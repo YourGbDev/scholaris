@@ -288,3 +288,9 @@ final profileSetupProvider =
     StateNotifierProvider<ProfileSetupNotifier, ProfileSetupState>(
   (ref) => ProfileSetupNotifier(ref.watch(profileRepositoryProvider)),
 );
+
+/// The signed-in user's full profile, or null when signed out / not built yet.
+/// Consumed by the matches provider and the profile tab.
+final currentProfileProvider = FutureProvider<StudentProfile?>(
+  (ref) => ref.watch(profileRepositoryProvider).fetchCurrent(),
+);

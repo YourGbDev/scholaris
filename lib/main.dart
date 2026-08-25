@@ -4,13 +4,14 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'app/router.dart';
 import 'app/supabase_config.dart';
+import 'shared/theme/app_theme.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   await Supabase.initialize(
     url: SupabaseConfig.url,
-    anonKey: SupabaseConfig.anonKey,
+    publishableKey: SupabaseConfig.anonKey,
   );
 
   runApp(const ProviderScope(child: ScholarisApp()));
@@ -26,10 +27,7 @@ class ScholarisApp extends ConsumerWidget {
     return MaterialApp.router(
       title: 'Scholaris',
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF0F4D2E)),
-        useMaterial3: true,
-      ),
+      theme: scholarisTheme(),
       routerConfig: router,
     );
   }

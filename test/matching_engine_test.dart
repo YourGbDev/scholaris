@@ -189,19 +189,20 @@ void main() {
   group('rank', () {
     test('sorts by soonest deadline then highest amount', () {
       final student = _student();
+      final base = DateTime.now();
       final inTwoWeeks = _scholarship(
         id: 'twoWeeks',
-        deadline: DateTime.now().add(const Duration(days: 14)),
+        deadline: base.add(const Duration(days: 14)),
         amount: 5000,
       );
       final inOneWeekSmall = _scholarship(
         id: 'oneWeekSmall',
-        deadline: DateTime.now().add(const Duration(days: 7)),
+        deadline: base.add(const Duration(days: 7)),
         amount: 1000,
       );
       final inOneWeekBig = _scholarship(
         id: 'oneWeekBig',
-        deadline: DateTime.now().add(const Duration(days: 7)),
+        deadline: base.add(const Duration(days: 7)),
         amount: 9000,
       );
 

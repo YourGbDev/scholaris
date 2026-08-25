@@ -1,0 +1,182 @@
+// lib/shared/widgets/scholarship_card.dart
+//
+// The standard Scholaris scholarship card. Used by both the personalized
+// matches list and the full catalog. The card leads with the value (amount)
+// and deadline urgency, and can show match-reason chips.
+
+import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:google_fonts/google_fonts.dart';
+
+import '../../features/scholarships/models/scholarship.dart';
+import '../theme/app_theme.dart';
+import '../utils/constants.dart';
+
+class ScholarshipCard extends StatelessWidget {
+  const ScholarshipCard({
+    super.key,
+    required this.scholarship,
+    this.reasons = const [],
+  });
+
+  final Scholarship scholarship;
+  final List<String> reasons;
+
+  @override
+  Widget build(BuildContext context) {
+    final daysLeft =
+        scholarship.deadline.difference(DateTime.now()).inDays;
+    final closing = isClosingSoon(daysLeft);
+
+    return Material(
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(kRadiusCard),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(kRadiusCard),
+        onTap: () => context.push(
+          '/scholarship/${scholarship.id}',
+          extra: scholarship,
+        ),
+        child: Container(
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(kRadiusCard),
+            boxShadow: const [
+              BoxShadow(
+                color: kPrimarySoft,
+                blurRadius: 16,
+                offset: Offset(0, 6),
+              ),
+            ],
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                    child: Text(
+                      scholarship.name,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: poppins(fontSize: 16, fontWeight: FontWeight.w600),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  _DeadlineChip(label: deadlineLabel(scholarship.deadline), urgent: closing),
+                ],
+              ),
+              const SizedBox(height: 4),
+              Text(
+                scholarship.provider ?? 'Scholarship provider',
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: openSans(fontSize: 13, color: Colors.black54),
+              ),
+              const SizedBox(height: 12),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Text(
+                    formatPeso(scholarship.amount),
+                    style: poppins(fontSize: 22, fontWeight: FontWeight.w700, color: kPrimary),
+                  ),
+                  const SizedBox(width: 8),
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 3),
+                    child: Text(
+                      _coverageLabel(scholarship.coverageType),
+                      style: openSans(fontSize: 13, color: Colors.black54),
+                    ),
+                  ),
+                ],
+              ),
+              if (reasons.isNotEmpty) ...[
+                const SizedBox(height: 12),
+                Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  children: reasons
+                      .map((r) => _ReasonChip(label: r))
+                      .toList(),
+                ),
+              ],
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  String _coverageLabel(String? coverageType) {
+    switch (coverageType) {
+      case 'full':
+        return '· full coverage';
+      case 'partial':
+        return '· partial coverage';
+      case 'stipend':
+        return '· stipend';
+      default:
+        return '';
+    }
+  }
+}
+
+class _DeadlineChip extends StatelessWidget {
+  const _DeadlineChip({required this.label, required this.urgent});
+
+  final String label;
+  final bool urgent;
+
+  @override
+  Widget build(BuildContext context) {
+    final background = urgent ? const Color(0xFFFFF3D6) : const Color(0xFFE8F2EC);
+    final foreground = urgent ? const Color(0xFF8A5B00) : kPrimary;
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+      decoration: BoxDecoration(
+        color: background,
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Text(
+        label,
+        style: GoogleFonts.poppins(
+          fontSize: 12,
+          fontWeight: FontWeight.w600,
+          color: foreground,
+        ),
+      ),
+    );
+  }
+}
+
+class _ReasonChip extends StatelessWidget {
+  const _ReasonChip({required this.label});
+
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+      decoration: BoxDecoration(
+        color: kPrimarySoft,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: kPrimary.withValues(alpha: 0.2)),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const Icon(Icons.check_circle, size: 14, color: kPrimary),
+          const SizedBox(width: 4),
+          Text(
+            label,
+            style: GoogleFonts.openSans(fontSize: 12, fontWeight: FontWeight.w600, color: kPrimary),
+          ),
+        ],
+      ),
+    );
+  }
+}

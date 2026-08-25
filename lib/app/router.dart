@@ -19,9 +19,12 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 //   profile_setup_screen.dart → ProfileSetupScreen({required String step})
 import 'package:scholaris/features/auth/presentation/login_screen.dart';
 import 'package:scholaris/features/auth/presentation/signup_screen.dart';
+import 'package:scholaris/features/auth/presentation/splash_screen.dart';
 import 'package:scholaris/features/home/presentation/home_screen.dart';
 import 'package:scholaris/features/profile/presentation/profile_setup_screen.dart';
 import 'package:scholaris/features/profile/providers/profile_setup_provider.dart';
+import 'package:scholaris/features/scholarships/models/scholarship.dart';
+import 'package:scholaris/features/scholarships/presentation/scholarship_detail_screen.dart';
 
 // -----------------------------------------------------------------------------
 // profileCompleteProvider
@@ -85,6 +88,19 @@ final routerProvider = Provider<GoRouter>((ref) {
         path: '/home',
         name: 'home',
         builder: (context, state) => const HomeScreen(),
+      ),
+
+      // --- Scholarship detail ------------------------------------------------
+      GoRoute(
+        path: '/scholarship/:id',
+        name: 'scholarship-detail',
+        builder: (context, state) {
+          final scholarship = state.extra as Scholarship?;
+          return ScholarshipDetailScreen(
+            scholarshipId: state.pathParameters['id']!,
+            initial: scholarship,
+          );
+        },
       ),
 
       // --- Profile setup (multi-step) ----------------------------------------
@@ -177,26 +193,4 @@ String? _redirect(Ref ref, GoRouterState state) {
   }
 
   return onSetupRoute ? null : ProfileSetupRoute.personal;
-}
-
-// -----------------------------------------------------------------------------
-// SplashScreen
-// -----------------------------------------------------------------------------
-// Placeholder: spins while the redirect logic decides where to go. Watching
-// profileCompleteProvider forces the profile check to run; when it settles,
-// the routerProvider listener calls router.refresh(), which triggers the
-// redirect to /login, /home or /profile-setup/personal.
-
-class SplashScreen extends ConsumerWidget {
-  const SplashScreen({super.key});
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    ref.watch(profileCompleteProvider);
-    return const Scaffold(
-      body: Center(
-        child: CircularProgressIndicator(),
-      ),
-    );
-  }
 }

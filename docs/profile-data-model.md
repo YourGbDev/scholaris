@@ -129,16 +129,15 @@ repository testable with an in-memory fake.
 
 ---
 
-## 7. Future connection to the Scholarship domain
+## 7. Connection to the Scholarship domain
 
-The `StudentProfile` object is the canonical domain object the future
-matching/eligibility system will consume. The Day 2 `MatchingEngine` already
-reads `gpa`, `yearLevel`, `course`, `nationality`, `region` and the derived
-`incomeBracket`. A dedicated Eligibility Engine will be built on the same
-deterministic inputs (see below). A full reconciliation of the `scholarships`
-table ↔ `Scholarship` model (camelCase/snake_case, missing columns such as
-`citizenship_required`, `regions_eligible`, `max_income_bracket`) is
-**deferred** to a later phase and was deliberately not touched in Day 3.
+The `StudentProfile` object is the canonical domain object the matching system
+consumes. The Day 2 `MatchingEngine` reads `gpa`, `yearLevel`, `course`,
+`nationality`, `region` and the derived `incomeBracket` to determine eligibility.
+
+**Day 4 resolved the `scholarships` table ↔ `Scholarship` model reconciliation**
+that was deferred in Day 3. See `docs/scholarship-discovery.md` for the
+contract, the data layer, and the personalized matching UX.
 
 ---
 

@@ -16,7 +16,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$StudentProfile {
 
- String get id; String get fullName; String get email; int get yearLevel; String get course; double get gpa; String get citizenship; String get region; String get province; String get incomeBracket; bool get isWorkingStudent; bool get isPwd; DateTime get createdAt; DateTime get updatedAt;
+ String get id;@JsonKey(name: 'full_name') String get fullName; String get nationality;@JsonKey(name: 'birth_date', fromJson: _dateFromJson, toJson: _dateToJson) DateTime? get birthDate; String? get gender; String get region; String? get province;@JsonKey(name: 'city_municipality') String? get cityMunicipality; double get gpa;@JsonKey(name: 'year_level') int get yearLevel; String get course; String? get school;@JsonKey(name: 'monthly_family_income') double? get monthlyFamilyIncome;@JsonKey(name: 'has_disability') bool get hasDisability;@JsonKey(name: 'is_indigenous') bool get isIndigenous;@JsonKey(name: 'setup_complete') bool get setupComplete;@JsonKey(name: 'created_at') DateTime? get createdAt;@JsonKey(name: 'updated_at') DateTime? get updatedAt;
 /// Create a copy of StudentProfile
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -29,16 +29,16 @@ $StudentProfileCopyWith<StudentProfile> get copyWith => _$StudentProfileCopyWith
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is StudentProfile&&(identical(other.id, id) || other.id == id)&&(identical(other.fullName, fullName) || other.fullName == fullName)&&(identical(other.email, email) || other.email == email)&&(identical(other.yearLevel, yearLevel) || other.yearLevel == yearLevel)&&(identical(other.course, course) || other.course == course)&&(identical(other.gpa, gpa) || other.gpa == gpa)&&(identical(other.citizenship, citizenship) || other.citizenship == citizenship)&&(identical(other.region, region) || other.region == region)&&(identical(other.province, province) || other.province == province)&&(identical(other.incomeBracket, incomeBracket) || other.incomeBracket == incomeBracket)&&(identical(other.isWorkingStudent, isWorkingStudent) || other.isWorkingStudent == isWorkingStudent)&&(identical(other.isPwd, isPwd) || other.isPwd == isPwd)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is StudentProfile&&(identical(other.id, id) || other.id == id)&&(identical(other.fullName, fullName) || other.fullName == fullName)&&(identical(other.nationality, nationality) || other.nationality == nationality)&&(identical(other.birthDate, birthDate) || other.birthDate == birthDate)&&(identical(other.gender, gender) || other.gender == gender)&&(identical(other.region, region) || other.region == region)&&(identical(other.province, province) || other.province == province)&&(identical(other.cityMunicipality, cityMunicipality) || other.cityMunicipality == cityMunicipality)&&(identical(other.gpa, gpa) || other.gpa == gpa)&&(identical(other.yearLevel, yearLevel) || other.yearLevel == yearLevel)&&(identical(other.course, course) || other.course == course)&&(identical(other.school, school) || other.school == school)&&(identical(other.monthlyFamilyIncome, monthlyFamilyIncome) || other.monthlyFamilyIncome == monthlyFamilyIncome)&&(identical(other.hasDisability, hasDisability) || other.hasDisability == hasDisability)&&(identical(other.isIndigenous, isIndigenous) || other.isIndigenous == isIndigenous)&&(identical(other.setupComplete, setupComplete) || other.setupComplete == setupComplete)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,fullName,email,yearLevel,course,gpa,citizenship,region,province,incomeBracket,isWorkingStudent,isPwd,createdAt,updatedAt);
+int get hashCode => Object.hash(runtimeType,id,fullName,nationality,birthDate,gender,region,province,cityMunicipality,gpa,yearLevel,course,school,monthlyFamilyIncome,hasDisability,isIndigenous,setupComplete,createdAt,updatedAt);
 
 @override
 String toString() {
-  return 'StudentProfile(id: $id, fullName: $fullName, email: $email, yearLevel: $yearLevel, course: $course, gpa: $gpa, citizenship: $citizenship, region: $region, province: $province, incomeBracket: $incomeBracket, isWorkingStudent: $isWorkingStudent, isPwd: $isPwd, createdAt: $createdAt, updatedAt: $updatedAt)';
+  return 'StudentProfile(id: $id, fullName: $fullName, nationality: $nationality, birthDate: $birthDate, gender: $gender, region: $region, province: $province, cityMunicipality: $cityMunicipality, gpa: $gpa, yearLevel: $yearLevel, course: $course, school: $school, monthlyFamilyIncome: $monthlyFamilyIncome, hasDisability: $hasDisability, isIndigenous: $isIndigenous, setupComplete: $setupComplete, createdAt: $createdAt, updatedAt: $updatedAt)';
 }
 
 
@@ -49,7 +49,7 @@ abstract mixin class $StudentProfileCopyWith<$Res>  {
   factory $StudentProfileCopyWith(StudentProfile value, $Res Function(StudentProfile) _then) = _$StudentProfileCopyWithImpl;
 @useResult
 $Res call({
- String id, String fullName, String email, int yearLevel, String course, double gpa, String citizenship, String region, String province, String incomeBracket, bool isWorkingStudent, bool isPwd, DateTime createdAt, DateTime updatedAt
+ String id,@JsonKey(name: 'full_name') String fullName, String nationality,@JsonKey(name: 'birth_date', fromJson: _dateFromJson, toJson: _dateToJson) DateTime? birthDate, String? gender, String region, String? province,@JsonKey(name: 'city_municipality') String? cityMunicipality, double gpa,@JsonKey(name: 'year_level') int yearLevel, String course, String? school,@JsonKey(name: 'monthly_family_income') double? monthlyFamilyIncome,@JsonKey(name: 'has_disability') bool hasDisability,@JsonKey(name: 'is_indigenous') bool isIndigenous,@JsonKey(name: 'setup_complete') bool setupComplete,@JsonKey(name: 'created_at') DateTime? createdAt,@JsonKey(name: 'updated_at') DateTime? updatedAt
 });
 
 
@@ -66,23 +66,27 @@ class _$StudentProfileCopyWithImpl<$Res>
 
 /// Create a copy of StudentProfile
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? fullName = null,Object? email = null,Object? yearLevel = null,Object? course = null,Object? gpa = null,Object? citizenship = null,Object? region = null,Object? province = null,Object? incomeBracket = null,Object? isWorkingStudent = null,Object? isPwd = null,Object? createdAt = null,Object? updatedAt = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? fullName = null,Object? nationality = null,Object? birthDate = freezed,Object? gender = freezed,Object? region = null,Object? province = freezed,Object? cityMunicipality = freezed,Object? gpa = null,Object? yearLevel = null,Object? course = null,Object? school = freezed,Object? monthlyFamilyIncome = freezed,Object? hasDisability = null,Object? isIndigenous = null,Object? setupComplete = null,Object? createdAt = freezed,Object? updatedAt = freezed,}) {
   return _then(StudentProfile(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,fullName: null == fullName ? _self.fullName : fullName // ignore: cast_nullable_to_non_nullable
-as String,email: null == email ? _self.email : email // ignore: cast_nullable_to_non_nullable
-as String,yearLevel: null == yearLevel ? _self.yearLevel : yearLevel // ignore: cast_nullable_to_non_nullable
+as String,nationality: null == nationality ? _self.nationality : nationality // ignore: cast_nullable_to_non_nullable
+as String,birthDate: freezed == birthDate ? _self.birthDate : birthDate // ignore: cast_nullable_to_non_nullable
+as DateTime?,gender: freezed == gender ? _self.gender : gender // ignore: cast_nullable_to_non_nullable
+as String?,region: null == region ? _self.region : region // ignore: cast_nullable_to_non_nullable
+as String,province: freezed == province ? _self.province : province // ignore: cast_nullable_to_non_nullable
+as String?,cityMunicipality: freezed == cityMunicipality ? _self.cityMunicipality : cityMunicipality // ignore: cast_nullable_to_non_nullable
+as String?,gpa: null == gpa ? _self.gpa : gpa // ignore: cast_nullable_to_non_nullable
+as double,yearLevel: null == yearLevel ? _self.yearLevel : yearLevel // ignore: cast_nullable_to_non_nullable
 as int,course: null == course ? _self.course : course // ignore: cast_nullable_to_non_nullable
-as String,gpa: null == gpa ? _self.gpa : gpa // ignore: cast_nullable_to_non_nullable
-as double,citizenship: null == citizenship ? _self.citizenship : citizenship // ignore: cast_nullable_to_non_nullable
-as String,region: null == region ? _self.region : region // ignore: cast_nullable_to_non_nullable
-as String,province: null == province ? _self.province : province // ignore: cast_nullable_to_non_nullable
-as String,incomeBracket: null == incomeBracket ? _self.incomeBracket : incomeBracket // ignore: cast_nullable_to_non_nullable
-as String,isWorkingStudent: null == isWorkingStudent ? _self.isWorkingStudent : isWorkingStudent // ignore: cast_nullable_to_non_nullable
-as bool,isPwd: null == isPwd ? _self.isPwd : isPwd // ignore: cast_nullable_to_non_nullable
-as bool,createdAt: null == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
-as DateTime,updatedAt: null == updatedAt ? _self.updatedAt : updatedAt // ignore: cast_nullable_to_non_nullable
-as DateTime,
+as String,school: freezed == school ? _self.school : school // ignore: cast_nullable_to_non_nullable
+as String?,monthlyFamilyIncome: freezed == monthlyFamilyIncome ? _self.monthlyFamilyIncome : monthlyFamilyIncome // ignore: cast_nullable_to_non_nullable
+as double?,hasDisability: null == hasDisability ? _self.hasDisability : hasDisability // ignore: cast_nullable_to_non_nullable
+as bool,isIndigenous: null == isIndigenous ? _self.isIndigenous : isIndigenous // ignore: cast_nullable_to_non_nullable
+as bool,setupComplete: null == setupComplete ? _self.setupComplete : setupComplete // ignore: cast_nullable_to_non_nullable
+as bool,createdAt: freezed == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
+as DateTime?,updatedAt: freezed == updatedAt ? _self.updatedAt : updatedAt // ignore: cast_nullable_to_non_nullable
+as DateTime?,
   ));
 }
 
@@ -167,10 +171,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String fullName,  String email,  int yearLevel,  String course,  double gpa,  String citizenship,  String region,  String province,  String incomeBracket,  bool isWorkingStudent,  bool isPwd,  DateTime createdAt,  DateTime updatedAt)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id, @JsonKey(name: 'full_name')  String fullName,  String nationality, @JsonKey(name: 'birth_date', fromJson: _dateFromJson, toJson: _dateToJson)  DateTime? birthDate,  String? gender,  String region,  String? province, @JsonKey(name: 'city_municipality')  String? cityMunicipality,  double gpa, @JsonKey(name: 'year_level')  int yearLevel,  String course,  String? school, @JsonKey(name: 'monthly_family_income')  double? monthlyFamilyIncome, @JsonKey(name: 'has_disability')  bool hasDisability, @JsonKey(name: 'is_indigenous')  bool isIndigenous, @JsonKey(name: 'setup_complete')  bool setupComplete, @JsonKey(name: 'created_at')  DateTime? createdAt, @JsonKey(name: 'updated_at')  DateTime? updatedAt)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _StudentProfile() when $default != null:
-return $default(_that.id,_that.fullName,_that.email,_that.yearLevel,_that.course,_that.gpa,_that.citizenship,_that.region,_that.province,_that.incomeBracket,_that.isWorkingStudent,_that.isPwd,_that.createdAt,_that.updatedAt);case _:
+return $default(_that.id,_that.fullName,_that.nationality,_that.birthDate,_that.gender,_that.region,_that.province,_that.cityMunicipality,_that.gpa,_that.yearLevel,_that.course,_that.school,_that.monthlyFamilyIncome,_that.hasDisability,_that.isIndigenous,_that.setupComplete,_that.createdAt,_that.updatedAt);case _:
   return orElse();
 
 }
@@ -188,10 +192,10 @@ return $default(_that.id,_that.fullName,_that.email,_that.yearLevel,_that.course
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String fullName,  String email,  int yearLevel,  String course,  double gpa,  String citizenship,  String region,  String province,  String incomeBracket,  bool isWorkingStudent,  bool isPwd,  DateTime createdAt,  DateTime updatedAt)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id, @JsonKey(name: 'full_name')  String fullName,  String nationality, @JsonKey(name: 'birth_date', fromJson: _dateFromJson, toJson: _dateToJson)  DateTime? birthDate,  String? gender,  String region,  String? province, @JsonKey(name: 'city_municipality')  String? cityMunicipality,  double gpa, @JsonKey(name: 'year_level')  int yearLevel,  String course,  String? school, @JsonKey(name: 'monthly_family_income')  double? monthlyFamilyIncome, @JsonKey(name: 'has_disability')  bool hasDisability, @JsonKey(name: 'is_indigenous')  bool isIndigenous, @JsonKey(name: 'setup_complete')  bool setupComplete, @JsonKey(name: 'created_at')  DateTime? createdAt, @JsonKey(name: 'updated_at')  DateTime? updatedAt)  $default,) {final _that = this;
 switch (_that) {
 case _StudentProfile():
-return $default(_that.id,_that.fullName,_that.email,_that.yearLevel,_that.course,_that.gpa,_that.citizenship,_that.region,_that.province,_that.incomeBracket,_that.isWorkingStudent,_that.isPwd,_that.createdAt,_that.updatedAt);case _:
+return $default(_that.id,_that.fullName,_that.nationality,_that.birthDate,_that.gender,_that.region,_that.province,_that.cityMunicipality,_that.gpa,_that.yearLevel,_that.course,_that.school,_that.monthlyFamilyIncome,_that.hasDisability,_that.isIndigenous,_that.setupComplete,_that.createdAt,_that.updatedAt);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -208,10 +212,10 @@ return $default(_that.id,_that.fullName,_that.email,_that.yearLevel,_that.course
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String fullName,  String email,  int yearLevel,  String course,  double gpa,  String citizenship,  String region,  String province,  String incomeBracket,  bool isWorkingStudent,  bool isPwd,  DateTime createdAt,  DateTime updatedAt)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id, @JsonKey(name: 'full_name')  String fullName,  String nationality, @JsonKey(name: 'birth_date', fromJson: _dateFromJson, toJson: _dateToJson)  DateTime? birthDate,  String? gender,  String region,  String? province, @JsonKey(name: 'city_municipality')  String? cityMunicipality,  double gpa, @JsonKey(name: 'year_level')  int yearLevel,  String course,  String? school, @JsonKey(name: 'monthly_family_income')  double? monthlyFamilyIncome, @JsonKey(name: 'has_disability')  bool hasDisability, @JsonKey(name: 'is_indigenous')  bool isIndigenous, @JsonKey(name: 'setup_complete')  bool setupComplete, @JsonKey(name: 'created_at')  DateTime? createdAt, @JsonKey(name: 'updated_at')  DateTime? updatedAt)?  $default,) {final _that = this;
 switch (_that) {
 case _StudentProfile() when $default != null:
-return $default(_that.id,_that.fullName,_that.email,_that.yearLevel,_that.course,_that.gpa,_that.citizenship,_that.region,_that.province,_that.incomeBracket,_that.isWorkingStudent,_that.isPwd,_that.createdAt,_that.updatedAt);case _:
+return $default(_that.id,_that.fullName,_that.nationality,_that.birthDate,_that.gender,_that.region,_that.province,_that.cityMunicipality,_that.gpa,_that.yearLevel,_that.course,_that.school,_that.monthlyFamilyIncome,_that.hasDisability,_that.isIndigenous,_that.setupComplete,_that.createdAt,_that.updatedAt);case _:
   return null;
 
 }
@@ -222,24 +226,28 @@ return $default(_that.id,_that.fullName,_that.email,_that.yearLevel,_that.course
 /// @nodoc
 @JsonSerializable()
 
-class _StudentProfile implements StudentProfile {
-  const _StudentProfile({required this.id, required this.fullName, required this.email, required this.yearLevel, required this.course, required this.gpa, required this.citizenship, required this.region, required this.province, required this.incomeBracket, required this.isWorkingStudent, required this.isPwd, required this.createdAt, required this.updatedAt});
+class _StudentProfile extends StudentProfile {
+  const _StudentProfile({required this.id, @JsonKey(name: 'full_name') required this.fullName, this.nationality = 'Filipino', @JsonKey(name: 'birth_date', fromJson: _dateFromJson, toJson: _dateToJson) this.birthDate, this.gender, required this.region, this.province, @JsonKey(name: 'city_municipality') this.cityMunicipality, required this.gpa, @JsonKey(name: 'year_level') required this.yearLevel, required this.course, this.school, @JsonKey(name: 'monthly_family_income') this.monthlyFamilyIncome, @JsonKey(name: 'has_disability') this.hasDisability = false, @JsonKey(name: 'is_indigenous') this.isIndigenous = false, @JsonKey(name: 'setup_complete') this.setupComplete = false, @JsonKey(name: 'created_at') this.createdAt, @JsonKey(name: 'updated_at') this.updatedAt}): super._();
   factory _StudentProfile.fromJson(Map<String, dynamic> json) => _$StudentProfileFromJson(json);
 
 @override final  String id;
-@override final  String fullName;
-@override final  String email;
-@override final  int yearLevel;
-@override final  String course;
-@override final  double gpa;
-@override final  String citizenship;
+@override@JsonKey(name: 'full_name') final  String fullName;
+@override@JsonKey() final  String nationality;
+@override@JsonKey(name: 'birth_date', fromJson: _dateFromJson, toJson: _dateToJson) final  DateTime? birthDate;
+@override final  String? gender;
 @override final  String region;
-@override final  String province;
-@override final  String incomeBracket;
-@override final  bool isWorkingStudent;
-@override final  bool isPwd;
-@override final  DateTime createdAt;
-@override final  DateTime updatedAt;
+@override final  String? province;
+@override@JsonKey(name: 'city_municipality') final  String? cityMunicipality;
+@override final  double gpa;
+@override@JsonKey(name: 'year_level') final  int yearLevel;
+@override final  String course;
+@override final  String? school;
+@override@JsonKey(name: 'monthly_family_income') final  double? monthlyFamilyIncome;
+@override@JsonKey(name: 'has_disability') final  bool hasDisability;
+@override@JsonKey(name: 'is_indigenous') final  bool isIndigenous;
+@override@JsonKey(name: 'setup_complete') final  bool setupComplete;
+@override@JsonKey(name: 'created_at') final  DateTime? createdAt;
+@override@JsonKey(name: 'updated_at') final  DateTime? updatedAt;
 
 /// Create a copy of StudentProfile
 /// with the given fields replaced by the non-null parameter values.
@@ -254,16 +262,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _StudentProfile&&(identical(other.id, id) || other.id == id)&&(identical(other.fullName, fullName) || other.fullName == fullName)&&(identical(other.email, email) || other.email == email)&&(identical(other.yearLevel, yearLevel) || other.yearLevel == yearLevel)&&(identical(other.course, course) || other.course == course)&&(identical(other.gpa, gpa) || other.gpa == gpa)&&(identical(other.citizenship, citizenship) || other.citizenship == citizenship)&&(identical(other.region, region) || other.region == region)&&(identical(other.province, province) || other.province == province)&&(identical(other.incomeBracket, incomeBracket) || other.incomeBracket == incomeBracket)&&(identical(other.isWorkingStudent, isWorkingStudent) || other.isWorkingStudent == isWorkingStudent)&&(identical(other.isPwd, isPwd) || other.isPwd == isPwd)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _StudentProfile&&(identical(other.id, id) || other.id == id)&&(identical(other.fullName, fullName) || other.fullName == fullName)&&(identical(other.nationality, nationality) || other.nationality == nationality)&&(identical(other.birthDate, birthDate) || other.birthDate == birthDate)&&(identical(other.gender, gender) || other.gender == gender)&&(identical(other.region, region) || other.region == region)&&(identical(other.province, province) || other.province == province)&&(identical(other.cityMunicipality, cityMunicipality) || other.cityMunicipality == cityMunicipality)&&(identical(other.gpa, gpa) || other.gpa == gpa)&&(identical(other.yearLevel, yearLevel) || other.yearLevel == yearLevel)&&(identical(other.course, course) || other.course == course)&&(identical(other.school, school) || other.school == school)&&(identical(other.monthlyFamilyIncome, monthlyFamilyIncome) || other.monthlyFamilyIncome == monthlyFamilyIncome)&&(identical(other.hasDisability, hasDisability) || other.hasDisability == hasDisability)&&(identical(other.isIndigenous, isIndigenous) || other.isIndigenous == isIndigenous)&&(identical(other.setupComplete, setupComplete) || other.setupComplete == setupComplete)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,fullName,email,yearLevel,course,gpa,citizenship,region,province,incomeBracket,isWorkingStudent,isPwd,createdAt,updatedAt);
+int get hashCode => Object.hash(runtimeType,id,fullName,nationality,birthDate,gender,region,province,cityMunicipality,gpa,yearLevel,course,school,monthlyFamilyIncome,hasDisability,isIndigenous,setupComplete,createdAt,updatedAt);
 
 @override
 String toString() {
-  return 'StudentProfile(id: $id, fullName: $fullName, email: $email, yearLevel: $yearLevel, course: $course, gpa: $gpa, citizenship: $citizenship, region: $region, province: $province, incomeBracket: $incomeBracket, isWorkingStudent: $isWorkingStudent, isPwd: $isPwd, createdAt: $createdAt, updatedAt: $updatedAt)';
+  return 'StudentProfile(id: $id, fullName: $fullName, nationality: $nationality, birthDate: $birthDate, gender: $gender, region: $region, province: $province, cityMunicipality: $cityMunicipality, gpa: $gpa, yearLevel: $yearLevel, course: $course, school: $school, monthlyFamilyIncome: $monthlyFamilyIncome, hasDisability: $hasDisability, isIndigenous: $isIndigenous, setupComplete: $setupComplete, createdAt: $createdAt, updatedAt: $updatedAt)';
 }
 
 
@@ -274,7 +282,7 @@ abstract mixin class _$StudentProfileCopyWith<$Res> implements $StudentProfileCo
   factory _$StudentProfileCopyWith(_StudentProfile value, $Res Function(_StudentProfile) _then) = __$StudentProfileCopyWithImpl;
 @override @useResult
 $Res call({
- String id, String fullName, String email, int yearLevel, String course, double gpa, String citizenship, String region, String province, String incomeBracket, bool isWorkingStudent, bool isPwd, DateTime createdAt, DateTime updatedAt
+ String id,@JsonKey(name: 'full_name') String fullName, String nationality,@JsonKey(name: 'birth_date', fromJson: _dateFromJson, toJson: _dateToJson) DateTime? birthDate, String? gender, String region, String? province,@JsonKey(name: 'city_municipality') String? cityMunicipality, double gpa,@JsonKey(name: 'year_level') int yearLevel, String course, String? school,@JsonKey(name: 'monthly_family_income') double? monthlyFamilyIncome,@JsonKey(name: 'has_disability') bool hasDisability,@JsonKey(name: 'is_indigenous') bool isIndigenous,@JsonKey(name: 'setup_complete') bool setupComplete,@JsonKey(name: 'created_at') DateTime? createdAt,@JsonKey(name: 'updated_at') DateTime? updatedAt
 });
 
 
@@ -291,23 +299,27 @@ class __$StudentProfileCopyWithImpl<$Res>
 
 /// Create a copy of StudentProfile
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? fullName = null,Object? email = null,Object? yearLevel = null,Object? course = null,Object? gpa = null,Object? citizenship = null,Object? region = null,Object? province = null,Object? incomeBracket = null,Object? isWorkingStudent = null,Object? isPwd = null,Object? createdAt = null,Object? updatedAt = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? fullName = null,Object? nationality = null,Object? birthDate = freezed,Object? gender = freezed,Object? region = null,Object? province = freezed,Object? cityMunicipality = freezed,Object? gpa = null,Object? yearLevel = null,Object? course = null,Object? school = freezed,Object? monthlyFamilyIncome = freezed,Object? hasDisability = null,Object? isIndigenous = null,Object? setupComplete = null,Object? createdAt = freezed,Object? updatedAt = freezed,}) {
   return _then(_StudentProfile(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,fullName: null == fullName ? _self.fullName : fullName // ignore: cast_nullable_to_non_nullable
-as String,email: null == email ? _self.email : email // ignore: cast_nullable_to_non_nullable
-as String,yearLevel: null == yearLevel ? _self.yearLevel : yearLevel // ignore: cast_nullable_to_non_nullable
+as String,nationality: null == nationality ? _self.nationality : nationality // ignore: cast_nullable_to_non_nullable
+as String,birthDate: freezed == birthDate ? _self.birthDate : birthDate // ignore: cast_nullable_to_non_nullable
+as DateTime?,gender: freezed == gender ? _self.gender : gender // ignore: cast_nullable_to_non_nullable
+as String?,region: null == region ? _self.region : region // ignore: cast_nullable_to_non_nullable
+as String,province: freezed == province ? _self.province : province // ignore: cast_nullable_to_non_nullable
+as String?,cityMunicipality: freezed == cityMunicipality ? _self.cityMunicipality : cityMunicipality // ignore: cast_nullable_to_non_nullable
+as String?,gpa: null == gpa ? _self.gpa : gpa // ignore: cast_nullable_to_non_nullable
+as double,yearLevel: null == yearLevel ? _self.yearLevel : yearLevel // ignore: cast_nullable_to_non_nullable
 as int,course: null == course ? _self.course : course // ignore: cast_nullable_to_non_nullable
-as String,gpa: null == gpa ? _self.gpa : gpa // ignore: cast_nullable_to_non_nullable
-as double,citizenship: null == citizenship ? _self.citizenship : citizenship // ignore: cast_nullable_to_non_nullable
-as String,region: null == region ? _self.region : region // ignore: cast_nullable_to_non_nullable
-as String,province: null == province ? _self.province : province // ignore: cast_nullable_to_non_nullable
-as String,incomeBracket: null == incomeBracket ? _self.incomeBracket : incomeBracket // ignore: cast_nullable_to_non_nullable
-as String,isWorkingStudent: null == isWorkingStudent ? _self.isWorkingStudent : isWorkingStudent // ignore: cast_nullable_to_non_nullable
-as bool,isPwd: null == isPwd ? _self.isPwd : isPwd // ignore: cast_nullable_to_non_nullable
-as bool,createdAt: null == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
-as DateTime,updatedAt: null == updatedAt ? _self.updatedAt : updatedAt // ignore: cast_nullable_to_non_nullable
-as DateTime,
+as String,school: freezed == school ? _self.school : school // ignore: cast_nullable_to_non_nullable
+as String?,monthlyFamilyIncome: freezed == monthlyFamilyIncome ? _self.monthlyFamilyIncome : monthlyFamilyIncome // ignore: cast_nullable_to_non_nullable
+as double?,hasDisability: null == hasDisability ? _self.hasDisability : hasDisability // ignore: cast_nullable_to_non_nullable
+as bool,isIndigenous: null == isIndigenous ? _self.isIndigenous : isIndigenous // ignore: cast_nullable_to_non_nullable
+as bool,setupComplete: null == setupComplete ? _self.setupComplete : setupComplete // ignore: cast_nullable_to_non_nullable
+as bool,createdAt: freezed == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
+as DateTime?,updatedAt: freezed == updatedAt ? _self.updatedAt : updatedAt // ignore: cast_nullable_to_non_nullable
+as DateTime?,
   ));
 }
 

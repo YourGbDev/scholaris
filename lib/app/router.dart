@@ -21,13 +21,15 @@ import 'package:scholaris/features/auth/presentation/login_screen.dart';
 import 'package:scholaris/features/auth/presentation/signup_screen.dart';
 import 'package:scholaris/features/home/presentation/home_screen.dart';
 import 'package:scholaris/features/profile/presentation/profile_setup_screen.dart';
+import 'package:scholaris/features/profile/providers/profile_setup_provider.dart';
 
 // -----------------------------------------------------------------------------
 // profileCompleteProvider
 // -----------------------------------------------------------------------------
 // AsyncNotifier that reports whether the signed-in user has finished the
-// multi-step profile setup. It looks up the user's row in the `profiles`
-// table and reads the `setup_complete` boolean column.
+// multi-step profile setup. It reads the user's own `profiles` row (via the
+// profile repository, which is always scoped to the authenticated user) and
+// returns the `setup_complete` flag.
 
 final profileCompleteProvider =
     AsyncNotifierProvider<ProfileCompleteNotifier, bool>(
@@ -37,17 +39,9 @@ final profileCompleteProvider =
 class ProfileCompleteNotifier extends AsyncNotifier<bool> {
   @override
   Future<bool> build() async {
-    final userId = Supabase.instance.client.auth.currentUser?.id;
-    if (userId == null) return false;
-
-    // Assumes the `profiles` table uses the auth user id as its primary key.
-    final row = await Supabase.instance.client
-        .from('profiles')
-        .select('setup_complete')
-        .eq('id', userId)
-        .maybeSingle();
-
-    return row?['setup_complete'] == true;
+    final profile =
+        await ref.watch(profileRepositoryProvider).fetchCurrent();
+    return profile?.setupComplete ?? false;
   }
 
   /// Re-check the `profiles` table. Call this after the user completes the

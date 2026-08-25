@@ -8,25 +8,22 @@ StudentProfile _student({
   double gpa = 3.0,
   int yearLevel = 2,
   String course = 'BS Computer Science',
-  String citizenship = 'Filipino',
+  String nationality = 'Filipino',
   String region = 'NCR',
-  String incomeBracket = 'low',
+  double? monthlyFamilyIncome = 15000,
 }) =>
     StudentProfile(
       id: 's1',
       fullName: 'Test Student',
-      email: 'student@example.com',
-      yearLevel: yearLevel,
-      course: course,
-      gpa: gpa,
-      citizenship: citizenship,
+      nationality: nationality,
       region: region,
       province: 'Manila',
-      incomeBracket: incomeBracket,
-      isWorkingStudent: false,
-      isPwd: false,
-      createdAt: DateTime(2026, 1, 1),
-      updatedAt: DateTime(2026, 1, 1),
+      gpa: gpa,
+      yearLevel: yearLevel,
+      course: course,
+      school: 'WLC',
+      monthlyFamilyIncome: monthlyFamilyIncome,
+      setupComplete: true,
     );
 
 Scholarship _scholarship({
@@ -90,15 +87,63 @@ void main() {
       expect(result.map((s) => s.id), ['allYears']);
     });
 
-    test('applies income bracket hierarchy', () {
+    test('filters by course', () {
+      final student = _student(course: 'BS Nursing');
+      final eligible = _scholarship(id: 'allCourses');
+      final ineligible = _scholarship(
+        id: 'stemOnly',
+        eligibleCourses: const ['BS Computer Science', 'BS Engineering'],
+      );
+
+      final result = engine.getEligible(student, [eligible, ineligible]);
+
+      expect(result.map((s) => s.id), ['allCourses']);
+    });
+
+    test('filters by nationality', () {
+      final student = _student(nationality: 'Filipino');
+      final eligible = _scholarship(id: 'anyNationality');
+      final ineligible = _scholarship(
+        id: 'filipinosOnly',
+        citizenshipRequired: 'Filipino',
+      );
+      final forOthers = _scholarship(
+        id: 'foreignersOnly',
+        citizenshipRequired: 'US',
+      );
+
+      final result =
+          engine.getEligible(student, [eligible, ineligible, forOthers]);
+
+      expect(result.map((s) => s.id), ['anyNationality', 'filipinosOnly']);
+    });
+
+    test('filters by region', () {
+      final student = _student(region: 'Region VII');
+      final eligible = _scholarship(id: 'noRestriction');
+      final ineligible = _scholarship(
+        id: 'ncrOnly',
+        regionsEligible: const ['NCR'],
+      );
+      final matches = _scholarship(
+        id: 'visayas',
+        regionsEligible: const ['Region VII', 'Region VI'],
+      );
+
+      final result = engine.getEligible(student, [eligible, ineligible, matches]);
+
+      expect(result.map((s) => s.id), ['noRestriction', 'visayas']);
+    });
+
+    test('applies income bracket hierarchy derived from income', () {
       final lowOnly = _scholarship(id: 'low', maxIncomeBracket: 'low');
       final midOnly = _scholarship(id: 'mid', maxIncomeBracket: 'mid');
       final highOnly = _scholarship(id: 'high', maxIncomeBracket: 'high');
       final any = _scholarship(id: 'any', maxIncomeBracket: 'any');
 
-      final lowStudent = _student(incomeBracket: 'low');
-      final midStudent = _student(incomeBracket: 'mid');
-      final highStudent = _student(incomeBracket: 'high');
+      final lowStudent = _student(monthlyFamilyIncome: 10000); // low
+      final midStudent = _student(monthlyFamilyIncome: 40000); // mid
+      final highStudent = _student(monthlyFamilyIncome: 90000); // high
 
       final all = [lowOnly, midOnly, highOnly, any];
 
@@ -114,6 +159,17 @@ void main() {
         engine.getEligible(highStudent, all).map((s) => s.id).toList(),
         ['high', 'any'],
       );
+    });
+
+    test('undisclosed income never matches income-constrained scholarships', () {
+      final lowOnly = _scholarship(id: 'low', maxIncomeBracket: 'low');
+      final any = _scholarship(id: 'any', maxIncomeBracket: 'any');
+
+      final undisclosed = _student(monthlyFamilyIncome: null);
+
+      final result = engine.getEligible(undisclosed, [lowOnly, any]);
+
+      expect(result.map((s) => s.id), ['any']);
     });
 
     test('filters out expired deadlines', () {

@@ -19,7 +19,7 @@ class MatchingEngine {
         return false;
       }
       if (s.citizenshipRequired != 'any' &&
-          s.citizenshipRequired != student.citizenship) {
+          s.citizenshipRequired != student.nationality) {
         return false;
       }
       if (s.regionsEligible.isNotEmpty &&
@@ -52,8 +52,11 @@ class MatchingEngine {
     return ranked;
   }
 
-  bool _incomeBracketAllows(String studentBracket, String scholarshipMax) {
+  bool _incomeBracketAllows(String? studentBracket, String scholarshipMax) {
     if (scholarshipMax == 'any') return true;
+    // An undisclosed income cannot be compared against a scholarship's income
+    // ceiling, so income-constrained scholarships simply do not match.
+    if (studentBracket == null) return false;
     const hierarchy = ['low', 'mid', 'high'];
     final studentIndex = hierarchy.indexOf(studentBracket);
     final maxIndex = hierarchy.indexOf(scholarshipMax);

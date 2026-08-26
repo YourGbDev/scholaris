@@ -2,17 +2,23 @@
 //
 // Full scholarship details. Receives the scholarship via route extra when
 // possible (from a card), otherwise falls back to loading it by id.
-// The bookmark toggle in the app bar keeps the Saved tab in sync.
+// The bookmark toggle in the app bar keeps the Saved tab in sync. When the
+// signed-in student's profile makes this scholarship an actual match, a
+// "Why this matches you" section restates the reasons they saw on the card.
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import 'package:scholaris/features/bookmarks/providers/bookmarks_provider.dart';
+import 'package:scholaris/features/profile/providers/profile_setup_provider.dart';
 import 'package:scholaris/features/scholarships/models/scholarship.dart';
 import 'package:scholaris/features/scholarships/providers/scholarships_provider.dart';
+import 'package:scholaris/features/scholarships/services/match_reasons.dart';
+import 'package:scholaris/features/scholarships/services/matching_engine.dart';
 import 'package:scholaris/shared/theme/app_theme.dart';
 import 'package:scholaris/shared/utils/constants.dart';
+import 'package:scholaris/shared/widgets/responsive_container.dart';
 import 'package:scholaris/shared/widgets/state_views.dart';
 
 class ScholarshipDetailScreen extends ConsumerStatefulWidget {
@@ -56,7 +62,7 @@ class _ScholarshipDetailScreenState
           const SizedBox(width: 4),
         ],
       ),
-      body: _buildBody(context),
+      body: ResponsiveContainer(child: _buildBody(context)),
     );
   }
 
@@ -114,15 +120,16 @@ class _ScholarshipDetailScreenState
   }
 }
 
-class _DetailContent extends StatelessWidget {
+class _DetailContent extends ConsumerWidget {
   const _DetailContent({required this.scholarship});
 
   final Scholarship scholarship;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final daysLeft = scholarship.deadline.difference(DateTime.now()).inDays;
     final closing = isClosingSoon(daysLeft);
+    final reasons = _matchReasons(ref);
 
     return ListView(
       padding: const EdgeInsets.fromLTRB(20, 8, 20, 40),
@@ -139,6 +146,16 @@ class _DetailContent extends StatelessWidget {
         const SizedBox(height: 20),
         _AmountCard(scholarship: scholarship, closing: closing, daysLeft: daysLeft),
         const SizedBox(height: 24),
+        if (reasons.isNotEmpty) ...[
+          _SectionLabel('Why this matches you'),
+          const SizedBox(height: 12),
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children: reasons.map((r) => _ReasonPill(label: r)).toList(),
+          ),
+          const SizedBox(height: 24),
+        ],
         if (scholarship.description != null) ...[
           _SectionLabel('About'),
           const SizedBox(height: 8),
@@ -204,6 +221,18 @@ class _DetailContent extends StatelessWidget {
     );
   }
 
+  /// Returns the "why this matches you" reasons only when the signed-in
+  /// student's profile genuinely qualifies for this scholarship, so the detail
+  /// screen never implies a match the engine would not produce.
+  List<String> _matchReasons(WidgetRef ref) {
+    final profile = ref.watch(currentProfileProvider).valueOrNull;
+    if (profile == null) return const [];
+    final isEligible =
+        MatchingEngine().getEligible(profile, [scholarship]).isNotEmpty;
+    if (!isEligible) return const [];
+    return matchReasonsFor(profile, scholarship);
+  }
+
   String _yearLevelsLabel(List<int> levels) {
     if (levels.length == 5) return '1–5';
     if (levels.length == 1) return '${levels.first} only';
@@ -221,6 +250,35 @@ class _DetailContent extends StatelessWidget {
       default:
         return 'All income levels';
     }
+  }
+}
+
+class _ReasonPill extends StatelessWidget {
+  const _ReasonPill({required this.label});
+
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
+      decoration: BoxDecoration(
+        color: kPrimarySoft,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: kPrimary.withValues(alpha: 0.2)),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const Icon(Icons.check_circle, size: 15, color: kPrimary),
+          const SizedBox(width: 5),
+          Text(
+            label,
+            style: GoogleFonts.openSans(fontSize: 12, fontWeight: FontWeight.w600, color: kPrimary),
+          ),
+        ],
+      ),
+    );
   }
 }
 

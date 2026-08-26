@@ -5,6 +5,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import 'package:scholaris/features/auth/controllers/auth_controller.dart';
 import 'package:scholaris/features/profile/models/student_profile.dart';
 import 'package:scholaris/features/profile/providers/profile_setup_provider.dart';
 import 'package:scholaris/features/profile/repositories/profile_repository.dart';
@@ -32,6 +33,7 @@ ProviderContainer _container() {
 
   return ProviderContainer(
     overrides: [
+      currentUserIdProvider.overrideWithValue('user-a'),
       profileRepositoryProvider.overrideWith(
         (ref) => ProfileRepository(
           dataSource: profileSource,
@@ -64,6 +66,7 @@ void main() {
   test('matchesProvider is empty without a built profile', () async {
     final container = ProviderContainer(
       overrides: [
+        currentUserIdProvider.overrideWithValue('user-a'),
         profileRepositoryProvider.overrideWith(
           (ref) => ProfileRepository(
             dataSource: FakeProfileDataSource(),

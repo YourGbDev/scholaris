@@ -6,6 +6,7 @@
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../auth/controllers/auth_controller.dart';
 import '../repositories/bookmark_repository.dart';
 
 final bookmarkRepositoryProvider = Provider<BookmarkRepository>(
@@ -20,6 +21,9 @@ final bookmarksProvider =
 class BookmarksNotifier extends AsyncNotifier<Set<String>> {
   @override
   Future<Set<String>> build() async {
+    // Bound to the authenticated user: rebuilt (and refetched) on every auth
+    // transition, so a previous user's saved set can never leak to the next.
+    ref.watch(currentUserIdProvider);
     final ids = await ref.watch(bookmarkRepositoryProvider).fetchBookmarkedIds();
     return ids.toSet();
   }

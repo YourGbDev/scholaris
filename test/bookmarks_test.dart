@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import 'package:scholaris/features/auth/controllers/auth_controller.dart';
 import 'package:scholaris/features/bookmarks/providers/bookmarks_provider.dart';
 import 'package:scholaris/features/bookmarks/repositories/bookmark_repository.dart';
 
@@ -60,6 +61,7 @@ void main() {
       final source = FakeBookmarkDataSource();
       final container = ProviderContainer(
         overrides: [
+          currentUserIdProvider.overrideWithValue('user-a'),
           bookmarkRepositoryProvider.overrideWith(
             (ref) => BookmarkRepository(
               dataSource: source,

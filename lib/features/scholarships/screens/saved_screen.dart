@@ -11,6 +11,7 @@ import 'package:scholaris/features/bookmarks/providers/bookmarks_provider.dart';
 import 'package:scholaris/features/scholarships/models/scholarship.dart';
 import 'package:scholaris/features/scholarships/providers/scholarships_provider.dart';
 import 'package:scholaris/shared/theme/app_theme.dart';
+import 'package:scholaris/shared/widgets/responsive_container.dart';
 import 'package:scholaris/shared/widgets/scholarship_card.dart';
 import 'package:scholaris/shared/widgets/state_views.dart';
 
@@ -23,18 +24,20 @@ class SavedScreen extends ConsumerWidget {
     final allAsync = ref.watch(scholarshipsProvider);
 
     return SafeArea(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Padding(
-            padding: const EdgeInsets.fromLTRB(20, 20, 20, 4),
-            child: Text(
-              'Saved',
-              style: poppins(fontSize: 22, fontWeight: FontWeight.w700, color: kPrimary),
+      child: ResponsiveContainer(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: const EdgeInsets.fromLTRB(20, 20, 20, 4),
+              child: Text(
+                'Saved',
+                style: poppins(fontSize: 22, fontWeight: FontWeight.w700, color: kPrimary),
+              ),
             ),
-          ),
-          Expanded(child: _buildBody(ref, bookmarksAsync, allAsync)),
-        ],
+            Expanded(child: _buildBody(ref, bookmarksAsync, allAsync)),
+          ],
+        ),
       ),
     );
   }
@@ -81,11 +84,23 @@ class SavedScreen extends ConsumerWidget {
               padding: const EdgeInsets.fromLTRB(20, 12, 20, 32),
               itemCount: saved.length,
               separatorBuilder: (_, _) => const SizedBox(height: 14),
-              itemBuilder: (_, i) => ScholarshipCard(scholarship: saved[i]),
+              itemBuilder: (_, i) => ScholarshipCard(
+                scholarship: saved[i],
+                isBookmarked: true,
+                onToggleBookmark: () => _toggleBookmark(ref, saved[i].id),
+              ),
             );
           },
         );
       },
     );
+  }
+
+  Future<void> _toggleBookmark(WidgetRef ref, String id) async {
+    try {
+      await ref.read(bookmarksProvider.notifier).toggle(id);
+    } on Exception {
+      // Silent on card; the icon state is sufficient feedback.
+    }
   }
 }

@@ -16,6 +16,7 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import 'package:scholaris/app/router.dart';
+import 'package:scholaris/features/auth/controllers/auth_controller.dart';
 import 'package:scholaris/features/profile/models/profile_validator.dart';
 import 'package:scholaris/features/profile/models/student_profile.dart';
 import 'package:scholaris/features/profile/providers/profile_setup_provider.dart';
@@ -70,7 +71,13 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
   @override
   void initState() {
     super.initState();
-    final state = ref.read(profileSetupProvider);
+    // The draft lives in profileSetupProvider, keyed by the authenticated user.
+    // The router guards this route to signed-in users, so userId is present in
+    // production; a null here only happens during a brief auth transition.
+    final userId = ref.read(currentUserIdProvider);
+    final state = userId == null
+        ? const ProfileSetupState()
+        : ref.read(profileSetupProvider(userId));
     _fullNameController = TextEditingController(text: state.fullName);
     _nationalityController = TextEditingController(text: state.nationality);
     _courseController = TextEditingController(text: state.course);
@@ -80,6 +87,26 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
         TextEditingController(text: state.monthlyFamilyIncome);
     _provinceController = TextEditingController(text: state.province);
     _cityController = TextEditingController(text: state.cityMunicipality);
+  }
+
+  /// A returning user's persisted profile may finish loading after this screen
+  /// mounted (the notifier hydrates asynchronously). When it lands, mirror the
+  /// hydrated values into the controllers so the form is populated.
+  void _syncHydration(ProfileSetupState? previous, ProfileSetupState next) {
+    if (next.hydrated && !(previous?.hydrated ?? false)) {
+      _syncFromState(next);
+    }
+  }
+
+  void _syncFromState(ProfileSetupState state) {
+    _fullNameController.text = state.fullName;
+    _nationalityController.text = state.nationality;
+    _courseController.text = state.course;
+    _schoolController.text = state.school;
+    _gpaController.text = state.gpa;
+    _incomeController.text = state.monthlyFamilyIncome;
+    _provinceController.text = state.province;
+    _cityController.text = state.cityMunicipality;
   }
 
   @override
@@ -97,8 +124,16 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final state = ref.watch(profileSetupProvider);
-    final notifier = ref.read(profileSetupProvider.notifier);
+    final userId = ref.watch(currentUserIdProvider);
+    if (userId == null) {
+      // The router only shows this screen to signed-in users; this guards the
+      // brief transition between an auth change and the redirect.
+      return const Scaffold(body: SizedBox.shrink());
+    }
+
+    final state = ref.watch(profileSetupProvider(userId));
+    final notifier = ref.read(profileSetupProvider(userId).notifier);
+    ref.listen(profileSetupProvider(userId), _syncHydration);
 
     return Scaffold(
       backgroundColor: _background,
@@ -377,7 +412,9 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
 
   /// Reads the latest per-field error from the domain validator.
   String? _fieldError(String? Function(ProfileFieldErrors) pick) {
-    final errors = ref.read(profileSetupProvider).fieldErrors;
+    final userId = ref.read(currentUserIdProvider);
+    if (userId == null) return null;
+    final errors = ref.read(profileSetupProvider(userId)).fieldErrors;
     return errors == null ? null : pick(errors);
   }
 
@@ -582,8 +619,13 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
 
   // --- Navigation -----------------------------------------------------------
 
+  /// The setup notifier for the currently signed-in user. Only reachable when
+  /// signed in (the router guards this route and build guards null userId).
+  ProfileSetupNotifier get _notifier =>
+      ref.read(profileSetupProvider(ref.read(currentUserIdProvider)!).notifier);
+
   void _onNext() {
-    final notifier = ref.read(profileSetupProvider.notifier);
+    final notifier = _notifier;
     notifier.validateStep(widget.step);
     if (!_formKey.currentState!.validate()) return;
 
@@ -594,15 +636,17 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
   }
 
   Future<void> _onSubmit() async {
-    final notifier = ref.read(profileSetupProvider.notifier);
+    final notifier = _notifier;
     notifier.validateStep('financial');
     if (!_formKey.currentState!.validate()) return;
 
     final ok = await notifier.submit();
     if (!ok) return;
 
-    // Re-check setup_complete so the router's redirect lets us through to /home.
+    // Re-check setup_complete so the router's redirect lets us through to /home,
+    // and refetch the shared current profile so tabs show the saved values.
     ref.invalidate(profileCompleteProvider);
+    ref.invalidate(currentProfileProvider);
     await ref.read(profileCompleteProvider.future);
 
     if (mounted) {

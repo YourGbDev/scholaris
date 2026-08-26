@@ -17,6 +17,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 //   signup_screen.dart       → SignupScreen()
 //   home_screen.dart         → HomeScreen()
 //   profile_setup_screen.dart → ProfileSetupScreen({required String step})
+import 'package:scholaris/features/auth/controllers/auth_controller.dart';
 import 'package:scholaris/features/auth/presentation/login_screen.dart';
 import 'package:scholaris/features/auth/presentation/signup_screen.dart';
 import 'package:scholaris/features/auth/presentation/splash_screen.dart';
@@ -42,6 +43,9 @@ final profileCompleteProvider =
 class ProfileCompleteNotifier extends AsyncNotifier<bool> {
   @override
   Future<bool> build() async {
+    // Rebuild whenever the signed-in user changes, so the redirect below is
+    // never evaluated against a previous user's profile.
+    ref.watch(currentUserIdProvider);
     final profile =
         await ref.watch(profileRepositoryProvider).fetchCurrent();
     return profile?.setupComplete ?? false;
@@ -57,6 +61,13 @@ class ProfileCompleteNotifier extends AsyncNotifier<bool> {
 // -----------------------------------------------------------------------------
 
 final routerProvider = Provider<GoRouter>((ref) {
+  // Instantiate the auth session boundary before the router registers its own
+  // auth subscription below. Its onAuthStateChange listener therefore runs
+  // first on every session change, invalidating every user-scoped provider
+  // (through currentUserIdProvider) before the redirect re-evaluates — so a
+  // redirect can never be decided from the previous user's cached state.
+  ref.read(authSessionProvider);
+
   final router = GoRouter(
     initialLocation: '/splash',
     redirect: (context, state) => _redirect(ref, state),
@@ -133,8 +144,10 @@ final routerProvider = Provider<GoRouter>((ref) {
     ],
   );
 
-  // Re-evaluate redirects whenever auth changes (login/logout) and whenever
-  // the profile-completion check settles.
+  // Re-evaluate redirects whenever auth changes (login/logout). The actual
+  // user-scoped state invalidation is handled by the auth session boundary
+  // (authSessionProvider → currentUserIdProvider → dependent providers), so
+  // this listener only needs to re-run the redirect for the new session.
   //
   // A token refresh does not change the signed-in user or their profile, so it
   // must not re-run the profile check here: that check issues a DB request,
@@ -149,7 +162,6 @@ final routerProvider = Provider<GoRouter>((ref) {
     if (event.event == AuthChangeEvent.tokenRefreshed) {
       return;
     }
-    ref.invalidate(profileCompleteProvider);
     router.refresh();
   });
   ref.onDispose(() => authSub.cancel());

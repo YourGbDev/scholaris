@@ -9,6 +9,7 @@ import 'package:go_router/go_router.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'package:scholaris/shared/theme/app_theme.dart';
+import 'package:scholaris/shared/widgets/responsive_container.dart';
 import 'package:scholaris/shared/widgets/state_views.dart';
 import '../models/student_profile.dart';
 import '../providers/profile_setup_provider.dart';
@@ -21,20 +22,22 @@ class ProfileTabScreen extends ConsumerWidget {
     final profileAsync = ref.watch(currentProfileProvider);
 
     return SafeArea(
-      child: profileAsync.when(
-        loading: () => const LoadingView(),
-        error: (_, _) => const EmptyView(
-          icon: Icons.error_outline_rounded,
-          title: 'Profile unavailable',
-          message: 'We could not load your profile.',
+      child: ResponsiveContainer(
+        child: profileAsync.when(
+          loading: () => const LoadingView(),
+          error: (_, _) => const EmptyView(
+            icon: Icons.error_outline_rounded,
+            title: 'Profile unavailable',
+            message: 'We could not load your profile.',
+          ),
+          data: (profile) => profile == null
+              ? const EmptyView(
+                  icon: Icons.person_outline_rounded,
+                  title: 'No profile yet',
+                  message: 'Complete your profile to start matching.',
+                )
+              : _buildProfile(context, profile),
         ),
-        data: (profile) => profile == null
-            ? const EmptyView(
-                icon: Icons.person_outline_rounded,
-                title: 'No profile yet',
-                message: 'Complete your profile to start matching.',
-              )
-            : _buildProfile(context, profile),
       ),
     );
   }

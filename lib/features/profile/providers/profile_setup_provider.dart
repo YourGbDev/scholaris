@@ -7,6 +7,7 @@
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../auth/controllers/auth_controller.dart';
 import '../models/profile_validator.dart';
 import '../models/student_profile.dart';
 import '../repositories/profile_repository.dart';
@@ -32,6 +33,7 @@ class ProfileSetupState {
     this.attempted = false,
     this.isSubmitting = false,
     this.error,
+    this.hydrated = false,
   });
 
   // Step 1 — personal
@@ -60,6 +62,11 @@ class ProfileSetupState {
   final bool isSubmitting;
   final String? error;
 
+  /// True once the draft has been populated from the signed-in user's persisted
+  /// profile. Lets the UI sync its field controllers when hydration lands after
+  /// the screen mounts.
+  final bool hydrated;
+
   ProfileSetupState copyWith({
     String? fullName,
     String? nationality,
@@ -81,6 +88,7 @@ class ProfileSetupState {
     bool? isSubmitting,
     String? error,
     bool clearError = false,
+    bool? hydrated,
   }) {
     return ProfileSetupState(
       fullName: fullName ?? this.fullName,
@@ -101,14 +109,91 @@ class ProfileSetupState {
       attempted: attempted ?? this.attempted,
       isSubmitting: isSubmitting ?? this.isSubmitting,
       error: clearError ? null : (error ?? this.error),
+      hydrated: hydrated ?? this.hydrated,
     );
   }
 }
 
 class ProfileSetupNotifier extends StateNotifier<ProfileSetupState> {
-  ProfileSetupNotifier(this._repository) : super(const ProfileSetupState());
+  ProfileSetupNotifier(this._repository) : super(const ProfileSetupState()) {
+    _hydration = _hydrate();
+  }
 
   final ProfileRepository _repository;
+
+  /// The single in-flight hydration attempt. Completed (awaited) by tests so
+  /// they observe the post-hydration state deterministically.
+  late final Future<void> _hydration;
+
+  /// Completes once the initial hydration attempt has settled, whether or not
+  /// a persisted profile was found and applied.
+  Future<void> get hydrationComplete => _hydration;
+
+  /// Fetches the signed-in user's persisted profile exactly once and, when one
+  /// exists and the form is still untouched, populates the draft. Safe even if
+  /// the shared `currentProfileProvider` is still loading: this notifier reads
+  /// the repository directly. Never clobbers an in-progress draft, and never
+  /// re-runs for this notifier's lifetime (it runs from the constructor only).
+  Future<void> _hydrate() async {
+    final StudentProfile? profile;
+    try {
+      profile = await _repository.fetchCurrent();
+    } catch (_) {
+      // A failed hydration must not block or break the wizard; leave the empty
+      // form and let the user continue.
+      return;
+    }
+    if (profile == null || !_isPristine()) return;
+
+    state = state.copyWith(
+      fullName: profile.fullName,
+      nationality: profile.nationality,
+      birthDate: profile.birthDate,
+      yearLevel: profile.yearLevel,
+      course: profile.course,
+      school: profile.school ?? '',
+      gpa: profile.gpa.toStringAsFixed(2),
+      monthlyFamilyIncome: _formatIncome(profile.monthlyFamilyIncome),
+      incomeUndisclosed: profile.monthlyFamilyIncome == null,
+      region: profile.region,
+      province: profile.province ?? '',
+      cityMunicipality: profile.cityMunicipality ?? '',
+      hasDisability: profile.hasDisability,
+      isIndigenous: profile.isIndigenous,
+      hydrated: true,
+    );
+  }
+
+  /// True when the form still holds its initial empty/default values — i.e. the
+  /// user has not started editing. Hydration only applies to such a pristine
+  /// form so it can never overwrite an actively edited draft.
+  bool _isPristine() {
+    final s = state;
+    return !s.attempted &&
+        !s.isSubmitting &&
+        s.error == null &&
+        s.fullName.isEmpty &&
+        s.nationality == 'Filipino' &&
+        s.birthDate == null &&
+        s.yearLevel == 1 &&
+        s.course.isEmpty &&
+        s.school.isEmpty &&
+        s.gpa.isEmpty &&
+        s.monthlyFamilyIncome.isEmpty &&
+        !s.incomeUndisclosed &&
+        s.region == null &&
+        s.province.isEmpty &&
+        s.cityMunicipality.isEmpty &&
+        !s.hasDisability &&
+        !s.isIndigenous;
+  }
+
+  static String _formatIncome(double? income) {
+    if (income == null) return '';
+    return income == income.roundToDouble()
+        ? income.toStringAsFixed(0)
+        : income.toString();
+  }
 
   static const ProfileValidator _validator = ProfileValidator();
 
@@ -284,13 +369,28 @@ final profileRepositoryProvider = Provider<ProfileRepository>(
   (ref) => ProfileRepository(),
 );
 
-final profileSetupProvider =
-    StateNotifierProvider<ProfileSetupNotifier, ProfileSetupState>(
-  (ref) => ProfileSetupNotifier(ref.watch(profileRepositoryProvider)),
+/// The multi-step profile-setup draft, isolated per authenticated user.
+///
+/// Keyed on the authenticated user's id and autoDisposed: when a session ends,
+/// that user's notifier (and its in-progress draft) is dropped, and the next
+/// user gets a fresh notifier that hydrates from their own profile. User A's
+/// draft can therefore never surface in User B's session.
+final profileSetupProvider = StateNotifierProvider.family.autoDispose<
+    ProfileSetupNotifier,
+    ProfileSetupState,
+    String>(
+  (ref, userId) => ProfileSetupNotifier(ref.watch(profileRepositoryProvider)),
 );
 
 /// The signed-in user's full profile, or null when signed out / not built yet.
 /// Consumed by the matches provider and the profile tab.
+///
+/// Watches [currentUserIdProvider] so it is recomputed for every auth
+/// transition: logging out yields null and logging in as another user fetches
+/// that user's own profile instead of serving the previous user's cache.
 final currentProfileProvider = FutureProvider<StudentProfile?>(
-  (ref) => ref.watch(profileRepositoryProvider).fetchCurrent(),
+  (ref) {
+    ref.watch(currentUserIdProvider);
+    return ref.watch(profileRepositoryProvider).fetchCurrent();
+  },
 );

@@ -8,12 +8,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'package:scholaris/features/bookmarks/providers/bookmarks_provider.dart';
 import 'package:scholaris/features/profile/models/student_profile.dart';
 import 'package:scholaris/features/profile/providers/profile_setup_provider.dart';
 import 'package:scholaris/features/scholarships/models/scholarship.dart';
 import 'package:scholaris/features/scholarships/providers/scholarships_provider.dart';
 import 'package:scholaris/features/scholarships/services/match_reasons.dart';
 import 'package:scholaris/shared/theme/app_theme.dart';
+import 'package:scholaris/shared/widgets/responsive_container.dart';
 import 'package:scholaris/shared/widgets/scholarship_card.dart';
 import 'package:scholaris/shared/widgets/state_views.dart';
 
@@ -24,23 +26,26 @@ class DiscoverScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final profileAsync = ref.watch(currentProfileProvider);
     final matchesAsync = ref.watch(matchesProvider);
+    final bookmarkIds = ref.watch(bookmarksProvider).valueOrNull ?? const <String>{};
 
     return SafeArea(
-      child: RefreshIndicator(
-        onRefresh: () async {
-          ref.invalidate(currentProfileProvider);
-          ref.invalidate(matchesProvider);
-          ref.invalidate(scholarshipsProvider);
-        },
-        child: ListView(
-          padding: const EdgeInsets.fromLTRB(20, 20, 20, 32),
-          children: [
-            _buildGreeting(profileAsync),
-            const SizedBox(height: 24),
-            _buildMatchesSection(context, ref, matchesAsync),
-            const SizedBox(height: 32),
-            _buildBrowseSection(ref),
-          ],
+      child: ResponsiveContainer(
+        child: RefreshIndicator(
+          onRefresh: () async {
+            ref.invalidate(currentProfileProvider);
+            ref.invalidate(matchesProvider);
+            ref.invalidate(scholarshipsProvider);
+          },
+          child: ListView(
+            padding: const EdgeInsets.fromLTRB(20, 20, 20, 32),
+            children: [
+              _buildGreeting(profileAsync),
+              const SizedBox(height: 24),
+              _buildMatchesSection(context, ref, matchesAsync, bookmarkIds),
+              const SizedBox(height: 32),
+              _buildBrowseSection(ref, bookmarkIds),
+            ],
+          ),
         ),
       ),
     );
@@ -72,6 +77,7 @@ class DiscoverScreen extends ConsumerWidget {
     BuildContext context,
     WidgetRef ref,
     AsyncValue<List<Scholarship>> matchesAsync,
+    Set<String> bookmarkIds,
   ) {
     return matchesAsync.when(
       loading: () => const LoadingView(),
@@ -124,6 +130,8 @@ class DiscoverScreen extends ConsumerWidget {
                 return ScholarshipCard(
                   scholarship: s,
                   reasons: matchReasonsFor(profile, s),
+                  isBookmarked: bookmarkIds.contains(s.id),
+                  onToggleBookmark: () => _toggleBookmark(ref, s.id),
                 );
               },
             ),
@@ -133,7 +141,7 @@ class DiscoverScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildBrowseSection(WidgetRef ref) {
+  Widget _buildBrowseSection(WidgetRef ref, Set<String> bookmarkIds) {
     final allAsync = ref.watch(scholarshipsProvider);
 
     return allAsync.when(
@@ -161,11 +169,23 @@ class DiscoverScreen extends ConsumerWidget {
               physics: const NeverScrollableScrollPhysics(),
               itemCount: browse.length,
               separatorBuilder: (_, _) => const SizedBox(height: 14),
-              itemBuilder: (_, i) => ScholarshipCard(scholarship: browse[i]),
+              itemBuilder: (_, i) => ScholarshipCard(
+                scholarship: browse[i],
+                isBookmarked: bookmarkIds.contains(browse[i].id),
+                onToggleBookmark: () => _toggleBookmark(ref, browse[i].id),
+              ),
             ),
           ],
         );
       },
     );
+  }
+
+  Future<void> _toggleBookmark(WidgetRef ref, String id) async {
+    try {
+      await ref.read(bookmarksProvider.notifier).toggle(id);
+    } on Exception {
+      // Silent on card; the icon state is sufficient feedback.
+    }
   }
 }

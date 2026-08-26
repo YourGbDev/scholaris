@@ -1,6 +1,6 @@
 # Scholaris
 
-> **Status: 🚧 In Development** — This repository contains the active implementation of Scholaris and is not yet production-ready.
+> **Status: In Development** — This repository contains the active implementation of Scholaris and is not yet production-ready.
 
 Scholaris is a scholarship-matching mobile application that helps students discover scholarships based on their eligibility profile. Built with **Flutter** and **Dart**, with **Supabase** (backed by **PostgreSQL**) planned as the backend.
 
@@ -8,9 +8,9 @@ Scholaris is a scholarship-matching mobile application that helps students disco
 
 This project is **currently in development (WIP)**. The current state of this repository is an early Flutter project foundation:
 
-- ✅ Flutter app skeleton created (Android, iOS, and web targets)
-- ✅ Minimal app shell with a placeholder home screen
-- ⏳ Planned features below are **not yet implemented**
+- Implemented: Flutter app skeleton created (Android, iOS, and web targets)
+- Implemented: Minimal app shell with a placeholder home screen
+- Planned: Features below are **not yet implemented**
 
 This is **not** a released or production-ready product.
 

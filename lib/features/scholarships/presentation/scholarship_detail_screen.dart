@@ -5,11 +5,16 @@
 // The bookmark toggle in the app bar keeps the Saved tab in sync. When the
 // signed-in student's profile makes this scholarship an actual match, a
 // "Why this matches you" section restates the reasons they saw on the card.
+// An Apply action lets the signed-in student submit an application through
+// the existing applications provider; once applied, the button is replaced by
+// an "Application submitted" banner.
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import 'package:scholaris/features/applications/providers/applications_provider.dart';
+import 'package:scholaris/features/applications/repositories/application_repository.dart';
 import 'package:scholaris/features/bookmarks/providers/bookmarks_provider.dart';
 import 'package:scholaris/features/profile/providers/profile_setup_provider.dart';
 import 'package:scholaris/features/scholarships/models/scholarship.dart';
@@ -18,6 +23,7 @@ import 'package:scholaris/features/scholarships/services/match_reasons.dart';
 import 'package:scholaris/features/scholarships/services/matching_engine.dart';
 import 'package:scholaris/shared/theme/app_theme.dart';
 import 'package:scholaris/shared/utils/constants.dart';
+import 'package:scholaris/shared/widgets/primary_button.dart';
 import 'package:scholaris/shared/widgets/responsive_container.dart';
 import 'package:scholaris/shared/widgets/state_views.dart';
 
@@ -145,6 +151,8 @@ class _DetailContent extends ConsumerWidget {
         ),
         const SizedBox(height: 20),
         _AmountCard(scholarship: scholarship, closing: closing, daysLeft: daysLeft),
+        const SizedBox(height: 16),
+        _ApplySection(scholarshipId: scholarship.id),
         const SizedBox(height: 24),
         if (reasons.isNotEmpty) ...[
           _SectionLabel('Why this matches you'),
@@ -253,6 +261,122 @@ class _DetailContent extends ConsumerWidget {
   }
 }
 
+class _ApplySection extends ConsumerStatefulWidget {
+  const _ApplySection({required this.scholarshipId});
+
+  final String scholarshipId;
+
+  @override
+  ConsumerState<_ApplySection> createState() => _ApplySectionState();
+}
+
+class _ApplySectionState extends ConsumerState<_ApplySection> {
+  /// True while an apply request is in flight, so the button renders a spinner
+  /// and cannot be double-submitted.
+  bool _isApplying = false;
+
+  Future<void> _apply() async {
+    if (_isApplying) return;
+    setState(() => _isApplying = true);
+    try {
+      await ref.read(applicationsProvider.notifier).apply(widget.scholarshipId);
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Application submitted!')),
+      );
+    } on ApplicationNotAuthenticatedException {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('You must be signed in to apply.')),
+      );
+    } on ApplicationDuplicateException {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('You have already applied to this scholarship.'),
+        ),
+      );
+    } on Exception {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Could not submit your application. Please try again.'),
+        ),
+      );
+    } finally {
+      if (mounted) setState(() => _isApplying = false);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    // Rebuild whenever the signed-in user's applications change so the applied
+    // state is reflected as soon as the provider lands it.
+    ref.watch(applicationsProvider);
+    final applied =
+        ref.read(applicationsProvider.notifier).hasApplied(widget.scholarshipId);
+
+    if (applied) return const _AppliedBanner();
+
+    return Semantics(
+      button: true,
+      label: 'Apply to this scholarship',
+      child: PrimaryButton(
+        label: _isApplying ? 'Applying...' : 'Apply now',
+        icon: Icons.send_rounded,
+        loading: _isApplying,
+        onPressed: _isApplying ? null : _apply,
+      ),
+    );
+  }
+}
+
+class _AppliedBanner extends StatelessWidget {
+  const _AppliedBanner();
+
+  @override
+  Widget build(BuildContext context) {
+    return Semantics(
+      liveRegion: true,
+      label: 'Application submitted',
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: kPrimarySoft,
+          borderRadius: BorderRadius.circular(kRadiusInput),
+          border: Border.all(color: kPrimary.withValues(alpha: 0.3)),
+        ),
+        child: Row(
+          children: [
+            const Icon(Icons.check_circle_rounded, size: 22, color: kPrimary),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Application submitted',
+                    style: poppins(
+                      fontSize: 15,
+                      fontWeight: FontWeight.w600,
+                      color: kPrimary,
+                    ),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    'You applied to this scholarship.',
+                    style: openSans(fontSize: 13, color: Colors.black54),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
 class _ReasonPill extends StatelessWidget {
   const _ReasonPill({required this.label});
 
@@ -272,9 +396,14 @@ class _ReasonPill extends StatelessWidget {
         children: [
           const Icon(Icons.check_circle, size: 15, color: kPrimary),
           const SizedBox(width: 5),
-          Text(
-            label,
-            style: GoogleFonts.openSans(fontSize: 12, fontWeight: FontWeight.w600, color: kPrimary),
+          ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 200),
+            child: Text(
+              label,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: GoogleFonts.openSans(fontSize: 12, fontWeight: FontWeight.w600, color: kPrimary),
+            ),
           ),
         ],
       ),

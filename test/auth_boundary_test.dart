@@ -11,6 +11,8 @@ import 'package:flutter_test/flutter_test.dart';
 
 import 'package:scholaris/app/router.dart';
 import 'package:scholaris/features/auth/controllers/auth_controller.dart';
+import 'package:scholaris/features/applications/providers/applications_provider.dart';
+import 'package:scholaris/features/applications/repositories/application_repository.dart';
 import 'package:scholaris/features/bookmarks/providers/bookmarks_provider.dart';
 import 'package:scholaris/features/bookmarks/repositories/bookmark_repository.dart';
 import 'package:scholaris/features/profile/models/student_profile.dart';
@@ -19,6 +21,7 @@ import 'package:scholaris/features/profile/repositories/profile_repository.dart'
 import 'package:scholaris/features/scholarships/providers/scholarships_provider.dart';
 import 'package:scholaris/features/scholarships/repositories/scholarship_repository.dart';
 
+import 'helpers/fake_application_data_source.dart';
 import 'helpers/fake_bookmark_data_source.dart';
 import 'helpers/fake_profile_data_source.dart';
 import 'helpers/fake_scholarship_data_source.dart';
@@ -65,7 +68,8 @@ Map<String, dynamic> _rowFor(String id, String fullName) =>
 class _Harness {
   _Harness()
       : profiles = FakeProfileDataSource(),
-        bookmarks = FakeBookmarkDataSource() {
+        bookmarks = FakeBookmarkDataSource(),
+        applications = FakeApplicationDataSource() {
     auth = _TestAuthNotifier();
     container = ProviderContainer(
       overrides: [
@@ -79,6 +83,12 @@ class _Harness {
         bookmarkRepositoryProvider.overrideWith(
           (ref) => BookmarkRepository(
             dataSource: bookmarks,
+            currentUserId: () => currentUser,
+          ),
+        ),
+        applicationRepositoryProvider.overrideWith(
+          (ref) => ApplicationRepository(
+            dataSource: applications,
             currentUserId: () => currentUser,
           ),
         ),
@@ -96,6 +106,7 @@ class _Harness {
 
   final FakeProfileDataSource profiles;
   final FakeBookmarkDataSource bookmarks;
+  final FakeApplicationDataSource applications;
   late final ProviderContainer container;
   late final _TestAuthNotifier auth;
 
@@ -190,6 +201,60 @@ void main() {
 
       h.signInAs('user-b');
       expect(await h.container.read(bookmarksProvider.future), {'sch-b'});
+    });
+  });
+
+  group('auth boundary — applications isolation', () {
+    test('applications are per-user and cleared on logout', () async {
+      final h = _Harness();
+      await h.applications.insertApplication('user-a', {
+        'user_id': 'user-a',
+        'scholarship_id': 'sch-dost',
+        'status': 'submitted',
+      });
+      await h.applications.insertApplication('user-b', {
+        'user_id': 'user-b',
+        'scholarship_id': 'sch-ched',
+        'status': 'submitted',
+      });
+      addTearDown(h.container.dispose);
+
+      h.signInAs('user-a');
+      final a = await h.container.read(applicationsProvider.future);
+      expect(a.map((x) => x.scholarshipId), ['sch-dost']);
+
+      h.signOut();
+      expect(await h.container.read(applicationsProvider.future), isEmpty);
+
+      h.signInAs('user-b');
+      final b = await h.container.read(applicationsProvider.future);
+      expect(b.map((x) => x.scholarshipId), ['sch-ched']);
+      // User B must never inherit User A's applications.
+      expect(b.map((x) => x.scholarshipId), isNot(['sch-dost']));
+    });
+
+    test('an application made while signed in never leaks to the next user',
+        () async {
+      final h = _Harness();
+      addTearDown(h.container.dispose);
+
+      // User A applies during their session.
+      h.signInAs('user-a');
+      final notifierA = h.container.read(applicationsProvider.notifier);
+      await h.container.read(applicationsProvider.future);
+      await notifierA.apply('sch-dost');
+      expect(notifierA.hasApplied('sch-dost'), isTrue);
+
+      // Logout clears the provider state.
+      h.signOut();
+      expect(await h.container.read(applicationsProvider.future), isEmpty);
+
+      // User B starts with a clean slate — A's application is invisible.
+      h.signInAs('user-b');
+      final notifierB = h.container.read(applicationsProvider.notifier);
+      await h.container.read(applicationsProvider.future);
+      expect(notifierB.hasApplied('sch-dost'), isFalse);
+      expect(await h.container.read(applicationsProvider.future), isEmpty);
     });
   });
 

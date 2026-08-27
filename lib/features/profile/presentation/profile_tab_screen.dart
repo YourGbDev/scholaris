@@ -8,6 +8,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import 'package:scholaris/features/applications/presentation/applications_screen.dart';
 import 'package:scholaris/shared/theme/app_theme.dart';
 import 'package:scholaris/shared/widgets/responsive_container.dart';
 import 'package:scholaris/shared/widgets/state_views.dart';
@@ -101,6 +102,39 @@ class ProfileTabScreen extends ConsumerWidget {
           ),
         ),
         const SizedBox(height: 24),
+        Card(
+          elevation: 0,
+          color: Colors.white,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(kRadiusCard),
+          ),
+          child: ListTile(
+            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            leading: Container(
+              padding: const EdgeInsets.all(8),
+              decoration: const BoxDecoration(
+                color: kPrimarySoft,
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(Icons.send_outlined, color: kPrimary, size: 20),
+            ),
+            title: Text(
+              'My Applications',
+              style: poppins(fontSize: 15, fontWeight: FontWeight.w600),
+            ),
+            subtitle: Text(
+              'Track your applications and their status',
+              style: openSans(fontSize: 12, color: Colors.black54),
+            ),
+            trailing: const Icon(Icons.chevron_right_rounded, color: Colors.black38),
+            onTap: () => Navigator.of(context).push(
+              MaterialPageRoute<void>(
+                builder: (_) => const ApplicationsScreen(),
+              ),
+            ),
+          ),
+        ),
+        const SizedBox(height: 12),
         OutlinedButton.icon(
           onPressed: () => context.go('/profile-setup/personal'),
           icon: const Icon(Icons.edit_outlined),

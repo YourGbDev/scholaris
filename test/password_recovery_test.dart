@@ -20,6 +20,7 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import 'package:scholaris/app/router.dart';
+import 'package:scholaris/app/supabase_config.dart';
 import 'package:scholaris/features/auth/controllers/auth_controller.dart';
 import 'package:scholaris/features/auth/presentation/forgot_password_screen.dart';
 import 'package:scholaris/features/auth/presentation/login_screen.dart';
@@ -357,6 +358,21 @@ void main() {
         ),
         '/profile-setup/personal',
       );
+    });
+  });
+
+  group('password recovery — deep-link redirect target', () {
+    test('resetPasswordRedirect is the single source of truth', () {
+      // The value SupabaseConfig.resetPasswordRedirect is the constant that
+      // the forgot-password screen passes as redirectTo, that the Android
+      // manifest declares as an intent-filter, and that the iOS Info.plist
+      // registers as a URL scheme. All three must match this exact string.
+      expect(SupabaseConfig.resetPasswordRedirect, 'scholaris://reset-password');
+
+      final uri = Uri.parse(SupabaseConfig.resetPasswordRedirect);
+      expect(uri.scheme, 'scholaris');
+      expect(uri.host, 'reset-password');
+      expect(uri.hasQuery, isFalse);
     });
   });
 

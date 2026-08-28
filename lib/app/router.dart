@@ -15,10 +15,14 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 // folders; the router only wires them together. Expected contracts:
 //   login_screen.dart        → LoginScreen()
 //   signup_screen.dart       → SignupScreen()
+//   forgot_password_screen.dart → ForgotPasswordScreen()
+//   reset_password_screen.dart → ResetPasswordScreen()
 //   home_screen.dart         → HomeScreen()
 //   profile_setup_screen.dart → ProfileSetupScreen({required String step})
 import 'package:scholaris/features/auth/controllers/auth_controller.dart';
+import 'package:scholaris/features/auth/presentation/forgot_password_screen.dart';
 import 'package:scholaris/features/auth/presentation/login_screen.dart';
+import 'package:scholaris/features/auth/presentation/reset_password_screen.dart';
 import 'package:scholaris/features/auth/presentation/signup_screen.dart';
 import 'package:scholaris/features/auth/presentation/splash_screen.dart';
 import 'package:scholaris/features/home/presentation/home_screen.dart';
@@ -91,6 +95,16 @@ final routerProvider = Provider<GoRouter>((ref) {
         path: '/signup',
         name: 'signup',
         builder: (context, state) => const SignupScreen(),
+      ),
+      GoRoute(
+        path: '/forgot-password',
+        name: 'forgot-password',
+        builder: (context, state) => const ForgotPasswordScreen(),
+      ),
+      GoRoute(
+        path: '/reset-password',
+        name: 'reset-password',
+        builder: (context, state) => const ResetPasswordScreen(),
       ),
 
       // --- Main app ----------------------------------------------------------
@@ -179,28 +193,70 @@ abstract final class ProfileSetupRoute {
   static const financial = '/profile-setup/financial';
 }
 
+/// Route path constants for password recovery, shared by the redirect logic
+/// and the auth screens.
+abstract final class AuthRoute {
+  static const forgotPassword = '/forgot-password';
+  static const resetPassword = '/reset-password';
+}
+
 /// Auth-aware redirect:
-///  - signed out              → /login (except /signup)
-///  - signed in, profile busy → /splash while loading
-///  - signed in, complete     → /home
-///  - signed in, incomplete   → /profile-setup/personal
+///  - forgot-password route       → always allowed (public request screen)
+///  - recovery session active     → /reset-password (before any profile read)
+///  - signed out                  → /login (except /login, /signup)
+///  - signed in, profile busy     → /splash while loading
+///  - signed in, complete         → /home
+///  - signed in, incomplete       → /profile-setup/personal
 String? _redirect(Ref ref, GoRouterState state) {
-  final isLoggedIn = Supabase.instance.client.auth.currentSession != null;
   final location = state.matchedLocation;
-  final onAuthRoute = location == '/login' || location == '/signup';
-  final onSetupRoute = location.startsWith('/profile-setup');
+  return authRedirectDecision(
+    location: location,
+    isLoggedIn: ref.read(authSessionProvider) != null,
+    recoveryActive: ref.read(passwordRecoveryProvider),
+    onAuthRoute: location == '/login' || location == '/signup',
+    onSetupRoute: location.startsWith('/profile-setup'),
+    profileLoading: ref.read(profileCompleteProvider).isLoading,
+    profileComplete: ref.read(profileCompleteProvider).valueOrNull ?? false,
+  );
+}
+
+/// Pure redirect decision, extracted from [_redirect] so it can be unit-tested
+/// without a live GoRouter or a Supabase instance.
+///
+/// Order matters:
+///  1. `/forgot-password` is a public request screen — always reachable.
+///  2. An active recovery session forces `/reset-password` and is decided
+///     before any profile read, so a half-authenticated recovery session never
+///     triggers profile hydration.
+///  3. `/reset-password` is otherwise protected — a user can only reach it
+///     through a live recovery session.
+///  4. Normal auth/profile routing follows.
+String? authRedirectDecision({
+  required String location,
+  required bool isLoggedIn,
+  required bool recoveryActive,
+  required bool onAuthRoute,
+  required bool onSetupRoute,
+  required bool profileLoading,
+  required bool profileComplete,
+}) {
+  if (location == AuthRoute.forgotPassword) return null;
+
+  if (recoveryActive) {
+    return location == AuthRoute.resetPassword ? null : AuthRoute.resetPassword;
+  }
+
+  if (location == AuthRoute.resetPassword) return '/login';
 
   if (!isLoggedIn) {
     return onAuthRoute ? null : '/login';
   }
 
-  final profile = ref.read(profileCompleteProvider);
-  if (profile.isLoading) {
+  if (profileLoading) {
     return location == '/splash' ? null : '/splash';
   }
 
-  final isComplete = profile.valueOrNull ?? false;
-  if (isComplete) {
+  if (profileComplete) {
     return location == '/home' ? null : '/home';
   }
 

@@ -19,9 +19,14 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 /// The authenticated session snapshot the app keys user-scoped state on.
 class AuthSession {
-  const AuthSession({required this.userId});
+  const AuthSession({required this.userId, this.passwordRecovery = false});
 
   final String userId;
+
+  /// True when the session was established through a password-recovery deep
+  /// link. While active the router forces the user onto the set-new-password
+  /// screen and skips profile hydration.
+  final bool passwordRecovery;
 }
 
 /// Reactive auth session. Holds the current [AuthSession] (or null when signed
@@ -41,7 +46,10 @@ class AuthSessionNotifier extends Notifier<AuthSession?> {
     final subscription = client.auth.onAuthStateChange.listen((event) {
       // A token refresh keeps the same user; it must not touch user state.
       if (event.event == AuthChangeEvent.tokenRefreshed) return;
-      final next = AuthSessionNotifier._fromSession(event.session);
+      final next = AuthSessionNotifier._fromSession(
+        event.session,
+        passwordRecovery: event.event == AuthChangeEvent.passwordRecovery,
+      );
       if (next == state) return;
       state = next;
     });
@@ -50,8 +58,16 @@ class AuthSessionNotifier extends Notifier<AuthSession?> {
     return AuthSessionNotifier._fromSession(client.auth.currentSession);
   }
 
-  static AuthSession? _fromSession(Session? session) =>
-      session == null ? null : AuthSession(userId: session.user.id);
+  static AuthSession? _fromSession(
+    Session? session, {
+    bool passwordRecovery = false,
+  }) =>
+      session == null
+          ? null
+          : AuthSession(
+              userId: session.user.id,
+              passwordRecovery: passwordRecovery,
+            );
 
   /// The initialized Supabase client, or null when Supabase was never
   /// initialized (e.g. isolated widget tests). Falling back to null keeps the
@@ -70,4 +86,12 @@ class AuthSessionNotifier extends Notifier<AuthSession?> {
 /// watch this so their state cannot survive an auth transition.
 final currentUserIdProvider = Provider<String?>(
   (ref) => ref.watch(authSessionProvider)?.userId,
+);
+
+/// True while a password-recovery session is active (the user opened a
+/// recovery link and must set a new password before normal routing resumes).
+/// The router redirects to /reset-password and skips profile hydration while
+/// this is true.
+final passwordRecoveryProvider = Provider<bool>(
+  (ref) => ref.watch(authSessionProvider)?.passwordRecovery ?? false,
 );

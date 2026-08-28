@@ -1,10 +1,11 @@
-// lib/features/auth/presentation/login_screen.dart
+// lib/features/auth/presentation/reset_password_screen.dart
 //
-// Email/password login against Supabase. All form state is local to this
-// screen; no separate auth provider yet.
+// Set-new-password screen shown after the user opens a password-recovery link.
+// The user enters a new password twice, then calls updateUser to persist it.
+// On success the auth boundary clears the recovery flag and the router redirects
+// to the normal signed-in landing (home or profile-setup).
 
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -14,48 +15,44 @@ const _background = Color(0xFFFAFAF8);
 
 const _inputRadius = 12.0;
 
-final _emailPattern = RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$');
-
-class LoginScreen extends StatefulWidget {
-  const LoginScreen({super.key});
+class ResetPasswordScreen extends StatefulWidget {
+  const ResetPasswordScreen({super.key});
 
   @override
-  State<LoginScreen> createState() => _LoginScreenState();
+  State<ResetPasswordScreen> createState() => _ResetPasswordScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
   final _formKey = GlobalKey<FormState>();
-  final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
+  final _confirmPasswordController = TextEditingController();
 
   bool _obscurePassword = true;
+  bool _obscureConfirm = true;
   bool _isLoading = false;
 
   @override
   void dispose() {
-    _emailController.dispose();
     _passwordController.dispose();
+    _confirmPasswordController.dispose();
     super.dispose();
   }
 
-  Future<void> _onLogin() async {
+  Future<void> _onSubmit() async {
     if (!_formKey.currentState!.validate()) return;
 
     setState(() => _isLoading = true);
-    debugPrint('[LOGIN] calling signInWithPassword');
     try {
-      final result = await Supabase.instance.client.auth.signInWithPassword(
-        email: _emailController.text.trim(),
-        password: _passwordController.text,
+      await Supabase.instance.client.auth.updateUser(
+        UserAttributes(password: _passwordController.text),
       );
-      debugPrint(
-        '[LOGIN] signInWithPassword succeeded session=${result.session != null}',
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        _snackBar('Password updated. You\'re signed in.'),
       );
-      // The router's auth listener picks up the new session and redirects.
+      // The auth boundary clears the recovery flag on userUpdated, and the
+      // router listener re-evaluates the redirect to /home or /profile-setup.
     } on AuthException catch (error) {
-      debugPrint(
-        '[LOGIN] AuthException statusCode=${error.statusCode} code=${error.code} message=${error.message}',
-      );
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         _snackBar(_friendlyError(error)),
@@ -65,21 +62,22 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
-  void _onForgotPassword() {
-    context.go('/forgot-password');
-  }
-
   String _friendlyError(AuthException error) {
-    if (error.message.contains('Invalid login credentials')) {
-      return 'Incorrect email or password.';
+    if (error.message.contains('Password should be')) {
+      return 'Password must be at least 6 characters.';
     }
     return error.message;
   }
 
-  String? _validateEmail(String? value) {
-    final email = value?.trim() ?? '';
-    if (email.isEmpty) return 'Enter your email.';
-    if (!_emailPattern.hasMatch(email)) return 'Enter a valid email address.';
+  String? _validatePassword(String? value) {
+    if (value == null || value.isEmpty) return 'Enter a new password.';
+    if (value.length < 8) return 'Password must be at least 8 characters.';
+    return null;
+  }
+
+  String? _validateConfirmPassword(String? value) {
+    if (value == null || value.isEmpty) return 'Confirm your new password.';
+    if (value != _passwordController.text) return 'Passwords do not match.';
     return null;
   }
 
@@ -126,7 +124,7 @@ class _LoginScreenState extends State<LoginScreen> {
         ),
         const SizedBox(height: 4),
         Text(
-          'Find scholarships that fit you',
+          'Set your new password',
           textAlign: TextAlign.center,
           style: GoogleFonts.openSans(color: Colors.black54),
         ),
@@ -154,28 +152,24 @@ class _LoginScreenState extends State<LoginScreen> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Text(
-              'Welcome back',
+              'Set new password',
               style: GoogleFonts.poppins(
                 color: _primary,
                 fontSize: 22,
                 fontWeight: FontWeight.w600,
               ),
             ),
-            const SizedBox(height: 16),
-            _textField(
-              controller: _emailController,
-              label: 'Email',
-              keyboardType: TextInputType.emailAddress,
-              textInputAction: TextInputAction.next,
-              validator: _validateEmail,
+            const SizedBox(height: 8),
+            Text(
+              'Enter a new password for your account.',
+              style: GoogleFonts.openSans(color: Colors.black54),
             ),
             const SizedBox(height: 16),
             _textField(
               controller: _passwordController,
-              label: 'Password',
+              label: 'New Password',
               obscureText: _obscurePassword,
-              textInputAction: TextInputAction.done,
-              onFieldSubmitted: (_) => _onLogin(),
+              textInputAction: TextInputAction.next,
               suffixIcon: IconButton(
                 icon: Icon(
                   _obscurePassword ? Icons.visibility_off : Icons.visibility,
@@ -184,27 +178,28 @@ class _LoginScreenState extends State<LoginScreen> {
                 onPressed: () =>
                     setState(() => _obscurePassword = !_obscurePassword),
               ),
-              validator: (value) => (value == null || value.isEmpty)
-                  ? 'Enter your password.'
-                  : null,
+              validator: _validatePassword,
             ),
-            const SizedBox(height: 4),
-            Align(
-              alignment: Alignment.centerRight,
-              child: TextButton(
-                onPressed: _onForgotPassword,
-                child: Text(
-                  'Forgot password?',
-                  style: GoogleFonts.poppins(
-                    color: _primary,
-                    fontWeight: FontWeight.w600,
-                  ),
+            const SizedBox(height: 16),
+            _textField(
+              controller: _confirmPasswordController,
+              label: 'Confirm New Password',
+              obscureText: _obscureConfirm,
+              textInputAction: TextInputAction.done,
+              onFieldSubmitted: (_) => _onSubmit(),
+              suffixIcon: IconButton(
+                icon: Icon(
+                  _obscureConfirm ? Icons.visibility_off : Icons.visibility,
+                  color: Colors.black45,
                 ),
+                onPressed: () =>
+                    setState(() => _obscureConfirm = !_obscureConfirm),
               ),
+              validator: _validateConfirmPassword,
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: 24),
             ElevatedButton(
-              onPressed: _isLoading ? null : _onLogin,
+              onPressed: _isLoading ? null : _onSubmit,
               style: ElevatedButton.styleFrom(
                 backgroundColor: _primary,
                 foregroundColor: Colors.white,
@@ -223,7 +218,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                     )
                   : Text(
-                      'Log in',
+                      'Update password',
                       style: GoogleFonts.poppins(fontWeight: FontWeight.w600),
                     ),
             ),
@@ -233,13 +228,13 @@ class _LoginScreenState extends State<LoginScreen> {
               crossAxisAlignment: WrapCrossAlignment.center,
               children: [
                 Text(
-                  "Don't have an account?",
+                  'Remembered your password?',
                   style: GoogleFonts.openSans(color: Colors.black54),
                 ),
                 TextButton(
-                  onPressed: () => context.push('/signup'),
+                  onPressed: () => Supabase.instance.client.auth.signOut(),
                   child: Text(
-                    'Sign up',
+                    'Sign out',
                     style: GoogleFonts.poppins(
                       color: _primary,
                       fontWeight: FontWeight.w600,

@@ -1,7 +1,10 @@
-// lib/features/auth/presentation/login_screen.dart
+// lib/features/auth/presentation/forgot_password_screen.dart
 //
-// Email/password login against Supabase. All form state is local to this
-// screen; no separate auth provider yet.
+// Requests a password-reset email against Supabase. The recovery link the user
+// receives opens the app (via a configured deep link) and establishes a
+// password-recovery session, which the auth boundary turns into recovery mode
+// so the router sends the user to the set-new-password screen. All form state
+// is local to this screen, matching the login/signup screens.
 
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -16,46 +19,45 @@ const _inputRadius = 12.0;
 
 final _emailPattern = RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$');
 
-class LoginScreen extends StatefulWidget {
-  const LoginScreen({super.key});
+class ForgotPasswordScreen extends StatefulWidget {
+  const ForgotPasswordScreen({super.key});
 
   @override
-  State<LoginScreen> createState() => _LoginScreenState();
+  State<ForgotPasswordScreen> createState() => _ForgotPasswordScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
-  final _passwordController = TextEditingController();
 
-  bool _obscurePassword = true;
   bool _isLoading = false;
 
   @override
   void dispose() {
     _emailController.dispose();
-    _passwordController.dispose();
     super.dispose();
   }
 
-  Future<void> _onLogin() async {
+  Future<void> _onSubmit() async {
     if (!_formKey.currentState!.validate()) return;
 
     setState(() => _isLoading = true);
-    debugPrint('[LOGIN] calling signInWithPassword');
     try {
-      final result = await Supabase.instance.client.auth.signInWithPassword(
-        email: _emailController.text.trim(),
-        password: _passwordController.text,
+      // PKCE recovery: Supabase generates the code challenge internally, so
+      // the app stays on its configured auth flow. No custom redirect scheme
+      // is invented here; the dashboard-configured redirect URL is used.
+      await Supabase.instance.client.auth.resetPasswordForEmail(
+        _emailController.text.trim(),
       );
-      debugPrint(
-        '[LOGIN] signInWithPassword succeeded session=${result.session != null}',
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        _snackBar(
+          'If an account exists for that email, a password reset link is on '
+          'its way.',
+        ),
       );
-      // The router's auth listener picks up the new session and redirects.
+      context.go('/login');
     } on AuthException catch (error) {
-      debugPrint(
-        '[LOGIN] AuthException statusCode=${error.statusCode} code=${error.code} message=${error.message}',
-      );
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         _snackBar(_friendlyError(error)),
@@ -65,13 +67,9 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
-  void _onForgotPassword() {
-    context.go('/forgot-password');
-  }
-
   String _friendlyError(AuthException error) {
-    if (error.message.contains('Invalid login credentials')) {
-      return 'Incorrect email or password.';
+    if (error.message.contains('User not found')) {
+      return 'No account found for that email.';
     }
     return error.message;
   }
@@ -154,57 +152,31 @@ class _LoginScreenState extends State<LoginScreen> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Text(
-              'Welcome back',
+              'Reset your password',
               style: GoogleFonts.poppins(
                 color: _primary,
                 fontSize: 22,
                 fontWeight: FontWeight.w600,
               ),
             ),
+            const SizedBox(height: 8),
+            Text(
+              'Enter the email you registered with and we\'ll send you a '
+              'link to set a new password.',
+              style: GoogleFonts.openSans(color: Colors.black54),
+            ),
             const SizedBox(height: 16),
             _textField(
               controller: _emailController,
               label: 'Email',
               keyboardType: TextInputType.emailAddress,
-              textInputAction: TextInputAction.next,
+              textInputAction: TextInputAction.done,
+              onFieldSubmitted: (_) => _onSubmit(),
               validator: _validateEmail,
             ),
             const SizedBox(height: 16),
-            _textField(
-              controller: _passwordController,
-              label: 'Password',
-              obscureText: _obscurePassword,
-              textInputAction: TextInputAction.done,
-              onFieldSubmitted: (_) => _onLogin(),
-              suffixIcon: IconButton(
-                icon: Icon(
-                  _obscurePassword ? Icons.visibility_off : Icons.visibility,
-                  color: Colors.black45,
-                ),
-                onPressed: () =>
-                    setState(() => _obscurePassword = !_obscurePassword),
-              ),
-              validator: (value) => (value == null || value.isEmpty)
-                  ? 'Enter your password.'
-                  : null,
-            ),
-            const SizedBox(height: 4),
-            Align(
-              alignment: Alignment.centerRight,
-              child: TextButton(
-                onPressed: _onForgotPassword,
-                child: Text(
-                  'Forgot password?',
-                  style: GoogleFonts.poppins(
-                    color: _primary,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ),
-            ),
-            const SizedBox(height: 8),
             ElevatedButton(
-              onPressed: _isLoading ? null : _onLogin,
+              onPressed: _isLoading ? null : _onSubmit,
               style: ElevatedButton.styleFrom(
                 backgroundColor: _primary,
                 foregroundColor: Colors.white,
@@ -223,7 +195,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                     )
                   : Text(
-                      'Log in',
+                      'Send reset link',
                       style: GoogleFonts.poppins(fontWeight: FontWeight.w600),
                     ),
             ),
@@ -233,13 +205,13 @@ class _LoginScreenState extends State<LoginScreen> {
               crossAxisAlignment: WrapCrossAlignment.center,
               children: [
                 Text(
-                  "Don't have an account?",
+                  'Remembered your password?',
                   style: GoogleFonts.openSans(color: Colors.black54),
                 ),
                 TextButton(
-                  onPressed: () => context.push('/signup'),
+                  onPressed: () => context.go('/login'),
                   child: Text(
-                    'Sign up',
+                    'Log in',
                     style: GoogleFonts.poppins(
                       color: _primary,
                       fontWeight: FontWeight.w600,
@@ -258,15 +230,12 @@ class _LoginScreenState extends State<LoginScreen> {
     required TextEditingController controller,
     required String label,
     required FormFieldValidator<String> validator,
-    bool obscureText = false,
     TextInputAction? textInputAction,
     TextInputType? keyboardType,
     void Function(String)? onFieldSubmitted,
-    Widget? suffixIcon,
   }) {
     return TextFormField(
       controller: controller,
-      obscureText: obscureText,
       textInputAction: textInputAction,
       keyboardType: keyboardType,
       onFieldSubmitted: onFieldSubmitted,
@@ -275,7 +244,6 @@ class _LoginScreenState extends State<LoginScreen> {
       decoration: InputDecoration(
         labelText: label,
         labelStyle: GoogleFonts.openSans(color: Colors.black54),
-        suffixIcon: suffixIcon,
         filled: true,
         fillColor: Colors.white,
         contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),

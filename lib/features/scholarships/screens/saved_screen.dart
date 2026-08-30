@@ -7,6 +7,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'package:scholaris/features/applications/models/application.dart';
+import 'package:scholaris/features/applications/providers/applications_provider.dart';
 import 'package:scholaris/features/bookmarks/providers/bookmarks_provider.dart';
 import 'package:scholaris/features/scholarships/models/scholarship.dart';
 import 'package:scholaris/features/scholarships/providers/scholarships_provider.dart';
@@ -22,6 +24,10 @@ class SavedScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final bookmarksAsync = ref.watch(bookmarksProvider);
     final allAsync = ref.watch(scholarshipsProvider);
+    final appliedIds =
+        (ref.watch(applicationsProvider).valueOrNull ?? const <Application>[])
+            .map((a) => a.scholarshipId)
+            .toSet();
 
     return SafeArea(
       child: ResponsiveContainer(
@@ -35,7 +41,7 @@ class SavedScreen extends ConsumerWidget {
                 style: poppins(fontSize: 22, fontWeight: FontWeight.w700, color: kPrimary),
               ),
             ),
-            Expanded(child: _buildBody(ref, bookmarksAsync, allAsync)),
+            Expanded(child: _buildBody(ref, bookmarksAsync, allAsync, appliedIds)),
           ],
         ),
       ),
@@ -46,6 +52,7 @@ class SavedScreen extends ConsumerWidget {
     WidgetRef ref,
     AsyncValue<Set<String>> bookmarksAsync,
     AsyncValue<List<Scholarship>> allAsync,
+    Set<String> appliedIds,
   ) {
     return bookmarksAsync.when(
       loading: () => const LoadingView(),
@@ -87,6 +94,7 @@ class SavedScreen extends ConsumerWidget {
               itemBuilder: (_, i) => ScholarshipCard(
                 scholarship: saved[i],
                 isBookmarked: true,
+                isApplied: appliedIds.contains(saved[i].id),
                 onToggleBookmark: () => _toggleBookmark(ref, saved[i].id),
               ),
             );

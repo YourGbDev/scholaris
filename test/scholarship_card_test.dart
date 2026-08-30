@@ -99,4 +99,43 @@ void main() {
     expect(size.width, greaterThanOrEqualTo(44));
     expect(size.height, greaterThanOrEqualTo(44));
   });
+
+  group('applied indicator', () {
+    testWidgets('applied card shows a compact Applied indicator',
+        (tester) async {
+      await tester.pumpWidget(_wrap(
+        card: ScholarshipCard(
+          scholarship: _scholarship(),
+          isApplied: true,
+        ),
+      ));
+
+      expect(find.text('Applied'), findsOneWidget);
+      expect(find.byIcon(Icons.check_circle), findsOneWidget);
+    });
+
+    testWidgets('non-applied card renders no Applied indicator',
+        (tester) async {
+      await tester.pumpWidget(_wrap(
+        card: ScholarshipCard(scholarship: _scholarship()),
+      ));
+
+      expect(find.text('Applied'), findsNothing);
+    });
+
+    testWidgets('applied indicator coexists with the bookmark control',
+        (tester) async {
+      await tester.pumpWidget(_wrap(
+        card: ScholarshipCard(
+          scholarship: _scholarship(),
+          isApplied: true,
+          isBookmarked: true,
+          onToggleBookmark: () {},
+        ),
+      ));
+
+      expect(find.text('Applied'), findsOneWidget);
+      expect(find.byIcon(Icons.bookmark_rounded), findsOneWidget);
+    });
+  });
 }

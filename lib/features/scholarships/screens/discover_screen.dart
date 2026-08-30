@@ -9,11 +9,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'package:scholaris/features/applications/models/application.dart';
+import 'package:scholaris/features/applications/providers/applications_provider.dart';
 import 'package:scholaris/features/bookmarks/providers/bookmarks_provider.dart';
 import 'package:scholaris/features/profile/models/student_profile.dart';
 import 'package:scholaris/features/profile/providers/profile_setup_provider.dart';
 import 'package:scholaris/features/scholarships/models/scholarship.dart';
 import 'package:scholaris/features/scholarships/presentation/discovery_filter_sheet.dart';
+import 'package:scholaris/features/scholarships/providers/dashboard_provider.dart';
 import 'package:scholaris/features/scholarships/providers/discovery_provider.dart';
 import 'package:scholaris/features/scholarships/providers/scholarships_provider.dart';
 import 'package:scholaris/features/scholarships/services/discovery_filters.dart';
@@ -33,6 +36,10 @@ class DiscoverScreen extends ConsumerWidget {
     final filteredBrowse = ref.watch(filteredBrowseProvider);
     final bookmarkIds =
         ref.watch(bookmarksProvider).valueOrNull ?? const <String>{};
+    final appliedIds =
+        (ref.watch(applicationsProvider).valueOrNull ?? const <Application>[])
+            .map((a) => a.scholarshipId)
+            .toSet();
     final state = ref.watch(discoveryFilterProvider);
 
     return SafeArea(
@@ -48,6 +55,8 @@ class DiscoverScreen extends ConsumerWidget {
             children: [
               _buildGreeting(profileAsync),
               const SizedBox(height: 16),
+              _buildDashboard(context, ref, bookmarkIds, appliedIds),
+              const SizedBox(height: 16),
               _buildSearchBar(context, ref),
               if (state.isActive) ...[
                 const SizedBox(height: 12),
@@ -60,10 +69,17 @@ class DiscoverScreen extends ConsumerWidget {
                 filteredMatches,
                 filteredBrowse,
                 bookmarkIds,
+                appliedIds,
                 state,
               ),
               const SizedBox(height: 32),
-              _buildBrowseSection(context, ref, filteredBrowse, bookmarkIds),
+              _buildBrowseSection(
+                context,
+                ref,
+                filteredBrowse,
+                bookmarkIds,
+                appliedIds,
+              ),
             ],
           ),
         ),
@@ -88,6 +104,67 @@ class DiscoverScreen extends ConsumerWidget {
         Text(
           'Here are scholarships that fit your profile.',
           style: openSans(fontSize: 14, color: Colors.black54),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildDashboard(
+    BuildContext context,
+    WidgetRef ref,
+    Set<String> bookmarkIds,
+    Set<String> appliedIds,
+  ) {
+    final dashboardAsync = ref.watch(dashboardProvider);
+    return dashboardAsync.when(
+      loading: () => const SizedBox.shrink(),
+      error: (_, _) => const SizedBox.shrink(),
+      data: (info) {
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _DashboardSummary(info: info),
+            if (info.closingSoonScholarships.isNotEmpty) ...[
+              const SizedBox(height: 20),
+              _buildClosingSoonSection(
+                ref,
+                info,
+                bookmarkIds,
+                appliedIds,
+              ),
+            ],
+          ],
+        );
+      },
+    );
+  }
+
+  Widget _buildClosingSoonSection(
+    WidgetRef ref,
+    DashboardInfo info,
+    Set<String> bookmarkIds,
+    Set<String> appliedIds,
+  ) {
+    return Column(
+      key: const ValueKey('closing-soon-section'),
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _buildSectionHeader('Closing Soon', info.closingSoonCount),
+        const SizedBox(height: 12),
+        ListView.separated(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          itemCount: info.closingSoonScholarships.length,
+          separatorBuilder: (_, _) => const SizedBox(height: 14),
+          itemBuilder: (_, i) {
+            final s = info.closingSoonScholarships[i];
+            return ScholarshipCard(
+              scholarship: s,
+              isBookmarked: bookmarkIds.contains(s.id),
+              isApplied: appliedIds.contains(s.id),
+              onToggleBookmark: () => _toggleBookmark(ref, s.id),
+            );
+          },
         ),
       ],
     );
@@ -207,6 +284,7 @@ class DiscoverScreen extends ConsumerWidget {
     AsyncValue<List<Scholarship>> matchesAsync,
     AsyncValue<List<Scholarship>> browseAsync,
     Set<String> bookmarkIds,
+    Set<String> appliedIds,
     DiscoveryFilterState state,
   ) {
     return matchesAsync.when(
@@ -244,6 +322,7 @@ class DiscoverScreen extends ConsumerWidget {
                   scholarship: s,
                   reasons: matchReasonsFor(profile, s),
                   isBookmarked: bookmarkIds.contains(s.id),
+                  isApplied: appliedIds.contains(s.id),
                   onToggleBookmark: () => _toggleBookmark(ref, s.id),
                 );
               },
@@ -259,6 +338,7 @@ class DiscoverScreen extends ConsumerWidget {
     WidgetRef ref,
     AsyncValue<List<Scholarship>> browseAsync,
     Set<String> bookmarkIds,
+    Set<String> appliedIds,
   ) {
     return browseAsync.when(
       loading: () => const SizedBox.shrink(),
@@ -290,6 +370,7 @@ class DiscoverScreen extends ConsumerWidget {
               itemBuilder: (_, i) => ScholarshipCard(
                 scholarship: browse[i],
                 isBookmarked: bookmarkIds.contains(browse[i].id),
+                isApplied: appliedIds.contains(browse[i].id),
                 onToggleBookmark: () => _toggleBookmark(ref, browse[i].id),
               ),
             ),
@@ -545,4 +626,69 @@ String _amountChipLabel(double? min, double? max) {
   if (min != null) return 'Min ₱${min.round()}';
   if (max != null) return 'Max ₱${max.round()}';
   return '';
+}
+
+class _DashboardSummary extends StatelessWidget {
+  const _DashboardSummary({required this.info});
+
+  final DashboardInfo info;
+
+  @override
+  Widget build(BuildContext context) {
+    return Wrap(
+      spacing: 8,
+      runSpacing: 8,
+      children: [
+        _SummaryPill(
+          icon: Icons.auto_awesome_rounded,
+          label: '${info.matchCount} Matches',
+        ),
+        _SummaryPill(
+          icon: Icons.schedule_rounded,
+          label: '${info.closingSoonCount} Closing soon',
+        ),
+        _SummaryPill(
+          icon: Icons.collections_bookmark_rounded,
+          label: '${info.savedCount} Saved',
+        ),
+        _SummaryPill(
+          icon: Icons.send_rounded,
+          label: '${info.appliedCount} Applied',
+        ),
+      ],
+    );
+  }
+}
+
+class _SummaryPill extends StatelessWidget {
+  const _SummaryPill({required this.icon, required this.label});
+
+  final IconData icon;
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      decoration: BoxDecoration(
+        color: kPrimarySoft,
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 15, color: kPrimary),
+          const SizedBox(width: 6),
+          Text(
+            label,
+            style: poppins(
+              fontSize: 13,
+              fontWeight: FontWeight.w600,
+              color: kPrimary,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 }

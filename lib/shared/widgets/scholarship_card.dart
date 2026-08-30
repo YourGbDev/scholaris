@@ -19,6 +19,7 @@ class ScholarshipCard extends StatelessWidget {
     required this.scholarship,
     this.reasons = const [],
     this.isBookmarked = false,
+    this.isApplied = false,
     this.onToggleBookmark,
   });
 
@@ -27,6 +28,10 @@ class ScholarshipCard extends StatelessWidget {
 
   /// Whether this scholarship is in the signed-in user's saved set.
   final bool isBookmarked;
+
+  /// Whether the signed-in user has already applied. When true the card shows
+  /// a compact "Applied" indicator. Optional — existing cards are unchanged.
+  final bool isApplied;
 
   /// Optional bookmark toggle. When null the card renders without a bookmark
   /// button (e.g. embed contexts that handle saving elsewhere).
@@ -78,6 +83,10 @@ class ScholarshipCard extends StatelessWidget {
                     ),
                     const SizedBox(width: 8),
                     _DeadlineChip(label: deadlineLabel(scholarship.deadline), urgent: closing),
+                    if (isApplied) ...[
+                      const SizedBox(width: 4),
+                      const _AppliedChip(),
+                    ],
                     if (onToggleBookmark != null) ...[
                       const SizedBox(width: 4),
                       IconButton(
@@ -200,6 +209,35 @@ class _DeadlineChip extends StatelessWidget {
   }
 }
 
+class _AppliedChip extends StatelessWidget {
+  const _AppliedChip();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
+      decoration: BoxDecoration(
+        color: kPrimarySoft,
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const Icon(Icons.check_circle, size: 13, color: kPrimary),
+          const SizedBox(width: 3),
+          Text(
+            'Applied',
+            style: GoogleFonts.poppins(
+              fontSize: 12,
+              fontWeight: FontWeight.w600,
+              color: kPrimary,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
 class _ReasonChip extends StatelessWidget {
   const _ReasonChip({required this.label});
 

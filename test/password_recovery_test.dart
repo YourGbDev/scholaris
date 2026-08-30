@@ -19,8 +19,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import 'package:scholaris/app/recovery_redirect.dart';
 import 'package:scholaris/app/router.dart';
-import 'package:scholaris/app/supabase_config.dart';
 import 'package:scholaris/features/auth/controllers/auth_controller.dart';
 import 'package:scholaris/features/auth/presentation/forgot_password_screen.dart';
 import 'package:scholaris/features/auth/presentation/login_screen.dart';
@@ -363,16 +363,46 @@ void main() {
 
   group('password recovery — deep-link redirect target', () {
     test('resetPasswordRedirect is the single source of truth', () {
-      // The value SupabaseConfig.resetPasswordRedirect is the constant that
-      // the forgot-password screen passes as redirectTo, that the Android
+      // The value resetPasswordRedirect is the constant that the
+      // forgot-password screen passes as redirectTo, that the Android
       // manifest declares as an intent-filter, and that the iOS Info.plist
       // registers as a URL scheme. All three must match this exact string.
-      expect(SupabaseConfig.resetPasswordRedirect, 'scholaris://reset-password');
+      // On non-web (tests run on the Dart VM) the getter must return the
+      // mobile custom scheme unchanged.
+      expect(resetPasswordRedirect, 'scholaris://reset-password');
 
-      final uri = Uri.parse(SupabaseConfig.resetPasswordRedirect);
+      final uri = Uri.parse(resetPasswordRedirect);
       expect(uri.scheme, 'scholaris');
       expect(uri.host, 'reset-password');
       expect(uri.hasQuery, isFalse);
+    });
+
+    test('web redirect targets the /reset-password route on the app origin', () {
+      // Browsers cannot open the scholaris:// custom scheme, so on web the
+      // recovery link must return to the HTTP(S) origin serving the app with
+      // the reset-password route. The origin is read from the requesting page
+      // at runtime; these cases mirror a local `flutter run` server and a
+      // page already on the forgot-password screen.
+      expect(
+        webResetPasswordRedirectFrom(
+          Uri.parse('http://localhost:8080/'),
+        ),
+        'http://localhost:8080/reset-password',
+      );
+      expect(
+        webResetPasswordRedirectFrom(
+          Uri.parse('http://localhost:8080/forgot-password'),
+        ),
+        'http://localhost:8080/reset-password',
+      );
+      // Query and fragment on the requesting page must not leak into the
+      // recovery redirect.
+      expect(
+        webResetPasswordRedirectFrom(
+          Uri.parse('http://localhost:8080/?utm_source=test'),
+        ),
+        'http://localhost:8080/reset-password',
+      );
     });
   });
 

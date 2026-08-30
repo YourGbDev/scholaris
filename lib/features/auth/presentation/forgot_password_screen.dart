@@ -11,7 +11,7 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-import 'package:scholaris/app/supabase_config.dart';
+import 'package:scholaris/app/recovery_redirect.dart';
 
 // Scholaris brand palette.
 const _primary = Color(0xFF0F4D2E);
@@ -47,11 +47,12 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
     try {
       // PKCE recovery: Supabase generates the code challenge internally, so
       // the app stays on its configured auth flow. The recovery email's link
-      // returns to the app through the custom scheme in
-      // SupabaseConfig.resetPasswordRedirect.
+      // returns to the app through the platform-aware redirect in
+      // resetPasswordRedirect (custom scheme on mobile, HTTP(S) origin on
+      // web).
       await Supabase.instance.client.auth.resetPasswordForEmail(
         _emailController.text.trim(),
-        redirectTo: SupabaseConfig.resetPasswordRedirect,
+        redirectTo: resetPasswordRedirect,
       );
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(

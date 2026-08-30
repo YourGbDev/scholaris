@@ -11,6 +11,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:scholaris/features/applications/models/application.dart';
 import 'package:scholaris/features/applications/providers/applications_provider.dart';
+import 'package:scholaris/features/applications/services/application_filters.dart';
 import 'package:scholaris/features/bookmarks/providers/bookmarks_provider.dart';
 import 'package:scholaris/features/profile/models/student_profile.dart';
 import 'package:scholaris/features/profile/providers/profile_setup_provider.dart';
@@ -36,10 +37,9 @@ class DiscoverScreen extends ConsumerWidget {
     final filteredBrowse = ref.watch(filteredBrowseProvider);
     final bookmarkIds =
         ref.watch(bookmarksProvider).valueOrNull ?? const <String>{};
-    final appliedIds =
-        (ref.watch(applicationsProvider).valueOrNull ?? const <Application>[])
-            .map((a) => a.scholarshipId)
-            .toSet();
+    final appliedIds = ApplicationFilters.activeAppliedScholarshipIds(
+      ref.watch(applicationsProvider).valueOrNull ?? const <Application>[],
+    );
     final state = ref.watch(discoveryFilterProvider);
 
     return SafeArea(

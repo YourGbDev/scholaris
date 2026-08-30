@@ -28,6 +28,19 @@ class FakeApplicationDataSource implements ApplicationDataSource {
   }
 
   @override
+  Future<Map<String, dynamic>?> fetchApplication(
+    String userId,
+    String applicationId,
+  ) async {
+    for (final r in _userRows(userId)) {
+      if (r['id'] == applicationId) {
+        return Map<String, dynamic>.of(r);
+      }
+    }
+    return null;
+  }
+
+  @override
   Future<Map<String, dynamic>> insertApplication(
     String userId,
     Map<String, dynamic> row,

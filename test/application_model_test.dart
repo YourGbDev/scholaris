@@ -37,6 +37,25 @@ void main() {
       expect(application.updatedAt, DateTime.utc(2026, 8, 1, 4, 30));
     });
 
+    test('fromJson parses a withdrawn row', () {
+      final application = Application.fromJson({
+        'id': 'app-1',
+        'user_id': 'user-a',
+        'scholarship_id': 'sch-dost',
+        'status': 'withdrawn',
+        'applied_at': '2026-08-01T04:30:00.000Z',
+      });
+
+      expect(application.status, ApplicationStatus.withdrawn);
+    });
+
+    test('toJson writes the withdrawn db value', () {
+      final json =
+          _application().copyWith(status: ApplicationStatus.withdrawn).toJson();
+
+      expect(json['status'], 'withdrawn');
+    });
+
     test('fromJson applies defaults for omitted optional columns', () {
       final application = Application.fromJson({
         'id': 'app-2',
@@ -88,6 +107,7 @@ void main() {
       expect(ApplicationStatus.underReview.dbValue, 'under_review');
       expect(ApplicationStatus.approved.dbValue, 'approved');
       expect(ApplicationStatus.rejected.dbValue, 'rejected');
+      expect(ApplicationStatus.withdrawn.dbValue, 'withdrawn');
     });
 
     test('fromDbValue maps each stored value back to the enum', () {
@@ -98,6 +118,8 @@ void main() {
           ApplicationStatus.underReview);
       expect(ApplicationStatus.fromDbValue('approved'), ApplicationStatus.approved);
       expect(ApplicationStatus.fromDbValue('rejected'), ApplicationStatus.rejected);
+      expect(ApplicationStatus.fromDbValue('withdrawn'),
+          ApplicationStatus.withdrawn);
     });
 
     test('fromDbValue rejects unknown values', () {
@@ -105,6 +127,15 @@ void main() {
         () => ApplicationStatus.fromDbValue('mystery'),
         throwsArgumentError,
       );
+    });
+
+    test('isPending is true only for draft, submitted and under review', () {
+      expect(ApplicationStatus.draft.isPending, isTrue);
+      expect(ApplicationStatus.submitted.isPending, isTrue);
+      expect(ApplicationStatus.underReview.isPending, isTrue);
+      expect(ApplicationStatus.approved.isPending, isFalse);
+      expect(ApplicationStatus.rejected.isPending, isFalse);
+      expect(ApplicationStatus.withdrawn.isPending, isFalse);
     });
   });
 }

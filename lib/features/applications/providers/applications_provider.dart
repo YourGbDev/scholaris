@@ -69,6 +69,34 @@ class ApplicationsNotifier extends AsyncNotifier<List<Application>> {
           application,
     ]);
   }
+
+  /// Withdraws one of the signed-in user's own applications, keeping the local
+  /// state in sync. The application is preserved (not deleted).
+  Future<void> withdraw(String applicationId) async {
+    await ref.read(applicationRepositoryProvider).withdraw(applicationId);
+    state = AsyncData([
+      for (final application in state.valueOrNull ?? const <Application>[])
+        if (application.id == applicationId)
+          application.copyWith(status: ApplicationStatus.withdrawn)
+        else
+          application,
+    ]);
+  }
+
+  /// Updates the notes of one of the signed-in user's own applications,
+  /// keeping the local state in sync.
+  Future<void> updateNotes(String applicationId, String notes) async {
+    await ref
+        .read(applicationRepositoryProvider)
+        .updateNotes(applicationId, notes);
+    state = AsyncData([
+      for (final application in state.valueOrNull ?? const <Application>[])
+        if (application.id == applicationId)
+          application.copyWith(notes: notes)
+        else
+          application,
+    ]);
+  }
 }
 
 /// The single status filter for the tracking surface. Auto-disposed and keyed

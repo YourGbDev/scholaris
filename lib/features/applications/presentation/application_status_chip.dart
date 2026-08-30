@@ -63,6 +63,13 @@ class ApplicationStatusUi {
           background: Color(0xFFFCE8E6),
           icon: Icons.cancel_outlined,
         );
+      case ApplicationStatus.withdrawn:
+        return const ApplicationStatusUi(
+          label: 'Withdrawn',
+          foreground: Color(0xFF5F6368),
+          background: Color(0xFFE9EAEE),
+          icon: Icons.unsubscribe_rounded,
+        );
     }
   }
 }

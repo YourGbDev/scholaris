@@ -250,6 +250,28 @@ void main() {
       expect(info.pendingApplicationCount, 2);
     });
 
+    test('withdrawn applications are not pending on the dashboard', () {
+      final info = buildDashboardInfo(
+        matches: const [],
+        catalog: const [],
+        bookmarkIds: const {},
+        applications: [
+          _app(id: 'a1', scholarshipId: 'x', status: ApplicationStatus.draft),
+          _app(id: 'a2', scholarshipId: 'y', status: ApplicationStatus.submitted),
+          _app(id: 'a3', scholarshipId: 'z', status: ApplicationStatus.underReview),
+          _app(id: 'a4', scholarshipId: 'q', status: ApplicationStatus.withdrawn),
+          _app(id: 'a5', scholarshipId: 'w', status: ApplicationStatus.approved),
+          _app(id: 'a6', scholarshipId: 'e', status: ApplicationStatus.rejected),
+        ],
+        now: _now,
+      );
+
+      // The dashboard pending count agrees with the Applications surface:
+      // withdrawn is terminal and excluded.
+      expect(info.appliedCount, 6);
+      expect(info.pendingApplicationCount, 3);
+    });
+
     test('does not double-count a scholarship that is both a match and in the '
         'catalog', () {
       final info = buildDashboardInfo(

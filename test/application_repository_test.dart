@@ -134,5 +134,183 @@ void main() {
       expect(raw.containsKey('userId'), isFalse);
       expect(raw.containsKey('scholarshipId'), isFalse);
     });
+
+    group('withdraw', () {
+    test('withdraws a pending (submitted) application and preserves the record',
+        () async {
+      final created = await repo.apply(scholarshipId: 'sch-dost');
+
+      await repo.withdraw(created.id);
+
+      final applications = await repo.fetchMyApplications();
+      expect(applications.single.id, created.id);
+      expect(applications.single.status, ApplicationStatus.withdrawn);
+      // The record is preserved, not deleted.
+      expect(await repo.hasApplied('sch-dost'), isTrue);
+    });
+
+    test('withdraws draft and under-review applications too', () async {
+      for (final status in [
+        ApplicationStatus.draft,
+        ApplicationStatus.submitted,
+        ApplicationStatus.underReview,
+      ]) {
+        final row = await dataSource.insertApplication('user-a', {
+          'user_id': 'user-a',
+          'scholarship_id': 'sch-$status',
+          'status': status.dbValue,
+        });
+        await repo.withdraw(row['id'] as String);
+        final app = (await repo.fetchMyApplications())
+            .firstWhere((a) => a.id == row['id']);
+        expect(app.status, ApplicationStatus.withdrawn,
+            reason: 'withdraw should allow $status');
+      }
+    });
+
+    test('rejects withdrawing an approved application', () async {
+      final row = await dataSource.insertApplication('user-a', {
+        'user_id': 'user-a',
+        'scholarship_id': 'sch-approved',
+        'status': 'approved',
+      });
+
+      expect(
+        () => repo.withdraw(row['id'] as String),
+        throwsA(isA<ApplicationWithdrawalException>()),
+      );
+
+      final app = (await repo.fetchMyApplications())
+          .firstWhere((a) => a.id == row['id']);
+      expect(app.status, ApplicationStatus.approved);
+    });
+
+    test('rejects withdrawing a rejected application', () async {
+      final row = await dataSource.insertApplication('user-a', {
+        'user_id': 'user-a',
+        'scholarship_id': 'sch-rejected',
+        'status': 'rejected',
+      });
+
+      expect(
+        () => repo.withdraw(row['id'] as String),
+        throwsA(isA<ApplicationWithdrawalException>()),
+      );
+
+      final app = (await repo.fetchMyApplications())
+          .firstWhere((a) => a.id == row['id']);
+      expect(app.status, ApplicationStatus.rejected);
+    });
+
+    test('rejects a duplicate withdrawal (already withdrawn is terminal)',
+        () async {
+      final created = await repo.apply(scholarshipId: 'sch-dost');
+      await repo.withdraw(created.id);
+
+      expect(
+        () => repo.withdraw(created.id),
+        throwsA(isA<ApplicationWithdrawalException>()),
+      );
+
+      final app = (await repo.fetchMyApplications()).single;
+      expect(app.status, ApplicationStatus.withdrawn);
+    });
+
+    test('rejects withdrawing an application that does not exist', () async {
+      expect(
+        () => repo.withdraw('does-not-exist'),
+        throwsA(isA<ApplicationWithdrawalException>()),
+      );
+    });
+
+    test('cannot withdraw another user application', () async {
+      final other = await dataSource.insertApplication('user-b', {
+        'user_id': 'user-b',
+        'scholarship_id': 'sch-other',
+        'status': 'submitted',
+      });
+
+      expect(
+        () => repo.withdraw(other['id'] as String),
+        throwsA(isA<ApplicationWithdrawalException>()),
+      );
+
+      final userB = await dataSource.fetchApplications('user-b');
+      expect(userB.single['status'], 'submitted');
+    });
+
+    test('withdraw while unauthenticated throws', () async {
+      final unauthenticated = ApplicationRepository(
+        dataSource: dataSource,
+        currentUserId: () => null,
+      );
+
+      expect(
+        () => unauthenticated.withdraw('any'),
+        throwsA(isA<ApplicationNotAuthenticatedException>()),
+      );
+    });
+    });
+
+    group('updateNotes', () {
+    test('updates notes and leaves status untouched', () async {
+      final created = await repo.apply(scholarshipId: 'sch-dost', notes: 'old');
+
+      await repo.updateNotes(created.id, 'new notes');
+
+      final app = (await repo.fetchMyApplications()).single;
+      expect(app.notes, 'new notes');
+      expect(app.status, ApplicationStatus.submitted);
+    });
+
+    test('clearing notes sets them to empty', () async {
+      final created = await repo.apply(scholarshipId: 'sch-dost', notes: 'old');
+
+      await repo.updateNotes(created.id, '');
+
+      final app = (await repo.fetchMyApplications()).single;
+      expect(app.notes, '');
+    });
+
+    test('notes update is owner-scoped', () async {
+      final other = await dataSource.insertApplication('user-b', {
+        'user_id': 'user-b',
+        'scholarship_id': 'sch-other',
+        'status': 'submitted',
+        'notes': 'b notes',
+      });
+
+      await repo.updateNotes(other['id'] as String, 'hacked');
+
+      final userB = await dataSource.fetchApplications('user-b');
+      expect(userB.single['notes'], 'b notes');
+    });
+
+    test('updates notes on an application with null notes', () async {
+      final row = await dataSource.insertApplication('user-a', {
+        'user_id': 'user-a',
+        'scholarship_id': 'sch-null-notes',
+        'status': 'submitted',
+      });
+
+      await repo.updateNotes(row['id'] as String, 'first note');
+
+      final app = (await repo.fetchMyApplications())
+          .firstWhere((a) => a.id == row['id']);
+      expect(app.notes, 'first note');
+    });
+
+    test('notes update while unauthenticated throws', () async {
+      final unauthenticated = ApplicationRepository(
+        dataSource: dataSource,
+        currentUserId: () => null,
+      );
+
+      expect(
+        () => unauthenticated.updateNotes('any', 'notes'),
+        throwsA(isA<ApplicationNotAuthenticatedException>()),
+      );
+    });
+  });
   });
 }

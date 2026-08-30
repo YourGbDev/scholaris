@@ -32,13 +32,13 @@ import 'package:scholaris/features/applications/models/application.dart';
 import 'package:scholaris/features/applications/providers/applications_provider.dart';
 import 'package:scholaris/features/applications/services/application_filters.dart';
 import 'package:scholaris/features/scholarships/models/scholarship.dart';
-import 'package:scholaris/features/scholarships/presentation/scholarship_detail_screen.dart';
 import 'package:scholaris/features/scholarships/providers/scholarships_provider.dart';
 import 'package:scholaris/shared/theme/app_theme.dart';
 import 'package:scholaris/shared/utils/constants.dart';
 import 'package:scholaris/shared/widgets/responsive_container.dart';
 import 'package:scholaris/shared/widgets/state_views.dart';
 
+import 'application_detail_screen.dart';
 import 'application_status_chip.dart';
 
 class ApplicationsScreen extends ConsumerWidget {
@@ -349,16 +349,16 @@ class _ApplicationCard extends StatelessWidget {
     final scholarshipKnown = scholarship != null;
 
     return Semantics(
-      button: scholarshipKnown,
+      button: true,
       label: scholarshipKnown
-          ? 'View ${scholarship!.name}'
-          : 'Application for an unavailable scholarship',
+          ? 'Open application for ${scholarship!.name}'
+          : 'Open application',
       child: Material(
         color: Colors.white,
         borderRadius: BorderRadius.circular(kRadiusCard),
         child: InkWell(
           borderRadius: BorderRadius.circular(kRadiusCard),
-          onTap: scholarshipKnown ? () => _openDetail(context) : null,
+          onTap: () => _openApplicationDetail(context),
           child: Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
@@ -456,12 +456,12 @@ class _ApplicationCard extends StatelessWidget {
     );
   }
 
-  void _openDetail(BuildContext context) {
+  void _openApplicationDetail(BuildContext context) {
     Navigator.of(context).push(
       MaterialPageRoute<void>(
-        builder: (_) => ScholarshipDetailScreen(
-          scholarshipId: scholarship!.id,
-          initial: scholarship,
+        builder: (_) => ApplicationDetailScreen(
+          applicationId: application.id,
+          initial: application,
         ),
       ),
     );

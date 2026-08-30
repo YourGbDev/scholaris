@@ -82,20 +82,31 @@ class ApplicationFilters {
     return applications.where((a) => a.status == status).length;
   }
 
-  /// Applications still in flight (draft, submitted or under review). This
-  /// matches the dashboard's pending semantics: everything except the terminal
-  /// approved / rejected states.
+  /// Applications still in flight. The single authoritative definition of
+  /// "pending" is [ApplicationStatus.isPending] — draft, submitted or under
+  /// review. Terminal statuses (approved, rejected, withdrawn) are excluded.
+  /// This is the one definition the Applications surface, the dashboard and
+  /// every count must agree on.
   static int pendingCount(List<Application> applications) =>
-      applications
-          .where((a) =>
-              a.status == ApplicationStatus.draft ||
-              a.status == ApplicationStatus.submitted ||
-              a.status == ApplicationStatus.underReview)
-          .length;
+      applications.where((a) => a.status.isPending).length;
 
   /// Applications that have been approved.
   static int approvedCount(List<Application> applications) =>
       applications.where((a) => a.status == ApplicationStatus.approved).length;
+
+  /// Whether [application] still counts as an active application for its
+  /// scholarship. A withdrawn application is a preserved historical record but
+  /// no longer an active "Applied" state on Discover/Saved.
+  static bool isActive(Application application) =>
+      application.status != ApplicationStatus.withdrawn;
+
+  /// The scholarship ids with at least one active (non-withdrawn) application.
+  /// This drives the "Applied" indicator on Discover/Saved so a withdrawn
+  /// application stops reading as "applied".
+  static Set<String> activeAppliedScholarshipIds(
+    List<Application> applications,
+  ) =>
+      applications.where(isActive).map((a) => a.scholarshipId).toSet();
 
   // --- Combined pipeline ----------------------------------------------------
 

@@ -35,12 +35,27 @@ class ApplicationDuplicateException implements Exception {
   String toString() => 'You have already applied to this scholarship.';
 }
 
+/// Thrown when a user tries to withdraw an application that is not in a
+/// withdrawable (pending) state. Withdrawal is only allowed for draft,
+/// submitted and under-review applications; approved, rejected and already
+/// withdrawn applications are terminal.
+class ApplicationWithdrawalException implements Exception {
+  const ApplicationWithdrawalException();
+
+  @override
+  String toString() => 'This application can no longer be withdrawn.';
+}
+
 /// Low-level row access for the `applications` table.
 abstract class ApplicationDataSource {
   Future<List<Map<String, dynamic>>> fetchApplications(String userId);
   Future<Map<String, dynamic>?> fetchApplicationByScholarship(
     String userId,
     String scholarshipId,
+  );
+  Future<Map<String, dynamic>?> fetchApplication(
+    String userId,
+    String applicationId,
   );
   Future<Map<String, dynamic>> insertApplication(
     String userId,
@@ -76,6 +91,19 @@ class SupabaseApplicationDataSource implements ApplicationDataSource {
         .select()
         .eq('user_id', userId)
         .eq('scholarship_id', scholarshipId)
+        .maybeSingle();
+  }
+
+  @override
+  Future<Map<String, dynamic>?> fetchApplication(
+    String userId,
+    String applicationId,
+  ) async {
+    return _client
+        .from('applications')
+        .select()
+        .eq('user_id', userId)
+        .eq('id', applicationId)
         .maybeSingle();
   }
 
@@ -164,6 +192,35 @@ class ApplicationRepository {
     final userId = _requireUserId();
     await _dataSource
         .updateApplication(userId, applicationId, {'status': status.dbValue});
+  }
+
+  /// Withdraws one of the signed-in user's own applications.
+  ///
+  /// Only pending applications (draft, submitted, under review) can be
+  /// withdrawn. Terminal applications (approved, rejected, withdrawn) throw
+  /// [ApplicationWithdrawalException]. The application record is preserved —
+  /// only its status changes to withdrawn.
+  Future<void> withdraw(String applicationId) async {
+    final userId = _requireUserId();
+    final current = await _dataSource.fetchApplication(userId, applicationId);
+    if (current == null) {
+      throw const ApplicationWithdrawalException();
+    }
+    final status = ApplicationStatus.fromDbValue(current['status'] as String);
+    if (!status.isPending) {
+      throw const ApplicationWithdrawalException();
+    }
+    await _dataSource
+        .updateApplication(userId, applicationId, {'status': ApplicationStatus.withdrawn.dbValue});
+  }
+
+  /// Updates the notes of one of the signed-in user's own applications.
+  /// Only the notes column is modified — status and other fields are never
+  /// touched.
+  Future<void> updateNotes(String applicationId, String notes) async {
+    final userId = _requireUserId();
+    await _dataSource
+        .updateApplication(userId, applicationId, {'notes': notes});
   }
 
   String _requireUserId() {

@@ -9,6 +9,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:scholaris/features/applications/models/application.dart';
 import 'package:scholaris/features/applications/providers/applications_provider.dart';
+import 'package:scholaris/features/applications/services/application_filters.dart';
 import 'package:scholaris/features/bookmarks/providers/bookmarks_provider.dart';
 import 'package:scholaris/features/scholarships/models/scholarship.dart';
 import 'package:scholaris/features/scholarships/providers/scholarships_provider.dart';
@@ -24,10 +25,9 @@ class SavedScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final bookmarksAsync = ref.watch(bookmarksProvider);
     final allAsync = ref.watch(scholarshipsProvider);
-    final appliedIds =
-        (ref.watch(applicationsProvider).valueOrNull ?? const <Application>[])
-            .map((a) => a.scholarshipId)
-            .toSet();
+    final appliedIds = ApplicationFilters.activeAppliedScholarshipIds(
+      ref.watch(applicationsProvider).valueOrNull ?? const <Application>[],
+    );
 
     return SafeArea(
       child: ResponsiveContainer(

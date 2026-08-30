@@ -14,6 +14,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../applications/models/application.dart';
 import '../../applications/providers/applications_provider.dart';
+import '../../applications/services/application_filters.dart';
 import '../../bookmarks/providers/bookmarks_provider.dart';
 import '../../../shared/utils/constants.dart';
 import '../models/scholarship.dart';
@@ -101,11 +102,7 @@ DashboardInfo buildDashboardInfo({
     closingSoonCount: closingSoon.length,
     savedCount: bookmarkIds.length,
     appliedCount: applications.length,
-    pendingApplicationCount: applications
-        .where((a) =>
-            a.status != ApplicationStatus.approved &&
-            a.status != ApplicationStatus.rejected)
-        .length,
+    pendingApplicationCount: ApplicationFilters.pendingCount(applications),
     closingSoonScholarships: closingSoon,
   );
 }

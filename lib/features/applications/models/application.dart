@@ -30,7 +30,8 @@ enum ApplicationStatus {
   submitted('submitted'),
   underReview('under_review'),
   approved('approved'),
-  rejected('rejected');
+  rejected('rejected'),
+  withdrawn('withdrawn');
 
   const ApplicationStatus(this.dbValue);
 
@@ -40,6 +41,10 @@ enum ApplicationStatus {
         (status) => status.dbValue == value,
         orElse: () => throw ArgumentError('Unknown application status: $value'),
       );
+
+  /// Draft, submitted and under review are the in-flight (pending) statuses.
+  /// Terminal statuses (approved, rejected, withdrawn) are not pending.
+  bool get isPending => this == draft || this == submitted || this == underReview;
 }
 
 ApplicationStatus _statusFromJson(Object? value) =>

@@ -9,13 +9,14 @@ import 'package:scholaris/features/applications/services/application_filters.dar
 
 Application _app({
   String id = 'a1',
+  String scholarshipId = 'sch-1',
   ApplicationStatus status = ApplicationStatus.submitted,
   DateTime? updatedAt,
 }) =>
     Application(
       id: id,
       userId: 'u1',
-      scholarshipId: 'sch-1',
+      scholarshipId: scholarshipId,
       status: status,
       updatedAt: updatedAt,
     );
@@ -61,11 +62,12 @@ void main() {
       _app(id: 'u', status: ApplicationStatus.underReview),
       _app(id: 'a', status: ApplicationStatus.approved),
       _app(id: 'r', status: ApplicationStatus.rejected),
+      _app(id: 'w', status: ApplicationStatus.withdrawn),
     ];
 
     test('null returns all items in order', () {
       expect(_ids(ApplicationFilters.filterByStatus(items, null)),
-          ['d', 's', 'u', 'a', 'r']);
+          ['d', 's', 'u', 'a', 'r', 'w']);
     });
 
     test('draft returns only draft', () {
@@ -80,6 +82,14 @@ void main() {
         _ids(
             ApplicationFilters.filterByStatus(items, ApplicationStatus.approved)),
         ['a'],
+      );
+    });
+
+    test('withdrawn returns only withdrawn', () {
+      expect(
+        _ids(
+            ApplicationFilters.filterByStatus(items, ApplicationStatus.withdrawn)),
+        ['w'],
       );
     });
 
@@ -107,6 +117,7 @@ void main() {
         _app(status: ApplicationStatus.submitted),
         _app(status: ApplicationStatus.approved),
         _app(status: ApplicationStatus.rejected),
+        _app(status: ApplicationStatus.withdrawn),
       ];
       final counts = ApplicationFilters.statusCounts(items);
       expect(counts[ApplicationStatus.draft], 1);
@@ -114,6 +125,7 @@ void main() {
       expect(counts[ApplicationStatus.underReview], 0);
       expect(counts[ApplicationStatus.approved], 1);
       expect(counts[ApplicationStatus.rejected], 1);
+      expect(counts[ApplicationStatus.withdrawn], 1);
     });
   });
 
@@ -122,15 +134,17 @@ void main() {
       _app(status: ApplicationStatus.draft),
       _app(status: ApplicationStatus.submitted),
       _app(status: ApplicationStatus.approved),
+      _app(status: ApplicationStatus.withdrawn),
     ];
 
     test('null returns total', () {
-      expect(ApplicationFilters.countByStatus(items, null), 3);
+      expect(ApplicationFilters.countByStatus(items, null), 4);
     });
 
     test('specific status returns its count', () {
       expect(ApplicationFilters.countByStatus(items, ApplicationStatus.draft), 1);
       expect(ApplicationFilters.countByStatus(items, ApplicationStatus.approved), 1);
+      expect(ApplicationFilters.countByStatus(items, ApplicationStatus.withdrawn), 1);
       expect(
           ApplicationFilters.countByStatus(items, ApplicationStatus.underReview), 0);
     });
@@ -148,14 +162,69 @@ void main() {
       expect(ApplicationFilters.pendingCount(items), 3);
     });
 
+    test('withdrawn is terminal and is never pending', () {
+      final items = [
+        _app(status: ApplicationStatus.draft),
+        _app(status: ApplicationStatus.submitted),
+        _app(status: ApplicationStatus.underReview),
+        _app(status: ApplicationStatus.approved),
+        _app(status: ApplicationStatus.rejected),
+        _app(status: ApplicationStatus.withdrawn),
+      ];
+      expect(ApplicationFilters.pendingCount(items), 3);
+    });
+
     test('no pending returns zero', () {
       expect(
         ApplicationFilters.pendingCount([
           _app(status: ApplicationStatus.approved),
           _app(status: ApplicationStatus.rejected),
+          _app(status: ApplicationStatus.withdrawn),
         ]),
         0,
       );
+    });
+
+    test('every status agrees with the authoritative pending table', () {
+      // Draft / Submitted / Under review → pending; Approved / Rejected /
+      // Withdrawn → terminal.
+      const expectedPending = {
+        ApplicationStatus.draft: true,
+        ApplicationStatus.submitted: true,
+        ApplicationStatus.underReview: true,
+        ApplicationStatus.approved: false,
+        ApplicationStatus.rejected: false,
+        ApplicationStatus.withdrawn: false,
+      };
+      for (final status in ApplicationStatus.values) {
+        expect(
+          ApplicationFilters.pendingCount([_app(status: status)]) == 1,
+          expectedPending[status],
+          reason: 'Pending semantics mismatch for $status',
+        );
+        expect(
+          ApplicationStatus.fromDbValue(status.dbValue).isPending,
+          expectedPending[status],
+          reason: 'isPending mismatch for $status',
+        );
+      }
+    });
+  });
+
+  group('activeAppliedScholarshipIds', () {
+    test('excludes withdrawn applications from the applied set', () {
+      final items = [
+        _app(id: 'a', scholarshipId: 'sch-a', status: ApplicationStatus.submitted),
+        _app(id: 'b', scholarshipId: 'sch-b', status: ApplicationStatus.approved),
+        _app(id: 'c', scholarshipId: 'sch-c', status: ApplicationStatus.withdrawn),
+        _app(id: 'd', scholarshipId: 'sch-d', status: ApplicationStatus.rejected),
+      ];
+      expect(ApplicationFilters.activeAppliedScholarshipIds(items),
+          {'sch-a', 'sch-b', 'sch-d'});
+    });
+
+    test('an empty list yields an empty set', () {
+      expect(ApplicationFilters.activeAppliedScholarshipIds([]), isEmpty);
     });
   });
 

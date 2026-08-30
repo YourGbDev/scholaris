@@ -2,13 +2,16 @@
 //
 // Reactive applications state: [applicationsProvider] holds the signed-in
 // user's own scholarship applications and exposes [apply] / [updateStatus] for
-// the Apply flow and future Applications screen to call.
+// the Apply flow and Applications screen to call. [applicationFilterProvider]
+// holds the tracking surface's status filter and
+// [filteredApplicationsProvider] derives the narrowed list from it.
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../auth/controllers/auth_controller.dart';
 import '../models/application.dart';
 import '../repositories/application_repository.dart';
+import '../services/application_filters.dart';
 
 final applicationRepositoryProvider = Provider<ApplicationRepository>(
   (ref) => ApplicationRepository(),
@@ -67,3 +70,37 @@ class ApplicationsNotifier extends AsyncNotifier<List<Application>> {
     ]);
   }
 }
+
+/// The single status filter for the tracking surface. Auto-disposed and keyed
+/// on the authenticated user so one user's filter choice can never leak into
+/// another user's session (the same boundary DiscoveryFilters uses).
+final applicationFilterProvider =
+    NotifierProvider.autoDispose<ApplicationFilterNotifier,
+        ApplicationFilterState>(
+  ApplicationFilterNotifier.new,
+);
+
+class ApplicationFilterNotifier extends AutoDisposeNotifier<ApplicationFilterState> {
+  @override
+  ApplicationFilterState build() {
+    // Reset to "All" whenever the authenticated user changes (including
+    // sign-out), so a previous user's filter never carries into the next.
+    ref.watch(currentUserIdProvider);
+    return const ApplicationFilterState();
+  }
+
+  void select(ApplicationStatus? status) =>
+      state = ApplicationFilterState(status: status);
+
+  void reset() => state = const ApplicationFilterState();
+}
+
+/// The signed-in user's applications narrowed by the active status filter,
+/// preserving the repository's default updated_at-descending ordering.
+final filteredApplicationsProvider = Provider<AsyncValue<List<Application>>>((ref) {
+  final applicationsAsync = ref.watch(applicationsProvider);
+  final filter = ref.watch(applicationFilterProvider);
+  return applicationsAsync.whenData(
+    (applications) => ApplicationFilters.applyAll(applications, filter.status),
+  );
+});

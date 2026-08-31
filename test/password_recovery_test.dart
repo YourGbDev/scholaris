@@ -201,13 +201,20 @@ void main() {
   group('router redirect during recovery', () {
     test('a recovery session forces /reset-password from any other location',
         () {
-      for (final location in ['/home', '/login', '/splash', '/profile-setup']) {
+      for (final location in [
+        '/home',
+        '/login',
+        '/splash',
+        '/profile-setup',
+        '/verify-email',
+      ]) {
         expect(
           authRedirectDecision(
             location: location,
             isLoggedIn: true,
             recoveryActive: true,
             onAuthRoute: location == '/login' || location == '/signup',
+            onVerifyRoute: location == AuthRoute.verifyEmail,
             onSetupRoute: location.startsWith('/profile-setup'),
             profileLoading: false,
             profileComplete: true,
@@ -358,6 +365,92 @@ void main() {
         ),
         '/profile-setup/personal',
       );
+    });
+
+    group('verify-email routing', () {
+      test('/verify-email is reachable while signed out', () {
+        expect(
+          authRedirectDecision(
+            location: '/verify-email',
+            isLoggedIn: false,
+            recoveryActive: false,
+            onAuthRoute: false,
+            onVerifyRoute: true,
+            onSetupRoute: false,
+            profileLoading: false,
+            profileComplete: false,
+          ),
+          isNull,
+        );
+      });
+
+      test('/verify-email redirects a signed-in complete profile to /home', () {
+        expect(
+          authRedirectDecision(
+            location: '/verify-email',
+            isLoggedIn: true,
+            recoveryActive: false,
+            onAuthRoute: false,
+            onVerifyRoute: true,
+            onSetupRoute: false,
+            profileLoading: false,
+            profileComplete: true,
+          ),
+          '/home',
+        );
+      });
+
+      test('/verify-email redirects a signed-in incomplete profile to setup',
+          () {
+        expect(
+          authRedirectDecision(
+            location: '/verify-email',
+            isLoggedIn: true,
+            recoveryActive: false,
+            onAuthRoute: false,
+            onVerifyRoute: true,
+            onSetupRoute: false,
+            profileLoading: false,
+            profileComplete: false,
+          ),
+          '/profile-setup/personal',
+        );
+      });
+
+      test('recovery still wins over the signed-out verify-email route', () {
+        // A live recovery session must still force /reset-password even from
+        // /verify-email, mirroring the recovery-precedence requirement.
+        expect(
+          authRedirectDecision(
+            location: '/verify-email',
+            isLoggedIn: false,
+            recoveryActive: true,
+            onAuthRoute: false,
+            onVerifyRoute: true,
+            onSetupRoute: false,
+            profileLoading: false,
+            profileComplete: false,
+          ),
+          '/reset-password',
+        );
+      });
+
+      test('onVerifyRoute defaults to false for existing call sites', () {
+        // A call without onVerifyRoute (as before Day 13) must treat the
+        // verify-email route like any other signed-out protected route.
+        expect(
+          authRedirectDecision(
+            location: '/verify-email',
+            isLoggedIn: false,
+            recoveryActive: false,
+            onAuthRoute: false,
+            onSetupRoute: false,
+            profileLoading: false,
+            profileComplete: false,
+          ),
+          '/login',
+        );
+      });
     });
   });
 

@@ -9,6 +9,8 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import 'package:scholaris/app/confirmation_redirect.dart';
+
 // Scholaris brand palette.
 const _primary = Color(0xFF0F4D2E);
 const _background = Color(0xFFFAFAF8);
@@ -53,14 +55,16 @@ class _SignupScreenState extends State<SignupScreen> {
         email: _emailController.text.trim(),
         password: _passwordController.text,
         data: {'full_name': _fullNameController.text.trim()},
+        emailRedirectTo: emailConfirmationRedirect,
       );
 
       if (!mounted) return;
 
       if (response.session == null) {
         // Email confirmation is enabled; the user must verify their inbox.
-        ScaffoldMessenger.of(context).showSnackBar(
-          _snackBar('Account created! Check your email to confirm.'),
+        // Send them to the dedicated screen so they can resend the link.
+        context.go(
+          '/verify-email?email=${Uri.encodeQueryComponent(_emailController.text.trim())}',
         );
         return;
       }

@@ -73,6 +73,11 @@ class _LoginScreenState extends State<LoginScreen> {
     if (error.message.contains('Invalid login credentials')) {
       return 'Incorrect email or password.';
     }
+    if (error.message.contains('Email not confirmed') ||
+        error.message.contains('email_not_confirmed')) {
+      return 'Your email has not been confirmed yet. Check your inbox, or '
+          'request a new link.';
+    }
     return error.message;
   }
 

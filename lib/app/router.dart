@@ -17,6 +17,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 //   signup_screen.dart       → SignupScreen()
 //   forgot_password_screen.dart → ForgotPasswordScreen()
 //   reset_password_screen.dart → ResetPasswordScreen()
+//   verify_email_screen.dart → VerifyEmailScreen({String? email})
 //   home_screen.dart         → HomeScreen()
 //   profile_setup_screen.dart → ProfileSetupScreen({required String step})
 import 'package:scholaris/features/auth/controllers/auth_controller.dart';
@@ -25,6 +26,7 @@ import 'package:scholaris/features/auth/presentation/login_screen.dart';
 import 'package:scholaris/features/auth/presentation/reset_password_screen.dart';
 import 'package:scholaris/features/auth/presentation/signup_screen.dart';
 import 'package:scholaris/features/auth/presentation/splash_screen.dart';
+import 'package:scholaris/features/auth/presentation/verify_email_screen.dart';
 import 'package:scholaris/features/home/presentation/home_screen.dart';
 import 'package:scholaris/features/profile/presentation/profile_setup_screen.dart';
 import 'package:scholaris/features/profile/providers/profile_setup_provider.dart';
@@ -105,6 +107,12 @@ final routerProvider = Provider<GoRouter>((ref) {
         path: '/reset-password',
         name: 'reset-password',
         builder: (context, state) => const ResetPasswordScreen(),
+      ),
+      GoRoute(
+        path: '/verify-email',
+        name: 'verify-email',
+        builder: (context, state) =>
+            VerifyEmailScreen(email: state.uri.queryParameters['email']),
       ),
 
       // --- Main app ----------------------------------------------------------
@@ -198,10 +206,12 @@ abstract final class ProfileSetupRoute {
 abstract final class AuthRoute {
   static const forgotPassword = '/forgot-password';
   static const resetPassword = '/reset-password';
+  static const verifyEmail = '/verify-email';
 }
 
 /// Auth-aware redirect:
 ///  - forgot-password route       → always allowed (public request screen)
+///  - verify-email route          → allowed when signed out
 ///  - recovery session active     → /reset-password (before any profile read)
 ///  - signed out                  → /login (except /login, /signup)
 ///  - signed in, profile busy     → /splash while loading
@@ -214,6 +224,7 @@ String? _redirect(Ref ref, GoRouterState state) {
     isLoggedIn: ref.read(authSessionProvider) != null,
     recoveryActive: ref.read(passwordRecoveryProvider),
     onAuthRoute: location == '/login' || location == '/signup',
+    onVerifyRoute: location == AuthRoute.verifyEmail,
     onSetupRoute: location.startsWith('/profile-setup'),
     profileLoading: ref.read(profileCompleteProvider).isLoading,
     profileComplete: ref.read(profileCompleteProvider).valueOrNull ?? false,
@@ -230,7 +241,9 @@ String? _redirect(Ref ref, GoRouterState state) {
 ///     triggers profile hydration.
 ///  3. `/reset-password` is otherwise protected — a user can only reach it
 ///     through a live recovery session.
-///  4. Normal auth/profile routing follows.
+///  4. `/verify-email` is public while signed out so an unconfirmed user can
+///     reach the resend surface.
+///  5. Normal auth/profile routing follows.
 String? authRedirectDecision({
   required String location,
   required bool isLoggedIn,
@@ -239,6 +252,7 @@ String? authRedirectDecision({
   required bool onSetupRoute,
   required bool profileLoading,
   required bool profileComplete,
+  bool onVerifyRoute = false,
 }) {
   if (location == AuthRoute.forgotPassword) return null;
 
@@ -249,6 +263,7 @@ String? authRedirectDecision({
   if (location == AuthRoute.resetPassword) return '/login';
 
   if (!isLoggedIn) {
+    if (onVerifyRoute) return null;
     return onAuthRoute ? null : '/login';
   }
 

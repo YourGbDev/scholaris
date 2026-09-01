@@ -19,7 +19,12 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 /// The authenticated session snapshot the app keys user-scoped state on.
 class AuthSession {
-  const AuthSession({required this.userId, this.passwordRecovery = false});
+  const AuthSession({
+    required this.userId,
+    this.passwordRecovery = false,
+    this.email,
+    this.emailConfirmed = false,
+  });
 
   final String userId;
 
@@ -27,6 +32,17 @@ class AuthSession {
   /// link. While active the router forces the user onto the set-new-password
   /// screen and skips profile hydration.
   final bool passwordRecovery;
+
+  /// The session user's email address, or null when the provider does not
+  /// expose one. Read-only snapshot for account display; account settings
+  /// never write authentication state.
+  final String? email;
+
+  /// Whether the session user's email is confirmed. Derived from the same
+  /// Supabase session (emailConfirmedAt); recomputed on every auth event that
+  /// replaces the session, so it reflects a completed email verification as
+  /// soon as the boundary sees it.
+  final bool emailConfirmed;
 }
 
 /// Reactive auth session. Holds the current [AuthSession] (or null when signed
@@ -67,6 +83,8 @@ class AuthSessionNotifier extends Notifier<AuthSession?> {
           : AuthSession(
               userId: session.user.id,
               passwordRecovery: passwordRecovery,
+              email: session.user.email,
+              emailConfirmed: session.user.emailConfirmedAt != null,
             );
 
   /// The initialized Supabase client, or null when Supabase was never
@@ -86,6 +104,18 @@ class AuthSessionNotifier extends Notifier<AuthSession?> {
 /// watch this so their state cannot survive an auth transition.
 final currentUserIdProvider = Provider<String?>(
   (ref) => ref.watch(authSessionProvider)?.userId,
+);
+
+/// The signed-in user's email address, or null when signed out / unknown.
+/// Derived from the session boundary; used by the account settings surface.
+final currentUserEmailProvider = Provider<String?>(
+  (ref) => ref.watch(authSessionProvider)?.email,
+);
+
+/// Whether the signed-in user's email address is confirmed. False when signed
+/// out. Derived from the session boundary's email-confirmation snapshot.
+final emailConfirmedProvider = Provider<bool>(
+  (ref) => ref.watch(authSessionProvider)?.emailConfirmed ?? false,
 );
 
 /// True while a password-recovery session is active (the user opened a

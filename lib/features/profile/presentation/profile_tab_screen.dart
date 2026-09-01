@@ -8,6 +8,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import 'package:scholaris/features/account/presentation/account_settings_screen.dart';
 import 'package:scholaris/features/applications/presentation/applications_screen.dart';
 import 'package:scholaris/shared/theme/app_theme.dart';
 import 'package:scholaris/shared/widgets/responsive_container.dart';
@@ -26,10 +27,9 @@ class ProfileTabScreen extends ConsumerWidget {
       child: ResponsiveContainer(
         child: profileAsync.when(
           loading: () => const LoadingView(),
-          error: (_, _) => const EmptyView(
-            icon: Icons.error_outline_rounded,
-            title: 'Profile unavailable',
+          error: (error, stackTrace) => ErrorView(
             message: 'We could not load your profile.',
+            onRetry: () => ref.invalidate(currentProfileProvider),
           ),
           data: (profile) => profile == null
               ? const EmptyView(
@@ -130,6 +130,43 @@ class ProfileTabScreen extends ConsumerWidget {
             onTap: () => Navigator.of(context).push(
               MaterialPageRoute<void>(
                 builder: (_) => const ApplicationsScreen(),
+              ),
+            ),
+          ),
+        ),
+        const SizedBox(height: 12),
+        Card(
+          elevation: 0,
+          color: Colors.white,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(kRadiusCard),
+          ),
+          child: ListTile(
+            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            leading: Container(
+              padding: const EdgeInsets.all(8),
+              decoration: const BoxDecoration(
+                color: kPrimarySoft,
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(
+                Icons.manage_accounts_outlined,
+                color: kPrimary,
+                size: 20,
+              ),
+            ),
+            title: Text(
+              'Account Settings',
+              style: poppins(fontSize: 15, fontWeight: FontWeight.w600),
+            ),
+            subtitle: Text(
+              'Email, verification and password',
+              style: openSans(fontSize: 12, color: Colors.black54),
+            ),
+            trailing: const Icon(Icons.chevron_right_rounded, color: Colors.black38),
+            onTap: () => Navigator.of(context).push(
+              MaterialPageRoute<void>(
+                builder: (_) => const AccountSettingsScreen(),
               ),
             ),
           ),

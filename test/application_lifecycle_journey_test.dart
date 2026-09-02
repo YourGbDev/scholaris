@@ -135,6 +135,11 @@ void main() {
     await tester.tap(find.text('Apply now'));
     await tester.pumpAndSettle();
 
+    // Day 15: the write only happens after the pre-apply confirmation.
+    expect(find.text('Apply to this scholarship?'), findsOneWidget);
+    await tester.tap(find.byKey(const ValueKey('apply-confirm')));
+    await tester.pumpAndSettle();
+
     expect(find.text('Application submitted!'), findsOneWidget);
     expect(find.text('Application submitted'), findsOneWidget);
     expect(await h.applications.fetchApplications('user-a'), hasLength(1));

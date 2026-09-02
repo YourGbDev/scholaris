@@ -328,6 +328,52 @@ void main() {
       expect(find.text('About'), findsOneWidget);
     });
 
+    testWidgets('shows why the student cannot apply when ineligible',
+        (tester) async {
+      final rows = _rows();
+      rows[1]['min_gpa'] = 3.5; // Student GPA is 3.2 → ineligible.
+      final ched = Scholarship.fromJson(rows[1]);
+
+      final profileSource = FakeProfileDataSource();
+      profileSource.upsertProfile('user-a', _student().toDbRow());
+
+      await tester.pumpWidget(ProviderScope(
+        overrides: [
+          currentUserIdProvider.overrideWithValue('user-a'),
+          profileRepositoryProvider.overrideWith(
+            (ref) => ProfileRepository(
+              dataSource: profileSource,
+              currentUserId: () => 'user-a',
+            ),
+          ),
+          scholarshipRepositoryProvider.overrideWith(
+            (ref) => ScholarshipRepository(
+              dataSource: FakeScholarshipDataSource(rows),
+            ),
+          ),
+          bookmarkRepositoryProvider.overrideWith(
+            (ref) => BookmarkRepository(
+              dataSource: FakeBookmarkDataSource(),
+              currentUserId: () => 'user-a',
+            ),
+          ),
+        ],
+        child: MaterialApp(
+          home: ScholarshipDetailScreen(
+            scholarshipId: 'sch-ched',
+            initial: ched,
+          ),
+        ),
+      ));
+      await tester.pumpAndSettle();
+
+      // The deterministic, value-bearing readiness explanation replaces the
+      // match-reasons section for a profile that does not qualify.
+      expect(find.text("Why you can't apply"), findsOneWidget);
+      expect(find.text('Minimum GPA 3.50 — your GPA is 3.20'), findsOneWidget);
+      expect(find.text('Why this matches you'), findsNothing);
+    });
+
     testWidgets('hides match reasons when no profile is set up',
         (tester) async {
       final rows = _rows();

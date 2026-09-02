@@ -1,6 +1,12 @@
 import '../models/scholarship.dart';
 import '../../profile/models/student_profile.dart';
 
+/// The profile-vs-scholarship eligibility criteria the engine applies, in its
+/// canonical evaluation order. Exposed so other consumers (e.g. the application
+/// readiness service) can explain outcomes without re-implementing — and
+/// potentially diverging from — the engine's semantics.
+enum EligibilityCriterion { gpa, yearLevel, course, citizenship, region, income }
+
 class MatchingEngine {
   List<Scholarship> getEligible(
     StudentProfile student,
@@ -8,35 +14,47 @@ class MatchingEngine {
   ) {
     final now = DateTime.now();
     return all.where((s) {
-      if (student.gpa < s.minGpa) {
-        return false;
-      }
-      if (!s.yearLevels.contains(student.yearLevel)) {
-        return false;
-      }
-      if (s.eligibleCourses.isNotEmpty &&
-          !s.eligibleCourses.contains(student.course)) {
-        return false;
-      }
-      if (s.citizenshipRequired != 'any' &&
-          s.citizenshipRequired != student.nationality) {
-        return false;
-      }
-      if (s.regionsEligible.isNotEmpty &&
-          !s.regionsEligible.contains(student.region)) {
-        return false;
-      }
-      if (!_incomeBracketAllows(student.incomeBracket, s.maxIncomeBracket)) {
-        return false;
-      }
       if (!s.isActive) {
         return false;
       }
       if (!s.deadline.isAfter(now)) {
         return false;
       }
-      return true;
+      return failedCriteria(student, s).isEmpty;
     }).toList();
+  }
+
+  /// The eligibility criteria [student] fails for [scholarship], in canonical
+  /// order; empty when the student qualifies. This is the single definition of
+  /// profile-based eligibility — [getEligible] and the readiness service both
+  /// derive their verdicts from it.
+  static List<EligibilityCriterion> failedCriteria(
+    StudentProfile student,
+    Scholarship scholarship,
+  ) {
+    final failed = <EligibilityCriterion>[];
+    if (student.gpa < scholarship.minGpa) {
+      failed.add(EligibilityCriterion.gpa);
+    }
+    if (!scholarship.yearLevels.contains(student.yearLevel)) {
+      failed.add(EligibilityCriterion.yearLevel);
+    }
+    if (scholarship.eligibleCourses.isNotEmpty &&
+        !scholarship.eligibleCourses.contains(student.course)) {
+      failed.add(EligibilityCriterion.course);
+    }
+    if (scholarship.citizenshipRequired != 'any' &&
+        scholarship.citizenshipRequired != student.nationality) {
+      failed.add(EligibilityCriterion.citizenship);
+    }
+    if (scholarship.regionsEligible.isNotEmpty &&
+        !scholarship.regionsEligible.contains(student.region)) {
+      failed.add(EligibilityCriterion.region);
+    }
+    if (!_incomeBracketAllows(student.incomeBracket, scholarship.maxIncomeBracket)) {
+      failed.add(EligibilityCriterion.income);
+    }
+    return failed;
   }
 
   List<Scholarship> rank(
@@ -52,7 +70,7 @@ class MatchingEngine {
     return ranked;
   }
 
-  bool _incomeBracketAllows(String? studentBracket, String scholarshipMax) {
+  static bool _incomeBracketAllows(String? studentBracket, String scholarshipMax) {
     if (scholarshipMax == 'any') return true;
     // An undisclosed income cannot be compared against a scholarship's income
     // ceiling, so income-constrained scholarships simply do not match.

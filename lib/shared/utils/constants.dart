@@ -29,6 +29,17 @@ String formatPeso(double amount) {
 /// "closing soon".
 bool isClosingSoon(int days) => days <= 14;
 
+/// True when [deadline]'s calendar day has passed relative to [now]'s — the
+/// scholarship no longer accepts applications. Day-granular so it stays
+/// consistent with [deadlineLabel] ("Closed" vs "Closes today"), and so a
+/// deadline later today is not mistaken for an expired one.
+bool isDeadlinePassed(DateTime deadline, {DateTime? now}) {
+  final today = now ?? DateTime.now();
+  final anchor = DateTime(today.year, today.month, today.day);
+  final day = DateTime(deadline.year, deadline.month, deadline.day);
+  return day.isBefore(anchor);
+}
+
 const List<String> _months = [
   'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
   'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',

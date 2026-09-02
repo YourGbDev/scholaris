@@ -39,9 +39,13 @@ class ScholarshipCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final daysLeft =
-        scholarship.deadline.difference(DateTime.now()).inDays;
-    final closing = isClosingSoon(daysLeft);
+    final now = DateTime.now();
+    final expired = isDeadlinePassed(scholarship.deadline, now: now);
+    // Expired deadlines must never be styled as urgent: the old `days <= 14`
+    // check also fired for negative day counts, labelling closed scholarships
+    // "closing soon".
+    final closing = !expired &&
+        isClosingSoon(scholarship.deadline.difference(now).inDays);
 
     return Semantics(
       button: true,
@@ -82,7 +86,11 @@ class ScholarshipCard extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(width: 8),
-                    _DeadlineChip(label: deadlineLabel(scholarship.deadline), urgent: closing),
+                    _DeadlineChip(
+                      label: deadlineLabel(scholarship.deadline),
+                      urgent: closing,
+                      expired: expired,
+                    ),
                     if (isApplied) ...[
                       const SizedBox(width: 4),
                       const _AppliedChip(),
@@ -181,15 +189,31 @@ class ScholarshipCard extends StatelessWidget {
 }
 
 class _DeadlineChip extends StatelessWidget {
-  const _DeadlineChip({required this.label, required this.urgent});
+  const _DeadlineChip({
+    required this.label,
+    required this.urgent,
+    this.expired = false,
+  });
 
   final String label;
   final bool urgent;
 
+  /// An expired deadline renders neutral (never urgent): its label is
+  /// "Closed" and it must not read as an active deadline.
+  final bool expired;
+
   @override
   Widget build(BuildContext context) {
-    final background = urgent ? const Color(0xFFFFF3D6) : const Color(0xFFE8F2EC);
-    final foreground = urgent ? const Color(0xFF8A5B00) : kPrimary;
+    final background = expired
+        ? const Color(0xFFECECE6)
+        : urgent
+            ? const Color(0xFFFFF3D6)
+            : const Color(0xFFE8F2EC);
+    final foreground = expired
+        ? Colors.black54
+        : urgent
+            ? const Color(0xFF8A5B00)
+            : kPrimary;
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),

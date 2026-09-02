@@ -1,8 +1,11 @@
-// Widget tests for the Day 6 Apply UX: the Apply action on the scholarship
-// detail screen drives the existing applications provider/repository. Covers
-// rendering, success/applied state, loading/disabled behavior, duplicate
-// prevention, failure surfacing, unauthenticated safety, and that existing
-// bookmark + responsive/detail behavior is untouched.
+// Widget tests for the Apply UX: the Apply action on the scholarship detail
+// screen drives the existing applications provider/repository through the
+// Day 15 safe-apply flow — readiness gating (closed/inactive/ineligible/
+// incomplete profile cannot apply), a pre-apply confirmation whose Cancel
+// never writes and whose Confirm goes through the existing apply path, and
+// the preserved success/applied state, loading/disabled behavior, duplicate
+// prevention, failure surfacing, unauthenticated safety, and bookmark +
+// responsive/detail behavior.
 
 import 'dart:async';
 
@@ -56,20 +59,47 @@ class _FailingApplicationDataSource extends FakeApplicationDataSource {
   }
 }
 
-StudentProfile _student() => StudentProfile(
+StudentProfile _student({
+  double gpa = 3.2,
+  bool setupComplete = true,
+  double? monthlyFamilyIncome = 15000,
+}) =>
+    StudentProfile(
       id: 'user-a',
       fullName: 'Maria Santos',
       nationality: 'Filipino',
       region: 'NCR',
-      gpa: 3.2,
+      gpa: gpa,
       yearLevel: 2,
       course: 'BS Computer Science',
-      monthlyFamilyIncome: 15000,
-      setupComplete: true,
+      monthlyFamilyIncome: monthlyFamilyIncome,
+      setupComplete: setupComplete,
     );
 
 Scholarship _scholarship() =>
     Scholarship.fromJson(FakeScholarshipDataSource.defaultRows.first);
+
+/// The default row's deadline (2026-10-15) is far enough ahead to stay valid
+/// for these tests; this produces an explicitly expired variant.
+Scholarship _expiredScholarship() {
+  final row = {...FakeScholarshipDataSource.defaultRows.first};
+  row['deadline'] = '2020-01-01';
+  return Scholarship.fromJson(row);
+}
+
+Scholarship _inactiveScholarship() {
+  final row = {...FakeScholarshipDataSource.defaultRows.first};
+  row['is_active'] = false;
+  return Scholarship.fromJson(row);
+}
+
+Scholarship _ineligibleScholarship() {
+  // Student GPA is 3.2 → a 3.5 minimum makes the profile deterministically
+  // ineligible without touching any other criterion.
+  final row = {...FakeScholarshipDataSource.defaultRows.first};
+  row['min_gpa'] = 3.5;
+  return Scholarship.fromJson(row);
+}
 
 /// Pumps the scholarship detail screen with the user-scoped providers backed by
 /// in-memory fakes, mirroring the real dependency graph. [userId] null renders
@@ -77,12 +107,16 @@ Scholarship _scholarship() =>
 Widget _wrap({
   required Scholarship scholarship,
   String? userId = 'user-a',
+  StudentProfile? profile,
   FakeApplicationDataSource? applications,
   FakeBookmarkDataSource? bookmarks,
 }) {
   final profileSource = FakeProfileDataSource();
   if (userId != null) {
-    profileSource.upsertProfile(userId, _student().toDbRow());
+    profileSource.upsertProfile(
+      userId,
+      (profile ?? _student()).toDbRow(),
+    );
   }
 
   return ProviderScope(
@@ -127,10 +161,13 @@ void main() {
   });
 
   group('Apply action rendering', () {
-    testWidgets('authenticated user sees the Apply action', (tester) async {
+    testWidgets('eligible student sees the enabled Apply action',
+        (tester) async {
       await tester.pumpWidget(_wrap(scholarship: _scholarship()));
       await tester.pumpAndSettle();
 
+      final button = tester.widget<ElevatedButton>(find.byType(ElevatedButton));
+      expect(button.onPressed, isNotNull);
       expect(find.text('Apply now'), findsOneWidget);
       expect(find.text('Application submitted'), findsNothing);
     });
@@ -154,8 +191,8 @@ void main() {
     });
   });
 
-  group('Apply submission', () {
-    testWidgets('apply succeeds, persists, and reflects the applied state',
+  group('Pre-apply confirmation', () {
+    testWidgets('tapping Apply opens the confirmation before any write',
         (tester) async {
       final applications = FakeApplicationDataSource();
 
@@ -167,15 +204,57 @@ void main() {
       await tester.tap(find.text('Apply now'));
       await tester.pumpAndSettle();
 
+      expect(find.text('Apply to this scholarship?'), findsOneWidget);
+      // No write happened just by opening the dialog.
+      expect(await applications.fetchApplications('user-a'), isEmpty);
+    });
+
+    testWidgets('cancelling the confirmation never creates an application',
+        (tester) async {
+      final applications = FakeApplicationDataSource();
+
+      await tester.pumpWidget(
+        _wrap(scholarship: _scholarship(), applications: applications),
+      );
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.text('Apply now'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const ValueKey('apply-cancel')));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Apply to this scholarship?'), findsNothing);
+      expect(find.text('Apply now'), findsOneWidget);
+      expect(find.text('Application submitted'), findsNothing);
+      expect(await applications.fetchApplications('user-a'), isEmpty);
+    });
+
+    testWidgets('confirming creates the application through the existing path',
+        (tester) async {
+      final applications = FakeApplicationDataSource();
+
+      await tester.pumpWidget(
+        _wrap(scholarship: _scholarship(), applications: applications),
+      );
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.text('Apply now'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const ValueKey('apply-confirm')));
+      await tester.pumpAndSettle();
+
       expect(find.text('Application submitted!'), findsOneWidget);
       expect(find.text('Application submitted'), findsOneWidget);
       expect(find.text('Apply now'), findsNothing);
 
       final rows = await applications.fetchApplications('user-a');
+      expect(rows, hasLength(1));
       expect(rows.single['scholarship_id'], _scholarship().id);
       expect(rows.single['status'], 'submitted');
     });
+  });
 
+  group('Apply submission', () {
     testWidgets('apply shows a spinner and disables the button while in flight',
         (tester) async {
       final slow = _SlowApplicationDataSource();
@@ -186,6 +265,8 @@ void main() {
       await tester.pumpAndSettle();
 
       await tester.tap(find.text('Apply now'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const ValueKey('apply-confirm')));
       await tester.pump();
 
       expect(find.byType(CircularProgressIndicator), findsOneWidget);
@@ -197,6 +278,108 @@ void main() {
 
       expect(find.text('Application submitted'), findsOneWidget);
       expect(await slow.fetchApplications('user-a'), hasLength(1));
+    });
+  });
+
+  group('Deadline safety', () {
+    testWidgets('an expired scholarship cannot be applied to',
+        (tester) async {
+      final applications = FakeApplicationDataSource();
+
+      await tester.pumpWidget(
+        _wrap(scholarship: _expiredScholarship(), applications: applications),
+      );
+      await tester.pumpAndSettle();
+
+      // No Apply affordance at all — the closed state replaces it.
+      expect(find.text('Apply now'), findsNothing);
+      expect(find.text('Applications closed'), findsOneWidget);
+      // Never labelled "Closing soon" (regression: Closing soon — Closed).
+      expect(find.textContaining('Closing soon'), findsNothing);
+
+      await tester.tap(find.text('Applications closed'), warnIfMissed: false);
+      await tester.pumpAndSettle();
+      expect(await applications.fetchApplications('user-a'), isEmpty);
+    });
+
+    testWidgets('an inactive scholarship cannot be applied to',
+        (tester) async {
+      final applications = FakeApplicationDataSource();
+
+      await tester.pumpWidget(
+        _wrap(scholarship: _inactiveScholarship(), applications: applications),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.text('Apply now'), findsNothing);
+      expect(find.text('Not accepting applications'), findsOneWidget);
+
+      await tester.tap(
+        find.text('Not accepting applications'),
+        warnIfMissed: false,
+      );
+      await tester.pumpAndSettle();
+      expect(await applications.fetchApplications('user-a'), isEmpty);
+    });
+  });
+
+  group('Readiness gating', () {
+    testWidgets('an ineligible profile cannot apply and sees the missing '
+        'criteria', (tester) async {
+      final applications = FakeApplicationDataSource();
+
+      await tester.pumpWidget(
+        _wrap(scholarship: _ineligibleScholarship(), applications: applications),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.text('Apply now'), findsNothing);
+      expect(find.text("Why you can't apply"), findsOneWidget);
+      // Deterministic, value-bearing explanation — not just "Not eligible".
+      expect(
+        find.text('Minimum GPA 3.50 — your GPA is 3.20'),
+        findsOneWidget,
+      );
+      // No match is claimed for a profile that does not qualify.
+      expect(find.text('Why this matches you'), findsNothing);
+
+      await tester.tap(find.text("Why you can't apply"), warnIfMissed: false);
+      await tester.pumpAndSettle();
+      expect(await applications.fetchApplications('user-a'), isEmpty);
+    });
+
+    testWidgets('a missing profile gets the profile-incomplete readiness, '
+        'not an eligibility verdict', (tester) async {
+      final applications = FakeApplicationDataSource();
+
+      await tester.pumpWidget(
+        _wrap(
+          scholarship: _ineligibleScholarship(),
+          userId: 'user-a',
+          profile: _student(setupComplete: false),
+          applications: applications,
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.text('Apply now'), findsNothing);
+      expect(find.text('Finish your profile to apply'), findsOneWidget);
+      // Must NOT be misrepresented as "not eligible" even though the profile's
+      // values would fail the scholarship's requirements.
+      expect(find.text("Why you can't apply"), findsNothing);
+      expect(find.textContaining('Minimum GPA'), findsNothing);
+      expect(await applications.fetchApplications('user-a'), isEmpty);
+    });
+
+    testWidgets('an incomplete profile offers the existing profile-setup route',
+        (tester) async {
+      await tester.pumpWidget(
+        _wrap(scholarship: _scholarship(), profile: _student(setupComplete: false)),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.text('Finish your profile to apply'), findsOneWidget);
+      expect(find.text('Update profile'), findsOneWidget);
     });
   });
 
@@ -233,6 +416,8 @@ void main() {
       await tester.pumpAndSettle();
 
       await tester.tap(find.text('Apply now'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const ValueKey('apply-confirm')));
       await tester.pumpAndSettle();
 
       expect(
@@ -289,6 +474,8 @@ void main() {
 
       // Applying still works after bookmarking.
       await tester.tap(find.text('Apply now'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const ValueKey('apply-confirm')));
       await tester.pumpAndSettle();
       expect(find.text('Application submitted'), findsOneWidget);
       expect(await applications.fetchApplications('user-a'), hasLength(1));

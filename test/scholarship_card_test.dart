@@ -1,6 +1,9 @@
 // Focused tests for the shared ScholarshipCard bookmark toggle: which icon
 // renders for the saved/unsaved state, that tapping fires the toggle callback,
-// and that the touch target meets the 44x44 accessibility minimum.
+// and that the touch target meets the 44x44 accessibility minimum. Also covers
+// the Day 15 deadline-display semantics: a future deadline inside the
+// closing-soon threshold is urgent, one outside it is normal, and an expired
+// deadline is "Closed" — never "Closing soon — Closed".
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -30,7 +33,11 @@ Map<String, dynamic> _row() => {
       'is_active': true,
     };
 
-Scholarship _scholarship() => Scholarship.fromJson(_row());
+Scholarship _scholarship({String? deadline}) {
+  final row = {..._row()};
+  if (deadline != null) row['deadline'] = deadline;
+  return Scholarship.fromJson(row);
+}
 
 Widget _wrap({required ScholarshipCard card}) =>
     MaterialApp(home: Scaffold(body: card));
@@ -136,6 +143,44 @@ void main() {
 
       expect(find.text('Applied'), findsOneWidget);
       expect(find.byIcon(Icons.bookmark_rounded), findsOneWidget);
+    });
+  });
+
+  group('deadline display', () {
+    String isoInDays(int days) =>
+        DateTime.now().add(Duration(days: days)).toIso8601String().split('T').first;
+
+    testWidgets('a future deadline inside the threshold shows the urgent '
+        'closing-soon label', (tester) async {
+      await tester.pumpWidget(_wrap(
+        card: ScholarshipCard(scholarship: _scholarship(deadline: isoInDays(10))),
+      ));
+
+      // 10 days out → "10 days left" on an urgent chip, never "Closed".
+      expect(find.text('10 days left'), findsOneWidget);
+      expect(find.text('Closed'), findsNothing);
+    });
+
+    testWidgets('a future deadline outside the threshold shows the normal '
+        'deadline label', (tester) async {
+      await tester.pumpWidget(_wrap(
+        card: ScholarshipCard(scholarship: _scholarship(deadline: isoInDays(40))),
+      ));
+
+      // 40 days out → plain "Closes <Mon d>", never urgent, never "Closed".
+      expect(find.text('Closed'), findsNothing);
+      expect(find.textContaining('Closing soon'), findsNothing);
+      expect(find.textContaining('Closes '), findsOneWidget);
+    });
+
+    testWidgets('an expired deadline shows Closed — never Closing soon '
+        '(regression: Closing soon — Closed)', (tester) async {
+      await tester.pumpWidget(_wrap(
+        card: ScholarshipCard(scholarship: _scholarship(deadline: isoInDays(-1))),
+      ));
+
+      expect(find.text('Closed'), findsOneWidget);
+      expect(find.textContaining('Closing soon'), findsNothing);
     });
   });
 }

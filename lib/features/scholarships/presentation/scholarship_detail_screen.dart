@@ -5,22 +5,26 @@
 // The bookmark toggle in the app bar keeps the Saved tab in sync. When the
 // signed-in student's profile makes this scholarship an actual match, a
 // "Why this matches you" section restates the reasons they saw on the card.
-// An Apply action lets the signed-in student submit an application through
-// the existing applications provider; once applied, the button is replaced by
-// an "Application submitted" banner.
+// The Apply action is gated by the pure application-readiness evaluation:
+// only an eligible student with an active, open scholarship gets an enabled
+// Apply button, and confirming the dialog is what sends the write through the
+// existing applications provider; once applied, the button is replaced by an
+// "Application submitted" banner.
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import 'package:scholaris/features/applications/providers/applications_provider.dart';
 import 'package:scholaris/features/applications/repositories/application_repository.dart';
+import 'package:scholaris/features/auth/controllers/auth_controller.dart';
 import 'package:scholaris/features/bookmarks/providers/bookmarks_provider.dart';
 import 'package:scholaris/features/profile/providers/profile_setup_provider.dart';
 import 'package:scholaris/features/scholarships/models/scholarship.dart';
 import 'package:scholaris/features/scholarships/providers/scholarships_provider.dart';
+import 'package:scholaris/features/scholarships/services/application_readiness.dart';
 import 'package:scholaris/features/scholarships/services/match_reasons.dart';
-import 'package:scholaris/features/scholarships/services/matching_engine.dart';
 import 'package:scholaris/shared/theme/app_theme.dart';
 import 'package:scholaris/shared/utils/constants.dart';
 import 'package:scholaris/shared/widgets/primary_button.dart';
@@ -133,8 +137,13 @@ class _DetailContent extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final daysLeft = scholarship.deadline.difference(DateTime.now()).inDays;
-    final closing = isClosingSoon(daysLeft);
+    final now = DateTime.now();
+    final expired = isDeadlinePassed(scholarship.deadline, now: now);
+    // Expired deadlines must never be labelled "Closing soon" (the old
+    // `days <= 14` check also fired for negative day counts).
+    final closing = !expired &&
+        isClosingSoon(scholarship.deadline.difference(now).inDays);
+    final daysLeft = scholarship.deadline.difference(now).inDays;
     final reasons = _matchReasons(ref);
 
     return ListView(
@@ -152,7 +161,7 @@ class _DetailContent extends ConsumerWidget {
         const SizedBox(height: 20),
         _AmountCard(scholarship: scholarship, closing: closing, daysLeft: daysLeft),
         const SizedBox(height: 16),
-        _ApplySection(scholarshipId: scholarship.id),
+        _ApplySection(scholarship: scholarship),
         const SizedBox(height: 24),
         if (reasons.isNotEmpty) ...[
           _SectionLabel('Why this matches you'),
@@ -230,15 +239,22 @@ class _DetailContent extends ConsumerWidget {
   }
 
   /// Returns the "why this matches you" reasons only when the signed-in
-  /// student's profile genuinely qualifies for this scholarship, so the detail
-  /// screen never implies a match the engine would not produce.
+  /// student's profile is genuinely ready (eligible per the readiness
+  /// evaluation, which derives its verdict from the MatchingEngine's own
+  /// criteria code), so the detail screen never implies a match the engine
+  /// would not produce. Non-eligible students instead get the Apply section's
+  /// "Why you can't apply" explanation.
   List<String> _matchReasons(WidgetRef ref) {
     final profile = ref.watch(currentProfileProvider).valueOrNull;
-    if (profile == null) return const [];
-    final isEligible =
-        MatchingEngine().getEligible(profile, [scholarship]).isNotEmpty;
-    if (!isEligible) return const [];
-    return matchReasonsFor(profile, scholarship);
+    final readiness = evaluateApplicationReadiness(
+      profile: profile,
+      scholarship: scholarship,
+      referenceNow: DateTime.now(),
+    );
+    if (readiness.state != ApplicationReadinessState.eligible) {
+      return const [];
+    }
+    return matchReasonsFor(profile!, scholarship);
   }
 
   String _yearLevelsLabel(List<int> levels) {
@@ -262,9 +278,9 @@ class _DetailContent extends ConsumerWidget {
 }
 
 class _ApplySection extends ConsumerStatefulWidget {
-  const _ApplySection({required this.scholarshipId});
+  const _ApplySection({required this.scholarship});
 
-  final String scholarshipId;
+  final Scholarship scholarship;
 
   @override
   ConsumerState<_ApplySection> createState() => _ApplySectionState();
@@ -275,11 +291,58 @@ class _ApplySectionState extends ConsumerState<_ApplySection> {
   /// and cannot be double-submitted.
   bool _isApplying = false;
 
+  /// Pre-apply confirmation, following the withdrawal-confirmation convention.
+  /// Confirming is what allows the application write to proceed; cancelling
+  /// leaves the applications provider and repository untouched.
+  Future<bool> _confirmApply() async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: const Text('Apply to this scholarship?'),
+        content: Text(
+          'Confirming will create and submit your application for '
+          '"${widget.scholarship.name}" in Scholaris. You can track it under '
+          'My Applications.',
+        ),
+        actions: [
+          TextButton(
+            key: const ValueKey('apply-cancel'),
+            onPressed: () => Navigator.of(dialogContext).pop(false),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            key: const ValueKey('apply-confirm'),
+            onPressed: () => Navigator.of(dialogContext).pop(true),
+            child: const Text('Apply'),
+          ),
+        ],
+      ),
+    );
+    return confirmed == true;
+  }
+
+  /// Confirmed apply path for an eligible, open scholarship.
   Future<void> _apply() async {
     if (_isApplying) return;
+    final confirmed = await _confirmApply();
+    if (!confirmed || !mounted) return;
+    await _submit();
+  }
+
+  /// Signed-out path: preserves the existing sign-in-first behavior — no
+  /// confirmation dialog, the submit attempt surfaces the sign-in requirement.
+  Future<void> _applySignedOut() async {
+    if (_isApplying) return;
+    await _submit();
+  }
+
+  /// The only application write path: the existing applicationsProvider →
+  /// ApplicationRepository chain. Readiness gating never bypasses it and the
+  /// repository's duplicate/auth guards stay authoritative.
+  Future<void> _submit() async {
     setState(() => _isApplying = true);
     try {
-      await ref.read(applicationsProvider.notifier).apply(widget.scholarshipId);
+      await ref.read(applicationsProvider.notifier).apply(widget.scholarship.id);
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Application submitted!')),
@@ -314,10 +377,74 @@ class _ApplySectionState extends ConsumerState<_ApplySection> {
     // state is reflected as soon as the provider lands it.
     ref.watch(applicationsProvider);
     final applied =
-        ref.read(applicationsProvider.notifier).hasApplied(widget.scholarshipId);
+        ref.read(applicationsProvider.notifier).hasApplied(widget.scholarship.id);
 
     if (applied) return const _AppliedBanner();
 
+    final userId = ref.watch(currentUserIdProvider);
+    final profileAsync =
+        userId == null ? null : ref.watch(currentProfileProvider);
+    // While the profile is still loading its readiness cannot be judged
+    // honestly — hold the action until it lands instead of flashing a
+    // misleading state.
+    if (profileAsync != null && profileAsync.isLoading) {
+      return const SizedBox.shrink();
+    }
+    final profile = profileAsync?.valueOrNull;
+    final readiness = evaluateApplicationReadiness(
+      profile: profile,
+      scholarship: widget.scholarship,
+      referenceNow: DateTime.now(),
+    );
+
+    switch (readiness.state) {
+      case ApplicationReadinessState.eligible:
+        return _applyButton(onPressed: _apply);
+
+      case ApplicationReadinessState.closed:
+        return const _ReadinessNotice(
+          icon: Icons.event_busy_rounded,
+          title: 'Applications closed',
+          message:
+              'The deadline for this scholarship has passed. You can no longer apply.',
+        );
+
+      case ApplicationReadinessState.inactive:
+        return const _ReadinessNotice(
+          icon: Icons.pause_circle_outline_rounded,
+          title: 'Not accepting applications',
+          message:
+              'This scholarship is currently inactive. Explore other scholarships instead.',
+        );
+
+      case ApplicationReadinessState.notEligible:
+        return _ReadinessNotice(
+          icon: Icons.info_outline_rounded,
+          title: "Why you can't apply",
+          message:
+              'Based on your profile, the requirements below are not met:',
+          reasons: readiness.reasons,
+        );
+
+      case ApplicationReadinessState.profileIncomplete:
+        if (userId == null) {
+          // Signed out: preserve the existing safety flow — the Apply action
+          // stays available and the sign-in requirement is surfaced on tap.
+          return _applyButton(onPressed: _applySignedOut);
+        }
+        // Reuse the existing profile-setup route; no new navigation surface.
+        return _ReadinessNotice(
+          icon: Icons.person_add_alt_1_outlined,
+          title: 'Finish your profile to apply',
+          message:
+              'Your profile is incomplete, so we cannot check your eligibility yet.',
+          actionLabel: 'Update profile',
+          onAction: () => context.go('/profile-setup/personal'),
+        );
+    }
+  }
+
+  Widget _applyButton({required VoidCallback? onPressed}) {
     return Semantics(
       button: true,
       label: 'Apply to this scholarship',
@@ -325,7 +452,7 @@ class _ApplySectionState extends ConsumerState<_ApplySection> {
         label: _isApplying ? 'Applying...' : 'Apply now',
         icon: Icons.send_rounded,
         loading: _isApplying,
-        onPressed: _isApplying ? null : _apply,
+        onPressed: _isApplying ? null : onPressed,
       ),
     );
   }
@@ -372,6 +499,121 @@ class _AppliedBanner extends StatelessWidget {
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+/// The Apply section's unavailable/readiness state: explains why the Apply
+/// action is not offered (closed, inactive, not eligible, profile incomplete)
+/// without pretending a missing profile is an eligibility verdict.
+class _ReadinessNotice extends StatelessWidget {
+  const _ReadinessNotice({
+    required this.icon,
+    required this.title,
+    required this.message,
+    this.reasons = const [],
+    this.actionLabel,
+    this.onAction,
+  });
+
+  final IconData icon;
+  final String title;
+  final String message;
+
+  /// Deterministic missing-criterion explanations (non-eligible state only).
+  final List<String> reasons;
+  final String? actionLabel;
+  final VoidCallback? onAction;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: kPrimarySoft,
+        borderRadius: BorderRadius.circular(kRadiusInput),
+        border: Border.all(color: kPrimary.withValues(alpha: 0.3)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(icon, size: 22, color: kPrimary),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Text(
+                  title,
+                  style: poppins(
+                    fontSize: 15,
+                    fontWeight: FontWeight.w600,
+                    color: kPrimary,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 6),
+          Text(
+            message,
+            style: openSans(fontSize: 13, color: Colors.black54),
+          ),
+          if (reasons.isNotEmpty) ...[
+            const SizedBox(height: 10),
+            Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              children: reasons.map((r) => _ReadinessReason(label: r)).toList(),
+            ),
+          ],
+          if (actionLabel != null && onAction != null) ...[
+            const SizedBox(height: 12),
+            OutlinedButton.icon(
+              onPressed: onAction,
+              icon: const Icon(Icons.edit_outlined),
+              label: Text(actionLabel!),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+}
+
+/// A single missing-criterion pill. Unlike the match-reason check pills, these
+/// use a neutral marker — they explain a blocker, not a match.
+class _ReadinessReason extends StatelessWidget {
+  const _ReadinessReason({required this.label});
+
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: kPrimary.withValues(alpha: 0.2)),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const Icon(Icons.remove_circle_outline, size: 15, color: kPrimary),
+          const SizedBox(width: 5),
+          ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 260),
+            child: Text(
+              label,
+              style: GoogleFonts.openSans(
+                fontSize: 12,
+                fontWeight: FontWeight.w600,
+                color: kPrimary,
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -472,7 +714,9 @@ class _AmountCard extends StatelessWidget {
                 ),
                 const SizedBox(width: 6),
                 Text(
-                  closing ? 'Closing soon — ${deadlineLabel(scholarship.deadline)}' : deadlineLabel(scholarship.deadline),
+                  closing
+                      ? 'Closing soon — ${deadlineLabel(scholarship.deadline)}'
+                      : deadlineLabel(scholarship.deadline),
                   style: GoogleFonts.poppins(
                     fontSize: 13,
                     fontWeight: FontWeight.w600,

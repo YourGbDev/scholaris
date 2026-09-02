@@ -19,12 +19,17 @@
 // and the Get-started CTA is choreographed to fade in only after the final
 // card has settled — the reward at the end of the sequence. It uses only
 // FadeTransition / SlideTransition / AnimatedSwitcher driven by Interval
-// curves over the shared entrance controller plus one timeline controller — no
-// assets, no third-party animation packages.
+// curves over the shared entrance controller plus one timeline controller.
 //
-// Reduced motion: when the platform requests reduced animations both the
-// entrance and the matching timeline jump to their settled state, so every
-// card is visible and the CTA is enabled on the first frame.
+// Day 18: between the story copy and the matching preview sits a Lottie-powered
+// "match hero" ([MatchHero]) — the student/graduation visual with its
+// certificate and celebration strokes. It plays once (its own lifecycle),
+// reports completion, and only then releases the native matching timeline via a
+// microtask-deferred [_matching].forward(), so the hero acts as the visual
+// bridge into the existing sequence. Reduced motion skips the hero's playback
+// (it settles into its meaningful end state) and jumps the matching timeline to
+// its completed state; if the Lottie asset cannot load the hero renders a
+// simple native fallback and the flow continues.
 
 import 'dart:math' as math;
 
@@ -32,6 +37,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import 'package:scholaris/features/auth/presentation/match_hero.dart';
 import 'package:scholaris/shared/theme/app_theme.dart';
 import 'package:scholaris/shared/widgets/entrance.dart';
 import 'package:scholaris/shared/widgets/scholaris_logo_badge.dart';
@@ -69,6 +75,14 @@ const int _taglineBeginMs = 1060;
 const int _taglineEndMs = 1360;
 const int _storyBeginMs = 1420;
 const int _storyEndMs = 1660;
+
+/// Day 18: the match hero fades in right after the story copy settles, before
+/// the matching preview begins its reveal.
+const int _heroBeginMs = 1660;
+const int _heroEndMs = 1800;
+
+/// The matching preview reveal overlaps with the hero's fade-in tail so it is
+/// present when the hero's animation begins.
 const int _previewBeginMs = 1660;
 const int _previewEndMs = 1900;
 
@@ -129,6 +143,8 @@ class _IntroScreenState extends ConsumerState<IntroScreen>
 
   bool _matchingStarted = false;
   bool _entranceReady = false;
+  bool _heroComplete = false;
+  bool _matchingForwarded = false;
 
   /// True once the CTA reveal has fully resolved, making the button tappable.
   bool _ctaReady = false;
@@ -147,25 +163,26 @@ class _IntroScreenState extends ConsumerState<IntroScreen>
   void _onEntranceTick() {
     if (_entranceReady || entranceController.value < 1.0) return;
     setState(() => _entranceReady = true);
-    // The matching timeline begins only once the branding entrance has fully
-    // settled, so branding and matching never overlap. Reduced motion already
-    // jumped the timeline to its end (see didChangeDependencies), so it never
-    // forwards.
-    //
-    // The forward is deferred to a microtask: this listener fires while the
-    // entrance controller is still notifying from inside its own tick, and
-    // starting a fresh ticker from within that notification is not clock-safe
-    // (the new ticker would capture the frame timestamp while the entrance
-    // controller is mid-notification). By the time the microtask runs the
-    // notification cycle has unwound — still within the same frame — so the
-    // matching ticker starts cleanly with the correct start time and the
-    // Day 17 sequence is unchanged.
-    if (!reducedMotion) {
-      Future<void>.microtask(() {
-        if (!mounted) return;
-        _matching.forward();
-      });
-    }
+    // Normal motion: the matching timeline is released by the hero's completion
+    // (see [_onHeroCompleted]) once the entrance is settled. Reduced motion
+    // already jumped the timeline to its end (see didChangeDependencies).
+  }
+
+  /// Called when the [MatchHero] reaches its end state (playback finished,
+  /// settled under reduced motion, or the Lottie asset failed to load).
+  ///
+  /// Releases the existing matching timeline so the opportunity cards reveal
+  /// themselves. The forward is deferred to a microtask so we never start the
+  /// matching ticker while a controller listener is still being notified.
+  void _onHeroCompleted() {
+    if (_heroComplete) return;
+    _heroComplete = true;
+    if (!_entranceReady || reducedMotion || _matchingForwarded) return;
+    _matchingForwarded = true;
+    Future<void>.microtask(() {
+      if (!mounted) return;
+      _matching.forward();
+    });
   }
 
   void _onCtaTick() {
@@ -192,8 +209,8 @@ class _IntroScreenState extends ConsumerState<IntroScreen>
         });
       });
     }
-    // Normal motion: the matching timeline is started by _onEntranceTick once
-    // the entrance controller reaches 1.0 (the branding block has settled).
+    // Normal motion: the matching timeline is released by the hero's completion
+    // (see [_onHeroCompleted]) once the entrance is settled.
   }
 
   @override
@@ -312,16 +329,28 @@ class _IntroScreenState extends ConsumerState<IntroScreen>
                       style: openSans(fontSize: 14, color: Colors.black45),
                     ),
                   ),
-                  const SizedBox(height: 24),
-                  // --- 5. Matching preview -----------------------------------
+                  const SizedBox(height: 20),
+                  // --- 5. Match hero (Day 18) ------------------------------
                   entranceItem(
                     index: 4,
+                    offset: const Offset(0, 0.08),
+                    interval: _entranceInterval(_heroBeginMs, _heroEndMs),
+                    child: MatchHero(
+                      key: const Key('match-hero'),
+                      start: _entranceReady,
+                      onCompleted: _onHeroCompleted,
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  // --- 6. Matching preview ----------------------------------
+                  entranceItem(
+                    index: 5,
                     offset: const Offset(0, 0.08),
                     interval: _entranceInterval(_previewBeginMs, _previewEndMs),
                     child: _buildMatchingPreview(),
                   ),
                   const SizedBox(height: 28),
-                  // --- 6. CTA + footer (reveal at the tail of the matching
+                  // --- 7. CTA + footer (reveal at the tail of the matching
                   //        timeline, not as part of the entrance stagger) -----
                   _buildCta(),
                 ],
@@ -418,10 +447,8 @@ class _IntroScreenState extends ConsumerState<IntroScreen>
           duration: const Duration(milliseconds: 280),
           switchInCurve: Curves.easeOutCubic,
           switchOutCurve: Curves.easeInCubic,
-          layoutBuilder: (currentChild, previousChildren) => Stack(
-            alignment: Alignment.center,
-            children: [?currentChild],
-          ),
+          layoutBuilder: (currentChild, previousChildren) =>
+              Stack(alignment: Alignment.center, children: [?currentChild]),
           transitionBuilder: (child, animation) {
             final offset = Tween<Offset>(
               begin: const Offset(0, 0.12),

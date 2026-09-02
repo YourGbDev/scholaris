@@ -18,6 +18,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:scholaris/app/router.dart';
 import 'package:scholaris/features/auth/presentation/intro_screen.dart';
 import 'package:scholaris/features/auth/presentation/login_screen.dart';
+import 'package:scholaris/features/auth/presentation/match_hero.dart';
 import 'package:scholaris/shared/widgets/entrance.dart';
 
 void main() {
@@ -55,6 +56,40 @@ void main() {
       ],
     );
     return MaterialApp.router(routerConfig: router);
+  }
+
+  /// Pumps the intro through the entrance and the Lottie match hero so the
+  /// matching timeline has just been released. Returns with the matching
+  /// timeline at ~0ms (its first tick has established the ticker start time).
+  Future<void> pumpThroughHero(WidgetTester tester) async {
+    await tester.pumpWidget(introHarness());
+    await tester.pump();
+    // Branding entrance settles first.
+    await tester.pump(const Duration(milliseconds: kIntroEntranceTotalMs));
+    // The hero only begins after the entrance is ready.
+    await tester.pump();
+    // Hero plays its full natural Lottie duration.
+    await tester.pump(const Duration(milliseconds: kMatchHeroDurationMs));
+    // Hero completion is delivered post-frame, then _matching.forward() is
+    // deferred via a microtask, so two flush frames hand control over.
+    await tester.pump();
+    await tester.pump();
+  }
+
+  /// Advances [ms] of fake time in fixed small steps. The matching ticker (and
+  /// the Lottie ticker) only make progress when frames are pumped individually,
+  /// so a single large pump would leave the controller at its start value.
+  Future<void> pumpSteps(
+    WidgetTester tester,
+    int ms, {
+    int stepMs = 200,
+  }) async {
+    var remaining = ms;
+    while (remaining > 0) {
+      final step = remaining < stepMs ? remaining : stepMs;
+      await tester.pump(Duration(milliseconds: step));
+      remaining -= step;
+    }
   }
 
   group('StaggeredEntrance', () {
@@ -130,28 +165,23 @@ void main() {
       tester,
     ) async {
       await useLargeSurface(tester);
-      await tester.pumpWidget(introHarness());
-      await tester.pump();
+      await pumpThroughHero(tester);
 
-      // The branding entrance (logo → wordmark → tagline → story → preview)
-      // resolves first; only then does the matching timeline begin, so branding
-      // and matching never overlap.
-      await tester.pump(const Duration(milliseconds: kIntroEntranceTotalMs));
-
-      // Just past the first reveal point: one opportunity visible.
-      await tester.pump(const Duration(milliseconds: 750));
+      // The hero gates the matching timeline: nothing reveals until it has
+      // completed. Just past the first reveal point: one opportunity visible.
+      await pumpSteps(tester, 1500);
       expect(find.text('STEM Futures Grant'), findsOneWidget);
       expect(find.text('Luzon Merit Scholarship'), findsNothing);
 
-      // Past the last reveal point but before completion: all three cards.
-      await tester.pump(const Duration(milliseconds: 2100));
+      // Past the last reveal point: all three cards visible.
+      await pumpSteps(tester, 2000);
       expect(find.text('STEM Futures Grant'), findsOneWidget);
       expect(find.text('Luzon Merit Scholarship'), findsOneWidget);
       expect(find.text('Future Educators Fund'), findsOneWidget);
       expect(find.text('Matching your academics…'), findsNothing);
 
       // Timeline complete: the final summary replaces the progress status.
-      await tester.pump(const Duration(milliseconds: 1600));
+      await pumpSteps(tester, 1500);
       expect(find.text('12 scholarships fit you'), findsOneWidget);
       expect(find.text('94%'), findsOneWidget);
       expect(find.text('82%'), findsOneWidget);
@@ -175,10 +205,14 @@ void main() {
         );
 
         // The entrance settling is no longer sufficient: the matching timeline
-        // is gated to start only after the branding entrance settles, and the
-        // CTA is the reward at the end of that sequence, so it must stay gated
-        // until the timeline has finished.
+        // is gated to start only after the hero completes, and the CTA is the
+        // reward at the end of that sequence, so it must stay gated until both
+        // the hero and the matching timeline have finished.
         await tester.pump(const Duration(milliseconds: kIntroEntranceTotalMs));
+        await tester.pump(); // flush hero start
+        await tester.pump(const Duration(milliseconds: kMatchHeroDurationMs));
+        await tester.pump(); // hero completion → post-frame onCompleted
+        await tester.pump(); // microtask → matching.forward()
         expect(
           tester
               .widget<ElevatedButton>(
@@ -186,11 +220,11 @@ void main() {
               )
               .onPressed,
           isNull,
-          reason: 'the CTA must wait for the matching sequence, not just the entrance',
+          reason: 'the CTA must wait for the matching sequence after the hero, not just the entrance',
         );
 
         // Run the matching timeline past the CTA reveal so it resolves.
-        await tester.pump(const Duration(milliseconds: 3600));
+        await pumpSteps(tester, 4200);
 
         expect(
           tester
@@ -220,19 +254,26 @@ void main() {
       await tester.pumpWidget(introHarness());
       await tester.pump();
 
-      // Branding entrance settles first; the matching timeline starts in its
-      // reading stage only after the entrance has fully resolved.
+      // Branding entrance settles first; the hero plays its Lottie once, then
+      // the matching timeline begins.
       await tester.pump(const Duration(milliseconds: kIntroEntranceTotalMs));
+      await tester.pump(); // flush hero start
+      await tester.pump(const Duration(milliseconds: kMatchHeroDurationMs));
+      await tester
+          .pump(); // flush hero completion → matching.forward() scheduled
+      await tester.pump(); // matching.forward() executes, ticker arms
+
       expect(find.text('Reading your profile…'), findsOneWidget);
 
       // Past the first reveal point and the AnimatedSwitcher settle window:
-      // the matching status is shown and the previous one is gone.
-      await tester.pump(const Duration(milliseconds: 1050));
+      // the matching status is shown and the previous one is gone. Pump in
+      // small steps so the matching ticker actually advances.
+      await pumpSteps(tester, 1500);
       expect(find.text('Matching your academics…'), findsOneWidget);
       expect(find.text('Reading your profile…'), findsNothing);
 
       // Timeline complete: the final summary replaces the ranking status.
-      await tester.pump(const Duration(milliseconds: 3200));
+      await pumpSteps(tester, 2700);
       expect(find.text('12 scholarships fit you'), findsOneWidget);
       expect(find.text('Ranking opportunities…'), findsNothing);
     });
@@ -258,6 +299,76 @@ void main() {
             .onPressed,
         isNotNull,
       );
+    });
+  });
+
+  group('MatchHero', () {
+    testWidgets('plays once and reports completion at its natural duration', (
+      tester,
+    ) async {
+      var completed = 0;
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: MatchHero(start: true, onCompleted: () => completed++),
+          ),
+        ),
+      );
+      await tester.pump(); // first frame; asset load starts
+      await tester.pump(); // composition resolves and playback begins
+      expect(completed, 0, reason: 'completion must wait for playback');
+
+      // Pump in small steps so the Lottie ticker actually advances.
+      await pumpSteps(tester, kMatchHeroDurationMs + 200);
+      await tester.pump(); // post-frame delivery of onCompleted
+      expect(completed, 1);
+
+      // No Lottie, no settle: the hero is rendered by the Lottie asset.
+      expect(find.byType(MatchHero), findsOneWidget);
+    });
+
+    testWidgets('reduced motion settles immediately into the settled state', (
+      tester,
+    ) async {
+      useReducedMotion(tester);
+      var completed = 0;
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: MatchHero(start: true, onCompleted: () => completed++),
+          ),
+        ),
+      );
+      await tester.pump();
+      await tester.pump();
+
+      expect(completed, 1, reason: 'reduced motion must not animate the hero');
+      // The native settled state (graduation cap + check) is shown.
+      expect(find.byIcon(Icons.school_outlined), findsOneWidget);
+      expect(find.byIcon(Icons.check), findsOneWidget);
+    });
+
+    testWidgets('falls back to the native settled state when the asset fails', (
+      tester,
+    ) async {
+      var completed = 0;
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: MatchHero(
+              start: true,
+              assetPath: 'assets/animations/does_not_exist.json',
+              onCompleted: () => completed++,
+            ),
+          ),
+        ),
+      );
+      await tester.pump(); // errorBuilder fires and schedules onCompleted
+      await tester.pump(); // post-frame delivery of onCompleted
+
+      expect(completed, 1, reason: 'the flow must continue on asset failure');
+      expect(find.byIcon(Icons.school_outlined), findsOneWidget);
+      expect(find.byIcon(Icons.check), findsOneWidget);
     });
   });
 

@@ -56,6 +56,21 @@ abstract final class EntranceMotion {
       curve: curve,
     );
   }
+
+  /// Builds a custom [Interval] for a bespoke entrance choreography (e.g. the
+  /// intro's staged branding). [beginMs] and [endMs] are milliseconds into an
+  /// entrance lasting [durationMs]; both are clamped to that range so the
+  /// result is always a valid [Interval] regardless of the host's timeline.
+  static Interval intervalFrom(
+    int beginMs,
+    int endMs,
+    int durationMs, {
+    Curve curve = curve,
+  }) => Interval(
+    (beginMs / durationMs).clamp(0.0, 1.0),
+    (endMs / durationMs).clamp(0.0, 1.0),
+    curve: curve,
+  );
 }
 
 /// State mixin that drives a screen's staggered entrance.
@@ -68,9 +83,15 @@ abstract final class EntranceMotion {
 /// call `super.dispose()` so the controller is released.
 mixin EntranceMotionMixin<T extends StatefulWidget>
     on State<T>, TickerProviderStateMixin<T> {
+  /// Entrance duration for this host. Defaults to [EntranceMotion.total];
+  /// hosts with a bespoke choreography (like the intro's staged branding)
+  /// override this to extend the timeline without changing the shared toolkit
+  /// defaults used by every other screen.
+  Duration get entranceDuration => EntranceMotion.total;
+
   late final AnimationController entranceController = AnimationController(
     vsync: this,
-    duration: EntranceMotion.total,
+    duration: entranceDuration,
   );
 
   // Null until the first didChangeDependencies so the initial read always
@@ -105,22 +126,26 @@ mixin EntranceMotionMixin<T extends StatefulWidget>
     super.dispose();
   }
 
-  /// The curved progress of item [index] over [entranceController].
-  Animation<double> entranceFor(int index) => CurvedAnimation(
-    parent: entranceController,
-    curve: EntranceMotion.intervalFor(index),
-  );
+  /// The curved progress of item [index] over [entranceController]. Pass an
+  /// explicit [interval] to override the default stagger (used by hosts with a
+  /// bespoke choreography such as the intro's staged branding).
+  Animation<double> entranceFor(int index, {Interval? interval}) =>
+      CurvedAnimation(
+        parent: entranceController,
+        curve: interval ?? EntranceMotion.intervalFor(index),
+      );
 
   /// Wraps [child] in the standard entrance transitions for item [index]:
   /// fade in, rise by [offset] (fractional), and optionally scale up from
-  /// [scaleFrom].
+  /// [scaleFrom]. Pass an explicit [interval] to override the default stagger.
   Widget entranceItem({
     required int index,
     required Widget child,
     Offset offset = const Offset(0, 0.18),
     double scaleFrom = 1.0,
+    Interval? interval,
   }) {
-    final animation = entranceFor(index);
+    final animation = entranceFor(index, interval: interval);
     Widget result = FadeTransition(
       opacity: animation,
       child: SlideTransition(

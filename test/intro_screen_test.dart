@@ -1,5 +1,7 @@
-// Day 16 tests: entrance motion toolkit, the intro screen, the login screen's
-// staggered entrance, and the /intro redirect decisions.
+// Day 16-17 tests: entrance motion toolkit, the intro screen (staggered brand
+// entrance, sequential card reveals, narrated status transitions, end-of-
+// sequence CTA lifecycle), the login screen's staggered entrance, and the
+// /intro redirect decisions.
 //
 // All animation here is native Flutter (AnimationController + intervals), so
 // tests can pump the virtual clock deterministically. Reduced-motion cases
@@ -131,6 +133,11 @@ void main() {
       await tester.pumpWidget(introHarness());
       await tester.pump();
 
+      // The branding entrance (logo → wordmark → tagline → story → preview)
+      // resolves first; only then does the matching timeline begin, so branding
+      // and matching never overlap.
+      await tester.pump(const Duration(milliseconds: kIntroEntranceTotalMs));
+
       // Just past the first reveal point: one opportunity visible.
       await tester.pump(const Duration(milliseconds: 750));
       expect(find.text('STEM Futures Grant'), findsOneWidget);
@@ -150,42 +157,84 @@ void main() {
       expect(find.text('82%'), findsOneWidget);
     });
 
-    testWidgets('CTA is gated until the entrance settles, then navigates', (
+    testWidgets(
+      'CTA stays gated until the matching sequence settles, then navigates',
+      (tester) async {
+        await useLargeSurface(tester);
+        await tester.pumpWidget(introHarness());
+        await tester.pump();
+
+        expect(
+          tester
+              .widget<ElevatedButton>(
+                find.widgetWithText(ElevatedButton, 'Get started'),
+              )
+              .onPressed,
+          isNull,
+          reason: 'the CTA must not be tappable mid-entrance',
+        );
+
+        // The entrance settling is no longer sufficient: the matching timeline
+        // is gated to start only after the branding entrance settles, and the
+        // CTA is the reward at the end of that sequence, so it must stay gated
+        // until the timeline has finished.
+        await tester.pump(const Duration(milliseconds: kIntroEntranceTotalMs));
+        expect(
+          tester
+              .widget<ElevatedButton>(
+                find.widgetWithText(ElevatedButton, 'Get started'),
+              )
+              .onPressed,
+          isNull,
+          reason: 'the CTA must wait for the matching sequence, not just the entrance',
+        );
+
+        // Run the matching timeline past the CTA reveal so it resolves.
+        await tester.pump(const Duration(milliseconds: 3600));
+
+        expect(
+          tester
+              .widget<ElevatedButton>(
+                find.widgetWithText(ElevatedButton, 'Get started'),
+              )
+              .onPressed,
+          isNotNull,
+          reason: 'the CTA becomes tappable once the matching sequence settles',
+        );
+
+        await tester.tap(find.text('Get started'));
+        await tester.pump();
+        await tester.pumpAndSettle();
+
+        expect(find.text('Welcome back'), findsOneWidget);
+        expect(find.text('Log in'), findsOneWidget);
+        // The Hero logo made it to the login screen (flight completed).
+        expect(find.byType(Hero), findsOneWidget);
+      },
+    );
+
+    testWidgets('status text transitions through distinct narrated stages', (
       tester,
     ) async {
       await useLargeSurface(tester);
       await tester.pumpWidget(introHarness());
       await tester.pump();
 
-      expect(
-        tester
-            .widget<ElevatedButton>(
-              find.widgetWithText(ElevatedButton, 'Get started'),
-            )
-            .onPressed,
-        isNull,
-        reason: 'the CTA must not be tappable mid-entrance',
-      );
+      // Branding entrance settles first; the matching timeline starts in its
+      // reading stage only after the entrance has fully resolved.
+      await tester.pump(const Duration(milliseconds: kIntroEntranceTotalMs));
+      expect(find.text('Reading your profile…'), findsOneWidget);
 
-      await tester.pump(EntranceMotion.total);
+      // Past the first reveal point and the AnimatedSwitcher settle window:
+      // the matching status is shown and the previous one is gone.
+      await tester.pump(const Duration(milliseconds: 1050));
+      expect(find.text('Matching your academics…'), findsOneWidget);
+      expect(find.text('Reading your profile…'), findsNothing);
 
-      expect(
-        tester
-            .widget<ElevatedButton>(
-              find.widgetWithText(ElevatedButton, 'Get started'),
-            )
-            .onPressed,
-        isNotNull,
-      );
-
-      await tester.tap(find.text('Get started'));
-      await tester.pump();
-      await tester.pumpAndSettle();
-
-      expect(find.text('Welcome back'), findsOneWidget);
-      expect(find.text('Log in'), findsOneWidget);
-      // The Hero logo made it to the login screen (flight completed).
-      expect(find.byType(Hero), findsOneWidget);
+      // Timeline complete: the final summary replaces the ranking status.
+      await tester.pump(const Duration(milliseconds: 3200));
+      expect(find.text('12 scholarships fit you'), findsOneWidget);
+      expect(find.text('Ranking opportunities…'), findsNothing);
     });
 
     testWidgets('reduced motion shows the settled intro immediately', (

@@ -213,7 +213,8 @@ final routerProvider = Provider<GoRouter>((ref) {
 /// Calm fade + slight rise used for the first-run surfaces (intro → login).
 /// Restrained by design: no bounce, no zoom; the content simply settles into
 /// place while the Scholaris logo Hero (tag: kScholarisLogoHeroTag) flies
-/// between the two screens on its own overlay.
+/// between the two screens on its own overlay. The ~400ms duration keeps the
+/// hand-off alive without feeling abrupt or sluggish (350–450ms target).
 CustomTransitionPage<void> _fadeRisePage(
   GoRouterState state, {
   required Widget child,
@@ -221,16 +222,33 @@ CustomTransitionPage<void> _fadeRisePage(
   return CustomTransitionPage<void>(
     key: state.pageKey,
     child: child,
+    transitionDuration: const Duration(milliseconds: 400),
     transitionsBuilder: (context, animation, secondaryAnimation, child) {
       final curved = CurvedAnimation(parent: animation, curve: Curves.easeOut);
+      // The outgoing page (the route beneath this one) fades out via
+      // secondaryAnimation so the intro → login hand-off is a clean cross-
+      // fade. Without this, the outgoing content stays fully opaque during the
+      // first ~50ms of the transition (easeOut starts slow), causing two
+      // overlapping Scholaris wordmarks at different positions for a few
+      // frames. The easeOut + Interval(0.0, 0.15) on the outgoing fade
+      // compresses the fade-out into the first ~15% of the transition so the
+      // underlying wordmark is gone (~21ms at 400ms transition duration) before
+      // the incoming one becomes visible.
+      final outgoingFade = CurvedAnimation(
+        parent: secondaryAnimation,
+        curve: const Interval(0.0, 0.15, curve: Curves.easeOut),
+      );
       return FadeTransition(
-        opacity: curved,
-        child: SlideTransition(
-          position: Tween<Offset>(
-            begin: const Offset(0, 0.03),
-            end: Offset.zero,
-          ).animate(curved),
-          child: child,
+        opacity: Tween<double>(begin: 1.0, end: 0.0).animate(outgoingFade),
+        child: FadeTransition(
+          opacity: curved,
+          child: SlideTransition(
+            position: Tween<Offset>(
+              begin: const Offset(0, 0.03),
+              end: Offset.zero,
+            ).animate(curved),
+            child: child,
+          ),
         ),
       );
     },

@@ -22,6 +22,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 //   profile_setup_screen.dart → ProfileSetupScreen({required String step})
 import 'package:scholaris/features/auth/controllers/auth_controller.dart';
 import 'package:scholaris/features/auth/presentation/forgot_password_screen.dart';
+import 'package:scholaris/features/auth/presentation/intro_screen.dart';
 import 'package:scholaris/features/auth/presentation/login_screen.dart';
 import 'package:scholaris/features/auth/presentation/reset_password_screen.dart';
 import 'package:scholaris/features/auth/presentation/signup_screen.dart';
@@ -43,8 +44,8 @@ import 'package:scholaris/features/scholarships/presentation/scholarship_detail_
 
 final profileCompleteProvider =
     AsyncNotifierProvider<ProfileCompleteNotifier, bool>(
-  ProfileCompleteNotifier.new,
-);
+      ProfileCompleteNotifier.new,
+    );
 
 class ProfileCompleteNotifier extends AsyncNotifier<bool> {
   @override
@@ -52,8 +53,7 @@ class ProfileCompleteNotifier extends AsyncNotifier<bool> {
     // Rebuild whenever the signed-in user changes, so the redirect below is
     // never evaluated against a previous user's profile.
     ref.watch(currentUserIdProvider);
-    final profile =
-        await ref.watch(profileRepositoryProvider).fetchCurrent();
+    final profile = await ref.watch(profileRepositoryProvider).fetchCurrent();
     return profile?.setupComplete ?? false;
   }
 
@@ -75,23 +75,30 @@ final routerProvider = Provider<GoRouter>((ref) {
   ref.read(authSessionProvider);
 
   final router = GoRouter(
-    initialLocation: '/splash',
+    initialLocation: '/intro',
     redirect: (context, state) => _redirect(ref, state),
     routes: <RouteBase>[
-      // --- Root / splash -----------------------------------------------------
-      // Shown while the redirect logic decides where to send the user.
+      // --- Intro --------------------------------------------------------------
+      // First-run landing for signed-out visitors: the animated "student →
+      // matching → scholarships" preview, then Get started → /login. Signed-in
+      // users are redirected away by the auth logic below, so a returning
+      // user opening the app lands on splash / home / setup as before.
       GoRoute(
-        path: '/splash',
-        name: 'splash',
-        builder: (context, state) => const SplashScreen(),
+        path: '/intro',
+        name: 'intro',
+        pageBuilder: (context, state) =>
+            _fadeRisePage(state, child: const IntroScreen()),
       ),
 
-      // --- Auth group --------------------------------------------------------
+      // --- Auth group ---------------------------------------------------------
       // Unauthenticated entry points. Access is guarded in _redirect.
       GoRoute(
         path: '/login',
         name: 'login',
-        builder: (context, state) => const LoginScreen(),
+        // Custom page transition so the intro → login hand-off (including the
+        // Scholaris logo Hero flight) plays as one calm, continuous motion.
+        pageBuilder: (context, state) =>
+            _fadeRisePage(state, child: const LoginScreen()),
       ),
       GoRoute(
         path: '/signup',
@@ -113,6 +120,14 @@ final routerProvider = Provider<GoRouter>((ref) {
         name: 'verify-email',
         builder: (context, state) =>
             VerifyEmailScreen(email: state.uri.queryParameters['email']),
+      ),
+
+      // --- Root / splash -----------------------------------------------------
+      // Shown while the redirect logic decides where to send the user.
+      GoRoute(
+        path: '/splash',
+        name: 'splash',
+        builder: (context, state) => const SplashScreen(),
       ),
 
       // --- Main app ----------------------------------------------------------
@@ -177,7 +192,9 @@ final routerProvider = Provider<GoRouter>((ref) {
   // refresh, turning a single token renewal into an unbounded refresh loop
   // (burning refresh tokens until Supabase rate-limits with a 429 and signs
   // the user out). React only to real session changes.
-  final authSub = Supabase.instance.client.auth.onAuthStateChange.listen((event) {
+  final authSub = Supabase.instance.client.auth.onAuthStateChange.listen((
+    event,
+  ) {
     debugPrint(
       '[AUTH EVENT] event=${event.event.name} session=${event.session != null} user=${event.session?.user.id}',
     );
@@ -192,6 +209,33 @@ final routerProvider = Provider<GoRouter>((ref) {
 
   return router;
 });
+
+/// Calm fade + slight rise used for the first-run surfaces (intro → login).
+/// Restrained by design: no bounce, no zoom; the content simply settles into
+/// place while the Scholaris logo Hero (tag: kScholarisLogoHeroTag) flies
+/// between the two screens on its own overlay.
+CustomTransitionPage<void> _fadeRisePage(
+  GoRouterState state, {
+  required Widget child,
+}) {
+  return CustomTransitionPage<void>(
+    key: state.pageKey,
+    child: child,
+    transitionsBuilder: (context, animation, secondaryAnimation, child) {
+      final curved = CurvedAnimation(parent: animation, curve: Curves.easeOut);
+      return FadeTransition(
+        opacity: curved,
+        child: SlideTransition(
+          position: Tween<Offset>(
+            begin: const Offset(0, 0.03),
+            end: Offset.zero,
+          ).animate(curved),
+          child: child,
+        ),
+      );
+    },
+  );
+}
 
 /// Route path constants for the profile-setup wizard, so the screen can
 /// advance steps with `context.go(ProfileSetupRoute.academic)`.
@@ -209,11 +253,17 @@ abstract final class AuthRoute {
   static const verifyEmail = '/verify-email';
 }
 
+/// The classic auth screens a signed-out user may always reach. `/intro` is
+/// handled separately by [_redirect] so it can share the signed-out behavior
+/// without being treated as a login/signup target elsewhere.
+bool _isAuthRoute(String location) =>
+    location == '/login' || location == '/signup';
+
 /// Auth-aware redirect:
 ///  - forgot-password route       → always allowed (public request screen)
 ///  - verify-email route          → allowed when signed out
 ///  - recovery session active     → /reset-password (before any profile read)
-///  - signed out                  → /login (except /login, /signup)
+///  - signed out                  → /login (except /login, /signup, /intro)
 ///  - signed in, profile busy     → /splash while loading
 ///  - signed in, complete         → /home
 ///  - signed in, incomplete       → /profile-setup/personal
@@ -223,7 +273,7 @@ String? _redirect(Ref ref, GoRouterState state) {
     location: location,
     isLoggedIn: ref.read(authSessionProvider) != null,
     recoveryActive: ref.read(passwordRecoveryProvider),
-    onAuthRoute: location == '/login' || location == '/signup',
+    onAuthRoute: location == '/intro' || _isAuthRoute(location),
     onVerifyRoute: location == AuthRoute.verifyEmail,
     onSetupRoute: location.startsWith('/profile-setup'),
     profileLoading: ref.read(profileCompleteProvider).isLoading,

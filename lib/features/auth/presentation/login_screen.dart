@@ -8,6 +8,9 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import 'package:scholaris/shared/widgets/entrance.dart';
+import 'package:scholaris/shared/widgets/scholaris_logo_badge.dart';
+
 // Scholaris brand palette.
 const _primary = Color(0xFF0F4D2E);
 const _background = Color(0xFFFAFAF8);
@@ -23,7 +26,10 @@ class LoginScreen extends StatefulWidget {
   State<LoginScreen> createState() => _LoginScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class _LoginScreenState extends State<LoginScreen>
+    with
+        TickerProviderStateMixin<LoginScreen>,
+        EntranceMotionMixin<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
@@ -57,9 +63,8 @@ class _LoginScreenState extends State<LoginScreen> {
         '[LOGIN] AuthException statusCode=${error.statusCode} code=${error.code} message=${error.message}',
       );
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        _snackBar(_friendlyError(error)),
-      );
+      ScaffoldMessenger.of(context)
+          .showSnackBar(_snackBar(_friendlyError(error)));
     } finally {
       if (mounted) setState(() => _isLoading = false);
     }
@@ -88,9 +93,8 @@ class _LoginScreenState extends State<LoginScreen> {
     return null;
   }
 
-  SnackBar _snackBar(String message) => SnackBar(
-        content: Text(message, style: GoogleFonts.openSans()),
-      );
+  SnackBar _snackBar(String message) =>
+      SnackBar(content: Text(message, style: GoogleFonts.openSans()));
 
   @override
   Widget build(BuildContext context) {
@@ -105,9 +109,17 @@ class _LoginScreenState extends State<LoginScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  _buildWordmark(),
+                  entranceItem(
+                    index: 0,
+                    offset: const Offset(0, 0.12),
+                    child: const Center(
+                      child: ScholarisLogoBadge(heroTag: kScholarisLogoHeroTag),
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  entranceItem(index: 1, child: _buildWordmark()),
                   const SizedBox(height: 32),
-                  _buildCard(),
+                  entranceItem(index: 2, child: _buildCard()),
                 ],
               ),
             ),
@@ -158,100 +170,118 @@ class _LoginScreenState extends State<LoginScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Text(
-              'Welcome back',
-              style: GoogleFonts.poppins(
-                color: _primary,
-                fontSize: 22,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-            const SizedBox(height: 16),
-            _textField(
-              controller: _emailController,
-              label: 'Email',
-              keyboardType: TextInputType.emailAddress,
-              textInputAction: TextInputAction.next,
-              validator: _validateEmail,
-            ),
-            const SizedBox(height: 16),
-            _textField(
-              controller: _passwordController,
-              label: 'Password',
-              obscureText: _obscurePassword,
-              textInputAction: TextInputAction.done,
-              onFieldSubmitted: (_) => _onLogin(),
-              suffixIcon: IconButton(
-                icon: Icon(
-                  _obscurePassword ? Icons.visibility_off : Icons.visibility,
-                  color: Colors.black45,
+            entranceItem(
+              index: 3,
+              child: Text(
+                'Welcome back',
+                style: GoogleFonts.poppins(
+                  color: _primary,
+                  fontSize: 22,
+                  fontWeight: FontWeight.w600,
                 ),
-                onPressed: () =>
-                    setState(() => _obscurePassword = !_obscurePassword),
               ),
-              validator: (value) => (value == null || value.isEmpty)
-                  ? 'Enter your password.'
-                  : null,
+            ),
+            const SizedBox(height: 16),
+            entranceItem(
+              index: 4,
+              child: _textField(
+                controller: _emailController,
+                label: 'Email',
+                keyboardType: TextInputType.emailAddress,
+                textInputAction: TextInputAction.next,
+                validator: _validateEmail,
+              ),
+            ),
+            const SizedBox(height: 16),
+            entranceItem(
+              index: 5,
+              child: _textField(
+                controller: _passwordController,
+                label: 'Password',
+                obscureText: _obscurePassword,
+                textInputAction: TextInputAction.done,
+                onFieldSubmitted: (_) => _onLogin(),
+                suffixIcon: IconButton(
+                  icon: Icon(
+                    _obscurePassword ? Icons.visibility_off : Icons.visibility,
+                    color: Colors.black45,
+                  ),
+                  onPressed: () =>
+                      setState(() => _obscurePassword = !_obscurePassword),
+                ),
+                validator: (value) => (value == null || value.isEmpty)
+                    ? 'Enter your password.'
+                    : null,
+              ),
             ),
             const SizedBox(height: 4),
-            Align(
-              alignment: Alignment.centerRight,
-              child: TextButton(
-                onPressed: _onForgotPassword,
-                child: Text(
-                  'Forgot password?',
-                  style: GoogleFonts.poppins(
-                    color: _primary,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ),
-            ),
-            const SizedBox(height: 8),
-            ElevatedButton(
-              onPressed: _isLoading ? null : _onLogin,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: _primary,
-                foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(vertical: 16),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(_inputRadius),
-                ),
-              ),
-              child: _isLoading
-                  ? const SizedBox(
-                      height: 20,
-                      width: 20,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2,
-                        color: Colors.white,
-                      ),
-                    )
-                  : Text(
-                      'Log in',
-                      style: GoogleFonts.poppins(fontWeight: FontWeight.w600),
-                    ),
-            ),
-            const SizedBox(height: 16),
-            Wrap(
-              alignment: WrapAlignment.center,
-              crossAxisAlignment: WrapCrossAlignment.center,
-              children: [
-                Text(
-                  "Don't have an account?",
-                  style: GoogleFonts.openSans(color: Colors.black54),
-                ),
-                TextButton(
-                  onPressed: () => context.push('/signup'),
+            entranceItem(
+              index: 6,
+              child: Align(
+                alignment: Alignment.centerRight,
+                child: TextButton(
+                  onPressed: _onForgotPassword,
                   child: Text(
-                    'Sign up',
+                    'Forgot password?',
                     style: GoogleFonts.poppins(
                       color: _primary,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
                 ),
-              ],
+              ),
+            ),
+            const SizedBox(height: 8),
+            entranceItem(
+              index: 7,
+              child: ElevatedButton(
+                onPressed: _isLoading ? null : _onLogin,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: _primary,
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(_inputRadius),
+                  ),
+                ),
+                child: _isLoading
+                    ? const SizedBox(
+                        height: 20,
+                        width: 20,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: Colors.white,
+                        ),
+                      )
+                    : Text(
+                        'Log in',
+                        style: GoogleFonts.poppins(fontWeight: FontWeight.w600),
+                      ),
+              ),
+            ),
+            const SizedBox(height: 16),
+            entranceItem(
+              index: 8,
+              child: Wrap(
+                alignment: WrapAlignment.center,
+                crossAxisAlignment: WrapCrossAlignment.center,
+                children: [
+                  Text(
+                    "Don't have an account?",
+                    style: GoogleFonts.openSans(color: Colors.black54),
+                  ),
+                  TextButton(
+                    onPressed: () => context.push('/signup'),
+                    child: Text(
+                      'Sign up',
+                      style: GoogleFonts.poppins(
+                        color: _primary,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ],
         ),
@@ -283,7 +313,10 @@ class _LoginScreenState extends State<LoginScreen> {
         suffixIcon: suffixIcon,
         filled: true,
         fillColor: Colors.white,
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 16,
+          vertical: 14,
+        ),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(_inputRadius),
           borderSide: BorderSide.none,

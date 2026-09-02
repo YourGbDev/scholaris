@@ -36,10 +36,8 @@ class _TestAuthNotifier extends AuthSessionNotifier {
   void signInAs(String userId) => state = AuthSession(userId: userId);
   void enterRecovery(String userId) =>
       state = AuthSession(userId: userId, passwordRecovery: true);
-  void completePasswordUpdate() => state = AuthSession(
-        userId: state!.userId,
-        passwordRecovery: false,
-      );
+  void completePasswordUpdate() =>
+      state = AuthSession(userId: state!.userId, passwordRecovery: false);
   void signOut() => state = null;
 }
 
@@ -49,26 +47,28 @@ void main() {
   });
 
   group('password recovery — auth state handling', () {
-    test('a recovery session sets passwordRecoveryProvider and the user id',
-        () {
-      final auth = _TestAuthNotifier();
-      final container = ProviderContainer(
-        overrides: [authSessionProvider.overrideWith(() => auth)],
-      );
-      addTearDown(container.dispose);
-      // Force the auth provider element to exist so the controllable notifier
-      // is bound to the container before any test drives state.
-      container.read(authSessionProvider);
+    test(
+      'a recovery session sets passwordRecoveryProvider and the user id',
+      () {
+        final auth = _TestAuthNotifier();
+        final container = ProviderContainer(
+          overrides: [authSessionProvider.overrideWith(() => auth)],
+        );
+        addTearDown(container.dispose);
+        // Force the auth provider element to exist so the controllable notifier
+        // is bound to the container before any test drives state.
+        container.read(authSessionProvider);
 
-      expect(container.read(passwordRecoveryProvider), isFalse);
-      expect(container.read(currentUserIdProvider), isNull);
+        expect(container.read(passwordRecoveryProvider), isFalse);
+        expect(container.read(currentUserIdProvider), isNull);
 
-      auth.enterRecovery('user-a');
+        auth.enterRecovery('user-a');
 
-      expect(container.read(passwordRecoveryProvider), isTrue);
-      expect(container.read(currentUserIdProvider), 'user-a');
-      expect(container.read(authSessionProvider)!.passwordRecovery, isTrue);
-    });
+        expect(container.read(passwordRecoveryProvider), isTrue);
+        expect(container.read(currentUserIdProvider), 'user-a');
+        expect(container.read(authSessionProvider)!.passwordRecovery, isTrue);
+      },
+    );
 
     test('a normal sign-in does not enter recovery mode', () {
       final auth = _TestAuthNotifier();
@@ -84,25 +84,27 @@ void main() {
       expect(container.read(currentUserIdProvider), 'user-a');
     });
 
-    test('a successful password update clears recovery but keeps the session',
-        () {
-      final auth = _TestAuthNotifier();
-      final container = ProviderContainer(
-        overrides: [authSessionProvider.overrideWith(() => auth)],
-      );
-      addTearDown(container.dispose);
-      container.read(authSessionProvider);
+    test(
+      'a successful password update clears recovery but keeps the session',
+      () {
+        final auth = _TestAuthNotifier();
+        final container = ProviderContainer(
+          overrides: [authSessionProvider.overrideWith(() => auth)],
+        );
+        addTearDown(container.dispose);
+        container.read(authSessionProvider);
 
-      auth.enterRecovery('user-a');
-      expect(container.read(passwordRecoveryProvider), isTrue);
+        auth.enterRecovery('user-a');
+        expect(container.read(passwordRecoveryProvider), isTrue);
 
-      // Supabase emits userUpdated after updateUser; the boundary must mirror
-      // that by keeping the user signed in but leaving recovery mode.
-      auth.completePasswordUpdate();
+        // Supabase emits userUpdated after updateUser; the boundary must mirror
+        // that by keeping the user signed in but leaving recovery mode.
+        auth.completePasswordUpdate();
 
-      expect(container.read(passwordRecoveryProvider), isFalse);
-      expect(container.read(currentUserIdProvider), 'user-a');
-    });
+        expect(container.read(passwordRecoveryProvider), isFalse);
+        expect(container.read(currentUserIdProvider), 'user-a');
+      },
+    );
 
     test('sign-out clears recovery mode', () {
       final auth = _TestAuthNotifier();
@@ -124,11 +126,10 @@ void main() {
   });
 
   group('forgot-password screen', () {
-    testWidgets('renders the request form and back-to-login link',
-        (tester) async {
-      await tester.pumpWidget(
-        const MaterialApp(home: ForgotPasswordScreen()),
-      );
+    testWidgets('renders the request form and back-to-login link', (
+      tester,
+    ) async {
+      await tester.pumpWidget(const MaterialApp(home: ForgotPasswordScreen()));
 
       expect(find.text('Scholaris'), findsOneWidget);
       expect(find.text('Reset your password'), findsOneWidget);
@@ -137,11 +138,8 @@ void main() {
       expect(find.text('Log in'), findsOneWidget);
     });
 
-    testWidgets('rejects an invalid email before any API call',
-        (tester) async {
-      await tester.pumpWidget(
-        const MaterialApp(home: ForgotPasswordScreen()),
-      );
+    testWidgets('rejects an invalid email before any API call', (tester) async {
+      await tester.pumpWidget(const MaterialApp(home: ForgotPasswordScreen()));
 
       await tester.enterText(find.byType(TextFormField), 'not-an-email');
       await tester.tap(find.text('Send reset link'));
@@ -151,9 +149,7 @@ void main() {
     });
 
     testWidgets('rejects an empty email', (tester) async {
-      await tester.pumpWidget(
-        const MaterialApp(home: ForgotPasswordScreen()),
-      );
+      await tester.pumpWidget(const MaterialApp(home: ForgotPasswordScreen()));
 
       await tester.tap(find.text('Send reset link'));
       await tester.pumpAndSettle();
@@ -163,8 +159,9 @@ void main() {
   });
 
   group('reset-password screen', () {
-    testWidgets('renders the set-new-password form and sign-out link',
-        (tester) async {
+    testWidgets('renders the set-new-password form and sign-out link', (
+      tester,
+    ) async {
       await tester.pumpWidget(const MaterialApp(home: ResetPasswordScreen()));
 
       expect(find.text('Scholaris'), findsOneWidget);
@@ -175,8 +172,9 @@ void main() {
       expect(find.text('Sign out'), findsOneWidget);
     });
 
-    testWidgets('rejects empty, short and mismatched passwords locally',
-        (tester) async {
+    testWidgets('rejects empty, short and mismatched passwords locally', (
+      tester,
+    ) async {
       await tester.pumpWidget(const MaterialApp(home: ResetPasswordScreen()));
 
       await tester.tap(find.text('Update password'));
@@ -199,31 +197,34 @@ void main() {
   });
 
   group('router redirect during recovery', () {
-    test('a recovery session forces /reset-password from any other location',
-        () {
-      for (final location in [
-        '/home',
-        '/login',
-        '/splash',
-        '/profile-setup',
-        '/verify-email',
-      ]) {
-        expect(
-          authRedirectDecision(
-            location: location,
-            isLoggedIn: true,
-            recoveryActive: true,
-            onAuthRoute: location == '/login' || location == '/signup',
-            onVerifyRoute: location == AuthRoute.verifyEmail,
-            onSetupRoute: location.startsWith('/profile-setup'),
-            profileLoading: false,
-            profileComplete: true,
-          ),
-          '/reset-password',
-          reason: 'from $location recovery must win',
-        );
-      }
-    });
+    test(
+      'a recovery session forces /reset-password from any other location',
+      () {
+        for (final location in [
+          '/home',
+          '/login',
+          '/splash',
+          '/intro',
+          '/profile-setup',
+          '/verify-email',
+        ]) {
+          expect(
+            authRedirectDecision(
+              location: location,
+              isLoggedIn: true,
+              recoveryActive: true,
+              onAuthRoute: location == '/login' || location == '/signup',
+              onVerifyRoute: location == AuthRoute.verifyEmail,
+              onSetupRoute: location.startsWith('/profile-setup'),
+              profileLoading: false,
+              profileComplete: true,
+            ),
+            '/reset-password',
+            reason: 'from $location recovery must win',
+          );
+        }
+      },
+    );
 
     test('recovery mode lets the user stay on /reset-password', () {
       expect(
@@ -400,22 +401,24 @@ void main() {
         );
       });
 
-      test('/verify-email redirects a signed-in incomplete profile to setup',
-          () {
-        expect(
-          authRedirectDecision(
-            location: '/verify-email',
-            isLoggedIn: true,
-            recoveryActive: false,
-            onAuthRoute: false,
-            onVerifyRoute: true,
-            onSetupRoute: false,
-            profileLoading: false,
-            profileComplete: false,
-          ),
-          '/profile-setup/personal',
-        );
-      });
+      test(
+        '/verify-email redirects a signed-in incomplete profile to setup',
+        () {
+          expect(
+            authRedirectDecision(
+              location: '/verify-email',
+              isLoggedIn: true,
+              recoveryActive: false,
+              onAuthRoute: false,
+              onVerifyRoute: true,
+              onSetupRoute: false,
+              profileLoading: false,
+              profileComplete: false,
+            ),
+            '/profile-setup/personal',
+          );
+        },
+      );
 
       test('recovery still wins over the signed-out verify-email route', () {
         // A live recovery session must still force /reset-password even from
@@ -470,38 +473,40 @@ void main() {
       expect(uri.hasQuery, isFalse);
     });
 
-    test('web redirect targets the /reset-password route on the app origin', () {
-      // Browsers cannot open the scholaris:// custom scheme, so on web the
-      // recovery link must return to the HTTP(S) origin serving the app with
-      // the reset-password route. The origin is read from the requesting page
-      // at runtime; these cases mirror a local `flutter run` server and a
-      // page already on the forgot-password screen.
-      expect(
-        webResetPasswordRedirectFrom(
-          Uri.parse('http://localhost:8080/'),
-        ),
-        'http://localhost:8080/reset-password',
-      );
-      expect(
-        webResetPasswordRedirectFrom(
-          Uri.parse('http://localhost:8080/forgot-password'),
-        ),
-        'http://localhost:8080/reset-password',
-      );
-      // Query and fragment on the requesting page must not leak into the
-      // recovery redirect.
-      expect(
-        webResetPasswordRedirectFrom(
-          Uri.parse('http://localhost:8080/?utm_source=test'),
-        ),
-        'http://localhost:8080/reset-password',
-      );
-    });
+    test(
+      'web redirect targets the /reset-password route on the app origin',
+      () {
+        // Browsers cannot open the scholaris:// custom scheme, so on web the
+        // recovery link must return to the HTTP(S) origin serving the app with
+        // the reset-password route. The origin is read from the requesting page
+        // at runtime; these cases mirror a local `flutter run` server and a
+        // page already on the forgot-password screen.
+        expect(
+          webResetPasswordRedirectFrom(Uri.parse('http://localhost:8080/')),
+          'http://localhost:8080/reset-password',
+        );
+        expect(
+          webResetPasswordRedirectFrom(
+            Uri.parse('http://localhost:8080/forgot-password'),
+          ),
+          'http://localhost:8080/reset-password',
+        );
+        // Query and fragment on the requesting page must not leak into the
+        // recovery redirect.
+        expect(
+          webResetPasswordRedirectFrom(
+            Uri.parse('http://localhost:8080/?utm_source=test'),
+          ),
+          'http://localhost:8080/reset-password',
+        );
+      },
+    );
   });
 
   group('login screen wiring', () {
-    testWidgets('"Forgot password?" navigates to the request screen',
-        (tester) async {
+    testWidgets('"Forgot password?" navigates to the request screen', (
+      tester,
+    ) async {
       final router = GoRouter(
         initialLocation: '/login',
         routes: [

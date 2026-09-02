@@ -9,6 +9,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:scholaris/app/router.dart';
 import 'package:scholaris/shared/theme/app_theme.dart';
+import 'package:scholaris/shared/widgets/scholaris_logo_badge.dart';
 
 class SplashScreen extends ConsumerStatefulWidget {
   const SplashScreen({super.key});
@@ -31,9 +32,10 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
       duration: const Duration(milliseconds: 700),
     )..forward();
     _opacity = CurvedAnimation(parent: _controller, curve: Curves.easeOut);
-    _offset = Tween<double>(begin: 8, end: 0).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeOut),
-    );
+    _offset = Tween<double>(
+      begin: 8,
+      end: 0,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOut));
   }
 
   @override
@@ -54,23 +56,24 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
         child: FadeTransition(
           opacity: _opacity,
           child: SlideTransition(
-            position: Tween<Offset>(begin: const Offset(0, 0.04), end: Offset.zero)
-                .animate(_offset),
+            position: Tween<Offset>(
+              begin: const Offset(0, 0.04),
+              end: Offset.zero,
+            ).animate(_offset),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Container(
-                  padding: const EdgeInsets.all(20),
-                  decoration: BoxDecoration(
-                    color: kPrimarySoft,
-                    shape: BoxShape.circle,
-                  ),
-                  child: const Icon(Icons.school, size: 44, color: kPrimary),
-                ),
+                // Shared brand mark (no Hero tag here: splash is a transient
+                // holding screen, only intro/login participate in the flight).
+                const ScholarisLogoBadge(size: 84),
                 const SizedBox(height: 20),
                 Text(
                   'Scholaris',
-                  style: poppins(fontSize: 40, fontWeight: FontWeight.w700, color: kPrimary),
+                  style: poppins(
+                    fontSize: 40,
+                    fontWeight: FontWeight.w700,
+                    color: kPrimary,
+                  ),
                 ),
                 const SizedBox(height: 6),
                 Text(

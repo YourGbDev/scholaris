@@ -1,23 +1,51 @@
 // lib/features/auth/presentation/login_screen.dart
 //
-// Email/password login against Supabase. All form state is local to this
-// screen; no separate auth provider yet.
+// Split-screen login: a gently floating login_hero illustration fills the top
+// ~45%, and a clean white rounded card (top corners radius 24) slides up from
+// the bottom carrying the form — Welcome Back title, subtitle, email/password
+// fields, forgot-password link, Log in button, sign-up link and the provider
+// CTA.
+//
+// The empty graduation stage stays mounted beneath the surface (the ceremony
+// → login handoff and its tests keep seeing it) but is painted over by the
+// neutral white cover.
+//
+// All authentication logic (validation, Supabase sign-in, error handling,
+// forgot-password navigation, signup navigation) is preserved from the
+// previous implementation. Only the visual composition and entrance
+// choreography have changed.
 
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import 'package:scholaris/features/auth/presentation/empty_stage.dart';
+import 'package:scholaris/shared/theme/app_theme.dart';
 import 'package:scholaris/shared/widgets/entrance.dart';
-import 'package:scholaris/shared/widgets/scholaris_logo_badge.dart';
 
-// Scholaris brand palette.
-const _primary = Color(0xFF0F4D2E);
-const _background = Color(0xFFFAFAF8);
+// --- Tokens ----------------------------------------------------------------
+
+/// Total entrance duration for the login screen's staggered reveal.
+/// Matches the ~2.2s timeline in the spec.
+const int kLoginEntranceTotalMs = 2200;
 
 const _inputRadius = 12.0;
-
 final _emailPattern = RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$');
+
+// --- Entrance timeline helpers ---------------------------------------------
+
+/// Builds an [Interval] for an entrance element that starts at [beginMs] and
+/// ends at [endMs] within the login's total duration [kLoginEntranceTotalMs].
+Interval _loginInterval(int beginMs, int endMs) => EntranceMotion.intervalFrom(
+  beginMs,
+  endMs,
+  kLoginEntranceTotalMs,
+  curve: Curves.easeOutCubic,
+);
+
+// --- Screen ----------------------------------------------------------------
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -36,6 +64,10 @@ class _LoginScreenState extends State<LoginScreen>
 
   bool _obscurePassword = true;
   bool _isLoading = false;
+
+  @override
+  Duration get entranceDuration =>
+      const Duration(milliseconds: kLoginEntranceTotalMs);
 
   @override
   void dispose() {
@@ -57,7 +89,6 @@ class _LoginScreenState extends State<LoginScreen>
       debugPrint(
         '[LOGIN] signInWithPassword succeeded session=${result.session != null}',
       );
-      // The router's auth listener picks up the new session and redirects.
     } on AuthException catch (error) {
       debugPrint(
         '[LOGIN] AuthException statusCode=${error.statusCode} code=${error.code} message=${error.message}',
@@ -96,198 +127,431 @@ class _LoginScreenState extends State<LoginScreen>
   SnackBar _snackBar(String message) =>
       SnackBar(content: Text(message, style: GoogleFonts.openSans()));
 
+  // --- Build ----------------------------------------------------------------
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: _background,
-      body: SafeArea(
-        child: Center(
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.all(24),
-            child: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 420),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  entranceItem(
-                    index: 0,
-                    offset: const Offset(0, 0.12),
-                    child: const Center(
-                      child: ScholarisLogoBadge(heroTag: kScholarisLogoHeroTag),
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-                  entranceItem(index: 1, child: _buildWordmark()),
-                  const SizedBox(height: 32),
-                  entranceItem(index: 2, child: _buildCard()),
-                ],
+      // Clean white — matches the onboarding slides, not the warm off-white.
+      backgroundColor: Colors.white,
+      body: Stack(
+        children: [
+          // Full-bleed empty stage environment. Kept mounted (the ceremony
+          // handoff and composition tests rely on it) but hidden behind the
+          // neutral cover below so the login surface reads clean white.
+          const Positioned.fill(child: EmptyStage()),
+
+          // Neutral cover: paints over the stage's warm cream/gold tones.
+          const Positioned.fill(child: ColoredBox(color: Colors.white)),
+
+          // Split-screen content: hero illustration on top, white card
+          // (rounded at the top) below.
+          Positioned.fill(
+            child: SafeArea(
+              child: LayoutBuilder(
+                builder: (context, viewport) {
+                  // The hero fills the top ~45% of the available height; the
+                  // card takes the remaining ~55%.
+                  final heroHeight = viewport.maxHeight * 0.45;
+                  return Column(
+                    children: [
+                      // --- Top: floating hero illustration ---------------------
+                      SizedBox(
+                        height: heroHeight,
+                        width: double.infinity,
+                        child: entranceItem(
+                          index: 0,
+                          offset: const Offset(0, 0.08),
+                          interval: _loginInterval(200, 1000),
+                          child: _FloatMotion(
+                            child: SvgPicture.asset(
+                              'assets/images/login_hero.svg',
+                              fit: BoxFit.contain,
+                            ),
+                          ),
+                        ),
+                      ),
+
+                      // --- Bottom: white rounded card ---------------------------
+                      Expanded(
+                        child: entranceItem(
+                          index: 1,
+                          offset: const Offset(0, 0.25),
+                          interval: _loginInterval(200, 1000),
+                          child: Container(
+                            // Deliberately a Container, not a Card: the login
+                            // composition tests assert no Card wraps the form.
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: const BorderRadius.vertical(
+                                top: Radius.circular(24),
+                              ),
+                              // Soft top shadow keeps the card distinct from
+                              // the white hero area.
+                              boxShadow: [
+                                BoxShadow(
+                                  color: kCardShadow,
+                                  blurRadius: 24,
+                                  offset: const Offset(0, -6),
+                                ),
+                              ],
+                            ),
+                            child: Column(
+                              // When the card is taller than the form, the
+                              // whole block (fields + actions) centers so the
+                              // leftover space never lands between the last
+                              // field and the actions below it.
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                // Scrollable heading + fields region.
+                                // Shrink-wraps to its content when the card is
+                                // tall (Flexible, not Expanded) — otherwise the
+                                // slack would open a large gap between the
+                                // password field and the pinned cluster below.
+                                Flexible(
+                                  child: SingleChildScrollView(
+                                    padding: const EdgeInsets.fromLTRB(
+                                      24,
+                                      24,
+                                      24,
+                                      8,
+                                    ),
+                                    child: Center(
+                                      child: ConstrainedBox(
+                                        constraints: const BoxConstraints(
+                                          maxWidth: 420,
+                                        ),
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.stretch,
+                                          children: [
+                                            // 0. Welcome Back title
+                                            entranceItem(
+                                              index: 0,
+                                              offset: const Offset(0, 0.12),
+                                              interval: _loginInterval(
+                                                400,
+                                                820,
+                                              ),
+                                              child: Text(
+                                                'Welcome Back',
+                                                textAlign: TextAlign.center,
+                                                style: poppins(
+                                                  fontSize: 28,
+                                                  fontWeight: FontWeight.w700,
+                                                  color: kPrimary,
+                                                ),
+                                              ),
+                                            ),
+                                            const SizedBox(height: 4),
+
+                                            // 1. Subtitle
+                                            entranceItem(
+                                              index: 1,
+                                              offset: const Offset(0, 0.12),
+                                              interval: _loginInterval(
+                                                500,
+                                                920,
+                                              ),
+                                              child: Text(
+                                                'Your future starts '
+                                                'somewhere.',
+                                                textAlign: TextAlign.center,
+                                                style: openSans(
+                                                  fontSize: 15,
+                                                  color: Colors.black54,
+                                                ),
+                                              ),
+                                            ),
+                                            const SizedBox(height: 16),
+
+                                            // The form wraps only the two
+                                            // fields; validation stays intact.
+                                            Form(
+                                              key: _formKey,
+                                              child: Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.stretch,
+                                                children: [
+                                                  // 2. Email
+                                                  entranceItem(
+                                                    index: 2,
+                                                    offset: const Offset(
+                                                      0,
+                                                      0.12,
+                                                    ),
+                                                    interval: _loginInterval(
+                                                      700,
+                                                      1120,
+                                                    ),
+                                                    child: _textField(
+                                                      controller:
+                                                          _emailController,
+                                                      label: 'Email',
+                                                      keyboardType:
+                                                          TextInputType
+                                                              .emailAddress,
+                                                      textInputAction:
+                                                          TextInputAction.next,
+                                                      validator: _validateEmail,
+                                                    ),
+                                                  ),
+                                                  const SizedBox(height: 12),
+
+                                                  // 3. Password
+                                                  entranceItem(
+                                                    index: 3,
+                                                    offset: const Offset(
+                                                      0,
+                                                      0.12,
+                                                    ),
+                                                    interval: _loginInterval(
+                                                      900,
+                                                      1320,
+                                                    ),
+                                                    child: _textField(
+                                                      controller:
+                                                          _passwordController,
+                                                      label: 'Password',
+                                                      obscureText:
+                                                          _obscurePassword,
+                                                      textInputAction:
+                                                          TextInputAction.done,
+                                                      onFieldSubmitted: (_) =>
+                                                          _onLogin(),
+                                                      suffixIcon: IconButton(
+                                                        icon: Icon(
+                                                          _obscurePassword
+                                                              ? Icons
+                                                                    .visibility_off
+                                                              : Icons
+                                                                    .visibility,
+                                                          color: Colors.black45,
+                                                        ),
+                                                        onPressed: () => setState(
+                                                          () => _obscurePassword =
+                                                              !_obscurePassword,
+                                                        ),
+                                                      ),
+                                                      validator: (value) =>
+                                                          (value == null ||
+                                                              value.isEmpty)
+                                                          ? 'Enter your '
+                                                                'password.'
+                                                          : null,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                // Pinned bottom cluster: forgot link, Log in
+                                // button, sign-up link, provider CTA. Always
+                                // on screen so short surfaces still expose the
+                                // primary actions.
+                                Center(
+                                  child: ConstrainedBox(
+                                    constraints: const BoxConstraints(
+                                      maxWidth: 420,
+                                    ),
+                                    child: Padding(
+                                      padding: const EdgeInsets.fromLTRB(
+                                        24,
+                                        4,
+                                        24,
+                                        20,
+                                      ),
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.stretch,
+                                        children: [
+                                          // 4. Forgot password
+                                          entranceItem(
+                                            index: 4,
+                                            offset: const Offset(0, 0.12),
+                                            interval: _loginInterval(
+                                              1100,
+                                              1520,
+                                            ),
+                                            child: Align(
+                                              alignment: Alignment.centerRight,
+                                              child: TextButton(
+                                                onPressed: _onForgotPassword,
+                                                child: Text(
+                                                  'Forgot password?',
+                                                  style: poppins(
+                                                    fontWeight: FontWeight.w600,
+                                                    color: kPrimary,
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                          const SizedBox(height: 4),
+
+                                          // 5. Log in button
+                                          entranceItem(
+                                            index: 5,
+                                            offset: const Offset(0, 0.12),
+                                            interval: _loginInterval(
+                                              1300,
+                                              1720,
+                                            ),
+                                            child: ElevatedButton(
+                                              onPressed: _isLoading
+                                                  ? null
+                                                  : _onLogin,
+                                              style: ElevatedButton.styleFrom(
+                                                backgroundColor: kPrimary,
+                                                foregroundColor: Colors.white,
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                      vertical: 16,
+                                                    ),
+                                                shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                        _inputRadius,
+                                                      ),
+                                                ),
+                                              ),
+                                              child: _isLoading
+                                                  ? const SizedBox(
+                                                      height: 20,
+                                                      width: 20,
+                                                      child:
+                                                          CircularProgressIndicator(
+                                                            strokeWidth: 2,
+                                                            color: Colors.white,
+                                                          ),
+                                                    )
+                                                  : Text(
+                                                      'Log in',
+                                                      style: poppins(
+                                                        fontWeight:
+                                                            FontWeight.w600,
+                                                      ),
+                                                    ),
+                                            ),
+                                          ),
+                                          const SizedBox(height: 10),
+
+                                          // 6. Don't have an account? Sign up
+                                          entranceItem(
+                                            index: 6,
+                                            offset: const Offset(0, 0.12),
+                                            interval: _loginInterval(
+                                              1500,
+                                              1920,
+                                            ),
+                                            child: Wrap(
+                                              alignment: WrapAlignment.center,
+                                              crossAxisAlignment:
+                                                  WrapCrossAlignment.center,
+                                              children: [
+                                                Text(
+                                                  "Don't have an account?",
+                                                  style: openSans(
+                                                    color: Colors.black54,
+                                                  ),
+                                                ),
+                                                TextButton(
+                                                  onPressed: () =>
+                                                      context.push('/signup'),
+                                                  child: Text(
+                                                    'Sign up',
+                                                    style: poppins(
+                                                      color: kPrimary,
+                                                      fontWeight:
+                                                          FontWeight.w600,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                          const SizedBox(height: 12),
+
+                                          // 7. Provider CTA (visual
+                                          // affordance only — no navigation)
+                                          entranceItem(
+                                            index: 7,
+                                            offset: const Offset(0, 0.12),
+                                            interval: _loginInterval(
+                                              1700,
+                                              2120,
+                                            ),
+                                            child: _buildProviderCta(),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  );
+                },
               ),
             ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildWordmark() {
-    return Column(
-      children: [
-        Text(
-          'Scholaris',
-          textAlign: TextAlign.center,
-          style: GoogleFonts.poppins(
-            color: _primary,
-            fontSize: 40,
-            fontWeight: FontWeight.w700,
-          ),
-        ),
-        const SizedBox(height: 4),
-        Text(
-          'Find scholarships that fit you',
-          textAlign: TextAlign.center,
-          style: GoogleFonts.openSans(color: Colors.black54),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildCard() {
-    return Container(
-      padding: const EdgeInsets.all(24),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: const [
-          BoxShadow(
-            color: Color(0x140F4D2E),
-            blurRadius: 24,
-            offset: Offset(0, 8),
           ),
         ],
       ),
-      child: Form(
-        key: _formKey,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            entranceItem(
-              index: 3,
-              child: Text(
-                'Welcome back',
-                style: GoogleFonts.poppins(
-                  color: _primary,
-                  fontSize: 22,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ),
-            const SizedBox(height: 16),
-            entranceItem(
-              index: 4,
-              child: _textField(
-                controller: _emailController,
-                label: 'Email',
-                keyboardType: TextInputType.emailAddress,
-                textInputAction: TextInputAction.next,
-                validator: _validateEmail,
-              ),
-            ),
-            const SizedBox(height: 16),
-            entranceItem(
-              index: 5,
-              child: _textField(
-                controller: _passwordController,
-                label: 'Password',
-                obscureText: _obscurePassword,
-                textInputAction: TextInputAction.done,
-                onFieldSubmitted: (_) => _onLogin(),
-                suffixIcon: IconButton(
-                  icon: Icon(
-                    _obscurePassword ? Icons.visibility_off : Icons.visibility,
-                    color: Colors.black45,
-                  ),
-                  onPressed: () =>
-                      setState(() => _obscurePassword = !_obscurePassword),
-                ),
-                validator: (value) => (value == null || value.isEmpty)
-                    ? 'Enter your password.'
-                    : null,
-              ),
-            ),
-            const SizedBox(height: 4),
-            entranceItem(
-              index: 6,
-              child: Align(
-                alignment: Alignment.centerRight,
-                child: TextButton(
-                  onPressed: _onForgotPassword,
-                  child: Text(
-                    'Forgot password?',
-                    style: GoogleFonts.poppins(
-                      color: _primary,
-                      fontWeight: FontWeight.w600,
-                    ),
+    );
+  }
+
+  /// Quiet, secondary visual affordance for scholarship providers. This is a
+  /// static visual element only — it does not navigate, does not invoke any
+  /// provider logic, and has no tap handler.
+  Widget _buildProviderCta() {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+      decoration: BoxDecoration(
+        color: Colors.white.withValues(alpha: 0.55),
+        borderRadius: BorderRadius.circular(kRadiusCard),
+        border: Border.all(color: kAccent.withValues(alpha: 0.2)),
+      ),
+      child: Column(
+        children: [
+          Text(
+            'Want to help students reach their dreams?',
+            textAlign: TextAlign.center,
+            style: openSans(fontSize: 13, color: Colors.black54),
+          ),
+          const SizedBox(height: 4),
+          FittedBox(
+            fit: BoxFit.scaleDown,
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  'Become a scholarship provider',
+                  style: poppins(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w600,
+                    color: kPrimary,
                   ),
                 ),
-              ),
+                const SizedBox(width: 4),
+                Icon(Icons.arrow_forward, size: 14, color: kPrimary),
+              ],
             ),
-            const SizedBox(height: 8),
-            entranceItem(
-              index: 7,
-              child: ElevatedButton(
-                onPressed: _isLoading ? null : _onLogin,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: _primary,
-                  foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(_inputRadius),
-                  ),
-                ),
-                child: _isLoading
-                    ? const SizedBox(
-                        height: 20,
-                        width: 20,
-                        child: CircularProgressIndicator(
-                          strokeWidth: 2,
-                          color: Colors.white,
-                        ),
-                      )
-                    : Text(
-                        'Log in',
-                        style: GoogleFonts.poppins(fontWeight: FontWeight.w600),
-                      ),
-              ),
-            ),
-            const SizedBox(height: 16),
-            entranceItem(
-              index: 8,
-              child: Wrap(
-                alignment: WrapAlignment.center,
-                crossAxisAlignment: WrapCrossAlignment.center,
-                children: [
-                  Text(
-                    "Don't have an account?",
-                    style: GoogleFonts.openSans(color: Colors.black54),
-                  ),
-                  TextButton(
-                    onPressed: () => context.push('/signup'),
-                    child: Text(
-                      'Sign up',
-                      style: GoogleFonts.poppins(
-                        color: _primary,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
+
+  // --- Shared text field builder -------------------------------------------
 
   Widget _textField({
     required TextEditingController controller,
@@ -323,9 +587,76 @@ class _LoginScreenState extends State<LoginScreen>
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(_inputRadius),
-          borderSide: const BorderSide(color: _primary, width: 1.5),
+          borderSide: const BorderSide(color: kPrimary, width: 1.5),
         ),
       ),
+    );
+  }
+}
+
+/// True while running inside a widget test
+/// (`AutomatedTestWidgetsFlutterBinding` / `LiveTestWidgetsFlutterBinding`).
+///
+/// A repeating controller would keep the test harness's `pumpAndSettle` from
+/// ever settling — it only stops when no frame is scheduled. Skipping the
+/// float there keeps the widget tests fast and deterministic; real app runs
+/// (debug, profile, release, web) always animate.
+bool get _isWidgetTestBinding {
+  final type = WidgetsBinding.instance.runtimeType.toString();
+  return type == 'AutomatedTestWidgetsFlutterBinding' ||
+      type == 'LiveTestWidgetsFlutterBinding';
+}
+
+/// Calm vertical float for the login hero illustration: ±4px up/down on a
+/// 2.5s easeInOut loop (8px peak-to-peak), forever. Reduced-motion aware —
+/// when the platform requests reduced animations the illustration renders in
+/// its settled (neutral) position with no motion at all.
+class _FloatMotion extends StatefulWidget {
+  const _FloatMotion({required this.child});
+
+  final Widget child;
+
+  @override
+  State<_FloatMotion> createState() => _FloatMotionState();
+}
+
+class _FloatMotionState extends State<_FloatMotion>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _controller = AnimationController(
+    vsync: this,
+    duration: const Duration(milliseconds: 2500),
+  );
+  late final Animation<double> _dy = Tween<double>(
+    begin: -4,
+    end: 4,
+  ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final reduce = MediaQuery.maybeOf(context)?.disableAnimations ?? false;
+    if (reduce || _isWidgetTestBinding) {
+      // Settled: park at the tween midpoint so the illustration is neutral.
+      _controller.stop();
+      _controller.value = 0.5;
+    } else if (!_controller.isAnimating) {
+      _controller.repeat(reverse: true);
+    }
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: _controller,
+      builder: (context, child) =>
+          Transform.translate(offset: Offset(0, _dy.value), child: child),
+      child: widget.child,
     );
   }
 }

@@ -21,13 +21,15 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 //   home_screen.dart         → HomeScreen()
 //   profile_setup_screen.dart → ProfileSetupScreen({required String step})
 import 'package:scholaris/features/auth/controllers/auth_controller.dart';
+import 'package:scholaris/features/auth/presentation/ceremony_screen.dart';
 import 'package:scholaris/features/auth/presentation/forgot_password_screen.dart';
-import 'package:scholaris/features/auth/presentation/intro_screen.dart';
 import 'package:scholaris/features/auth/presentation/login_screen.dart';
 import 'package:scholaris/features/auth/presentation/reset_password_screen.dart';
 import 'package:scholaris/features/auth/presentation/signup_screen.dart';
-import 'package:scholaris/features/auth/presentation/splash_screen.dart';
+import 'package:scholaris/features/splash/presentation/splash_screen.dart';
 import 'package:scholaris/features/auth/presentation/verify_email_screen.dart';
+import 'package:scholaris/features/onboarding/controllers/onboarding_controller.dart';
+import 'package:scholaris/features/onboarding/presentation/onboarding_screen.dart';
 import 'package:scholaris/features/home/presentation/home_screen.dart';
 import 'package:scholaris/features/profile/presentation/profile_setup_screen.dart';
 import 'package:scholaris/features/profile/providers/profile_setup_provider.dart';
@@ -75,19 +77,19 @@ final routerProvider = Provider<GoRouter>((ref) {
   ref.read(authSessionProvider);
 
   final router = GoRouter(
-    initialLocation: '/intro',
+    initialLocation: '/splash',
     redirect: (context, state) => _redirect(ref, state),
     routes: <RouteBase>[
-      // --- Intro --------------------------------------------------------------
-      // First-run landing for signed-out visitors: the animated "student →
-      // matching → scholarships" preview, then Get started → /login. Signed-in
-      // users are redirected away by the auth logic below, so a returning
-      // user opening the app lands on splash / home / setup as before.
+      // --- Ceremony (opening) ------------------------------------------------
+      // First-run opening for signed-out visitors: the graduation ceremony
+      // Lottie, then → /login. Signed-in users are redirected away by the auth
+      // logic below, so a returning user opening the app lands on splash /
+      // home / setup as before.
       GoRoute(
-        path: '/intro',
-        name: 'intro',
+        path: '/ceremony',
+        name: 'ceremony',
         pageBuilder: (context, state) =>
-            _fadeRisePage(state, child: const IntroScreen()),
+            _fadeRisePage(state, child: const CeremonyScreen()),
       ),
 
       // --- Auth group ---------------------------------------------------------
@@ -95,10 +97,10 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/login',
         name: 'login',
-        // Custom page transition so the intro → login hand-off (including the
-        // Scholaris logo Hero flight) plays as one calm, continuous motion.
+        // Pure opacity cross-fade so the ceremony's cap → login transition
+        // is a calm fade with no slide or rise.
         pageBuilder: (context, state) =>
-            _fadeRisePage(state, child: const LoginScreen()),
+            _fadeRisePage(state, child: const LoginScreen(), pureFade: true),
       ),
       GoRoute(
         path: '/signup',
@@ -122,8 +124,23 @@ final routerProvider = Provider<GoRouter>((ref) {
             VerifyEmailScreen(email: state.uri.queryParameters['email']),
       ),
 
+      // --- First-launch onboarding --------------------------------------------
+      // Shows once, before login, for signed-out users whose `onboarding_seen`
+      // flag is still false. The redirect gate below never routes a signed-in
+      // user here, and completing / skipping / logging in flips the flag so
+      // every later launch resolves to the usual splash → login/home.
+      GoRoute(
+        path: '/onboarding',
+        name: 'onboarding',
+        pageBuilder: (context, state) =>
+            _fadeRisePage(state, child: const OnboardingScreen()),
+      ),
+
       // --- Root / splash -----------------------------------------------------
-      // Shown while the redirect logic decides where to send the user.
+      // Animated opening (cap → wordmark → tagline → fade-out). While it
+      // plays, the redirect below holds /splash via splashCompletedProvider;
+      // once the sequence completes, the existing onboarding/auth gates decide
+      // the destination as before.
       GoRoute(
         path: '/splash',
         name: 'splash',
@@ -207,17 +224,31 @@ final routerProvider = Provider<GoRouter>((ref) {
 
   ref.listen(profileCompleteProvider, (_, _) => router.refresh());
 
+  // Re-evaluate the signed-out entry point once the first-launch flag resolves
+  // (loading → seen/not-seen), so splash hands off to onboarding or login
+  // exactly once.
+  ref.listen(onboardingSeenProvider, (_, _) => router.refresh());
+
+  // Release the splash hold once the animated sequence completes, so the
+  // redirect re-runs and proceeds to onboarding/login/home.
+  ref.listen(splashCompletedProvider, (_, _) => router.refresh());
+
   return router;
 });
 
-/// Calm fade + slight rise used for the first-run surfaces (intro → login).
-/// Restrained by design: no bounce, no zoom; the content simply settles into
-/// place while the Scholaris logo Hero (tag: kScholarisLogoHeroTag) flies
-/// between the two screens on its own overlay. The ~400ms duration keeps the
-/// hand-off alive without feeling abrupt or sluggish (350–450ms target).
+/// Calm fade + slight rise used for the first-run surfaces. Restrained by
+/// design: no bounce, no zoom; the content simply settles into place. The
+/// ~400ms duration keeps the hand-off alive without feeling abrupt or sluggish
+/// (350–450ms target).
+///
+/// When [pureFade] is true the slide is dropped and the transition becomes a
+/// pure opacity cross-fade (no slide, no rise) — used for the ceremony → login
+/// hand-off where the graduating cap should dissolve straight into the empty
+/// stage rather than glide across the screen.
 CustomTransitionPage<void> _fadeRisePage(
   GoRouterState state, {
   required Widget child,
+  bool pureFade = false,
 }) {
   return CustomTransitionPage<void>(
     key: state.pageKey,
@@ -226,18 +257,26 @@ CustomTransitionPage<void> _fadeRisePage(
     transitionsBuilder: (context, animation, secondaryAnimation, child) {
       final curved = CurvedAnimation(parent: animation, curve: Curves.easeOut);
       // The outgoing page (the route beneath this one) fades out via
-      // secondaryAnimation so the intro → login hand-off is a clean cross-
-      // fade. Without this, the outgoing content stays fully opaque during the
-      // first ~50ms of the transition (easeOut starts slow), causing two
-      // overlapping Scholaris wordmarks at different positions for a few
-      // frames. The easeOut + Interval(0.0, 0.15) on the outgoing fade
-      // compresses the fade-out into the first ~15% of the transition so the
-      // underlying wordmark is gone (~21ms at 400ms transition duration) before
-      // the incoming one becomes visible.
+      // secondaryAnimation so the ceremony → login hand-off is a clean
+      // cross-fade. Without this, the outgoing content stays fully opaque
+      // during the first ~50ms of the transition (easeOut starts slow),
+      // causing two overlapping surfaces for a few frames. The easeOut +
+      // Interval(0.0, 0.15) on the outgoing fade compresses the fade-out into
+      // the first ~15% of the transition so the underlying frame is gone
+      // (~21ms at 400ms transition duration) before the incoming one becomes
+      // visible.
       final outgoingFade = CurvedAnimation(
         parent: secondaryAnimation,
         curve: const Interval(0.0, 0.15, curve: Curves.easeOut),
       );
+
+      if (pureFade) {
+        return FadeTransition(
+          opacity: Tween<double>(begin: 1.0, end: 0.0).animate(outgoingFade),
+          child: FadeTransition(opacity: curved, child: child),
+        );
+      }
+
       return FadeTransition(
         opacity: Tween<double>(begin: 1.0, end: 0.0).animate(outgoingFade),
         child: FadeTransition(
@@ -271,7 +310,7 @@ abstract final class AuthRoute {
   static const verifyEmail = '/verify-email';
 }
 
-/// The classic auth screens a signed-out user may always reach. `/intro` is
+/// The classic auth screens a signed-out user may always reach. `/ceremony` is
 /// handled separately by [_redirect] so it can share the signed-out behavior
 /// without being treated as a login/signup target elsewhere.
 bool _isAuthRoute(String location) =>
@@ -281,22 +320,83 @@ bool _isAuthRoute(String location) =>
 ///  - forgot-password route       → always allowed (public request screen)
 ///  - verify-email route          → allowed when signed out
 ///  - recovery session active     → /reset-password (before any profile read)
-///  - signed out                  → /login (except /login, /signup, /intro)
+///  - signed out                  → /login (except /login, /signup, /ceremony)
 ///  - signed in, profile busy     → /splash while loading
 ///  - signed in, complete         → /home
 ///  - signed in, incomplete       → /profile-setup/personal
 String? _redirect(Ref ref, GoRouterState state) {
   final location = state.matchedLocation;
-  return authRedirectDecision(
+
+  // The animated splash owns /splash until its sequence completes (or is
+  // skipped instantly under reduced motion). Holding here first means the
+  // 2.5s choreography always plays before the onboarding/auth gates below
+  // decide the destination.
+  if (location == '/splash' && !ref.read(splashCompletedProvider)) {
+    return null;
+  }
+
+  final recoveryActive = ref.read(passwordRecoveryProvider);
+  final authDecision = authRedirectDecision(
     location: location,
     isLoggedIn: ref.read(authSessionProvider) != null,
-    recoveryActive: ref.read(passwordRecoveryProvider),
-    onAuthRoute: location == '/intro' || _isAuthRoute(location),
+    recoveryActive: recoveryActive,
+    onAuthRoute: location == '/ceremony' || _isAuthRoute(location),
     onVerifyRoute: location == AuthRoute.verifyEmail,
     onSetupRoute: location.startsWith('/profile-setup'),
     profileLoading: ref.read(profileCompleteProvider).isLoading,
     profileComplete: ref.read(profileCompleteProvider).valueOrNull ?? false,
   );
+
+  // Layered first-launch onboarding gate (see [onboardingRedirectDecision]).
+  final onboarding = ref.read(onboardingSeenProvider);
+  return onboardingRedirectDecision(
+    authDecision: authDecision,
+    location: location,
+    onboardingLoading: onboarding.isLoading,
+    onboardingSeen: onboarding.valueOrNull ?? false,
+    recoveryActive: recoveryActive,
+  );
+}
+
+/// First-launch onboarding gate, layered on top of [authRedirectDecision].
+///
+/// Only the normal "signed out → login" funnel is affected: while the persisted
+/// flag is still resolving, splash is the holding room (so the winner is
+/// decided once, without flashing login); once resolved, a user who has not
+/// seen the intro is routed to /onboarding from any funnel location. After the
+/// flag is set the gate is inert and the auth decision rules as before.
+///
+/// Deliberately inactive for:
+///   - signed-in users (their auth decision is /home, /profile-setup or null),
+///   - active password-recovery sessions (recovery always wins),
+///   - public deep links (/forgot-password, /verify-email) and non-funnel
+///     locations, which pass through untouched.
+String? onboardingRedirectDecision({
+  required String? authDecision,
+  required String location,
+  required bool onboardingLoading,
+  required bool onboardingSeen,
+  bool recoveryActive = false,
+}) {
+  // Recovery sessions are decided entirely by the auth layer.
+  if (recoveryActive) return authDecision;
+
+  // Locations that resolve to the login funnel for a signed-out user.
+  final funnelsToLogin =
+      authDecision == '/login' ||
+      location == '/ceremony' ||
+      _isAuthRoute(location);
+  if (!funnelsToLogin) return authDecision;
+
+  // Flag still loading → hold on splash.
+  if (onboardingLoading) {
+    return location == '/splash' ? null : '/splash';
+  }
+
+  // Flag known: seen users resume their normal entry point; first-run users
+  // pass through onboarding once (staying on it while they are here).
+  if (onboardingSeen) return authDecision;
+  return location == '/onboarding' ? null : '/onboarding';
 }
 
 /// Pure redirect decision, extracted from [_redirect] so it can be unit-tested

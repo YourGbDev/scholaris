@@ -11,9 +11,9 @@
 // actions stay reachable on short surfaces.
 
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:lottie/lottie.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'package:scholaris/app/confirmation_redirect.dart';
@@ -36,59 +36,15 @@ bool get _isWidgetTestBinding {
       type == 'LiveTestWidgetsFlutterBinding';
 }
 
-/// Calm vertical float for the hero illustration: ±4px up/down on a 2.5s
-/// easeInOut loop (8px peak-to-peak), forever. Reduced-motion aware — when
-/// the platform requests reduced animations the illustration renders in its
-/// settled (neutral) position with no motion at all.
-class _FloatMotion extends StatefulWidget {
-  const _FloatMotion({required this.child});
+/// Total entrance duration for the signup screen's staggered reveal.
+const int kSignupEntranceTotalMs = 2200;
 
-  final Widget child;
-
-  @override
-  State<_FloatMotion> createState() => _FloatMotionState();
-}
-
-class _FloatMotionState extends State<_FloatMotion>
-    with SingleTickerProviderStateMixin {
-  late final AnimationController _controller = AnimationController(
-    vsync: this,
-    duration: const Duration(milliseconds: 2500),
-  );
-  late final Animation<double> _dy = Tween<double>(
-    begin: -4,
-    end: 4,
-  ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    final reduce = MediaQuery.maybeOf(context)?.disableAnimations ?? false;
-    if (reduce || _isWidgetTestBinding) {
-      // Settled: park at the tween midpoint so the illustration is neutral.
-      _controller.stop();
-      _controller.value = 0.5;
-    } else if (!_controller.isAnimating) {
-      _controller.repeat(reverse: true);
-    }
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return AnimatedBuilder(
-      animation: _controller,
-      builder: (context, child) =>
-          Transform.translate(offset: Offset(0, _dy.value), child: child),
-      child: widget.child,
+Interval _signupInterval(int beginMs, int endMs) => EntranceMotion.intervalFrom(
+      beginMs,
+      endMs,
+      kSignupEntranceTotalMs,
+      curve: Curves.easeOutCubic,
     );
-  }
-}
 
 class SignupScreen extends StatefulWidget {
   const SignupScreen({super.key});
@@ -192,23 +148,38 @@ class _SignupScreenState extends State<SignupScreen>
       body: SafeArea(
         child: LayoutBuilder(
           builder: (context, viewport) {
-            // Split-screen: floating hero on top, white rounded card below.
-            final heroHeight = viewport.maxHeight * 0.45;
+            // Responsive split: hero takes ~40% on tall screens, but
+            // shrinks further on short viewports so the card always
+            // has room for the form without immediate scrolling.
+            // 400px is the minimum card height needed to show the
+            // heading, all four fields, the primary button, and
+            // secondary actions without scrolling on the smallest
+            // supported phones.
+            final heroHeight = (viewport.maxHeight * 0.40)
+                .clamp(180.0, viewport.maxHeight - 400);
             return Column(
               children: [
-                // --- Top: floating hero illustration -------------------------
+                // --- Top: hero Lottie animation --------------------------
                 SizedBox(
                   height: heroHeight,
                   width: double.infinity,
                   child: entranceItem(
                     index: 0,
-                    child: _FloatMotion(
-                      // Reuses the onboarding "Education" illustration —
-                      // thematically right for joining a scholarship app.
-                      child: SvgPicture.asset(
-                        'assets/images/onboarding_slide2.svg',
-                        fit: BoxFit.contain,
-                      ),
+                    offset: const Offset(0, 0.08),
+                    interval: _signupInterval(200, 1000),
+                    // The Lottie file has built-in looping motion (74
+                    // animated properties), so no float wrapper —
+                    // stacking the ±4px breathing on top would
+                    // double-animate. Frozen on its first frame for
+                    // reduced-motion users and in widget tests.
+                    child: Lottie.asset(
+                      'assets/animations/sign in hover.json',
+                      fit: BoxFit.contain,
+                      animate:
+                          !(MediaQuery.maybeOf(context)
+                                  ?.disableAnimations ??
+                              false) &&
+                          !_isWidgetTestBinding,
                     ),
                   ),
                 ),
@@ -234,10 +205,7 @@ class _SignupScreenState extends State<SignupScreen>
                       ],
                     ),
                     child: Column(
-                      // When the card is taller than the form, the whole
-                      // block (fields + actions) centers so leftover space
-                      // never lands between the last field and the actions.
-                      mainAxisAlignment: MainAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.start,
                       children: [
                         // Scrollable heading + fields region.
                         Flexible(
@@ -344,6 +312,10 @@ class _SignupScreenState extends State<SignupScreen>
                             ),
                           ),
                         ),
+                        // Capped spacer between form and bottom actions.
+                        // Keeps the gap reasonable on tall viewports
+                        // without pushing content below the fold.
+                        const SizedBox(height: 24),
                         // Pinned bottom cluster: the CTA stays on screen so
                         // short surfaces still expose the primary action.
                         Center(

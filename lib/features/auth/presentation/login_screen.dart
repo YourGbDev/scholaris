@@ -157,7 +157,7 @@ class _LoginScreenState extends State<LoginScreen>
                   // both fields, the primary button, and secondary actions
                   // without scrolling on the smallest supported phones.
                   final heroHeight = (viewport.maxHeight * 0.40)
-                      .clamp(180.0, viewport.maxHeight - 380);
+                      .clamp(180.0, viewport.maxHeight - 400);
                   return Column(
                     children: [
                       // --- Top: hero Lottie animation --------------------------
@@ -214,7 +214,7 @@ class _LoginScreenState extends State<LoginScreen>
                               // whole block (fields + actions) centers so the
                               // leftover space never lands between the last
                               // field and the actions below it.
-                              mainAxisAlignment: MainAxisAlignment.center,
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 // Scrollable heading + fields region.
                                 // Shrink-wraps to its content when the card is
@@ -276,7 +276,7 @@ class _LoginScreenState extends State<LoginScreen>
                                                 ),
                                               ),
                                             ),
-                                            const SizedBox(height: 16),
+                                            const SizedBox(height: 12),
 
                                             // The form wraps only the two
                                             // fields; validation stays intact.
@@ -309,7 +309,7 @@ class _LoginScreenState extends State<LoginScreen>
                                                       validator: _validateEmail,
                                                     ),
                                                   ),
-                                                  const SizedBox(height: 12),
+                                                  const SizedBox(height: 8),
 
                                                   // 3. Password
                                                   entranceItem(
@@ -377,7 +377,7 @@ class _LoginScreenState extends State<LoginScreen>
                                         24,
                                         4,
                                         24,
-                                        20,
+                                        16,
                                       ),
                                       child: Column(
                                         crossAxisAlignment:
@@ -592,7 +592,7 @@ class _LoginScreenState extends State<LoginScreen>
         fillColor: Colors.white,
         contentPadding: const EdgeInsets.symmetric(
           horizontal: 16,
-          vertical: 14,
+          vertical: 12,
         ),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(_inputRadius),

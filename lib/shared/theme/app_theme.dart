@@ -32,6 +32,20 @@ const double kRadiusInput = 12.0;
 /// Radius for cards and elevated surfaces.
 const double kRadiusCard = 16.0;
 
+const double kSpaceMd = 24.0;
+
+/// Neutral warm-tinted shadow for cards and elevated surfaces. Replaces the
+/// green/glowing shadow language so cards read as calm, flat surfaces.
+const Color kCardShadow = Color(0x14000000);
+
+/// Gradient for the Discover hero surface. A calm Scholaris green derived from
+/// the existing brand green — premium, optimistic, educational. Never neon.
+const LinearGradient kHeroSurface = LinearGradient(
+  begin: Alignment.topCenter,
+  end: Alignment.bottomCenter,
+  colors: [kBackground, Color(0xFFEFF7F1)],
+);
+
 // --- Typography helpers -----------------------------------------------------
 
 TextStyle poppins({
@@ -39,26 +53,24 @@ TextStyle poppins({
   FontWeight fontWeight = FontWeight.w500,
   Color? color,
   double? height,
-}) =>
-    GoogleFonts.poppins(
-      fontSize: fontSize,
-      fontWeight: fontWeight,
-      color: color,
-      height: height,
-    );
+}) => GoogleFonts.poppins(
+  fontSize: fontSize,
+  fontWeight: fontWeight,
+  color: color,
+  height: height,
+);
 
 TextStyle openSans({
   double fontSize = 14,
   FontWeight fontWeight = FontWeight.w400,
   Color? color,
   double? height,
-}) =>
-    GoogleFonts.openSans(
-      fontSize: fontSize,
-      fontWeight: fontWeight,
-      color: color,
-      height: height,
-    );
+}) => GoogleFonts.openSans(
+  fontSize: fontSize,
+  fontWeight: fontWeight,
+  color: color,
+  height: height,
+);
 
 /// Builds the Scholaris [ThemeData] used by the root [MaterialApp].
 ThemeData scholarisTheme() {

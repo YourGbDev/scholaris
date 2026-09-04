@@ -150,9 +150,14 @@ class _LoginScreenState extends State<LoginScreen>
             child: SafeArea(
               child: LayoutBuilder(
                 builder: (context, viewport) {
-                  // The hero fills the top ~45% of the available height; the
-                  // card takes the remaining ~55%.
-                  final heroHeight = viewport.maxHeight * 0.45;
+                  // Responsive split: hero takes ~40% on tall screens, but
+                  // shrinks further on short viewports so the card always
+                  // has room for the form without immediate scrolling.
+                  // 380px is the minimum card height needed to show title,
+                  // both fields, the primary button, and secondary actions
+                  // without scrolling on the smallest supported phones.
+                  final heroHeight = (viewport.maxHeight * 0.40)
+                      .clamp(180.0, viewport.maxHeight - 380);
                   return Column(
                     children: [
                       // --- Top: hero Lottie animation --------------------------

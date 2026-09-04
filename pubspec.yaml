@@ -1,6 +1,6 @@
 name: scholaris
 description: "A new Flutter project."
-publish_to: 'none'
+publish_to: "none"
 version: 1.0.0+1
 
 environment:
@@ -19,6 +19,8 @@ dependencies:
   json_annotation: ^4.12.0
   google_fonts: ^6.2.1
   lottie: ^3.5.1
+  shared_preferences: ^2.5.5
+  flutter_svg: ^2.3.0
 
 dev_dependencies:
   flutter_test:
@@ -31,4 +33,13 @@ dev_dependencies:
 flutter:
   uses-material-design: true
   assets:
-    - assets/animations/scholaris_match_hero.json
+    - assets/animations/scholaris_ceremony.json
+    - assets/animations/onboarding_slide1.json
+    - assets/animations/onboarding_slide2.json
+    - assets/animations/onboarding_slide3.json
+    - assets/animations/login_hero.json
+    - assets/images/scholaris_hero_student.png
+    - assets/images/onboarding_slide1.svg
+    - assets/images/onboarding_slide2.svg
+    - assets/images/onboarding_slide3.svg
+    - assets/images/login_hero.svg

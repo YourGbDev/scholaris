@@ -1,6 +1,6 @@
 // lib/features/auth/presentation/login_screen.dart
 //
-// Split-screen login: a gently floating login_hero illustration fills the top
+// Split-screen login: a looping login_hero Lottie animation fills the top
 // ~45%, and a clean white rounded card (top corners radius 24) slides up from
 // the bottom carrying the form — Welcome Back title, subtitle, email/password
 // fields, forgot-password link, Log in button, sign-up link and the provider
@@ -16,9 +16,9 @@
 // choreography have changed.
 
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:lottie/lottie.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'package:scholaris/features/auth/presentation/empty_stage.dart';
@@ -155,7 +155,7 @@ class _LoginScreenState extends State<LoginScreen>
                   final heroHeight = viewport.maxHeight * 0.45;
                   return Column(
                     children: [
-                      // --- Top: floating hero illustration ---------------------
+                      // --- Top: hero Lottie animation --------------------------
                       SizedBox(
                         height: heroHeight,
                         width: double.infinity,
@@ -163,11 +163,19 @@ class _LoginScreenState extends State<LoginScreen>
                           index: 0,
                           offset: const Offset(0, 0.08),
                           interval: _loginInterval(200, 1000),
-                          child: _FloatMotion(
-                            child: SvgPicture.asset(
-                              'assets/images/login_hero.svg',
-                              fit: BoxFit.contain,
-                            ),
+                          // The Lottie file has built-in looping motion (49
+                          // animated properties), so no float wrapper —
+                          // stacking the ±4px breathing on top would
+                          // double-animate. Frozen on its first frame for
+                          // reduced-motion users and in widget tests.
+                          child: Lottie.asset(
+                            'assets/animations/login_hero.json',
+                            fit: BoxFit.contain,
+                            animate:
+                                !(MediaQuery.maybeOf(context)
+                                        ?.disableAnimations ??
+                                    false) &&
+                                !_isWidgetTestBinding,
                           ),
                         ),
                       ),
@@ -597,66 +605,13 @@ class _LoginScreenState extends State<LoginScreen>
 /// True while running inside a widget test
 /// (`AutomatedTestWidgetsFlutterBinding` / `LiveTestWidgetsFlutterBinding`).
 ///
-/// A repeating controller would keep the test harness's `pumpAndSettle` from
-/// ever settling — it only stops when no frame is scheduled. Skipping the
-/// float there keeps the widget tests fast and deterministic; real app runs
-/// (debug, profile, release, web) always animate.
+/// The login hero Lottie loops forever; a repeating animation would keep the
+/// test harness's `pumpAndSettle` from ever settling — it only stops when no
+/// frame is scheduled. Freezing the hero there keeps the widget tests fast
+/// and deterministic; real app runs (debug, profile, release, web) always
+/// animate.
 bool get _isWidgetTestBinding {
   final type = WidgetsBinding.instance.runtimeType.toString();
   return type == 'AutomatedTestWidgetsFlutterBinding' ||
       type == 'LiveTestWidgetsFlutterBinding';
-}
-
-/// Calm vertical float for the login hero illustration: ±4px up/down on a
-/// 2.5s easeInOut loop (8px peak-to-peak), forever. Reduced-motion aware —
-/// when the platform requests reduced animations the illustration renders in
-/// its settled (neutral) position with no motion at all.
-class _FloatMotion extends StatefulWidget {
-  const _FloatMotion({required this.child});
-
-  final Widget child;
-
-  @override
-  State<_FloatMotion> createState() => _FloatMotionState();
-}
-
-class _FloatMotionState extends State<_FloatMotion>
-    with SingleTickerProviderStateMixin {
-  late final AnimationController _controller = AnimationController(
-    vsync: this,
-    duration: const Duration(milliseconds: 2500),
-  );
-  late final Animation<double> _dy = Tween<double>(
-    begin: -4,
-    end: 4,
-  ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    final reduce = MediaQuery.maybeOf(context)?.disableAnimations ?? false;
-    if (reduce || _isWidgetTestBinding) {
-      // Settled: park at the tween midpoint so the illustration is neutral.
-      _controller.stop();
-      _controller.value = 0.5;
-    } else if (!_controller.isAnimating) {
-      _controller.repeat(reverse: true);
-    }
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return AnimatedBuilder(
-      animation: _controller,
-      builder: (context, child) =>
-          Transform.translate(offset: Offset(0, _dy.value), child: child),
-      child: widget.child,
-    );
-  }
 }

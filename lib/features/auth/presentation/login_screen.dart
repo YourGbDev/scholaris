@@ -214,7 +214,7 @@ class _LoginScreenState extends State<LoginScreen>
                               // whole block (fields + actions) centers so the
                               // leftover space never lands between the last
                               // field and the actions below it.
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              mainAxisAlignment: MainAxisAlignment.start,
                               children: [
                                 // Scrollable heading + fields region.
                                 // Shrink-wraps to its content when the card is
@@ -363,6 +363,10 @@ class _LoginScreenState extends State<LoginScreen>
                                     ),
                                   ),
                                 ),
+                                // Capped spacer between form and bottom actions.
+                                // Keeps the gap reasonable on tall viewports
+                                // without pushing content below the fold.
+                                const SizedBox(height: 24),
                                 // Pinned bottom cluster: forgot link, Log in
                                 // button, sign-up link, provider CTA. Always
                                 // on screen so short surfaces still expose the

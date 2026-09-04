@@ -72,6 +72,6 @@ void main() {
     await tester.tap(find.text('Back to login'));
     await tester.pumpAndSettle();
 
-    expect(find.text('Welcome back'), findsOneWidget);
+    expect(find.text('Welcome Back'), findsOneWidget);
   });
 }

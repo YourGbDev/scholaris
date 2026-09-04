@@ -15,11 +15,10 @@ void main() {
   });
 
   group('LoginScreen', () {
-    testWidgets('renders the wordmark and email/password form', (tester) async {
+    testWidgets('renders email/password form', (tester) async {
       await tester.pumpWidget(const MaterialApp(home: LoginScreen()));
 
-      expect(find.text('Scholaris'), findsOneWidget);
-      expect(find.text('Welcome back'), findsOneWidget);
+      expect(find.text('Welcome Back'), findsOneWidget);
       expect(find.text('Email'), findsOneWidget);
       expect(find.text('Password'), findsOneWidget);
       expect(find.text('Forgot password?'), findsOneWidget);

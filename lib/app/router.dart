@@ -436,7 +436,7 @@ String? authRedirectDecision({
   }
 
   if (profileLoading) {
-    return location == '/splash' ? null : '/splash';
+    return null;
   }
 
   if (profileComplete) {

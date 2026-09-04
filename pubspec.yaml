@@ -35,8 +35,8 @@ flutter:
   assets:
     - assets/animations/scholaris_ceremony.json
     - assets/animations/onboarding_slide1.json
-    - assets/animations/onboarding_slide2.json
     - assets/animations/onboarding_slide3.json
+    - assets/animations/selection list clients.json
     - assets/animations/Sign up.json
     - assets/animations/login_hero.json
     - assets/animations/Forgot password.json

@@ -20,6 +20,7 @@ import 'package:scholaris/features/auth/controllers/auth_controller.dart';
 import 'package:scholaris/features/profile/models/profile_validator.dart';
 import 'package:scholaris/features/profile/models/student_profile.dart';
 import 'package:scholaris/features/profile/providers/profile_setup_provider.dart';
+import 'package:scholaris/shared/widgets/success_overlay.dart';
 
 // Scholaris brand palette.
 const _primary = Color(0xFF0F4D2E);
@@ -650,7 +651,8 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
     await ref.read(profileCompleteProvider.future);
 
     if (mounted) {
-      context.go('/home');
+      await SuccessOverlay.show(context);
+      if (mounted) context.go('/home');
     }
   }
 

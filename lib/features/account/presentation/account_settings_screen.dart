@@ -27,6 +27,7 @@ import 'package:scholaris/features/account/repositories/account_repository.dart'
 import 'package:scholaris/features/auth/controllers/auth_controller.dart';
 import 'package:scholaris/shared/theme/app_theme.dart';
 import 'package:scholaris/shared/widgets/responsive_container.dart';
+import 'package:scholaris/shared/widgets/success_overlay.dart';
 
 class AccountSettingsScreen extends ConsumerStatefulWidget {
   const AccountSettingsScreen({super.key});
@@ -118,6 +119,7 @@ class _AccountSettingsScreenState extends ConsumerState<AccountSettingsScreen> {
         _newPasswordController.clear();
         _confirmPasswordController.clear();
       });
+      await SuccessOverlay.show(context);
     } on AccountNotAuthenticatedException {
       if (!mounted) return;
       setState(() {

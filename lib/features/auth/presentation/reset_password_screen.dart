@@ -6,14 +6,9 @@
 // to the normal signed-in landing (home or profile-setup).
 
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-// Scholaris brand palette.
-const _primary = Color(0xFF0F4D2E);
-const _background = Color(0xFFFAFAF8);
-
-const _inputRadius = 12.0;
+import 'package:scholaris/shared/theme/app_theme.dart';
 
 class ResetPasswordScreen extends StatefulWidget {
   const ResetPasswordScreen({super.key});
@@ -82,13 +77,13 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
   }
 
   SnackBar _snackBar(String message) => SnackBar(
-        content: Text(message, style: GoogleFonts.openSans()),
+        content: Text(message, style: openSans()),
       );
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: _background,
+      backgroundColor: kBackground,
       body: SafeArea(
         child: Center(
           child: SingleChildScrollView(
@@ -116,17 +111,17 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
         Text(
           'Scholaris',
           textAlign: TextAlign.center,
-          style: GoogleFonts.poppins(
-            color: _primary,
+          style: poppins(
             fontSize: 40,
             fontWeight: FontWeight.w700,
+            color: kPrimary,
           ),
         ),
         const SizedBox(height: 4),
         Text(
           'Set your new password',
           textAlign: TextAlign.center,
-          style: GoogleFonts.openSans(color: Colors.black54),
+          style: openSans(color: Colors.black54),
         ),
       ],
     );
@@ -137,10 +132,10 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(kRadiusCard),
         boxShadow: const [
           BoxShadow(
-            color: Color(0x140F4D2E),
+            color: kCardShadow,
             blurRadius: 24,
             offset: Offset(0, 8),
           ),
@@ -153,16 +148,16 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
           children: [
             Text(
               'Set new password',
-              style: GoogleFonts.poppins(
-                color: _primary,
+              style: poppins(
                 fontSize: 22,
                 fontWeight: FontWeight.w600,
+                color: kPrimary,
               ),
             ),
             const SizedBox(height: 8),
             Text(
               'Enter a new password for your account.',
-              style: GoogleFonts.openSans(color: Colors.black54),
+              style: openSans(color: Colors.black54),
             ),
             const SizedBox(height: 16),
             _textField(
@@ -201,11 +196,11 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
             ElevatedButton(
               onPressed: _isLoading ? null : _onSubmit,
               style: ElevatedButton.styleFrom(
-                backgroundColor: _primary,
+                backgroundColor: kPrimary,
                 foregroundColor: Colors.white,
                 padding: const EdgeInsets.symmetric(vertical: 16),
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(_inputRadius),
+                  borderRadius: BorderRadius.circular(kRadiusInput),
                 ),
               ),
               child: _isLoading
@@ -219,7 +214,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                     )
                   : Text(
                       'Update password',
-                      style: GoogleFonts.poppins(fontWeight: FontWeight.w600),
+                      style: poppins(fontWeight: FontWeight.w600),
                     ),
             ),
             const SizedBox(height: 16),
@@ -229,14 +224,14 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
               children: [
                 Text(
                   'Remembered your password?',
-                  style: GoogleFonts.openSans(color: Colors.black54),
+                  style: openSans(color: Colors.black54),
                 ),
                 TextButton(
                   onPressed: () => Supabase.instance.client.auth.signOut(),
                   child: Text(
                     'Sign out',
-                    style: GoogleFonts.poppins(
-                      color: _primary,
+                    style: poppins(
+                      color: kPrimary,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
@@ -265,22 +260,22 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
       textInputAction: textInputAction,
       keyboardType: keyboardType,
       onFieldSubmitted: onFieldSubmitted,
-      style: GoogleFonts.openSans(),
+      style: openSans(),
       validator: validator,
       decoration: InputDecoration(
         labelText: label,
-        labelStyle: GoogleFonts.openSans(color: Colors.black54),
+        labelStyle: openSans(color: Colors.black54),
         suffixIcon: suffixIcon,
         filled: true,
         fillColor: Colors.white,
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(_inputRadius),
+          borderRadius: BorderRadius.circular(kRadiusInput),
           borderSide: BorderSide.none,
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(_inputRadius),
-          borderSide: const BorderSide(color: _primary, width: 1.5),
+          borderRadius: BorderRadius.circular(kRadiusInput),
+          borderSide: const BorderSide(color: kPrimary, width: 1.5),
         ),
       ),
     );

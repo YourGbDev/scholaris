@@ -526,44 +526,46 @@ class _LoginScreenState extends State<LoginScreen>
     );
   }
 
-  /// Quiet, secondary visual affordance for scholarship providers. This is a
-  /// static visual element only — it does not navigate, does not invoke any
-  /// provider logic, and has no tap handler.
+  /// Quiet, secondary visual affordance for scholarship providers.
   Widget _buildProviderCta() {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-      decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.55),
-        borderRadius: BorderRadius.circular(kRadiusCard),
-        border: Border.all(color: kAccent.withValues(alpha: 0.2)),
-      ),
-      child: Column(
-        children: [
-          Text(
-            'Want to help students reach their dreams?',
-            textAlign: TextAlign.center,
-            style: openSans(fontSize: 13, color: Colors.black54),
-          ),
-          const SizedBox(height: 4),
-          FittedBox(
-            fit: BoxFit.scaleDown,
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  'Become a scholarship provider',
-                  style: poppins(
-                    fontSize: 13,
-                    fontWeight: FontWeight.w600,
-                    color: kPrimary,
-                  ),
-                ),
-                const SizedBox(width: 4),
-                Icon(Icons.arrow_forward, size: 14, color: kPrimary),
-              ],
+    return InkWell(
+      onTap: () => context.go('/become-provider'),
+      borderRadius: BorderRadius.circular(kRadiusCard),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+        decoration: BoxDecoration(
+          color: Colors.white.withValues(alpha: 0.55),
+          borderRadius: BorderRadius.circular(kRadiusCard),
+          border: Border.all(color: kAccent.withValues(alpha: 0.2)),
+        ),
+        child: Column(
+          children: [
+            Text(
+              'Want to help students reach their dreams?',
+              textAlign: TextAlign.center,
+              style: openSans(fontSize: 13, color: Colors.black54),
             ),
-          ),
-        ],
+            const SizedBox(height: 4),
+            FittedBox(
+              fit: BoxFit.scaleDown,
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    'Become a scholarship provider',
+                    style: poppins(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w600,
+                      color: kPrimary,
+                    ),
+                  ),
+                  const SizedBox(width: 4),
+                  Icon(Icons.arrow_forward, size: 14, color: kPrimary),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

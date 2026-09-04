@@ -26,6 +26,8 @@ import 'package:scholaris/features/auth/presentation/forgot_password_screen.dart
 import 'package:scholaris/features/auth/presentation/login_screen.dart';
 import 'package:scholaris/features/auth/presentation/reset_password_screen.dart';
 import 'package:scholaris/features/auth/presentation/signup_screen.dart';
+import 'package:scholaris/features/provider/presentation/provider_review_screen.dart';
+import 'package:scholaris/features/provider/presentation/provider_signup_screen.dart';
 import 'package:scholaris/features/splash/presentation/splash_screen.dart';
 import 'package:scholaris/features/auth/presentation/verify_email_screen.dart';
 import 'package:scholaris/features/onboarding/controllers/onboarding_controller.dart';
@@ -122,6 +124,16 @@ final routerProvider = Provider<GoRouter>((ref) {
         name: 'verify-email',
         builder: (context, state) =>
             VerifyEmailScreen(email: state.uri.queryParameters['email']),
+      ),
+      GoRoute(
+        path: '/become-provider',
+        name: 'become-provider',
+        builder: (context, state) => const ProviderSignupScreen(),
+      ),
+      GoRoute(
+        path: '/provider-review',
+        name: 'provider-review',
+        builder: (context, state) => const ProviderReviewScreen(),
       ),
 
       // --- First-launch onboarding --------------------------------------------

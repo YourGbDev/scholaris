@@ -19,6 +19,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:scholaris/app/confirmation_redirect.dart';
 import 'package:scholaris/shared/theme/app_theme.dart';
 import 'package:scholaris/shared/widgets/entrance.dart';
+import 'package:scholaris/shared/widgets/success_overlay.dart';
 
 const _inputRadius = 12.0;
 
@@ -88,9 +89,10 @@ class _SignupScreenState extends State<SignupScreen>
 
       if (!mounted) return;
 
+      await SuccessOverlay.show(context);
+      if (!mounted) return;
+
       if (response.session == null) {
-        // Email confirmation is enabled; the user must verify their inbox.
-        // Send them to the dedicated screen so they can resend the link.
         context.go(
           '/verify-email?email=${Uri.encodeQueryComponent(_emailController.text.trim())}',
         );

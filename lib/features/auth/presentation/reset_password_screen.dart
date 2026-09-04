@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'package:scholaris/shared/theme/app_theme.dart';
+import 'package:scholaris/shared/widgets/success_overlay.dart';
 
 class ResetPasswordScreen extends StatefulWidget {
   const ResetPasswordScreen({super.key});
@@ -42,9 +43,8 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
         UserAttributes(password: _passwordController.text),
       );
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        _snackBar('Password updated. You\'re signed in.'),
-      );
+
+      await SuccessOverlay.show(context);
       // The auth boundary clears the recovery flag on userUpdated, and the
       // router listener re-evaluates the redirect to /home or /profile-setup.
     } on AuthException catch (error) {

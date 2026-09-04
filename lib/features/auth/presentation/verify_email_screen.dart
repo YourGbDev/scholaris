@@ -9,16 +9,10 @@
 
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'package:scholaris/app/confirmation_redirect.dart';
-
-// Scholaris brand palette.
-const _primary = Color(0xFF0F4D2E);
-const _background = Color(0xFFFAFAF8);
-
-const _inputRadius = 12.0;
+import 'package:scholaris/shared/theme/app_theme.dart';
 
 class VerifyEmailScreen extends StatefulWidget {
   const VerifyEmailScreen({super.key, this.email});
@@ -77,7 +71,7 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
   }
 
   SnackBar _snackBar(String message) => SnackBar(
-        content: Text(message, style: GoogleFonts.openSans()),
+        content: Text(message, style: openSans()),
       );
 
   @override
@@ -86,7 +80,7 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
     final hasEmail = email != null && email.isNotEmpty;
 
     return Scaffold(
-      backgroundColor: _background,
+      backgroundColor: kBackground,
       body: SafeArea(
         child: Center(
           child: SingleChildScrollView(
@@ -114,17 +108,17 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
         Text(
           'Scholaris',
           textAlign: TextAlign.center,
-          style: GoogleFonts.poppins(
-            color: _primary,
+          style: poppins(
             fontSize: 40,
             fontWeight: FontWeight.w700,
+            color: kPrimary,
           ),
         ),
         const SizedBox(height: 4),
         Text(
           'Find scholarships that fit you',
           textAlign: TextAlign.center,
-          style: GoogleFonts.openSans(color: Colors.black54),
+          style: openSans(color: Colors.black54),
         ),
       ],
     );
@@ -135,10 +129,10 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(kRadiusCard),
         boxShadow: const [
           BoxShadow(
-            color: Color(0x140F4D2E),
+            color: kCardShadow,
             blurRadius: 24,
             offset: Offset(0, 8),
           ),
@@ -149,10 +143,10 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
         children: [
           Text(
             'Verify your email',
-            style: GoogleFonts.poppins(
-              color: _primary,
+            style: poppins(
               fontSize: 22,
               fontWeight: FontWeight.w600,
+              color: kPrimary,
             ),
           ),
           const SizedBox(height: 16),
@@ -164,17 +158,17 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
                     'the email to activate your account.'
                 : 'Check your inbox for a verification link and tap it to '
                     'activate your account.',
-            style: GoogleFonts.openSans(color: Colors.black54, height: 1.5),
+            style: openSans(color: Colors.black54, height: 1.5),
           ),
           const SizedBox(height: 24),
           ElevatedButton(
             onPressed: (hasEmail && !_isLoading) ? _onResend : null,
             style: ElevatedButton.styleFrom(
-              backgroundColor: _primary,
+              backgroundColor: kPrimary,
               foregroundColor: Colors.white,
               padding: const EdgeInsets.symmetric(vertical: 16),
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(_inputRadius),
+                borderRadius: BorderRadius.circular(kRadiusInput),
               ),
             ),
             child: _isLoading
@@ -188,7 +182,7 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
                   )
                 : Text(
                     'Resend email',
-                    style: GoogleFonts.poppins(fontWeight: FontWeight.w600),
+                    style: poppins(fontWeight: FontWeight.w600),
                   ),
           ),
           const SizedBox(height: 16),
@@ -198,14 +192,14 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
             children: [
               Text(
                 'Changed your mind?',
-                style: GoogleFonts.openSans(color: Colors.black54),
+                style: openSans(color: Colors.black54),
               ),
               TextButton(
                 onPressed: () => context.go('/login'),
                 child: Text(
                   'Back to login',
-                  style: GoogleFonts.poppins(
-                    color: _primary,
+                  style: poppins(
+                    color: kPrimary,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
@@ -221,12 +215,12 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
     return Container(
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
-        color: const Color(0x0F0F4D2E),
-        borderRadius: BorderRadius.circular(_inputRadius),
+        color: kPrimarySoft,
+        borderRadius: BorderRadius.circular(kRadiusInput),
       ),
       child: Icon(
         Icons.mark_email_read_outlined,
-        color: _primary,
+        color: kPrimary,
         size: 48,
       ),
     );

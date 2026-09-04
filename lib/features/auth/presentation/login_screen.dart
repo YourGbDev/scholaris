@@ -169,7 +169,7 @@ class _LoginScreenState extends State<LoginScreen>
                           // double-animate. Frozen on its first frame for
                           // reduced-motion users and in widget tests.
                           child: Lottie.asset(
-                            'assets/animations/login_hero.json',
+                            'assets/animations/Sign up.json',
                             fit: BoxFit.contain,
                             animate:
                                 !(MediaQuery.maybeOf(context)

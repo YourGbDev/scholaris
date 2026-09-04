@@ -37,6 +37,7 @@ flutter:
     - assets/animations/onboarding_slide1.json
     - assets/animations/onboarding_slide2.json
     - assets/animations/onboarding_slide3.json
+    - assets/animations/Sign up.json
     - assets/animations/login_hero.json
     - assets/images/scholaris_hero_student.png
     - assets/images/onboarding_slide1.svg

@@ -131,8 +131,7 @@ void main() {
     ) async {
       await tester.pumpWidget(const MaterialApp(home: ForgotPasswordScreen()));
 
-      expect(find.text('Scholaris'), findsOneWidget);
-      expect(find.text('Reset your password'), findsOneWidget);
+      expect(find.text('Forgot Password?'), findsOneWidget);
       expect(find.text('Email'), findsOneWidget);
       expect(find.text('Send reset link'), findsOneWidget);
       expect(find.text('Log in'), findsOneWidget);
@@ -140,9 +139,11 @@ void main() {
 
     testWidgets('rejects an invalid email before any API call', (tester) async {
       await tester.pumpWidget(const MaterialApp(home: ForgotPasswordScreen()));
+      await tester.pumpAndSettle();
 
-      await tester.enterText(find.byType(TextFormField), 'not-an-email');
-      await tester.tap(find.text('Send reset link'));
+      await tester.enterText(find.byType(TextFormField).at(0), 'not-an-email');
+      await tester.ensureVisible(find.widgetWithText(ElevatedButton, 'Send reset link'));
+      await tester.tap(find.widgetWithText(ElevatedButton, 'Send reset link'));
       await tester.pumpAndSettle();
 
       expect(find.text('Enter a valid email address.'), findsOneWidget);
@@ -150,8 +151,10 @@ void main() {
 
     testWidgets('rejects an empty email', (tester) async {
       await tester.pumpWidget(const MaterialApp(home: ForgotPasswordScreen()));
+      await tester.pumpAndSettle();
 
-      await tester.tap(find.text('Send reset link'));
+      await tester.ensureVisible(find.widgetWithText(ElevatedButton, 'Send reset link'));
+      await tester.tap(find.widgetWithText(ElevatedButton, 'Send reset link'));
       await tester.pumpAndSettle();
 
       expect(find.text('Enter your email.'), findsOneWidget);
@@ -526,7 +529,7 @@ void main() {
       await tester.tap(find.text('Forgot password?'));
       await tester.pumpAndSettle();
 
-      expect(find.text('Reset your password'), findsOneWidget);
+      expect(find.text('Forgot Password?'), findsOneWidget);
     });
   });
 }

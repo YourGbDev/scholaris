@@ -6,6 +6,7 @@
 // is delegated to ProfileRepository.
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../auth/controllers/auth_controller.dart';
 import '../models/profile_validator.dart';
@@ -139,14 +140,23 @@ class ProfileSetupNotifier extends StateNotifier<ProfileSetupState> {
     try {
       profile = await _repository.fetchCurrent();
     } catch (_) {
-      // A failed hydration must not block or break the wizard; leave the empty
-      // form and let the user continue.
       return;
     }
     if (profile == null || !_isPristine()) return;
 
+    // Bridge: if the persisted profile has no full_name but the auth
+    // user metadata does (carried over from signup), use the auth
+    // metadata value so the user doesn't have to re-type their name.
+    var fullName = profile.fullName;
+    if (fullName.trim().isEmpty) {
+      final authName = Supabase.instance.client.auth.currentUser?.userMetadata?['full_name'] as String?;
+      if (authName != null && authName.trim().isNotEmpty) {
+        fullName = authName.trim();
+      }
+    }
+
     state = state.copyWith(
-      fullName: profile.fullName,
+      fullName: fullName,
       nationality: profile.nationality,
       birthDate: profile.birthDate,
       yearLevel: profile.yearLevel,

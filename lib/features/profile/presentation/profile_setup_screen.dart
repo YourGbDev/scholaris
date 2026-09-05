@@ -95,6 +95,14 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
   /// hydrated values into the controllers so the form is populated.
   void _syncHydration(ProfileSetupState? previous, ProfileSetupState next) {
     if (next.hydrated && !(previous?.hydrated ?? false)) {
+      // TEMP DEBUG: log hydration event
+      debugPrint('[ProfileSetup] hydration landed: attempted=${next.attempted}, fullName="${next.fullName}"');
+      // If the user has already started interacting with the form, do NOT
+      // overwrite their in-progress input with the persisted values.
+      if (next.attempted) {
+        debugPrint('[ProfileSetup] hydration skipped because form was already attempted');
+        return;
+      }
       _syncFromState(next);
     }
   }
@@ -628,7 +636,18 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
   void _onNext() {
     final notifier = _notifier;
     notifier.validateStep(widget.step);
-    if (!_formKey.currentState!.validate()) return;
+
+    final formState = _formKey.currentState;
+    final isValid = formState?.validate() ?? false;
+
+    // TEMP DEBUG: log validation result and field errors
+    final userId = ref.read(currentUserIdProvider);
+    final fieldErrors = userId == null
+        ? null
+        : ref.read(profileSetupProvider(userId)).fieldErrors;
+    debugPrint('[ProfileSetup] _onNext step=$widget.step isValid=$isValid fieldErrors=$fieldErrors');
+
+    if (!isValid) return;
 
     final nextRoute = widget.step == 'academic'
         ? ProfileSetupRoute.financial

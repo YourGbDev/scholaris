@@ -661,17 +661,48 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
     notifier.validateStep('financial');
 
     final userId = ref.read(currentUserIdProvider);
-    final preValidateRegion = userId == null
-        ? null
-        : ref.read(profileSetupProvider(userId)).region;
-    final preValidateErrors = userId == null
+    final state = userId == null ? null : ref.read(profileSetupProvider(userId));
+    final fieldErrors = state?.fieldErrors;
+
+    // Granular: print every field in the ProfileFieldErrors object
+    if (fieldErrors != null) {
+      debugPrint(
+        '[ProfileSetup] _onSubmit fieldErrors: '
+        'fullName=${fieldErrors.fullName} '
+        'nationality=${fieldErrors.nationality} '
+        'gpa=${fieldErrors.gpa} '
+        'yearLevel=${fieldErrors.yearLevel} '
+        'course=${fieldErrors.course} '
+        'monthlyFamilyIncome=${fieldErrors.monthlyFamilyIncome} '
+        'region=${fieldErrors.region}',
+      );
+    } else {
+      debugPrint('[ProfileSetup] _onSubmit fieldErrors=null (all valid)');
+    }
+
+    // Granular: validate each FormField in the form individually to see
+    // exactly which widget's internal value is failing.
+    final formState = _formKey.currentState;
+    final preValidateFieldErrors = userId == null
         ? null
         : ref.read(profileSetupProvider(userId)).fieldErrors;
     debugPrint(
-      '[ProfileSetup] _onSubmit preValidate region=$preValidateRegion fieldErrors=$preValidateErrors',
+      '[ProfileSetup] _onSubmit preValidate fieldErrors=$preValidateFieldErrors',
     );
+    if (formState != null) {
+      final fields = formState.fields.toList();
+      for (var i = 0; i < fields.length; i++) {
+        final fieldState = fields[i];
+        final value = fieldState.value;
+        final isValid = fieldState.validate();
+        final error = fieldState.errorText;
+        debugPrint(
+          '[ProfileSetup] _onSubmit field[$i] '
+          'value=$value isValid=$isValid error=$error',
+        );
+      }
+    }
 
-    final formState = _formKey.currentState;
     final isValid = formState?.validate() ?? false;
     debugPrint('[ProfileSetup] _onSubmit isValid=$isValid');
 
@@ -686,6 +717,10 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
     final ok = await notifier.submit();
     if (!ok) return;
 
+    if (mounted) {
+      await SuccessOverlay.show(context);
+    }
+
     // Re-check setup_complete so the router's redirect lets us through to /home,
     // and refetch the shared current profile so tabs show the saved values.
     ref.invalidate(profileCompleteProvider);
@@ -693,8 +728,7 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
     await ref.read(profileCompleteProvider.future);
 
     if (mounted) {
-      await SuccessOverlay.show(context);
-      if (mounted) context.go('/home');
+      context.go('/home');
     }
   }
 

@@ -468,6 +468,7 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
     String? hint,
   }) {
     return DropdownButtonFormField<T>(
+      key: ValueKey(value),
       initialValue: value,
       hint: hint == null
           ? null
@@ -658,7 +659,29 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
   Future<void> _onSubmit() async {
     final notifier = _notifier;
     notifier.validateStep('financial');
-    if (!_formKey.currentState!.validate()) return;
+
+    final userId = ref.read(currentUserIdProvider);
+    final preValidateRegion = userId == null
+        ? null
+        : ref.read(profileSetupProvider(userId)).region;
+    final preValidateErrors = userId == null
+        ? null
+        : ref.read(profileSetupProvider(userId)).fieldErrors;
+    debugPrint(
+      '[ProfileSetup] _onSubmit preValidate region=$preValidateRegion fieldErrors=$preValidateErrors',
+    );
+
+    final formState = _formKey.currentState;
+    final isValid = formState?.validate() ?? false;
+    debugPrint('[ProfileSetup] _onSubmit isValid=$isValid');
+
+    if (!isValid) {
+      final postErrors = userId == null
+          ? null
+          : ref.read(profileSetupProvider(userId)).fieldErrors;
+      debugPrint('[ProfileSetup] _onSubmit blocked fieldErrors=$postErrors');
+      return;
+    }
 
     final ok = await notifier.submit();
     if (!ok) return;

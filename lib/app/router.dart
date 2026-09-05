@@ -185,7 +185,16 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/profile-setup',
         name: 'profile-setup',
-        redirect: (context, state) => ProfileSetupRoute.personal,
+        redirect: (context, state) {
+          // TEMP DEBUG: log parent redirect evaluation
+          debugPrint('[ROUTER] parent redirect for path=${state.uri.path}');
+          // Only redirect bare /profile-setup to personal; child paths must
+          // pass through untouched or the Next button bounces back to step 1.
+          if (state.uri.path == '/profile-setup' || state.uri.path.endsWith('/profile-setup/')) {
+            return ProfileSetupRoute.personal;
+          }
+          return null;
+        },
         routes: <RouteBase>[
           GoRoute(
             path: 'personal',
@@ -339,11 +348,21 @@ bool _isAuthRoute(String location) =>
 String? _redirect(Ref ref, GoRouterState state) {
   final location = state.matchedLocation;
 
+  // TEMP DEBUG: log every redirect evaluation with key state
+  debugPrint(
+    '[ROUTER] redirect location=$location '
+    'isLoggedIn=${ref.read(authSessionProvider) != null} '
+    'profileLoading=${ref.read(profileCompleteProvider).isLoading} '
+    'profileComplete=${ref.read(profileCompleteProvider).valueOrNull ?? false} '
+    'onSetupRoute=${location.startsWith('/profile-setup')}',
+  );
+
   // The animated splash owns /splash until its sequence completes (or is
   // skipped instantly under reduced motion). Holding here first means the
   // 2.5s choreography always plays before the onboarding/auth gates below
   // decide the destination.
   if (location == '/splash' && !ref.read(splashCompletedProvider)) {
+    debugPrint('[ROUTER] holding on /splash');
     return null;
   }
 
@@ -358,16 +377,19 @@ String? _redirect(Ref ref, GoRouterState state) {
     profileLoading: ref.read(profileCompleteProvider).isLoading,
     profileComplete: ref.read(profileCompleteProvider).valueOrNull ?? false,
   );
+  debugPrint('[ROUTER] authDecision=$authDecision');
 
   // Layered first-launch onboarding gate (see [onboardingRedirectDecision]).
   final onboarding = ref.read(onboardingSeenProvider);
-  return onboardingRedirectDecision(
+  final result = onboardingRedirectDecision(
     authDecision: authDecision,
     location: location,
     onboardingLoading: onboarding.isLoading,
     onboardingSeen: onboarding.valueOrNull ?? false,
     recoveryActive: recoveryActive,
   );
+  debugPrint('[ROUTER] final redirect=$result');
+  return result;
 }
 
 /// First-launch onboarding gate, layered on top of [authRedirectDecision].

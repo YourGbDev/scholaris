@@ -7,6 +7,7 @@
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:flutter/foundation.dart';
 
 import '../../auth/controllers/auth_controller.dart';
 import '../models/profile_validator.dart';
@@ -256,7 +257,9 @@ class ProfileSetupNotifier extends StateNotifier<ProfileSetupState> {
   }
 
   void setRegion(String value) {
+    debugPrint('[ProfileSetup] setRegion called value=$value before=${state.region}');
     state = state.copyWith(region: value);
+    debugPrint('[ProfileSetup] setRegion after state.region=${state.region} attempted=${state.attempted}');
     _refreshErrors();
   }
 
@@ -274,6 +277,7 @@ class ProfileSetupNotifier extends StateNotifier<ProfileSetupState> {
   /// the form can surface them per-input. Returns the (possibly empty) errors.
   ProfileFieldErrors? validateStep(String step) {
     final all = _validateAll();
+    debugPrint('[ProfileSetup] validateStep step=$step all.region=${all.region} all.monthlyFamilyIncome=${all.monthlyFamilyIncome} all.isValid=${all.isValid}');
     final errors = switch (step) {
       'personal' => ProfileFieldErrors(
           fullName: all.fullName,
@@ -289,8 +293,10 @@ class ProfileSetupNotifier extends StateNotifier<ProfileSetupState> {
           region: all.region,
         ),
     };
+    debugPrint('[ProfileSetup] validateStep result region=${errors.region} monthlyFamilyIncome=${errors.monthlyFamilyIncome} isValid=${errors.isValid}');
     final result = errors.isValid ? null : errors;
-    state = state.copyWith(attempted: true, fieldErrors: result);
+    state = state.copyWith(attempted: true, fieldErrors: result, clearFieldErrors: result == null);
+    debugPrint('[ProfileSetup] validateStep stored fieldErrors region=${state.fieldErrors?.region}');
     return result;
   }
 
@@ -353,6 +359,7 @@ class ProfileSetupNotifier extends StateNotifier<ProfileSetupState> {
   // --- Internals ------------------------------------------------------------
 
   ProfileFieldErrors _validateAll() {
+    debugPrint('[ProfileSetup] _validateAll region=${state.region} incomeUndisclosed=${state.incomeUndisclosed} monthlyFamilyIncome="${state.monthlyFamilyIncome}"');
     return _validator.validate(
       fullName: state.fullName,
       nationality: state.nationality,
@@ -366,9 +373,11 @@ class ProfileSetupNotifier extends StateNotifier<ProfileSetupState> {
   }
 
   void _refreshErrors() {
+    debugPrint('[ProfileSetup] _refreshErrors called attempted=${state.attempted}');
     if (!state.attempted) return;
     final all = _validateAll();
-    state = state.copyWith(fieldErrors: all.isValid ? null : all);
+    debugPrint('[ProfileSetup] _refreshErrors result region=${all.region} monthlyFamilyIncome=${all.monthlyFamilyIncome} isValid=${all.isValid}');
+    state = state.copyWith(fieldErrors: all.isValid ? null : all, clearFieldErrors: all.isValid);
   }
 
   static String? _blankToNull(String value) =>

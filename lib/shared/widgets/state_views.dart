@@ -12,10 +12,11 @@ class LoadingView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Padding(
+    return Padding(
       padding: EdgeInsets.all(48),
       child: Center(
         child: SizedBox(
+          key: Key('loading-indicator'),
           height: 32,
           width: 32,
           child: _LoadingSpinner(),

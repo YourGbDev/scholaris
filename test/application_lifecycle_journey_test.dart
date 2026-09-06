@@ -104,7 +104,7 @@ Future<void> _pump(
       child: MaterialApp(home: child),
     ),
   );
-  await tester.pumpAndSettle();
+  await tester.pump(const Duration(milliseconds: 500));
 }
 
 void main() {
@@ -133,12 +133,12 @@ void main() {
 
     expect(find.text('Apply now'), findsOneWidget);
     await tester.tap(find.text('Apply now'));
-    await tester.pumpAndSettle();
+    await tester.pump(const Duration(milliseconds: 500));
 
     // Day 15: the write only happens after the pre-apply confirmation.
     expect(find.text('Apply to this scholarship?'), findsOneWidget);
     await tester.tap(find.byKey(const ValueKey('apply-confirm')));
-    await tester.pumpAndSettle();
+    await tester.pump(const Duration(milliseconds: 500));
 
     expect(find.text('Application submitted!'), findsOneWidget);
     expect(find.text('Application submitted'), findsOneWidget);
@@ -148,7 +148,7 @@ void main() {
     await _pump(tester, h.container, const HomeScreen());
 
     await tester.tap(find.text('Applications'));
-    await tester.pumpAndSettle();
+    await tester.pump(const Duration(milliseconds: 500));
 
     expect(find.text('My Applications'), findsOneWidget);
     expect(find.text('1 Total'), findsOneWidget);
@@ -158,7 +158,7 @@ void main() {
 
     // ---- Step 3: Open the application detail ------------------------------
     await tester.tap(find.text('DOST-SEI Undergraduate Scholarship'));
-    await tester.pumpAndSettle();
+    await tester.pump(const Duration(milliseconds: 500));
 
     expect(find.byType(ApplicationDetailScreen), findsOneWidget);
     expect(find.byKey(const ValueKey('withdraw-action')), findsOneWidget);
@@ -166,7 +166,7 @@ void main() {
     // ---- Step 4: Withdraw (confirmation) ---------------------------------
     await tester.ensureVisible(find.byKey(const ValueKey('withdraw-action')));
     await tester.tap(find.byKey(const ValueKey('withdraw-action')));
-    await tester.pumpAndSettle();
+    await tester.pump(const Duration(milliseconds: 500));
 
     expect(find.text('Withdraw application?'), findsOneWidget);
 
@@ -177,13 +177,13 @@ void main() {
     final rows = await h.applications.fetchApplications('user-a');
     expect(rows.single['status'], 'withdrawn');
 
-    await tester.pumpAndSettle();
+    await tester.pump(const Duration(milliseconds: 500));
 
     expect(find.byKey(const ValueKey('withdraw-action')), findsNothing);
     expect(find.textContaining('kept in your history'), findsOneWidget);
 
     await tester.pageBack();
-    await tester.pumpAndSettle();
+    await tester.pump(const Duration(milliseconds: 500));
 
     // The pending count dropped; the withdrawn filter chip exists.
     expect(find.text('0 Pending'), findsOneWidget);
@@ -193,7 +193,7 @@ void main() {
     // The withdrawn filter surfaces the historical application.
     await tester.ensureVisible(find.text('Withdrawn (1)'));
     await tester.tap(find.text('Withdrawn (1)'));
-    await tester.pumpAndSettle();
+    await tester.pump(const Duration(milliseconds: 500));
 
     expect(find.text('DOST-SEI Undergraduate Scholarship'), findsOneWidget);
     expect(find.byType(ApplicationStatusChip), findsOneWidget);
@@ -201,11 +201,11 @@ void main() {
     // Back to All.
     await tester.ensureVisible(find.text('All (1)'));
     await tester.tap(find.text('All (1)'));
-    await tester.pumpAndSettle();
+    await tester.pump(const Duration(milliseconds: 500));
 
     // ---- Step 6: Discover/Saved applied-state updates --------------------
     await tester.tap(find.text('Discover'));
-    await tester.pumpAndSettle();
+    await tester.pump(const Duration(milliseconds: 500));
 
     // The withdrawn application no longer reads as "Applied" on the card.
     final dostCard = find.ancestor(

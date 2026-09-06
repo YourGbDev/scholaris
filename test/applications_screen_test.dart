@@ -226,10 +226,10 @@ void main() {
       addTearDown(tester.view.reset);
 
       await tester.pumpWidget(_wrapHomeScreen());
-      await tester.pumpAndSettle();
+      await tester.pump(const Duration(milliseconds: 500));
 
       await tester.tap(find.text('Profile'));
-      await tester.pumpAndSettle();
+      await tester.pump(const Duration(milliseconds: 500));
 
       expect(find.text('My Applications'), findsOneWidget);
     });
@@ -241,13 +241,13 @@ void main() {
       addTearDown(tester.view.reset);
 
       await tester.pumpWidget(_wrapHomeScreen());
-      await tester.pumpAndSettle();
+      await tester.pump(const Duration(milliseconds: 500));
 
       await tester.tap(find.text('Profile'));
-      await tester.pumpAndSettle();
+      await tester.pump(const Duration(milliseconds: 500));
 
       await tester.tap(find.text('My Applications'));
-      await tester.pumpAndSettle();
+      await tester.pump(const Duration(milliseconds: 500));
 
       // The pushed screen's AppBar shows the title and its body shows the
       // tracking surface (empty state here).
@@ -264,14 +264,14 @@ void main() {
     testWidgets('the three-tab navigation contract remains intact',
         (tester) async {
       await tester.pumpWidget(_wrapHomeScreen());
-      await tester.pumpAndSettle();
+      await tester.pump(const Duration(milliseconds: 500));
 
       expect(find.text('Discover'), findsOneWidget);
       expect(find.text('Saved'), findsOneWidget);
       expect(find.text('Profile'), findsOneWidget);
 
       await tester.tap(find.text('Saved'));
-      await tester.pumpAndSettle();
+      await tester.pump(const Duration(milliseconds: 500));
       expect(find.text('Nothing saved yet'), findsOneWidget);
     });
   });
@@ -315,7 +315,7 @@ void main() {
       await tester.pumpWidget(_wrap(applications: slow));
       await tester.pump();
 
-      expect(find.byType(CircularProgressIndicator), findsOneWidget);
+      expect(find.byKey(const Key("loading-indicator")), findsOneWidget);
       expect(find.text('No applications yet'), findsNothing);
 
       slow.gate.complete();

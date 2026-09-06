@@ -163,7 +163,7 @@ Future<void> _pumpDiscover(WidgetTester tester) async {
   tester.view.devicePixelRatio = 1.0;
   addTearDown(tester.view.reset);
   await tester.pumpWidget(_wrap());
-  await tester.pumpAndSettle();
+  await tester.pump(const Duration(milliseconds: 500));
 }
 
 Finder _inSheet(Finder inner) =>
@@ -171,22 +171,22 @@ Finder _inSheet(Finder inner) =>
 
 Future<void> _openFilters(WidgetTester tester) async {
   await tester.tap(find.byIcon(Icons.tune_rounded));
-  await tester.pumpAndSettle();
+  await tester.pump(const Duration(milliseconds: 500));
 }
 
 Future<void> _selectInSheet(WidgetTester tester, Finder finder) async {
   await tester.tap(_inSheet(finder));
-  await tester.pumpAndSettle();
+  await tester.pump(const Duration(milliseconds: 500));
 }
 
 Future<void> _closeSheet(WidgetTester tester) async {
   await tester.tap(_inSheet(find.text('Done')));
-  await tester.pumpAndSettle();
+  await tester.pump(const Duration(milliseconds: 500));
 }
 
 Future<void> _typeSearch(WidgetTester tester, String query) async {
   await tester.enterText(find.byType(TextField), query);
-  await tester.pumpAndSettle();
+  await tester.pump(const Duration(milliseconds: 500));
 }
 
 void main() {
@@ -220,7 +220,7 @@ void main() {
       expect(find.text('CHED Merit Scholarship'), findsNothing);
 
       await tester.tap(find.byIcon(Icons.close_rounded));
-      await tester.pumpAndSettle();
+      await tester.pump(const Duration(milliseconds: 500));
 
       expect(find.text('DOST-SEI Scholarship'), findsOneWidget);
       expect(find.text('CHED Merit Scholarship'), findsOneWidget);
@@ -289,7 +289,7 @@ void main() {
         of: find.byKey(const ValueKey('filter-chip-Income: Mid')),
         matching: find.byIcon(Icons.close),
       ));
-      await tester.pumpAndSettle();
+      await tester.pump(const Duration(milliseconds: 500));
 
       expect(find.text('Income: Mid'), findsNothing);
       expect(find.text('CHED Merit Scholarship'), findsOneWidget);
@@ -307,7 +307,7 @@ void main() {
       expect(find.text('Income: High'), findsOneWidget);
 
       await tester.tap(find.text('Clear all'));
-      await tester.pumpAndSettle();
+      await tester.pump(const Duration(milliseconds: 500));
 
       expect(find.text('Income: High'), findsNothing);
       expect(find.text('CHED Merit Scholarship'), findsOneWidget);
@@ -383,7 +383,7 @@ void main() {
       expect(find.text('No scholarships found'), findsOneWidget);
 
       await tester.tap(find.text('Clear search & filters'));
-      await tester.pumpAndSettle();
+      await tester.pump(const Duration(milliseconds: 500));
 
       expect(find.text('No scholarships found'), findsNothing);
       expect(find.text('DOST-SEI Scholarship'), findsOneWidget);

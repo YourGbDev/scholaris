@@ -188,7 +188,7 @@ void main() {
       addTearDown(tester.view.reset);
 
       await tester.pumpWidget(_wrapHomeScreen());
-      await tester.pumpAndSettle();
+      await tester.pump(const Duration(milliseconds: 500));
 
       // All four destinations are present.
       expect(find.text('Discover'), findsOneWidget);
@@ -198,14 +198,14 @@ void main() {
 
       // Switching to the Applications tab surfaces the tracking surface.
       await tester.tap(find.text('Applications'));
-      await tester.pumpAndSettle();
+      await tester.pump(const Duration(milliseconds: 500));
 
       expect(find.text('My Applications'), findsOneWidget);
       expect(find.text('No applications yet'), findsOneWidget);
 
       // Discover still works after switching back — IndexedStack preserved.
       await tester.tap(find.text('Discover'));
-      await tester.pumpAndSettle();
+      await tester.pump(const Duration(milliseconds: 500));
       expect(find.text('Good to see you, Maria'), findsOneWidget);
     });
 
@@ -222,10 +222,10 @@ void main() {
           scholarshipId: 'sch-ched', status: 'approved');
 
       await tester.pumpWidget(_wrapHomeScreen(applications: applications));
-      await tester.pumpAndSettle();
+      await tester.pump(const Duration(milliseconds: 500));
 
       await tester.tap(find.text('Applications'));
-      await tester.pumpAndSettle();
+      await tester.pump(const Duration(milliseconds: 500));
 
       expect(find.text('DOST-SEI Undergraduate Scholarship'), findsOneWidget);
       expect(find.text('CHED Merit Scholarship (MSRS)'), findsOneWidget);

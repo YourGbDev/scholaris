@@ -118,7 +118,7 @@ void main() {
   group('HomeScreen shell', () {
     testWidgets('renders three navigation tabs', (tester) async {
       await tester.pumpWidget(_wrap(child: const HomeScreen()));
-      await tester.pumpAndSettle();
+      await tester.pump(const Duration(milliseconds: 500));
 
       expect(find.text('Discover'), findsOneWidget);
       expect(find.text('Saved'), findsOneWidget);
@@ -128,10 +128,10 @@ void main() {
     testWidgets('switching to the Saved tab shows the empty state',
         (tester) async {
       await tester.pumpWidget(_wrap(child: const HomeScreen()));
-      await tester.pumpAndSettle();
+      await tester.pump(const Duration(milliseconds: 500));
 
       await tester.tap(find.text('Saved'));
-      await tester.pumpAndSettle();
+      await tester.pump(const Duration(milliseconds: 500));
 
       expect(find.text('Nothing saved yet'), findsOneWidget);
     });
@@ -139,10 +139,10 @@ void main() {
     testWidgets('switching to the Profile tab shows the profile summary',
         (tester) async {
       await tester.pumpWidget(_wrap(child: const HomeScreen()));
-      await tester.pumpAndSettle();
+      await tester.pump(const Duration(milliseconds: 500));
 
       await tester.tap(find.text('Profile'));
-      await tester.pumpAndSettle();
+      await tester.pump(const Duration(milliseconds: 500));
 
       expect(find.text('Maria Santos'), findsOneWidget);
       expect(find.text('Your matching profile'), findsOneWidget);
@@ -153,7 +153,7 @@ void main() {
     testWidgets('greets the student and shows personalized matches',
         (tester) async {
       await tester.pumpWidget(_wrap(child: const HomeScreen()));
-      await tester.pumpAndSettle();
+      await tester.pump(const Duration(milliseconds: 500));
 
       expect(find.text('Good to see you, Maria'), findsOneWidget);
       expect(find.text('Your Matches'), findsOneWidget);
@@ -196,7 +196,7 @@ void main() {
         ],
         child: const MaterialApp(home: HomeScreen()),
       ));
-      await tester.pumpAndSettle();
+      await tester.pump(const Duration(milliseconds: 500));
 
       expect(find.text('DOST-SEI Undergraduate Scholarship'), findsOneWidget);
       // CHED is ineligible for matches but still appears in the browse
@@ -402,7 +402,7 @@ void main() {
         child: const HomeScreen(),
         bookmarks: bookmarks,
       ));
-      await tester.pumpAndSettle();
+      await tester.pump(const Duration(milliseconds: 500));
 
       // Both matched cards start unsaved. Scoped to cards so the navigation
       // bar's Saved icon (same glyph) is not matched.
@@ -413,7 +413,7 @@ void main() {
       expect(cardBookmarks, findsNWidgets(2));
 
       await tester.tap(cardBookmarks.first);
-      await tester.pumpAndSettle();
+      await tester.pump(const Duration(milliseconds: 500));
 
       expect(await bookmarks.fetchScholarshipIds('user-a'), ['sch-dost']);
       expect(
@@ -435,7 +435,7 @@ void main() {
         child: const HomeScreen(),
         bookmarks: bookmarks,
       ));
-      await tester.pumpAndSettle();
+      await tester.pump(const Duration(milliseconds: 500));
 
       expect(
         find.descendant(
@@ -462,10 +462,10 @@ void main() {
         child: const HomeScreen(),
         bookmarks: bookmarks,
       ));
-      await tester.pumpAndSettle();
+      await tester.pump(const Duration(milliseconds: 500));
 
       await tester.tap(find.text('Saved'));
-      await tester.pumpAndSettle();
+      await tester.pump(const Duration(milliseconds: 500));
 
       expect(find.text('CHED Merit Scholarship (MSRS)'), findsOneWidget);
 
@@ -473,7 +473,7 @@ void main() {
         of: find.byType(ScholarshipCard),
         matching: find.byIcon(Icons.bookmark_rounded),
       ));
-      await tester.pumpAndSettle();
+      await tester.pump(const Duration(milliseconds: 500));
 
       expect(await bookmarks.fetchScholarshipIds('user-a'), isEmpty);
       expect(find.text('Nothing saved yet'), findsOneWidget);
@@ -488,7 +488,7 @@ void main() {
       addTearDown(tester.view.reset);
 
       await tester.pumpWidget(_wrap(child: const HomeScreen()));
-      await tester.pumpAndSettle();
+      await tester.pump(const Duration(milliseconds: 500));
 
       final listView = find.byType(ListView).first;
       expect(tester.getSize(listView).width, lessThanOrEqualTo(640));
@@ -532,7 +532,7 @@ void main() {
         ],
         child: const MaterialApp(home: HomeScreen()),
       ));
-      await tester.pumpAndSettle();
+      await tester.pump(const Duration(milliseconds: 500));
 
       expect(find.text('A Very Long Scholarship Name That Should Be '
           'Ellipsized Gracefully Instead Of Overflowing The Card Layout'),

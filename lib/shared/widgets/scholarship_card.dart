@@ -8,7 +8,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:lottie/lottie.dart';
 
 import '../../features/scholarships/models/scholarship.dart';
 import '../theme/app_theme.dart';
@@ -177,57 +176,89 @@ class _BookmarkButton extends StatefulWidget {
 class _BookmarkButtonState extends State<_BookmarkButton>
     with SingleTickerProviderStateMixin {
   bool _locallyBookmarked = false;
-  bool _playing = false;
+  bool _animating = false;
+  late final AnimationController _burstController;
+  late final Animation<double> _burstScale;
+  late final Animation<Color?> _burstColor;
+
+  @override
+  void initState() {
+    super.initState();
+    _burstController = AnimationController(
+      duration: const Duration(milliseconds: 420),
+      vsync: this,
+    );
+    _burstScale = TweenSequence<double>(
+      [
+        TweenSequenceItem(tween: Tween(begin: 1.0, end: 1.4), weight: 1),
+        TweenSequenceItem(tween: Tween(begin: 1.4, end: 1.0), weight: 1),
+      ],
+    ).animate(CurvedAnimation(parent: _burstController, curve: Curves.elasticOut));
+    _burstColor = ColorTween(begin: kPrimary, end: kAccent).animate(_burstController);
+  }
+
+  @override
+  void dispose() {
+    _burstController.dispose();
+    super.dispose();
+  }
 
   @override
   void didUpdateWidget(covariant _BookmarkButton oldWidget) {
     super.didUpdateWidget(oldWidget);
-    // If upstream state changed underneath us, reset local visual state.
     if (widget.isBookmarked != oldWidget.isBookmarked) {
       _locallyBookmarked = widget.isBookmarked;
-      _playing = false;
+      if (!_animating && !_burstController.isAnimating) {
+        _burstController.reset();
+      }
     }
   }
 
   void _handleTap() {
-    // When already bookmarked, un-bookmark with instant icon swap.
-    if (widget.isBookmarked || _locallyBookmarked) {
+    final willBookmark = !(widget.isBookmarked || _locallyBookmarked);
+
+    if (willBookmark) {
+      setState(() {
+        _locallyBookmarked = true;
+        _animating = true;
+      });
+      _burstController.forward(from: 0);
+    } else {
       setState(() {
         _locallyBookmarked = false;
-        _playing = false;
       });
-      widget.onToggleBookmark();
-      return;
     }
 
-    // Not bookmarked: play burst animation, then settle to filled icon.
-    setState(() {
-      _playing = true;
-      _locallyBookmarked = true;
-    });
-    widget.onToggleBookmark();
+    try {
+      widget.onToggleBookmark();
+    } on Exception {
+      setState(() {
+        _locallyBookmarked = !willBookmark;
+      });
+      if (willBookmark) {
+        _animating = false;
+        _burstController.reset();
+      }
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     final showFilled = widget.isBookmarked || _locallyBookmarked;
+    final showBurst = _animating && _burstController.isAnimating && showFilled;
 
     Widget icon;
-    if (_playing) {
-      icon = SizedBox(
-        width: 20,
-        height: 20,
-        child: Lottie.asset(
-          'assets/animations/bookmark_burst.json',
-          fit: BoxFit.contain,
-          repeat: false,
-          onLoaded: (composition) {
-            // Play exactly once; when complete, drop back to static icon.
-            // Lottie calls the status listener when the animation ends, but
-            // to avoid depending on controller internals here we simply let
-            // the composition finish and then clear _playing on the next
-            // frame by relying on didUpdateWidget / rebuilds after the
-            // callback from parent state update.
+    if (showBurst) {
+      icon = ScaleTransition(
+        scale: _burstScale,
+        child: AnimatedBuilder(
+          animation: _burstColor,
+          builder: (context, child) {
+            return Icon(
+              Icons.bookmark_rounded,
+              size: 20,
+              color: _burstColor.value ?? kAccent,
+            );
           },
         ),
       );
@@ -326,6 +357,7 @@ class _AppliedChip extends StatelessWidget {
     );
   }
 }
+
 class _ReasonChip extends StatelessWidget {
   const _ReasonChip({required this.label});
 

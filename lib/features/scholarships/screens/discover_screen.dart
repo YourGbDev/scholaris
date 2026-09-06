@@ -375,6 +375,7 @@ class DiscoverScreen extends ConsumerWidget {
           'No scholarships match your current search and filters. Try adjusting them to see more results.',
       actionLabel: 'Clear search & filters',
       onAction: () => ref.read(discoveryFilterProvider.notifier).reset(),
+      animateSearchIcon: true,
     );
   }
 

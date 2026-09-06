@@ -66,6 +66,7 @@ class SavedScreen extends ConsumerWidget {
             icon: Icons.bookmark_border_rounded,
             title: 'Nothing saved yet',
             message: 'Tap the bookmark on any scholarship to keep it here.',
+            animateSearchIcon: true,
           );
         }
 
@@ -84,6 +85,7 @@ class SavedScreen extends ConsumerWidget {
                 icon: Icons.bookmark_border_rounded,
                 title: 'Nothing saved yet',
                 message: 'Tap the bookmark on any scholarship to keep it here.',
+                animateSearchIcon: true,
               );
             }
 

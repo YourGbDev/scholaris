@@ -4,6 +4,8 @@
 // a consistent, polished state instead of a raw spinner or exception.
 
 import 'package:flutter/material.dart';
+// TODO: uncomment when assets/animations/loading_spinner.json is available.
+// import 'package:lottie/lottie.dart';
 
 import '../theme/app_theme.dart';
 
@@ -18,10 +20,21 @@ class LoadingView extends StatelessWidget {
         child: SizedBox(
           height: 32,
           width: 32,
-          child: CircularProgressIndicator(strokeWidth: 3, color: kPrimary),
+          child: _LoadingLottie(),
         ),
       ),
     );
+  }
+}
+
+class _LoadingLottie extends StatelessWidget {
+  const _LoadingLottie();
+
+  @override
+  Widget build(BuildContext context) {
+    // TODO: replace with actual Lottie asset when assets/animations/loading_spinner.json is available.
+    // For now, fall back to the existing spinner so this widget compiles and behaves identically.
+    return CircularProgressIndicator(strokeWidth: 3, color: kPrimary);
   }
 }
 

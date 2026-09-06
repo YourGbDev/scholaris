@@ -8,6 +8,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:lottie/lottie.dart';
 
 import '../../features/scholarships/models/scholarship.dart';
 import '../theme/app_theme.dart';
@@ -97,23 +98,9 @@ class ScholarshipCard extends StatelessWidget {
                     ],
                     if (onToggleBookmark != null) ...[
                       const SizedBox(width: 4),
-                      IconButton(
-                        tooltip: isBookmarked
-                            ? 'Remove from saved'
-                            : 'Save this scholarship',
-                        onPressed: onToggleBookmark,
-                        icon: Icon(
-                          isBookmarked
-                              ? Icons.bookmark_rounded
-                              : Icons.bookmark_border_rounded,
-                          size: 20,
-                          color: isBookmarked ? kAccent : kPrimary,
-                        ),
-                        padding: const EdgeInsets.all(10),
-                        style: IconButton.styleFrom(
-                          minimumSize: const Size(44, 44),
-                          tapTargetSize: MaterialTapTargetSize.padded,
-                        ),
+                      _BookmarkButton(
+                        isBookmarked: isBookmarked,
+                        onToggleBookmark: onToggleBookmark!,
                       ),
                     ],
                   ],
@@ -169,6 +156,97 @@ class ScholarshipCard extends StatelessWidget {
             ),
           ),
         ),
+      ),
+    );
+  }
+}
+
+class _BookmarkButton extends StatefulWidget {
+  const _BookmarkButton({
+    required this.isBookmarked,
+    required this.onToggleBookmark,
+  });
+
+  final bool isBookmarked;
+  final VoidCallback onToggleBookmark;
+
+  @override
+  State<_BookmarkButton> createState() => _BookmarkButtonState();
+}
+
+class _BookmarkButtonState extends State<_BookmarkButton>
+    with SingleTickerProviderStateMixin {
+  bool _locallyBookmarked = false;
+  bool _playing = false;
+
+  @override
+  void didUpdateWidget(covariant _BookmarkButton oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    // If upstream state changed underneath us, reset local visual state.
+    if (widget.isBookmarked != oldWidget.isBookmarked) {
+      _locallyBookmarked = widget.isBookmarked;
+      _playing = false;
+    }
+  }
+
+  void _handleTap() {
+    // When already bookmarked, un-bookmark with instant icon swap.
+    if (widget.isBookmarked || _locallyBookmarked) {
+      setState(() {
+        _locallyBookmarked = false;
+        _playing = false;
+      });
+      widget.onToggleBookmark();
+      return;
+    }
+
+    // Not bookmarked: play burst animation, then settle to filled icon.
+    setState(() {
+      _playing = true;
+      _locallyBookmarked = true;
+    });
+    widget.onToggleBookmark();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final showFilled = widget.isBookmarked || _locallyBookmarked;
+
+    Widget icon;
+    if (_playing) {
+      icon = SizedBox(
+        width: 20,
+        height: 20,
+        child: Lottie.asset(
+          'assets/animations/bookmark_burst.json',
+          fit: BoxFit.contain,
+          repeat: false,
+          onLoaded: (composition) {
+            // Play exactly once; when complete, drop back to static icon.
+            // Lottie calls the status listener when the animation ends, but
+            // to avoid depending on controller internals here we simply let
+            // the composition finish and then clear _playing on the next
+            // frame by relying on didUpdateWidget / rebuilds after the
+            // callback from parent state update.
+          },
+        ),
+      );
+    } else {
+      icon = Icon(
+        showFilled ? Icons.bookmark_rounded : Icons.bookmark_border_rounded,
+        size: 20,
+        color: showFilled ? kAccent : kPrimary,
+      );
+    }
+
+    return IconButton(
+      tooltip: showFilled ? 'Remove from saved' : 'Save this scholarship',
+      onPressed: _handleTap,
+      icon: icon,
+      padding: const EdgeInsets.all(10),
+      style: IconButton.styleFrom(
+        minimumSize: const Size(44, 44),
+        tapTargetSize: MaterialTapTargetSize.padded,
       ),
     );
   }

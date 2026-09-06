@@ -41,42 +41,36 @@ StudentProfile _student() => StudentProfile(
 List<Map<String, dynamic>> _rows() => [
       {
         'id': 'sch-dost',
-        'name': 'DOST-SEI Undergraduate Scholarship',
+        'title': 'DOST-SEI Undergraduate Scholarship',
         'provider': 'Department of Science and Technology',
         'description': 'Supports students in priority STEM programs.',
         'min_gpa': 2.0,
-        'year_levels': [1, 2, 3, 4, 5],
-        'eligible_courses': <String>[],
-        'citizenship_required': 'Filipino',
-        'regions_eligible': <String>[],
-        'max_income_bracket': 'any',
-        'is_pwd_priority': false,
-        'is_working_student_priority': false,
-        'slots_available': 8000,
+        'required_year_levels': [1, 2, 3, 4, 5],
+        'required_courses': <String>[],
+        'location_restriction': null,
+        'max_monthly_income': null,
+        'for_pwd': false,
+        'for_indigenous': false,
+        'slots': 8000,
         'deadline': _inDays(10).toIso8601String().split('T').first,
-        'amount': 70000,
-        'coverage_type': 'full',
-        'tags': const ['stem', 'stipend'],
+        'application_url': 'https://ched.gov.ph/scholarships',
         'is_active': true,
       },
       {
         'id': 'sch-ched',
-        'name': 'CHED Merit Scholarship (MSRS)',
+        'title': 'CHED Merit Scholarship (MSRS)',
         'provider': 'Commission on Higher Education',
         'description': 'A national merit scholarship for strong students.',
         'min_gpa': 3.0,
-        'year_levels': [1, 2, 3, 4, 5],
-        'eligible_courses': <String>[],
-        'citizenship_required': 'Filipino',
-        'regions_eligible': <String>[],
-        'max_income_bracket': 'low',
-        'is_pwd_priority': false,
-        'is_working_student_priority': false,
-        'slots_available': 2000,
+        'required_year_levels': [1, 2, 3, 4, 5],
+        'required_courses': <String>[],
+        'location_restriction': null,
+        'max_monthly_income': 15000,
+        'for_pwd': false,
+        'for_indigenous': false,
+        'slots': 2000,
         'deadline': _inDays(30).toIso8601String().split('T').first,
-        'amount': 50000,
-        'coverage_type': 'full',
-        'tags': const ['merit'],
+        'application_url': 'https://ched.gov.ph/scholarships',
         'is_active': true,
       },
     ];
@@ -260,6 +254,11 @@ void main() {
         scrollable: find.byType(Scrollable).first,
       );
       expect(find.text('About'), findsOneWidget);
+      await tester.scrollUntilVisible(
+        find.text('Eligibility'),
+        200,
+        scrollable: find.byType(Scrollable).first,
+      );
       expect(find.text('Eligibility'), findsOneWidget);
       expect(find.text('Min GPA 2.00'), findsOneWidget);
     });
@@ -503,7 +502,7 @@ void main() {
       addTearDown(tester.view.reset);
 
       final rows = _rows();
-      rows[0]['name'] =
+      rows[0]['title'] =
           'A Very Long Scholarship Name That Should Be Ellipsized Gracefully '
           'Instead Of Overflowing The Card Layout';
 

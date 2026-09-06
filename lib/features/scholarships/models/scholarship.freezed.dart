@@ -16,7 +16,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$Scholarship {
 
- String get id; String get name; String? get provider; String? get description;@JsonKey(name: 'min_gpa') double get minGpa;@JsonKey(name: 'year_levels') List<int> get yearLevels;@JsonKey(name: 'eligible_courses') List<String> get eligibleCourses;@JsonKey(name: 'citizenship_required') String get citizenshipRequired;@JsonKey(name: 'regions_eligible') List<String> get regionsEligible;@JsonKey(name: 'max_income_bracket') String get maxIncomeBracket;@JsonKey(name: 'is_pwd_priority') bool get isPwdPriority;@JsonKey(name: 'is_working_student_priority') bool get isWorkingStudentPriority;@JsonKey(name: 'slots_available') int? get slotsAvailable;@JsonKey(name: 'deadline', fromJson: _dateFromJson) DateTime get deadline; double get amount;@JsonKey(name: 'coverage_type') String? get coverageType;@JsonKey(name: 'tags') List<String> get tags;@JsonKey(name: 'is_active') bool get isActive;
+ String get id; String get title; String? get provider; String? get description;@JsonKey(name: 'min_gpa') double get minGpa;@JsonKey(name: 'max_monthly_income') double? get maxMonthlyIncome;@JsonKey(name: 'required_year_levels') List<int>? get requiredYearLevels;@JsonKey(name: 'required_courses') List<String>? get requiredCourses;@JsonKey(name: 'location_restriction') String? get locationRestriction;@JsonKey(name: 'for_indigenous') bool? get forIndigenous;@JsonKey(name: 'for_pwd') bool? get forPwd;@JsonKey(name: 'slots') int? get slots;@JsonKey(name: 'deadline', fromJson: _dateFromJson) DateTime get deadline;@JsonKey(name: 'application_url') String? get applicationUrl;@JsonKey(name: 'is_active') bool get isActive;@JsonKey(name: 'created_at') DateTime? get createdAt;
 /// Create a copy of Scholarship
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -29,16 +29,16 @@ $ScholarshipCopyWith<Scholarship> get copyWith => _$ScholarshipCopyWithImpl<Scho
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is Scholarship&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.provider, provider) || other.provider == provider)&&(identical(other.description, description) || other.description == description)&&(identical(other.minGpa, minGpa) || other.minGpa == minGpa)&&const DeepCollectionEquality().equals(other.yearLevels, yearLevels)&&const DeepCollectionEquality().equals(other.eligibleCourses, eligibleCourses)&&(identical(other.citizenshipRequired, citizenshipRequired) || other.citizenshipRequired == citizenshipRequired)&&const DeepCollectionEquality().equals(other.regionsEligible, regionsEligible)&&(identical(other.maxIncomeBracket, maxIncomeBracket) || other.maxIncomeBracket == maxIncomeBracket)&&(identical(other.isPwdPriority, isPwdPriority) || other.isPwdPriority == isPwdPriority)&&(identical(other.isWorkingStudentPriority, isWorkingStudentPriority) || other.isWorkingStudentPriority == isWorkingStudentPriority)&&(identical(other.slotsAvailable, slotsAvailable) || other.slotsAvailable == slotsAvailable)&&(identical(other.deadline, deadline) || other.deadline == deadline)&&(identical(other.amount, amount) || other.amount == amount)&&(identical(other.coverageType, coverageType) || other.coverageType == coverageType)&&const DeepCollectionEquality().equals(other.tags, tags)&&(identical(other.isActive, isActive) || other.isActive == isActive));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is Scholarship&&(identical(other.id, id) || other.id == id)&&(identical(other.title, title) || other.title == title)&&(identical(other.provider, provider) || other.provider == provider)&&(identical(other.description, description) || other.description == description)&&(identical(other.minGpa, minGpa) || other.minGpa == minGpa)&&(identical(other.maxMonthlyIncome, maxMonthlyIncome) || other.maxMonthlyIncome == maxMonthlyIncome)&&const DeepCollectionEquality().equals(other.requiredYearLevels, requiredYearLevels)&&const DeepCollectionEquality().equals(other.requiredCourses, requiredCourses)&&(identical(other.locationRestriction, locationRestriction) || other.locationRestriction == locationRestriction)&&(identical(other.forIndigenous, forIndigenous) || other.forIndigenous == forIndigenous)&&(identical(other.forPwd, forPwd) || other.forPwd == forPwd)&&(identical(other.slots, slots) || other.slots == slots)&&(identical(other.deadline, deadline) || other.deadline == deadline)&&(identical(other.applicationUrl, applicationUrl) || other.applicationUrl == applicationUrl)&&(identical(other.isActive, isActive) || other.isActive == isActive)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,name,provider,description,minGpa,const DeepCollectionEquality().hash(yearLevels),const DeepCollectionEquality().hash(eligibleCourses),citizenshipRequired,const DeepCollectionEquality().hash(regionsEligible),maxIncomeBracket,isPwdPriority,isWorkingStudentPriority,slotsAvailable,deadline,amount,coverageType,const DeepCollectionEquality().hash(tags),isActive);
+int get hashCode => Object.hash(runtimeType,id,title,provider,description,minGpa,maxMonthlyIncome,const DeepCollectionEquality().hash(requiredYearLevels),const DeepCollectionEquality().hash(requiredCourses),locationRestriction,forIndigenous,forPwd,slots,deadline,applicationUrl,isActive,createdAt);
 
 @override
 String toString() {
-  return 'Scholarship(id: $id, name: $name, provider: $provider, description: $description, minGpa: $minGpa, yearLevels: $yearLevels, eligibleCourses: $eligibleCourses, citizenshipRequired: $citizenshipRequired, regionsEligible: $regionsEligible, maxIncomeBracket: $maxIncomeBracket, isPwdPriority: $isPwdPriority, isWorkingStudentPriority: $isWorkingStudentPriority, slotsAvailable: $slotsAvailable, deadline: $deadline, amount: $amount, coverageType: $coverageType, tags: $tags, isActive: $isActive)';
+  return 'Scholarship(id: $id, title: $title, provider: $provider, description: $description, minGpa: $minGpa, maxMonthlyIncome: $maxMonthlyIncome, requiredYearLevels: $requiredYearLevels, requiredCourses: $requiredCourses, locationRestriction: $locationRestriction, forIndigenous: $forIndigenous, forPwd: $forPwd, slots: $slots, deadline: $deadline, applicationUrl: $applicationUrl, isActive: $isActive, createdAt: $createdAt)';
 }
 
 
@@ -49,7 +49,7 @@ abstract mixin class $ScholarshipCopyWith<$Res>  {
   factory $ScholarshipCopyWith(Scholarship value, $Res Function(Scholarship) _then) = _$ScholarshipCopyWithImpl;
 @useResult
 $Res call({
- String id, String name, String? provider, String? description,@JsonKey(name: 'min_gpa') double minGpa,@JsonKey(name: 'year_levels') List<int> yearLevels,@JsonKey(name: 'eligible_courses') List<String> eligibleCourses,@JsonKey(name: 'citizenship_required') String citizenshipRequired,@JsonKey(name: 'regions_eligible') List<String> regionsEligible,@JsonKey(name: 'max_income_bracket') String maxIncomeBracket,@JsonKey(name: 'is_pwd_priority') bool isPwdPriority,@JsonKey(name: 'is_working_student_priority') bool isWorkingStudentPriority,@JsonKey(name: 'slots_available') int? slotsAvailable,@JsonKey(name: 'deadline', fromJson: _dateFromJson) DateTime deadline, double amount,@JsonKey(name: 'coverage_type') String? coverageType,@JsonKey(name: 'tags') List<String> tags,@JsonKey(name: 'is_active') bool isActive
+ String id, String title, String? provider, String? description,@JsonKey(name: 'min_gpa') double minGpa,@JsonKey(name: 'max_monthly_income') double? maxMonthlyIncome,@JsonKey(name: 'required_year_levels') List<int>? requiredYearLevels,@JsonKey(name: 'required_courses') List<String>? requiredCourses,@JsonKey(name: 'location_restriction') String? locationRestriction,@JsonKey(name: 'for_indigenous') bool? forIndigenous,@JsonKey(name: 'for_pwd') bool? forPwd,@JsonKey(name: 'slots') int? slots,@JsonKey(name: 'deadline', fromJson: _dateFromJson) DateTime deadline,@JsonKey(name: 'application_url') String? applicationUrl,@JsonKey(name: 'is_active') bool isActive,@JsonKey(name: 'created_at') DateTime? createdAt
 });
 
 
@@ -66,27 +66,25 @@ class _$ScholarshipCopyWithImpl<$Res>
 
 /// Create a copy of Scholarship
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? name = null,Object? provider = freezed,Object? description = freezed,Object? minGpa = null,Object? yearLevels = null,Object? eligibleCourses = null,Object? citizenshipRequired = null,Object? regionsEligible = null,Object? maxIncomeBracket = null,Object? isPwdPriority = null,Object? isWorkingStudentPriority = null,Object? slotsAvailable = freezed,Object? deadline = null,Object? amount = null,Object? coverageType = freezed,Object? tags = null,Object? isActive = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? title = null,Object? provider = freezed,Object? description = freezed,Object? minGpa = null,Object? maxMonthlyIncome = freezed,Object? requiredYearLevels = freezed,Object? requiredCourses = freezed,Object? locationRestriction = freezed,Object? forIndigenous = freezed,Object? forPwd = freezed,Object? slots = freezed,Object? deadline = null,Object? applicationUrl = freezed,Object? isActive = null,Object? createdAt = freezed,}) {
   return _then(Scholarship(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
-as String,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
+as String,title: null == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
 as String,provider: freezed == provider ? _self.provider : provider // ignore: cast_nullable_to_non_nullable
 as String?,description: freezed == description ? _self.description : description // ignore: cast_nullable_to_non_nullable
 as String?,minGpa: null == minGpa ? _self.minGpa : minGpa // ignore: cast_nullable_to_non_nullable
-as double,yearLevels: null == yearLevels ? _self.yearLevels : yearLevels // ignore: cast_nullable_to_non_nullable
-as List<int>,eligibleCourses: null == eligibleCourses ? _self.eligibleCourses : eligibleCourses // ignore: cast_nullable_to_non_nullable
-as List<String>,citizenshipRequired: null == citizenshipRequired ? _self.citizenshipRequired : citizenshipRequired // ignore: cast_nullable_to_non_nullable
-as String,regionsEligible: null == regionsEligible ? _self.regionsEligible : regionsEligible // ignore: cast_nullable_to_non_nullable
-as List<String>,maxIncomeBracket: null == maxIncomeBracket ? _self.maxIncomeBracket : maxIncomeBracket // ignore: cast_nullable_to_non_nullable
-as String,isPwdPriority: null == isPwdPriority ? _self.isPwdPriority : isPwdPriority // ignore: cast_nullable_to_non_nullable
-as bool,isWorkingStudentPriority: null == isWorkingStudentPriority ? _self.isWorkingStudentPriority : isWorkingStudentPriority // ignore: cast_nullable_to_non_nullable
-as bool,slotsAvailable: freezed == slotsAvailable ? _self.slotsAvailable : slotsAvailable // ignore: cast_nullable_to_non_nullable
+as double,maxMonthlyIncome: freezed == maxMonthlyIncome ? _self.maxMonthlyIncome : maxMonthlyIncome // ignore: cast_nullable_to_non_nullable
+as double?,requiredYearLevels: freezed == requiredYearLevels ? _self.requiredYearLevels : requiredYearLevels // ignore: cast_nullable_to_non_nullable
+as List<int>?,requiredCourses: freezed == requiredCourses ? _self.requiredCourses : requiredCourses // ignore: cast_nullable_to_non_nullable
+as List<String>?,locationRestriction: freezed == locationRestriction ? _self.locationRestriction : locationRestriction // ignore: cast_nullable_to_non_nullable
+as String?,forIndigenous: freezed == forIndigenous ? _self.forIndigenous : forIndigenous // ignore: cast_nullable_to_non_nullable
+as bool?,forPwd: freezed == forPwd ? _self.forPwd : forPwd // ignore: cast_nullable_to_non_nullable
+as bool?,slots: freezed == slots ? _self.slots : slots // ignore: cast_nullable_to_non_nullable
 as int?,deadline: null == deadline ? _self.deadline : deadline // ignore: cast_nullable_to_non_nullable
-as DateTime,amount: null == amount ? _self.amount : amount // ignore: cast_nullable_to_non_nullable
-as double,coverageType: freezed == coverageType ? _self.coverageType : coverageType // ignore: cast_nullable_to_non_nullable
-as String?,tags: null == tags ? _self.tags : tags // ignore: cast_nullable_to_non_nullable
-as List<String>,isActive: null == isActive ? _self.isActive : isActive // ignore: cast_nullable_to_non_nullable
-as bool,
+as DateTime,applicationUrl: freezed == applicationUrl ? _self.applicationUrl : applicationUrl // ignore: cast_nullable_to_non_nullable
+as String?,isActive: null == isActive ? _self.isActive : isActive // ignore: cast_nullable_to_non_nullable
+as bool,createdAt: freezed == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
+as DateTime?,
   ));
 }
 
@@ -171,10 +169,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String name,  String? provider,  String? description, @JsonKey(name: 'min_gpa')  double minGpa, @JsonKey(name: 'year_levels')  List<int> yearLevels, @JsonKey(name: 'eligible_courses')  List<String> eligibleCourses, @JsonKey(name: 'citizenship_required')  String citizenshipRequired, @JsonKey(name: 'regions_eligible')  List<String> regionsEligible, @JsonKey(name: 'max_income_bracket')  String maxIncomeBracket, @JsonKey(name: 'is_pwd_priority')  bool isPwdPriority, @JsonKey(name: 'is_working_student_priority')  bool isWorkingStudentPriority, @JsonKey(name: 'slots_available')  int? slotsAvailable, @JsonKey(name: 'deadline', fromJson: _dateFromJson)  DateTime deadline,  double amount, @JsonKey(name: 'coverage_type')  String? coverageType, @JsonKey(name: 'tags')  List<String> tags, @JsonKey(name: 'is_active')  bool isActive)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String title,  String? provider,  String? description, @JsonKey(name: 'min_gpa')  double minGpa, @JsonKey(name: 'max_monthly_income')  double? maxMonthlyIncome, @JsonKey(name: 'required_year_levels')  List<int>? requiredYearLevels, @JsonKey(name: 'required_courses')  List<String>? requiredCourses, @JsonKey(name: 'location_restriction')  String? locationRestriction, @JsonKey(name: 'for_indigenous')  bool? forIndigenous, @JsonKey(name: 'for_pwd')  bool? forPwd, @JsonKey(name: 'slots')  int? slots, @JsonKey(name: 'deadline', fromJson: _dateFromJson)  DateTime deadline, @JsonKey(name: 'application_url')  String? applicationUrl, @JsonKey(name: 'is_active')  bool isActive, @JsonKey(name: 'created_at')  DateTime? createdAt)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _Scholarship() when $default != null:
-return $default(_that.id,_that.name,_that.provider,_that.description,_that.minGpa,_that.yearLevels,_that.eligibleCourses,_that.citizenshipRequired,_that.regionsEligible,_that.maxIncomeBracket,_that.isPwdPriority,_that.isWorkingStudentPriority,_that.slotsAvailable,_that.deadline,_that.amount,_that.coverageType,_that.tags,_that.isActive);case _:
+return $default(_that.id,_that.title,_that.provider,_that.description,_that.minGpa,_that.maxMonthlyIncome,_that.requiredYearLevels,_that.requiredCourses,_that.locationRestriction,_that.forIndigenous,_that.forPwd,_that.slots,_that.deadline,_that.applicationUrl,_that.isActive,_that.createdAt);case _:
   return orElse();
 
 }
@@ -192,10 +190,10 @@ return $default(_that.id,_that.name,_that.provider,_that.description,_that.minGp
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String name,  String? provider,  String? description, @JsonKey(name: 'min_gpa')  double minGpa, @JsonKey(name: 'year_levels')  List<int> yearLevels, @JsonKey(name: 'eligible_courses')  List<String> eligibleCourses, @JsonKey(name: 'citizenship_required')  String citizenshipRequired, @JsonKey(name: 'regions_eligible')  List<String> regionsEligible, @JsonKey(name: 'max_income_bracket')  String maxIncomeBracket, @JsonKey(name: 'is_pwd_priority')  bool isPwdPriority, @JsonKey(name: 'is_working_student_priority')  bool isWorkingStudentPriority, @JsonKey(name: 'slots_available')  int? slotsAvailable, @JsonKey(name: 'deadline', fromJson: _dateFromJson)  DateTime deadline,  double amount, @JsonKey(name: 'coverage_type')  String? coverageType, @JsonKey(name: 'tags')  List<String> tags, @JsonKey(name: 'is_active')  bool isActive)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String title,  String? provider,  String? description, @JsonKey(name: 'min_gpa')  double minGpa, @JsonKey(name: 'max_monthly_income')  double? maxMonthlyIncome, @JsonKey(name: 'required_year_levels')  List<int>? requiredYearLevels, @JsonKey(name: 'required_courses')  List<String>? requiredCourses, @JsonKey(name: 'location_restriction')  String? locationRestriction, @JsonKey(name: 'for_indigenous')  bool? forIndigenous, @JsonKey(name: 'for_pwd')  bool? forPwd, @JsonKey(name: 'slots')  int? slots, @JsonKey(name: 'deadline', fromJson: _dateFromJson)  DateTime deadline, @JsonKey(name: 'application_url')  String? applicationUrl, @JsonKey(name: 'is_active')  bool isActive, @JsonKey(name: 'created_at')  DateTime? createdAt)  $default,) {final _that = this;
 switch (_that) {
 case _Scholarship():
-return $default(_that.id,_that.name,_that.provider,_that.description,_that.minGpa,_that.yearLevels,_that.eligibleCourses,_that.citizenshipRequired,_that.regionsEligible,_that.maxIncomeBracket,_that.isPwdPriority,_that.isWorkingStudentPriority,_that.slotsAvailable,_that.deadline,_that.amount,_that.coverageType,_that.tags,_that.isActive);case _:
+return $default(_that.id,_that.title,_that.provider,_that.description,_that.minGpa,_that.maxMonthlyIncome,_that.requiredYearLevels,_that.requiredCourses,_that.locationRestriction,_that.forIndigenous,_that.forPwd,_that.slots,_that.deadline,_that.applicationUrl,_that.isActive,_that.createdAt);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -212,10 +210,10 @@ return $default(_that.id,_that.name,_that.provider,_that.description,_that.minGp
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String name,  String? provider,  String? description, @JsonKey(name: 'min_gpa')  double minGpa, @JsonKey(name: 'year_levels')  List<int> yearLevels, @JsonKey(name: 'eligible_courses')  List<String> eligibleCourses, @JsonKey(name: 'citizenship_required')  String citizenshipRequired, @JsonKey(name: 'regions_eligible')  List<String> regionsEligible, @JsonKey(name: 'max_income_bracket')  String maxIncomeBracket, @JsonKey(name: 'is_pwd_priority')  bool isPwdPriority, @JsonKey(name: 'is_working_student_priority')  bool isWorkingStudentPriority, @JsonKey(name: 'slots_available')  int? slotsAvailable, @JsonKey(name: 'deadline', fromJson: _dateFromJson)  DateTime deadline,  double amount, @JsonKey(name: 'coverage_type')  String? coverageType, @JsonKey(name: 'tags')  List<String> tags, @JsonKey(name: 'is_active')  bool isActive)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String title,  String? provider,  String? description, @JsonKey(name: 'min_gpa')  double minGpa, @JsonKey(name: 'max_monthly_income')  double? maxMonthlyIncome, @JsonKey(name: 'required_year_levels')  List<int>? requiredYearLevels, @JsonKey(name: 'required_courses')  List<String>? requiredCourses, @JsonKey(name: 'location_restriction')  String? locationRestriction, @JsonKey(name: 'for_indigenous')  bool? forIndigenous, @JsonKey(name: 'for_pwd')  bool? forPwd, @JsonKey(name: 'slots')  int? slots, @JsonKey(name: 'deadline', fromJson: _dateFromJson)  DateTime deadline, @JsonKey(name: 'application_url')  String? applicationUrl, @JsonKey(name: 'is_active')  bool isActive, @JsonKey(name: 'created_at')  DateTime? createdAt)?  $default,) {final _that = this;
 switch (_that) {
 case _Scholarship() when $default != null:
-return $default(_that.id,_that.name,_that.provider,_that.description,_that.minGpa,_that.yearLevels,_that.eligibleCourses,_that.citizenshipRequired,_that.regionsEligible,_that.maxIncomeBracket,_that.isPwdPriority,_that.isWorkingStudentPriority,_that.slotsAvailable,_that.deadline,_that.amount,_that.coverageType,_that.tags,_that.isActive);case _:
+return $default(_that.id,_that.title,_that.provider,_that.description,_that.minGpa,_that.maxMonthlyIncome,_that.requiredYearLevels,_that.requiredCourses,_that.locationRestriction,_that.forIndigenous,_that.forPwd,_that.slots,_that.deadline,_that.applicationUrl,_that.isActive,_that.createdAt);case _:
   return null;
 
 }
@@ -227,51 +225,41 @@ return $default(_that.id,_that.name,_that.provider,_that.description,_that.minGp
 @JsonSerializable()
 
 class _Scholarship implements Scholarship {
-  const _Scholarship({required this.id, required this.name, this.provider, this.description, @JsonKey(name: 'min_gpa') required this.minGpa, @JsonKey(name: 'year_levels')  List<int> yearLevels = const [1, 2, 3, 4, 5], @JsonKey(name: 'eligible_courses')  List<String> eligibleCourses = const [], @JsonKey(name: 'citizenship_required') this.citizenshipRequired = 'any', @JsonKey(name: 'regions_eligible')  List<String> regionsEligible = const [], @JsonKey(name: 'max_income_bracket') this.maxIncomeBracket = 'any', @JsonKey(name: 'is_pwd_priority') this.isPwdPriority = false, @JsonKey(name: 'is_working_student_priority') this.isWorkingStudentPriority = false, @JsonKey(name: 'slots_available') this.slotsAvailable, @JsonKey(name: 'deadline', fromJson: _dateFromJson) required this.deadline, required this.amount, @JsonKey(name: 'coverage_type') this.coverageType, @JsonKey(name: 'tags')  List<String> tags = const [], @JsonKey(name: 'is_active') this.isActive = true}): _yearLevels = yearLevels,_eligibleCourses = eligibleCourses,_regionsEligible = regionsEligible,_tags = tags;
+  const _Scholarship({required this.id, required this.title, this.provider, this.description, @JsonKey(name: 'min_gpa') required this.minGpa, @JsonKey(name: 'max_monthly_income') this.maxMonthlyIncome, @JsonKey(name: 'required_year_levels')  List<int>? requiredYearLevels, @JsonKey(name: 'required_courses')  List<String>? requiredCourses, @JsonKey(name: 'location_restriction') this.locationRestriction, @JsonKey(name: 'for_indigenous') this.forIndigenous = false, @JsonKey(name: 'for_pwd') this.forPwd = false, @JsonKey(name: 'slots') this.slots, @JsonKey(name: 'deadline', fromJson: _dateFromJson) required this.deadline, @JsonKey(name: 'application_url') this.applicationUrl, @JsonKey(name: 'is_active') this.isActive = true, @JsonKey(name: 'created_at') this.createdAt}): _requiredYearLevels = requiredYearLevels,_requiredCourses = requiredCourses;
   factory _Scholarship.fromJson(Map<String, dynamic> json) => _$ScholarshipFromJson(json);
 
 @override final  String id;
-@override final  String name;
+@override final  String title;
 @override final  String? provider;
 @override final  String? description;
 @override@JsonKey(name: 'min_gpa') final  double minGpa;
- final  List<int> _yearLevels;
-@override@JsonKey(name: 'year_levels') List<int> get yearLevels {
-  if (_yearLevels is EqualUnmodifiableListView) return _yearLevels;
+@override@JsonKey(name: 'max_monthly_income') final  double? maxMonthlyIncome;
+ final  List<int>? _requiredYearLevels;
+@override@JsonKey(name: 'required_year_levels') List<int>? get requiredYearLevels {
+  final value = _requiredYearLevels;
+  if (value == null) return null;
+  if (_requiredYearLevels is EqualUnmodifiableListView) return _requiredYearLevels;
   // ignore: implicit_dynamic_type
-  return EqualUnmodifiableListView(_yearLevels);
+  return EqualUnmodifiableListView(value);
 }
 
- final  List<String> _eligibleCourses;
-@override@JsonKey(name: 'eligible_courses') List<String> get eligibleCourses {
-  if (_eligibleCourses is EqualUnmodifiableListView) return _eligibleCourses;
+ final  List<String>? _requiredCourses;
+@override@JsonKey(name: 'required_courses') List<String>? get requiredCourses {
+  final value = _requiredCourses;
+  if (value == null) return null;
+  if (_requiredCourses is EqualUnmodifiableListView) return _requiredCourses;
   // ignore: implicit_dynamic_type
-  return EqualUnmodifiableListView(_eligibleCourses);
+  return EqualUnmodifiableListView(value);
 }
 
-@override@JsonKey(name: 'citizenship_required') final  String citizenshipRequired;
- final  List<String> _regionsEligible;
-@override@JsonKey(name: 'regions_eligible') List<String> get regionsEligible {
-  if (_regionsEligible is EqualUnmodifiableListView) return _regionsEligible;
-  // ignore: implicit_dynamic_type
-  return EqualUnmodifiableListView(_regionsEligible);
-}
-
-@override@JsonKey(name: 'max_income_bracket') final  String maxIncomeBracket;
-@override@JsonKey(name: 'is_pwd_priority') final  bool isPwdPriority;
-@override@JsonKey(name: 'is_working_student_priority') final  bool isWorkingStudentPriority;
-@override@JsonKey(name: 'slots_available') final  int? slotsAvailable;
+@override@JsonKey(name: 'location_restriction') final  String? locationRestriction;
+@override@JsonKey(name: 'for_indigenous') final  bool? forIndigenous;
+@override@JsonKey(name: 'for_pwd') final  bool? forPwd;
+@override@JsonKey(name: 'slots') final  int? slots;
 @override@JsonKey(name: 'deadline', fromJson: _dateFromJson) final  DateTime deadline;
-@override final  double amount;
-@override@JsonKey(name: 'coverage_type') final  String? coverageType;
- final  List<String> _tags;
-@override@JsonKey(name: 'tags') List<String> get tags {
-  if (_tags is EqualUnmodifiableListView) return _tags;
-  // ignore: implicit_dynamic_type
-  return EqualUnmodifiableListView(_tags);
-}
-
+@override@JsonKey(name: 'application_url') final  String? applicationUrl;
 @override@JsonKey(name: 'is_active') final  bool isActive;
+@override@JsonKey(name: 'created_at') final  DateTime? createdAt;
 
 /// Create a copy of Scholarship
 /// with the given fields replaced by the non-null parameter values.
@@ -286,16 +274,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Scholarship&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.provider, provider) || other.provider == provider)&&(identical(other.description, description) || other.description == description)&&(identical(other.minGpa, minGpa) || other.minGpa == minGpa)&&const DeepCollectionEquality().equals(other._yearLevels, _yearLevels)&&const DeepCollectionEquality().equals(other._eligibleCourses, _eligibleCourses)&&(identical(other.citizenshipRequired, citizenshipRequired) || other.citizenshipRequired == citizenshipRequired)&&const DeepCollectionEquality().equals(other._regionsEligible, _regionsEligible)&&(identical(other.maxIncomeBracket, maxIncomeBracket) || other.maxIncomeBracket == maxIncomeBracket)&&(identical(other.isPwdPriority, isPwdPriority) || other.isPwdPriority == isPwdPriority)&&(identical(other.isWorkingStudentPriority, isWorkingStudentPriority) || other.isWorkingStudentPriority == isWorkingStudentPriority)&&(identical(other.slotsAvailable, slotsAvailable) || other.slotsAvailable == slotsAvailable)&&(identical(other.deadline, deadline) || other.deadline == deadline)&&(identical(other.amount, amount) || other.amount == amount)&&(identical(other.coverageType, coverageType) || other.coverageType == coverageType)&&const DeepCollectionEquality().equals(other._tags, _tags)&&(identical(other.isActive, isActive) || other.isActive == isActive));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Scholarship&&(identical(other.id, id) || other.id == id)&&(identical(other.title, title) || other.title == title)&&(identical(other.provider, provider) || other.provider == provider)&&(identical(other.description, description) || other.description == description)&&(identical(other.minGpa, minGpa) || other.minGpa == minGpa)&&(identical(other.maxMonthlyIncome, maxMonthlyIncome) || other.maxMonthlyIncome == maxMonthlyIncome)&&const DeepCollectionEquality().equals(other._requiredYearLevels, _requiredYearLevels)&&const DeepCollectionEquality().equals(other._requiredCourses, _requiredCourses)&&(identical(other.locationRestriction, locationRestriction) || other.locationRestriction == locationRestriction)&&(identical(other.forIndigenous, forIndigenous) || other.forIndigenous == forIndigenous)&&(identical(other.forPwd, forPwd) || other.forPwd == forPwd)&&(identical(other.slots, slots) || other.slots == slots)&&(identical(other.deadline, deadline) || other.deadline == deadline)&&(identical(other.applicationUrl, applicationUrl) || other.applicationUrl == applicationUrl)&&(identical(other.isActive, isActive) || other.isActive == isActive)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,name,provider,description,minGpa,const DeepCollectionEquality().hash(_yearLevels),const DeepCollectionEquality().hash(_eligibleCourses),citizenshipRequired,const DeepCollectionEquality().hash(_regionsEligible),maxIncomeBracket,isPwdPriority,isWorkingStudentPriority,slotsAvailable,deadline,amount,coverageType,const DeepCollectionEquality().hash(_tags),isActive);
+int get hashCode => Object.hash(runtimeType,id,title,provider,description,minGpa,maxMonthlyIncome,const DeepCollectionEquality().hash(_requiredYearLevels),const DeepCollectionEquality().hash(_requiredCourses),locationRestriction,forIndigenous,forPwd,slots,deadline,applicationUrl,isActive,createdAt);
 
 @override
 String toString() {
-  return 'Scholarship(id: $id, name: $name, provider: $provider, description: $description, minGpa: $minGpa, yearLevels: $yearLevels, eligibleCourses: $eligibleCourses, citizenshipRequired: $citizenshipRequired, regionsEligible: $regionsEligible, maxIncomeBracket: $maxIncomeBracket, isPwdPriority: $isPwdPriority, isWorkingStudentPriority: $isWorkingStudentPriority, slotsAvailable: $slotsAvailable, deadline: $deadline, amount: $amount, coverageType: $coverageType, tags: $tags, isActive: $isActive)';
+  return 'Scholarship(id: $id, title: $title, provider: $provider, description: $description, minGpa: $minGpa, maxMonthlyIncome: $maxMonthlyIncome, requiredYearLevels: $requiredYearLevels, requiredCourses: $requiredCourses, locationRestriction: $locationRestriction, forIndigenous: $forIndigenous, forPwd: $forPwd, slots: $slots, deadline: $deadline, applicationUrl: $applicationUrl, isActive: $isActive, createdAt: $createdAt)';
 }
 
 
@@ -306,7 +294,7 @@ abstract mixin class _$ScholarshipCopyWith<$Res> implements $ScholarshipCopyWith
   factory _$ScholarshipCopyWith(_Scholarship value, $Res Function(_Scholarship) _then) = __$ScholarshipCopyWithImpl;
 @override @useResult
 $Res call({
- String id, String name, String? provider, String? description,@JsonKey(name: 'min_gpa') double minGpa,@JsonKey(name: 'year_levels') List<int> yearLevels,@JsonKey(name: 'eligible_courses') List<String> eligibleCourses,@JsonKey(name: 'citizenship_required') String citizenshipRequired,@JsonKey(name: 'regions_eligible') List<String> regionsEligible,@JsonKey(name: 'max_income_bracket') String maxIncomeBracket,@JsonKey(name: 'is_pwd_priority') bool isPwdPriority,@JsonKey(name: 'is_working_student_priority') bool isWorkingStudentPriority,@JsonKey(name: 'slots_available') int? slotsAvailable,@JsonKey(name: 'deadline', fromJson: _dateFromJson) DateTime deadline, double amount,@JsonKey(name: 'coverage_type') String? coverageType,@JsonKey(name: 'tags') List<String> tags,@JsonKey(name: 'is_active') bool isActive
+ String id, String title, String? provider, String? description,@JsonKey(name: 'min_gpa') double minGpa,@JsonKey(name: 'max_monthly_income') double? maxMonthlyIncome,@JsonKey(name: 'required_year_levels') List<int>? requiredYearLevels,@JsonKey(name: 'required_courses') List<String>? requiredCourses,@JsonKey(name: 'location_restriction') String? locationRestriction,@JsonKey(name: 'for_indigenous') bool? forIndigenous,@JsonKey(name: 'for_pwd') bool? forPwd,@JsonKey(name: 'slots') int? slots,@JsonKey(name: 'deadline', fromJson: _dateFromJson) DateTime deadline,@JsonKey(name: 'application_url') String? applicationUrl,@JsonKey(name: 'is_active') bool isActive,@JsonKey(name: 'created_at') DateTime? createdAt
 });
 
 
@@ -323,27 +311,25 @@ class __$ScholarshipCopyWithImpl<$Res>
 
 /// Create a copy of Scholarship
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? name = null,Object? provider = freezed,Object? description = freezed,Object? minGpa = null,Object? yearLevels = null,Object? eligibleCourses = null,Object? citizenshipRequired = null,Object? regionsEligible = null,Object? maxIncomeBracket = null,Object? isPwdPriority = null,Object? isWorkingStudentPriority = null,Object? slotsAvailable = freezed,Object? deadline = null,Object? amount = null,Object? coverageType = freezed,Object? tags = null,Object? isActive = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? title = null,Object? provider = freezed,Object? description = freezed,Object? minGpa = null,Object? maxMonthlyIncome = freezed,Object? requiredYearLevels = freezed,Object? requiredCourses = freezed,Object? locationRestriction = freezed,Object? forIndigenous = freezed,Object? forPwd = freezed,Object? slots = freezed,Object? deadline = null,Object? applicationUrl = freezed,Object? isActive = null,Object? createdAt = freezed,}) {
   return _then(_Scholarship(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
-as String,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
+as String,title: null == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
 as String,provider: freezed == provider ? _self.provider : provider // ignore: cast_nullable_to_non_nullable
 as String?,description: freezed == description ? _self.description : description // ignore: cast_nullable_to_non_nullable
 as String?,minGpa: null == minGpa ? _self.minGpa : minGpa // ignore: cast_nullable_to_non_nullable
-as double,yearLevels: null == yearLevels ? _self._yearLevels : yearLevels // ignore: cast_nullable_to_non_nullable
-as List<int>,eligibleCourses: null == eligibleCourses ? _self._eligibleCourses : eligibleCourses // ignore: cast_nullable_to_non_nullable
-as List<String>,citizenshipRequired: null == citizenshipRequired ? _self.citizenshipRequired : citizenshipRequired // ignore: cast_nullable_to_non_nullable
-as String,regionsEligible: null == regionsEligible ? _self._regionsEligible : regionsEligible // ignore: cast_nullable_to_non_nullable
-as List<String>,maxIncomeBracket: null == maxIncomeBracket ? _self.maxIncomeBracket : maxIncomeBracket // ignore: cast_nullable_to_non_nullable
-as String,isPwdPriority: null == isPwdPriority ? _self.isPwdPriority : isPwdPriority // ignore: cast_nullable_to_non_nullable
-as bool,isWorkingStudentPriority: null == isWorkingStudentPriority ? _self.isWorkingStudentPriority : isWorkingStudentPriority // ignore: cast_nullable_to_non_nullable
-as bool,slotsAvailable: freezed == slotsAvailable ? _self.slotsAvailable : slotsAvailable // ignore: cast_nullable_to_non_nullable
+as double,maxMonthlyIncome: freezed == maxMonthlyIncome ? _self.maxMonthlyIncome : maxMonthlyIncome // ignore: cast_nullable_to_non_nullable
+as double?,requiredYearLevels: freezed == requiredYearLevels ? _self._requiredYearLevels : requiredYearLevels // ignore: cast_nullable_to_non_nullable
+as List<int>?,requiredCourses: freezed == requiredCourses ? _self._requiredCourses : requiredCourses // ignore: cast_nullable_to_non_nullable
+as List<String>?,locationRestriction: freezed == locationRestriction ? _self.locationRestriction : locationRestriction // ignore: cast_nullable_to_non_nullable
+as String?,forIndigenous: freezed == forIndigenous ? _self.forIndigenous : forIndigenous // ignore: cast_nullable_to_non_nullable
+as bool?,forPwd: freezed == forPwd ? _self.forPwd : forPwd // ignore: cast_nullable_to_non_nullable
+as bool?,slots: freezed == slots ? _self.slots : slots // ignore: cast_nullable_to_non_nullable
 as int?,deadline: null == deadline ? _self.deadline : deadline // ignore: cast_nullable_to_non_nullable
-as DateTime,amount: null == amount ? _self.amount : amount // ignore: cast_nullable_to_non_nullable
-as double,coverageType: freezed == coverageType ? _self.coverageType : coverageType // ignore: cast_nullable_to_non_nullable
-as String?,tags: null == tags ? _self._tags : tags // ignore: cast_nullable_to_non_nullable
-as List<String>,isActive: null == isActive ? _self.isActive : isActive // ignore: cast_nullable_to_non_nullable
-as bool,
+as DateTime,applicationUrl: freezed == applicationUrl ? _self.applicationUrl : applicationUrl // ignore: cast_nullable_to_non_nullable
+as String?,isActive: null == isActive ? _self.isActive : isActive // ignore: cast_nullable_to_non_nullable
+as bool,createdAt: freezed == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
+as DateTime?,
   ));
 }
 

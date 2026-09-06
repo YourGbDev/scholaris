@@ -127,24 +127,31 @@ String _reasonFor(
       return 'Minimum GPA ${scholarship.minGpa.toStringAsFixed(2)} — '
           'your GPA is ${profile.gpa.toStringAsFixed(2)}';
     case EligibilityCriterion.yearLevel:
-      return 'Open to year ${scholarship.yearLevels.join(', ')} — '
+      final years = scholarship.requiredYearLevels;
+      final label = years == null || years.isEmpty
+          ? 'any year'
+          : years.join(', ');
+      return 'Open to year $label — '
           'you are in year ${profile.yearLevel}';
     case EligibilityCriterion.course:
       return '${profile.course} is not among the eligible courses';
-    case EligibilityCriterion.citizenship:
-      return 'Requires ${scholarship.citizenshipRequired} nationality — '
-          'your nationality is ${profile.nationality}';
     case EligibilityCriterion.region:
-      final regions = scholarship.regionsEligible;
-      final openTo = regions.length <= 3
-          ? regions.join(', ')
-          : '${regions.length} selected regions';
-      return 'Open to $openTo — your region is ${profile.region}';
+      final location = scholarship.locationRestriction ?? 'nationwide';
+      return 'Open to $location — your region is ${profile.region}';
     case EligibilityCriterion.income:
-      final bracket = profile.incomeBracket;
-      return bracket == null
-          ? 'Income requirement not met — your household income is undisclosed'
-          : 'Your income bracket ($bracket) is above the limit '
-              '(${scholarship.maxIncomeBracket})';
+      final income = profile.monthlyFamilyIncome;
+      final limit = scholarship.maxMonthlyIncome;
+      if (limit == null) {
+        return 'Income requirement not disclosed';
+      }
+      if (income == null) {
+        return 'Income requirement not met — your household income is undisclosed';
+      }
+      return 'Maximum monthly income ₱${limit.toStringAsFixed(0)} — '
+          'your household income is ₱${income.toStringAsFixed(0)}';
+    case EligibilityCriterion.pwd:
+      return 'This scholarship is for students with disabilities';
+    case EligibilityCriterion.indigenous:
+      return 'This scholarship is for indigenous students';
   }
 }

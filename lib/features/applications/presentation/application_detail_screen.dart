@@ -162,7 +162,7 @@ class _DetailBodyState extends ConsumerState<_DetailBody> {
         title: const Text('Withdraw application?'),
         content: Text(
           'You are about to withdraw your application for '
-          '"${widget.scholarship?.name ?? 'this scholarship'}". '
+          '"${widget.scholarship?.title ?? 'this scholarship'}". '
           'Withdrawal is permanent, but the application stays in your '
           'history under Withdrawn.',
         ),
@@ -271,7 +271,7 @@ class _DetailBodyState extends ConsumerState<_DetailBody> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              scholarship.name,
+                              scholarship.title,
                               maxLines: 2,
                               overflow: TextOverflow.ellipsis,
                               style: poppins(
@@ -403,7 +403,9 @@ class _FactsCard extends StatelessWidget {
         (Icons.event_rounded, deadlineLabel(scholarship!.deadline)),
       if (scholarship != null)
         (Icons.account_balance_wallet_outlined,
-            formatPeso(scholarship!.amount)),
+            scholarship!.slots == null
+                ? 'Slots not specified'
+                : '${scholarship!.slots} slot(s)'),
     ];
 
     return Container(

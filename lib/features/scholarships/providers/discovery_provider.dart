@@ -40,26 +40,6 @@ class DiscoveryFilterNotifier extends AutoDisposeNotifier<DiscoveryFilterState> 
     state = state.copyWith(regions: regions);
   }
 
-  void toggleCoverage(String coverage) {
-    final coverageTypes = {...state.coverageTypes};
-    if (!coverageTypes.add(coverage)) {
-      coverageTypes.remove(coverage);
-    }
-    state = state.copyWith(coverageTypes: coverageTypes);
-  }
-
-  void toggleTag(String tag) {
-    final tags = {...state.tags};
-    if (!tags.add(tag)) {
-      tags.remove(tag);
-    }
-    state = state.copyWith(tags: tags);
-  }
-
-  void setMinAmount(double? value) => state = state.copyWith(minAmount: value);
-
-  void setMaxAmount(double? value) => state = state.copyWith(maxAmount: value);
-
   void setClosingSoonOnly(bool value) =>
       state = state.copyWith(closingSoonOnly: value);
 
@@ -75,9 +55,6 @@ final discoveryActiveFilterCountProvider = Provider<int>((ref) {
   if (s.query.trim().isNotEmpty) count++;
   if (s.incomeBracket != null) count++;
   count += s.regions.length;
-  count += s.coverageTypes.length;
-  count += s.tags.length;
-  if (s.minAmount != null || s.maxAmount != null) count++;
   if (s.closingSoonOnly) count++;
   return count;
 });

@@ -49,7 +49,7 @@ class ScholarshipCard extends StatelessWidget {
 
     return Semantics(
       button: true,
-      label: 'View ${scholarship.name}',
+      label: 'View ${scholarship.title}',
       child: Material(
         color: Colors.white,
         borderRadius: BorderRadius.circular(kRadiusCard),
@@ -79,7 +79,7 @@ class ScholarshipCard extends StatelessWidget {
                   children: [
                     Expanded(
                       child: Text(
-                        scholarship.name,
+                        scholarship.title,
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                         style: poppins(fontSize: 16, fontWeight: FontWeight.w600),
@@ -126,27 +126,26 @@ class ScholarshipCard extends StatelessWidget {
                   style: openSans(fontSize: 13, color: Colors.black54),
                 ),
                 const SizedBox(height: 12),
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    Text(
-                      formatPeso(scholarship.amount),
-                      style: poppins(fontSize: 22, fontWeight: FontWeight.w700, color: kPrimary),
-                    ),
-                    const SizedBox(width: 8),
-                    Flexible(
-                      child: Padding(
-                        padding: const EdgeInsets.only(bottom: 3),
-                        child: Text(
-                          _coverageLabel(scholarship.coverageType),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: openSans(fontSize: 13, color: Colors.black54),
+                if (scholarship.slots != null) ...[
+                  Row(
+                    children: [
+                      Icon(
+                        Icons.people_rounded,
+                        size: 16,
+                        color: Colors.grey[600],
+                      ),
+                      const SizedBox(width: 6),
+                      Text(
+                        '${scholarship.slots} slots available',
+                        style: openSans(
+                          fontSize: 12,
+                          color: Colors.grey[700],
                         ),
                       ),
-                    ),
-                  ],
-                ),
+                    ],
+                  ),
+                  const SizedBox(height: 12),
+                ],
                 if (reasons.isNotEmpty) ...[
                   const SizedBox(height: 14),
                   Text(
@@ -172,19 +171,6 @@ class ScholarshipCard extends StatelessWidget {
         ),
       ),
     );
-  }
-
-  String _coverageLabel(String? coverageType) {
-    switch (coverageType) {
-      case 'full':
-        return '· full coverage';
-      case 'partial':
-        return '· partial coverage';
-      case 'stipend':
-        return '· stipend';
-      default:
-        return '';
-    }
   }
 }
 

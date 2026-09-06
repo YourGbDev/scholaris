@@ -1,8 +1,3 @@
-// lib/features/scholarships/services/match_reasons.dart
-//
-// Produces human-readable reason labels for why a scholarship matched a
-// student profile. These are surfaced as chips on the personalized cards.
-
 import '../../profile/models/student_profile.dart';
 import '../models/scholarship.dart';
 
@@ -17,48 +12,38 @@ List<String> matchReasonsFor(StudentProfile student, Scholarship scholarship) {
     reasons.add('Your GPA qualifies');
   }
 
-  if (scholarship.yearLevels.contains(student.yearLevel)) {
+  if (scholarship.requiredYearLevels == null ||
+      scholarship.requiredYearLevels!.isEmpty ||
+      scholarship.requiredYearLevels!.contains(student.yearLevel)) {
     reasons.add('Your year level matches');
   }
 
-  if (scholarship.eligibleCourses.isNotEmpty &&
-      scholarship.eligibleCourses.contains(student.course)) {
+  if (scholarship.requiredCourses == null ||
+      scholarship.requiredCourses!.isEmpty ||
+      scholarship.requiredCourses!.contains(student.course)) {
     reasons.add('Your course is eligible');
-  } else if (scholarship.eligibleCourses.isEmpty) {
-    reasons.add('Open to all courses');
   }
 
-  if (scholarship.regionsEligible.isEmpty ||
-      scholarship.regionsEligible.contains(student.region)) {
+  if (scholarship.locationRestriction == null ||
+      scholarship.locationRestriction == student.region) {
     reasons.add('Your location is eligible');
   }
 
-  if (scholarship.maxIncomeBracket == 'any' ||
-      _incomeBracketIndex(student.incomeBracket) <=
-          _incomeBracketIndex(scholarship.maxIncomeBracket)) {
+  final income = student.monthlyFamilyIncome;
+  final limit = scholarship.maxMonthlyIncome;
+  if (limit == null) {
+    reasons.add('Your income qualifies');
+  } else if (income != null && income <= limit) {
     reasons.add('Your income qualifies');
   }
 
-  if (scholarship.isPwdPriority && student.hasDisability) {
+  if (scholarship.forPwd == true && student.hasDisability) {
     reasons.add('PWD priority applies');
   }
 
-  if (scholarship.isWorkingStudentPriority) {
-    reasons.add('Working students welcome');
+  if (scholarship.forIndigenous == true && student.isIndigenous) {
+    reasons.add('Indigenous priority applies');
   }
 
   return reasons;
-}
-
-int _incomeBracketIndex(String? bracket) {
-  switch (bracket) {
-    case 'low':
-      return 0;
-    case 'mid':
-      return 1;
-    case 'high':
-      return 2;
-    default:
-      return 999;
-  }
 }

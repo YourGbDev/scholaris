@@ -10,10 +10,10 @@ import '../models/scholarship.dart';
 
 /// Sort modes available for discovery results.
 enum DiscoverySort {
-  /// Soonest deadline first; a higher amount breaks ties.
+  /// Soonest deadline first.
   defaultSort,
 
-  /// Highest amount first; the soonest deadline breaks ties.
+  /// Soonest deadline first (amount sort removed; no amount field in schema).
   highestAmount,
 }
 
@@ -31,34 +31,18 @@ class DiscoveryFilterState {
     this.query = '',
     this.incomeBracket,
     this.regions = const <String>{},
-    this.coverageTypes = const <String>{},
-    this.tags = const <String>{},
-    this.minAmount,
-    this.maxAmount,
     this.closingSoonOnly = false,
     this.sort = DiscoverySort.defaultSort,
   });
 
-  /// Free-text search applied to name/provider/description/tags/courses/regions.
+  /// Free-text search applied to title/provider/description/courses/location.
   final String query;
 
   /// Selected income bracket ('low' | 'mid' | 'high'), or null for any.
   final String? incomeBracket;
 
-  /// Selected eligible regions (OR). Empty means any region.
+  /// Selected regions (OR). Empty means any region.
   final Set<String> regions;
-
-  /// Selected coverage types (OR). Empty means any coverage.
-  final Set<String> coverageTypes;
-
-  /// Selected tags (OR). Empty means any tag.
-  final Set<String> tags;
-
-  /// Inclusive lower amount bound; null = unset.
-  final double? minAmount;
-
-  /// Inclusive upper amount bound; null = unset.
-  final double? maxAmount;
 
   /// Restrict to scholarships closing within 14 days.
   final bool closingSoonOnly;
@@ -70,20 +54,12 @@ class DiscoveryFilterState {
       query.trim().isNotEmpty ||
       incomeBracket != null ||
       regions.isNotEmpty ||
-      coverageTypes.isNotEmpty ||
-      tags.isNotEmpty ||
-      minAmount != null ||
-      maxAmount != null ||
       closingSoonOnly;
 
   DiscoveryFilterState copyWith({
     String? query,
     Object? incomeBracket = _unset,
     Set<String>? regions,
-    Set<String>? coverageTypes,
-    Set<String>? tags,
-    Object? minAmount = _unset,
-    Object? maxAmount = _unset,
     bool? closingSoonOnly,
     DiscoverySort? sort,
   }) {
@@ -93,12 +69,6 @@ class DiscoveryFilterState {
           ? this.incomeBracket
           : incomeBracket as String?,
       regions: regions ?? this.regions,
-      coverageTypes: coverageTypes ?? this.coverageTypes,
-      tags: tags ?? this.tags,
-      minAmount:
-          identical(minAmount, _unset) ? this.minAmount : minAmount as double?,
-      maxAmount:
-          identical(maxAmount, _unset) ? this.maxAmount : maxAmount as double?,
       closingSoonOnly: closingSoonOnly ?? this.closingSoonOnly,
       sort: sort ?? this.sort,
     );
@@ -128,12 +98,11 @@ class DiscoveryFilters {
     if (tokens.isEmpty) return true;
 
     final haystack = _normalize([
-      s.name,
+      s.title,
       s.provider ?? '',
       s.description ?? '',
-      s.tags.join(' '),
-      s.eligibleCourses.join(' '),
-      s.regionsEligible.join(' '),
+      s.requiredCourses?.join(' ') ?? '',
+      s.locationRestriction ?? '',
     ].join(' '));
 
     return tokens.every(haystack.contains);
@@ -154,9 +123,6 @@ class DiscoveryFilters {
   }) {
     if (!_matchesIncome(s, state.incomeBracket)) return false;
     if (!_matchesRegions(s, state.regions)) return false;
-    if (!_matchesCoverage(s, state.coverageTypes)) return false;
-    if (!_matchesTags(s, state.tags)) return false;
-    if (!_matchesAmount(s, state.minAmount, state.maxAmount)) return false;
     if (!_matchesDeadline(s, state.closingSoonOnly, now: now)) return false;
     return true;
   }
@@ -169,45 +135,29 @@ class DiscoveryFilters {
     return items.where((s) => matchesFilters(s, state, now: now)).toList();
   }
 
-  /// Preserves the income hierarchy: low → low/mid/high/any, mid → mid/high/any,
-  /// high → high/any. Mirrors MatchingEngine's ceiling semantics.
+  /// Maps the selected income bracket to a numeric threshold. A scholarship
+  /// passes when its max_monthly_income is null (no restriction) or >= the
+  /// student's income threshold.
+  static const _incomeThresholds = <String, double>{
+    'low': 15000,
+    'mid': 25000,
+    'high': 60000,
+  };
+
   static bool _matchesIncome(Scholarship s, String? selected) {
-    if (selected == null || selected == 'any') return true;
-    const hierarchy = ['low', 'mid', 'high'];
-    final selectedIndex = hierarchy.indexOf(selected);
-    if (selectedIndex == -1) return true;
-    if (s.maxIncomeBracket == 'any') return true;
-    final maxIndex = hierarchy.indexOf(s.maxIncomeBracket);
-    if (maxIndex == -1) return false;
-    return maxIndex >= selectedIndex;
+    if (selected == null) return true;
+    final threshold = _incomeThresholds[selected];
+    if (threshold == null) return true;
+    if (s.maxMonthlyIncome == null) return true;
+    return s.maxMonthlyIncome! >= threshold;
   }
 
-  /// Selected regions use OR semantics; an unrestricted scholarship (empty
-  /// regionsEligible) remains eligible for any region.
+  /// Selected regions use OR semantics; an unrestricted scholarship (null
+  /// location_restriction) remains eligible for any region.
   static bool _matchesRegions(Scholarship s, Set<String> selected) {
     if (selected.isEmpty) return true;
-    if (s.regionsEligible.isEmpty) return true;
-    return s.regionsEligible.any(selected.contains);
-  }
-
-  static bool _matchesCoverage(Scholarship s, Set<String> selected) {
-    if (selected.isEmpty) return true;
-    final coverage = s.coverageType;
-    return coverage != null && selected.contains(coverage);
-  }
-
-  static bool _matchesTags(Scholarship s, Set<String> selected) {
-    if (selected.isEmpty) return true;
-    return s.tags.any(selected.contains);
-  }
-
-  /// Inclusive boundaries. When min > max the range is invalid and treated as
-  /// unset (no amount filtering).
-  static bool _matchesAmount(Scholarship s, double? min, double? max) {
-    if (min != null && max != null && min > max) return true;
-    if (min != null && s.amount < min) return false;
-    if (max != null && s.amount > max) return false;
-    return true;
+    if (s.locationRestriction == null) return true;
+    return selected.contains(s.locationRestriction);
   }
 
   static bool _matchesDeadline(
@@ -235,12 +185,8 @@ class DiscoveryFilters {
   static int compare(Scholarship a, Scholarship b, DiscoverySort sort) {
     switch (sort) {
       case DiscoverySort.defaultSort:
-        final deadlineCmp = a.deadline.compareTo(b.deadline);
-        if (deadlineCmp != 0) return deadlineCmp;
-        return b.amount.compareTo(a.amount);
+        return a.deadline.compareTo(b.deadline);
       case DiscoverySort.highestAmount:
-        final amountCmp = b.amount.compareTo(a.amount);
-        if (amountCmp != 0) return amountCmp;
         return a.deadline.compareTo(b.deadline);
     }
   }
@@ -254,7 +200,7 @@ class DiscoveryFilters {
   // --- Combined pipeline ----------------------------------------------------
 
   /// Search → filters → sort in one pass. The default sort keeps personalized
-  /// matches in MatchingEngine's order (soonest deadline, then higher amount).
+  /// matches in MatchingEngine's order (soonest deadline).
   static List<Scholarship> applyAll(
     List<Scholarship> items,
     DiscoveryFilterState state, {
@@ -268,13 +214,15 @@ class DiscoveryFilters {
 
   // --- Catalog-derived ------------------------------------------------------
 
-  /// Distinct tags across the active catalog. Never hardcoded — the options
+  /// Distinct values across the active catalog. Never hardcoded — the options
   /// grow/shrink with the data.
-  static Set<String> availableTags(List<Scholarship> catalog) {
-    final tags = <String>{};
+  static Set<String> availableRegions(List<Scholarship> catalog) {
+    final regions = <String>{};
     for (final s in catalog) {
-      tags.addAll(s.tags);
+      if (s.locationRestriction != null) {
+        regions.add(s.locationRestriction!);
+      }
     }
-    return tags;
+    return regions;
   }
 }

@@ -1,0 +1,126 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="900" viewBox="0 0 1200 900">
+  <defs>
+    <linearGradient id="shirtShade" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#FFFFFF"/>
+      <stop offset="100%" stop-color="#F1E5D1"/>
+    </linearGradient>
+    <linearGradient id="deskTopGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#E2BC85"/>
+      <stop offset="100%" stop-color="#D0A76E"/>
+    </linearGradient>
+    <linearGradient id="deskFrontGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#C0965D"/>
+      <stop offset="100%" stop-color="#A87F49"/>
+    </linearGradient>
+  </defs>
+
+  <!-- ============ GROUND SHADOWS ============ -->
+  <ellipse cx="720" cy="884" rx="480" ry="20" fill="rgba(6,40,22,0.18)"/>
+  <ellipse cx="1080" cy="884" rx="128" ry="16" fill="rgba(6,40,22,0.20)"/>
+
+  <!-- ============ DESK ============ -->
+  <g id="desk">
+    <rect x="350" y="808" width="40" height="82" rx="12" fill="#96693C"/>
+    <rect x="1090" y="808" width="40" height="82" rx="12" fill="#96693C"/>
+    <rect x="312" y="744" width="816" height="84" rx="16" fill="url(#deskFrontGrad)"/>
+    <rect x="312" y="744" width="816" height="10" rx="5" fill="rgba(255,255,255,0.18)"/>
+    <rect x="280" y="696" width="880" height="48" rx="24" fill="url(#deskTopGrad)"/>
+    <rect x="280" y="696" width="880" height="18" rx="9" fill="rgba(255,255,255,0.30)"/>
+  </g>
+
+  <!-- ============ STUDENT BODY (behind desk) ============ -->
+  <g id="student">
+    <rect x="736" y="360" width="228" height="400" rx="110" fill="url(#shirtShade)"/>
+    <ellipse cx="850" cy="520" rx="100" ry="110" fill="rgba(120,92,54,0.08)"/>
+    <ellipse cx="850" cy="418" rx="70" ry="26" fill="rgba(90,62,32,0.10)"/>
+    <rect x="814" y="338" width="72" height="70" rx="20" fill="#E4B284"/>
+    <path d="M 822 344 Q 850 360 878 344 L 878 356 Q 850 374 822 356 Z" fill="#D89F6E" opacity="0.85"/>
+    <ellipse cx="850" cy="300" rx="64" ry="76" fill="#F5CDA2"/>
+  </g>
+
+  <!-- ============ HAIR ============ -->
+  <g id="hair">
+    <path d="M 786 322 C 782 232 806 216 850 216 C 894 216 918 232 914 322 C 912 300 892 286 850 286 C 808 286 788 300 786 322 Z" fill="#40291C"/>
+    <path d="M 822 252 C 834 234 866 234 878 252 C 866 242 834 242 822 252 Z" fill="#5B4231" opacity="0.9"/>
+    <path d="M 788 320 Q 782 358 794 388 Q 806 356 802 320 Z" fill="#40291C"/>
+    <path d="M 912 320 Q 918 358 906 388 Q 894 356 898 320 Z" fill="#40291C"/>
+  </g>
+
+  <!-- ============ FACE ============ -->
+  <g id="face">
+    <ellipse cx="816" cy="310" rx="6" ry="7.5" fill="#2E1D14"/>
+    <ellipse cx="884" cy="310" rx="6" ry="7.5" fill="#2E1D14"/>
+    <circle cx="814" cy="307" r="2" fill="#FFFFFF" opacity="0.9"/>
+    <circle cx="882" cy="307" r="2" fill="#FFFFFF" opacity="0.9"/>
+    <path d="M 848 328 Q 852 334 848 337" fill="none" stroke="#D89F6E" stroke-width="3" stroke-linecap="round" opacity="0.8"/>
+    <path d="M 836 342 Q 850 352 864 342" fill="none" stroke="#A9642F" stroke-width="4" stroke-linecap="round"/>
+  </g>
+
+  <!-- ============ GOLD COLLAR ============ -->
+  <g id="collar">
+    <polygon points="798,386 902,386 850,428" fill="#F1B41E" opacity="0.92"/>
+    <circle cx="850" cy="446" r="5" fill="#F1B41E" opacity="0.9"/>
+  </g>
+
+  <!-- ============ OPEN BOOK ON DESK ============ -->
+  <g id="openbook">
+    <rect x="580" y="694" width="272" height="54" rx="13" fill="#6E4A24"/>
+    <path d="M 716 700 L 596 708 L 596 744 L 716 740 Z" fill="#FFF6E1"/>
+    <path d="M 716 700 L 836 708 L 836 744 L 716 740 Z" fill="#F3E3C2"/>
+    <path d="M 716 700 L 596 708 L 596 712 L 716 704 Z" fill="#FFFFFF" opacity="0.9"/>
+    <path d="M 716 700 L 836 708 L 836 712 L 716 704 Z" fill="#FFF6E1"/>
+    <path d="M 712 700 L 720 700 L 720 740 L 712 740 Z" fill="#D9BF97" opacity="0.9"/>
+    <rect x="606" y="720" width="84" height="6" rx="3" fill="#C9A878" opacity="0.55"/>
+    <rect x="606" y="732" width="64" height="6" rx="3" fill="#C9A878" opacity="0.4"/>
+    <rect x="728" y="718" width="90" height="6" rx="3" fill="#C9A878" opacity="0.55"/>
+    <rect x="728" y="730" width="70" height="6" rx="3" fill="#C9A878" opacity="0.4"/>
+    <path d="M 792 718 Q 794 722 798 722 Q 794 722 792 726 Q 790 722 786 722 Q 790 722 792 718 Z" fill="#F1B41E"/>
+  </g>
+
+  <!-- ============ BOOK STACK ============ -->
+  <g id="bookstack">
+    <rect x="360" y="700" width="120" height="36" rx="9" fill="#5F8669"/>
+    <rect x="360" y="700" width="16" height="36" rx="8" fill="#4C6D57"/>
+    <rect x="372" y="668" width="102" height="32" rx="8" fill="#E6B54D"/>
+    <rect x="372" y="668" width="14" height="32" rx="7" fill="#C99A32"/>
+    <rect x="382" y="638" width="86" height="30" rx="7" fill="#F2E4C8"/>
+  </g>
+
+  <!-- ============ BACKPACK (green, floor front-right) ============ -->
+  <g id="backpack">
+    <rect x="1050" y="660" width="36" height="34" rx="13" fill="#1A6B42"/>
+    <rect x="1000" y="700" width="128" height="164" rx="32" fill="#1A6B42"/>
+    <rect x="1000" y="700" width="30" height="164" rx="15" fill="#145338"/>
+    <rect x="1016" y="786" width="96" height="66" rx="18" fill="#155A38"/>
+    <rect x="1020" y="730" width="18" height="104" rx="9" fill="#145338"/>
+    <rect x="1090" y="730" width="18" height="104" rx="9" fill="#145338"/>
+    <rect x="990" y="688" width="148" height="58" rx="28" fill="#2E7D52"/>
+    <rect x="990" y="712" width="148" height="14" rx="7" fill="#1A6B42"/>
+    <ellipse cx="1064" cy="714" rx="8.5" ry="8.5" fill="#F1B41E"/>
+    <ellipse cx="1064" cy="714" rx="4" ry="4" fill="#D99A0F"/>
+  </g>
+
+  <!-- ============ ARMS + HANDS (over desk and book) ============ -->
+  <g id="arms">
+    <path d="M 796 432 Q 706 480 672 716" fill="none" stroke="#FDF7EC" stroke-width="44" stroke-linecap="round"/>
+    <path d="M 904 436 Q 952 520 828 732" fill="none" stroke="#FDF7EC" stroke-width="44" stroke-linecap="round"/>
+    <ellipse cx="672" cy="724" rx="19" ry="18" fill="#F5CDA2"/>
+    <ellipse cx="824" cy="732" rx="19" ry="18" fill="#F5CDA2"/>
+  </g>
+
+  <!-- ============ FLOATING ACCENTS ============ -->
+  <g id="accents">
+    <circle cx="584" cy="636" r="5" fill="#F1B41E" opacity="0.32"/>
+    <circle cx="566" cy="598" r="4.5" fill="#F1B41E" opacity="0.48"/>
+    <circle cx="552" cy="562" r="4" fill="#F1B41E" opacity="0.62"/>
+    <circle cx="540" cy="514" r="36" fill="#F1B41E" opacity="0.12"/>
+    <path d="M 540 494 Q 545.6 508.4 560 514 Q 545.6 519.6 540 534 Q 534.4 519.6 520 514 Q 534.4 508.4 540 494 Z" fill="#F1B41E"/>
+    <path d="M 598 463 Q 599.9 467.1 604 469 Q 599.9 470.9 598 475 Q 596.1 470.9 592 469 Q 596.1 467.1 598 463 Z" fill="#F1B41E" opacity="0.85"/>
+    <g opacity="0.52">
+      <polygon points="1040,120 1060,129 1040,138 1020,129" fill="#F1B41E"/>
+      <rect x="1034" y="138" width="12" height="6" rx="2" fill="#F1B41E"/>
+      <path d="M 1060 129 Q 1070 138 1066 150" fill="none" stroke="#F1B41E" stroke-width="3" stroke-linecap="round"/>
+      <circle cx="1065" cy="153" r="3" fill="#F1B41E"/>
+    </g>
+  </g>
+</svg>

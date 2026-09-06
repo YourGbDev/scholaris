@@ -5,7 +5,7 @@ import '../../profile/models/student_profile.dart';
 /// canonical evaluation order. Exposed so other consumers (e.g. the application
 /// readiness service) can explain outcomes without re-implementing — and
 /// potentially diverging from — the engine's semantics.
-enum EligibilityCriterion { gpa, yearLevel, course, citizenship, region, income }
+enum EligibilityCriterion { gpa, yearLevel, course, region, income, pwd, indigenous }
 
 class MatchingEngine {
   List<Scholarship> getEligible(
@@ -36,22 +36,22 @@ class MatchingEngine {
     if (student.gpa < scholarship.minGpa) {
       failed.add(EligibilityCriterion.gpa);
     }
-    if (!scholarship.yearLevels.contains(student.yearLevel)) {
+    if (scholarship.requiredYearLevels != null &&
+        !scholarship.requiredYearLevels!.contains(student.yearLevel)) {
       failed.add(EligibilityCriterion.yearLevel);
     }
-    if (scholarship.eligibleCourses.isNotEmpty &&
-        !scholarship.eligibleCourses.contains(student.course)) {
+    if (scholarship.requiredCourses != null &&
+        scholarship.requiredCourses!.isNotEmpty &&
+        !scholarship.requiredCourses!.contains(student.course)) {
       failed.add(EligibilityCriterion.course);
     }
-    if (scholarship.citizenshipRequired != 'any' &&
-        scholarship.citizenshipRequired != student.nationality) {
-      failed.add(EligibilityCriterion.citizenship);
-    }
-    if (scholarship.regionsEligible.isNotEmpty &&
-        !scholarship.regionsEligible.contains(student.region)) {
+    if (scholarship.locationRestriction != null &&
+        scholarship.locationRestriction != student.region) {
       failed.add(EligibilityCriterion.region);
     }
-    if (!_incomeBracketAllows(student.incomeBracket, scholarship.maxIncomeBracket)) {
+    final income = student.monthlyFamilyIncome;
+    final limit = scholarship.maxMonthlyIncome;
+    if (limit != null && (income == null || income > limit)) {
       failed.add(EligibilityCriterion.income);
     }
     return failed;
@@ -65,20 +65,8 @@ class MatchingEngine {
     ranked.sort((a, b) {
       final deadlineCmp = a.deadline.compareTo(b.deadline);
       if (deadlineCmp != 0) return deadlineCmp;
-      return b.amount.compareTo(a.amount);
+      return 0;
     });
     return ranked;
-  }
-
-  static bool _incomeBracketAllows(String? studentBracket, String scholarshipMax) {
-    if (scholarshipMax == 'any') return true;
-    // An undisclosed income cannot be compared against a scholarship's income
-    // ceiling, so income-constrained scholarships simply do not match.
-    if (studentBracket == null) return false;
-    const hierarchy = ['low', 'mid', 'high'];
-    final studentIndex = hierarchy.indexOf(studentBracket);
-    final maxIndex = hierarchy.indexOf(scholarshipMax);
-    if (studentIndex == -1 || maxIndex == -1) return false;
-    return studentIndex <= maxIndex;
   }
 }

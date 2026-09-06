@@ -21,6 +21,8 @@ StudentProfile _student({
   String nationality = 'Filipino',
   String region = 'NCR',
   double? monthlyFamilyIncome = 15000,
+  bool hasDisability = false,
+  bool isIndigenous = false,
   bool setupComplete = true,
 }) =>
     StudentProfile(
@@ -32,38 +34,39 @@ StudentProfile _student({
       yearLevel: yearLevel,
       course: course,
       monthlyFamilyIncome: monthlyFamilyIncome,
+      hasDisability: hasDisability,
+      isIndigenous: isIndigenous,
       setupComplete: setupComplete,
     );
 
 Scholarship _scholarship({
   String id = 'sch-1',
+  String title = 'Test Scholarship',
   double minGpa = 2.0,
-  List<int> yearLevels = const [1, 2, 3, 4, 5],
-  List<String> eligibleCourses = const [],
-  String citizenshipRequired = 'any',
-  List<String> regionsEligible = const [],
-  String maxIncomeBracket = 'any',
+  List<int>? requiredYearLevels = const [1, 2, 3, 4, 5],
+  List<String>? requiredCourses = const [],
+  String? locationRestriction,
+  double? maxMonthlyIncome,
+  bool forPwd = false,
+  bool forIndigenous = false,
+  int? slots,
   bool isActive = true,
   DateTime? deadline,
 }) =>
     Scholarship(
       id: id,
-      name: 'Test Scholarship',
+      title: title,
       provider: 'Provider',
       description: 'Description',
       minGpa: minGpa,
-      yearLevels: yearLevels,
-      eligibleCourses: eligibleCourses,
-      citizenshipRequired: citizenshipRequired,
-      regionsEligible: regionsEligible,
-      maxIncomeBracket: maxIncomeBracket,
-      isPwdPriority: false,
-      isWorkingStudentPriority: false,
-      slotsAvailable: null,
+      requiredYearLevels: requiredYearLevels,
+      requiredCourses: requiredCourses,
+      locationRestriction: locationRestriction,
+      maxMonthlyIncome: maxMonthlyIncome,
+      forPwd: forPwd,
+      forIndigenous: forIndigenous,
+      slots: slots,
       deadline: deadline ?? DateTime(2026, 10, 15, 23, 59),
-      amount: 50000,
-      coverageType: 'full',
-      tags: const [],
       isActive: isActive,
     );
 
@@ -219,7 +222,7 @@ void main() {
     test('year-level failure reports the open years and the actual year', () {
       final readiness = evaluateApplicationReadiness(
         profile: _student(yearLevel: 5),
-        scholarship: _scholarship(yearLevels: [1, 2, 3]),
+        scholarship: _scholarship(requiredYearLevels: [1, 2, 3]),
         referenceNow: _now,
       );
 
@@ -232,7 +235,7 @@ void main() {
       final readiness = evaluateApplicationReadiness(
         profile: _student(course: 'BS Nursing'),
         scholarship: _scholarship(
-          eligibleCourses: ['BS Computer Science', 'BS Engineering'],
+          requiredCourses: ['BS Computer Science', 'BS Engineering'],
         ),
         referenceNow: _now,
       );
@@ -244,29 +247,17 @@ void main() {
     test('open course list never fails the course criterion', () {
       final readiness = evaluateApplicationReadiness(
         profile: _student(course: 'BS Nursing'),
-        scholarship: _scholarship(eligibleCourses: []),
+        scholarship: _scholarship(requiredCourses: []),
         referenceNow: _now,
       );
 
       expect(readiness.state, ApplicationReadinessState.eligible);
     });
 
-    test('citizenship failure reports requirement and actual nationality', () {
-      final readiness = evaluateApplicationReadiness(
-        profile: _student(nationality: 'Canadian'),
-        scholarship: _scholarship(citizenshipRequired: 'Filipino'),
-        referenceNow: _now,
-      );
-
-      expect(readiness.missingCriteria, [EligibilityCriterion.citizenship]);
-      expect(readiness.reasons.single, contains('Filipino'));
-      expect(readiness.reasons.single, contains('Canadian'));
-    });
-
-    test('region failure reports the open regions and the actual region', () {
+    test('region failure reports the open region and the actual region', () {
       final readiness = evaluateApplicationReadiness(
         profile: _student(region: 'Region VII'),
-        scholarship: _scholarship(regionsEligible: ['NCR', 'Region IV-A (CALABARZON)']),
+        scholarship: _scholarship(locationRestriction: 'NCR'),
         referenceNow: _now,
       );
 
@@ -275,32 +266,32 @@ void main() {
       expect(readiness.reasons.single, contains('Region VII'));
     });
 
-    test('open region list never fails the region criterion', () {
+    test('open region never fails the region criterion', () {
       final readiness = evaluateApplicationReadiness(
         profile: _student(region: 'Region VII'),
-        scholarship: _scholarship(regionsEligible: []),
+        scholarship: _scholarship(locationRestriction: null),
         referenceNow: _now,
       );
 
       expect(readiness.state, ApplicationReadinessState.eligible);
     });
 
-    test('income failure reports the bracket comparison', () {
+    test('income failure reports the threshold comparison', () {
       final readiness = evaluateApplicationReadiness(
-        profile: _student(monthlyFamilyIncome: 90000), // high
-        scholarship: _scholarship(maxIncomeBracket: 'low'),
+        profile: _student(monthlyFamilyIncome: 90000),
+        scholarship: _scholarship(maxMonthlyIncome: 15000),
         referenceNow: _now,
       );
 
       expect(readiness.missingCriteria, [EligibilityCriterion.income]);
-      expect(readiness.reasons.single, contains('high'));
-      expect(readiness.reasons.single, contains('low'));
+      expect(readiness.reasons.single, contains('15000'));
+      expect(readiness.reasons.single, contains('90000'));
     });
 
     test('undisclosed income fails income-constrained scholarships', () {
       final readiness = evaluateApplicationReadiness(
         profile: _student(monthlyFamilyIncome: null),
-        scholarship: _scholarship(maxIncomeBracket: 'low'),
+        scholarship: _scholarship(maxMonthlyIncome: 15000),
         referenceNow: _now,
       );
 
@@ -311,7 +302,7 @@ void main() {
     test('undisclosed income passes income-unconstrained scholarships', () {
       final readiness = evaluateApplicationReadiness(
         profile: _student(monthlyFamilyIncome: null),
-        scholarship: _scholarship(maxIncomeBracket: 'any'),
+        scholarship: _scholarship(maxMonthlyIncome: null),
         referenceNow: _now,
       );
 
@@ -328,9 +319,9 @@ void main() {
         ),
         scholarship: _scholarship(
           minGpa: 3.5,
-          yearLevels: [1, 2],
-          regionsEligible: ['NCR'],
-          maxIncomeBracket: 'low',
+          requiredYearLevels: [1, 2],
+          locationRestriction: 'NCR',
+          maxMonthlyIncome: 15000,
         ),
         referenceNow: _now,
       );
@@ -350,11 +341,11 @@ void main() {
     test('priority flags are never eligibility criteria', () {
       final readiness = evaluateApplicationReadiness(
         profile: _student(),
-        scholarship: _scholarship(),
+        scholarship: _scholarship(forPwd: true, forIndigenous: true),
         referenceNow: _now,
       );
 
-      // Eligible with no priority flags set on the profile: PWD/working-student
+      // Eligible with no matching priority flags on the profile: PWD/indigenous
       // priorities are not hard requirements in the MatchingEngine.
       expect(readiness.state, ApplicationReadinessState.eligible);
     });
@@ -424,15 +415,17 @@ void main() {
       final engine = MatchingEngine();
       final scholarship = _scholarship(
         minGpa: 3.5,
-        eligibleCourses: ['BS Computer Science'],
-        regionsEligible: ['NCR'],
-        maxIncomeBracket: 'low',
+        requiredCourses: ['BS Computer Science'],
+        locationRestriction: 'NCR',
+        maxMonthlyIncome: 15000,
       );
       final student = _student(
         gpa: 3.2,
         course: 'BS Nursing',
         region: 'Region VII',
         monthlyFamilyIncome: 90000,
+        hasDisability: true,
+        isIndigenous: true,
       );
 
       final readiness = evaluateApplicationReadiness(
@@ -464,11 +457,10 @@ void main() {
       final engine = MatchingEngine();
       final scholarship = _scholarship(
         minGpa: 2.0,
-        yearLevels: [2],
-        eligibleCourses: ['BS Computer Science'],
-        citizenshipRequired: 'Filipino',
-        regionsEligible: ['NCR'],
-        maxIncomeBracket: 'mid',
+        requiredYearLevels: [2],
+        requiredCourses: ['BS Computer Science'],
+        locationRestriction: 'NCR',
+        maxMonthlyIncome: 25000,
       );
       final student = _student();
 

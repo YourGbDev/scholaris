@@ -8,58 +8,45 @@ part of 'scholarship.dart';
 
 _Scholarship _$ScholarshipFromJson(Map<String, dynamic> json) => _Scholarship(
   id: json['id'] as String,
-  name: json['name'] as String,
+  title: json['title'] as String,
   provider: json['provider'] as String?,
   description: json['description'] as String?,
   minGpa: (json['min_gpa'] as num).toDouble(),
-  yearLevels:
-      (json['year_levels'] as List<dynamic>?)
-          ?.map((e) => (e as num).toInt())
-          .toList() ??
-      const [1, 2, 3, 4, 5],
-  eligibleCourses:
-      (json['eligible_courses'] as List<dynamic>?)
-          ?.map((e) => e as String)
-          .toList() ??
-      const [],
-  citizenshipRequired: json['citizenship_required'] as String? ?? 'any',
-  regionsEligible:
-      (json['regions_eligible'] as List<dynamic>?)
-          ?.map((e) => e as String)
-          .toList() ??
-      const [],
-  maxIncomeBracket: json['max_income_bracket'] as String? ?? 'any',
-  isPwdPriority: json['is_pwd_priority'] as bool? ?? false,
-  isWorkingStudentPriority:
-      json['is_working_student_priority'] as bool? ?? false,
-  slotsAvailable: (json['slots_available'] as num?)?.toInt(),
+  maxMonthlyIncome: (json['max_monthly_income'] as num?)?.toDouble(),
+  requiredYearLevels: (json['required_year_levels'] as List<dynamic>?)
+      ?.map((e) => (e as num).toInt())
+      .toList(),
+  requiredCourses: (json['required_courses'] as List<dynamic>?)
+      ?.map((e) => e as String)
+      .toList(),
+  locationRestriction: json['location_restriction'] as String?,
+  forIndigenous: json['for_indigenous'] as bool? ?? false,
+  forPwd: json['for_pwd'] as bool? ?? false,
+  slots: (json['slots'] as num?)?.toInt(),
   deadline: _dateFromJson(json['deadline']),
-  amount: (json['amount'] as num).toDouble(),
-  coverageType: json['coverage_type'] as String?,
-  tags:
-      (json['tags'] as List<dynamic>?)?.map((e) => e as String).toList() ??
-      const [],
+  applicationUrl: json['application_url'] as String?,
   isActive: json['is_active'] as bool? ?? true,
+  createdAt: json['created_at'] == null
+      ? null
+      : DateTime.parse(json['created_at'] as String),
 );
 
 Map<String, dynamic> _$ScholarshipToJson(_Scholarship instance) =>
     <String, dynamic>{
       'id': instance.id,
-      'name': instance.name,
+      'title': instance.title,
       'provider': instance.provider,
       'description': instance.description,
       'min_gpa': instance.minGpa,
-      'year_levels': instance.yearLevels,
-      'eligible_courses': instance.eligibleCourses,
-      'citizenship_required': instance.citizenshipRequired,
-      'regions_eligible': instance.regionsEligible,
-      'max_income_bracket': instance.maxIncomeBracket,
-      'is_pwd_priority': instance.isPwdPriority,
-      'is_working_student_priority': instance.isWorkingStudentPriority,
-      'slots_available': instance.slotsAvailable,
+      'max_monthly_income': instance.maxMonthlyIncome,
+      'required_year_levels': instance.requiredYearLevels,
+      'required_courses': instance.requiredCourses,
+      'location_restriction': instance.locationRestriction,
+      'for_indigenous': instance.forIndigenous,
+      'for_pwd': instance.forPwd,
+      'slots': instance.slots,
       'deadline': instance.deadline.toIso8601String(),
-      'amount': instance.amount,
-      'coverage_type': instance.coverageType,
-      'tags': instance.tags,
+      'application_url': instance.applicationUrl,
       'is_active': instance.isActive,
+      'created_at': instance.createdAt?.toIso8601String(),
     };

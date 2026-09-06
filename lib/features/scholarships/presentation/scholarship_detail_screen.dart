@@ -150,7 +150,7 @@ class _DetailContent extends ConsumerWidget {
       padding: const EdgeInsets.fromLTRB(20, 8, 20, 40),
       children: [
         Text(
-          scholarship.name,
+          scholarship.title,
           style: poppins(fontSize: 24, fontWeight: FontWeight.w700, color: kPrimary),
         ),
         const SizedBox(height: 4),
@@ -191,49 +191,28 @@ class _DetailContent extends ConsumerWidget {
             _EligibilityChip(icon: Icons.workspace_premium_outlined, label: 'Min GPA ${scholarship.minGpa.toStringAsFixed(2)}'),
             _EligibilityChip(
               icon: Icons.school_outlined,
-              label: 'Year ${_yearLevelsLabel(scholarship.yearLevels)}',
+              label: _yearLevelsLabel(scholarship.requiredYearLevels),
             ),
             _EligibilityChip(
               icon: Icons.menu_book_outlined,
-              label: scholarship.eligibleCourses.isEmpty
+              label: (scholarship.requiredCourses == null || scholarship.requiredCourses!.isEmpty)
                   ? 'All courses'
                   : 'Selected courses',
             ),
             _EligibilityChip(
               icon: Icons.location_on_outlined,
-              label: scholarship.regionsEligible.isEmpty
+              label: scholarship.locationRestriction == null
                   ? 'All regions'
-                  : '${scholarship.regionsEligible.length} region(s)',
+                  : '${scholarship.locationRestriction}',
             ),
             _EligibilityChip(
               icon: Icons.account_balance_wallet_outlined,
-              label: _incomeBracketLabel(scholarship.maxIncomeBracket),
+              label: _incomeBracketLabel(scholarship.maxMonthlyIncome),
             ),
-            if (scholarship.isPwdPriority)
+            if (scholarship.forPwd == true)
               _EligibilityChip(icon: Icons.accessible_rounded, label: 'PWD priority'),
-            if (scholarship.isWorkingStudentPriority)
-              _EligibilityChip(icon: Icons.work_outline_rounded, label: 'Working students'),
           ],
         ),
-        if (scholarship.tags.isNotEmpty) ...[
-          const SizedBox(height: 24),
-          _SectionLabel('Tags'),
-          const SizedBox(height: 12),
-          Wrap(
-            spacing: 8,
-            runSpacing: 8,
-            children: scholarship.tags
-                .map((t) => Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                      decoration: BoxDecoration(
-                        color: kPrimarySoft,
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: Text(t, style: GoogleFonts.openSans(fontSize: 12, fontWeight: FontWeight.w600, color: kPrimary)),
-                    ))
-                .toList(),
-          ),
-        ],
       ],
     );
   }
@@ -257,23 +236,16 @@ class _DetailContent extends ConsumerWidget {
     return matchReasonsFor(profile!, scholarship);
   }
 
-  String _yearLevelsLabel(List<int> levels) {
+  String _yearLevelsLabel(List<int>? levels) {
+    if (levels == null || levels.isEmpty) return 'Any year';
     if (levels.length == 5) return '1–5';
     if (levels.length == 1) return '${levels.first} only';
     return levels.map((l) => '$l').join(', ');
   }
 
-  String _incomeBracketLabel(String bracket) {
-    switch (bracket) {
-      case 'low':
-        return 'Income under ₱25k';
-      case 'mid':
-        return 'Income up to ₱70k';
-      case 'high':
-        return 'All income levels';
-      default:
-        return 'All income levels';
-    }
+  String _incomeBracketLabel(double? maxMonthlyIncome) {
+    if (maxMonthlyIncome == null) return 'All income levels';
+    return 'Max monthly income ₱${maxMonthlyIncome.toStringAsFixed(0)}';
   }
 }
 
@@ -301,7 +273,7 @@ class _ApplySectionState extends ConsumerState<_ApplySection> {
         title: const Text('Apply to this scholarship?'),
         content: Text(
           'Confirming will create and submit your application for '
-          '"${widget.scholarship.name}" in Scholaris. You can track it under '
+          '"${widget.scholarship.title}" in Scholaris. You can track it under '
           'My Applications.',
         ),
         actions: [
@@ -679,25 +651,6 @@ class _AmountCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            'Up to',
-            style: GoogleFonts.openSans(fontSize: 12, color: Colors.white70),
-          ),
-          const SizedBox(height: 4),
-          Text(
-            formatPeso(scholarship.amount),
-            style: GoogleFonts.poppins(
-              fontSize: 32,
-              fontWeight: FontWeight.w700,
-              color: Colors.white,
-            ),
-          ),
-          const SizedBox(height: 2),
-          Text(
-            _coverageLabel(scholarship.coverageType),
-            style: GoogleFonts.openSans(fontSize: 13, color: Colors.white70),
-          ),
-          const SizedBox(height: 16),
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
             decoration: BoxDecoration(
@@ -728,25 +681,14 @@ class _AmountCard extends StatelessWidget {
           ),
           const SizedBox(height: 12),
           Text(
-            '${scholarship.slotsAvailable ?? 'Unlimited'} slot(s) available',
+            scholarship.slots == null
+                ? 'Slots not specified'
+                : '${scholarship.slots} slot(s) available',
             style: GoogleFonts.openSans(fontSize: 13, color: Colors.white70),
           ),
         ],
       ),
     );
-  }
-
-  String _coverageLabel(String? coverageType) {
-    switch (coverageType) {
-      case 'full':
-        return 'Full coverage including tuition';
-      case 'partial':
-        return 'Partial coverage';
-      case 'stipend':
-        return 'Monthly stipend';
-      default:
-        return 'Scholarship award';
-    }
   }
 }
 

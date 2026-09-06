@@ -7,9 +7,6 @@
 // `scholarships` table column carries a @JsonKey(name: 'snake_case') so
 // fromJson/toJson round-trip a real Supabase row. Nothing is written to
 // Supabase with camelCase keys.
-//
-// The table contract lives in supabase/migrations/0002_scholarship_discovery.sql
-// — the model and the migration must stay in sync.
 
 import 'package:freezed_annotation/freezed_annotation.dart';
 
@@ -22,29 +19,21 @@ DateTime _dateFromJson(Object? value) => DateTime.parse(value as String);
 abstract class Scholarship with _$Scholarship {
   const factory Scholarship({
     required String id,
-    required String name,
+    required String title,
     String? provider,
     String? description,
     @JsonKey(name: 'min_gpa') required double minGpa,
-    @JsonKey(name: 'year_levels') @Default([1, 2, 3, 4, 5]) List<int> yearLevels,
-    @JsonKey(name: 'eligible_courses') @Default([]) List<String> eligibleCourses,
-    @JsonKey(name: 'citizenship_required')
-    @Default('any')
-    String citizenshipRequired,
-    @JsonKey(name: 'regions_eligible') @Default([]) List<String> regionsEligible,
-    @JsonKey(name: 'max_income_bracket')
-    @Default('any')
-    String maxIncomeBracket,
-    @JsonKey(name: 'is_pwd_priority') @Default(false) bool isPwdPriority,
-    @JsonKey(name: 'is_working_student_priority')
-    @Default(false)
-    bool isWorkingStudentPriority,
-    @JsonKey(name: 'slots_available') int? slotsAvailable,
+    @JsonKey(name: 'max_monthly_income') double? maxMonthlyIncome,
+    @JsonKey(name: 'required_year_levels') List<int>? requiredYearLevels,
+    @JsonKey(name: 'required_courses') List<String>? requiredCourses,
+    @JsonKey(name: 'location_restriction') String? locationRestriction,
+    @JsonKey(name: 'for_indigenous') @Default(false) bool? forIndigenous,
+    @JsonKey(name: 'for_pwd') @Default(false) bool? forPwd,
+    @JsonKey(name: 'slots') int? slots,
     @JsonKey(name: 'deadline', fromJson: _dateFromJson) required DateTime deadline,
-    required double amount,
-    @JsonKey(name: 'coverage_type') String? coverageType,
-    @JsonKey(name: 'tags') @Default([]) List<String> tags,
+    @JsonKey(name: 'application_url') String? applicationUrl,
     @JsonKey(name: 'is_active') @Default(true) bool isActive,
+    @JsonKey(name: 'created_at') DateTime? createdAt,
   }) = _Scholarship;
 
   factory Scholarship.fromJson(Map<String, dynamic> json) =>

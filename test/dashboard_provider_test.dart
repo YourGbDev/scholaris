@@ -39,25 +39,30 @@ DateTime _inDays(int days) => DateTime.now().add(Duration(days: days));
 Scholarship _s({
   required String id,
   required DateTime deadline,
-  double amount = 50000,
+  String title = 'Test Scholarship',
+  double minGpa = 2.0,
+  List<int>? requiredYearLevels = const [1, 2, 3, 4, 5],
+  List<String>? requiredCourses = const [],
+  String? locationRestriction,
+  double? maxMonthlyIncome,
+  bool forPwd = false,
+  bool forIndigenous = false,
+  int? slots,
+  bool isActive = true,
 }) =>
     Scholarship(
       id: id,
-      name: id,
-      minGpa: 2.0,
-      yearLevels: const [1, 2, 3, 4, 5],
-      eligibleCourses: const [],
-      citizenshipRequired: 'any',
-      regionsEligible: const [],
-      maxIncomeBracket: 'any',
-      isPwdPriority: false,
-      isWorkingStudentPriority: false,
-      slotsAvailable: null,
+      title: title,
+      minGpa: minGpa,
+      requiredYearLevels: requiredYearLevels,
+      requiredCourses: requiredCourses,
+      locationRestriction: locationRestriction,
+      maxMonthlyIncome: maxMonthlyIncome,
+      forPwd: forPwd,
+      forIndigenous: forIndigenous,
+      slots: slots,
       deadline: deadline,
-      amount: amount,
-      coverageType: 'full',
-      tags: const [],
-      isActive: true,
+      isActive: isActive,
     );
 
 Application _app({
@@ -98,38 +103,36 @@ StudentProfile _student() => StudentProfile(
 List<Map<String, dynamic>> _rows() => [
       {
         'id': 'sch-dost',
-        'name': 'DOST-SEI Scholarship',
+        'title': 'DOST-SEI Scholarship',
+        'provider': 'Department of Science and Technology',
+        'description': 'Supports students in priority STEM programs.',
         'min_gpa': 2.0,
-        'year_levels': [1, 2, 3, 4, 5],
-        'eligible_courses': <String>[],
-        'citizenship_required': 'Filipino',
-        'regions_eligible': <String>[],
-        'max_income_bracket': 'any',
-        'is_pwd_priority': false,
-        'is_working_student_priority': false,
-        'slots_available': 8000,
+        'required_year_levels': [1, 2, 3, 4, 5],
+        'required_courses': <String>[],
+        'location_restriction': null,
+        'max_monthly_income': null,
+        'for_pwd': false,
+        'for_indigenous': false,
+        'slots': 8000,
         'deadline': _inDays(10).toIso8601String().split('T').first,
-        'amount': 70000,
-        'coverage_type': 'full',
-        'tags': const ['stem'],
+        'application_url': 'https://ched.gov.ph/scholarships',
         'is_active': true,
       },
       {
         'id': 'sch-barmm',
-        'name': 'BARMM Study Grant',
+        'title': 'BARMM Study Grant',
+        'provider': 'BARMM Ministry of Education',
+        'description': 'For students in the BARMM region.',
         'min_gpa': 2.0,
-        'year_levels': [1, 2, 3, 4, 5],
-        'eligible_courses': <String>[],
-        'citizenship_required': 'any',
-        'regions_eligible': ['BARMM'],
-        'max_income_bracket': 'any',
-        'is_pwd_priority': false,
-        'is_working_student_priority': false,
-        'slots_available': 200,
+        'required_year_levels': [1, 2, 3, 4, 5],
+        'required_courses': <String>[],
+        'location_restriction': 'BARMM',
+        'max_monthly_income': null,
+        'for_pwd': false,
+        'for_indigenous': false,
+        'slots': 200,
         'deadline': _inDays(6).toIso8601String().split('T').first,
-        'amount': 40000,
-        'coverage_type': 'full',
-        'tags': const ['community'],
+        'application_url': 'https://barmm.gov.ph/scholarships',
         'is_active': true,
       },
     ];
@@ -205,16 +208,16 @@ void main() {
       expect(soon, isEmpty);
     });
 
-    test('sorts by soonest deadline, higher amount breaks ties', () {
+    test('sorts by soonest deadline', () {
       final soon = closingSoonScholarships(
         [
-          _s(id: 'late', deadline: _at(10), amount: 90000),
-          _s(id: 'soonSmall', deadline: _at(3), amount: 10000),
-          _s(id: 'soonBig', deadline: _at(3), amount: 80000),
+          _s(id: 'late', deadline: _at(10)),
+          _s(id: 'soonSmall', deadline: _at(3)),
+          _s(id: 'soonBig', deadline: _at(3)),
         ],
         now: _now,
       );
-      expect(soon.map((s) => s.id), ['soonBig', 'soonSmall', 'late']);
+      expect(soon.map((s) => s.id), ['soonSmall', 'soonBig', 'late']);
     });
 
     test('returns empty for an empty catalog', () {

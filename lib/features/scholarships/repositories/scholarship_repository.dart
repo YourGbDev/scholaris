@@ -38,7 +38,7 @@ class ScholarshipRepository {
   Future<List<Scholarship>> fetchActive() async {
     final rows = await _dataSource.fetchScholarships();
     final scholarships =
-        rows.map(Scholarship.fromJson).where((s) => s.isActive).toList();
+        rows.map(Scholarship.fromJson).toList();
     scholarships.sort((a, b) => a.deadline.compareTo(b.deadline));
     return scholarships;
   }

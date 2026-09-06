@@ -290,8 +290,6 @@ void main() {
 
       expect(find.text('DOST-SEI Undergraduate Scholarship'), findsOneWidget);
       expect(find.text('CHED Merit Scholarship (MSRS)'), findsOneWidget);
-      expect(find.text('₱70,000'), findsOneWidget);
-      expect(find.text('₱50,000'), findsOneWidget);
       expect(find.byType(ApplicationStatusChip), findsNWidgets(2));
       expect(find.text('Submitted'), findsOneWidget);
       expect(find.text('Approved'), findsOneWidget);

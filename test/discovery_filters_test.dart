@@ -11,35 +11,29 @@ DateTime _inDays(int days) => DateTime(2026, 1, 1).add(Duration(days: days));
 
 Scholarship _s({
   String id = 's1',
-  String name = 'DOST-SEI Scholarship',
+  String title = 'DOST-SEI Scholarship',
   String? provider = 'Department of Science and Technology',
   String? description = 'Supports students in priority STEM programs.',
-  List<String> tags = const ['stem', 'stipend'],
-  List<String> eligibleCourses = const ['BS Computer Science'],
-  List<String> regionsEligible = const ['NCR', 'Region III'],
-  String maxIncomeBracket = 'any',
-  double amount = 50000,
+  List<String>? requiredCourses = const ['BS Computer Science'],
+  String? locationRestriction,
+  double? maxMonthlyIncome,
   DateTime? deadline,
-  String? coverageType = 'full',
+  int? slots,
 }) =>
     Scholarship(
       id: id,
-      name: name,
+      title: title,
       provider: provider,
       description: description,
       minGpa: 2.0,
-      yearLevels: const [1, 2, 3, 4, 5],
-      eligibleCourses: eligibleCourses,
-      citizenshipRequired: 'any',
-      regionsEligible: regionsEligible,
-      maxIncomeBracket: maxIncomeBracket,
-      isPwdPriority: false,
-      isWorkingStudentPriority: false,
-      slotsAvailable: null,
+      requiredYearLevels: const [1, 2, 3, 4, 5],
+      requiredCourses: requiredCourses,
+      locationRestriction: locationRestriction,
+      maxMonthlyIncome: maxMonthlyIncome,
+      forPwd: false,
+      forIndigenous: false,
+      slots: slots,
       deadline: deadline ?? _inDays(30),
-      amount: amount,
-      coverageType: coverageType,
-      tags: tags,
       isActive: true,
     );
 
@@ -47,10 +41,10 @@ List<String> _ids(List<Scholarship> items) => items.map((s) => s.id).toList();
 
 void main() {
   group('search', () {
-    test('matches the name field', () {
+    test('matches the title field', () {
       final items = [
-        _s(id: 'dost', name: 'DOST-SEI Scholarship'),
-        _s(id: 'ched', name: 'CHED Merit Scholarship'),
+        _s(id: 'dost', title: 'DOST-SEI Scholarship'),
+        _s(id: 'ched', title: 'CHED Merit Scholarship'),
       ];
       expect(_ids(DiscoveryFilters.applySearch(items, 'DOST')), ['dost']);
     });
@@ -74,18 +68,10 @@ void main() {
       expect(_ids(DiscoveryFilters.applySearch(items, 'merit')), ['ched']);
     });
 
-    test('matches the tags field', () {
+    test('matches the required courses field', () {
       final items = [
-        _s(id: 'dost', tags: const ['stem', 'stipend']),
-        _s(id: 'ched', tags: const ['merit']),
-      ];
-      expect(_ids(DiscoveryFilters.applySearch(items, 'stipend')), ['dost']);
-    });
-
-    test('matches the eligible courses field', () {
-      final items = [
-        _s(id: 'nursing', eligibleCourses: const ['BS Nursing']),
-        _s(id: 'cs', eligibleCourses: const ['BS Computer Science']),
+        _s(id: 'nursing', requiredCourses: const ['BS Nursing']),
+        _s(id: 'cs', requiredCourses: const ['BS Computer Science']),
       ];
       expect(
         _ids(DiscoveryFilters.applySearch(items, 'computer science')),
@@ -93,39 +79,37 @@ void main() {
       );
     });
 
-    test('matches the regions eligible field', () {
+    test('matches the location restriction field', () {
       final items = [
-        _s(id: 'ncr', regionsEligible: const ['NCR']),
-        _s(id: 'visayas', regionsEligible: const ['Region VII']),
+        _s(id: 'ncr', locationRestriction: 'NCR'),
+        _s(id: 'visayas', locationRestriction: 'Region VII'),
       ];
       expect(_ids(DiscoveryFilters.applySearch(items, 'ncr')), ['ncr']);
     });
 
     test('is case-insensitive', () {
-      final items = [_s(id: 'dost', name: 'DOST-SEI Scholarship')];
+      final items = [_s(id: 'dost', title: 'DOST-SEI Scholarship')];
       expect(_ids(DiscoveryFilters.applySearch(items, 'dost')), ['dost']);
       expect(_ids(DiscoveryFilters.applySearch(items, 'DoSt')), ['dost']);
     });
 
     test('performs partial substring matching', () {
-      final items = [_s(id: 'dost', name: 'DOST-SEI Scholarship')];
+      final items = [_s(id: 'dost', title: 'DOST-SEI Scholarship')];
       expect(_ids(DiscoveryFilters.applySearch(items, 'sei')), ['dost']);
     });
 
     test('requires every token to match (AND)', () {
       final items = [
-        _s(id: 'dost', name: 'DOST-SEI Scholarship', tags: const ['stipend']),
-        _s(id: 'ched', name: 'CHED Merit Scholarship', tags: const ['merit']),
+        _s(id: 'dost', title: 'DOST-SEI Scholarship', requiredCourses: const ['STEM']),
+        _s(id: 'ched', title: 'CHED Merit Scholarship', requiredCourses: const ['Merit']),
       ];
-      expect(_ids(DiscoveryFilters.applySearch(items, 'dost stipend')),
-          ['dost']);
+      expect(_ids(DiscoveryFilters.applySearch(items, 'dost stem')), ['dost']);
       expect(_ids(DiscoveryFilters.applySearch(items, 'dost ched')), isEmpty);
     });
 
     test('collapses whitespace and trims the query', () {
-      final items = [_s(id: 'dost', name: 'DOST-SEI Scholarship')];
-      expect(_ids(DiscoveryFilters.applySearch(items, '  dost   sei  ')),
-          ['dost']);
+      final items = [_s(id: 'dost', title: 'DOST-SEI Scholarship')];
+      expect(_ids(DiscoveryFilters.applySearch(items, '  dost   sei  ')), ['dost']);
     });
 
     test('empty query is a no-op', () {
@@ -142,10 +126,10 @@ void main() {
 
   group('income filter', () {
     final items = [
-      _s(id: 'low', maxIncomeBracket: 'low'),
-      _s(id: 'mid', maxIncomeBracket: 'mid'),
-      _s(id: 'high', maxIncomeBracket: 'high'),
-      _s(id: 'any', maxIncomeBracket: 'any'),
+      _s(id: 'low', maxMonthlyIncome: 15000),
+      _s(id: 'mid', maxMonthlyIncome: 25000),
+      _s(id: 'high', maxMonthlyIncome: 60000),
+      _s(id: 'any', maxMonthlyIncome: null),
     ];
 
     test('low selection allows low/mid/high/any', () {
@@ -181,9 +165,9 @@ void main() {
 
   group('region filter', () {
     final items = [
-      _s(id: 'ncr', regionsEligible: const ['NCR']),
-      _s(id: 'visayas', regionsEligible: const ['Region VII']),
-      _s(id: 'anywhere', regionsEligible: const []),
+      _s(id: 'ncr', locationRestriction: 'NCR'),
+      _s(id: 'visayas', locationRestriction: 'Region VII'),
+      _s(id: 'anywhere', locationRestriction: null),
     ];
 
     test('selected regions use OR semantics', () {
@@ -196,109 +180,9 @@ void main() {
       );
     });
 
-    test('empty regionsEligible means any region', () {
+    test('null location restriction means any region', () {
       final state = const DiscoveryFilterState(regions: {'BARMM'});
       expect(_ids(DiscoveryFilters.applyFilters(items, state)), ['anywhere']);
-    });
-  });
-
-  group('coverage filter', () {
-    final items = [
-      _s(id: 'full', coverageType: 'full'),
-      _s(id: 'partial', coverageType: 'partial'),
-      _s(id: 'stipend', coverageType: 'stipend'),
-      _s(id: 'none', coverageType: null),
-    ];
-
-    test('single coverage selection', () {
-      final state = const DiscoveryFilterState(coverageTypes: {'full'});
-      expect(_ids(DiscoveryFilters.applyFilters(items, state)), ['full']);
-    });
-
-    test('multi coverage selection uses OR', () {
-      final state = const DiscoveryFilterState(
-        coverageTypes: {'full', 'stipend'},
-      );
-      expect(
-        _ids(DiscoveryFilters.applyFilters(items, state)),
-        ['full', 'stipend'],
-      );
-    });
-
-    test('null coverage never matches a selected coverage', () {
-      final state = const DiscoveryFilterState(coverageTypes: {'stipend'});
-      expect(_ids(DiscoveryFilters.applyFilters(items, state)), ['stipend']);
-    });
-  });
-
-  group('tags filter', () {
-    final items = [
-      _s(id: 'stem', tags: const ['stem', 'stipend']),
-      _s(id: 'merit', tags: const ['merit']),
-      _s(id: 'other', tags: const ['vocational']),
-    ];
-
-    test('multi-selection uses OR', () {
-      final state = const DiscoveryFilterState(tags: {'stem', 'merit'});
-      expect(
-        _ids(DiscoveryFilters.applyFilters(items, state)),
-        ['stem', 'merit'],
-      );
-    });
-
-    test('available tags are derived from the catalog', () {
-      final tags = DiscoveryFilters.availableTags(items);
-      expect(tags, {'stem', 'stipend', 'merit', 'vocational'});
-    });
-  });
-
-  group('amount filter', () {
-    final items = [
-      _s(id: 'small', amount: 20000),
-      _s(id: 'mid', amount: 50000),
-      _s(id: 'large', amount: 90000),
-    ];
-
-    test('minimum is inclusive', () {
-      final state = const DiscoveryFilterState(minAmount: 50000);
-      expect(
-        _ids(DiscoveryFilters.applyFilters(items, state)),
-        ['mid', 'large'],
-      );
-    });
-
-    test('maximum is inclusive', () {
-      final state = const DiscoveryFilterState(maxAmount: 50000);
-      expect(
-        _ids(DiscoveryFilters.applyFilters(items, state)),
-        ['small', 'mid'],
-      );
-    });
-
-    test('min/max boundaries are inclusive', () {
-      final state = const DiscoveryFilterState(
-        minAmount: 50000,
-        maxAmount: 50000,
-      );
-      expect(_ids(DiscoveryFilters.applyFilters(items, state)), ['mid']);
-    });
-
-    test('invalid amount input parses to null (unset)', () {
-      expect(DiscoveryFilters.parseAmount('abc'), isNull);
-      expect(DiscoveryFilters.parseAmount('   '), isNull);
-      expect(DiscoveryFilters.parseAmount('-5'), isNull);
-      expect(DiscoveryFilters.parseAmount('50000'), 50000);
-    });
-
-    test('min greater than max is treated as unset', () {
-      final state = const DiscoveryFilterState(
-        minAmount: 70000,
-        maxAmount: 50000,
-      );
-      expect(
-        _ids(DiscoveryFilters.applyFilters(items, state)),
-        ['small', 'mid', 'large'],
-      );
     });
   });
 
@@ -333,29 +217,20 @@ void main() {
     final items = [
       _s(
         id: 'fit',
-        maxIncomeBracket: 'low',
-        coverageType: 'full',
-        regionsEligible: const ['NCR'],
-        amount: 60000,
-        tags: const ['stem'],
+        locationRestriction: 'NCR',
+        maxMonthlyIncome: 15000,
       ),
       _s(
         id: 'no',
-        maxIncomeBracket: 'high',
-        coverageType: 'stipend',
-        regionsEligible: const ['BARMM'],
-        amount: 10000,
-        tags: const ['community'],
+        locationRestriction: 'BARMM',
+        maxMonthlyIncome: 60000,
       ),
     ];
 
     test('filters combine with AND semantics', () {
       final state = const DiscoveryFilterState(
         incomeBracket: 'low',
-        coverageTypes: {'full'},
         regions: {'NCR'},
-        minAmount: 50000,
-        tags: {'stem'},
       );
       expect(_ids(DiscoveryFilters.applyFilters(items, state)), ['fit']);
     });
@@ -363,19 +238,19 @@ void main() {
 
   group('sorting', () {
     final items = [
-      _s(id: 'lateBig', deadline: _inDays(20), amount: 90000),
-      _s(id: 'soonSmall', deadline: _inDays(5), amount: 10000),
-      _s(id: 'soonBig', deadline: _inDays(5), amount: 80000),
+      _s(id: 'lateBig', deadline: _inDays(20)),
+      _s(id: 'soonSmall', deadline: _inDays(5)),
+      _s(id: 'soonBig', deadline: _inDays(5)),
     ];
 
-    test('default sorts by soonest deadline then highest amount', () {
+    test('default sorts by soonest deadline', () {
       final sorted = DiscoveryFilters.sort(items, DiscoverySort.defaultSort);
-      expect(_ids(sorted), ['soonBig', 'soonSmall', 'lateBig']);
+      expect(_ids(sorted), ['soonSmall', 'soonBig', 'lateBig']);
     });
 
-    test('highest amount sorts by amount then deadline', () {
+    test('highest amount sorts by soonest deadline', () {
       final sorted = DiscoveryFilters.sort(items, DiscoverySort.highestAmount);
-      expect(_ids(sorted), ['lateBig', 'soonBig', 'soonSmall']);
+      expect(_ids(sorted), ['soonSmall', 'soonBig', 'lateBig']);
     });
   });
 
@@ -385,10 +260,6 @@ void main() {
         query: 'dost',
         incomeBracket: 'low',
         regions: {'NCR'},
-        coverageTypes: {'full'},
-        tags: {'stem'},
-        minAmount: 100,
-        maxAmount: 200,
         closingSoonOnly: true,
         sort: DiscoverySort.highestAmount,
       );
@@ -396,10 +267,6 @@ void main() {
       expect(reset.query, '');
       expect(reset.incomeBracket, isNull);
       expect(reset.regions, isEmpty);
-      expect(reset.coverageTypes, isEmpty);
-      expect(reset.tags, isEmpty);
-      expect(reset.minAmount, isNull);
-      expect(reset.maxAmount, isNull);
       expect(reset.closingSoonOnly, isFalse);
       expect(reset.sort, DiscoverySort.defaultSort);
     });
@@ -409,7 +276,6 @@ void main() {
         query: 'dost',
         incomeBracket: 'low',
         regions: {'NCR'},
-        coverageTypes: {'full'},
       );
       final cleared = state.copyWith(
         query: '',
@@ -419,7 +285,6 @@ void main() {
       expect(cleared.query, '');
       expect(cleared.incomeBracket, isNull);
       expect(cleared.regions, isEmpty);
-      expect(cleared.coverageTypes, {'full'});
     });
 
     test('isActive reflects any active control', () {

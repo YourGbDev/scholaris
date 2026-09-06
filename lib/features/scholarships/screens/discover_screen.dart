@@ -24,6 +24,7 @@ import 'package:scholaris/features/scholarships/services/discovery_filters.dart'
 import 'package:scholaris/features/scholarships/services/match_reasons.dart';
 import 'package:scholaris/shared/theme/app_theme.dart';
 import 'package:scholaris/shared/widgets/responsive_container.dart';
+import 'package:scholaris/shared/widgets/scholaris_hero.dart';
 import 'package:scholaris/shared/widgets/scholarship_card.dart';
 import 'package:scholaris/shared/widgets/state_views.dart';
 
@@ -93,19 +94,9 @@ class DiscoverScreen extends ConsumerWidget {
         ? 'Good to see you, ${name.split(' ').first}'
         : 'Welcome to Scholaris';
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          greeting,
-          style: poppins(fontSize: 22, fontWeight: FontWeight.w700, color: kPrimary),
-        ),
-        const SizedBox(height: 4),
-        Text(
-          'Here are scholarships that fit your profile.',
-          style: openSans(fontSize: 14, color: Colors.black54),
-        ),
-      ],
+    return ScholarisHero(
+      greeting: greeting,
+      subtitle: 'Here are scholarships that fit your profile.',
     );
   }
 
@@ -214,37 +205,6 @@ class DiscoverScreen extends ConsumerWidget {
         label: region,
         onRemove: () =>
             ref.read(discoveryFilterProvider.notifier).toggleRegion(region),
-      ));
-    }
-
-    for (final coverage in state.coverageTypes) {
-      final label = coverageLabel(coverage);
-      chips.add(_ActiveFilterChip(
-        key: ValueKey('filter-chip-$label'),
-        label: label,
-        onRemove: () =>
-            ref.read(discoveryFilterProvider.notifier).toggleCoverage(coverage),
-      ));
-    }
-
-    for (final tag in state.tags) {
-      chips.add(_ActiveFilterChip(
-        key: ValueKey('filter-chip-$tag'),
-        label: tag,
-        onRemove: () => ref.read(discoveryFilterProvider.notifier).toggleTag(tag),
-      ));
-    }
-
-    if (state.minAmount != null || state.maxAmount != null) {
-      final label = _amountChipLabel(state.minAmount, state.maxAmount);
-      chips.add(_ActiveFilterChip(
-        key: ValueKey('filter-chip-$label'),
-        label: label,
-        onRemove: () {
-          final notifier = ref.read(discoveryFilterProvider.notifier);
-          notifier.setMinAmount(null);
-          notifier.setMaxAmount(null);
-        },
       ));
     }
 
@@ -619,13 +579,6 @@ class _ActiveFilterChip extends StatelessWidget {
       ),
     );
   }
-}
-
-String _amountChipLabel(double? min, double? max) {
-  if (min != null && max != null) return '₱${min.round()} – ₱${max.round()}';
-  if (min != null) return 'Min ₱${min.round()}';
-  if (max != null) return 'Max ₱${max.round()}';
-  return '';
 }
 
 class _DashboardSummary extends StatelessWidget {

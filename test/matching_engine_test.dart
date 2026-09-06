@@ -11,6 +11,8 @@ StudentProfile _student({
   String nationality = 'Filipino',
   String region = 'NCR',
   double? monthlyFamilyIncome = 15000,
+  bool hasDisability = false,
+  bool isIndigenous = false,
 }) =>
     StudentProfile(
       id: 's1',
@@ -23,40 +25,39 @@ StudentProfile _student({
       course: course,
       school: 'WLC',
       monthlyFamilyIncome: monthlyFamilyIncome,
+      hasDisability: hasDisability,
+      isIndigenous: isIndigenous,
       setupComplete: true,
     );
 
 Scholarship _scholarship({
   String id = 'sch1',
-  String name = 'Scholarship',
+  String title = 'Scholarship',
   double minGpa = 2.0,
-  List<int> yearLevels = const [1, 2, 3, 4],
-  List<String> eligibleCourses = const [],
-  String citizenshipRequired = 'any',
-  List<String> regionsEligible = const [],
-  String maxIncomeBracket = 'any',
+  List<int>? requiredYearLevels = const [1, 2, 3, 4],
+  List<String>? requiredCourses = const [],
+  String? locationRestriction,
+  double? maxMonthlyIncome,
+  bool forPwd = false,
+  bool forIndigenous = false,
+  int? slots,
   bool isActive = true,
   DateTime? deadline,
-  double amount = 10000,
 }) =>
     Scholarship(
       id: id,
-      name: name,
+      title: title,
       provider: 'Provider',
       description: 'Description',
       minGpa: minGpa,
-      yearLevels: yearLevels,
-      eligibleCourses: eligibleCourses,
-      citizenshipRequired: citizenshipRequired,
-      regionsEligible: regionsEligible,
-      maxIncomeBracket: maxIncomeBracket,
-      isPwdPriority: false,
-      isWorkingStudentPriority: false,
-      slotsAvailable: null,
+      requiredYearLevels: requiredYearLevels,
+      requiredCourses: requiredCourses,
+      locationRestriction: locationRestriction,
+      maxMonthlyIncome: maxMonthlyIncome,
+      forPwd: forPwd,
+      forIndigenous: forIndigenous,
+      slots: slots,
       deadline: deadline ?? DateTime.now().add(const Duration(days: 30)),
-      amount: amount,
-      coverageType: 'full',
-      tags: const [],
       isActive: isActive,
     );
 
@@ -79,7 +80,7 @@ void main() {
       final eligible = _scholarship(id: 'allYears');
       final ineligible = _scholarship(
         id: 'freshmenOnly',
-        yearLevels: const [1],
+        requiredYearLevels: const [1],
       );
 
       final result = engine.getEligible(student, [eligible, ineligible]);
@@ -92,7 +93,7 @@ void main() {
       final eligible = _scholarship(id: 'allCourses');
       final ineligible = _scholarship(
         id: 'stemOnly',
-        eligibleCourses: const ['BS Computer Science', 'BS Engineering'],
+        requiredCourses: const ['BS Computer Science', 'BS Engineering'],
       );
 
       final result = engine.getEligible(student, [eligible, ineligible]);
@@ -100,34 +101,16 @@ void main() {
       expect(result.map((s) => s.id), ['allCourses']);
     });
 
-    test('filters by nationality', () {
-      final student = _student(nationality: 'Filipino');
-      final eligible = _scholarship(id: 'anyNationality');
-      final ineligible = _scholarship(
-        id: 'filipinosOnly',
-        citizenshipRequired: 'Filipino',
-      );
-      final forOthers = _scholarship(
-        id: 'foreignersOnly',
-        citizenshipRequired: 'US',
-      );
-
-      final result =
-          engine.getEligible(student, [eligible, ineligible, forOthers]);
-
-      expect(result.map((s) => s.id), ['anyNationality', 'filipinosOnly']);
-    });
-
-    test('filters by region', () {
+    test('filters by location restriction', () {
       final student = _student(region: 'Region VII');
       final eligible = _scholarship(id: 'noRestriction');
       final ineligible = _scholarship(
         id: 'ncrOnly',
-        regionsEligible: const ['NCR'],
+        locationRestriction: 'NCR',
       );
       final matches = _scholarship(
         id: 'visayas',
-        regionsEligible: const ['Region VII', 'Region VI'],
+        locationRestriction: 'Region VII',
       );
 
       final result = engine.getEligible(student, [eligible, ineligible, matches]);
@@ -135,11 +118,11 @@ void main() {
       expect(result.map((s) => s.id), ['noRestriction', 'visayas']);
     });
 
-    test('applies income bracket hierarchy derived from income', () {
-      final lowOnly = _scholarship(id: 'low', maxIncomeBracket: 'low');
-      final midOnly = _scholarship(id: 'mid', maxIncomeBracket: 'mid');
-      final highOnly = _scholarship(id: 'high', maxIncomeBracket: 'high');
-      final any = _scholarship(id: 'any', maxIncomeBracket: 'any');
+    test('applies income threshold hierarchy derived from income', () {
+      final lowOnly = _scholarship(id: 'low', maxMonthlyIncome: 20000);
+      final midOnly = _scholarship(id: 'mid', maxMonthlyIncome: 50000);
+      final highOnly = _scholarship(id: 'high', maxMonthlyIncome: 100000);
+      final any = _scholarship(id: 'any', maxMonthlyIncome: null);
 
       final lowStudent = _student(monthlyFamilyIncome: 10000); // low
       final midStudent = _student(monthlyFamilyIncome: 40000); // mid
@@ -162,8 +145,8 @@ void main() {
     });
 
     test('undisclosed income never matches income-constrained scholarships', () {
-      final lowOnly = _scholarship(id: 'low', maxIncomeBracket: 'low');
-      final any = _scholarship(id: 'any', maxIncomeBracket: 'any');
+      final lowOnly = _scholarship(id: 'low', maxMonthlyIncome: 15000);
+      final any = _scholarship(id: 'any', maxMonthlyIncome: null);
 
       final undisclosed = _student(monthlyFamilyIncome: null);
 
@@ -187,23 +170,20 @@ void main() {
   });
 
   group('rank', () {
-    test('sorts by soonest deadline then highest amount', () {
+    test('sorts by soonest deadline', () {
       final student = _student();
       final base = DateTime.now();
       final inTwoWeeks = _scholarship(
         id: 'twoWeeks',
         deadline: base.add(const Duration(days: 14)),
-        amount: 5000,
       );
       final inOneWeekSmall = _scholarship(
         id: 'oneWeekSmall',
         deadline: base.add(const Duration(days: 7)),
-        amount: 1000,
       );
       final inOneWeekBig = _scholarship(
         id: 'oneWeekBig',
         deadline: base.add(const Duration(days: 7)),
-        amount: 9000,
       );
 
       final result = engine.rank(
@@ -212,8 +192,8 @@ void main() {
       );
 
       expect(result.map((s) => s.id).toList(), [
-        'oneWeekBig',
         'oneWeekSmall',
+        'oneWeekBig',
         'twoWeeks',
       ]);
     });

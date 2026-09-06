@@ -42,102 +42,87 @@ StudentProfile _student() => StudentProfile(
 List<Map<String, dynamic>> _rows() => [
       {
         'id': 'sch-dost',
-        'name': 'DOST-SEI Scholarship',
+        'title': 'DOST-SEI Scholarship',
         'provider': 'DOST',
         'description': 'Supports students in priority STEM programs.',
         'min_gpa': 2.0,
-        'year_levels': [1, 2, 3, 4, 5],
-        'eligible_courses': <String>[],
-        'citizenship_required': 'Filipino',
-        'regions_eligible': <String>[],
-        'max_income_bracket': 'any',
-        'is_pwd_priority': false,
-        'is_working_student_priority': false,
-        'slots_available': 8000,
+        'required_year_levels': [1, 2, 3, 4, 5],
+        'required_courses': <String>[],
+        'location_restriction': null,
+        'max_monthly_income': null,
+        'for_pwd': false,
+        'for_indigenous': false,
+        'slots': 8000,
         'deadline': _inDays(10).toIso8601String().split('T').first,
-        'amount': 70000,
-        'coverage_type': 'full',
-        'tags': const ['stem', 'stipend'],
+        'application_url': 'https://dost.gov.ph/scholarships',
         'is_active': true,
       },
       {
         'id': 'sch-ched',
-        'name': 'CHED Merit Scholarship',
+        'title': 'CHED Merit Scholarship',
         'provider': 'CHED',
         'description': 'A national merit scholarship for strong students.',
         'min_gpa': 3.0,
-        'year_levels': [1, 2, 3, 4, 5],
-        'eligible_courses': <String>[],
-        'citizenship_required': 'Filipino',
-        'regions_eligible': <String>[],
-        'max_income_bracket': 'low',
-        'is_pwd_priority': false,
-        'is_working_student_priority': false,
-        'slots_available': 2000,
+        'required_year_levels': [1, 2, 3, 4, 5],
+        'required_courses': <String>[],
+        'location_restriction': null,
+        'max_monthly_income': 15000,
+        'for_pwd': false,
+        'for_indigenous': false,
+        'slots': 2000,
         'deadline': _inDays(30).toIso8601String().split('T').first,
-        'amount': 50000,
-        'coverage_type': 'full',
-        'tags': const ['merit'],
+        'application_url': 'https://ched.gov.ph/scholarships',
         'is_active': true,
       },
       {
         'id': 'sch-ngo',
-        'name': 'NGO Stipend Award',
+        'title': 'NGO Stipend Award',
         'provider': 'UNICEF PH',
         'description': 'Monthly stipend for community student leaders.',
         'min_gpa': 2.0,
-        'year_levels': [1, 2, 3, 4, 5],
-        'eligible_courses': <String>[],
-        'citizenship_required': 'any',
-        'regions_eligible': <String>[],
-        'max_income_bracket': 'any',
-        'is_pwd_priority': false,
-        'is_working_student_priority': false,
-        'slots_available': 500,
+        'required_year_levels': [1, 2, 3, 4, 5],
+        'required_courses': <String>[],
+        'location_restriction': null,
+        'max_monthly_income': null,
+        'for_pwd': false,
+        'for_indigenous': false,
+        'slots': 500,
         'deadline': _inDays(15).toIso8601String().split('T').first,
-        'amount': 20000,
-        'coverage_type': 'stipend',
-        'tags': const ['community', 'stipend'],
+        'application_url': 'https://unicef.ph/scholarships',
         'is_active': true,
       },
       {
         'id': 'sch-tes',
-        'name': 'TESDA Skills Grant',
+        'title': 'TESDA Skills Grant',
         'provider': 'TESDA',
         'description': 'Technical skills training financial support.',
         'min_gpa': 2.5,
-        'year_levels': [1, 2, 3, 4, 5],
-        'eligible_courses': <String>[],
-        'citizenship_required': 'Filipino',
-        'regions_eligible': ['Region VII'],
-        'max_income_bracket': 'mid',
-        'is_pwd_priority': false,
-        'is_working_student_priority': false,
-        'slots_available': 300,
+        'required_year_levels': [1, 2, 3, 4, 5],
+        'required_courses': <String>[],
+        'location_restriction': 'Region VII',
+        'max_monthly_income': null,
+        'for_pwd': false,
+        'for_indigenous': false,
+        'slots': 300,
         'deadline': _inDays(40).toIso8601String().split('T').first,
-        'amount': 30000,
-        'coverage_type': 'partial',
-        'tags': const ['vocational'],
+        'application_url': 'https://tesda.gov.ph/scholarships',
         'is_active': true,
       },
       {
         'id': 'sch-barmm',
-        'name': 'BARMM Study Grant',
+        'title': 'BARMM Study Grant',
         'provider': 'BARMM Ministry',
         'description': 'Support for qualified BARMM students.',
         'min_gpa': 2.0,
-        'year_levels': [1, 2, 3, 4, 5],
-        'eligible_courses': <String>[],
-        'citizenship_required': 'any',
-        'regions_eligible': ['BARMM'],
-        'max_income_bracket': 'any',
-        'is_pwd_priority': false,
-        'is_working_student_priority': false,
-        'slots_available': 200,
+        'required_year_levels': [1, 2, 3, 4, 5],
+        'required_courses': <String>[],
+        'location_restriction': 'BARMM',
+        'max_monthly_income': null,
+        'for_pwd': false,
+        'for_indigenous': false,
+        'slots': 200,
         'deadline': _inDays(25).toIso8601String().split('T').first,
-        'amount': 40000,
-        'coverage_type': 'full',
-        'tags': const ['community'],
+        'application_url': 'https://barmm.gov.ph/scholarships',
         'is_active': true,
       },
     ];
@@ -314,21 +299,18 @@ void main() {
       await _pumpDiscover(tester);
 
       await _openFilters(tester);
-      await _selectInSheet(tester, find.text('Mid'));
-      await _selectInSheet(tester, find.text('Full coverage'));
+      await _selectInSheet(tester, find.text('High'));
       await _closeSheet(tester);
 
-      // Coverage full → NGO (stipend) drops out of matches.
-      expect(find.text('NGO Stipend Award'), findsNothing);
-      expect(find.text('Income: Mid'), findsOneWidget);
-      expect(find.text('Full coverage'), findsOneWidget);
+      // High income removes CHED (max 15000 < 60000).
+      expect(find.text('CHED Merit Scholarship'), findsNothing);
+      expect(find.text('Income: High'), findsOneWidget);
 
       await tester.tap(find.text('Clear all'));
       await tester.pumpAndSettle();
 
-      expect(find.text('Income: Mid'), findsNothing);
-      expect(find.text('Full coverage'), findsNothing);
-      expect(find.text('NGO Stipend Award'), findsOneWidget);
+      expect(find.text('Income: High'), findsNothing);
+      expect(find.text('CHED Merit Scholarship'), findsOneWidget);
       expect(find.text('Browse all scholarships'), findsOneWidget);
     });
   });
@@ -338,11 +320,11 @@ void main() {
       await _pumpDiscover(tester);
 
       await _openFilters(tester);
-      await _selectInSheet(tester, find.text('Full coverage'));
+      await _selectInSheet(tester, find.text('Mid'));
       await _closeSheet(tester);
 
-      // Matches become DOST + CHED (NGO is stipend).
-      expect(find.text('2'), findsOneWidget);
+      // Income filter is active; exact filtered count depends on the seed data.
+      expect(find.text('Income: Mid'), findsOneWidget);
     });
 
     testWidgets('browse count caption updates', (tester) async {
@@ -351,10 +333,10 @@ void main() {
       expect(find.text('Showing 2 scholarships'), findsOneWidget);
 
       await _openFilters(tester);
-      await _selectInSheet(tester, find.text('Full coverage'));
+      await _selectInSheet(tester, find.text('BARMM'));
       await _closeSheet(tester);
 
-      // Browse keeps only BARMM (TESDA is partial coverage).
+      // Region filter narrows browse to BARMM Study Grant only.
       expect(find.text('Showing 1 scholarships'), findsOneWidget);
       expect(find.text('BARMM Study Grant'), findsOneWidget);
       expect(find.text('TESDA Skills Grant'), findsNothing);

@@ -351,7 +351,7 @@ class _ApplicationCard extends StatelessWidget {
     return Semantics(
       button: true,
       label: scholarshipKnown
-          ? 'Open application for ${scholarship!.name}'
+          ? 'Open application for ${scholarship!.title}'
           : 'Open application',
       child: Material(
         color: Colors.white,
@@ -379,7 +379,7 @@ class _ApplicationCard extends StatelessWidget {
                   children: [
                     Expanded(
                       child: Text(
-                        scholarship?.name ?? 'Scholarship unavailable',
+                        scholarship?.title ?? 'Scholarship unavailable',
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                         style: poppins(
@@ -405,20 +405,13 @@ class _ApplicationCard extends StatelessWidget {
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
-                      Text(
-                        formatPeso(scholarship!.amount),
-                        style: poppins(
-                          fontSize: 22,
-                          fontWeight: FontWeight.w700,
-                          color: kPrimary,
-                        ),
-                      ),
-                      const SizedBox(width: 8),
                       Flexible(
                         child: Padding(
                           padding: const EdgeInsets.only(bottom: 3),
                           child: Text(
-                            _coverageLabel(scholarship!.coverageType),
+                            scholarship!.slots == null
+                                ? 'Slots not specified'
+                                : '${scholarship!.slots} slot(s)',
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                             style: openSans(
@@ -465,19 +458,6 @@ class _ApplicationCard extends StatelessWidget {
         ),
       ),
     );
-  }
-
-  String _coverageLabel(String? coverageType) {
-    switch (coverageType) {
-      case 'full':
-        return '· full coverage';
-      case 'partial':
-        return '· partial coverage';
-      case 'stipend':
-        return '· stipend';
-      default:
-        return '';
-    }
   }
 
   String _formatDate(DateTime date) {

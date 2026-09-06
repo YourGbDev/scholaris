@@ -59,7 +59,7 @@ final dashboardReferenceNowProvider = Provider<DateTime>(
 
 /// Scholarships in [catalog] that close within the same "closing soon" window
 /// the discovery filter uses ([isClosingSoon]) and are still open (deadline not
-/// yet passed), sorted by soonest deadline with a higher amount breaking ties.
+/// yet passed), sorted by soonest deadline.
 /// Deterministic and unit-testable.
 List<Scholarship> closingSoonScholarships(
   List<Scholarship> catalog, {
@@ -73,7 +73,7 @@ List<Scholarship> closingSoonScholarships(
     ..sort((a, b) {
       final deadlineCmp = a.deadline.compareTo(b.deadline);
       if (deadlineCmp != 0) return deadlineCmp;
-      return b.amount.compareTo(a.amount);
+      return 0;
     });
   return soon;
 }

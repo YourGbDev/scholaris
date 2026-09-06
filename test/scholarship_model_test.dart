@@ -7,22 +7,18 @@ import 'package:scholaris/features/scholarships/models/scholarship.dart';
 
 Scholarship _scholarship({DateTime? deadline}) => Scholarship(
       id: 'sch-1',
-      name: 'DOST-SEI Undergraduate Scholarship',
+      title: 'DOST-SEI Undergraduate Scholarship',
       provider: 'Department of Science and Technology',
       description: 'Supports students in priority STEM programs.',
       minGpa: 2.0,
-      yearLevels: const [1, 2, 3, 4, 5],
-      eligibleCourses: const [],
-      citizenshipRequired: 'Filipino',
-      regionsEligible: const ['NCR', 'Region VII'],
-      maxIncomeBracket: 'any',
-      isPwdPriority: false,
-      isWorkingStudentPriority: false,
-      slotsAvailable: 8000,
+      requiredYearLevels: const [1, 2, 3, 4, 5],
+      requiredCourses: const [],
+      locationRestriction: 'NCR',
+      maxMonthlyIncome: null,
+      forPwd: false,
+      forIndigenous: false,
+      slots: 8000,
       deadline: deadline ?? DateTime(2026, 10, 15),
-      amount: 70000,
-      coverageType: 'full',
-      tags: const ['stem', 'stipend'],
       isActive: true,
     );
 
@@ -31,58 +27,49 @@ void main() {
     test('fromJson parses a snake_case Supabase row', () {
       final row = {
         'id': 'sch-1',
-        'name': 'DOST-SEI Undergraduate Scholarship',
+        'title': 'DOST-SEI Undergraduate Scholarship',
         'provider': 'Department of Science and Technology',
         'description': 'Supports students in priority STEM programs.',
         'min_gpa': 2.0,
-        'year_levels': [1, 2, 3, 4, 5],
-        'eligible_courses': <String>[],
-        'citizenship_required': 'Filipino',
-        'regions_eligible': ['NCR', 'Region VII'],
-        'max_income_bracket': 'any',
-        'is_pwd_priority': false,
-        'is_working_student_priority': false,
-        'slots_available': 8000,
+        'required_year_levels': [1, 2, 3, 4, 5],
+        'required_courses': <String>[],
+        'location_restriction': 'NCR',
+        'max_monthly_income': null,
+        'for_pwd': false,
+        'for_indigenous': false,
+        'slots': 8000,
         'deadline': '2026-10-15',
-        'amount': 70000,
-        'coverage_type': 'full',
-        'tags': ['stem', 'stipend'],
         'is_active': true,
       };
 
       final scholarship = Scholarship.fromJson(row);
 
-      expect(scholarship.name, 'DOST-SEI Undergraduate Scholarship');
+      expect(scholarship.title, 'DOST-SEI Undergraduate Scholarship');
       expect(scholarship.minGpa, 2.0);
-      expect(scholarship.yearLevels, [1, 2, 3, 4, 5]);
-      expect(scholarship.regionsEligible, ['NCR', 'Region VII']);
-      expect(scholarship.citizenshipRequired, 'Filipino');
+      expect(scholarship.requiredYearLevels, [1, 2, 3, 4, 5]);
+      expect(scholarship.locationRestriction, 'NCR');
       expect(scholarship.deadline, DateTime(2026, 10, 15));
-      expect(scholarship.amount, 70000);
-      expect(scholarship.tags, ['stem', 'stipend']);
+      expect(scholarship.slots, 8000);
       expect(scholarship.isActive, isTrue);
     });
 
     test('fromJson applies defaults for omitted optional columns', () {
       final scholarship = Scholarship.fromJson({
         'id': 'sch-2',
-        'name': 'Tulong Dunong Program',
+        'title': 'Tulong Dunong Program',
         'min_gpa': 2.0,
-        'year_levels': [1, 2, 3, 4, 5],
-        'eligible_courses': <String>[],
-        'regions_eligible': <String>[],
+        'required_year_levels': [1, 2, 3, 4, 5],
+        'required_courses': <String>[],
+        'location_restriction': null,
         'deadline': '2026-12-10',
-        'amount': 30000,
       });
 
-      expect(scholarship.citizenshipRequired, 'any');
-      expect(scholarship.maxIncomeBracket, 'any');
-      expect(scholarship.isPwdPriority, isFalse);
-      expect(scholarship.isWorkingStudentPriority, isFalse);
-      expect(scholarship.isActive, isTrue);
       expect(scholarship.provider, isNull);
-      expect(scholarship.slotsAvailable, isNull);
-      expect(scholarship.tags, isEmpty);
+      expect(scholarship.maxMonthlyIncome, isNull);
+      expect(scholarship.forPwd, isFalse);
+      expect(scholarship.forIndigenous, isFalse);
+      expect(scholarship.isActive, isTrue);
+      expect(scholarship.slots, isNull);
     });
 
     test('toJson round-trips a full scholarship', () {
@@ -96,15 +83,16 @@ void main() {
       final json = _scholarship().toJson();
 
       expect(json.containsKey('min_gpa'), isTrue);
-      expect(json.containsKey('year_levels'), isTrue);
-      expect(json.containsKey('citizenship_required'), isTrue);
-      expect(json.containsKey('max_income_bracket'), isTrue);
-      expect(json.containsKey('is_pwd_priority'), isTrue);
-      expect(json.containsKey('is_working_student_priority'), isTrue);
+      expect(json.containsKey('required_year_levels'), isTrue);
+      expect(json.containsKey('location_restriction'), isTrue);
+      expect(json.containsKey('max_monthly_income'), isTrue);
+      expect(json.containsKey('for_pwd'), isTrue);
+      expect(json.containsKey('for_indigenous'), isTrue);
+      expect(json.containsKey('slots'), isTrue);
       // No camelCase keys leak into the payload.
       expect(json.containsKey('minGpa'), isFalse);
-      expect(json.containsKey('yearLevels'), isFalse);
-      expect(json.containsKey('maxIncomeBracket'), isFalse);
+      expect(json.containsKey('requiredYearLevels'), isFalse);
+      expect(json.containsKey('maxMonthlyIncome'), isFalse);
     });
   });
 }

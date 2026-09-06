@@ -2,8 +2,7 @@
 //
 // Self-contained bottom sheet for the discovery filters. Reads and writes the
 // shared discoveryFilterProvider directly — no local persistent state — so the
-// Discover screen stays reactive while the sheet is open. Text controllers only
-// bind text input; the authoritative values always live in the provider.
+// Discover screen stays reactive while the sheet is open.
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -11,25 +10,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../shared/theme/app_theme.dart';
 import '../../profile/models/student_profile.dart';
 import '../providers/discovery_provider.dart';
-import '../providers/scholarships_provider.dart';
 import '../services/discovery_filters.dart';
-
-/// Canonical coverage types offered in the coverage filter.
-const List<String> kCoverageOptions = ['full', 'partial', 'stipend'];
-
-/// Human label for a coverage type.
-String coverageLabel(String coverage) {
-  switch (coverage) {
-    case 'full':
-      return 'Full coverage';
-    case 'partial':
-      return 'Partial coverage';
-    case 'stipend':
-      return 'Stipend';
-    default:
-      return coverage;
-  }
-}
 
 /// Human label for an income bracket ('any' → "Any").
 String incomeLabel(String? income) {
@@ -67,14 +48,6 @@ class _DiscoveryFilterSheetState extends ConsumerState<DiscoveryFilterSheet> {
   final TextEditingController _maxController = TextEditingController();
 
   @override
-  void initState() {
-    super.initState();
-    final state = ref.read(discoveryFilterProvider);
-    _minController.text = state.minAmount?.toStringAsFixed(0) ?? '';
-    _maxController.text = state.maxAmount?.toStringAsFixed(0) ?? '';
-  }
-
-  @override
   void dispose() {
     _minController.dispose();
     _maxController.dispose();
@@ -85,9 +58,6 @@ class _DiscoveryFilterSheetState extends ConsumerState<DiscoveryFilterSheet> {
   Widget build(BuildContext context) {
     final state = ref.watch(discoveryFilterProvider);
     final notifier = ref.read(discoveryFilterProvider.notifier);
-    final catalog = ref.watch(scholarshipsProvider).valueOrNull ?? const [];
-    final availableTags = DiscoveryFilters.availableTags(catalog).toList()
-      ..sort();
 
     return SizedBox(
       height: MediaQuery.of(context).size.height * 0.85,
@@ -151,7 +121,7 @@ class _DiscoveryFilterSheetState extends ConsumerState<DiscoveryFilterSheet> {
                     );
                   }).toList(),
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: 24),
                 _sectionTitle('Deadline'),
                 SwitchListTile(
                   contentPadding: EdgeInsets.zero,
@@ -160,57 +130,6 @@ class _DiscoveryFilterSheetState extends ConsumerState<DiscoveryFilterSheet> {
                   value: state.closingSoonOnly,
                   activeThumbColor: kPrimary,
                   onChanged: notifier.setClosingSoonOnly,
-                ),
-                const SizedBox(height: 8),
-                _sectionTitle('Amount'),
-                const SizedBox(height: 10),
-                Row(
-                  children: [
-                    Expanded(
-                      child: TextField(
-                        controller: _minController,
-                        keyboardType: const TextInputType.numberWithOptions(
-                          decimal: true,
-                        ),
-                        onChanged: (value) => notifier.setMinAmount(
-                          DiscoveryFilters.parseAmount(value),
-                        ),
-                        decoration: const InputDecoration(
-                          labelText: 'Min amount',
-                          prefixText: '₱',
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: TextField(
-                        controller: _maxController,
-                        keyboardType: const TextInputType.numberWithOptions(
-                          decimal: true,
-                        ),
-                        onChanged: (value) => notifier.setMaxAmount(
-                          DiscoveryFilters.parseAmount(value),
-                        ),
-                        decoration: const InputDecoration(
-                          labelText: 'Max amount',
-                          prefixText: '₱',
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 24),
-                _sectionTitle('Coverage'),
-                const SizedBox(height: 10),
-                Wrap(
-                  spacing: 8,
-                  children: kCoverageOptions.map((coverage) {
-                    return FilterChip(
-                      label: Text(coverageLabel(coverage)),
-                      selected: state.coverageTypes.contains(coverage),
-                      onSelected: (_) => notifier.toggleCoverage(coverage),
-                    );
-                  }).toList(),
                 ),
                 const SizedBox(height: 24),
                 _sectionTitle('Region'),
@@ -226,22 +145,6 @@ class _DiscoveryFilterSheetState extends ConsumerState<DiscoveryFilterSheet> {
                     );
                   }).toList(),
                 ),
-                if (availableTags.isNotEmpty) ...[
-                  const SizedBox(height: 24),
-                  _sectionTitle('Tags'),
-                  const SizedBox(height: 10),
-                  Wrap(
-                    spacing: 8,
-                    runSpacing: 8,
-                    children: availableTags.map((tag) {
-                      return FilterChip(
-                        label: Text(tag),
-                        selected: state.tags.contains(tag),
-                        onSelected: (_) => notifier.toggleTag(tag),
-                      );
-                    }).toList(),
-                  ),
-                ],
               ],
             ),
           ),

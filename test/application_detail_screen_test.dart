@@ -567,7 +567,12 @@ void main() {
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 500));
 
-      expect(find.text('1 Applied'), findsOneWidget);
+      expect(
+        tester
+            .widget<Text>(find.byKey(const ValueKey('stat-count-applied')))
+            .data,
+        '1',
+      );
       final card = find.ancestor(
         of: find.text('DOST-SEI Undergraduate Scholarship'),
         matching: find.byType(ScholarshipCard),

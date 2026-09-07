@@ -216,10 +216,20 @@ void main() {
 
       await _pumpDiscover(tester, bookmarks: bookmarks, applications: applications);
 
-      expect(find.text('2 Matches'), findsOneWidget);
-      expect(find.text('2 Closing soon'), findsOneWidget);
-      expect(find.text('1 Saved'), findsOneWidget);
-      expect(find.text('1 Applied'), findsOneWidget);
+      // Stat tiles expose their counts via stable keys; the number itself is
+      // the tile's primary text.
+      int countOf(String statKey) => int.parse(
+            tester
+                .widget<Text>(
+                  find.byKey(ValueKey('stat-count-$statKey')),
+                )
+                .data!,
+          );
+
+      expect(countOf('matches'), 2);
+      expect(countOf('closing-soon'), 2);
+      expect(countOf('saved'), 1);
+      expect(countOf('applied'), 1);
     });
   });
 
@@ -275,7 +285,12 @@ void main() {
 
       await _pumpDiscover(tester, applications: applications);
 
-      expect(find.text('1 Applied'), findsOneWidget);
+      expect(
+        tester
+            .widget<Text>(find.byKey(const ValueKey('stat-count-applied')))
+            .data,
+        '1',
+      );
       expect(_inClosingSoon(find.text('Applied')), findsOneWidget);
     });
 
@@ -303,8 +318,9 @@ void main() {
         (tester) async {
       await _pumpDiscover(tester, size: const Size(360, 720));
 
-      expect(find.text('2 Matches'), findsOneWidget);
-      expect(find.text('2 Closing soon'), findsOneWidget);
+      expect(find.byKey(const ValueKey('stat-count-matches')), findsOneWidget);
+      expect(
+          find.byKey(const ValueKey('stat-count-closing-soon')), findsOneWidget);
       expect(tester.takeException(), isNull);
     });
   });

@@ -190,11 +190,24 @@ void main() {
       await tester.pumpWidget(_wrapHomeScreen());
       await tester.pump(const Duration(milliseconds: 500));
 
-      // All four destinations are present.
-      expect(find.text('Discover'), findsOneWidget);
-      expect(find.text('Saved'), findsOneWidget);
-      expect(find.text('Applications'), findsOneWidget);
-      expect(find.text('Profile'), findsOneWidget);
+      // All four destinations are present — scoped to the NavigationBar,
+      // since the Discover dashboard's stat tiles render similar labels.
+      expect(
+        find.descendant(of: find.byType(NavigationBar), matching: find.text('Discover')),
+        findsOneWidget,
+      );
+      expect(
+        find.descendant(of: find.byType(NavigationBar), matching: find.text('Saved')),
+        findsOneWidget,
+      );
+      expect(
+        find.descendant(of: find.byType(NavigationBar), matching: find.text('Applications')),
+        findsOneWidget,
+      );
+      expect(
+        find.descendant(of: find.byType(NavigationBar), matching: find.text('Profile')),
+        findsOneWidget,
+      );
 
       // Switching to the Applications tab surfaces the tracking surface.
       await tester.tap(find.text('Applications'));

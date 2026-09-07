@@ -38,12 +38,14 @@ const double kSpaceMd = 24.0;
 /// green/glowing shadow language so cards read as calm, flat surfaces.
 const Color kCardShadow = Color(0x14000000);
 
-/// Gradient for the Discover hero surface. A calm Scholaris green derived from
-/// the existing brand green — premium, optimistic, educational. Never neon.
+/// Gradient for the Discover hero surface. Deep Bridge Green flowing into a
+/// lighter Scholaris green — the hero is the one surface that gets the full
+/// brand green, so the white greeting text and gold sparkle read with real
+/// contrast. Never neon.
 const LinearGradient kHeroSurface = LinearGradient(
   begin: Alignment.topCenter,
   end: Alignment.bottomCenter,
-  colors: [kBackground, Color(0xFFEFF7F1)],
+  colors: [kPrimary, Color(0xFF1A6B42)],
 );
 
 // --- Typography helpers -----------------------------------------------------

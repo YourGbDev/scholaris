@@ -13,6 +13,7 @@ import 'package:scholaris/features/applications/models/application.dart';
 import 'package:scholaris/features/applications/providers/applications_provider.dart';
 import 'package:scholaris/features/applications/services/application_filters.dart';
 import 'package:scholaris/features/bookmarks/providers/bookmarks_provider.dart';
+import 'package:scholaris/features/home/presentation/home_screen.dart';
 import 'package:scholaris/features/profile/models/student_profile.dart';
 import 'package:scholaris/features/profile/providers/profile_setup_provider.dart';
 import 'package:scholaris/features/scholarships/models/scholarship.dart';
@@ -26,6 +27,7 @@ import 'package:scholaris/shared/theme/app_theme.dart';
 import 'package:scholaris/shared/widgets/responsive_container.dart';
 import 'package:scholaris/shared/widgets/scholaris_hero.dart';
 import 'package:scholaris/shared/widgets/scholarship_card.dart';
+import 'package:scholaris/shared/widgets/section_header.dart';
 import 'package:scholaris/shared/widgets/state_views.dart';
 
 class DiscoverScreen extends ConsumerWidget {
@@ -269,7 +271,11 @@ class DiscoverScreen extends ConsumerWidget {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _buildSectionHeader('Your Matches', matches.length),
+            _buildSectionHeader(
+              'Your Matches',
+              matches.length,
+              trailing: _seeAllApplications(ref),
+            ),
             const SizedBox(height: 12),
             ListView.separated(
               shrinkWrap: true,
@@ -312,10 +318,7 @@ class DiscoverScreen extends ConsumerWidget {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              'Browse all scholarships',
-              style: poppins(fontSize: 18, fontWeight: FontWeight.w600),
-            ),
+            SectionHeader(title: 'Browse all scholarships'),
             const SizedBox(height: 4),
             Text(
               'Showing ${browse.length} scholarships',
@@ -340,30 +343,28 @@ class DiscoverScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildSectionHeader(String title, int count) {
-    return Row(
-      children: [
-        Text(
-          title,
-          style: poppins(fontSize: 18, fontWeight: FontWeight.w600),
-        ),
-        const SizedBox(width: 8),
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
-          decoration: BoxDecoration(
-            color: kAccent,
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: Text(
-            '$count',
-            style: poppins(
-              fontSize: 13,
-              fontWeight: FontWeight.w700,
-              color: Colors.white,
-            ),
-          ),
-        ),
-      ],
+  /// All section headers route through the shared [SectionHeader] so
+  /// typography, the gold count badge and trailing actions stay consistent
+  /// across every scrollable surface.
+  Widget _buildSectionHeader(String title, int count, {Widget? trailing}) {
+    return SectionHeader(title: title, count: count, trailing: trailing);
+  }
+
+  /// Trailing "See all" action for the matches section — jumps to the
+  /// Applications tab. Title-left / action-right, the reference templates'
+  /// section-title pattern restated with Scholaris tokens.
+  Widget _seeAllApplications(WidgetRef ref) {
+    return TextButton(
+      key: const ValueKey('see-all-applications'),
+      onPressed: () => ref.read(homeTabIndexProvider.notifier).selectTab(2),
+      style: TextButton.styleFrom(
+        visualDensity: VisualDensity.compact,
+        padding: const EdgeInsets.symmetric(horizontal: 8),
+      ),
+      child: Text(
+        'See all',
+        style: poppins(fontSize: 13, fontWeight: FontWeight.w600, color: kPrimary),
+      ),
     );
   }
 
@@ -589,59 +590,149 @@ class _DashboardSummary extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Wrap(
-      spacing: 8,
-      runSpacing: 8,
+    return Column(
       children: [
-        _SummaryPill(
-          icon: Icons.auto_awesome_rounded,
-          label: '${info.matchCount} Matches',
+        Row(
+          children: [
+            Expanded(
+              child: _StatTile(
+                statKey: 'matches',
+                count: info.matchCount,
+                label: 'Matches',
+                icon: Icons.auto_awesome_rounded,
+                accent: kPrimary,
+              ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: _StatTile(
+                statKey: 'closing-soon',
+                count: info.closingSoonCount,
+                label: 'Closing soon',
+                icon: Icons.schedule_rounded,
+                // Gold is reserved for deadline urgency across the app.
+                accent: kAccent,
+              ),
+            ),
+          ],
         ),
-        _SummaryPill(
-          icon: Icons.schedule_rounded,
-          label: '${info.closingSoonCount} Closing soon',
-        ),
-        _SummaryPill(
-          icon: Icons.collections_bookmark_rounded,
-          label: '${info.savedCount} Saved',
-        ),
-        _SummaryPill(
-          icon: Icons.send_rounded,
-          label: '${info.appliedCount} Applied',
+        const SizedBox(height: 12),
+        Row(
+          children: [
+            Expanded(
+              child: _StatTile(
+                statKey: 'saved',
+                count: info.savedCount,
+                label: 'Saved',
+                icon: Icons.collections_bookmark_rounded,
+                accent: kPrimary,
+              ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: _StatTile(
+                statKey: 'applied',
+                count: info.appliedCount,
+                label: 'Applied',
+                icon: Icons.send_rounded,
+                accent: kPrimary,
+              ),
+            ),
+          ],
         ),
       ],
     );
   }
 }
 
-class _SummaryPill extends StatelessWidget {
-  const _SummaryPill({required this.icon, required this.label});
+/// One dashboard stat tile: number-forward (big Poppins count over a small
+/// Open Sans label), a vertical brand accent bar and a tinted icon chip, on a
+/// calm white surface with the shared neutral card shadow. The pattern is
+/// adapted from the number-forward stat cards in the reference dashboard
+/// templates — restated in Scholaris tokens rather than copied.
+class _StatTile extends StatelessWidget {
+  const _StatTile({
+    required this.statKey,
+    required this.count,
+    required this.label,
+    required this.icon,
+    required this.accent,
+  });
 
-  final IconData icon;
+  /// Stable identifier used by tests to locate this tile's count
+  /// (`ValueKey('stat-count-...')`) without depending on layout text.
+  final String statKey;
+
+  final int count;
   final String label;
+  final IconData icon;
+  final Color accent;
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-      decoration: BoxDecoration(
-        color: kPrimarySoft,
-        borderRadius: BorderRadius.circular(20),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(icon, size: 15, color: kPrimary),
-          const SizedBox(width: 6),
-          Text(
-            label,
-            style: poppins(
-              fontSize: 13,
-              fontWeight: FontWeight.w600,
-              color: kPrimary,
+    return Semantics(
+      label: '$count $label',
+      button: false,
+      child: Container(
+        padding: const EdgeInsets.all(14),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(kRadiusCard),
+          boxShadow: const [
+            BoxShadow(
+              color: kCardShadow,
+              blurRadius: 16,
+              offset: Offset(0, 6),
             ),
-          ),
-        ],
+          ],
+        ),
+        child: Row(
+          children: [
+            Container(
+              width: 3,
+              height: 38,
+              decoration: BoxDecoration(
+                color: accent,
+                borderRadius: BorderRadius.circular(2),
+              ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    '$count',
+                    key: ValueKey('stat-count-$statKey'),
+                    style: poppins(
+                      fontSize: 20,
+                      fontWeight: FontWeight.w700,
+                      height: 1.1,
+                    ),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    label,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: openSans(fontSize: 12, color: Colors.black54),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(width: 8),
+            Container(
+              width: 34,
+              height: 34,
+              decoration: BoxDecoration(
+                color: accent.withValues(alpha: 0.12),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(icon, size: 18, color: accent),
+            ),
+          ],
+        ),
       ),
     );
   }

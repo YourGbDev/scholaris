@@ -224,7 +224,12 @@ void main() {
 
     // The "Applied" dashboard count matches the badge semantics: a withdrawn
     // application no longer reads as applied anywhere (see 4ebe9ad).
-    expect(find.text('0 Applied'), findsOneWidget);
+    expect(
+      tester
+          .widget<Text>(find.byKey(const ValueKey('stat-count-applied')))
+          .data,
+      '0',
+    );
 
     // ---- Step 7: Scholarship detail still blocks re-application ----------
     await _pump(

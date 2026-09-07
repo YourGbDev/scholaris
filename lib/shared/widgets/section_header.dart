@@ -14,6 +14,7 @@ class SectionHeader extends StatelessWidget {
     super.key,
     required this.title,
     this.count,
+    this.trailing,
   });
 
   /// The section title.
@@ -21,6 +22,11 @@ class SectionHeader extends StatelessWidget {
 
   /// Optional count rendered in the gold badge. When null the badge is hidden.
   final int? count;
+
+  /// Optional trailing action (e.g. a "See all" link), right-aligned. The
+  /// pattern comes from the reference dashboard templates' title rows:
+  /// title-left, action-right.
+  final Widget? trailing;
 
   @override
   Widget build(BuildContext context) {
@@ -49,6 +55,10 @@ class SectionHeader extends StatelessWidget {
               ),
             ),
           ),
+        ],
+        if (trailing != null) ...[
+          const Spacer(),
+          trailing!,
         ],
       ],
     );

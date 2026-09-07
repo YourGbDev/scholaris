@@ -269,11 +269,24 @@ void main() {
       await tester.pumpWidget(_wrapHomeScreen());
       await tester.pump(const Duration(milliseconds: 500));
 
-      expect(find.text('Discover'), findsOneWidget);
-      expect(find.text('Saved'), findsOneWidget);
-      expect(find.text('Profile'), findsOneWidget);
+      // Scope to the NavigationBar: the Discover dashboard's stat tiles
+      // legitimately render a 'Saved' label on the visible tab.
+      expect(
+        find.descendant(of: find.byType(NavigationBar), matching: find.text('Discover')),
+        findsOneWidget,
+      );
+      expect(
+        find.descendant(of: find.byType(NavigationBar), matching: find.text('Saved')),
+        findsOneWidget,
+      );
+      expect(
+        find.descendant(of: find.byType(NavigationBar), matching: find.text('Profile')),
+        findsOneWidget,
+      );
 
-      await tester.tap(find.text('Saved'));
+      await tester.tap(
+        find.descendant(of: find.byType(NavigationBar), matching: find.text('Saved')),
+      );
       await tester.pump(const Duration(milliseconds: 500));
       expect(find.text('Nothing saved yet'), findsOneWidget);
     });

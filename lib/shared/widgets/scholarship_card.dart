@@ -63,9 +63,11 @@ class ScholarshipCard extends StatelessWidget {
             padding: const EdgeInsets.fromLTRB(16, 16, 16, 16),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(kRadiusCard),
+              // Shared neutral warm shadow (kCardShadow) — the one shadow
+              // language across all Scholaris elevated surfaces.
               boxShadow: const [
                 BoxShadow(
-                  color: kPrimarySoft,
+                  color: kCardShadow,
                   blurRadius: 16,
                   offset: Offset(0, 6),
                 ),

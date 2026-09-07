@@ -269,9 +269,11 @@ void main() {
         now: _now,
       );
 
-      // The dashboard pending count agrees with the Applications surface:
-      // withdrawn is terminal and excluded.
-      expect(info.appliedCount, 6);
+      // The withdrawn application is terminal: excluded from pending AND
+      // from appliedCount, matching the "Applied" badge semantics on
+      // Discover/Saved (ApplicationFilters.isActive). 6 apps − 1 withdrawn
+      // = 5 applied; draft/submitted/under_review = 3 pending.
+      expect(info.appliedCount, 5);
       expect(info.pendingApplicationCount, 3);
     });
 

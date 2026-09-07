@@ -40,7 +40,9 @@ class DashboardInfo {
   /// Number of scholarships the signed-in student has saved.
   final int savedCount;
 
-  /// Number of applications the signed-in student has submitted.
+  /// Number of active (non-withdrawn) applications the signed-in student has
+  /// submitted. Matches the "Applied" badge semantics on Discover/Saved —
+  /// see [ApplicationFilters.isActive] — so the pill and the badges agree.
   final int appliedCount;
 
   /// Applications still in flight (draft / submitted / under review).
@@ -101,7 +103,8 @@ DashboardInfo buildDashboardInfo({
     matchCount: matches.length,
     closingSoonCount: closingSoon.length,
     savedCount: bookmarkIds.length,
-    appliedCount: applications.length,
+    appliedCount:
+        applications.where(ApplicationFilters.isActive).length,
     pendingApplicationCount: ApplicationFilters.pendingCount(applications),
     closingSoonScholarships: closingSoon,
   );

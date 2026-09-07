@@ -18,6 +18,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:lottie/lottie.dart';
 
 import 'package:scholaris/app/recovery_redirect.dart';
 import 'package:scholaris/app/router.dart';
@@ -167,7 +168,9 @@ void main() {
     ) async {
       await tester.pumpWidget(const MaterialApp(home: ResetPasswordScreen()));
 
-      expect(find.text('Scholaris'), findsOneWidget);
+      // V1 treatment: Lottie hero + white card; the wordmark is gone in favor
+      // of the card heading.
+      expect(find.byType(Lottie), findsOneWidget);
       expect(find.text('Set new password'), findsOneWidget);
       expect(find.text('New Password'), findsOneWidget);
       expect(find.text('Confirm New Password'), findsOneWidget);
@@ -180,6 +183,9 @@ void main() {
     ) async {
       await tester.pumpWidget(const MaterialApp(home: ResetPasswordScreen()));
 
+      // The button sits below the fold on the default test viewport (the V1
+      // hero takes the top band); scroll it into view before tapping.
+      await tester.ensureVisible(find.text('Update password'));
       await tester.tap(find.text('Update password'));
       await tester.pumpAndSettle();
       expect(find.text('Enter a new password.'), findsOneWidget);

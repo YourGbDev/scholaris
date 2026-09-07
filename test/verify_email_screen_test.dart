@@ -69,6 +69,9 @@ void main() {
     await tester.pumpWidget(harness(email: 'a@b.com'));
     await tester.pumpAndSettle();
 
+    // The back link sits below the fold on the default test viewport (the V1
+    // hero takes the top band); scroll it into view before tapping.
+    await tester.ensureVisible(find.text('Back to login'));
     await tester.tap(find.text('Back to login'));
     await tester.pumpAndSettle();
 

@@ -4,12 +4,37 @@
 // The user enters a new password twice, then calls updateUser to persist it.
 // On success the auth boundary clears the recovery flag and the router redirects
 // to the normal signed-in landing (home or profile-setup).
+//
+// V1 visual treatment (matching Login / Forgot Password / Signup): a looping
+// Lottie hero fills the top band, and a clean white rounded card (top corners
+// radius 24) slides up carrying the form. The hero freezes in widget tests and
+// for reduced-motion users so the surface stays deterministic and calm.
 
 import 'package:flutter/material.dart';
+import 'package:lottie/lottie.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'package:scholaris/shared/theme/app_theme.dart';
+import 'package:scholaris/shared/widgets/entrance.dart';
 import 'package:scholaris/shared/widgets/success_overlay.dart';
+
+// --- Tokens ----------------------------------------------------------------
+
+/// Total entrance duration for the reset-password screen's staggered reveal.
+const int kResetEntranceTotalMs = 2000;
+
+const _inputRadius = 12.0;
+
+// --- Entrance timeline helpers ---------------------------------------------
+
+/// Builds an [Interval] for an entrance element that starts at [beginMs] and
+/// ends at [endMs] within the screen's total duration.
+Interval _resetInterval(int beginMs, int endMs) => EntranceMotion.intervalFrom(
+  beginMs,
+  endMs,
+  kResetEntranceTotalMs,
+  curve: Curves.easeOutCubic,
+);
 
 class ResetPasswordScreen extends StatefulWidget {
   const ResetPasswordScreen({super.key});
@@ -18,7 +43,10 @@ class ResetPasswordScreen extends StatefulWidget {
   State<ResetPasswordScreen> createState() => _ResetPasswordScreenState();
 }
 
-class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
+class _ResetPasswordScreenState extends State<ResetPasswordScreen>
+    with
+        TickerProviderStateMixin<ResetPasswordScreen>,
+        EntranceMotionMixin<ResetPasswordScreen> {
   final _formKey = GlobalKey<FormState>();
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
@@ -26,6 +54,10 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
   bool _obscurePassword = true;
   bool _obscureConfirm = true;
   bool _isLoading = false;
+
+  @override
+  Duration get entranceDuration =>
+      const Duration(milliseconds: kResetEntranceTotalMs);
 
   @override
   void dispose() {
@@ -80,166 +112,330 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
         content: Text(message, style: openSans()),
       );
 
+  /// True while running inside a widget test
+  /// (`AutomatedTestWidgetsFlutterBinding` / `LiveTestWidgetsFlutterBinding`).
+  ///
+  /// The hero Lottie loops forever; a repeating animation would keep the test
+  /// harness's `pumpAndSettle` from ever settling. Freezing the hero there
+  /// keeps the widget tests fast and deterministic; real app runs always
+  /// animate. Same guard the login / forgot-password / signup heroes use.
+  bool get _isWidgetTestBinding {
+    final type = WidgetsBinding.instance.runtimeType.toString();
+    return type == 'AutomatedTestWidgetsFlutterBinding' ||
+        type == 'LiveTestWidgetsFlutterBinding';
+  }
+
+  // --- Build ----------------------------------------------------------------
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: kBackground,
-      body: SafeArea(
-        child: Center(
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.all(24),
-            child: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 420),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  _buildWordmark(),
-                  const SizedBox(height: 32),
-                  _buildCard(),
-                ],
+      // Clean white — matches the other V1 auth surfaces.
+      backgroundColor: Colors.white,
+      body: Stack(
+        children: [
+          Positioned.fill(
+            child: SafeArea(
+              child: LayoutBuilder(
+                builder: (context, viewport) {
+                  // Responsive split: hero takes ~42% on tall screens but
+                  // shrinks on short viewports so the card always has room
+                  // for both fields, the button and the sign-out row.
+                  final heroHeight =
+                      (viewport.maxHeight * 0.42).clamp(180.0, viewport.maxHeight - 400);
+                  return Column(
+                    children: [
+                      // --- Top: hero Lottie animation --------------------------
+                      SizedBox(
+                        height: heroHeight,
+                        width: double.infinity,
+                        child: entranceItem(
+                          index: 0,
+                          offset: const Offset(0, 0.08),
+                          interval: _resetInterval(200, 1000),
+                          // The asset has built-in looping motion, so no
+                          // float wrapper — stacking a breathing offset on
+                          // top would double-animate.
+                          child: Lottie.asset(
+                            'assets/animations/selection list clients.json',
+                            fit: BoxFit.contain,
+                            animate:
+                                !(MediaQuery.maybeOf(context)
+                                        ?.disableAnimations ??
+                                    false) &&
+                                !_isWidgetTestBinding,
+                          ),
+                        ),
+                      ),
+
+                      // --- Bottom: white rounded card ---------------------------
+                      Expanded(
+                        child: entranceItem(
+                          index: 1,
+                          offset: const Offset(0, 0.25),
+                          interval: _resetInterval(200, 1000),
+                          child: Container(
+                            // Deliberately a Container, not a Card — matches
+                            // the login screen's V1 card treatment.
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: const BorderRadius.vertical(
+                                top: Radius.circular(24),
+                              ),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: kCardShadow,
+                                  blurRadius: 24,
+                                  offset: const Offset(0, -6),
+                                ),
+                              ],
+                            ),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                // Scrollable form region.
+                                Flexible(
+                                  child: SingleChildScrollView(
+                                    padding: const EdgeInsets.fromLTRB(
+                                      24,
+                                      24,
+                                      24,
+                                      8,
+                                    ),
+                                    child: Center(
+                                      child: ConstrainedBox(
+                                        constraints: const BoxConstraints(
+                                          maxWidth: 420,
+                                        ),
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.stretch,
+                                          children: [
+                                            // Heading.
+                                            entranceItem(
+                                              index: 0,
+                                              offset: const Offset(0, 0.12),
+                                              interval: _resetInterval(
+                                                400,
+                                                820,
+                                              ),
+                                              child: Text(
+                                                'Set new password',
+                                                textAlign: TextAlign.center,
+                                                style: poppins(
+                                                  fontSize: 28,
+                                                  fontWeight: FontWeight.w700,
+                                                  color: kPrimary,
+                                                ),
+                                              ),
+                                            ),
+                                            const SizedBox(height: 8),
+                                            // Instructions.
+                                            entranceItem(
+                                              index: 1,
+                                              offset: const Offset(0, 0.12),
+                                              interval: _resetInterval(
+                                                500,
+                                                920,
+                                              ),
+                                              child: Text(
+                                                'Enter a new password for your '
+                                                'account.',
+                                                textAlign: TextAlign.center,
+                                                style: openSans(
+                                                  fontSize: 15,
+                                                  color: Colors.black54,
+                                                ),
+                                              ),
+                                            ),
+                                            const SizedBox(height: 24),
+                                            // Form.
+                                            Form(
+                                              key: _formKey,
+                                              child: Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.stretch,
+                                                children: [
+                                                  entranceItem(
+                                                    index: 2,
+                                                    offset: const Offset(
+                                                      0,
+                                                      0.12,
+                                                    ),
+                                                    interval: _resetInterval(
+                                                      700,
+                                                      1120,
+                                                    ),
+                                                    child: _textField(
+                                                      controller:
+                                                          _passwordController,
+                                                      label: 'New Password',
+                                                      obscureText:
+                                                          _obscurePassword,
+                                                      textInputAction:
+                                                          TextInputAction.next,
+                                                      suffixIcon: IconButton(
+                                                        icon: Icon(
+                                                          _obscurePassword
+                                                              ? Icons
+                                                                  .visibility_off
+                                                              : Icons.visibility,
+                                                          color: Colors.black45,
+                                                        ),
+                                                        onPressed: () =>
+                                                            setState(() =>
+                                                                _obscurePassword =
+                                                                    !_obscurePassword),
+                                                      ),
+                                                      validator:
+                                                          _validatePassword,
+                                                    ),
+                                                  ),
+                                                  const SizedBox(height: 16),
+                                                  entranceItem(
+                                                    index: 3,
+                                                    offset: const Offset(
+                                                      0,
+                                                      0.12,
+                                                    ),
+                                                    interval: _resetInterval(
+                                                      900,
+                                                      1320,
+                                                    ),
+                                                    child: _textField(
+                                                      controller:
+                                                          _confirmPasswordController,
+                                                      label:
+                                                          'Confirm New Password',
+                                                      obscureText:
+                                                          _obscureConfirm,
+                                                      textInputAction:
+                                                          TextInputAction.done,
+                                                      onFieldSubmitted: (_) =>
+                                                          _onSubmit(),
+                                                      suffixIcon: IconButton(
+                                                        icon: Icon(
+                                                          _obscureConfirm
+                                                              ? Icons
+                                                                  .visibility_off
+                                                              : Icons.visibility,
+                                                          color: Colors.black45,
+                                                        ),
+                                                        onPressed: () =>
+                                                            setState(() =>
+                                                                _obscureConfirm =
+                                                                    !_obscureConfirm),
+                                                      ),
+                                                      validator:
+                                                          _validateConfirmPassword,
+                                                    ),
+                                                  ),
+                                                  const SizedBox(height: 24),
+                                                  entranceItem(
+                                                    index: 4,
+                                                    offset: const Offset(
+                                                      0,
+                                                      0.12,
+                                                    ),
+                                                    interval: _resetInterval(
+                                                      1100,
+                                                      1520,
+                                                    ),
+                                                    child: ElevatedButton(
+                                                      onPressed: _isLoading
+                                                          ? null
+                                                          : _onSubmit,
+                                                      style: ElevatedButton
+                                                          .styleFrom(
+                                                        backgroundColor:
+                                                            kPrimary,
+                                                        foregroundColor:
+                                                            Colors.white,
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .symmetric(
+                                                                  vertical: 16,
+                                                                ),
+                                                        shape:
+                                                            RoundedRectangleBorder(
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(
+                                                            _inputRadius,
+                                                          ),
+                                                        ),
+                                                      ),
+                                                      child: _isLoading
+                                                          ? const SizedBox(
+                                                              height: 20,
+                                                              width: 20,
+                                                              child:
+                                                                  CircularProgressIndicator(
+                                                                strokeWidth: 2,
+                                                                color: Colors
+                                                                    .white,
+                                                              ),
+                                                            )
+                                                          : Text(
+                                                              'Update password',
+                                                              style: poppins(
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w600,
+                                                              ),
+                                                            ),
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                            const SizedBox(height: 16),
+                                            Wrap(
+                                              alignment: WrapAlignment.center,
+                                              crossAxisAlignment:
+                                                  WrapCrossAlignment.center,
+                                              children: [
+                                                Text(
+                                                  'Remembered your password?',
+                                                  style: openSans(
+                                                    color: Colors.black54,
+                                                  ),
+                                                ),
+                                                TextButton(
+                                                  onPressed: () => Supabase
+                                                      .instance
+                                                      .client
+                                                      .auth
+                                                      .signOut(),
+                                                  child: Text(
+                                                    'Sign out',
+                                                    style: poppins(
+                                                      color: kPrimary,
+                                                      fontWeight:
+                                                          FontWeight.w600,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  );
+                },
               ),
             ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildWordmark() {
-    return Column(
-      children: [
-        Text(
-          'Scholaris',
-          textAlign: TextAlign.center,
-          style: poppins(
-            fontSize: 40,
-            fontWeight: FontWeight.w700,
-            color: kPrimary,
-          ),
-        ),
-        const SizedBox(height: 4),
-        Text(
-          'Set your new password',
-          textAlign: TextAlign.center,
-          style: openSans(color: Colors.black54),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildCard() {
-    return Container(
-      padding: const EdgeInsets.all(24),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(kRadiusCard),
-        boxShadow: const [
-          BoxShadow(
-            color: kCardShadow,
-            blurRadius: 24,
-            offset: Offset(0, 8),
           ),
         ],
-      ),
-      child: Form(
-        key: _formKey,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Text(
-              'Set new password',
-              style: poppins(
-                fontSize: 22,
-                fontWeight: FontWeight.w600,
-                color: kPrimary,
-              ),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              'Enter a new password for your account.',
-              style: openSans(color: Colors.black54),
-            ),
-            const SizedBox(height: 16),
-            _textField(
-              controller: _passwordController,
-              label: 'New Password',
-              obscureText: _obscurePassword,
-              textInputAction: TextInputAction.next,
-              suffixIcon: IconButton(
-                icon: Icon(
-                  _obscurePassword ? Icons.visibility_off : Icons.visibility,
-                  color: Colors.black45,
-                ),
-                onPressed: () =>
-                    setState(() => _obscurePassword = !_obscurePassword),
-              ),
-              validator: _validatePassword,
-            ),
-            const SizedBox(height: 16),
-            _textField(
-              controller: _confirmPasswordController,
-              label: 'Confirm New Password',
-              obscureText: _obscureConfirm,
-              textInputAction: TextInputAction.done,
-              onFieldSubmitted: (_) => _onSubmit(),
-              suffixIcon: IconButton(
-                icon: Icon(
-                  _obscureConfirm ? Icons.visibility_off : Icons.visibility,
-                  color: Colors.black45,
-                ),
-                onPressed: () =>
-                    setState(() => _obscureConfirm = !_obscureConfirm),
-              ),
-              validator: _validateConfirmPassword,
-            ),
-            const SizedBox(height: 24),
-            ElevatedButton(
-              onPressed: _isLoading ? null : _onSubmit,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: kPrimary,
-                foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(vertical: 16),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(kRadiusInput),
-                ),
-              ),
-              child: _isLoading
-                  ? const SizedBox(
-                      height: 20,
-                      width: 20,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2,
-                        color: Colors.white,
-                      ),
-                    )
-                  : Text(
-                      'Update password',
-                      style: poppins(fontWeight: FontWeight.w600),
-                    ),
-            ),
-            const SizedBox(height: 16),
-            Wrap(
-              alignment: WrapAlignment.center,
-              crossAxisAlignment: WrapCrossAlignment.center,
-              children: [
-                Text(
-                  'Remembered your password?',
-                  style: openSans(color: Colors.black54),
-                ),
-                TextButton(
-                  onPressed: () => Supabase.instance.client.auth.signOut(),
-                  child: Text(
-                    'Sign out',
-                    style: poppins(
-                      color: kPrimary,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ],
-        ),
       ),
     );
   }

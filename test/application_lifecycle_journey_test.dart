@@ -158,6 +158,9 @@ void main() {
 
     // ---- Step 3: Open the application detail ------------------------------
     await tester.tap(find.text('DOST-SEI Undergraduate Scholarship'));
+    // Route pushes need one pump to start the transition and another to
+    // complete it; a single pump(500) leaves the pushed screen mid-flight.
+    await tester.pump();
     await tester.pump(const Duration(milliseconds: 500));
 
     expect(find.byType(ApplicationDetailScreen), findsOneWidget);
@@ -183,6 +186,8 @@ void main() {
     expect(find.textContaining('kept in your history'), findsOneWidget);
 
     await tester.pageBack();
+    // Pops animate too — same pump-to-start, pump-to-complete pattern.
+    await tester.pump();
     await tester.pump(const Duration(milliseconds: 500));
 
     // The pending count dropped; the withdrawn filter chip exists.
@@ -217,8 +222,9 @@ void main() {
       findsNothing,
     );
 
-    // The "Applied" dashboard count still counts the preserved record.
-    expect(find.text('1 Applied'), findsOneWidget);
+    // The "Applied" dashboard count matches the badge semantics: a withdrawn
+    // application no longer reads as applied anywhere (see 4ebe9ad).
+    expect(find.text('0 Applied'), findsOneWidget);
 
     // ---- Step 7: Scholarship detail still blocks re-application ----------
     await _pump(

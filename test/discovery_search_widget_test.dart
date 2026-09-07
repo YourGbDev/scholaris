@@ -174,7 +174,15 @@ Future<void> _openFilters(WidgetTester tester) async {
   await tester.pump(const Duration(milliseconds: 500));
 }
 
+/// Scrolls [finder] into view inside the filter sheet, then taps it.
+///
+/// The sheet's ListView is taller than the sheet viewport, so chips like the
+/// income options and most regions sit below the fold. Tapping an off-screen
+/// widget silently misses (flutter_test only issues a warning), which left
+/// every downstream assertion asserting on unfiltered results.
 Future<void> _selectInSheet(WidgetTester tester, Finder finder) async {
+  await tester.ensureVisible(_inSheet(finder));
+  await tester.pump(const Duration(milliseconds: 100));
   await tester.tap(_inSheet(finder));
   await tester.pump(const Duration(milliseconds: 500));
 }
@@ -192,6 +200,10 @@ Future<void> _typeSearch(WidgetTester tester, String query) async {
 void main() {
   setUpAll(() {
     GoogleFonts.config.allowRuntimeFetching = false;
+    // A tap on an off-screen or obscured widget silently misses (warning
+    // only). Make it fatal so a missed interaction can never masquerade as a
+    // failing assertion again.
+    WidgetController.hitTestWarningShouldBeFatal = true;
   });
 
   group('search field', () {

@@ -414,15 +414,20 @@ void main() {
           scholarshipId: 'sch-ched', status: 'approved');
 
       await tester.pumpWidget(_wrapHomeScreen(applications: applications));
-      await tester.pumpAndSettle();
+      // The full HomeScreen keeps an offstage IndexedStack tab (Saved /
+      // Profile) mounted, and its data future never resolves in this harness,
+      // so its _LoadingSpinner schedules frames forever and pumpAndSettle
+      // times out. Pump a bounded sequence instead — DIAGNOSTIC-VERIFIED.
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 500));
 
       await tester.tap(find.text('Applications'));
-      await tester.pumpAndSettle();
+      await tester.pump(const Duration(milliseconds: 500));
 
       expect(find.text('Withdrawn (1)'), findsOneWidget);
       await tester.ensureVisible(find.text('Withdrawn (1)'));
       await tester.tap(find.text('Withdrawn (1)'));
-      await tester.pumpAndSettle();
+      await tester.pump(const Duration(milliseconds: 500));
 
       expect(find.text('DOST-SEI Undergraduate Scholarship'), findsOneWidget);
       expect(find.text('CHED Merit Scholarship (MSRS)'), findsNothing);
@@ -557,7 +562,10 @@ void main() {
         ],
         child: const MaterialApp(home: HomeScreen()),
       ));
-      await tester.pumpAndSettle();
+      // Offstage-tab spinner never settles on the full HomeScreen harness —
+      // bounded pumps instead of pumpAndSettle (see the withdrawn-filter test).
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 500));
 
       expect(find.text('1 Applied'), findsOneWidget);
       final card = find.ancestor(

@@ -247,6 +247,9 @@ void main() {
       await tester.pump(const Duration(milliseconds: 500));
 
       await tester.tap(find.text('My Applications'));
+      // Route pushes need one pump to start the transition and another to
+      // complete it; a single pump(500) leaves the pushed screen mid-flight.
+      await tester.pump();
       await tester.pump(const Duration(milliseconds: 500));
 
       // The pushed screen's AppBar shows the title and its body shows the

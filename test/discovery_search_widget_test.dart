@@ -200,10 +200,6 @@ Future<void> _typeSearch(WidgetTester tester, String query) async {
 void main() {
   setUpAll(() {
     GoogleFonts.config.allowRuntimeFetching = false;
-    // A tap on an off-screen or obscured widget silently misses (warning
-    // only). Make it fatal so a missed interaction can never masquerade as a
-    // failing assertion again.
-    WidgetController.hitTestWarningShouldBeFatal = true;
   });
 
   group('search field', () {

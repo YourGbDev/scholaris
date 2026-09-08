@@ -334,8 +334,15 @@ abstract final class AuthRoute {
 /// The classic auth screens a signed-out user may always reach. `/ceremony` is
 /// handled separately by [_redirect] so it can share the signed-out behavior
 /// without being treated as a login/signup target elsewhere.
+///
+/// `/become-provider` is included: the provider signup is an unauthenticated
+/// entry point (like /signup) — omitting it made the redirect bounce
+/// /become-provider → /login before the screen could ever render
+/// (allowlist omission from 9de9f5f, fixed 2026-09-08).
 bool _isAuthRoute(String location) =>
-    location == '/login' || location == '/signup';
+    location == '/login' ||
+    location == '/signup' ||
+    location == '/become-provider';
 
 /// Auth-aware redirect:
 ///  - forgot-password route       → always allowed (public request screen)

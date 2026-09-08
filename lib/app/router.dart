@@ -26,6 +26,7 @@ import 'package:scholaris/features/auth/presentation/forgot_password_screen.dart
 import 'package:scholaris/features/auth/presentation/login_screen.dart';
 import 'package:scholaris/features/auth/presentation/reset_password_screen.dart';
 import 'package:scholaris/features/auth/presentation/signup_screen.dart';
+import 'package:scholaris/features/provider/presentation/provider_home_screen.dart';
 import 'package:scholaris/features/provider/presentation/provider_review_screen.dart';
 import 'package:scholaris/features/provider/presentation/provider_signup_screen.dart';
 import 'package:scholaris/features/splash/presentation/splash_screen.dart';
@@ -39,12 +40,12 @@ import 'package:scholaris/features/scholarships/models/scholarship.dart';
 import 'package:scholaris/features/scholarships/presentation/scholarship_detail_screen.dart';
 
 // -----------------------------------------------------------------------------
-// profileCompleteProvider
+// profileCompleteProvider / userRoleProvider
 // -----------------------------------------------------------------------------
-// AsyncNotifier that reports whether the signed-in user has finished the
-// multi-step profile setup. It reads the user's own `profiles` row (via the
-// profile repository, which is always scoped to the authenticated user) and
-// returns the `setup_complete` flag.
+// AsyncNotifiers that report whether the signed-in user has finished the
+// multi-step profile setup, and the account `role` used to pick the landing
+// route. Both read the user's own `profiles` row (via the profile repository,
+// which is always scoped to the authenticated user).
 
 final profileCompleteProvider =
     AsyncNotifierProvider<ProfileCompleteNotifier, bool>(
@@ -65,6 +66,21 @@ class ProfileCompleteNotifier extends AsyncNotifier<bool> {
   /// setup flow so the router re-evaluates the redirect to /home.
   Future<void> refresh() async => ref.invalidateSelf();
 }
+
+/// The signed-in user's `profiles.role` ('student' | 'provider'), defaulting
+/// to 'student' when the row is missing or the column is null — the legacy
+/// behaviour every existing route was built against. Read-path only: nothing
+/// in the client writes role through this provider (provider signup does its
+/// own one-off tag; flagged separately, out of scope here).
+///
+/// Derived from [currentProfileProvider] (which is already cached per user)
+/// so the redirect never issues a second DB fetch — a second unlinked fetch
+/// on every auth change risks the refresh-loop the profile listener here is
+/// documented to avoid.
+final userRoleProvider = FutureProvider<String>((ref) async {
+  final profile = await ref.watch(currentProfileProvider.future);
+  return profile?.role ?? 'student';
+});
 
 // -----------------------------------------------------------------------------
 // Router
@@ -134,6 +150,14 @@ final routerProvider = Provider<GoRouter>((ref) {
         path: '/provider-review',
         name: 'provider-review',
         builder: (context, state) => const ProviderReviewScreen(),
+      ),
+      // Persistent landing route for signed-in users with role='provider'.
+      // Placeholder content for now (same "Application Under Review" copy);
+      // step 3 replaces it with the real provider console.
+      GoRoute(
+        path: '/provider-home',
+        name: 'provider-home',
+        builder: (context, state) => const ProviderHomeScreen(),
       ),
 
       // --- First-launch onboarding --------------------------------------------
@@ -244,6 +268,10 @@ final routerProvider = Provider<GoRouter>((ref) {
   ref.onDispose(() => authSub.cancel());
 
   ref.listen(profileCompleteProvider, (_, _) => router.refresh());
+  // The provider branch of the landing decision depends on role, so a role
+  // change (e.g. after provider signup tags the row) must also re-evaluate
+  // redirects.
+  ref.listen(userRoleProvider, (_, _) => router.refresh());
 
   // Re-evaluate the signed-out entry point once the first-launch flag resolves
   // (loading → seen/not-seen), so splash hands off to onboarding or login
@@ -331,6 +359,15 @@ abstract final class AuthRoute {
   static const verifyEmail = '/verify-email';
 }
 
+/// Route path constants for the provider surfaces reached through the role
+/// branch of [authRedirectDecision]. /provider-review stays the post-signup
+/// confirmation page; /provider-home is the persistent landing route for
+/// signed-in role='provider' users.
+abstract final class ProviderRoute {
+  static const review = '/provider-review';
+  static const home = '/provider-home';
+}
+
 /// The classic auth screens a signed-out user may always reach. `/ceremony` is
 /// handled separately by [_redirect] so it can share the signed-out behavior
 /// without being treated as a login/signup target elsewhere.
@@ -350,6 +387,7 @@ bool _isAuthRoute(String location) =>
 ///  - recovery session active     → /reset-password (before any profile read)
 ///  - signed out                  → /login (except /login, /signup, /ceremony)
 ///  - signed in, profile busy     → /splash while loading
+///  - signed in, role='provider'  → /provider-home
 ///  - signed in, complete         → /home
 ///  - signed in, incomplete       → /profile-setup/personal
 String? _redirect(Ref ref, GoRouterState state) {
@@ -361,6 +399,7 @@ String? _redirect(Ref ref, GoRouterState state) {
     'isLoggedIn=${ref.read(authSessionProvider) != null} '
     'profileLoading=${ref.read(profileCompleteProvider).isLoading} '
     'profileComplete=${ref.read(profileCompleteProvider).valueOrNull ?? false} '
+    'role=${ref.read(userRoleProvider).valueOrNull ?? "..."} '
     'onSetupRoute=${location.startsWith('/profile-setup')}',
   );
 
@@ -374,6 +413,8 @@ String? _redirect(Ref ref, GoRouterState state) {
   }
 
   final recoveryActive = ref.read(passwordRecoveryProvider);
+  final profileAsync = ref.read(profileCompleteProvider);
+  final roleAsync = ref.read(userRoleProvider);
   final authDecision = authRedirectDecision(
     location: location,
     isLoggedIn: ref.read(authSessionProvider) != null,
@@ -381,8 +422,10 @@ String? _redirect(Ref ref, GoRouterState state) {
     onAuthRoute: location == '/ceremony' || _isAuthRoute(location),
     onVerifyRoute: location == AuthRoute.verifyEmail,
     onSetupRoute: location.startsWith('/profile-setup'),
-    profileLoading: ref.read(profileCompleteProvider).isLoading,
-    profileComplete: ref.read(profileCompleteProvider).valueOrNull ?? false,
+    profileLoading:
+        profileAsync.isLoading || (roleAsync.isLoading && roleAsync.value == null),
+    profileComplete: profileAsync.valueOrNull ?? false,
+    role: roleAsync.valueOrNull ?? 'student',
   );
   debugPrint('[ROUTER] authDecision=$authDecision');
 
@@ -408,7 +451,9 @@ String? _redirect(Ref ref, GoRouterState state) {
 /// flag is set the gate is inert and the auth decision rules as before.
 ///
 /// Deliberately inactive for:
-///   - signed-in users (their auth decision is /home, /profile-setup or null),
+///   - signed-in users (their auth decision is /home, /profile-setup or
+///     /provider-home — see [ProviderRoute]; any of these bypasses the gate
+///     outright, standing "signed-in flows are never gated" invariant),
 ///   - active password-recovery sessions (recovery always wins),
 ///   - public deep links (/forgot-password, /verify-email) and non-funnel
 ///     locations, which pass through untouched.
@@ -421,6 +466,16 @@ String? onboardingRedirectDecision({
 }) {
   // Recovery sessions are decided entirely by the auth layer.
   if (recoveryActive) return authDecision;
+
+  // A signed-in auth decision is a destination, not the login funnel — even
+  // when it was produced while sitting on /ceremony or an auth route. Without
+  // this, a provider landing on /login (auth decision /provider-home) would be
+  // pulled into onboarding by the location-only funnel check below.
+  final signedInDestination =
+      authDecision == '/home' ||
+      authDecision == ProviderRoute.home ||
+      (authDecision != null && authDecision.startsWith('/profile-setup'));
+  if (signedInDestination) return authDecision;
 
   // Locations that resolve to the login funnel for a signed-out user.
   final funnelsToLogin =
@@ -453,6 +508,9 @@ String? onboardingRedirectDecision({
 ///  4. `/verify-email` is public while signed out so an unconfirmed user can
 ///     reach the resend surface.
 ///  5. Normal auth/profile routing follows.
+///  6. Signed-in users with role='provider' land on /provider-home before
+///     any student setup/completeness routing. [role] defaults to 'student'
+///     so every pre-existing call site keeps its exact behaviour.
 String? authRedirectDecision({
   required String location,
   required bool isLoggedIn,
@@ -462,6 +520,7 @@ String? authRedirectDecision({
   required bool profileLoading,
   required bool profileComplete,
   bool onVerifyRoute = false,
+  String role = 'student',
 }) {
   if (location == AuthRoute.forgotPassword) return null;
 
@@ -478,6 +537,14 @@ String? authRedirectDecision({
 
   if (profileLoading) {
     return null;
+  }
+
+  // Provider branch: a role='provider' account lands on its persistent home,
+  // never on the student /profile-setup wizard or /home. Decided BEFORE the
+  // profileComplete check so a provider row (whose setup_complete is
+  // irrelevant) is never forced through the student wizard.
+  if (role == 'provider') {
+    return location == ProviderRoute.home ? null : ProviderRoute.home;
   }
 
   if (profileComplete) {

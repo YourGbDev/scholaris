@@ -97,5 +97,41 @@ void main() {
         '/reset-password',
       );
     });
+
+    test('signed-in providers are sent to /provider-home from /ceremony', () {
+      // Role branch wins over setup/completeness routing regardless of the
+      // setupComplete flag — a provider row is never forced through the
+      // student wizard.
+      for (final complete in [true, false]) {
+        expect(
+          authRedirectDecision(
+            location: '/ceremony',
+            isLoggedIn: true,
+            recoveryActive: false,
+            onAuthRoute: true,
+            onSetupRoute: false,
+            profileLoading: false,
+            profileComplete: complete,
+            role: 'provider',
+          ),
+          '/provider-home',
+          reason: 'provider must leave /ceremony (setupComplete=$complete)',
+        );
+      }
+      // Recovery still outranks the provider branch.
+      expect(
+        authRedirectDecision(
+          location: '/ceremony',
+          isLoggedIn: true,
+          recoveryActive: true,
+          onAuthRoute: true,
+          onSetupRoute: false,
+          profileLoading: false,
+          profileComplete: false,
+          role: 'provider',
+        ),
+        '/reset-password',
+      );
+    });
   });
 }

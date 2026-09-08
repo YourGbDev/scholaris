@@ -24,6 +24,7 @@ _StudentProfile _$StudentProfileFromJson(Map<String, dynamic> json) =>
       hasDisability: json['has_disability'] as bool? ?? false,
       isIndigenous: json['is_indigenous'] as bool? ?? false,
       setupComplete: json['setup_complete'] as bool? ?? false,
+      role: json['role'] as String? ?? 'student',
       createdAt: json['created_at'] == null
           ? null
           : DateTime.parse(json['created_at'] as String),
@@ -50,6 +51,7 @@ Map<String, dynamic> _$StudentProfileToJson(_StudentProfile instance) =>
       'has_disability': instance.hasDisability,
       'is_indigenous': instance.isIndigenous,
       'setup_complete': instance.setupComplete,
+      'role': instance.role,
       'created_at': instance.createdAt?.toIso8601String(),
       'updated_at': instance.updatedAt?.toIso8601String(),
     };

@@ -216,6 +216,8 @@ void main() {
           '/intro',
           '/profile-setup',
           '/verify-email',
+          '/provider-home',
+          '/provider-review',
         ]) {
           expect(
             authRedirectDecision(
@@ -375,6 +377,101 @@ void main() {
         ),
         '/profile-setup/personal',
       );
+    });
+
+    test('a recovery session outranks the provider role branch', () {
+      // Precedence pin: recovery is decided before any profile-based routing,
+      // so a provider mid-recovery still lands on /reset-password, not
+      // /provider-home.
+      expect(
+        authRedirectDecision(
+          location: '/provider-home',
+          isLoggedIn: true,
+          recoveryActive: true,
+          onAuthRoute: false,
+          onSetupRoute: false,
+          profileLoading: false,
+          profileComplete: false,
+          role: 'provider',
+        ),
+        '/reset-password',
+      );
+    });
+
+    group('provider role routing', () {
+      test('role=provider lands on /provider-home regardless of profile state',
+          () {
+        // setupComplete false must NOT route a provider through the student
+        // wizard — this is the bug the pre-profileComplete branch prevents.
+        for (final complete in [true, false]) {
+          expect(
+            authRedirectDecision(
+              location: '/login',
+              isLoggedIn: true,
+              recoveryActive: false,
+              onAuthRoute: true,
+              onSetupRoute: false,
+              profileLoading: false,
+              profileComplete: complete,
+              role: 'provider',
+            ),
+            '/provider-home',
+            reason: 'provider routing must ignore setupComplete ($complete)',
+          );
+        }
+      });
+
+      test('a provider may stay on /provider-home', () {
+        expect(
+          authRedirectDecision(
+            location: '/provider-home',
+            isLoggedIn: true,
+            recoveryActive: false,
+            onAuthRoute: false,
+            onSetupRoute: false,
+            profileLoading: false,
+            profileComplete: false,
+            role: 'provider',
+          ),
+          isNull,
+        );
+      });
+
+      test('/provider-home is protected for students', () {
+        // A student navigating to /provider-home must be sent to their own
+        // landing, never shown the provider surface.
+        expect(
+          authRedirectDecision(
+            location: '/provider-home',
+            isLoggedIn: true,
+            recoveryActive: false,
+            onAuthRoute: false,
+            onSetupRoute: false,
+            profileLoading: false,
+            profileComplete: true,
+            role: 'student',
+          ),
+          '/home',
+        );
+      });
+
+      test('the decision holds while role/profile state is unresolved', () {
+        // The router passes profileLoading=true while the role fetch is in
+        // flight, so no decision is ever made from a stale/absent role.
+        expect(
+          authRedirectDecision(
+            location: '/splash',
+            isLoggedIn: true,
+            recoveryActive: false,
+            onAuthRoute: false,
+            onSetupRoute: false,
+            profileLoading: true,
+            profileComplete: false,
+            role: 'student',
+          ),
+          isNull,
+        );
+      });
     });
 
     group('verify-email routing', () {

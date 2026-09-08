@@ -175,6 +175,40 @@ void main() {
         '/splash',
       );
     });
+
+    test('a signed-in provider destination is never gated', () {
+      // The exemption flagged in the router docstring: the auth decision
+      // /provider-home is a destination, not the login funnel — even when the
+      // user is standing on an auth-allowlisted location like /login on a
+      // first run (a provider who signed in from the login screen).
+      expect(
+        onboardingRedirectDecision(
+          authDecision: '/provider-home',
+          location: '/login',
+          onboardingLoading: false,
+          onboardingSeen: false,
+        ),
+        '/provider-home',
+      );
+      expect(
+        onboardingRedirectDecision(
+          authDecision: '/provider-home',
+          location: '/provider-home',
+          onboardingLoading: false,
+          onboardingSeen: false,
+        ),
+        '/provider-home',
+      );
+      expect(
+        onboardingRedirectDecision(
+          authDecision: '/provider-home',
+          location: '/ceremony',
+          onboardingLoading: false,
+          onboardingSeen: false,
+        ),
+        '/provider-home',
+      );
+    });
   });
 
   group('onboardingRedirectDecision + authRedirectDecision composition', () {

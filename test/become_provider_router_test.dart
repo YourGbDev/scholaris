@@ -71,6 +71,60 @@ void main() {
         '/login',
       );
     });
+
+    test('signed-out provider signups may stay on /become-provider', () {
+      // The role branch applies only to signed-in sessions: /become-provider
+      // is where a provider account is CREATED, so an unauthenticated user
+      // must never be bounced to /provider-home by the new role parameter.
+      expect(
+        authRedirectDecision(
+          location: '/become-provider',
+          isLoggedIn: false,
+          recoveryActive: false,
+          onAuthRoute: true,
+          onSetupRoute: false,
+          profileLoading: false,
+          profileComplete: false,
+          role: 'provider',
+        ),
+        isNull,
+      );
+    });
+
+    test('a signed-in provider is redirected away from /become-provider', () {
+      // Once signed in with role='provider', the persistent landing wins —
+      // /provider-home is the durable destination, not the signup screen.
+      expect(
+        authRedirectDecision(
+          location: '/become-provider',
+          isLoggedIn: true,
+          recoveryActive: false,
+          onAuthRoute: true,
+          onSetupRoute: false,
+          profileLoading: false,
+          profileComplete: false,
+          role: 'provider',
+        ),
+        '/provider-home',
+      );
+    });
+
+    test('role defaults to student: existing signatures unchanged', () {
+      // Every pre-existing call site omits role; the default must keep the
+      // student behaviour byte-for-byte.
+      expect(
+        authRedirectDecision(
+          location: '/login',
+          isLoggedIn: true,
+          recoveryActive: false,
+          onAuthRoute: true,
+          onSetupRoute: false,
+          profileLoading: false,
+          profileComplete: true,
+        ),
+        '/home',
+      );
+    });
   });
 
   // Skip the widget test: known GoTrue teardown hang (NOT a regression from

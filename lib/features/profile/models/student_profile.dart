@@ -103,6 +103,12 @@ abstract class StudentProfile with _$StudentProfile {
     @JsonKey(name: 'has_disability') @Default(false) bool hasDisability,
     @JsonKey(name: 'is_indigenous') @Default(false) bool isIndigenous,
     @JsonKey(name: 'setup_complete') @Default(false) bool setupComplete,
+    // READ-PATH ONLY: `role` is consumed by the router to choose the
+    // post-login landing route ('student' → /home flow, 'provider' →
+    // /provider-home). It is deliberately absent from toDbRow() so no
+    // client write path can clobber it. Missing/NULL rows decode to
+    // 'student', keeping the legacy behaviour byte-for-byte.
+    @JsonKey(name: 'role') @Default('student') String role,
     @JsonKey(name: 'created_at') DateTime? createdAt,
     @JsonKey(name: 'updated_at') DateTime? updatedAt,
   }) = _StudentProfile;

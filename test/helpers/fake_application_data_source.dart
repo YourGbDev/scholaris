@@ -7,12 +7,38 @@ class FakeApplicationDataSource implements ApplicationDataSource {
   final Map<String, List<Map<String, dynamic>>> _rows = {};
   int _seq = 0;
 
+  /// Scholarship rows keyed by id, so the provider-scoped incoming-applications
+  /// path can be exercised without a Supabase client. Seed with a
+  /// `created_by` column to emulate the `scholarships.created_by` ownership
+  /// the production query filters on.
+  final Map<String, Map<String, dynamic>> scholarshipIndex = {};
+
   List<Map<String, dynamic>> _userRows(String userId) =>
       _rows.putIfAbsent(userId, () => []);
 
   @override
   Future<List<Map<String, dynamic>>> fetchApplications(String userId) async =>
       [for (final r in _userRows(userId)) Map<String, dynamic>.of(r)];
+
+  @override
+  Future<List<String>> fetchProviderScholarshipIds(String providerId) async =>
+      scholarshipIndex.entries
+          .where((e) => e.value['created_by'] == providerId)
+          .map((e) => e.key)
+          .toList();
+
+  @override
+  Future<List<Map<String, dynamic>>> fetchApplicationsForScholarships(
+    List<String> scholarshipIds,
+  ) async {
+    if (scholarshipIds.isEmpty) return const [];
+    return [
+      for (final rows in _rows.values)
+        for (final r in rows)
+          if (scholarshipIds.contains(r['scholarship_id']))
+            Map<String, dynamic>.of(r),
+    ];
+  }
 
   @override
   Future<Map<String, dynamic>?> fetchApplicationByScholarship(

@@ -132,3 +132,30 @@ final filteredApplicationsProvider = Provider<AsyncValue<List<Application>>>((re
     (applications) => ApplicationFilters.applyAll(applications, filter.status),
   );
 });
+
+/// Applications submitted to scholarships the signed-in provider owns
+/// (those whose `scholarships.created_by` equals the current user id).
+///
+/// Read-only and user-scoped: bound to [currentUserIdProvider] so it refetches
+/// on every auth transition and a previous provider's queue can never leak to
+/// the next session. Mirrors [applicationsProvider]'s session-derived-id guard:
+/// signed-out users get an empty list, never another provider's data.
+final incomingApplicationsProvider =
+    AsyncNotifierProvider<IncomingApplicationsNotifier, List<Application>>(
+  IncomingApplicationsNotifier.new,
+);
+
+class IncomingApplicationsNotifier extends AsyncNotifier<List<Application>> {
+  @override
+  Future<List<Application>> build() async {
+    ref.watch(currentUserIdProvider);
+    return ref.watch(applicationRepositoryProvider).fetchIncomingApplications();
+  }
+
+  /// Refreshes the provider queue (e.g. after a provider acts on an
+  /// application). Mirrors [ApplicationsNotifier] retry ergonomics.
+  Future<void> refresh() async {
+    ref.invalidateSelf();
+    await future;
+  }
+}

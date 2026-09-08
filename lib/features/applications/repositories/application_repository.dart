@@ -49,6 +49,10 @@ class ApplicationWithdrawalException implements Exception {
 /// Low-level row access for the `applications` table.
 abstract class ApplicationDataSource {
   Future<List<Map<String, dynamic>>> fetchApplications(String userId);
+  Future<List<Map<String, dynamic>>> fetchApplicationsForScholarships(
+    List<String> scholarshipIds,
+  );
+  Future<List<String>> fetchProviderScholarshipIds(String providerId);
   Future<Map<String, dynamic>?> fetchApplicationByScholarship(
     String userId,
     String scholarshipId,
@@ -79,6 +83,30 @@ class SupabaseApplicationDataSource implements ApplicationDataSource {
         .select()
         .eq('user_id', userId)
         .order('updated_at', ascending: false);
+  }
+
+  @override
+  Future<List<Map<String, dynamic>>> fetchApplicationsForScholarships(
+    List<String> scholarshipIds,
+  ) async {
+    if (scholarshipIds.isEmpty) return const [];
+    return _client
+        .from('applications')
+        .select()
+        .inFilter('scholarship_id', scholarshipIds)
+        .order('applied_at', ascending: false);
+  }
+
+  @override
+  Future<List<String>> fetchProviderScholarshipIds(String providerId) async {
+    final rows = await _client
+        .from('scholarships')
+        .select('id')
+        .eq('created_by', providerId);
+    return [
+      for (final row in rows)
+        if (row['id'] is String) row['id'] as String,
+    ];
   }
 
   @override
@@ -148,6 +176,27 @@ class ApplicationRepository {
     final userId = _currentUserId();
     if (userId == null) return const [];
     final rows = await _dataSource.fetchApplications(userId);
+    return rows.map(Application.fromJson).toList();
+  }
+
+  /// Applications submitted to scholarships owned by the signed-in provider
+  /// (those whose `scholarships.created_by` equals the current user id).
+  ///
+  /// Scoping is delegated to the database: the
+  /// `providers_select_own_applications` RLS policy only returns rows belonging
+  /// to the provider's own scholarships, so this method is safe to call for any
+  /// signed-in user — a non-provider simply gets an empty list. Returns an empty
+  /// list when signed out.
+  ///
+  /// The returned rows are NOT filtered by `applied_at` on the client; the data
+  /// source orders newest-first and any application without an `applied_at`
+  /// (e.g. a still-draft submission) sorts to the end.
+  Future<List<Application>> fetchIncomingApplications() async {
+    final providerId = _currentUserId();
+    if (providerId == null) return const [];
+    final ids = await _dataSource.fetchProviderScholarshipIds(providerId);
+    if (ids.isEmpty) return const [];
+    final rows = await _dataSource.fetchApplicationsForScholarships(ids);
     return rows.map(Application.fromJson).toList();
   }
 

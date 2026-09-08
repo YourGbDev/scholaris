@@ -75,6 +75,18 @@ class ProfileRepository {
     return StudentProfile.fromJson({...row, 'id': userId});
   }
 
+  /// Fetches the profile of an arbitrary user by id, or null when it does not
+  /// exist. Used by the provider console to resolve an applicant's display name
+  /// for an incoming application. Row-level security (`providers_select_
+  /// applicant_profiles`) restricts the calling provider to applicants who
+  /// applied to their own scholarships — this method performs no ownership check
+  /// of its own because the database enforces the boundary.
+  Future<StudentProfile?> fetchProfileById(String userId) async {
+    final row = await _dataSource.fetchProfile(userId);
+    if (row == null) return null;
+    return StudentProfile.fromJson({...row, 'id': userId});
+  }
+
   /// Upserts the signed-in user's own profile. Rejects any profile that does
   /// not belong to the authenticated user.
   Future<void> saveCurrent({required StudentProfile profile}) async {

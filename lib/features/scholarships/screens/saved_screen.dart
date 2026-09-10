@@ -89,15 +89,22 @@ class SavedScreen extends ConsumerWidget {
               );
             }
 
-            return ListView.separated(
-              padding: const EdgeInsets.fromLTRB(20, 12, 20, 32),
-              itemCount: saved.length,
-              separatorBuilder: (_, _) => const SizedBox(height: 14),
-              itemBuilder: (_, i) => ScholarshipCard(
-                scholarship: saved[i],
-                isBookmarked: true,
-                isApplied: appliedIds.contains(saved[i].id),
-                onToggleBookmark: () => _toggleBookmark(ref, saved[i].id),
+            return RefreshIndicator(
+              onRefresh: () async {
+                ref.invalidate(bookmarksProvider);
+                ref.invalidate(scholarshipsProvider);
+              },
+              child: ListView.separated(
+                physics: const AlwaysScrollableScrollPhysics(),
+                padding: const EdgeInsets.fromLTRB(20, 12, 20, 32),
+                itemCount: saved.length,
+                separatorBuilder: (_, _) => const SizedBox(height: 14),
+                itemBuilder: (_, i) => ScholarshipCard(
+                  scholarship: saved[i],
+                  isBookmarked: true,
+                  isApplied: appliedIds.contains(saved[i].id),
+                  onToggleBookmark: () => _toggleBookmark(ref, saved[i].id),
+                ),
               ),
             );
           },

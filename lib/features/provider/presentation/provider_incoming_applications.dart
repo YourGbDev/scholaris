@@ -98,6 +98,16 @@ class ProviderIncomingApplications extends ConsumerWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Padding(
+                      padding: const EdgeInsets.fromLTRB(20, 8, 20, 4),
+                      child: _ProviderSummaryBar(
+                        totalCount: applications.length,
+                        pendingCount: (counts[ApplicationStatus.submitted] ?? 0) +
+                            (counts[ApplicationStatus.underReview] ?? 0),
+                        decidedCount: (counts[ApplicationStatus.approved] ?? 0) +
+                            (counts[ApplicationStatus.rejected] ?? 0),
+                      ),
+                    ),
+                    Padding(
                       padding: const EdgeInsets.fromLTRB(20, 8, 20, 12),
                       child: _ProviderStatusFilterBar(
                         counts: counts,
@@ -276,14 +286,33 @@ class _IncomingApplicationRow extends ConsumerWidget {
                 style: openSans(fontSize: 13, color: Colors.black54),
               ),
               const SizedBox(height: 12),
-              Wrap(
-                spacing: 8,
-                runSpacing: 8,
+              Row(
                 children: [
                   _MetaChip(
                     icon: Icons.event_rounded,
                     label: appliedLabel,
                   ),
+                  const Spacer(),
+                  if (!isTerminal)
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          'Review',
+                          style: poppins(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w600,
+                            color: kPrimary,
+                          ),
+                        ),
+                        const SizedBox(width: 2),
+                        const Icon(
+                          Icons.chevron_right_rounded,
+                          size: 16,
+                          color: kPrimary,
+                        ),
+                      ],
+                    ),
                 ],
               ),
             ],
@@ -627,6 +656,80 @@ class _MetaChip extends StatelessWidget {
           Text(
             label,
             style: openSans(
+              fontSize: 12,
+              fontWeight: FontWeight.w600,
+              color: kPrimary,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _ProviderSummaryBar extends StatelessWidget {
+  const _ProviderSummaryBar({
+    required this.totalCount,
+    required this.pendingCount,
+    required this.decidedCount,
+  });
+
+  final int totalCount;
+  final int pendingCount;
+  final int decidedCount;
+
+  @override
+  Widget build(BuildContext context) {
+    return Wrap(
+      spacing: 8,
+      runSpacing: 8,
+      children: [
+        _ProviderSummaryPill(
+          key: const ValueKey('provider-summary-total'),
+          icon: Icons.inbox_rounded,
+          label: '$totalCount Total',
+        ),
+        _ProviderSummaryPill(
+          key: const ValueKey('provider-summary-pending'),
+          icon: Icons.schedule_rounded,
+          label: '$pendingCount Pending',
+        ),
+        _ProviderSummaryPill(
+          key: const ValueKey('provider-summary-decided'),
+          icon: Icons.check_circle_outline_rounded,
+          label: '$decidedCount Decided',
+        ),
+      ],
+    );
+  }
+}
+
+class _ProviderSummaryPill extends StatelessWidget {
+  const _ProviderSummaryPill({
+    super.key,
+    required this.icon,
+    required this.label,
+  });
+
+  final IconData icon;
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 11, vertical: 6),
+      decoration: BoxDecoration(
+        color: kPrimarySoft,
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 14, color: kPrimary),
+          const SizedBox(width: 5),
+          Text(
+            label,
+            style: poppins(
               fontSize: 12,
               fontWeight: FontWeight.w600,
               color: kPrimary,

@@ -13,11 +13,24 @@ final adminScholarshipSearchQueryProvider =
 final adminScholarshipFilterProvider =
     StateProvider.autoDispose<String>((ref) => 'all'); // 'all', 'active', 'inactive'
 
-class AdminScholarshipsTab extends ConsumerWidget {
+class AdminScholarshipsTab extends ConsumerStatefulWidget {
   const AdminScholarshipsTab({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<AdminScholarshipsTab> createState() => _AdminScholarshipsTabState();
+}
+
+class _AdminScholarshipsTabState extends ConsumerState<AdminScholarshipsTab> {
+  final TextEditingController _searchController = TextEditingController();
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final scholarshipsAsync = ref.watch(scholarshipsProvider);
     final searchQuery = ref.watch(adminScholarshipSearchQueryProvider);
     final statusFilter = ref.watch(adminScholarshipFilterProvider);
@@ -46,9 +59,22 @@ class AdminScholarshipsTab extends ConsumerWidget {
                 ),
                 const SizedBox(height: 14),
                 TextField(
+                  controller: _searchController,
                   decoration: InputDecoration(
                     hintText: 'Search by scholarship or provider...',
                     prefixIcon: const Icon(Icons.search_rounded, size: 20),
+                    suffixIcon: searchQuery.isNotEmpty
+                        ? IconButton(
+                            icon: const Icon(Icons.close_rounded, size: 18),
+                            tooltip: 'Clear search',
+                            onPressed: () {
+                              _searchController.clear();
+                              ref
+                                  .read(adminScholarshipSearchQueryProvider.notifier)
+                                  .state = '';
+                            },
+                          )
+                        : null,
                     contentPadding: const EdgeInsets.symmetric(
                       horizontal: 16,
                       vertical: 12,

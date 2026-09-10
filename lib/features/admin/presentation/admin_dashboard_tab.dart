@@ -17,9 +17,15 @@ class AdminDashboardTab extends ConsumerWidget {
     final applicationsAsync = ref.watch(incomingApplicationsProvider);
 
     return ResponsiveContainer(
-      child: ListView(
-        padding: const EdgeInsets.fromLTRB(20, 16, 20, 32),
-        children: [
+      child: RefreshIndicator(
+        onRefresh: () async {
+          ref.invalidate(scholarshipsProvider);
+          ref.invalidate(incomingApplicationsProvider);
+        },
+        child: ListView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          padding: const EdgeInsets.fromLTRB(20, 16, 20, 32),
+          children: [
           Text(
             'System Overview',
             style: poppins(
@@ -90,6 +96,7 @@ class AdminDashboardTab extends ConsumerWidget {
             },
           ),
         ],
+        ),
       ),
     );
   }

@@ -472,4 +472,47 @@ void main() {
     expect(find.text('Juan Dela Cruz'), findsOneWidget);
     expect(find.text('Maria Santos'), findsOneWidget);
   });
+
+  testWidgets('renders queue summary bar with Total, Pending, and Decided counts and shows Review affordance', (tester) async {
+    final applications = FakeApplicationDataSource();
+    applications.scholarshipIndex['sch-1'] = {'id': 'sch-1', 'created_by': 'prov-1'};
+    await applications.insertApplication('applicant-1', {
+      'user_id': 'applicant-1',
+      'scholarship_id': 'sch-1',
+      'status': 'submitted',
+    });
+    await applications.insertApplication('applicant-2', {
+      'user_id': 'applicant-2',
+      'scholarship_id': 'sch-1',
+      'status': 'approved',
+    });
+
+    final scholarships = FakeScholarshipDataSource([
+      {
+        ...FakeScholarshipDataSource.defaultRows.first,
+        'id': 'sch-1',
+        'title': 'Test Scholarship',
+      }
+    ]);
+
+    final profiles = FakeProfileDataSource();
+    profiles.rows['applicant-1'] = {'id': 'applicant-1', 'full_name': 'Juan Dela Cruz'};
+    profiles.rows['applicant-2'] = {'id': 'applicant-2', 'full_name': 'Maria Santos'};
+
+    await tester.pumpWidget(buildApp(
+      applications: applications,
+      scholarships: scholarships,
+      profiles: profiles,
+    ));
+    await tester.pumpAndSettle();
+
+    // Summary bar pills
+    expect(find.text('2 Total'), findsOneWidget);
+    expect(find.text('1 Pending'), findsOneWidget);
+    expect(find.text('1 Decided'), findsOneWidget);
+
+    // Non-terminal application (Juan) shows Review affordance
+    expect(find.text('Review'), findsOneWidget);
+    expect(find.byIcon(Icons.chevron_right_rounded), findsOneWidget);
+  });
 }

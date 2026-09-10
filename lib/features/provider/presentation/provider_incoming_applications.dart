@@ -99,9 +99,9 @@ class ProviderIncomingApplications extends ConsumerWidget {
   }
 }
 
-/// Resolves each applicant's display name through a provider-scoped lookup and
-/// renders the list. Kept as a separate widget so the applicant-name fetch can
-/// be awaited once from here rather than re-reading per row.
+/// Resolves each applicant's profile through a provider-scoped lookup and
+/// renders the list. Kept as a separate widget so the applicant-profile fetch
+/// can be awaited once from here rather than re-reading per row.
 class _ApplicantNameBuilder extends ConsumerWidget {
   const _ApplicantNameBuilder({
     required this.applications,
@@ -124,12 +124,10 @@ class _ApplicantNameBuilder extends ConsumerWidget {
       ),
       builder: (context, snapshot) {
         final profiles = snapshot.data;
-        final nameByUserId = <String, String>{};
+        final profileByUserId = <String, StudentProfile?>{};
         if (profiles != null) {
           for (var i = 0; i < applicantIds.length; i++) {
-            final profile = profiles[i];
-            nameByUserId[applicantIds[i]] =
-                profile?.fullName ?? 'Applicant';
+            profileByUserId[applicantIds[i]] = profiles[i];
           }
         }
 
@@ -145,7 +143,9 @@ class _ApplicantNameBuilder extends ConsumerWidget {
             application: applications[i],
             scholarship: byId[applications[i].scholarshipId],
             applicantName:
-                nameByUserId[applications[i].userId] ?? 'Applicant',
+                profileByUserId[applications[i].userId]?.fullName ??
+                    'Applicant',
+            applicantProfile: profileByUserId[applications[i].userId],
           ),
         );
       },
@@ -158,11 +158,13 @@ class _IncomingApplicationRow extends ConsumerWidget {
     required this.application,
     required this.scholarship,
     required this.applicantName,
+    this.applicantProfile,
   });
 
   final Application application;
   final Scholarship? scholarship;
   final String applicantName;
+  final StudentProfile? applicantProfile;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -258,18 +260,23 @@ class _IncomingApplicationRow extends ConsumerWidget {
 
     showModalBottomSheet<void>(
       context: context,
+      isScrollControlled: true,
+      showDragHandle: true,
       builder: (bottomSheetContext) {
         return SafeArea(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Text(
-                  'Update Application Status',
-                  style: poppins(fontSize: 18, fontWeight: FontWeight.w600),
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                  child: Text(
+                    'Update Application Status',
+                    style: poppins(fontSize: 18, fontWeight: FontWeight.w600),
+                  ),
                 ),
-              ),
+                if (applicantProfile != null)
+                  _ApplicantCredentialsCard(profile: applicantProfile!),
               for (final status in validNextStatuses)
                 ListTile(
                   leading: Icon(
@@ -307,9 +314,10 @@ class _IncomingApplicationRow extends ConsumerWidget {
                 ),
             ],
           ),
-        );
-      },
-    );
+        ),
+      );
+    },
+  );
   }
 
   Future<bool> _confirmTerminalStatus(
@@ -354,6 +362,62 @@ class _IncomingApplicationRow extends ConsumerWidget {
       'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
     ];
     return '${months[date.month - 1]} ${date.day}, ${date.year}';
+  }
+}
+
+class _ApplicantCredentialsCard extends StatelessWidget {
+  const _ApplicantCredentialsCard({required this.profile});
+
+  final StudentProfile profile;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: kPrimarySoft,
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            profile.fullName,
+            style: poppins(fontSize: 15, fontWeight: FontWeight.w600),
+          ),
+          const SizedBox(height: 8),
+          _credentialRow(Icons.school_outlined, profile.course),
+          if (profile.school != null && profile.school!.isNotEmpty)
+            _credentialRow(Icons.account_balance_outlined, profile.school!),
+          _credentialRow(
+            Icons.timeline_rounded,
+            'Year ${profile.yearLevel} · GPA ${profile.gpa.toStringAsFixed(1)}',
+          ),
+          _credentialRow(Icons.location_on_outlined, profile.region),
+        ],
+      ),
+    );
+  }
+
+  Widget _credentialRow(IconData icon, String text) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 4),
+      child: Row(
+        children: [
+          Icon(icon, size: 16, color: kPrimary),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Text(
+              text,
+              style: openSans(fontSize: 13, color: Colors.black87),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }
 

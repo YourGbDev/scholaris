@@ -302,4 +302,50 @@ void main() {
     expect(mockRepo.lastUpdatedId, 'app-3');
     expect(mockRepo.lastUpdatedStatus, ApplicationStatus.rejected);
   });
+
+  testWidgets('tapping a submitted row shows applicant credentials card in sheet', (tester) async {
+    final applications = FakeApplicationDataSource();
+    applications.scholarshipIndex['sch-1'] = {'id': 'sch-1', 'created_by': 'prov-1'};
+    await applications.insertApplication('applicant-1', {
+      'user_id': 'applicant-1',
+      'scholarship_id': 'sch-1',
+      'status': 'submitted',
+    });
+
+    final scholarships = FakeScholarshipDataSource([
+      {
+        ...FakeScholarshipDataSource.defaultRows.first,
+        'id': 'sch-1',
+        'title': 'Test Scholarship',
+      }
+    ]);
+
+    final profiles = FakeProfileDataSource();
+    profiles.rows['applicant-1'] = {
+      'id': 'applicant-1',
+      'full_name': 'Juan Dela Cruz',
+      'course': 'BS Computer Science',
+      'school': 'University of the Philippines',
+      'year_level': 3,
+      'gpa': 3.5,
+      'region': 'NCR',
+      'nationality': 'Filipino',
+    };
+
+    await tester.pumpWidget(buildApp(
+      applications: applications,
+      scholarships: scholarships,
+      profiles: profiles,
+    ));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('Test Scholarship'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Juan Dela Cruz'), findsWidgets);
+    expect(find.text('BS Computer Science'), findsOneWidget);
+    expect(find.text('University of the Philippines'), findsOneWidget);
+    expect(find.text('Year 3 · GPA 3.5'), findsOneWidget);
+    expect(find.text('NCR'), findsOneWidget);
+  });
 }

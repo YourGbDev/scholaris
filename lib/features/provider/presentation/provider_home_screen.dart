@@ -11,6 +11,7 @@
 // applied date and status resolved client-side.
 
 import 'package:flutter/material.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'package:scholaris/shared/theme/app_theme.dart';
 
@@ -23,7 +24,29 @@ class ProviderHomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: kBackground,
+      appBar: AppBar(
+        title: Text(
+          'Provider Console',
+          style: poppins(
+            fontSize: 20,
+            fontWeight: FontWeight.w700,
+            color: kPrimary,
+          ),
+        ),
+        centerTitle: false,
+        backgroundColor: kBackground,
+        elevation: 0,
+        scrolledUnderElevation: 0,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.logout_rounded, color: kError),
+            tooltip: 'Sign out',
+            onPressed: () => Supabase.instance.client.auth.signOut(),
+          ),
+        ],
+      ),
       body: SafeArea(
+        top: false,
         child: ProviderIncomingApplications(),
       ),
     );

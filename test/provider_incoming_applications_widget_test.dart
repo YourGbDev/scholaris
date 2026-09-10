@@ -348,4 +348,128 @@ void main() {
     expect(find.text('Year 3 · GPA 3.5'), findsOneWidget);
     expect(find.text('NCR'), findsOneWidget);
   });
+
+  testWidgets('applicant note renders in credentials card when present', (tester) async {
+    final applications = FakeApplicationDataSource();
+    applications.scholarshipIndex['sch-1'] = {'id': 'sch-1', 'created_by': 'prov-1'};
+    await applications.insertApplication('applicant-1', {
+      'user_id': 'applicant-1',
+      'scholarship_id': 'sch-1',
+      'status': 'submitted',
+      'notes': 'I am passionate about software engineering.',
+    });
+
+    final scholarships = FakeScholarshipDataSource([
+      {
+        ...FakeScholarshipDataSource.defaultRows.first,
+        'id': 'sch-1',
+        'title': 'Test Scholarship',
+      }
+    ]);
+
+    final profiles = FakeProfileDataSource();
+    profiles.rows['applicant-1'] = {
+      'id': 'applicant-1',
+      'full_name': 'Juan Dela Cruz',
+      'course': 'BS Computer Science',
+      'year_level': 3,
+      'gpa': 3.5,
+      'region': 'NCR',
+      'nationality': 'Filipino',
+    };
+
+    await tester.pumpWidget(buildApp(
+      applications: applications,
+      scholarships: scholarships,
+      profiles: profiles,
+    ));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('Test Scholarship'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Applicant Note'), findsOneWidget);
+    expect(find.text('I am passionate about software engineering.'), findsOneWidget);
+  });
+
+  testWidgets('status filter chips filter the applications list and show empty state when no matches', (tester) async {
+    final applications = FakeApplicationDataSource();
+    applications.scholarshipIndex['sch-1'] = {'id': 'sch-1', 'created_by': 'prov-1'};
+    await applications.insertApplication('applicant-1', {
+      'user_id': 'applicant-1',
+      'scholarship_id': 'sch-1',
+      'status': 'submitted',
+    });
+    await applications.insertApplication('applicant-2', {
+      'user_id': 'applicant-2',
+      'scholarship_id': 'sch-1',
+      'status': 'under_review',
+    });
+
+    final scholarships = FakeScholarshipDataSource([
+      {
+        ...FakeScholarshipDataSource.defaultRows.first,
+        'id': 'sch-1',
+        'title': 'Test Scholarship',
+      }
+    ]);
+
+    final profiles = FakeProfileDataSource();
+    profiles.rows['applicant-1'] = {
+      'id': 'applicant-1',
+      'full_name': 'Juan Dela Cruz',
+      'course': 'BS CS',
+      'year_level': 2,
+      'gpa': 3.0,
+      'region': 'NCR',
+      'nationality': 'Filipino',
+    };
+    profiles.rows['applicant-2'] = {
+      'id': 'applicant-2',
+      'full_name': 'Maria Santos',
+      'course': 'BS IT',
+      'year_level': 3,
+      'gpa': 3.2,
+      'region': 'NCR',
+      'nationality': 'Filipino',
+    };
+
+    await tester.pumpWidget(buildApp(
+      applications: applications,
+      scholarships: scholarships,
+      profiles: profiles,
+    ));
+    await tester.pumpAndSettle();
+
+    // Verify filter chips exist
+    expect(find.byKey(const ValueKey('provider-filter-all')), findsOneWidget);
+    expect(find.byKey(const ValueKey('provider-filter-submitted')), findsOneWidget);
+    expect(find.byKey(const ValueKey('provider-filter-under_review')), findsOneWidget);
+    expect(find.byKey(const ValueKey('provider-filter-approved')), findsOneWidget);
+
+    // Filter by Submitted
+    await tester.ensureVisible(find.byKey(const ValueKey('provider-filter-submitted')));
+    await tester.tap(find.byKey(const ValueKey('provider-filter-submitted')));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Juan Dela Cruz'), findsOneWidget);
+    expect(find.text('Maria Santos'), findsNothing);
+
+    // Filter by Approved (0 items)
+    await tester.ensureVisible(find.byKey(const ValueKey('provider-filter-approved')));
+    await tester.tap(find.byKey(const ValueKey('provider-filter-approved')));
+    await tester.pumpAndSettle();
+
+    expect(find.text('No approved applications'), findsOneWidget);
+    expect(find.text('Juan Dela Cruz'), findsNothing);
+    expect(find.text('Maria Santos'), findsNothing);
+
+    // Back to All
+    await tester.ensureVisible(find.byKey(const ValueKey('provider-filter-all')));
+    await tester.tap(find.byKey(const ValueKey('provider-filter-all')));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Juan Dela Cruz'), findsOneWidget);
+    expect(find.text('Maria Santos'), findsOneWidget);
+  });
 }

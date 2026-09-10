@@ -33,6 +33,9 @@ import 'package:scholaris/shared/theme/app_theme.dart';
 import 'package:scholaris/shared/widgets/responsive_container.dart';
 import 'package:scholaris/shared/widgets/state_views.dart';
 
+final providerStatusFilterProvider =
+    StateProvider.autoDispose<ApplicationStatus?>((ref) => null);
+
 class ProviderIncomingApplications extends ConsumerWidget {
   const ProviderIncomingApplications({super.key});
 
@@ -40,6 +43,7 @@ class ProviderIncomingApplications extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final applicationsAsync = ref.watch(incomingApplicationsProvider);
     final scholarshipsAsync = ref.watch(scholarshipsProvider);
+    final selectedStatus = ref.watch(providerStatusFilterProvider);
 
     return ResponsiveContainer(
       child: Column(
@@ -74,21 +78,64 @@ class ProviderIncomingApplications extends ConsumerWidget {
                   );
                 }
 
-                return scholarshipsAsync.when(
-                  loading: () => const LoadingView(),
-                  error: (_, _) => ErrorView(
-                    message: 'Could not load scholarship details.',
-                    onRetry: () => ref.invalidate(scholarshipsProvider),
-                  ),
-                  data: (all) {
-                    final byId = <String, Scholarship>{
-                      for (final s in all) s.id: s,
-                    };
-                    return _ApplicantNameBuilder(
-                      applications: applications,
-                      byId: byId,
-                    );
-                  },
+                final counts = <ApplicationStatus, int>{
+                  for (final s in const [
+                    ApplicationStatus.submitted,
+                    ApplicationStatus.underReview,
+                    ApplicationStatus.approved,
+                    ApplicationStatus.rejected,
+                  ])
+                    s: applications.where((a) => a.status == s).length,
+                };
+
+                final filteredApplications = selectedStatus == null
+                    ? applications
+                    : applications
+                        .where((a) => a.status == selectedStatus)
+                        .toList();
+
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(20, 8, 20, 12),
+                      child: _ProviderStatusFilterBar(
+                        counts: counts,
+                        totalCount: applications.length,
+                        selected: selectedStatus,
+                        onSelect: (status) => ref
+                            .read(providerStatusFilterProvider.notifier)
+                            .state = status,
+                      ),
+                    ),
+                    Expanded(
+                      child: filteredApplications.isEmpty
+                          ? EmptyView(
+                              icon: Icons.filter_list_off_rounded,
+                              title:
+                                  'No ${ApplicationStatusUi.of(selectedStatus!).label.toLowerCase()} applications',
+                              message:
+                                  'No incoming applications match this status filter.',
+                            )
+                          : scholarshipsAsync.when(
+                              loading: () => const LoadingView(),
+                              error: (_, _) => ErrorView(
+                                message: 'Could not load scholarship details.',
+                                onRetry: () =>
+                                    ref.invalidate(scholarshipsProvider),
+                              ),
+                              data: (all) {
+                                final byId = <String, Scholarship>{
+                                  for (final s in all) s.id: s,
+                                };
+                                return _ApplicantNameBuilder(
+                                  applications: filteredApplications,
+                                  byId: byId,
+                                );
+                              },
+                            ),
+                    ),
+                  ],
                 );
               },
             ),
@@ -135,17 +182,22 @@ class _ApplicantNameBuilder extends ConsumerWidget {
           return const LoadingView();
         }
 
-        return ListView.separated(
-          padding: const EdgeInsets.fromLTRB(20, 12, 20, 32),
-          itemCount: applications.length,
-          separatorBuilder: (_, _) => const SizedBox(height: 14),
-          itemBuilder: (_, i) => _IncomingApplicationRow(
-            application: applications[i],
-            scholarship: byId[applications[i].scholarshipId],
-            applicantName:
-                profileByUserId[applications[i].userId]?.fullName ??
-                    'Applicant',
-            applicantProfile: profileByUserId[applications[i].userId],
+        return RefreshIndicator(
+          onRefresh: () =>
+              ref.read(incomingApplicationsProvider.notifier).refresh(),
+          child: ListView.separated(
+            physics: const AlwaysScrollableScrollPhysics(),
+            padding: const EdgeInsets.fromLTRB(20, 12, 20, 32),
+            itemCount: applications.length,
+            separatorBuilder: (_, _) => const SizedBox(height: 14),
+            itemBuilder: (_, i) => _IncomingApplicationRow(
+              application: applications[i],
+              scholarship: byId[applications[i].scholarshipId],
+              applicantName:
+                  profileByUserId[applications[i].userId]?.fullName ??
+                      'Applicant',
+              applicantProfile: profileByUserId[applications[i].userId],
+            ),
           ),
         );
       },
@@ -276,7 +328,10 @@ class _IncomingApplicationRow extends ConsumerWidget {
                   ),
                 ),
                 if (applicantProfile != null)
-                  _ApplicantCredentialsCard(profile: applicantProfile!),
+                  _ApplicantCredentialsCard(
+                    profile: applicantProfile!,
+                    notes: application.notes,
+                  ),
               for (final status in validNextStatuses)
                 ListTile(
                   leading: Icon(
@@ -366,9 +421,13 @@ class _IncomingApplicationRow extends ConsumerWidget {
 }
 
 class _ApplicantCredentialsCard extends StatelessWidget {
-  const _ApplicantCredentialsCard({required this.profile});
+  const _ApplicantCredentialsCard({
+    required this.profile,
+    this.notes,
+  });
 
   final StudentProfile profile;
+  final String? notes;
 
   @override
   Widget build(BuildContext context) {
@@ -395,6 +454,38 @@ class _ApplicantCredentialsCard extends StatelessWidget {
             'Year ${profile.yearLevel} · GPA ${profile.gpa.toStringAsFixed(1)}',
           ),
           _credentialRow(Icons.location_on_outlined, profile.region),
+          if (notes != null && notes!.trim().isNotEmpty) ...[
+            const SizedBox(height: 10),
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Applicant Note',
+                    style: poppins(
+                      fontSize: 11,
+                      fontWeight: FontWeight.w600,
+                      color: kPrimary,
+                    ),
+                  ),
+                  const SizedBox(height: 3),
+                  Text(
+                    notes!,
+                    style: openSans(
+                      fontSize: 13,
+                      color: Colors.black87,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
         ],
       ),
     );
@@ -416,6 +507,99 @@ class _ApplicantCredentialsCard extends StatelessWidget {
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class _ProviderStatusFilterBar extends StatelessWidget {
+  const _ProviderStatusFilterBar({
+    required this.counts,
+    required this.totalCount,
+    required this.selected,
+    required this.onSelect,
+  });
+
+  final Map<ApplicationStatus, int> counts;
+  final int totalCount;
+  final ApplicationStatus? selected;
+  final ValueChanged<ApplicationStatus?> onSelect;
+
+  @override
+  Widget build(BuildContext context) {
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: Row(
+        children: [
+          _ProviderStatusFilterChip(
+            key: const ValueKey('provider-filter-all'),
+            label: 'All',
+            count: totalCount,
+            selected: selected == null,
+            onTap: () => onSelect(null),
+          ),
+          for (final status in const [
+            ApplicationStatus.submitted,
+            ApplicationStatus.underReview,
+            ApplicationStatus.approved,
+            ApplicationStatus.rejected,
+          ]) ...[
+            const SizedBox(width: 8),
+            _ProviderStatusFilterChip(
+              key: ValueKey('provider-filter-${status.dbValue}'),
+              label: ApplicationStatusUi.of(status).label,
+              count: counts[status] ?? 0,
+              selected: selected == status,
+              onTap: () => onSelect(status),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+}
+
+class _ProviderStatusFilterChip extends StatelessWidget {
+  const _ProviderStatusFilterChip({
+    super.key,
+    required this.label,
+    required this.count,
+    required this.selected,
+    required this.onTap,
+  });
+
+  final String label;
+  final int count;
+  final bool selected;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final foreground = selected ? Colors.white : kPrimary;
+    final background = selected ? kPrimary : kPrimarySoft;
+
+    return Semantics(
+      button: true,
+      selected: selected,
+      label: '$label ($count)',
+      child: Material(
+        color: background,
+        borderRadius: BorderRadius.circular(20),
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(20),
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
+            child: Text(
+              '$label ($count)',
+              style: poppins(
+                fontSize: 12,
+                fontWeight: FontWeight.w600,
+                color: foreground,
+              ),
+            ),
+          ),
+        ),
       ),
     );
   }

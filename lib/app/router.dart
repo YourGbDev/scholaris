@@ -20,6 +20,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 //   verify_email_screen.dart → VerifyEmailScreen({String? email})
 //   home_screen.dart         → HomeScreen()
 //   profile_setup_screen.dart → ProfileSetupScreen({required String step})
+import 'package:scholaris/features/admin/presentation/admin_home_screen.dart';
 import 'package:scholaris/features/auth/controllers/auth_controller.dart';
 import 'package:scholaris/features/auth/presentation/ceremony_screen.dart';
 import 'package:scholaris/features/auth/presentation/forgot_password_screen.dart';
@@ -158,6 +159,12 @@ final routerProvider = Provider<GoRouter>((ref) {
         path: '/provider-home',
         name: 'provider-home',
         builder: (context, state) => const ProviderHomeScreen(),
+      ),
+      // Persistent landing route for signed-in users with role='admin'.
+      GoRoute(
+        path: '/admin-home',
+        name: 'admin-home',
+        builder: (context, state) => const AdminHomeScreen(),
       ),
 
       // --- First-launch onboarding --------------------------------------------
@@ -368,6 +375,12 @@ abstract final class ProviderRoute {
   static const home = '/provider-home';
 }
 
+/// Route path constants for the admin surfaces reached through the role
+/// branch of [authRedirectDecision].
+abstract final class AdminRoute {
+  static const home = '/admin-home';
+}
+
 /// The classic auth screens a signed-out user may always reach. `/ceremony` is
 /// handled separately by [_redirect] so it can share the signed-out behavior
 /// without being treated as a login/signup target elsewhere.
@@ -474,6 +487,7 @@ String? onboardingRedirectDecision({
   final signedInDestination =
       authDecision == '/home' ||
       authDecision == ProviderRoute.home ||
+      authDecision == AdminRoute.home ||
       (authDecision != null && authDecision.startsWith('/profile-setup'));
   if (signedInDestination) return authDecision;
 
@@ -537,6 +551,12 @@ String? authRedirectDecision({
 
   if (profileLoading) {
     return null;
+  }
+
+  // Admin branch: a role='admin' account lands on its persistent console,
+  // never on the student /profile-setup wizard or /home.
+  if (role == 'admin') {
+    return location == AdminRoute.home ? null : AdminRoute.home;
   }
 
   // Provider branch: a role='provider' account lands on its persistent home,

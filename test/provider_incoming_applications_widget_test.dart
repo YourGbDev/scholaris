@@ -156,7 +156,7 @@ void main() {
     expect(find.text('Update Application Status'), findsNothing);
   });
 
-  testWidgets('selecting a status option calls updateStatus', (tester) async {
+  testWidgets('selecting Under review updates status directly without confirmation dialog', (tester) async {
     final mockRepo = _MockApplicationRepository();
 
     final scholarships = FakeScholarshipDataSource([
@@ -183,7 +183,123 @@ void main() {
     await tester.tap(find.text('Under review'));
     await tester.pumpAndSettle();
 
+    // No dialog shown, directly updated
+    expect(find.byType(AlertDialog), findsNothing);
     expect(mockRepo.lastUpdatedId, 'app-3');
     expect(mockRepo.lastUpdatedStatus, ApplicationStatus.underReview);
+  });
+
+  testWidgets('selecting Approved shows confirmation dialog and Cancel aborts update', (tester) async {
+    final mockRepo = _MockApplicationRepository();
+
+    final scholarships = FakeScholarshipDataSource([
+      {
+        ...FakeScholarshipDataSource.defaultRows.first,
+        'id': 'sch-1',
+        'title': 'Test Scholarship',
+      }
+    ]);
+
+    final profiles = FakeProfileDataSource();
+    profiles.rows['applicant-3'] = {'id': 'applicant-3', 'full_name': 'Jose Rizal'};
+
+    await tester.pumpWidget(buildAppWithRepo(
+      mockRepo,
+      scholarships: scholarships,
+      profiles: profiles,
+    ));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('Test Scholarship'));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('Approved'));
+    await tester.pumpAndSettle();
+
+    // Confirmation dialog is shown
+    expect(find.byType(AlertDialog), findsOneWidget);
+    expect(find.text('Approve Application'), findsOneWidget);
+    expect(find.text('Cancel'), findsOneWidget);
+
+    // Tap Cancel
+    await tester.tap(find.text('Cancel'));
+    await tester.pumpAndSettle();
+
+    // Dialog dismissed and no update was made
+    expect(find.byType(AlertDialog), findsNothing);
+    expect(mockRepo.lastUpdatedStatus, isNull);
+  });
+
+  testWidgets('selecting Approved shows confirmation dialog and Confirm updates status', (tester) async {
+    final mockRepo = _MockApplicationRepository();
+
+    final scholarships = FakeScholarshipDataSource([
+      {
+        ...FakeScholarshipDataSource.defaultRows.first,
+        'id': 'sch-1',
+        'title': 'Test Scholarship',
+      }
+    ]);
+
+    final profiles = FakeProfileDataSource();
+    profiles.rows['applicant-3'] = {'id': 'applicant-3', 'full_name': 'Jose Rizal'};
+
+    await tester.pumpWidget(buildAppWithRepo(
+      mockRepo,
+      scholarships: scholarships,
+      profiles: profiles,
+    ));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('Test Scholarship'));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('Approved'));
+    await tester.pumpAndSettle();
+
+    // Tap confirm action button inside AlertDialog
+    expect(find.byType(AlertDialog), findsOneWidget);
+    await tester.tap(find.widgetWithText(FilledButton, 'Approve'));
+    await tester.pumpAndSettle();
+
+    expect(mockRepo.lastUpdatedId, 'app-3');
+    expect(mockRepo.lastUpdatedStatus, ApplicationStatus.approved);
+  });
+
+  testWidgets('selecting Rejected shows confirmation dialog and Confirm updates status', (tester) async {
+    final mockRepo = _MockApplicationRepository();
+
+    final scholarships = FakeScholarshipDataSource([
+      {
+        ...FakeScholarshipDataSource.defaultRows.first,
+        'id': 'sch-1',
+        'title': 'Test Scholarship',
+      }
+    ]);
+
+    final profiles = FakeProfileDataSource();
+    profiles.rows['applicant-3'] = {'id': 'applicant-3', 'full_name': 'Jose Rizal'};
+
+    await tester.pumpWidget(buildAppWithRepo(
+      mockRepo,
+      scholarships: scholarships,
+      profiles: profiles,
+    ));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('Test Scholarship'));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('Rejected'));
+    await tester.pumpAndSettle();
+
+    // Tap confirm action button inside AlertDialog
+    expect(find.byType(AlertDialog), findsOneWidget);
+    expect(find.text('Reject Application'), findsOneWidget);
+    await tester.tap(find.widgetWithText(FilledButton, 'Reject'));
+    await tester.pumpAndSettle();
+
+    expect(mockRepo.lastUpdatedId, 'app-3');
+    expect(mockRepo.lastUpdatedStatus, ApplicationStatus.rejected);
   });
 }

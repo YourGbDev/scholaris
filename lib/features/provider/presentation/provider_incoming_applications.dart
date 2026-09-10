@@ -279,6 +279,17 @@ class _IncomingApplicationRow extends ConsumerWidget {
                   title: Text(ApplicationStatusUi.of(status).label),
                   onTap: () async {
                     Navigator.of(bottomSheetContext).pop();
+
+                    final isTerminalTransition =
+                        status == ApplicationStatus.approved ||
+                        status == ApplicationStatus.rejected;
+
+                    if (isTerminalTransition) {
+                      final confirmed =
+                          await _confirmTerminalStatus(context, status);
+                      if (!confirmed) return;
+                    }
+
                     try {
                       await ref
                           .read(applicationRepositoryProvider)
@@ -287,7 +298,9 @@ class _IncomingApplicationRow extends ConsumerWidget {
                     } catch (e) {
                       if (!context.mounted) return;
                       ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Failed to update status.')),
+                        const SnackBar(
+                          content: Text('Failed to update status.'),
+                        ),
                       );
                     }
                   },
@@ -297,6 +310,42 @@ class _IncomingApplicationRow extends ConsumerWidget {
         );
       },
     );
+  }
+
+  Future<bool> _confirmTerminalStatus(
+    BuildContext context,
+    ApplicationStatus status,
+  ) async {
+    final actionLabel =
+        status == ApplicationStatus.approved ? 'Approve' : 'Reject';
+    final result = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: Text(
+          '$actionLabel Application',
+          style: poppins(fontWeight: FontWeight.w600, fontSize: 18),
+        ),
+        content: Text(
+          'Are you sure you want to ${actionLabel.toLowerCase()} the application for $applicantName? This decision is final.',
+          style: openSans(fontSize: 14),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(dialogContext).pop(false),
+            child: const Text('Cancel'),
+          ),
+          FilledButton(
+            style: FilledButton.styleFrom(
+              backgroundColor:
+                  status == ApplicationStatus.approved ? kPrimary : kError,
+            ),
+            onPressed: () => Navigator.of(dialogContext).pop(true),
+            child: Text(actionLabel),
+          ),
+        ],
+      ),
+    );
+    return result ?? false;
   }
 
   String _formatDate(DateTime date) {

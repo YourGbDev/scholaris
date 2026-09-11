@@ -4,9 +4,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:scholaris/features/applications/models/application.dart';
 import 'package:scholaris/features/applications/providers/applications_provider.dart';
 import 'package:scholaris/features/scholarships/providers/scholarships_provider.dart';
-import 'package:scholaris/shared/theme/app_theme.dart';
 import 'package:scholaris/shared/widgets/responsive_container.dart';
 import 'package:scholaris/shared/widgets/state_views.dart';
+
+import 'admin_theme.dart';
 
 class AdminDashboardTab extends ConsumerWidget {
   const AdminDashboardTab({super.key});
@@ -18,90 +19,92 @@ class AdminDashboardTab extends ConsumerWidget {
 
     return ResponsiveContainer(
       child: RefreshIndicator(
+        color: kAdminBridgeGreen,
         onRefresh: () async {
           ref.invalidate(scholarshipsProvider);
           ref.invalidate(incomingApplicationsProvider);
         },
         child: ListView(
           physics: const AlwaysScrollableScrollPhysics(),
-          padding: const EdgeInsets.fromLTRB(20, 16, 20, 32),
+          padding: const EdgeInsets.fromLTRB(24, 20, 24, 32),
           children: [
-          Text(
-            'System Overview',
-            style: poppins(
-              fontSize: 22,
-              fontWeight: FontWeight.w700,
-              color: kPrimary,
-            ),
-          ),
-          const SizedBox(height: 4),
-          Text(
-            'Live monitoring across scholarships, applications, and system roles.',
-            style: openSans(fontSize: 13, color: Colors.black54),
-          ),
-          const SizedBox(height: 20),
-          scholarshipsAsync.when(
-            loading: () => const Center(
-              child: Padding(
-                padding: EdgeInsets.all(32.0),
-                child: LoadingView(),
+            Text(
+              'System Overview',
+              style: adminHeaderStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.w700,
+                color: kAdminNavyTrust,
               ),
             ),
-            error: (_, _) => const ErrorView(
-              message: 'Failed to load scholarship statistics.',
+            const SizedBox(height: 4),
+            Text(
+              'Live monitoring across scholarships, applications, and system roles.',
+              style: adminLabelStyle(fontSize: 13, color: kAdminTextSecondary),
             ),
-            data: (scholarships) {
-              final activeScholarships = scholarships.where((s) => s.isActive).length;
+            const SizedBox(height: 18),
+            scholarshipsAsync.when(
+              loading: () => const Center(
+                child: Padding(
+                  padding: EdgeInsets.all(32.0),
+                  child: LoadingView(),
+                ),
+              ),
+              error: (_, _) => const ErrorView(
+                message: 'Failed to load scholarship statistics.',
+              ),
+              data: (scholarships) {
+                final activeScholarships =
+                    scholarships.where((s) => s.isActive).length;
 
-              return applicationsAsync.when(
-                loading: () => const Center(
-                  child: Padding(
-                    padding: EdgeInsets.all(32.0),
-                    child: LoadingView(),
+                return applicationsAsync.when(
+                  loading: () => const Center(
+                    child: Padding(
+                      padding: EdgeInsets.all(32.0),
+                      child: LoadingView(),
+                    ),
                   ),
-                ),
-                error: (_, _) => _buildStatsGrid(
-                  activeScholarships: activeScholarships,
-                  totalApplications: 0,
-                  approvedCount: 0,
-                  underReviewCount: 0,
-                  submittedCount: 0,
-                  rejectedCount: 0,
-                ),
-                data: (applications) {
-                  final totalApps = applications.length;
-                  final approved = applications
-                      .where((a) => a.status == ApplicationStatus.approved)
-                      .length;
-                  final underReview = applications
-                      .where((a) => a.status == ApplicationStatus.underReview)
-                      .length;
-                  final submitted = applications
-                      .where((a) => a.status == ApplicationStatus.submitted)
-                      .length;
-                  final rejected = applications
-                      .where((a) => a.status == ApplicationStatus.rejected)
-                      .length;
-
-                  return _buildStatsGrid(
+                  error: (_, _) => _buildDashboardContent(
                     activeScholarships: activeScholarships,
-                    totalApplications: totalApps,
-                    approvedCount: approved,
-                    underReviewCount: underReview,
-                    submittedCount: submitted,
-                    rejectedCount: rejected,
-                  );
-                },
-              );
-            },
-          ),
-        ],
+                    totalApplications: 0,
+                    approvedCount: 0,
+                    underReviewCount: 0,
+                    submittedCount: 0,
+                    rejectedCount: 0,
+                  ),
+                  data: (applications) {
+                    final totalApps = applications.length;
+                    final approved = applications
+                        .where((a) => a.status == ApplicationStatus.approved)
+                        .length;
+                    final underReview = applications
+                        .where((a) => a.status == ApplicationStatus.underReview)
+                        .length;
+                    final submitted = applications
+                        .where((a) => a.status == ApplicationStatus.submitted)
+                        .length;
+                    final rejected = applications
+                        .where((a) => a.status == ApplicationStatus.rejected)
+                        .length;
+
+                    return _buildDashboardContent(
+                      activeScholarships: activeScholarships,
+                      totalApplications: totalApps,
+                      approvedCount: approved,
+                      underReviewCount: underReview,
+                      submittedCount: submitted,
+                      rejectedCount: rejected,
+                    );
+                  },
+                );
+              },
+            ),
+          ],
         ),
       ),
     );
   }
 
-  Widget _buildStatsGrid({
+  Widget _buildDashboardContent({
     required int activeScholarships,
     required int totalApplications,
     required int approvedCount,
@@ -116,132 +119,65 @@ class AdminDashboardTab extends ConsumerWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        LayoutBuilder(
-          builder: (context, constraints) {
-            final isWide = constraints.maxWidth > 500;
-            final cardWidth = isWide
-                ? (constraints.maxWidth - 12) / 2
-                : constraints.maxWidth;
-
-            return Wrap(
-              spacing: 12,
-              runSpacing: 12,
-              children: [
-                SizedBox(
-                  width: cardWidth,
-                  child: _MetricCard(
-                    title: 'Active Scholarships',
-                    value: '$activeScholarships',
-                    icon: Icons.school_rounded,
-                    color: kPrimary,
-                  ),
-                ),
-                SizedBox(
-                  width: cardWidth,
-                  child: _MetricCard(
-                    title: 'Total Applications',
-                    value: '$totalApplications',
-                    icon: Icons.assignment_rounded,
-                    color: const Color(0xFF2563EB),
-                  ),
-                ),
-                SizedBox(
-                  width: cardWidth,
-                  child: _MetricCard(
-                    title: 'Approved Grants',
-                    value: '$approvedCount',
-                    icon: Icons.check_circle_rounded,
-                    color: const Color(0xFF16A34A),
-                  ),
-                ),
-                SizedBox(
-                  width: cardWidth,
-                  child: _MetricCard(
-                    title: 'Acceptance Rate',
-                    value: '$acceptanceRate%',
-                    icon: Icons.trending_up_rounded,
-                    color: const Color(0xFFD97706),
-                  ),
-                ),
-              ],
-            );
-          },
-        ),
-        const SizedBox(height: 28),
-        Text(
-          'Application Pipeline',
-          style: poppins(
-            fontSize: 17,
-            fontWeight: FontWeight.w600,
-            color: kPrimary,
-          ),
-        ),
-        const SizedBox(height: 12),
-        Container(
-          padding: const EdgeInsets.all(16),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(kRadiusCard),
-            boxShadow: const [
-              BoxShadow(
-                color: kCardShadow,
-                blurRadius: 14,
-                offset: Offset(0, 4),
-              ),
-            ],
-          ),
-          child: Column(
-            children: [
-              _PipelineRow(
-                label: 'Submitted',
-                count: submittedCount,
-                color: const Color(0xFF0284C7),
-                icon: Icons.send_rounded,
-              ),
-              const Divider(height: 20),
-              _PipelineRow(
-                label: 'Under Review',
-                count: underReviewCount,
-                color: const Color(0xFFD97706),
-                icon: Icons.search_rounded,
-              ),
-              const Divider(height: 20),
-              _PipelineRow(
-                label: 'Approved',
-                count: approvedCount,
-                color: const Color(0xFF16A34A),
-                icon: Icons.check_circle_rounded,
-              ),
-              const Divider(height: 20),
-              _PipelineRow(
-                label: 'Rejected',
-                count: rejectedCount,
-                color: const Color(0xFFDC2626),
-                icon: Icons.cancel_rounded,
-              ),
-            ],
-          ),
+        // Compact Stat Strip
+        _CompactStatStrip(
+          activeScholarships: activeScholarships,
+          totalApplications: totalApplications,
+          approvedCount: approvedCount,
+          acceptanceRate: '$acceptanceRate%',
         ),
         const SizedBox(height: 24),
+        // Pipeline Section Header
+        Text(
+          'Application Pipeline',
+          style: adminHeaderStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.w600,
+            color: kAdminNavyTrust,
+          ),
+        ),
+        const SizedBox(height: 10),
+        // Dense Pipeline Table
+        _DensePipelineTable(
+          totalApplications: totalApplications,
+          submittedCount: submittedCount,
+          underReviewCount: underReviewCount,
+          approvedCount: approvedCount,
+          rejectedCount: rejectedCount,
+        ),
+        const SizedBox(height: 20),
+        // System Ops / Security Banner
         Container(
-          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
           decoration: BoxDecoration(
-            color: const Color(0xFFF0FDF4),
-            borderRadius: BorderRadius.circular(10),
-            border: Border.all(color: const Color(0xFFBBF7D0)),
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(6),
+            border: Border.all(color: kAdminHairline, width: 1),
           ),
           child: Row(
             children: [
-              const Icon(Icons.security_rounded, color: Color(0xFF16A34A), size: 20),
-              const SizedBox(width: 10),
+              const Icon(
+                Icons.shield_outlined,
+                color: kAdminBridgeGreen,
+                size: 16,
+              ),
+              const SizedBox(width: 8),
               Expanded(
                 child: Text(
                   'Role-Based Security & Supabase RLS Active',
-                  style: openSans(
+                  style: adminBodyStyle(
                     fontSize: 12,
                     fontWeight: FontWeight.w600,
-                    color: const Color(0xFF166534),
+                    color: kAdminNavyTrust,
                   ),
+                ),
+              ),
+              Text(
+                'FAIL-CLOSED',
+                style: adminDataMono(
+                  fontSize: 11,
+                  fontWeight: FontWeight.w600,
+                  color: kAdminBridgeGreen,
                 ),
               ),
             ],
@@ -252,69 +188,277 @@ class AdminDashboardTab extends ConsumerWidget {
   }
 }
 
-class _MetricCard extends StatelessWidget {
-  const _MetricCard({
-    required this.title,
-    required this.value,
-    required this.icon,
-    required this.color,
+class _CompactStatStrip extends StatelessWidget {
+  const _CompactStatStrip({
+    required this.activeScholarships,
+    required this.totalApplications,
+    required this.approvedCount,
+    required this.acceptanceRate,
   });
 
-  final String title;
+  final int activeScholarships;
+  final int totalApplications;
+  final int approvedCount;
+  final String acceptanceRate;
+
+  @override
+  Widget build(BuildContext context) {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final isNarrow = constraints.maxWidth < 540;
+
+        if (isNarrow) {
+          return Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(6),
+              border: Border.all(color: kAdminHairline, width: 1),
+            ),
+            child: Column(
+              children: [
+                Row(
+                  children: [
+                    Expanded(
+                      child: _StatCell(
+                        label: 'Active Scholarships',
+                        value: '$activeScholarships',
+                      ),
+                    ),
+                    Container(width: 1, height: 50, color: kAdminHairline),
+                    Expanded(
+                      child: _StatCell(
+                        label: 'Total Applications',
+                        value: '$totalApplications',
+                      ),
+                    ),
+                  ],
+                ),
+                const Divider(height: 1, color: kAdminHairline),
+                Row(
+                  children: [
+                    Expanded(
+                      child: _StatCell(
+                        label: 'Approved Grants',
+                        value: '$approvedCount',
+                      ),
+                    ),
+                    Container(width: 1, height: 50, color: kAdminHairline),
+                    Expanded(
+                      child: _StatCell(
+                        label: 'Acceptance Rate',
+                        value: acceptanceRate,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          );
+        }
+
+        return Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(6),
+            border: Border.all(color: kAdminHairline, width: 1),
+          ),
+          child: IntrinsicHeight(
+            child: Row(
+              children: [
+                Expanded(
+                  child: _StatCell(
+                    label: 'Active Scholarships',
+                    value: '$activeScholarships',
+                  ),
+                ),
+                const VerticalDivider(width: 1, thickness: 1, color: kAdminHairline),
+                Expanded(
+                  child: _StatCell(
+                    label: 'Total Applications',
+                    value: '$totalApplications',
+                  ),
+                ),
+                const VerticalDivider(width: 1, thickness: 1, color: kAdminHairline),
+                Expanded(
+                  child: _StatCell(
+                    label: 'Approved Grants',
+                    value: '$approvedCount',
+                  ),
+                ),
+                const VerticalDivider(width: 1, thickness: 1, color: kAdminHairline),
+                Expanded(
+                  child: _StatCell(
+                    label: 'Acceptance Rate',
+                    value: acceptanceRate,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+}
+
+class _StatCell extends StatelessWidget {
+  const _StatCell({
+    required this.label,
+    required this.value,
+  });
+
+  final String label;
   final String value;
-  final IconData icon;
-  final Color color;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            label,
+            style: adminLabelStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.w500,
+              color: kAdminTextSecondary,
+            ),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            value,
+            style: adminDataMono(
+              fontSize: 20,
+              fontWeight: FontWeight.w600,
+              color: kAdminNavyTrust,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _DensePipelineTable extends StatelessWidget {
+  const _DensePipelineTable({
+    required this.totalApplications,
+    required this.submittedCount,
+    required this.underReviewCount,
+    required this.approvedCount,
+    required this.rejectedCount,
+  });
+
+  final int totalApplications;
+  final int submittedCount;
+  final int underReviewCount;
+  final int approvedCount;
+  final int rejectedCount;
+
+  String _pct(int count) {
+    if (totalApplications <= 0) return '0.0%';
+    return '${((count / totalApplications) * 100).toStringAsFixed(1)}%';
+  }
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(kRadiusCard),
-        boxShadow: const [
-          BoxShadow(
-            color: kCardShadow,
-            blurRadius: 14,
-            offset: Offset(0, 4),
-          ),
-        ],
+        borderRadius: BorderRadius.circular(6),
+        border: Border.all(color: kAdminHairline, width: 1),
       ),
-      child: Row(
+      clipBehavior: Clip.antiAlias,
+      child: Column(
         children: [
+          // Table Header
           Container(
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: color.withValues(alpha: 0.12),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Icon(icon, color: color, size: 24),
-          ),
-          const SizedBox(width: 14),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+            color: const Color(0xFFF9FAFB),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+            child: Row(
               children: [
-                Text(
-                  value,
-                  style: poppins(
-                    fontSize: 22,
-                    fontWeight: FontWeight.w700,
-                    color: Colors.black87,
+                Expanded(
+                  flex: 3,
+                  child: Text(
+                    'Stage / Status',
+                    style: adminLabelStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w600,
+                      color: kAdminNavyTrust,
+                    ),
                   ),
                 ),
-                Text(
-                  title,
-                  style: openSans(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w500,
-                    color: Colors.black54,
+                Expanded(
+                  flex: 2,
+                  child: Text(
+                    'Count',
+                    textAlign: TextAlign.right,
+                    style: adminLabelStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w600,
+                      color: kAdminNavyTrust,
+                    ),
                   ),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
+                ),
+                Expanded(
+                  flex: 2,
+                  child: Text(
+                    'Share',
+                    textAlign: TextAlign.right,
+                    style: adminLabelStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w600,
+                      color: kAdminNavyTrust,
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 16),
+                Expanded(
+                  flex: 3,
+                  child: Text(
+                    'Queue State',
+                    style: adminLabelStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w600,
+                      color: kAdminNavyTrust,
+                    ),
+                  ),
                 ),
               ],
             ),
+          ),
+          const Divider(height: 1, color: kAdminHairline),
+          _PipelineTableRow(
+            label: 'Submitted',
+            count: submittedCount,
+            share: _pct(submittedCount),
+            stateLabel: 'Pending Intake',
+            indicatorColor: kAdminGoldenOpportunity,
+          ),
+          const Divider(height: 1, color: kAdminHairline),
+          _PipelineTableRow(
+            label: 'Under Review',
+            count: underReviewCount,
+            share: _pct(underReviewCount),
+            stateLabel: 'Awaiting Decision',
+            indicatorColor: kAdminGoldenOpportunity,
+          ),
+          const Divider(height: 1, color: kAdminHairline),
+          _PipelineTableRow(
+            label: 'Approved',
+            count: approvedCount,
+            share: _pct(approvedCount),
+            stateLabel: 'Granted',
+            indicatorColor: kAdminBridgeGreen,
+          ),
+          const Divider(height: 1, color: kAdminHairline),
+          _PipelineTableRow(
+            label: 'Rejected',
+            count: rejectedCount,
+            share: _pct(rejectedCount),
+            stateLabel: 'Closed',
+            indicatorColor: kAdminCoralConnect,
           ),
         ],
       ),
@@ -322,47 +466,93 @@ class _MetricCard extends StatelessWidget {
   }
 }
 
-class _PipelineRow extends StatelessWidget {
-  const _PipelineRow({
+class _PipelineTableRow extends StatelessWidget {
+  const _PipelineTableRow({
     required this.label,
     required this.count,
-    required this.color,
-    required this.icon,
+    required this.share,
+    required this.stateLabel,
+    required this.indicatorColor,
   });
 
   final String label;
   final int count;
-  final Color color;
-  final IconData icon;
+  final String share;
+  final String stateLabel;
+  final Color indicatorColor;
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      children: [
-        Icon(icon, color: color, size: 18),
-        const SizedBox(width: 10),
-        Expanded(
-          child: Text(
-            label,
-            style: openSans(fontSize: 14, fontWeight: FontWeight.w500),
-          ),
-        ),
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
-          decoration: BoxDecoration(
-            color: color.withValues(alpha: 0.12),
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: Text(
-            '$count',
-            style: poppins(
-              fontSize: 13,
-              fontWeight: FontWeight.w600,
-              color: color,
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+      child: Row(
+        children: [
+          Expanded(
+            flex: 3,
+            child: Row(
+              children: [
+                Container(
+                  width: 7,
+                  height: 7,
+                  decoration: BoxDecoration(
+                    color: indicatorColor,
+                    shape: BoxShape.circle,
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    label,
+                    style: adminBodyStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w500,
+                      color: kAdminNavyTrust,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+              ],
             ),
           ),
-        ),
-      ],
+          Expanded(
+            flex: 2,
+            child: Text(
+              '$count',
+              textAlign: TextAlign.right,
+              style: adminDataMono(
+                fontSize: 13,
+                fontWeight: FontWeight.w600,
+                color: kAdminNavyTrust,
+              ),
+            ),
+          ),
+          Expanded(
+            flex: 2,
+            child: Text(
+              share,
+              textAlign: TextAlign.right,
+              style: adminDataMono(
+                fontSize: 12,
+                color: kAdminTextSecondary,
+              ),
+            ),
+          ),
+          const SizedBox(width: 16),
+          Expanded(
+            flex: 3,
+            child: Text(
+              stateLabel,
+              style: adminLabelStyle(
+                fontSize: 12,
+                color: kAdminTextSecondary,
+              ),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:scholaris/features/scholarships/providers/scholarships_provider.dart';
-import 'package:scholaris/shared/theme/app_theme.dart';
 import 'package:scholaris/shared/widgets/responsive_container.dart';
 import 'package:scholaris/shared/widgets/state_views.dart';
+
+import 'admin_theme.dart';
 
 class AdminProvidersTab extends ConsumerStatefulWidget {
   const AdminProvidersTab({super.key});
@@ -15,7 +16,11 @@ class AdminProvidersTab extends ConsumerStatefulWidget {
 
 class _AdminProvidersTabState extends ConsumerState<AdminProvidersTab> {
   // Set of provider IDs that are approved/verified in-memory during presentation
-  final Set<String> _verifiedProviders = {'CHED', 'DOST-SEI', 'Ayala Foundation'};
+  final Set<String> _verifiedProviders = {
+    'CHED',
+    'DOST-SEI',
+    'Ayala Foundation',
+  };
 
   @override
   Widget build(BuildContext context) {
@@ -26,22 +31,25 @@ class _AdminProvidersTabState extends ConsumerState<AdminProvidersTab> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
-            padding: const EdgeInsets.fromLTRB(20, 16, 20, 12),
+            padding: const EdgeInsets.fromLTRB(24, 20, 24, 12),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   'Provider Verification',
-                  style: poppins(
-                    fontSize: 22,
+                  style: adminHeaderStyle(
+                    fontSize: 20,
                     fontWeight: FontWeight.w700,
-                    color: kPrimary,
+                    color: kAdminNavyTrust,
                   ),
                 ),
                 const SizedBox(height: 4),
                 Text(
                   'Review and verify scholarship provider applications.',
-                  style: openSans(fontSize: 13, color: Colors.black54),
+                  style: adminLabelStyle(
+                    fontSize: 13,
+                    color: kAdminTextSecondary,
+                  ),
                 ),
               ],
             ),
@@ -53,147 +61,258 @@ class _AdminProvidersTabState extends ConsumerState<AdminProvidersTab> {
                 message: 'Failed to load provider listings.',
               ),
               data: (scholarships) {
-                // Extract distinct provider names from scholarships, plus default pending demo provider
                 final providerNames = <String>{
                   for (final s in scholarships)
-                    if (s.provider != null && s.provider!.isNotEmpty) s.provider!,
+                    if (s.provider != null && s.provider!.isNotEmpty)
+                      s.provider!,
                   'Metrobank Foundation',
                   'SM Foundation',
                 }.toList();
 
-                return ListView.separated(
-                  padding: const EdgeInsets.fromLTRB(20, 4, 20, 32),
-                  itemCount: providerNames.length,
-                  separatorBuilder: (_, _) => const SizedBox(height: 12),
-                  itemBuilder: (context, i) {
-                    final name = providerNames[i];
-                    final isVerified = _verifiedProviders.contains(name);
-
-                    return Container(
-                      padding: const EdgeInsets.all(16),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(kRadiusCard),
-                        boxShadow: const [
-                          BoxShadow(
-                            color: kCardShadow,
-                            blurRadius: 14,
-                            offset: Offset(0, 4),
+                return Padding(
+                  padding: const EdgeInsets.fromLTRB(24, 6, 24, 28),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(6),
+                      border: Border.all(color: kAdminHairline, width: 1),
+                    ),
+                    clipBehavior: Clip.antiAlias,
+                    child: Column(
+                      children: [
+                        // Dense Table Header
+                        Container(
+                          color: const Color(0xFFF9FAFB),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 10,
                           ),
-                        ],
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
+                          child: Row(
                             children: [
-                              CircleAvatar(
-                                radius: 20,
-                                backgroundColor: kPrimarySoft,
+                              Expanded(
+                                flex: 4,
                                 child: Text(
-                                  name.substring(0, 1).toUpperCase(),
-                                  style: poppins(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w700,
-                                    color: kPrimary,
+                                  'Organization',
+                                  style: adminLabelStyle(
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w600,
+                                    color: kAdminNavyTrust,
                                   ),
                                 ),
                               ),
-                              const SizedBox(width: 12),
                               Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      name,
-                                      style: poppins(
-                                        fontSize: 15,
-                                        fontWeight: FontWeight.w600,
-                                      ),
-                                    ),
-                                    Text(
-                                      'Scholarship Organization',
-                                      style: openSans(
-                                        fontSize: 12,
-                                        color: Colors.black54,
-                                      ),
-                                    ),
-                                  ],
+                                flex: 3,
+                                child: Text(
+                                  'Category',
+                                  style: adminLabelStyle(
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w600,
+                                    color: kAdminNavyTrust,
+                                  ),
                                 ),
                               ),
-                              Container(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 10,
-                                  vertical: 4,
+                              Expanded(
+                                flex: 3,
+                                child: Text(
+                                  'Verification Status',
+                                  style: adminLabelStyle(
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w600,
+                                    color: kAdminNavyTrust,
+                                  ),
                                 ),
-                                decoration: BoxDecoration(
-                                  color: isVerified
-                                      ? const Color(0xFFDCFCE7)
-                                      : const Color(0xFFFEF3C7),
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Icon(
-                                      isVerified
-                                          ? Icons.verified_rounded
-                                          : Icons.schedule_rounded,
-                                      size: 13,
-                                      color: isVerified
-                                          ? const Color(0xFF166534)
-                                          : const Color(0xFF92400E),
-                                    ),
-                                    const SizedBox(width: 4),
-                                    Text(
-                                      isVerified ? 'Verified' : 'Under Review',
-                                      style: poppins(
-                                        fontSize: 11,
-                                        fontWeight: FontWeight.w600,
-                                        color: isVerified
-                                            ? const Color(0xFF166534)
-                                            : const Color(0xFF92400E),
-                                      ),
-                                    ),
-                                  ],
+                              ),
+                              Expanded(
+                                flex: 4,
+                                child: Text(
+                                  'Actions',
+                                  textAlign: TextAlign.right,
+                                  style: adminLabelStyle(
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w600,
+                                    color: kAdminNavyTrust,
+                                  ),
                                 ),
                               ),
                             ],
                           ),
-                          if (!isVerified) ...[
-                            const SizedBox(height: 14),
-                            SizedBox(
-                              width: double.infinity,
-                              child: FilledButton.icon(
-                                icon: const Icon(Icons.check_rounded, size: 16),
-                                label: const Text('Verify & Approve Provider'),
-                                style: FilledButton.styleFrom(
-                                  backgroundColor: kPrimary,
-                                  padding: const EdgeInsets.symmetric(vertical: 10),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(8),
-                                  ),
+                        ),
+                        const Divider(height: 1, color: kAdminHairline),
+                        // Dense Table Rows
+                        Expanded(
+                          child: ListView.separated(
+                            itemCount: providerNames.length,
+                            separatorBuilder: (_, _) =>
+                                const Divider(height: 1, color: kAdminHairline),
+                            itemBuilder: (context, i) {
+                              final name = providerNames[i];
+                              final isVerified =
+                                  _verifiedProviders.contains(name);
+
+                              return Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 16,
+                                  vertical: 8,
                                 ),
-                                onPressed: () async {
-                                  final confirmed =
-                                      await _confirmProviderApproval(context, name);
-                                  if (!confirmed) return;
-                                  if (!context.mounted) return;
-                                  setState(() => _verifiedProviders.add(name));
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                      content: Text('$name has been verified and approved.'),
-                                      duration: const Duration(seconds: 2),
+                                child: Row(
+                                  children: [
+                                    Expanded(
+                                      flex: 4,
+                                      child: Text(
+                                        name,
+                                        style: adminHeaderStyle(
+                                          fontSize: 13,
+                                          fontWeight: FontWeight.w600,
+                                          color: kAdminNavyTrust,
+                                        ),
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
                                     ),
-                                  );
-                                },
-                              ),
-                            ),
-                          ],
-                        ],
-                      ),
-                    );
-                  },
+                                    Expanded(
+                                      flex: 3,
+                                      child: Text(
+                                        'Scholarship Organization',
+                                        style: adminBodyStyle(
+                                          fontSize: 13,
+                                          color: kAdminTextSecondary,
+                                        ),
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ),
+                                    Expanded(
+                                      flex: 3,
+                                      child: Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          Container(
+                                            width: 7,
+                                            height: 7,
+                                            decoration: BoxDecoration(
+                                              color: isVerified
+                                                  ? kAdminBridgeGreen
+                                                  : kAdminGoldenOpportunity,
+                                              shape: BoxShape.circle,
+                                            ),
+                                          ),
+                                          const SizedBox(width: 6),
+                                          Expanded(
+                                            child: Text(
+                                              isVerified
+                                                  ? 'Verified'
+                                                  : 'Under Review',
+                                              style: adminLabelStyle(
+                                                fontSize: 12,
+                                                fontWeight: FontWeight.w600,
+                                                color: isVerified
+                                                    ? kAdminBridgeGreen
+                                                    : kAdminGoldenOpportunity,
+                                              ),
+                                              maxLines: 1,
+                                              overflow: TextOverflow.ellipsis,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    Expanded(
+                                      flex: 4,
+                                      child: Align(
+                                        alignment: Alignment.centerRight,
+                                        child: isVerified
+                                            ? Row(
+                                                mainAxisSize: MainAxisSize.min,
+                                                children: [
+                                                  const Icon(
+                                                    Icons.check_circle_outline,
+                                                    size: 15,
+                                                    color: kAdminBridgeGreen,
+                                                  ),
+                                                  const SizedBox(width: 4),
+                                                  Text(
+                                                    'Approved',
+                                                    style: adminLabelStyle(
+                                                      fontSize: 12,
+                                                      fontWeight:
+                                                          FontWeight.w500,
+                                                      color: kAdminBridgeGreen,
+                                                    ),
+                                                  ),
+                                                ],
+                                              )
+                                            : FilledButton.icon(
+                                                icon: const Icon(
+                                                  Icons.check_rounded,
+                                                  size: 14,
+                                                ),
+                                                label: const Text(
+                                                  'Verify & Approve Provider',
+                                                  style: TextStyle(
+                                                    fontSize: 12,
+                                                    fontWeight:
+                                                        FontWeight.w600,
+                                                  ),
+                                                ),
+                                                style: FilledButton.styleFrom(
+                                                  backgroundColor:
+                                                      kAdminBridgeGreen,
+                                                  foregroundColor:
+                                                      Colors.white,
+                                                  padding:
+                                                      const EdgeInsets.symmetric(
+                                                    horizontal: 10,
+                                                    vertical: 8,
+                                                  ),
+                                                  shape:
+                                                      RoundedRectangleBorder(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                      4,
+                                                    ),
+                                                  ),
+                                                ),
+                                                onPressed: () async {
+                                                  final confirmed =
+                                                      await _confirmProviderApproval(
+                                                    context,
+                                                    name,
+                                                  );
+                                                  if (!confirmed) return;
+                                                  if (!context.mounted) return;
+                                                  setState(
+                                                    () => _verifiedProviders
+                                                        .add(name),
+                                                  );
+                                                  ScaffoldMessenger.of(
+                                                    context,
+                                                  ).showSnackBar(
+                                                    SnackBar(
+                                                      content: Text(
+                                                        '$name has been verified and approved.',
+                                                        style: adminBodyStyle(
+                                                          fontSize: 12,
+                                                          color: Colors.white,
+                                                        ),
+                                                      ),
+                                                      duration: const Duration(
+                                                        seconds: 2,
+                                                      ),
+                                                    ),
+                                                  );
+                                                },
+                                              ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                 );
               },
             ),
@@ -210,22 +329,36 @@ class _AdminProvidersTabState extends ConsumerState<AdminProvidersTab> {
     final result = await showDialog<bool>(
       context: context,
       builder: (dialogContext) => AlertDialog(
+        backgroundColor: Colors.white,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(8),
+        ),
         title: Text(
           'Approve Provider',
-          style: poppins(fontWeight: FontWeight.w600, fontSize: 18),
+          style: adminHeaderStyle(fontSize: 17, fontWeight: FontWeight.w600),
         ),
         content: Text(
           'Are you sure you want to verify and approve $providerName? They will be granted full access to publish scholarships and review student applications.',
-          style: openSans(fontSize: 14),
+          style: adminBodyStyle(fontSize: 13),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(dialogContext).pop(false),
-            child: const Text('Cancel'),
+            child: Text(
+              'Cancel',
+              style: adminLabelStyle(
+                fontSize: 13,
+                color: kAdminTextSecondary,
+              ),
+            ),
           ),
           FilledButton(
             style: FilledButton.styleFrom(
-              backgroundColor: kPrimary,
+              backgroundColor: kAdminBridgeGreen,
+              foregroundColor: Colors.white,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(4),
+              ),
             ),
             onPressed: () => Navigator.of(dialogContext).pop(true),
             child: const Text('Approve'),

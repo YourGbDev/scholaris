@@ -56,7 +56,7 @@ class AdminHomeScreen extends ConsumerWidget {
                         padding: const EdgeInsets.all(6),
                         decoration: BoxDecoration(
                           color: kAdminBridgeGreen.withValues(alpha: 0.10),
-                          borderRadius: BorderRadius.circular(6),
+                          borderRadius: kAdminChromeRadius,
                           border: Border.all(
                             color: kAdminBridgeGreen.withValues(alpha: 0.20),
                             width: 1,
@@ -137,7 +137,7 @@ class AdminHomeScreen extends ConsumerWidget {
                       const SizedBox(width: 8),
                       Expanded(
                         child: Text(
-                          'Console Active',
+                          'Console active',
                           style: adminLabelStyle(fontSize: 11),
                         ),
                       ),
@@ -192,14 +192,14 @@ class _SidebarNavItem extends StatelessWidget {
         color: isSelected
             ? kAdminBridgeGreen.withValues(alpha: 0.08)
             : Colors.transparent,
-        borderRadius: BorderRadius.circular(6),
+        borderRadius: kAdminChromeRadius,
         child: InkWell(
-          borderRadius: BorderRadius.circular(6),
+          borderRadius: kAdminChromeRadius,
           onTap: onTap,
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 9),
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(6),
+              borderRadius: kAdminChromeRadius,
               border: isSelected
                   ? Border.all(
                       color: kAdminBridgeGreen.withValues(alpha: 0.20),

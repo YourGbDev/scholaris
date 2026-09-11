@@ -74,7 +74,7 @@ class _AdminProvidersTabState extends ConsumerState<AdminProvidersTab> {
                   child: Container(
                     decoration: BoxDecoration(
                       color: Colors.white,
-                      borderRadius: BorderRadius.circular(6),
+                      borderRadius: kAdminTableRadius,
                       border: Border.all(color: kAdminHairline, width: 1),
                     ),
                     clipBehavior: Clip.antiAlias,
@@ -114,7 +114,7 @@ class _AdminProvidersTabState extends ConsumerState<AdminProvidersTab> {
                               Expanded(
                                 flex: 3,
                                 child: Text(
-                                  'Verification Status',
+                                  'Verification status',
                                   style: adminLabelStyle(
                                     fontSize: 12,
                                     fontWeight: FontWeight.w600,
@@ -201,7 +201,7 @@ class _AdminProvidersTabState extends ConsumerState<AdminProvidersTab> {
                                             child: Text(
                                               isVerified
                                                   ? 'Verified'
-                                                  : 'Under Review',
+                                                  : 'Under review',
                                               style: adminLabelStyle(
                                                 fontSize: 12,
                                                 fontWeight: FontWeight.w600,
@@ -265,11 +265,9 @@ class _AdminProvidersTabState extends ConsumerState<AdminProvidersTab> {
                                                     vertical: 8,
                                                   ),
                                                   shape:
-                                                      RoundedRectangleBorder(
+                                                      const RoundedRectangleBorder(
                                                     borderRadius:
-                                                        BorderRadius.circular(
-                                                      4,
-                                                    ),
+                                                        kAdminCardRadius,
                                                   ),
                                                 ),
                                                 onPressed: () async {
@@ -330,8 +328,8 @@ class _AdminProvidersTabState extends ConsumerState<AdminProvidersTab> {
       context: context,
       builder: (dialogContext) => AlertDialog(
         backgroundColor: Colors.white,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(8),
+        shape: const RoundedRectangleBorder(
+          borderRadius: kAdminChromeRadius,
         ),
         title: Text(
           'Approve Provider',
@@ -347,7 +345,7 @@ class _AdminProvidersTabState extends ConsumerState<AdminProvidersTab> {
             child: Text(
               'Cancel',
               style: adminLabelStyle(
-                fontSize: 13,
+                 fontSize: 13,
                 color: kAdminTextSecondary,
               ),
             ),
@@ -356,8 +354,8 @@ class _AdminProvidersTabState extends ConsumerState<AdminProvidersTab> {
             style: FilledButton.styleFrom(
               backgroundColor: kAdminBridgeGreen,
               foregroundColor: Colors.white,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(4),
+              shape: const RoundedRectangleBorder(
+                borderRadius: kAdminCardRadius,
               ),
             ),
             onPressed: () => Navigator.of(dialogContext).pop(true),

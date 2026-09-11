@@ -1,4 +1,4 @@
-﻿// lib/features/admin/presentation/admin_theme.dart
+// lib/features/admin/presentation/admin_theme.dart
 //
 // Operational design system tokens for the Admin Portal.
 // Control room, not brochure — dense tables, hairline rules, disciplined status signaling.
@@ -34,6 +34,20 @@ const Color kAdminTextSecondary = Color(0xFF5E6D66);
 
 /// Sidebar background.
 const Color kAdminSidebarBackground = Color(0xFFFFFFFF);
+
+// --- Border Radius Tokens ----------------------------------------------------
+
+/// Sharp structural radius for dense data tables and pipeline grids.
+const BorderRadius kAdminTableRadius = BorderRadius.all(Radius.circular(2));
+
+/// Crisp radius for stat strips, inputs, and operational banners.
+const BorderRadius kAdminCardRadius = BorderRadius.all(Radius.circular(4));
+
+/// Softer radius for chrome elements (sidebar nav targets, dialogs).
+const BorderRadius kAdminChromeRadius = BorderRadius.all(Radius.circular(8));
+
+/// Pill/tag radius for filter chips and status badges.
+const BorderRadius kAdminPillRadius = BorderRadius.all(Radius.circular(6));
 
 // --- Typography Helpers ------------------------------------------------------
 

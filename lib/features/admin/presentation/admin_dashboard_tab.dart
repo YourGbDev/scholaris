@@ -151,7 +151,7 @@ class AdminDashboardTab extends ConsumerWidget {
           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
           decoration: BoxDecoration(
             color: Colors.white,
-            borderRadius: BorderRadius.circular(6),
+            borderRadius: kAdminCardRadius,
             border: Border.all(color: kAdminHairline, width: 1),
           ),
           child: Row(
@@ -164,7 +164,7 @@ class AdminDashboardTab extends ConsumerWidget {
               const SizedBox(width: 8),
               Expanded(
                 child: Text(
-                  'Role-Based Security & Supabase RLS Active',
+                  'Access control and row-level security active',
                   style: adminBodyStyle(
                     fontSize: 12,
                     fontWeight: FontWeight.w600,
@@ -173,8 +173,8 @@ class AdminDashboardTab extends ConsumerWidget {
                 ),
               ),
               Text(
-                'FAIL-CLOSED',
-                style: adminDataMono(
+                'Active policies enforced',
+                style: adminLabelStyle(
                   fontSize: 11,
                   fontWeight: FontWeight.w600,
                   color: kAdminBridgeGreen,
@@ -211,7 +211,7 @@ class _CompactStatStrip extends StatelessWidget {
           return Container(
             decoration: BoxDecoration(
               color: Colors.white,
-              borderRadius: BorderRadius.circular(6),
+              borderRadius: kAdminCardRadius,
               border: Border.all(color: kAdminHairline, width: 1),
             ),
             child: Column(
@@ -259,7 +259,7 @@ class _CompactStatStrip extends StatelessWidget {
         return Container(
           decoration: BoxDecoration(
             color: Colors.white,
-            borderRadius: BorderRadius.circular(6),
+            borderRadius: kAdminCardRadius,
             border: Border.all(color: kAdminHairline, width: 1),
           ),
           child: IntrinsicHeight(
@@ -366,7 +366,7 @@ class _DensePipelineTable extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(6),
+        borderRadius: kAdminTableRadius,
         border: Border.all(color: kAdminHairline, width: 1),
       ),
       clipBehavior: Clip.antiAlias,
@@ -381,7 +381,7 @@ class _DensePipelineTable extends StatelessWidget {
                 Expanded(
                   flex: 3,
                   child: Text(
-                    'Stage / Status',
+                    'Stage / status',
                     style: adminLabelStyle(
                       fontSize: 12,
                       fontWeight: FontWeight.w600,
@@ -417,7 +417,7 @@ class _DensePipelineTable extends StatelessWidget {
                 Expanded(
                   flex: 3,
                   child: Text(
-                    'Queue State',
+                    'Queue state',
                     style: adminLabelStyle(
                       fontSize: 12,
                       fontWeight: FontWeight.w600,
@@ -433,15 +433,15 @@ class _DensePipelineTable extends StatelessWidget {
             label: 'Submitted',
             count: submittedCount,
             share: _pct(submittedCount),
-            stateLabel: 'Pending Intake',
+            stateLabel: 'Pending intake',
             indicatorColor: kAdminGoldenOpportunity,
           ),
           const Divider(height: 1, color: kAdminHairline),
           _PipelineTableRow(
-            label: 'Under Review',
+            label: 'Under review',
             count: underReviewCount,
             share: _pct(underReviewCount),
-            stateLabel: 'Awaiting Decision',
+            stateLabel: 'Awaiting decision',
             indicatorColor: kAdminGoldenOpportunity,
           ),
           const Divider(height: 1, color: kAdminHairline),

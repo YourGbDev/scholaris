@@ -108,21 +108,21 @@ class _AdminScholarshipsTabState extends ConsumerState<AdminScholarshipsTab> {
                             filled: true,
                             fillColor: Colors.white,
                             border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(6),
+                              borderRadius: kAdminCardRadius,
                               borderSide: const BorderSide(
                                 color: kAdminHairline,
                                 width: 1,
                               ),
                             ),
                             enabledBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(6),
+                              borderRadius: kAdminCardRadius,
                               borderSide: const BorderSide(
                                 color: kAdminHairline,
                                 width: 1,
                               ),
                             ),
                             focusedBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(6),
+                              borderRadius: kAdminCardRadius,
                               borderSide: const BorderSide(
                                 color: kAdminBridgeGreen,
                                 width: 1.5,
@@ -204,7 +204,7 @@ class _AdminScholarshipsTabState extends ConsumerState<AdminScholarshipsTab> {
                   child: Container(
                     decoration: BoxDecoration(
                       color: Colors.white,
-                      borderRadius: BorderRadius.circular(6),
+                      borderRadius: kAdminTableRadius,
                       border: Border.all(color: kAdminHairline, width: 1),
                     ),
                     clipBehavior: Clip.antiAlias,
@@ -333,14 +333,14 @@ class _FilterSegment extends StatelessWidget {
       color: selected
           ? kAdminBridgeGreen.withValues(alpha: 0.08)
           : Colors.white,
-      borderRadius: BorderRadius.circular(6),
+      borderRadius: kAdminPillRadius,
       child: InkWell(
-        borderRadius: BorderRadius.circular(6),
+        borderRadius: kAdminPillRadius,
         onTap: onTap,
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(6),
+            borderRadius: kAdminPillRadius,
             border: Border.all(
               color: selected ? kAdminBridgeGreen : kAdminHairline,
               width: selected ? 1.5 : 1,

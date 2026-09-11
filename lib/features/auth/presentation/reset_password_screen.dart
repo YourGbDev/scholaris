@@ -141,8 +141,10 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen>
                   // Responsive split: hero takes ~42% on tall screens but
                   // shrinks on short viewports so the card always has room
                   // for both fields, the button and the sign-out row.
+                  final maxHero =
+                      (viewport.maxHeight - 400).clamp(0.0, double.infinity);
                   final heroHeight =
-                      (viewport.maxHeight * 0.42).clamp(180.0, viewport.maxHeight - 400);
+                      (viewport.maxHeight * 0.42).clamp(0.0, maxHero);
                   return Column(
                     children: [
                       // --- Top: hero Lottie animation --------------------------

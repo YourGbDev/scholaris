@@ -157,8 +157,10 @@ class _SignupScreenState extends State<SignupScreen>
             // heading, all four fields, the primary button, and
             // secondary actions without scrolling on the smallest
             // supported phones.
-            final heroHeight = (viewport.maxHeight * 0.40)
-                .clamp(180.0, viewport.maxHeight - 400);
+            final maxHero =
+                (viewport.maxHeight - 400).clamp(0.0, double.infinity);
+            final heroHeight =
+                (viewport.maxHeight * 0.40).clamp(0.0, maxHero);
             return Column(
               children: [
                 // --- Top: hero Lottie animation --------------------------

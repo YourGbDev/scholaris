@@ -549,6 +549,15 @@ String? authRedirectDecision({
     return onAuthRoute ? null : '/login';
   }
 
+  // Admin route protection: only users with role='admin' may access /admin-home.
+  // All other users (even while profile is loading) must be redirected away
+  // to their authorized destination (fails closed, never open).
+  if (location == AdminRoute.home && role != 'admin') {
+    if (role == 'provider') return ProviderRoute.home;
+    if (profileComplete) return '/home';
+    return onSetupRoute ? null : ProfileSetupRoute.personal;
+  }
+
   if (profileLoading) {
     return null;
   }

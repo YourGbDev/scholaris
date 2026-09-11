@@ -156,8 +156,10 @@ class _LoginScreenState extends State<LoginScreen>
                   // 380px is the minimum card height needed to show title,
                   // both fields, the primary button, and secondary actions
                   // without scrolling on the smallest supported phones.
-                  final heroHeight = (viewport.maxHeight * 0.40)
-                      .clamp(180.0, viewport.maxHeight - 400);
+                  final maxHero =
+                      (viewport.maxHeight - 400).clamp(0.0, double.infinity);
+                  final heroHeight =
+                      (viewport.maxHeight * 0.40).clamp(0.0, maxHero);
                   return Column(
                     children: [
                       // --- Top: hero Lottie animation --------------------------
@@ -529,7 +531,7 @@ class _LoginScreenState extends State<LoginScreen>
   /// Quiet, secondary visual affordance for scholarship providers.
   Widget _buildProviderCta() {
     return InkWell(
-      onTap: () => context.go('/become-provider'),
+      onTap: () => context.push('/become-provider'),
       borderRadius: BorderRadius.circular(kRadiusCard),
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),

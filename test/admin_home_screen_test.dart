@@ -102,5 +102,65 @@ void main() {
       expect(find.text('Provider Verification'), findsOneWidget);
       expect(find.text('DOST-SEI'), findsOneWidget);
     });
+
+    testWidgets('tapping Verify & Approve Provider shows confirmation dialog and Cancel aborts approval', (tester) async {
+      await tester.pumpWidget(buildApp());
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.text('Providers'));
+      await tester.pumpAndSettle();
+
+      // Find the unverified provider button
+      final approveBtn = find.widgetWithText(FilledButton, 'Verify & Approve Provider').first;
+      expect(approveBtn, findsOneWidget);
+      await tester.ensureVisible(approveBtn);
+      await tester.tap(approveBtn);
+      await tester.pumpAndSettle();
+
+      // Verify confirmation dialog appeared
+      expect(find.byType(AlertDialog), findsOneWidget);
+      expect(find.text('Approve Provider'), findsOneWidget);
+      expect(find.text('Cancel'), findsOneWidget);
+
+      // Tap Cancel
+      await tester.tap(find.text('Cancel'));
+      await tester.pumpAndSettle();
+
+      // Dialog dismissed and provider is still unverified (button still exists)
+      expect(find.byType(AlertDialog), findsNothing);
+      expect(find.widgetWithText(FilledButton, 'Verify & Approve Provider'), findsWidgets);
+    });
+
+    testWidgets('tapping Verify & Approve Provider and confirming Approve verifies provider', (tester) async {
+      await tester.pumpWidget(buildApp());
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.text('Providers'));
+      await tester.pumpAndSettle();
+
+      // Find the unverified provider button
+      final approveBtn = find.widgetWithText(FilledButton, 'Verify & Approve Provider').first;
+      expect(approveBtn, findsOneWidget);
+      await tester.ensureVisible(approveBtn);
+      await tester.tap(approveBtn);
+      await tester.pumpAndSettle();
+
+      // Verify confirmation dialog appeared
+      expect(find.byType(AlertDialog), findsOneWidget);
+      expect(find.text('Approve Provider'), findsOneWidget);
+
+      // Tap Approve
+      final confirmApprove = find.descendant(
+        of: find.byType(AlertDialog),
+        matching: find.widgetWithText(FilledButton, 'Approve'),
+      );
+      expect(confirmApprove, findsOneWidget);
+      await tester.tap(confirmApprove);
+      await tester.pumpAndSettle();
+
+      // Dialog dismissed, provider is now verified, SnackBar is shown
+      expect(find.byType(AlertDialog), findsNothing);
+      expect(find.textContaining('has been verified and approved.'), findsOneWidget);
+    });
   });
 }

@@ -174,7 +174,11 @@ class _AdminProvidersTabState extends ConsumerState<AdminProvidersTab> {
                                     borderRadius: BorderRadius.circular(8),
                                   ),
                                 ),
-                                onPressed: () {
+                                onPressed: () async {
+                                  final confirmed =
+                                      await _confirmProviderApproval(context, name);
+                                  if (!confirmed) return;
+                                  if (!context.mounted) return;
                                   setState(() => _verifiedProviders.add(name));
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     SnackBar(
@@ -197,5 +201,38 @@ class _AdminProvidersTabState extends ConsumerState<AdminProvidersTab> {
         ],
       ),
     );
+  }
+
+  Future<bool> _confirmProviderApproval(
+    BuildContext context,
+    String providerName,
+  ) async {
+    final result = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: Text(
+          'Approve Provider',
+          style: poppins(fontWeight: FontWeight.w600, fontSize: 18),
+        ),
+        content: Text(
+          'Are you sure you want to verify and approve $providerName? They will be granted full access to publish scholarships and review student applications.',
+          style: openSans(fontSize: 14),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(dialogContext).pop(false),
+            child: const Text('Cancel'),
+          ),
+          FilledButton(
+            style: FilledButton.styleFrom(
+              backgroundColor: kPrimary,
+            ),
+            onPressed: () => Navigator.of(dialogContext).pop(true),
+            child: const Text('Approve'),
+          ),
+        ],
+      ),
+    );
+    return result ?? false;
   }
 }

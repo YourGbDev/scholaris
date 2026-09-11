@@ -70,5 +70,31 @@ void main() {
       );
       expect(find.text('Passwords do not match.'), findsOneWidget);
     });
+
+    testWidgets('renders and handles back to login button', (tester) async {
+      bool popped = false;
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Navigator(
+            onDidRemovePage: (page) {
+              popped = true;
+            },
+            pages: const [
+              MaterialPage(child: Scaffold(body: Text('Previous'))),
+              MaterialPage(child: ProviderSignupScreen()),
+            ],
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      final backBtn = find.text('Back to login');
+      expect(backBtn, findsOneWidget);
+      await tester.ensureVisible(backBtn);
+      await tester.tap(backBtn);
+      await tester.pumpAndSettle();
+
+      expect(popped, isTrue);
+    });
   });
 }

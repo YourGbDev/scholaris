@@ -157,6 +157,14 @@ class _ProviderSignupScreenState extends State<ProviderSignupScreen>
         content: Text(message, style: openSans()),
       );
 
+  void _navigateBack() {
+    if (Navigator.of(context).canPop()) {
+      Navigator.of(context).pop();
+    } else {
+      context.go('/login');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -164,13 +172,17 @@ class _ProviderSignupScreenState extends State<ProviderSignupScreen>
       body: SafeArea(
         child: LayoutBuilder(
           builder: (context, viewport) {
-            final heroHeight = (viewport.maxHeight * 0.40)
-                .clamp(180.0, viewport.maxHeight - 400);
-            return Column(
+            final maxHero =
+                (viewport.maxHeight - 400).clamp(0.0, double.infinity);
+            final heroHeight =
+                (viewport.maxHeight * 0.40).clamp(0.0, maxHero);
+            return Stack(
               children: [
-                SizedBox(
-                  height: heroHeight,
-                  width: double.infinity,
+                Column(
+                  children: [
+                    SizedBox(
+                      height: heroHeight,
+                      width: double.infinity,
                   child: entranceItem(
                     index: 0,
                     offset: const Offset(0, 0.08),
@@ -371,23 +383,55 @@ class _ProviderSignupScreenState extends State<ProviderSignupScreen>
                                               ),
                                             ),
                                     ),
-                                    const SizedBox(height: 10),
-                                    TextButton(
-                                      onPressed: () => context.pop(),
-                                      child: Text(
-                                        'Back to login',
-                                        style: poppins(
-                                          color: kPrimary,
-                                          fontWeight: FontWeight.w600,
+                                      const SizedBox(height: 10),
+                                      TextButton(
+                                        onPressed: _navigateBack,
+                                        child: Text(
+                                          'Back to login',
+                                          style: poppins(
+                                            color: kPrimary,
+                                            fontWeight: FontWeight.w600,
+                                          ),
                                         ),
                                       ),
-                                    ),
                                   ],
                                 ),
                               ),
                             ),
                           ),
                         ],
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            Positioned(
+                  top: 16,
+                  left: 16,
+                  child: Material(
+                    color: Colors.transparent,
+                    child: InkWell(
+                      borderRadius: BorderRadius.circular(24),
+                      onTap: _navigateBack,
+                      child: Container(
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          color: Colors.white.withValues(alpha: 0.85),
+                          shape: BoxShape.circle,
+                          boxShadow: [
+                            BoxShadow(
+                              color: kCardShadow,
+                              blurRadius: 8,
+                              offset: const Offset(0, 2),
+                            ),
+                          ],
+                        ),
+                        child: Icon(
+                          Icons.arrow_back_ios_new,
+                          size: 18,
+                          color: kPrimary,
+                        ),
                       ),
                     ),
                   ),

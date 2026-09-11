@@ -56,3 +56,4 @@ app.*.map.json
 .widget_preview/
 
 lib/app/supabase_config.dart
+scratch/

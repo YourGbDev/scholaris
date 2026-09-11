@@ -96,4 +96,22 @@ class FakeApplicationDataSource implements ApplicationDataSource {
     if (i == -1) return;
     rows[i] = {...rows[i], ...row};
   }
+
+  @override
+  Future<void> updateApplicationStatus(
+    String applicationId,
+    String status,
+  ) async {
+    for (final rows in _rows.values) {
+      final i = rows.indexWhere((r) => r['id'] == applicationId);
+      if (i != -1) {
+        rows[i] = {
+          ...rows[i],
+          'status': status,
+          'updated_at': DateTime.now().toUtc().toIso8601String(),
+        };
+        return;
+      }
+    }
+  }
 }

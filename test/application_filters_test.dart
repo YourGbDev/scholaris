@@ -93,6 +93,18 @@ void main() {
       );
     });
 
+    test('awarded returns only awarded', () {
+      final itemsWithAwarded = [
+        ...items,
+        _app(id: 'aw', status: ApplicationStatus.awarded),
+      ];
+      expect(
+        _ids(
+            ApplicationFilters.filterByStatus(itemsWithAwarded, ApplicationStatus.awarded)),
+        ['aw'],
+      );
+    });
+
     test('unmatched status returns empty list', () {
       expect(
         ApplicationFilters.filterByStatus(
@@ -187,7 +199,7 @@ void main() {
 
     test('every status agrees with the authoritative pending table', () {
       // Draft / Submitted / Under review → pending; Approved / Rejected /
-      // Withdrawn → terminal.
+      // Withdrawn / Awarded → terminal.
       const expectedPending = {
         ApplicationStatus.draft: true,
         ApplicationStatus.submitted: true,
@@ -195,6 +207,7 @@ void main() {
         ApplicationStatus.approved: false,
         ApplicationStatus.rejected: false,
         ApplicationStatus.withdrawn: false,
+        ApplicationStatus.awarded: false,
       };
       for (final status in ApplicationStatus.values) {
         expect(

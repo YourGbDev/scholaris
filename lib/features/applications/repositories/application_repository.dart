@@ -71,6 +71,10 @@ abstract class ApplicationDataSource {
     String applicationId,
     Map<String, dynamic> row,
   );
+  Future<void> updateApplicationStatus(
+    String applicationId,
+    String status,
+  );
 }
 
 /// Production implementation backed by Supabase.
@@ -162,6 +166,17 @@ class SupabaseApplicationDataSource implements ApplicationDataSource {
         .from('applications')
         .update(row)
         .eq('user_id', userId)
+        .eq('id', applicationId);
+  }
+
+  @override
+  Future<void> updateApplicationStatus(
+    String applicationId,
+    String status,
+  ) async {
+    await _client
+        .from('applications')
+        .update({'status': status})
         .eq('id', applicationId);
   }
 }
@@ -257,6 +272,15 @@ class ApplicationRepository {
     final userId = _requireUserId();
     await _dataSource
         .updateApplication(userId, applicationId, {'status': status.dbValue});
+  }
+
+  /// Confirms an award for an approved application. Accessible by administrators.
+  Future<void> confirmAward(String applicationId) async {
+    _requireUserId();
+    await _dataSource.updateApplicationStatus(
+      applicationId,
+      ApplicationStatus.awarded.dbValue,
+    );
   }
 
   /// Withdraws one of the signed-in user's own applications.

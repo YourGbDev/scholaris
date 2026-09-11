@@ -336,6 +336,8 @@ class _StatusDistributionTable extends StatelessWidget {
           const Divider(height: 1, color: kAdminHairline),
           _statusRow('Approved', statusCounts[ApplicationStatus.approved] ?? 0, kAdminBridgeGreen),
           const Divider(height: 1, color: kAdminHairline),
+          _statusRow('Awarded', statusCounts[ApplicationStatus.awarded] ?? 0, kAdminBridgeGreen),
+          const Divider(height: 1, color: kAdminHairline),
           _statusRow('Rejected', statusCounts[ApplicationStatus.rejected] ?? 0, kAdminCoralConnect),
         ],
       ),

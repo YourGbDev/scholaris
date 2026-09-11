@@ -108,6 +108,7 @@ void main() {
       expect(ApplicationStatus.approved.dbValue, 'approved');
       expect(ApplicationStatus.rejected.dbValue, 'rejected');
       expect(ApplicationStatus.withdrawn.dbValue, 'withdrawn');
+      expect(ApplicationStatus.awarded.dbValue, 'awarded');
     });
 
     test('fromDbValue maps each stored value back to the enum', () {
@@ -120,6 +121,7 @@ void main() {
       expect(ApplicationStatus.fromDbValue('rejected'), ApplicationStatus.rejected);
       expect(ApplicationStatus.fromDbValue('withdrawn'),
           ApplicationStatus.withdrawn);
+      expect(ApplicationStatus.fromDbValue('awarded'), ApplicationStatus.awarded);
     });
 
     test('fromDbValue rejects unknown values', () {
@@ -136,6 +138,7 @@ void main() {
       expect(ApplicationStatus.approved.isPending, isFalse);
       expect(ApplicationStatus.rejected.isPending, isFalse);
       expect(ApplicationStatus.withdrawn.isPending, isFalse);
+      expect(ApplicationStatus.awarded.isPending, isFalse);
     });
   });
 }

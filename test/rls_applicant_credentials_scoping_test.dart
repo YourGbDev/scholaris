@@ -232,6 +232,17 @@ class RlsEnforcingApplicationDataSource implements ApplicationDataSource {
       rawApplications[i] = {...rawApplications[i], ...row};
     }
   }
+
+  @override
+  Future<void> updateApplicationStatus(
+    String applicationId,
+    String status,
+  ) async {
+    final i = rawApplications.indexWhere((a) => a['id'] == applicationId);
+    if (i != -1) {
+      rawApplications[i] = {...rawApplications[i], 'status': status};
+    }
+  }
 }
 
 void main() {

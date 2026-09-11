@@ -67,6 +67,7 @@ class AdminDashboardTab extends ConsumerWidget {
                     activeScholarships: activeScholarships,
                     totalApplications: 0,
                     approvedCount: 0,
+                    awardedCount: 0,
                     underReviewCount: 0,
                     submittedCount: 0,
                     rejectedCount: 0,
@@ -75,6 +76,9 @@ class AdminDashboardTab extends ConsumerWidget {
                     final totalApps = applications.length;
                     final approved = applications
                         .where((a) => a.status == ApplicationStatus.approved)
+                        .length;
+                    final awarded = applications
+                        .where((a) => a.status == ApplicationStatus.awarded)
                         .length;
                     final underReview = applications
                         .where((a) => a.status == ApplicationStatus.underReview)
@@ -90,6 +94,7 @@ class AdminDashboardTab extends ConsumerWidget {
                       activeScholarships: activeScholarships,
                       totalApplications: totalApps,
                       approvedCount: approved,
+                      awardedCount: awarded,
                       underReviewCount: underReview,
                       submittedCount: submitted,
                       rejectedCount: rejected,
@@ -108,6 +113,7 @@ class AdminDashboardTab extends ConsumerWidget {
     required int activeScholarships,
     required int totalApplications,
     required int approvedCount,
+    required int awardedCount,
     required int underReviewCount,
     required int submittedCount,
     required int rejectedCount,
@@ -143,6 +149,7 @@ class AdminDashboardTab extends ConsumerWidget {
           submittedCount: submittedCount,
           underReviewCount: underReviewCount,
           approvedCount: approvedCount,
+          awardedCount: awardedCount,
           rejectedCount: rejectedCount,
         ),
         const SizedBox(height: 20),
@@ -347,6 +354,7 @@ class _DensePipelineTable extends StatelessWidget {
     required this.submittedCount,
     required this.underReviewCount,
     required this.approvedCount,
+    this.awardedCount = 0,
     required this.rejectedCount,
   });
 
@@ -354,6 +362,7 @@ class _DensePipelineTable extends StatelessWidget {
   final int submittedCount;
   final int underReviewCount;
   final int approvedCount;
+  final int awardedCount;
   final int rejectedCount;
 
   String _pct(int count) {
@@ -450,6 +459,14 @@ class _DensePipelineTable extends StatelessWidget {
             count: approvedCount,
             share: _pct(approvedCount),
             stateLabel: 'Granted',
+            indicatorColor: kAdminBridgeGreen,
+          ),
+          const Divider(height: 1, color: kAdminHairline),
+          _PipelineTableRow(
+            label: 'Awarded',
+            count: awardedCount,
+            share: _pct(awardedCount),
+            stateLabel: 'Awarded',
             indicatorColor: kAdminBridgeGreen,
           ),
           const Divider(height: 1, color: kAdminHairline),

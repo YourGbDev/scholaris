@@ -31,7 +31,8 @@ enum ApplicationStatus {
   underReview('under_review'),
   approved('approved'),
   rejected('rejected'),
-  withdrawn('withdrawn');
+  withdrawn('withdrawn'),
+  awarded('awarded');
 
   const ApplicationStatus(this.dbValue);
 

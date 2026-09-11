@@ -237,7 +237,8 @@ class _IncomingApplicationRow extends ConsumerWidget {
 
     final isTerminal = application.status == ApplicationStatus.approved ||
         application.status == ApplicationStatus.rejected ||
-        application.status == ApplicationStatus.withdrawn;
+        application.status == ApplicationStatus.withdrawn ||
+        application.status == ApplicationStatus.awarded;
 
     return Material(
       color: Colors.white,

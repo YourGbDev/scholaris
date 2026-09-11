@@ -70,6 +70,13 @@ class ApplicationStatusUi {
           background: Color(0xFFE9EAEE),
           icon: Icons.unsubscribe_rounded,
         );
+      case ApplicationStatus.awarded:
+        return const ApplicationStatusUi(
+          label: 'Awarded',
+          foreground: Color(0xFF0F4D2E),
+          background: Color(0xFFD8EEDF),
+          icon: Icons.workspace_premium_rounded,
+        );
     }
   }
 }

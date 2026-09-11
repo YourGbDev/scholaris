@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:scholaris/features/profile/models/student_profile.dart';
 import 'package:scholaris/shared/widgets/responsive_container.dart';
 import 'package:scholaris/shared/widgets/state_views.dart';
 
@@ -186,7 +187,7 @@ class _AdminUsersTabState extends ConsumerState<AdminUsersTab> {
                               Expanded(
                                 flex: 4,
                                 child: Text(
-                                  'Account / Identity',
+                                  'Account / identity',
                                   style: adminLabelStyle(
                                     fontSize: 12,
                                     fontWeight: FontWeight.w600,
@@ -262,7 +263,7 @@ class _AdminUsersTabState extends ConsumerState<AdminUsersTab> {
                                     Expanded(
                                       flex: 4,
                                       child: Text(
-                                        u.fullName.isNotEmpty ? u.fullName : 'Unnamed User',
+                                        u.fullName.isNotEmpty ? u.fullName : 'Unnamed user',
                                         style: adminHeaderStyle(
                                           fontSize: 13,
                                           fontWeight: FontWeight.w600,
@@ -359,17 +360,7 @@ class _AdminUsersTabState extends ConsumerState<AdminUsersTab> {
                                             minimumSize: Size.zero,
                                             tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                                           ),
-                                          onPressed: () {
-                                            ScaffoldMessenger.of(context).showSnackBar(
-                                              SnackBar(
-                                                content: Text(
-                                                  'Account ${u.id} inspection ready',
-                                                  style: adminBodyStyle(fontSize: 12, color: Colors.white),
-                                                ),
-                                                duration: const Duration(seconds: 2),
-                                              ),
-                                            );
-                                          },
+                                          onPressed: () => _showUserDetails(context, u),
                                           child: Text(
                                             'Inspect',
                                             style: adminLabelStyle(
@@ -392,6 +383,67 @@ class _AdminUsersTabState extends ConsumerState<AdminUsersTab> {
                   ),
                 );
               },
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showUserDetails(BuildContext context, StudentProfile u) {
+    showDialog<void>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        backgroundColor: Colors.white,
+        shape: const RoundedRectangleBorder(borderRadius: kAdminChromeRadius),
+        title: Text(
+          u.fullName.isNotEmpty ? u.fullName : 'Unnamed user',
+          style: adminHeaderStyle(fontSize: 17, fontWeight: FontWeight.w600),
+        ),
+        content: SizedBox(
+          width: 420,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _detailRow('Account ID', u.id),
+              _detailRow('System role', u.role == 'admin' ? 'Admin' : u.role == 'provider' ? 'Provider' : 'Student'),
+              _detailRow('Profile status', u.setupComplete ? 'Active' : 'Setup pending'),
+              if (u.region.isNotEmpty) _detailRow('Region', u.region),
+              if (u.course.isNotEmpty) _detailRow('Course', u.course),
+            ],
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(dialogContext).pop(),
+            child: Text(
+              'Close',
+              style: adminLabelStyle(fontSize: 13, color: kAdminNavyTrust),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _detailRow(String label, String value) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(
+            width: 120,
+            child: Text(
+              label,
+              style: adminLabelStyle(fontSize: 12, color: kAdminTextSecondary),
+            ),
+          ),
+          Expanded(
+            child: Text(
+              value,
+              style: adminBodyStyle(fontSize: 13, fontWeight: FontWeight.w500, color: kAdminNavyTrust),
             ),
           ),
         ],

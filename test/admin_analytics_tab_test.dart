@@ -125,11 +125,11 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('Platform Analytics'), findsOneWidget);
-    expect(find.text('Total Applications'), findsOneWidget);
-    expect(find.text('Participating Schools'), findsOneWidget);
-    expect(find.text('Institution Breakdown'), findsOneWidget);
+    expect(find.text('Total applications'), findsOneWidget);
+    expect(find.text('Participating schools'), findsOneWidget);
+    expect(find.text('Institution breakdown'), findsOneWidget);
     expect(find.text('UP Diliman'), findsOneWidget);
-    expect(find.text('Pipeline Stage Distribution'), findsOneWidget);
-    expect(find.text('Regional Coverage'), findsOneWidget);
+    expect(find.text('Pipeline stage distribution'), findsOneWidget);
+    expect(find.text('Regional coverage'), findsOneWidget);
   });
 }

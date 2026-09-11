@@ -154,7 +154,7 @@ class _AdminApplicantsTabState extends ConsumerState<AdminApplicantsTab> {
                               Expanded(
                                 flex: 4,
                                 child: Text(
-                                  'Applicant / Name',
+                                  'Applicant / name',
                                   style: adminLabelStyle(
                                     fontSize: 12,
                                     fontWeight: FontWeight.w600,
@@ -165,7 +165,7 @@ class _AdminApplicantsTabState extends ConsumerState<AdminApplicantsTab> {
                               Expanded(
                                 flex: 4,
                                 child: Text(
-                                  'Course & School',
+                                  'Course & school',
                                   style: adminLabelStyle(
                                     fontSize: 12,
                                     fontWeight: FontWeight.w600,
@@ -372,13 +372,13 @@ class _AdminApplicantsTabState extends ConsumerState<AdminApplicantsTab> {
               _detailRow('Nationality', p.nationality),
               _detailRow('Course', p.course),
               if (p.school != null) _detailRow('School', p.school!),
-              _detailRow('Year Level', 'Year ${p.yearLevel}'),
+              _detailRow('Year level', 'Year ${p.yearLevel}'),
               _detailRow('Cumulative GPA', p.gpa.toStringAsFixed(2)),
               _detailRow('Region', p.region),
               if (p.province != null) _detailRow('Province', p.province!),
-              if (p.cityMunicipality != null) _detailRow('City / Municipality', p.cityMunicipality!),
+              if (p.cityMunicipality != null) _detailRow('City / municipality', p.cityMunicipality!),
               if (p.hasDisability) _detailRow('Disability (PWD)', 'Declared'),
-              if (p.isIndigenous) _detailRow('Indigenous Group', 'Declared'),
+              if (p.isIndigenous) _detailRow('Indigenous group', 'Declared'),
             ],
           ),
         ),

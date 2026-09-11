@@ -72,28 +72,28 @@ class AdminAnalyticsTab extends ConsumerWidget {
               children: [
                 Expanded(
                   child: _AnalyticsStatCell(
-                    label: 'Total Applications',
+                    label: 'Total applications',
                     value: '${data.totalApplications}',
                   ),
                 ),
                 const VerticalDivider(width: 1, thickness: 1, color: kAdminHairline),
                 Expanded(
                   child: _AnalyticsStatCell(
-                    label: 'Participating Schools',
+                    label: 'Participating schools',
                     value: '${data.schoolCounts.length}',
                   ),
                 ),
                 const VerticalDivider(width: 1, thickness: 1, color: kAdminHairline),
                 Expanded(
                   child: _AnalyticsStatCell(
-                    label: 'Active Scholarships',
+                    label: 'Active scholarships',
                     value: '${data.activeScholarships}',
                   ),
                 ),
                 const VerticalDivider(width: 1, thickness: 1, color: kAdminHairline),
                 Expanded(
                   child: _AnalyticsStatCell(
-                    label: 'Platform Acceptance',
+                    label: 'Platform acceptance',
                     value: '${data.acceptanceRate.toStringAsFixed(1)}%',
                   ),
                 ),
@@ -104,7 +104,7 @@ class AdminAnalyticsTab extends ConsumerWidget {
         const SizedBox(height: 24),
         // Institution Breakdown Section
         Text(
-          'Institution Breakdown',
+          'Institution breakdown',
           style: adminHeaderStyle(fontSize: 16, fontWeight: FontWeight.w600, color: kAdminNavyTrust),
         ),
         const SizedBox(height: 4),
@@ -117,7 +117,7 @@ class AdminAnalyticsTab extends ConsumerWidget {
         const SizedBox(height: 24),
         // Stage Pipeline Breakdown
         Text(
-          'Pipeline Stage Distribution',
+          'Pipeline stage distribution',
           style: adminHeaderStyle(fontSize: 16, fontWeight: FontWeight.w600, color: kAdminNavyTrust),
         ),
         const SizedBox(height: 10),
@@ -128,7 +128,7 @@ class AdminAnalyticsTab extends ConsumerWidget {
         const SizedBox(height: 24),
         // Regional Distribution Section
         Text(
-          'Regional Coverage',
+          'Regional coverage',
           style: adminHeaderStyle(fontSize: 16, fontWeight: FontWeight.w600, color: kAdminNavyTrust),
         ),
         const SizedBox(height: 10),
@@ -210,7 +210,7 @@ class _InstitutionTable extends StatelessWidget {
                 Expanded(
                   flex: 6,
                   child: Text(
-                    'Institution / University',
+                    'Institution / university',
                     style: adminLabelStyle(fontSize: 12, fontWeight: FontWeight.w600, color: kAdminNavyTrust),
                   ),
                 ),
@@ -426,7 +426,7 @@ class _RegionalTable extends StatelessWidget {
                 Expanded(
                   flex: 6,
                   child: Text(
-                    'Administrative Region',
+                    'Administrative region',
                     style: adminLabelStyle(fontSize: 12, fontWeight: FontWeight.w600, color: kAdminNavyTrust),
                   ),
                 ),

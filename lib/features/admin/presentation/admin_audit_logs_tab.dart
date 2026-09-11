@@ -1,16 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:scholaris/features/auth/controllers/auth_controller.dart';
 import 'package:scholaris/shared/widgets/responsive_container.dart';
 
 import 'admin_theme.dart';
 
-class AdminAuditLogsTab extends ConsumerWidget {
+class AdminAuditLogsTab extends StatelessWidget {
   const AdminAuditLogsTab({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final currentUserId = ref.watch(currentUserIdProvider);
+  Widget build(BuildContext context) {
 
     return ResponsiveContainer(
       child: ListView(
@@ -83,7 +80,7 @@ class AdminAuditLogsTab extends ConsumerWidget {
           const SizedBox(height: 20),
           // Target Migration Specification
           Text(
-            'Target Migration Blueprint (0008_create_audit_logs.sql)',
+            'Target migration blueprint (0008_create_audit_logs.sql)',
             style: adminHeaderStyle(fontSize: 15, fontWeight: FontWeight.w600, color: kAdminNavyTrust),
           ),
           const SizedBox(height: 8),
@@ -95,138 +92,64 @@ class AdminAuditLogsTab extends ConsumerWidget {
               border: Border.all(color: kAdminHairline, width: 1),
             ),
             child: Text(
-              'CREATE TABLE public.audit_logs (\\n'
-              '  id          uuid PRIMARY KEY DEFAULT gen_random_uuid(),\\n'
-              '  actor_id    uuid NOT NULL REFERENCES auth.users(id),\\n'
-              '  actor_role  text NOT NULL,\\n'
-              '  action      text NOT NULL,\\n'
-              '  target_type text NOT NULL,\\n'
-              '  target_id   text NOT NULL,\\n'
-              '  metadata    jsonb,\\n'
-              '  created_at  timestamptz NOT NULL DEFAULT now()\\n'
-              ');\\n'
-              'ALTER TABLE public.audit_logs ENABLE ROW LEVEL SECURITY;\\n'
-              'CREATE POLICY "Audit logs are viewable by admin only"\\n'
-              '  ON public.audit_logs FOR SELECT TO authenticated\\n'
+              'CREATE TABLE public.audit_logs (\n'
+              '  id          uuid PRIMARY KEY DEFAULT gen_random_uuid(),\n'
+              '  actor_id    uuid NOT NULL REFERENCES auth.users(id),\n'
+              '  actor_role  text NOT NULL,\n'
+              '  action      text NOT NULL,\n'
+              '  target_type text NOT NULL,\n'
+              '  target_id   text NOT NULL,\n'
+              '  metadata    jsonb,\n'
+              '  created_at  timestamptz NOT NULL DEFAULT now()\n'
+              ');\n'
+              'ALTER TABLE public.audit_logs ENABLE ROW LEVEL SECURITY;\n'
+              'CREATE POLICY "Audit logs are viewable by admin only"\n'
+              '  ON public.audit_logs FOR SELECT TO authenticated\n'
               '  USING (EXISTS (SELECT 1 FROM public.profiles WHERE id = auth.uid() AND role = \'admin\'));',
               style: adminDataMono(fontSize: 12, color: kAdminNavyTrust),
             ),
           ),
           const SizedBox(height: 24),
-          // Codebase Trigger Points Table
+          // Inactive Event Stream Notice
           Text(
-            'Registered Action Hooks',
+            'Audit event stream',
             style: adminHeaderStyle(fontSize: 15, fontWeight: FontWeight.w600, color: kAdminNavyTrust),
           ),
           const SizedBox(height: 8),
           Container(
+            padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: kAdminTableRadius,
               border: Border.all(color: kAdminHairline, width: 1),
             ),
-            clipBehavior: Clip.antiAlias,
-            child: Column(
-              children: [
-                Container(
-                  color: const Color(0xFFF9FAFB),
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        flex: 4,
-                        child: Text(
-                          'Action identifier',
-                          style: adminLabelStyle(fontSize: 12, fontWeight: FontWeight.w600, color: kAdminNavyTrust),
-                        ),
-                      ),
-                      Expanded(
-                        flex: 3,
-                        child: Text(
-                          'Target type',
-                          style: adminLabelStyle(fontSize: 12, fontWeight: FontWeight.w600, color: kAdminNavyTrust),
-                        ),
-                      ),
-                      Expanded(
-                        flex: 5,
-                        child: Text(
-                          'Code location',
-                          style: adminLabelStyle(fontSize: 12, fontWeight: FontWeight.w600, color: kAdminNavyTrust),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                const Divider(height: 1, color: kAdminHairline),
-                _triggerRow('provider.approved', 'provider', 'AdminProvidersTab._confirmProviderApproval'),
-                const Divider(height: 1, color: kAdminHairline),
-                _triggerRow('scholarship.status_toggled', 'scholarship', 'AdminScholarshipsTab._isActive toggle'),
-                const Divider(height: 1, color: kAdminHairline),
-                _triggerRow('application.status_changed', 'application', 'provider_incoming_applications.dart'),
-                const Divider(height: 1, color: kAdminHairline),
-                _triggerRow('user.authenticated', 'auth.session', 'authRedirectDecision (router.dart)'),
-              ],
-            ),
-          ),
-          const SizedBox(height: 24),
-          // Runtime Telemetry
-          Text(
-            'Session Telemetry',
-            style: adminHeaderStyle(fontSize: 15, fontWeight: FontWeight.w600, color: kAdminNavyTrust),
-          ),
-          const SizedBox(height: 8),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: kAdminCardRadius,
-              border: Border.all(color: kAdminHairline, width: 1),
-            ),
             child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Container(width: 8, height: 8, decoration: const BoxDecoration(color: kAdminBridgeGreen, shape: BoxShape.circle)),
-                const SizedBox(width: 8),
+                const Icon(Icons.inbox_outlined, color: kAdminTextSecondary, size: 20),
+                const SizedBox(width: 12),
                 Expanded(
-                  child: Row(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('Operator: ', style: adminLabelStyle(fontSize: 12, color: kAdminTextSecondary)),
-                      Flexible(
-                        child: Text(
-                          currentUserId ?? 'admin-1',
-                          style: adminDataMono(fontSize: 12, fontWeight: FontWeight.w600, color: kAdminNavyTrust),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
+                      Text(
+                        'Event streaming inactive',
+                        style: adminHeaderStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                          color: kAdminNavyTrust,
                         ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        'Audit event recording and live streaming will activate automatically once migration 0008 is executed against the database. No simulated or mock entries are generated.',
+                        style: adminBodyStyle(fontSize: 13, color: kAdminTextSecondary),
                       ),
                     ],
                   ),
                 ),
-                const SizedBox(width: 8),
-                Text('RLS verified', style: adminLabelStyle(fontSize: 11, fontWeight: FontWeight.w600, color: kAdminBridgeGreen)),
               ],
             ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _triggerRow(String action, String target, String location) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-      child: Row(
-        children: [
-          Expanded(
-            flex: 4,
-            child: Text(action, style: adminDataMono(fontSize: 12, fontWeight: FontWeight.w600, color: kAdminNavyTrust)),
-          ),
-          Expanded(
-            flex: 3,
-            child: Text(target, style: adminBodyStyle(fontSize: 12, color: kAdminTextSecondary)),
-          ),
-          Expanded(
-            flex: 5,
-            child: Text(location, style: adminLabelStyle(fontSize: 11, color: kAdminTextSecondary)),
           ),
         ],
       ),

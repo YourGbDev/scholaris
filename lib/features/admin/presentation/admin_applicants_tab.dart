@@ -575,7 +575,7 @@ class _AdminApplicantsTabState extends ConsumerState<AdminApplicantsTab> {
           borderRadius: kAdminChromeRadius,
         ),
         title: Text(
-          'Confirm Award',
+          'Confirm award',
           style: adminHeaderStyle(fontSize: 17, fontWeight: FontWeight.w600),
         ),
         content: Text(

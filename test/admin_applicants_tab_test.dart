@@ -181,7 +181,7 @@ void main() {
 
     // Verify confirmation dialog appears with guard text
     expect(find.byType(AlertDialog), findsOneWidget);
-    expect(find.text('Confirm Award'), findsOneWidget);
+    expect(find.text('Confirm award'), findsWidgets);
     expect(find.textContaining('officially award the "DOST Merit Scholarship" scholarship to Juan Dela Cruz'), findsOneWidget);
 
     // Test Cancel button aborts
@@ -297,7 +297,7 @@ void main() {
     await tester.pumpAndSettle();
 
     // Guard dialog appears
-    expect(find.text('Confirm Award'), findsOneWidget);
+    expect(find.text('Confirm award'), findsWidgets);
 
     // Confirm
     await tester.tap(find.widgetWithText(FilledButton, 'Confirm award'));

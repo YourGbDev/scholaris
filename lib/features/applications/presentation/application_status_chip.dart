@@ -73,7 +73,7 @@ class ApplicationStatusUi {
       case ApplicationStatus.awarded:
         return const ApplicationStatusUi(
           label: 'Awarded',
-          foreground: Color(0xFF0F4D2E),
+          foreground: kPrimary,
           background: Color(0xFFD8EEDF),
           icon: Icons.workspace_premium_rounded,
         );

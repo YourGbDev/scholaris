@@ -11,7 +11,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:lottie/lottie.dart';
+import 'package:scholaris/shared/widgets/eli_mascot.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:scholaris/features/onboarding/controllers/onboarding_controller.dart';
@@ -19,12 +19,9 @@ import 'package:scholaris/features/onboarding/presentation/onboarding_screen.dar
 
 const String _loginMarker = 'LOGIN STUB';
 
-/// Finds the [LottieBuilder] loading [asset] (e.g. onboarding_slide1.json).
-Finder _lottieAsset(String asset) => find.byWidgetPredicate(
-  (w) =>
-      w is LottieBuilder &&
-      w.lottie is AssetLottie &&
-      (w.lottie as AssetLottie).assetName == asset,
+/// Finds the [EliMascot] showing [pose].
+Finder _eliPose(EliPose pose) => find.byWidgetPredicate(
+  (w) => w is EliMascot && w.pose == pose,
 );
 
 GoRouter _router() => GoRouter(
@@ -58,13 +55,13 @@ void main() {
   ) async {
     await _pumpOnboarding(tester);
 
-    expect(find.text('Find Your Scholarship'), findsOneWidget);
+    expect(find.text('Meet Eli'), findsOneWidget);
     expect(
-      find.text('Hundreds of opportunities matched to your profile'),
+      find.text('Your guide to greater opportunities'),
       findsOneWidget,
     );
     expect(
-      _lottieAsset('assets/animations/onboarding_slide1.json'),
+      _eliPose(EliPose.welcome),
       findsOneWidget,
     );
 
@@ -85,7 +82,7 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('Smart Matching'), findsOneWidget);
     expect(
-      _lottieAsset('assets/animations/selection list clients.json'),
+      _eliPose(EliPose.thinking),
       findsOneWidget,
     );
     expect(find.text('Skip'), findsOneWidget);
@@ -95,7 +92,7 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('Apply with Ease'), findsOneWidget);
     expect(
-      _lottieAsset('assets/animations/onboarding_slide3.json'),
+      _eliPose(EliPose.celebrating),
       findsOneWidget,
     );
 

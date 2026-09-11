@@ -29,40 +29,40 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:lottie/lottie.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:scholaris/features/onboarding/controllers/onboarding_controller.dart';
 import 'package:scholaris/shared/theme/app_theme.dart';
 import 'package:scholaris/shared/widgets/entrance.dart';
+import 'package:scholaris/shared/widgets/eli_mascot.dart';
 
-/// A single onboarding slide's copy + illustration asset.
+/// A single onboarding slide's copy + mascot pose.
 class _SlideSpec {
   const _SlideSpec({
-    required this.asset,
+    required this.pose,
     required this.title,
     required this.subtitle,
   });
 
-  final String asset;
+  final EliPose pose;
   final String title;
   final String subtitle;
 }
 
 const List<_SlideSpec> _kSlides = [
   _SlideSpec(
-    asset: 'assets/animations/onboarding_slide1.json',
-    title: 'Find Your Scholarship',
-    subtitle: 'Hundreds of opportunities matched to your profile',
+    pose: EliPose.welcome,
+    title: 'Meet Eli',
+    subtitle: 'Your guide to greater opportunities',
   ),
   _SlideSpec(
-    asset: 'assets/animations/selection list clients.json',
+    pose: EliPose.thinking,
     title: 'Smart Matching',
     subtitle:
         'We find the best fit based on your grades, course, and financial need',
   ),
   _SlideSpec(
-    asset: 'assets/animations/onboarding_slide3.json',
+    pose: EliPose.celebrating,
     title: 'Apply with Ease',
     subtitle: 'Track your applications and never miss a deadline',
   ),
@@ -122,7 +122,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
             final isLast = index == _kSlides.length - 1;
             return _SlideFadeRise(
               child: _OnboardingSlide(
-                asset: spec.asset,
+                pose: spec.pose,
                 title: spec.title,
                 subtitle: spec.subtitle,
                 index: index,
@@ -197,7 +197,7 @@ class _SlideFadeRiseState extends State<_SlideFadeRise>
 
 class _OnboardingSlide extends StatelessWidget {
   const _OnboardingSlide({
-    required this.asset,
+    required this.pose,
     required this.title,
     required this.subtitle,
     required this.index,
@@ -208,7 +208,7 @@ class _OnboardingSlide extends StatelessWidget {
     required this.onLogin,
   });
 
-  final String asset;
+  final EliPose pose;
   final String title;
   final String subtitle;
   final int index;
@@ -242,25 +242,14 @@ class _OnboardingSlide extends StatelessWidget {
                     height: illustrationArea,
                     width: double.infinity,
                     child: Padding(
-                      // Padding keeps the artwork clear of the screen edges in
-                      // every breakpoint; contain letterboxes where the ratio
-                      // differs.
                       padding: const EdgeInsets.symmetric(
                         horizontal: 24,
                         vertical: 8,
                       ),
-                      child: Lottie.asset(
-                        asset,
+                      child: EliMascot(
+                        pose: pose,
+                        height: illustrationArea,
                         fit: BoxFit.contain,
-                        // The Lottie files carry their own looping motion, so
-                        // there is no float wrapper here — stacking the old
-                        // ±4px breathing on top would double-animate. Frozen
-                        // on the first frame for reduced-motion users and in
-                        // widget tests.
-                        animate:
-                            !(MediaQuery.maybeOf(context)?.disableAnimations ??
-                                false) &&
-                            !_isWidgetTestBinding,
                       ),
                     ),
                   ),
@@ -450,18 +439,4 @@ class _BottomControls extends StatelessWidget {
       ],
     );
   }
-}
-
-/// True while running inside a widget test
-/// (`AutomatedTestWidgetsFlutterBinding` / `LiveTestWidgetsFlutterBinding`).
-///
-/// The Lottie compositions loop forever; a repeating animation would keep the
-/// test harness's `pumpAndSettle` from ever settling — it only stops when no
-/// frame is scheduled. Freezing the illustration there keeps the widget tests
-/// fast and deterministic; real app runs (debug, profile, release, web)
-/// always animate.
-bool get _isWidgetTestBinding {
-  final type = WidgetsBinding.instance.runtimeType.toString();
-  return type == 'AutomatedTestWidgetsFlutterBinding' ||
-      type == 'LiveTestWidgetsFlutterBinding';
 }

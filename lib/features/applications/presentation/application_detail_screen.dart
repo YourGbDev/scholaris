@@ -31,6 +31,7 @@ import 'package:scholaris/features/scholarships/presentation/scholarship_detail_
 import 'package:scholaris/features/scholarships/providers/scholarships_provider.dart';
 import 'package:scholaris/shared/theme/app_theme.dart';
 import 'package:scholaris/shared/utils/constants.dart';
+import 'package:scholaris/shared/widgets/eli_mascot.dart';
 import 'package:scholaris/shared/widgets/primary_button.dart';
 import 'package:scholaris/shared/widgets/responsive_container.dart';
 import 'package:scholaris/shared/widgets/state_views.dart';
@@ -73,7 +74,7 @@ class ApplicationDetailScreen extends ConsumerWidget {
             initial;
         if (application == null) {
           return const EmptyView(
-            icon: Icons.article_outlined,
+            mascotPose: EliPose.thinking,
             title: 'Application not found',
             message: 'This application is no longer available.',
           );
@@ -344,6 +345,23 @@ class _StatusSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final ui = ApplicationStatusUi.of(application.status);
+    final EliPose mascotPose;
+    switch (application.status) {
+      case ApplicationStatus.approved:
+      case ApplicationStatus.awarded:
+        mascotPose = EliPose.celebrating;
+        break;
+      case ApplicationStatus.rejected:
+        mascotPose = EliPose.concerned;
+        break;
+      case ApplicationStatus.underReview:
+      case ApplicationStatus.submitted:
+      case ApplicationStatus.draft:
+      case ApplicationStatus.withdrawn:
+        mascotPose = EliPose.thinking;
+        break;
+    }
+
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -352,14 +370,7 @@ class _StatusSection extends StatelessWidget {
       ),
       child: Row(
         children: [
-          Container(
-            padding: const EdgeInsets.all(10),
-            decoration: BoxDecoration(
-              color: ui.background,
-              shape: BoxShape.circle,
-            ),
-            child: Icon(ui.icon, size: 22, color: ui.foreground),
-          ),
+          EliMascot(pose: mascotPose, height: 42, width: 42),
           const SizedBox(width: 12),
           Expanded(
             child: Column(

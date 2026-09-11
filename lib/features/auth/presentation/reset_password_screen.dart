@@ -11,7 +11,7 @@
 // for reduced-motion users so the surface stays deterministic and calm.
 
 import 'package:flutter/material.dart';
-import 'package:lottie/lottie.dart';
+import 'package:scholaris/shared/widgets/eli_mascot.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'package:scholaris/shared/theme/app_theme.dart';
@@ -112,18 +112,6 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen>
         content: Text(message, style: openSans()),
       );
 
-  /// True while running inside a widget test
-  /// (`AutomatedTestWidgetsFlutterBinding` / `LiveTestWidgetsFlutterBinding`).
-  ///
-  /// The hero Lottie loops forever; a repeating animation would keep the test
-  /// harness's `pumpAndSettle` from ever settling. Freezing the hero there
-  /// keeps the widget tests fast and deterministic; real app runs always
-  /// animate. Same guard the login / forgot-password / signup heroes use.
-  bool get _isWidgetTestBinding {
-    final type = WidgetsBinding.instance.runtimeType.toString();
-    return type == 'AutomatedTestWidgetsFlutterBinding' ||
-        type == 'LiveTestWidgetsFlutterBinding';
-  }
 
   // --- Build ----------------------------------------------------------------
 
@@ -155,17 +143,9 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen>
                           index: 0,
                           offset: const Offset(0, 0.08),
                           interval: _resetInterval(200, 1000),
-                          // The asset has built-in looping motion, so no
-                          // float wrapper — stacking a breathing offset on
-                          // top would double-animate.
-                          child: Lottie.asset(
-                            'assets/animations/selection list clients.json',
-                            fit: BoxFit.contain,
-                            animate:
-                                !(MediaQuery.maybeOf(context)
-                                        ?.disableAnimations ??
-                                    false) &&
-                                !_isWidgetTestBinding,
+                          child: EliMascot(
+                            pose: EliPose.security,
+                            height: heroHeight,
                           ),
                         ),
                       ),

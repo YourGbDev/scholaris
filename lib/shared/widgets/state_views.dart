@@ -6,6 +6,7 @@
 import 'package:flutter/material.dart';
 
 import '../theme/app_theme.dart';
+import 'eli_mascot.dart';
 
 class LoadingView extends StatelessWidget {
   const LoadingView({super.key});
@@ -116,40 +117,52 @@ class _LoadingArcPainter extends CustomPainter {
 class EmptyView extends StatelessWidget {
   const EmptyView({
     super.key,
-    required this.icon,
+    this.icon = Icons.inbox_rounded,
     required this.title,
     required this.message,
     this.actionLabel,
     this.onAction,
     this.animateSearchIcon = false,
+    this.mascotPose = EliPose.thinking,
   });
 
-  final IconData icon;
+  final IconData? icon;
   final String title;
   final String message;
   final String? actionLabel;
   final VoidCallback? onAction;
   final bool animateSearchIcon;
+  final EliPose? mascotPose;
 
   @override
   Widget build(BuildContext context) {
-    final iconWidget = animateSearchIcon
-        ? _SearchIconAnimation(icon: icon)
-        : Icon(icon, size: 36, color: kPrimary);
+    final Widget visualWidget;
+    if (mascotPose != null) {
+      visualWidget = EliMascot(
+        pose: mascotPose!,
+        height: 140,
+      );
+    } else {
+      final iconWidget = animateSearchIcon
+          ? _SearchIconAnimation(icon: icon ?? Icons.inbox_rounded)
+          : Icon(icon ?? Icons.inbox_rounded, size: 36, color: kPrimary);
+
+      visualWidget = Container(
+        padding: const EdgeInsets.all(20),
+        decoration: const BoxDecoration(
+          color: kPrimarySoft,
+          shape: BoxShape.circle,
+        ),
+        child: iconWidget,
+      );
+    }
 
     return Padding(
       padding: const EdgeInsets.all(40),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Container(
-            padding: const EdgeInsets.all(20),
-            decoration: const BoxDecoration(
-              color: kPrimarySoft,
-              shape: BoxShape.circle,
-            ),
-            child: iconWidget,
-          ),
+          visualWidget,
           const SizedBox(height: 16),
           Text(
             title,
@@ -231,19 +244,28 @@ class ErrorView extends StatelessWidget {
     super.key,
     required this.message,
     this.onRetry,
+    this.mascotPose = EliPose.concerned,
   });
 
   final String message;
   final VoidCallback? onRetry;
+  final EliPose? mascotPose;
 
   @override
   Widget build(BuildContext context) {
+    final Widget visualWidget = mascotPose != null
+        ? EliMascot(
+            pose: mascotPose!,
+            height: 120,
+          )
+        : const Icon(Icons.cloud_off, size: 36, color: kError);
+
     return Padding(
       padding: const EdgeInsets.all(40),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const Icon(Icons.cloud_off, size: 36, color: kError),
+          visualWidget,
           const SizedBox(height: 12),
           Text(
             'Something went wrong',

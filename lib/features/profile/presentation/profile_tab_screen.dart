@@ -11,6 +11,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:scholaris/features/account/presentation/account_settings_screen.dart';
 import 'package:scholaris/features/applications/presentation/applications_screen.dart';
 import 'package:scholaris/shared/theme/app_theme.dart';
+import 'package:scholaris/shared/widgets/eli_mascot.dart';
 import 'package:scholaris/shared/widgets/responsive_container.dart';
 import 'package:scholaris/shared/widgets/state_views.dart';
 import '../models/student_profile.dart';
@@ -33,7 +34,7 @@ class ProfileTabScreen extends ConsumerWidget {
           ),
           data: (profile) => profile == null
               ? const EmptyView(
-                  icon: Icons.person_outline_rounded,
+                  mascotPose: EliPose.thinking,
                   title: 'No profile yet',
                   message: 'Complete your profile to start matching.',
                 )
@@ -59,9 +60,23 @@ class ProfileTabScreen extends ConsumerWidget {
         Row(
           children: [
             Container(
-              padding: const EdgeInsets.all(14),
-              decoration: BoxDecoration(color: kPrimarySoft, shape: BoxShape.circle),
-              child: const Icon(Icons.person_rounded, size: 32, color: kPrimary),
+              width: 58,
+              height: 58,
+              decoration: BoxDecoration(
+                color: kPrimarySoft,
+                shape: BoxShape.circle,
+                border: Border.all(
+                  color: kPrimary.withValues(alpha: 0.2),
+                  width: 2,
+                ),
+              ),
+              child: const ClipOval(
+                child: EliMascot(
+                  pose: EliPose.appIcon,
+                  height: 58,
+                  width: 58,
+                ),
+              ),
             ),
             const SizedBox(width: 14),
             Expanded(
@@ -82,7 +97,8 @@ class ProfileTabScreen extends ConsumerWidget {
             ),
           ],
         ),
-        const SizedBox(height: 24),
+        _EliMilestoneCard(profile: profile),
+        const SizedBox(height: 20),
         Text(
           'Your matching profile',
           style: poppins(fontSize: 18, fontWeight: FontWeight.w600),
@@ -235,6 +251,151 @@ class _DetailRow extends StatelessWidget {
               value,
               textAlign: TextAlign.right,
               style: poppins(fontSize: 14, fontWeight: FontWeight.w600),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _EliMilestoneCard extends StatelessWidget {
+  const _EliMilestoneCard({required this.profile});
+
+  final StudentProfile profile;
+
+  @override
+  Widget build(BuildContext context) {
+    final hasSchool =
+        profile.school != null && profile.school!.trim().isNotEmpty;
+    final hasIncome = profile.monthlyFamilyIncome != null;
+    var filledCount = 6;
+    if (hasSchool) filledCount++;
+    if (hasIncome) filledCount++;
+    final percentage = (filledCount / 8 * 100).round();
+    final isComplete = percentage == 100;
+
+    final EliPose pose = isComplete ? EliPose.celebrating : EliPose.thinking;
+    final accentColor = isComplete ? kPrimary : kAccent;
+
+    final String advice;
+    if (hasSchool && hasIncome) {
+      advice =
+          'Outstanding! Your matching profile is 100% complete. Eli has all the facts to unlock your highest-match scholarships!';
+    } else if (!hasSchool && !hasIncome) {
+      advice =
+          'Tip from Eli: Add your school & family income to unlock university grants and need-based tuition assistance!';
+    } else if (!hasSchool) {
+      advice =
+          'Tip from Eli: Add your school or university to qualify for campus-partnered grants!';
+    } else {
+      advice =
+          'Tip from Eli: Add your family income bracket to qualify for need-based tuition waivers!';
+    }
+
+    return Container(
+      key: const ValueKey('eli-profile-milestone-card'),
+      margin: const EdgeInsets.only(top: 20, bottom: 4),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(kRadiusCard),
+        border: Border.all(
+          color: accentColor.withValues(alpha: 0.28),
+        ),
+        boxShadow: const [
+          BoxShadow(
+            color: kCardShadow,
+            blurRadius: 12,
+            offset: Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              EliMascot(
+                pose: pose,
+                height: 52,
+                width: 52,
+              ),
+              const SizedBox(width: 14),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Wrap(
+                      crossAxisAlignment: WrapCrossAlignment.center,
+                      spacing: 8,
+                      runSpacing: 4,
+                      children: [
+                        Text(
+                          'Matching Power',
+                          style: poppins(
+                            fontSize: 15,
+                            fontWeight: FontWeight.w700,
+                            color: kPrimary,
+                          ),
+                        ),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 8,
+                            vertical: 2,
+                          ),
+                          decoration: BoxDecoration(
+                            color: isComplete
+                                ? kPrimary.withValues(alpha: 0.12)
+                                : kAccent.withValues(alpha: 0.18),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Text(
+                            '$percentage%',
+                            style: poppins(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w700,
+                              color: isComplete
+                                  ? kPrimary
+                                  : const Color(0xFFB57A00),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 6),
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(4),
+                      child: LinearProgressIndicator(
+                        value: filledCount / 8.0,
+                        minHeight: 6,
+                        backgroundColor: kPrimarySoft,
+                        valueColor: AlwaysStoppedAnimation<Color>(
+                          isComplete ? kPrimary : kAccent,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            decoration: BoxDecoration(
+              color: isComplete ? kPrimarySoft : const Color(0xFFFFFBEB),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Text(
+              advice,
+              style: openSans(
+                fontSize: 12,
+                color: isComplete ? kPrimary : const Color(0xFF92400E),
+                height: 1.35,
+              ),
             ),
           ),
         ],

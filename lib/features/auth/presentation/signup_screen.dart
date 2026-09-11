@@ -13,7 +13,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:lottie/lottie.dart';
+import 'package:scholaris/shared/widgets/eli_mascot.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'package:scholaris/app/confirmation_redirect.dart';
@@ -24,18 +24,6 @@ import 'package:scholaris/shared/widgets/success_overlay.dart';
 const _inputRadius = 12.0;
 
 final _emailPattern = RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$');
-
-/// True while running inside a widget test
-/// (`AutomatedTestWidgetsFlutterBinding` / `LiveTestWidgetsFlutterBinding`).
-///
-/// A repeating controller would keep the test harness's `pumpAndSettle` from
-/// ever settling — the same gate the onboarding and login floats use. Real
-/// app runs (debug, profile, release, web) always animate.
-bool get _isWidgetTestBinding {
-  final type = WidgetsBinding.instance.runtimeType.toString();
-  return type == 'AutomatedTestWidgetsFlutterBinding' ||
-      type == 'LiveTestWidgetsFlutterBinding';
-}
 
 /// Total entrance duration for the signup screen's staggered reveal.
 const int kSignupEntranceTotalMs = 2200;
@@ -171,19 +159,9 @@ class _SignupScreenState extends State<SignupScreen>
                     index: 0,
                     offset: const Offset(0, 0.08),
                     interval: _signupInterval(200, 1000),
-                    // The Lottie file has built-in looping motion (74
-                    // animated properties), so no float wrapper —
-                    // stacking the ±4px breathing on top would
-                    // double-animate. Frozen on its first frame for
-                    // reduced-motion users and in widget tests.
-                    child: Lottie.asset(
-                      'assets/animations/sign in hover.json',
-                      fit: BoxFit.contain,
-                      animate:
-                          !(MediaQuery.maybeOf(context)
-                                  ?.disableAnimations ??
-                              false) &&
-                          !_isWidgetTestBinding,
+                    child: EliMascot(
+                      pose: EliPose.welcome,
+                      height: heroHeight,
                     ),
                   ),
                 ),

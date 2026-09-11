@@ -20,6 +20,7 @@ import 'package:scholaris/features/auth/controllers/auth_controller.dart';
 import 'package:scholaris/features/profile/models/student_profile.dart';
 import 'package:scholaris/features/profile/presentation/profile_tab_screen.dart';
 import 'package:scholaris/features/profile/providers/profile_setup_provider.dart';
+import 'package:scholaris/shared/widgets/eli_mascot.dart';
 import 'helpers/fake_account_data_source.dart';
 
 /// Controllable auth session notifier; initial state comes from build() so it
@@ -88,6 +89,10 @@ void main() {
   });
 
   testWidgets('renders the Account Settings entry', (tester) async {
+    tester.view.physicalSize = const Size(800, 1200);
+    tester.view.devicePixelRatio = 1.0;
+    addTearDown(tester.view.reset);
+
     await tester.pumpWidget(_harness(profileFactory: () async => _profile()));
     await tester.pumpAndSettle();
 
@@ -97,6 +102,10 @@ void main() {
 
   testWidgets('tapping the entry opens AccountSettingsScreen',
       (tester) async {
+    tester.view.physicalSize = const Size(800, 1200);
+    tester.view.devicePixelRatio = 1.0;
+    addTearDown(tester.view.reset);
+
     await tester.pumpWidget(_harness(profileFactory: () async => _profile()));
     await tester.pumpAndSettle();
 
@@ -145,5 +154,58 @@ void main() {
 
     expect(find.text('Maria Santos'), findsOneWidget);
     expect(find.text('Something went wrong'), findsNothing);
+  });
+
+  group('Eli mascot on profile', () {
+    testWidgets('renders Eli avatar and milestone matching card',
+        (tester) async {
+      tester.view.physicalSize = const Size(800, 1200);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.reset);
+
+      await tester.pumpWidget(_harness(profileFactory: () async => _profile()));
+      await tester.pumpAndSettle();
+
+      // Eli avatar in header + Eli in milestone card
+      expect(find.byType(EliMascot), findsWidgets);
+      expect(find.byKey(const ValueKey('eli-profile-milestone-card')),
+          findsOneWidget);
+      expect(find.text('Matching Power'), findsOneWidget);
+      expect(find.text('88%'), findsOneWidget);
+      expect(
+          find.text(
+              'Tip from Eli: Add your school or university to qualify for campus-partnered grants!'),
+          findsOneWidget);
+    });
+
+    testWidgets('100% complete profile celebrates with full power',
+        (tester) async {
+      tester.view.physicalSize = const Size(800, 1200);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.reset);
+
+      const completeProfile = StudentProfile(
+        id: 'user-a',
+        fullName: 'Maria Santos',
+        nationality: 'Filipino',
+        region: 'NCR',
+        gpa: 3.2,
+        yearLevel: 2,
+        course: 'BS Computer Science',
+        school: 'University of the Philippines',
+        monthlyFamilyIncome: 15000,
+        setupComplete: true,
+      );
+
+      await tester
+          .pumpWidget(_harness(profileFactory: () async => completeProfile));
+      await tester.pumpAndSettle();
+
+      expect(find.text('100%'), findsOneWidget);
+      expect(
+          find.text(
+              'Outstanding! Your matching profile is 100% complete. Eli has all the facts to unlock your highest-match scholarships!'),
+          findsOneWidget);
+    });
   });
 }

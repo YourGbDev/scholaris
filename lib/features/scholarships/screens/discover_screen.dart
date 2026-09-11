@@ -29,6 +29,7 @@ import 'package:scholaris/shared/widgets/scholaris_hero.dart';
 import 'package:scholaris/shared/widgets/scholarship_card.dart';
 import 'package:scholaris/shared/widgets/section_header.dart';
 import 'package:scholaris/shared/widgets/state_views.dart';
+import 'package:scholaris/shared/widgets/eli_mascot.dart';
 
 class DiscoverScreen extends ConsumerWidget {
   const DiscoverScreen({super.key});
@@ -404,8 +405,8 @@ class DiscoverScreen extends ConsumerWidget {
           ),
           child: Row(
             children: [
-              const Icon(Icons.info_outline, color: kPrimary, size: 20),
-              const SizedBox(width: 10),
+              const EliMascot(pose: EliPose.thinking, height: 44),
+              const SizedBox(width: 12),
               Expanded(
                 child: Text(
                   message,
@@ -583,6 +584,125 @@ class _ActiveFilterChip extends StatelessWidget {
   }
 }
 
+class _EliAdviceCard extends StatelessWidget {
+  const _EliAdviceCard({required this.info});
+
+  final DashboardInfo info;
+
+  @override
+  Widget build(BuildContext context) {
+    final EliPose pose;
+    final String title;
+    final String message;
+    final Color accentColor;
+
+    if (info.closingSoonCount > 0) {
+      pose = EliPose.welcome;
+      title = 'Deadline Alert!';
+      final count = info.closingSoonCount;
+      message =
+          'You have $count scholarship${count == 1 ? '' : 's'} closing soon. Don\'t miss your opportunity!';
+      accentColor = kAccent;
+    } else if (info.matchCount > 0) {
+      pose = EliPose.welcome;
+      title = 'Good day, Scholar!';
+      final count = info.matchCount;
+      message =
+          'Eli matched $count scholarship opportunity${count == 1 ? '' : 'ies'} tailored to your academic profile!';
+      accentColor = kPrimary;
+    } else {
+      pose = EliPose.thinking;
+      title = 'Tip from Eli';
+      message =
+          'Explore opportunities below and bookmark the ones that match your goals!';
+      accentColor = kPrimary;
+    }
+
+    return Container(
+      key: const ValueKey('eli-advice-card'),
+      margin: const EdgeInsets.only(bottom: 14),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(kRadiusCard),
+        border: Border.all(color: accentColor.withValues(alpha: 0.28)),
+        boxShadow: const [
+          BoxShadow(
+            color: kCardShadow,
+            blurRadius: 10,
+            offset: Offset(0, 3),
+          ),
+        ],
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          EliMascot(
+            pose: pose,
+            height: 56,
+            width: 56,
+          ),
+          const SizedBox(width: 14),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Wrap(
+                  crossAxisAlignment: WrapCrossAlignment.center,
+                  spacing: 8,
+                  runSpacing: 4,
+                  children: [
+                    Text(
+                      title,
+                      style: poppins(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w700,
+                        color: accentColor == kAccent
+                            ? const Color(0xFFB57A00)
+                            : kPrimary,
+                      ),
+                    ),
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 6,
+                        vertical: 1.5,
+                      ),
+                      decoration: BoxDecoration(
+                        color: accentColor.withValues(alpha: 0.12),
+                        borderRadius: BorderRadius.circular(6),
+                      ),
+                      child: Text(
+                        'Eli Guide',
+                        style: openSans(
+                          fontSize: 10,
+                          fontWeight: FontWeight.w600,
+                          color: accentColor == kAccent
+                              ? const Color(0xFFB57A00)
+                              : kPrimary,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 3),
+                Text(
+                  message,
+                  style: openSans(
+                    fontSize: 12.5,
+                    color: Colors.black87,
+                    height: 1.35,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 class _DashboardSummary extends StatelessWidget {
   const _DashboardSummary({required this.info});
 
@@ -592,6 +712,7 @@ class _DashboardSummary extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
+        _EliAdviceCard(info: info),
         Row(
           children: [
             Expanded(

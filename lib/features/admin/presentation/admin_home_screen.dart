@@ -2,10 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import 'admin_analytics_tab.dart';
+import 'admin_applicants_tab.dart';
+import 'admin_audit_logs_tab.dart';
 import 'admin_dashboard_tab.dart';
 import 'admin_providers_tab.dart';
 import 'admin_scholarships_tab.dart';
 import 'admin_theme.dart';
+import 'admin_users_tab.dart';
 
 class AdminTabIndexNotifier extends Notifier<int> {
   @override
@@ -25,6 +29,10 @@ class AdminHomeScreen extends ConsumerWidget {
     AdminDashboardTab(),
     AdminScholarshipsTab(),
     AdminProvidersTab(),
+    AdminApplicantsTab(),
+    AdminUsersTab(),
+    AdminAnalyticsTab(),
+    AdminAuditLogsTab(),
   ];
 
   @override
@@ -49,7 +57,7 @@ class AdminHomeScreen extends ConsumerWidget {
               children: [
                 // Brand Header
                 Padding(
-                  padding: const EdgeInsets.fromLTRB(16, 20, 16, 20),
+                  padding: const EdgeInsets.fromLTRB(16, 20, 16, 16),
                   child: Row(
                     children: [
                       Container(
@@ -85,45 +93,77 @@ class AdminHomeScreen extends ConsumerWidget {
                   ),
                 ),
                 const Divider(height: 1, color: kAdminHairline),
-                const SizedBox(height: 12),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-                  child: Text(
-                    'Operations',
-                    style: adminLabelStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w600,
-                      color: kAdminTextSecondary,
+                Expanded(
+                  child: SingleChildScrollView(
+                    padding: const EdgeInsets.symmetric(vertical: 8),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Operations Section
+                        _sectionHeader('Operations'),
+                        _SidebarNavItem(
+                          label: 'Overview',
+                          icon: Icons.dashboard_outlined,
+                          selectedIcon: Icons.dashboard_rounded,
+                          isSelected: tabIndex == 0,
+                          onTap: () => ref.read(adminTabIndexProvider.notifier).selectTab(0),
+                        ),
+                        _SidebarNavItem(
+                          label: 'Scholarships',
+                          icon: Icons.school_outlined,
+                          selectedIcon: Icons.school_rounded,
+                          isSelected: tabIndex == 1,
+                          onTap: () => ref.read(adminTabIndexProvider.notifier).selectTab(1),
+                        ),
+                        _SidebarNavItem(
+                          label: 'Providers',
+                          icon: Icons.verified_user_outlined,
+                          selectedIcon: Icons.verified_user_rounded,
+                          isSelected: tabIndex == 2,
+                          onTap: () => ref.read(adminTabIndexProvider.notifier).selectTab(2),
+                        ),
+                        const SizedBox(height: 12),
+                        // Management Section
+                        _sectionHeader('Management'),
+                        _SidebarNavItem(
+                          label: 'Applicants',
+                          icon: Icons.people_outline_rounded,
+                          selectedIcon: Icons.people_rounded,
+                          isSelected: tabIndex == 3,
+                          onTap: () => ref.read(adminTabIndexProvider.notifier).selectTab(3),
+                        ),
+                        _SidebarNavItem(
+                          label: 'Users',
+                          icon: Icons.manage_accounts_outlined,
+                          selectedIcon: Icons.manage_accounts_rounded,
+                          isSelected: tabIndex == 4,
+                          onTap: () => ref.read(adminTabIndexProvider.notifier).selectTab(4),
+                        ),
+                        const SizedBox(height: 12),
+                        // Intelligence Section
+                        _sectionHeader('Intelligence'),
+                        _SidebarNavItem(
+                          label: 'Analytics',
+                          icon: Icons.insights_outlined,
+                          selectedIcon: Icons.insights_rounded,
+                          isSelected: tabIndex == 5,
+                          onTap: () => ref.read(adminTabIndexProvider.notifier).selectTab(5),
+                        ),
+                        _SidebarNavItem(
+                          label: 'Audit Logs',
+                          icon: Icons.fact_check_outlined,
+                          selectedIcon: Icons.fact_check_rounded,
+                          isSelected: tabIndex == 6,
+                          onTap: () => ref.read(adminTabIndexProvider.notifier).selectTab(6),
+                        ),
+                      ],
                     ),
                   ),
                 ),
-                const SizedBox(height: 4),
-                _SidebarNavItem(
-                  label: 'Overview',
-                  icon: Icons.dashboard_outlined,
-                  selectedIcon: Icons.dashboard_rounded,
-                  isSelected: tabIndex == 0,
-                  onTap: () => ref.read(adminTabIndexProvider.notifier).selectTab(0),
-                ),
-                _SidebarNavItem(
-                  label: 'Scholarships',
-                  icon: Icons.school_outlined,
-                  selectedIcon: Icons.school_rounded,
-                  isSelected: tabIndex == 1,
-                  onTap: () => ref.read(adminTabIndexProvider.notifier).selectTab(1),
-                ),
-                _SidebarNavItem(
-                  label: 'Providers',
-                  icon: Icons.verified_user_outlined,
-                  selectedIcon: Icons.verified_user_rounded,
-                  isSelected: tabIndex == 2,
-                  onTap: () => ref.read(adminTabIndexProvider.notifier).selectTab(2),
-                ),
-                const Spacer(),
                 const Divider(height: 1, color: kAdminHairline),
                 // Footer: Ops info & Sign out
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
                   child: Row(
                     children: [
                       Container(
@@ -167,6 +207,20 @@ class AdminHomeScreen extends ConsumerWidget {
       ),
     );
   }
+
+  Widget _sectionHeader(String title) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 6, 16, 4),
+      child: Text(
+        title,
+        style: adminLabelStyle(
+          fontSize: 11,
+          fontWeight: FontWeight.w600,
+          color: kAdminTextSecondary,
+        ),
+      ),
+    );
+  }
 }
 
 class _SidebarNavItem extends StatelessWidget {
@@ -197,7 +251,7 @@ class _SidebarNavItem extends StatelessWidget {
           borderRadius: kAdminChromeRadius,
           onTap: onTap,
           child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 9),
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
             decoration: BoxDecoration(
               borderRadius: kAdminChromeRadius,
               border: isSelected

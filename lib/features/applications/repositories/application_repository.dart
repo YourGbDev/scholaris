@@ -49,6 +49,7 @@ class ApplicationWithdrawalException implements Exception {
 /// Low-level row access for the `applications` table.
 abstract class ApplicationDataSource {
   Future<List<Map<String, dynamic>>> fetchApplications(String userId);
+  Future<List<Map<String, dynamic>>> fetchAllApplications();
   Future<List<Map<String, dynamic>>> fetchApplicationsForScholarships(
     List<String> scholarshipIds,
   );
@@ -83,6 +84,14 @@ class SupabaseApplicationDataSource implements ApplicationDataSource {
         .select()
         .eq('user_id', userId)
         .order('updated_at', ascending: false);
+  }
+
+  @override
+  Future<List<Map<String, dynamic>>> fetchAllApplications() async {
+    return _client
+        .from('applications')
+        .select()
+        .order('applied_at', ascending: false);
   }
 
   @override
@@ -197,6 +206,13 @@ class ApplicationRepository {
     final ids = await _dataSource.fetchProviderScholarshipIds(providerId);
     if (ids.isEmpty) return const [];
     final rows = await _dataSource.fetchApplicationsForScholarships(ids);
+    return rows.map(Application.fromJson).toList();
+  }
+
+  /// All applications across the platform. Intended for administrative telemetry
+  /// and pipeline analytics.
+  Future<List<Application>> fetchAllApplications() async {
+    final rows = await _dataSource.fetchAllApplications();
     return rows.map(Application.fromJson).toList();
   }
 

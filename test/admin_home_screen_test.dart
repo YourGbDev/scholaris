@@ -61,13 +61,17 @@ void main() {
       expect(find.byTooltip('Sign out'), findsOneWidget);
     });
 
-    testWidgets('renders three navigation destinations', (tester) async {
+    testWidgets('renders seven navigation destinations', (tester) async {
       await tester.pumpWidget(buildApp());
       await tester.pumpAndSettle();
 
       expect(find.text('Overview'), findsOneWidget);
       expect(find.text('Scholarships'), findsOneWidget);
       expect(find.text('Providers'), findsOneWidget);
+      expect(find.text('Applicants'), findsOneWidget);
+      expect(find.text('Users'), findsOneWidget);
+      expect(find.text('Analytics'), findsOneWidget);
+      expect(find.text('Audit Logs'), findsOneWidget);
     });
 
     testWidgets('overview tab displays metrics and pipeline sections', (tester) async {
@@ -101,6 +105,47 @@ void main() {
 
       expect(find.text('Provider Verification'), findsOneWidget);
       expect(find.text('DOST-SEI'), findsOneWidget);
+    });
+
+    testWidgets('switching to Applicants tab renders student directory', (tester) async {
+      await tester.pumpWidget(buildApp());
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.text('Applicants'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Student Directory'), findsOneWidget);
+    });
+
+    testWidgets('switching to Users tab renders user management', (tester) async {
+      await tester.pumpWidget(buildApp());
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.text('Users'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('User Management'), findsOneWidget);
+    });
+
+    testWidgets('switching to Analytics tab renders platform analytics', (tester) async {
+      await tester.pumpWidget(buildApp());
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.text('Analytics'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Platform Analytics'), findsOneWidget);
+    });
+
+    testWidgets('switching to Audit Logs tab renders system audit ledger', (tester) async {
+      await tester.pumpWidget(buildApp());
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.text('Audit Logs'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('System Audit Ledger'), findsOneWidget);
+      expect(find.text('Audit logging infrastructure readiness'), findsOneWidget);
     });
 
     testWidgets('tapping Verify & Approve Provider shows confirmation dialog and Cancel aborts approval', (tester) async {

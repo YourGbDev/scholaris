@@ -12,6 +12,13 @@ class FakeProfileDataSource implements ProfileDataSource {
   }
 
   @override
+  Future<List<Map<String, dynamic>>> fetchAllProfiles() async {
+    return rows.entries
+        .map((e) => Map<String, dynamic>.of({'id': e.key, ...e.value}))
+        .toList();
+  }
+
+  @override
   Future<void> upsertProfile(String userId, Map<String, dynamic> row) async {
     rows[userId] = {...rows[userId] ?? const {}, ...row};
   }

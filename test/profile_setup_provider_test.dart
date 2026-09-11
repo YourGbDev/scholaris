@@ -249,5 +249,10 @@ class _ThrowingProfileDataSource implements ProfileDataSource {
   }
 
   @override
+  Future<List<Map<String, dynamic>>> fetchAllProfiles() async {
+    throw Exception('network down');
+  }
+
+  @override
   Future<void> upsertProfile(String userId, Map<String, dynamic> row) async {}
 }

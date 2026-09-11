@@ -62,6 +62,18 @@ class RlsEnforcingProfileDataSource implements ProfileDataSource {
   }
 
   @override
+  Future<List<Map<String, dynamic>>> fetchAllProfiles() async {
+    final callerId = currentUserId();
+    if (callerId == null) return const [];
+    final results = <Map<String, dynamic>>[];
+    for (final entry in rawProfiles.entries) {
+      final profile = await fetchProfile(entry.key);
+      if (profile != null) results.add(profile);
+    }
+    return results;
+  }
+
+  @override
   Future<void> upsertProfile(String userId, Map<String, dynamic> row) async {
     rawProfiles[userId] = {...rawProfiles[userId] ?? const {}, ...row};
   }
@@ -108,6 +120,22 @@ class RlsEnforcingApplicationDataSource implements ApplicationDataSource {
       for (final a in rawApplications)
         if (a['user_id'] == userId) Map<String, dynamic>.of(a),
     ];
+  }
+
+  @override
+  Future<List<Map<String, dynamic>>> fetchAllApplications() async {
+    final callerId = currentUserId();
+    if (callerId == null) return const [];
+    final results = <Map<String, dynamic>>[];
+    for (final app in rawApplications) {
+      final isOwner = app['user_id'] == callerId;
+      final sch = rawScholarships[app['scholarship_id']];
+      final isProvider = sch != null && sch['created_by'] == callerId;
+      if (isOwner || isProvider) {
+        results.add(Map<String, dynamic>.of(app));
+      }
+    }
+    return results;
   }
 
   @override

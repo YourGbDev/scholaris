@@ -34,6 +34,7 @@ class ProfileOwnershipException implements Exception {
 /// Low-level row access for the `profiles` table.
 abstract class ProfileDataSource {
   Future<Map<String, dynamic>?> fetchProfile(String userId);
+  Future<List<Map<String, dynamic>>> fetchAllProfiles();
   Future<void> upsertProfile(String userId, Map<String, dynamic> row);
 }
 
@@ -44,6 +45,15 @@ class SupabaseProfileDataSource implements ProfileDataSource {
   @override
   Future<Map<String, dynamic>?> fetchProfile(String userId) async {
     return _client.from('profiles').select().eq('id', userId).maybeSingle();
+  }
+
+  @override
+  Future<List<Map<String, dynamic>>> fetchAllProfiles() async {
+    final rows = await _client
+        .from('profiles')
+        .select()
+        .order('created_at', ascending: false);
+    return List<Map<String, dynamic>>.from(rows);
   }
 
   @override
@@ -85,6 +95,24 @@ class ProfileRepository {
     final row = await _dataSource.fetchProfile(userId);
     if (row == null) return null;
     return StudentProfile.fromJson({...row, 'id': userId});
+  }
+
+  /// Fetches all profiles across the platform. Intended for administrative directories
+  /// (such as student applicant directory and user account management).
+  Future<List<StudentProfile>> fetchAllProfiles() async {
+    final rows = await _dataSource.fetchAllProfiles();
+    return rows.map((r) {
+      final safeRow = {
+        'full_name': r['full_name'] ?? '',
+        'region': r['region'] ?? '',
+        'gpa': (r['gpa'] as num?)?.toDouble() ?? 0.0,
+        'year_level': (r['year_level'] as num?)?.toInt() ?? 1,
+        'course': r['course'] ?? '',
+        ...r,
+        'id': r['id'] ?? '',
+      };
+      return StudentProfile.fromJson(safeRow);
+    }).toList();
   }
 
   /// Upserts the signed-in user's own profile. Rejects any profile that does

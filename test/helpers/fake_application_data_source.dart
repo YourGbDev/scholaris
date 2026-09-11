@@ -21,6 +21,10 @@ class FakeApplicationDataSource implements ApplicationDataSource {
       [for (final r in _userRows(userId)) Map<String, dynamic>.of(r)];
 
   @override
+  Future<List<Map<String, dynamic>>> fetchAllApplications() async =>
+      [for (final rows in _rows.values) for (final r in rows) Map<String, dynamic>.of(r)];
+
+  @override
   Future<List<String>> fetchProviderScholarshipIds(String providerId) async =>
       scholarshipIndex.entries
           .where((e) => e.value['created_by'] == providerId)
@@ -72,6 +76,7 @@ class FakeApplicationDataSource implements ApplicationDataSource {
     Map<String, dynamic> row,
   ) async {
     final created = <String, dynamic>{
+      'user_id': userId,
       ...row,
       'id': 'app-${++_seq}',
       'updated_at': DateTime.now().toUtc().toIso8601String(),

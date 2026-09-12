@@ -18,11 +18,11 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:lottie/lottie.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'package:scholaris/features/auth/presentation/empty_stage.dart';
 import 'package:scholaris/shared/theme/app_theme.dart';
+import 'package:scholaris/shared/widgets/eli_mascot.dart';
 import 'package:scholaris/shared/widgets/entrance.dart';
 
 // --- Tokens ----------------------------------------------------------------
@@ -162,7 +162,7 @@ class _LoginScreenState extends State<LoginScreen>
                       (viewport.maxHeight * 0.40).clamp(0.0, maxHero);
                   return Column(
                     children: [
-                      // --- Top: hero Lottie animation --------------------------
+                      // --- Top: hero Mascot ------------------------------------
                       SizedBox(
                         height: heroHeight,
                         width: double.infinity,
@@ -170,19 +170,9 @@ class _LoginScreenState extends State<LoginScreen>
                           index: 0,
                           offset: const Offset(0, 0.08),
                           interval: _loginInterval(200, 1000),
-                          // The Lottie file has built-in looping motion (49
-                          // animated properties), so no float wrapper —
-                          // stacking the ±4px breathing on top would
-                          // double-animate. Frozen on its first frame for
-                          // reduced-motion users and in widget tests.
-                          child: Lottie.asset(
-                            'assets/animations/Sign up.json',
-                            fit: BoxFit.contain,
-                            animate:
-                                !(MediaQuery.maybeOf(context)
-                                        ?.disableAnimations ??
-                                    false) &&
-                                !_isWidgetTestBinding,
+                          child: EliMascot(
+                            pose: EliPose.welcome,
+                            height: heroHeight,
                           ),
                         ),
                       ),
@@ -615,16 +605,4 @@ class _LoginScreenState extends State<LoginScreen>
   }
 }
 
-/// True while running inside a widget test
-/// (`AutomatedTestWidgetsFlutterBinding` / `LiveTestWidgetsFlutterBinding`).
-///
-/// The login hero Lottie loops forever; a repeating animation would keep the
-/// test harness's `pumpAndSettle` from ever settling — it only stops when no
-/// frame is scheduled. Freezing the hero there keeps the widget tests fast
-/// and deterministic; real app runs (debug, profile, release, web) always
-/// animate.
-bool get _isWidgetTestBinding {
-  final type = WidgetsBinding.instance.runtimeType.toString();
-  return type == 'AutomatedTestWidgetsFlutterBinding' ||
-      type == 'LiveTestWidgetsFlutterBinding';
-}
+

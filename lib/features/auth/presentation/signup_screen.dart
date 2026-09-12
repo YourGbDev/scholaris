@@ -160,7 +160,7 @@ class _SignupScreenState extends State<SignupScreen>
                     offset: const Offset(0, 0.08),
                     interval: _signupInterval(200, 1000),
                     child: EliMascot(
-                      pose: EliPose.welcome,
+                      pose: EliPose.thinking,
                       height: heroHeight,
                     ),
                   ),

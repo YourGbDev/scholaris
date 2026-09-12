@@ -182,7 +182,7 @@ class _ProviderSignupScreenState extends State<ProviderSignupScreen>
                     offset: const Offset(0, 0.08),
                     interval: _providerInterval(200, 1000),
                     child: EliMascot(
-                      pose: EliPose.welcome,
+                      pose: EliPose.mail,
                       height: heroHeight,
                     ),
                   ),

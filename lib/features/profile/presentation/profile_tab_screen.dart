@@ -359,7 +359,7 @@ class _EliMilestoneCard extends StatelessWidget {
                               fontWeight: FontWeight.w700,
                               color: isComplete
                                   ? kPrimary
-                                  : const Color(0xFFB57A00),
+                                  : kMatchGoldText,
                             ),
                           ),
                         ),
@@ -387,14 +387,14 @@ class _EliMilestoneCard extends StatelessWidget {
             width: double.infinity,
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
             decoration: BoxDecoration(
-              color: isComplete ? kPrimarySoft : const Color(0xFFFFFBEB),
-              borderRadius: BorderRadius.circular(8),
+              color: isComplete ? kPrimarySoft : kMatchGoldSoft,
+              borderRadius: BorderRadius.circular(kRadiusInput),
             ),
             child: Text(
               advice,
               style: openSans(
                 fontSize: 12,
-                color: isComplete ? kPrimary : const Color(0xFF92400E),
+                color: isComplete ? kPrimary : kMatchGoldText,
                 height: 1.35,
               ),
             ),

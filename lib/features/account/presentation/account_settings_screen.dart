@@ -531,7 +531,7 @@ class _InlineMessage extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: success ? kPrimarySoft : const Color(0x14B3261E),
+        color: success ? kPrimarySoft : kErrorSoft,
         borderRadius: BorderRadius.circular(kRadiusInput),
       ),
       child: Row(

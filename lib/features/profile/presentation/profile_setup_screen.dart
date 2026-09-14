@@ -87,12 +87,9 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
   /// hydrated values into the controllers so the form is populated.
   void _syncHydration(ProfileSetupState? previous, ProfileSetupState next) {
     if (next.hydrated && !(previous?.hydrated ?? false)) {
-      // TEMP DEBUG: log hydration event
-      debugPrint('[ProfileSetup] hydration landed: attempted=${next.attempted}, fullName="${next.fullName}"');
       // If the user has already started interacting with the form, do NOT
       // overwrite their in-progress input with the persisted values.
       if (next.attempted) {
-        debugPrint('[ProfileSetup] hydration skipped because form was already attempted');
         return;
       }
       _syncFromState(next);
@@ -539,7 +536,7 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: const Color(0xFFFDE8E8),
+        color: kErrorSoft,
         borderRadius: BorderRadius.circular(kRadiusInput),
       ),
       child: Row(

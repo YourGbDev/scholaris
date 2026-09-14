@@ -21,6 +21,9 @@ const Color kBackground = Color(0xFFFAFAF8);
 /// Error / destructive color.
 const Color kError = Color(0xFFB3261E);
 
+/// Soft error tint used for alert banners and destructive surfaces.
+const Color kErrorSoft = Color(0x14B3261E);
+
 /// Soft green tint used for focus rings and subtle surfaces.
 const Color kPrimarySoft = Color(0x140F4D2E);
 

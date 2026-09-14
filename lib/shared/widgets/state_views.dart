@@ -201,7 +201,6 @@ class EmptyView extends StatelessWidget {
               const SizedBox(height: 20),
               OutlinedButton(
                 onPressed: onAction,
-                style: OutlinedButton.styleFrom(minimumSize: const Size(0, 44)),
                 child: Text(actionLabel!),
               ),
             ],
@@ -283,33 +282,34 @@ class ErrorView extends StatelessWidget {
           )
         : const Icon(Icons.cloud_off, size: 36, color: kError);
 
-    return Padding(
-      padding: const EdgeInsets.all(40),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          visualWidget,
-          const SizedBox(height: 12),
-          Text(
-            'Something went wrong',
-            textAlign: TextAlign.center,
-            style: poppins(fontSize: 18, fontWeight: FontWeight.w600),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            message,
-            textAlign: TextAlign.center,
-            style: openSans(fontSize: 14, color: Colors.black54),
-          ),
-          if (onRetry != null) ...[
-            const SizedBox(height: 20),
-            OutlinedButton(
-              onPressed: onRetry,
-              style: OutlinedButton.styleFrom(minimumSize: const Size(0, 44)),
-              child: const Text('Try again'),
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(40),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            visualWidget,
+            const SizedBox(height: 12),
+            Text(
+              'Something went wrong',
+              textAlign: TextAlign.center,
+              style: poppins(fontSize: 18, fontWeight: FontWeight.w600),
             ),
+            const SizedBox(height: 8),
+            Text(
+              message,
+              textAlign: TextAlign.center,
+              style: openSans(fontSize: 14, color: Colors.black54),
+            ),
+            if (onRetry != null) ...[
+              const SizedBox(height: 20),
+              OutlinedButton(
+                onPressed: onRetry,
+                child: const Text('Try again'),
+              ),
+            ],
           ],
-        ],
+        ),
       ),
     );
   }

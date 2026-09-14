@@ -526,7 +526,7 @@ class _WithdrawCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: const Color(0xFFFCE8E6),
+        color: kErrorSoft,
         borderRadius: BorderRadius.circular(kRadiusCard),
         border: Border.all(color: kError.withValues(alpha: 0.25)),
       ),

@@ -31,7 +31,6 @@ import 'package:scholaris/shared/widgets/entrance.dart';
 /// Matches the ~2.2s timeline in the spec.
 const int kLoginEntranceTotalMs = 2200;
 
-const _inputRadius = 12.0;
 final _emailPattern = RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$');
 
 // --- Entrance timeline helpers ---------------------------------------------
@@ -425,7 +424,7 @@ class _LoginScreenState extends State<LoginScreen>
                                                 shape: RoundedRectangleBorder(
                                                   borderRadius:
                                                       BorderRadius.circular(
-                                                        _inputRadius,
+                                                        kRadiusInput,
                                                       ),
                                                 ),
                                               ),
@@ -593,11 +592,11 @@ class _LoginScreenState extends State<LoginScreen>
           vertical: 12,
         ),
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(_inputRadius),
+          borderRadius: BorderRadius.circular(kRadiusInput),
           borderSide: BorderSide.none,
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(_inputRadius),
+          borderRadius: BorderRadius.circular(kRadiusInput),
           borderSide: const BorderSide(color: kPrimary, width: 1.5),
         ),
       ),

@@ -599,7 +599,7 @@ class _ReasonPill extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
       decoration: BoxDecoration(
         color: kMatchGoldSoft,
         borderRadius: BorderRadius.circular(20),
@@ -608,15 +608,15 @@ class _ReasonPill extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const Icon(Icons.check_circle, size: 15, color: kAccent),
-          const SizedBox(width: 5),
+          const Icon(Icons.check_circle, size: 14, color: kAccent),
+          const SizedBox(width: 4),
           ConstrainedBox(
             constraints: const BoxConstraints(maxWidth: 200),
             child: Text(
               label,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
-              style: GoogleFonts.openSans(
+              style: openSans(
                 fontSize: 12,
                 fontWeight: FontWeight.w600,
                 color: kMatchGoldText,
@@ -645,11 +645,7 @@ class _AmountCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          colors: [kPrimary, Color(0xFF1A6B42)],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
+        gradient: kHeroSurface,
         borderRadius: BorderRadius.circular(kRadiusCard),
       ),
       child: Column(
@@ -722,7 +718,7 @@ class _EligibilityChip extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(10),
+        borderRadius: BorderRadius.circular(kRadiusInput),
         border: Border.all(color: kPrimary.withValues(alpha: 0.15)),
       ),
       child: Row(

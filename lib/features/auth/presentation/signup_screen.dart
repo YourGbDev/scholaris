@@ -21,8 +21,6 @@ import 'package:scholaris/shared/theme/app_theme.dart';
 import 'package:scholaris/shared/widgets/entrance.dart';
 import 'package:scholaris/shared/widgets/success_overlay.dart';
 
-const _inputRadius = 12.0;
-
 final _emailPattern = RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$');
 
 /// Total entrance duration for the signup screen's staggered reveal.
@@ -321,7 +319,7 @@ class _SignupScreenState extends State<SignupScreen>
                                         ),
                                         shape: RoundedRectangleBorder(
                                           borderRadius: BorderRadius.circular(
-                                            _inputRadius,
+                                            kRadiusInput,
                                           ),
                                         ),
                                       ),
@@ -415,11 +413,11 @@ class _SignupScreenState extends State<SignupScreen>
           vertical: 14,
         ),
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(_inputRadius),
+          borderRadius: BorderRadius.circular(kRadiusInput),
           borderSide: BorderSide.none,
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(_inputRadius),
+          borderRadius: BorderRadius.circular(kRadiusInput),
           borderSide: const BorderSide(color: kPrimary, width: 1.5),
         ),
       ),

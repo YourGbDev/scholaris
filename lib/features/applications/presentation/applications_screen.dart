@@ -331,7 +331,9 @@ class _StatusFilterChip extends StatelessWidget {
           onTap: onTap,
           borderRadius: BorderRadius.circular(20),
           child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
+            constraints: const BoxConstraints(minHeight: 36),
+            alignment: Alignment.center,
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
             child: Text(
               '$label ($count)',
               style: poppins(

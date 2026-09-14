@@ -11,7 +11,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:scholaris/features/account/presentation/account_settings_screen.dart';
 import 'package:scholaris/features/applications/presentation/applications_screen.dart';
 import 'package:scholaris/shared/theme/app_theme.dart';
-import 'package:scholaris/shared/widgets/eli_mascot.dart';
+import 'package:scholaris/shared/widgets/student_mascot.dart';
 import 'package:scholaris/shared/widgets/responsive_container.dart';
 import 'package:scholaris/shared/widgets/state_views.dart';
 import '../models/student_profile.dart';
@@ -34,7 +34,7 @@ class ProfileTabScreen extends ConsumerWidget {
           ),
           data: (profile) => profile == null
               ? const EmptyView(
-                  mascotPose: EliPose.thinking,
+                  mascotPose: StudentMascotPose.thinking,
                   title: 'No profile yet',
                   message: 'Complete your profile to start matching.',
                 )
@@ -71,8 +71,8 @@ class ProfileTabScreen extends ConsumerWidget {
                 ),
               ),
               child: const ClipOval(
-                child: EliMascot(
-                  pose: EliPose.appIcon,
+                child: StudentMascot(
+                  pose: StudentMascotPose.hero,
                   height: 58,
                   width: 58,
                 ),
@@ -275,22 +275,23 @@ class _EliMilestoneCard extends StatelessWidget {
     final percentage = (filledCount / 8 * 100).round();
     final isComplete = percentage == 100;
 
-    final EliPose pose = isComplete ? EliPose.celebrating : EliPose.thinking;
-    final accentColor = isComplete ? kPrimary : kAccent;
+    final StudentMascotPose pose =
+        isComplete ? StudentMascotPose.celebrating : StudentMascotPose.thinking;
+    final accentColor = isComplete ? kLumiGold : kAccent;
 
     final String advice;
     if (hasSchool && hasIncome) {
       advice =
-          'Outstanding! Your matching profile is 100% complete. Eli has all the facts to unlock your highest-match scholarships!';
+          'Outstanding! Your matching profile is 100% complete. Lumi has all the facts to unlock your highest-match scholarships!';
     } else if (!hasSchool && !hasIncome) {
       advice =
-          'Tip from Eli: Add your school & family income to unlock university grants and need-based tuition assistance!';
+          'Tip from Lumi: Add your school & family income to unlock university grants and need-based tuition assistance!';
     } else if (!hasSchool) {
       advice =
-          'Tip from Eli: Add your school or university to qualify for campus-partnered grants!';
+          'Tip from Lumi: Add your school or university to qualify for campus-partnered grants!';
     } else {
       advice =
-          'Tip from Eli: Add your family income bracket to qualify for need-based tuition waivers!';
+          'Tip from Lumi: Add your family income bracket to qualify for need-based tuition waivers!';
     }
 
     return Container(
@@ -317,7 +318,7 @@ class _EliMilestoneCard extends StatelessWidget {
           Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              EliMascot(
+              StudentMascot(
                 pose: pose,
                 height: 52,
                 width: 52,

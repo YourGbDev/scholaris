@@ -22,7 +22,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'package:scholaris/features/auth/presentation/empty_stage.dart';
 import 'package:scholaris/shared/theme/app_theme.dart';
-import 'package:scholaris/shared/widgets/eli_mascot.dart';
+import 'package:scholaris/shared/widgets/student_mascot.dart';
 import 'package:scholaris/shared/widgets/entrance.dart';
 
 // --- Tokens ----------------------------------------------------------------
@@ -170,8 +170,8 @@ class _LoginScreenState extends State<LoginScreen>
                           index: 0,
                           offset: const Offset(0, 0.08),
                           interval: _loginInterval(200, 1000),
-                          child: EliMascot(
-                            pose: EliPose.welcome,
+                          child: StudentMascot(
+                            pose: StudentMascotPose.hero,
                             height: heroHeight,
                           ),
                         ),

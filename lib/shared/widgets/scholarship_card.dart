@@ -13,6 +13,52 @@ import '../../features/scholarships/models/scholarship.dart';
 import '../theme/app_theme.dart';
 import '../utils/constants.dart';
 
+/// Maps a scholarship provider string to a brand palette accent color:
+/// - University / College / Academic -> Bridge Green (kPrimary)
+/// - NGO / Foundation / Association / Alliance -> Coral Connect (kCoralConnect)
+/// - Private / Corporate / Bank -> Golden Opportunity (kAccent)
+/// - Government Agency / Public Sector (default) -> Navy Trust (kNavyTrust)
+Color providerTypeColor(String? provider) {
+  if (provider == null || provider.trim().isEmpty) {
+    return kNavyTrust;
+  }
+  final p = provider.toLowerCase();
+
+  if (p.contains('university') ||
+      p.contains('college') ||
+      p.contains('state u') ||
+      p.contains('academic') ||
+      p.contains('institute of tech') ||
+      p.contains('school')) {
+    return kPrimary;
+  }
+
+  if (p.contains('foundation') ||
+      p.contains('ngo') ||
+      p.contains('alliance') ||
+      p.contains('association') ||
+      p.contains('trust') ||
+      p.contains('advocacy') ||
+      p.contains('society')) {
+    return kCoralConnect;
+  }
+
+  if (p.contains('corporation') ||
+      p.contains('corp') ||
+      p.contains('bank') ||
+      p.contains('company') ||
+      p.contains('inc') ||
+      p.contains('private') ||
+      p.contains('technologies') ||
+      p.contains('holdings')) {
+    return kAccent;
+  }
+
+  // Government agencies: CHED, DOST, TESDA, Department, Commission, Ministry,
+  // City Government, Council, National, Regional, BARMM, etc.
+  return kNavyTrust;
+}
+
 class ScholarshipCard extends StatelessWidget {
   const ScholarshipCard({
     super.key,
@@ -46,6 +92,7 @@ class ScholarshipCard extends StatelessWidget {
     // "closing soon".
     final closing = !expired &&
         isClosingSoon(scholarship.deadline.difference(now).inDays);
+    final accentColor = providerTypeColor(scholarship.provider);
 
     return Semantics(
       button: true,
@@ -60,7 +107,6 @@ class ScholarshipCard extends StatelessWidget {
             extra: scholarship,
           ),
           child: Container(
-            padding: const EdgeInsets.fromLTRB(16, 16, 16, 16),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(kRadiusCard),
               // Shared neutral warm shadow (kCardShadow) — the one shadow
@@ -73,86 +119,108 @@ class ScholarshipCard extends StatelessWidget {
                 ),
               ],
             ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+            child: Stack(
               children: [
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Expanded(
-                      child: Text(
-                        scholarship.title,
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                        style: poppins(fontSize: 16, fontWeight: FontWeight.w600),
+                Positioned(
+                  top: 0,
+                  bottom: 0,
+                  left: 0,
+                  child: Container(
+                    width: 4.5,
+                    decoration: BoxDecoration(
+                      color: accentColor,
+                      borderRadius: const BorderRadius.only(
+                        topLeft: Radius.circular(kRadiusCard),
+                        bottomLeft: Radius.circular(kRadiusCard),
                       ),
                     ),
-                    const SizedBox(width: 8),
-                    _DeadlineChip(
-                      label: deadlineLabel(scholarship.deadline),
-                      urgent: closing,
-                      expired: expired,
-                    ),
-                    if (isApplied) ...[
-                      const SizedBox(width: 4),
-                      const _AppliedChip(),
-                    ],
-                    if (onToggleBookmark != null) ...[
-                      const SizedBox(width: 4),
-                      _BookmarkButton(
-                        isBookmarked: isBookmarked,
-                        onToggleBookmark: onToggleBookmark!,
-                      ),
-                    ],
-                  ],
+                  ),
                 ),
-                const SizedBox(height: 4),
-                Text(
-                  scholarship.provider ?? 'Scholarship provider',
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: openSans(fontSize: 13, color: Colors.black54),
-                ),
-                const SizedBox(height: 12),
-                if (scholarship.slots != null) ...[
-                  Row(
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(18, 16, 16, 16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Icon(
-                        Icons.people_rounded,
-                        size: 16,
-                        color: Colors.grey[600],
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Expanded(
+                            child: Text(
+                              scholarship.title,
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                              style: poppins(fontSize: 16, fontWeight: FontWeight.w600),
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          _DeadlineChip(
+                            label: deadlineLabel(scholarship.deadline),
+                            urgent: closing,
+                            expired: expired,
+                          ),
+                          if (isApplied) ...[
+                            const SizedBox(width: 4),
+                            const _AppliedChip(),
+                          ],
+                          if (onToggleBookmark != null) ...[
+                            const SizedBox(width: 4),
+                            _BookmarkButton(
+                              isBookmarked: isBookmarked,
+                              onToggleBookmark: onToggleBookmark!,
+                            ),
+                          ],
+                        ],
                       ),
-                      const SizedBox(width: 6),
+                      const SizedBox(height: 4),
                       Text(
-                        '${scholarship.slots} slots available',
-                        style: openSans(
-                          fontSize: 12,
-                          color: Colors.grey[700],
-                        ),
+                        scholarship.provider ?? 'Scholarship provider',
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: openSans(fontSize: 13, color: Colors.black54),
                       ),
+                      const SizedBox(height: 12),
+                      if (scholarship.slots != null) ...[
+                        Row(
+                          children: [
+                            Icon(
+                              Icons.people_rounded,
+                              size: 16,
+                              color: Colors.grey[600],
+                            ),
+                            const SizedBox(width: 6),
+                            Text(
+                              '${scholarship.slots} slots available',
+                              style: openSans(
+                                fontSize: 12,
+                                color: Colors.grey[700],
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 12),
+                      ],
+                      if (reasons.isNotEmpty) ...[
+                        const SizedBox(height: 14),
+                        Text(
+                          'Why this matches you',
+                          style: poppins(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.black54,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        Wrap(
+                          spacing: 8,
+                          runSpacing: 8,
+                          children: reasons
+                              .map((r) => _ReasonChip(label: r))
+                              .toList(),
+                        ),
+                      ],
                     ],
                   ),
-                  const SizedBox(height: 12),
-                ],
-                if (reasons.isNotEmpty) ...[
-                  const SizedBox(height: 14),
-                  Text(
-                    'Why this matches you',
-                    style: poppins(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.black54,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  Wrap(
-                    spacing: 8,
-                    runSpacing: 8,
-                    children: reasons
-                        .map((r) => _ReasonChip(label: r))
-                        .toList(),
-                  ),
-                ],
+                ),
               ],
             ),
           ),
@@ -338,20 +406,21 @@ class _AppliedChip extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
       decoration: BoxDecoration(
-        color: kPrimarySoft,
+        color: kMatchGoldSoft,
         borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: kMatchGoldBorder),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const Icon(Icons.check_circle, size: 13, color: kPrimary),
+          const Icon(Icons.check_circle, size: 13, color: kAccent),
           const SizedBox(width: 3),
           Text(
             'Applied',
             style: GoogleFonts.poppins(
               fontSize: 12,
               fontWeight: FontWeight.w600,
-              color: kPrimary,
+              color: kMatchGoldText,
             ),
           ),
         ],
@@ -370,14 +439,14 @@ class _ReasonChip extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
       decoration: BoxDecoration(
-        color: kPrimarySoft,
+        color: kMatchGoldSoft,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: kPrimary.withValues(alpha: 0.2)),
+        border: Border.all(color: kMatchGoldBorder),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const Icon(Icons.check_circle, size: 14, color: kPrimary),
+          const Icon(Icons.check_circle, size: 14, color: kAccent),
           const SizedBox(width: 4),
           ConstrainedBox(
             constraints: const BoxConstraints(maxWidth: 180),
@@ -385,7 +454,11 @@ class _ReasonChip extends StatelessWidget {
               label,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
-              style: GoogleFonts.openSans(fontSize: 12, fontWeight: FontWeight.w600, color: kPrimary),
+              style: GoogleFonts.openSans(
+                fontSize: 12,
+                fontWeight: FontWeight.w600,
+                color: kMatchGoldText,
+              ),
             ),
           ),
         ],

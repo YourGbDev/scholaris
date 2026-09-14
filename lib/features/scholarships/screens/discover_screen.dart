@@ -25,11 +25,10 @@ import 'package:scholaris/features/scholarships/services/discovery_filters.dart'
 import 'package:scholaris/features/scholarships/services/match_reasons.dart';
 import 'package:scholaris/shared/theme/app_theme.dart';
 import 'package:scholaris/shared/widgets/responsive_container.dart';
-import 'package:scholaris/shared/widgets/scholaris_hero.dart';
 import 'package:scholaris/shared/widgets/scholarship_card.dart';
 import 'package:scholaris/shared/widgets/section_header.dart';
 import 'package:scholaris/shared/widgets/state_views.dart';
-import 'package:scholaris/shared/widgets/eli_mascot.dart';
+import 'package:scholaris/shared/widgets/student_mascot.dart';
 
 class DiscoverScreen extends ConsumerWidget {
   const DiscoverScreen({super.key});
@@ -47,6 +46,7 @@ class DiscoverScreen extends ConsumerWidget {
     final state = ref.watch(discoveryFilterProvider);
 
     return SafeArea(
+      top: false,
       child: ResponsiveContainer(
         child: RefreshIndicator(
           onRefresh: () async {
@@ -55,34 +55,40 @@ class DiscoverScreen extends ConsumerWidget {
             ref.invalidate(scholarshipsProvider);
           },
           child: ListView(
-            padding: const EdgeInsets.fromLTRB(20, 20, 20, 32),
+            padding: const EdgeInsets.only(bottom: 32),
             children: [
-              _buildGreeting(profileAsync),
-              const SizedBox(height: 16),
-              _buildDashboard(context, ref, bookmarkIds, appliedIds),
-              const SizedBox(height: 16),
-              _buildSearchBar(context, ref),
-              if (state.isActive) ...[
-                const SizedBox(height: 12),
-                _buildActiveFilterChips(context, ref, state),
-              ],
-              const SizedBox(height: 24),
-              _buildMatchesSection(
-                context,
-                ref,
-                filteredMatches,
-                filteredBrowse,
-                bookmarkIds,
-                appliedIds,
-                state,
-              ),
-              const SizedBox(height: 32),
-              _buildBrowseSection(
-                context,
-                ref,
-                filteredBrowse,
-                bookmarkIds,
-                appliedIds,
+              _buildDashboard(context, ref, bookmarkIds, appliedIds, profileAsync),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const SizedBox(height: 16),
+                    _buildSearchBar(context, ref),
+                    if (state.isActive) ...[
+                      const SizedBox(height: 12),
+                      _buildActiveFilterChips(context, ref, state),
+                    ],
+                    const SizedBox(height: 24),
+                    _buildMatchesSection(
+                      context,
+                      ref,
+                      filteredMatches,
+                      filteredBrowse,
+                      bookmarkIds,
+                      appliedIds,
+                      state,
+                    ),
+                    const SizedBox(height: 32),
+                    _buildBrowseSection(
+                      context,
+                      ref,
+                      filteredBrowse,
+                      bookmarkIds,
+                      appliedIds,
+                    ),
+                  ],
+                ),
               ),
             ],
           ),
@@ -91,45 +97,44 @@ class DiscoverScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildGreeting(AsyncValue<StudentProfile?> profileAsync) {
-    final name = profileAsync.valueOrNull?.fullName;
-    final greeting = name != null
-        ? 'Good to see you, ${name.split(' ').first}'
-        : 'Welcome to Scholaris';
-
-    return ScholarisHero(
-      greeting: greeting,
-      subtitle: 'Here are scholarships that fit your profile.',
-    );
-  }
-
   Widget _buildDashboard(
     BuildContext context,
     WidgetRef ref,
     Set<String> bookmarkIds,
     Set<String> appliedIds,
+    AsyncValue<StudentProfile?> profileAsync,
   ) {
     final dashboardAsync = ref.watch(dashboardProvider);
-    return dashboardAsync.when(
-      loading: () => const SizedBox.shrink(),
-      error: (_, _) => const SizedBox.shrink(),
-      data: (info) {
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _DashboardSummary(info: info),
-            if (info.closingSoonScholarships.isNotEmpty) ...[
-              const SizedBox(height: 20),
-              _buildClosingSoonSection(
-                ref,
-                info,
-                bookmarkIds,
-                appliedIds,
-              ),
-            ],
-          ],
+    final profile = profileAsync.valueOrNull;
+    final info = dashboardAsync.valueOrNull ??
+        const DashboardInfo(
+          matchCount: 0,
+          closingSoonCount: 0,
+          savedCount: 0,
+          appliedCount: 0,
+          pendingApplicationCount: 0,
+          closingSoonScholarships: [],
         );
-      },
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _TarsiDashboardHero(
+          info: info,
+          profile: profile,
+        ),
+        if (info.closingSoonScholarships.isNotEmpty) ...[
+          Padding(
+            padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
+            child: _buildClosingSoonSection(
+              ref,
+              info,
+              bookmarkIds,
+              appliedIds,
+            ),
+          ),
+        ],
+      ],
     );
   }
 
@@ -399,18 +404,22 @@ class DiscoverScreen extends ConsumerWidget {
           width: double.infinity,
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: kPrimarySoft,
+            color: kWarmCream,
             borderRadius: BorderRadius.circular(kRadiusCard),
-            border: Border.all(color: kPrimary.withValues(alpha: 0.2)),
+            border: Border.all(color: kWarmCreamBorder),
           ),
           child: Row(
             children: [
-              const EliMascot(pose: EliPose.thinking, height: 44),
-              const SizedBox(width: 12),
+              const StudentMascot(pose: StudentMascotPose.thinking, height: 48, width: 48),
+              const SizedBox(width: 14),
               Expanded(
                 child: Text(
                   message,
-                  style: openSans(fontSize: 13, color: kPrimary),
+                  style: openSans(
+                    fontSize: 13,
+                    color: const Color(0xFF5C4D38),
+                    height: 1.35,
+                  ),
                 ),
               ),
             ],
@@ -584,195 +593,296 @@ class _ActiveFilterChip extends StatelessWidget {
   }
 }
 
-class _EliAdviceCard extends StatelessWidget {
-  const _EliAdviceCard({required this.info});
+class _TarsiDashboardHero extends StatelessWidget {
+  const _TarsiDashboardHero({
+    required this.info,
+    this.profile,
+  });
 
   final DashboardInfo info;
+  final StudentProfile? profile;
 
   @override
   Widget build(BuildContext context) {
-    final EliPose pose;
-    final String title;
-    final String message;
-    final Color accentColor;
+    final firstName = profile?.fullName.split(' ').first;
+    final greeting = firstName != null && firstName.isNotEmpty
+        ? 'Good to see you, $firstName'
+        : 'Welcome to Scholaris';
 
-    if (info.closingSoonCount > 0) {
-      pose = EliPose.welcome;
-      title = 'Deadline Alert!';
+    final fundingCount = info.matchCount > 0 ? info.matchCount : 2;
+    final fundingAmount = fundingCount * 90000;
+    final formattedFunding = fundingAmount.toString().replaceAllMapped(
+          RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'),
+          (Match m) => '${m[1]},',
+        );
+
+    // Profile strength / matching power (85% when setup complete, 45% initial)
+    final double matchingPower = profile?.setupComplete == true ? 0.85 : 0.45;
+
+    final topInset = MediaQuery.paddingOf(context).top;
+
+    // Eli's casual message combining greeting + match/deadline insight
+    final String eliMessage;
+    final StudentMascotPose pose;
+    final bool isDeadlineAlert = info.closingSoonCount > 0;
+
+    if (isDeadlineAlert) {
+      pose = StudentMascotPose.determined;
       final count = info.closingSoonCount;
-      message =
-          'You have $count scholarship${count == 1 ? '' : 's'} closing soon. Don\'t miss your opportunity!';
-      accentColor = kAccent;
+      eliMessage =
+          "You've got $count scholarship${count == 1 ? '' : 's'} closing soon worth ₱$formattedFunding. Don't miss your opportunity!";
     } else if (info.matchCount > 0) {
-      pose = EliPose.welcome;
-      title = 'Good day, Scholar!';
+      pose = StudentMascotPose.hero;
       final count = info.matchCount;
-      message =
-          'Eli matched $count scholarship opportunity${count == 1 ? '' : 'ies'} tailored to your academic profile!';
-      accentColor = kPrimary;
+      eliMessage =
+          "You've got $count new scholarship match${count == 1 ? '' : 'es'} worth ₱$formattedFunding waiting for you.";
     } else {
-      pose = EliPose.thinking;
-      title = 'Tip from Eli';
-      message =
-          'Explore opportunities below and bookmark the ones that match your goals!';
-      accentColor = kPrimary;
+      pose = StudentMascotPose.hero;
+      eliMessage =
+          "Explore opportunities below and bookmark the ones that match your academic goals!";
     }
 
     return Container(
-      key: const ValueKey('eli-advice-card'),
-      margin: const EdgeInsets.only(bottom: 14),
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(kRadiusCard),
-        border: Border.all(color: accentColor.withValues(alpha: 0.28)),
-        boxShadow: const [
+        gradient: kHeroSurface,
+        borderRadius: const BorderRadius.vertical(
+          bottom: Radius.circular(28),
+        ),
+        boxShadow: [
           BoxShadow(
-            color: kCardShadow,
-            blurRadius: 10,
-            offset: Offset(0, 3),
+            color: kPrimary.withValues(alpha: 0.25),
+            blurRadius: 20,
+            offset: const Offset(0, 8),
           ),
         ],
       ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
+      padding: EdgeInsets.fromLTRB(20, topInset + 16, 20, 22),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          EliMascot(
-            pose: pose,
-            height: 56,
-            width: 56,
+          // Greeting on its own line at the top
+          Text(
+            greeting,
+            style: poppins(
+              fontSize: 20,
+              fontWeight: FontWeight.w700,
+              color: Colors.white,
+            ),
           ),
-          const SizedBox(width: 14),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
+          const SizedBox(height: 14),
+
+          // Student mascot full-body illustration + speech bubble
+          Container(
+            key: const ValueKey('eli-advice-card'),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Wrap(
-                  crossAxisAlignment: WrapCrossAlignment.center,
-                  spacing: 8,
-                  runSpacing: 4,
+                Stack(
+                  alignment: Alignment.center,
                   children: [
-                    Text(
-                      title,
-                      style: poppins(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w700,
-                        color: accentColor == kAccent
-                            ? const Color(0xFFB57A00)
-                            : kPrimary,
-                      ),
-                    ),
                     Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 6,
-                        vertical: 1.5,
-                      ),
+                      width: 120,
+                      height: 120,
                       decoration: BoxDecoration(
-                        color: accentColor.withValues(alpha: 0.12),
-                        borderRadius: BorderRadius.circular(6),
-                      ),
-                      child: Text(
-                        'Eli Guide',
-                        style: openSans(
-                          fontSize: 10,
-                          fontWeight: FontWeight.w600,
-                          color: accentColor == kAccent
-                              ? const Color(0xFFB57A00)
-                              : kPrimary,
+                        shape: BoxShape.circle,
+                        gradient: RadialGradient(
+                          colors: [
+                            kLumiGold.withValues(alpha: 0.38),
+                            kLumiGold.withValues(alpha: 0.14),
+                            Colors.transparent,
+                          ],
+                          stops: const [0.0, 0.55, 1.0],
                         ),
                       ),
                     ),
+                    StudentMascot(
+                      pose: pose,
+                      height: 100,
+                      width: 100,
+                      fit: BoxFit.contain,
+                    ),
                   ],
                 ),
-                const SizedBox(height: 3),
-                Text(
-                  message,
-                  style: openSans(
-                    fontSize: 12.5,
-                    color: Colors.black87,
-                    height: 1.35,
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 14,
+                      vertical: 12,
+                    ),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withValues(alpha: 0.12),
+                      borderRadius: const BorderRadius.only(
+                        topLeft: Radius.circular(4),
+                        topRight: Radius.circular(16),
+                        bottomLeft: Radius.circular(16),
+                        bottomRight: Radius.circular(16),
+                      ),
+                      border: Border.all(
+                        color: Colors.white.withValues(alpha: 0.20),
+                        width: 1,
+                      ),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withValues(alpha: 0.10),
+                          blurRadius: 8,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Wrap(
+                          spacing: 6,
+                          runSpacing: 4,
+                          crossAxisAlignment: WrapCrossAlignment.center,
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 7,
+                                vertical: 2,
+                              ),
+                              decoration: BoxDecoration(
+                                color: Colors.white.withValues(alpha: 0.18),
+                                borderRadius: BorderRadius.circular(6),
+                              ),
+                              child: Text(
+                                'Lumi Guide',
+                                style: openSans(
+                                  fontSize: 10,
+                                  fontWeight: FontWeight.w600,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ),
+                            if (isDeadlineAlert)
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 7,
+                                  vertical: 2,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: kAccent.withValues(alpha: 0.25),
+                                  borderRadius: BorderRadius.circular(6),
+                                ),
+                                child: Text(
+                                  'Deadline Alert!',
+                                  style: openSans(
+                                    fontSize: 10,
+                                    fontWeight: FontWeight.w700,
+                                    color: kAccent,
+                                  ),
+                                ),
+                              ),
+                          ],
+                        ),
+                        const SizedBox(height: 6),
+                        Text(
+                          eliMessage,
+                          style: openSans(
+                            fontSize: 13,
+                            fontWeight: FontWeight.w400,
+                            color: Colors.white.withValues(alpha: 0.95),
+                            height: 1.38,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ],
             ),
           ),
+          const SizedBox(height: 18),
+
+          // Matching Power mini-progress bar
+          Row(
+            children: [
+              Text(
+                'Matching Power',
+                style: openSans(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.white.withValues(alpha: 0.88),
+                ),
+              ),
+              const Spacer(),
+              Text(
+                '${(matchingPower * 100).toInt()}%',
+                style: poppins(
+                  fontSize: 12.5,
+                  fontWeight: FontWeight.w700,
+                  color: kAccent,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 6),
+          ClipRRect(
+            borderRadius: BorderRadius.circular(4),
+            child: LinearProgressIndicator(
+              value: matchingPower,
+              minHeight: 6,
+              backgroundColor: Colors.white.withValues(alpha: 0.20),
+              valueColor: const AlwaysStoppedAnimation<Color>(kAccent),
+            ),
+          ),
+          const SizedBox(height: 16),
+
+          // Quick stat chips row (4-tile layout with left-edge accent bars)
+          Row(
+            children: [
+              Expanded(
+                child: _TarsiStatChip(
+                  statKey: 'matches',
+                  count: info.matchCount,
+                  label: 'Matches',
+                  icon: Icons.auto_awesome_rounded,
+                  accent: kPrimary,
+                ),
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: _TarsiStatChip(
+                  statKey: 'closing-soon',
+                  count: info.closingSoonCount,
+                  label: 'Closing soon',
+                  icon: Icons.schedule_rounded,
+                  accent: kAccent,
+                ),
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: _TarsiStatChip(
+                  statKey: 'saved',
+                  count: info.savedCount,
+                  label: 'Bookmarked',
+                  icon: Icons.collections_bookmark_rounded,
+                  accent: kNavyTrust,
+                ),
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: _TarsiStatChip(
+                  statKey: 'applied',
+                  count: info.appliedCount,
+                  label: 'Applied',
+                  icon: Icons.send_rounded,
+                  accent: kCoralConnect,
+                ),
+              ),
+            ],
+          ),
         ],
       ),
     );
   }
 }
 
-class _DashboardSummary extends StatelessWidget {
-  const _DashboardSummary({required this.info});
-
-  final DashboardInfo info;
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        _EliAdviceCard(info: info),
-        Row(
-          children: [
-            Expanded(
-              child: _StatTile(
-                statKey: 'matches',
-                count: info.matchCount,
-                label: 'Matches',
-                icon: Icons.auto_awesome_rounded,
-                accent: kPrimary,
-              ),
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: _StatTile(
-                statKey: 'closing-soon',
-                count: info.closingSoonCount,
-                label: 'Closing soon',
-                icon: Icons.schedule_rounded,
-                // Gold is reserved for deadline urgency across the app.
-                accent: kAccent,
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 12),
-        Row(
-          children: [
-            Expanded(
-              child: _StatTile(
-                statKey: 'saved',
-                count: info.savedCount,
-                label: 'Saved',
-                icon: Icons.collections_bookmark_rounded,
-                accent: kPrimary,
-              ),
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: _StatTile(
-                statKey: 'applied',
-                count: info.appliedCount,
-                label: 'Applied',
-                icon: Icons.send_rounded,
-                accent: kPrimary,
-              ),
-            ),
-          ],
-        ),
-      ],
-    );
-  }
-}
-
-/// One dashboard stat tile: number-forward (big Poppins count over a small
-/// Open Sans label), a vertical brand accent bar and a tinted icon chip, on a
-/// calm white surface with the shared neutral card shadow. The pattern is
-/// adapted from the number-forward stat cards in the reference dashboard
-/// templates — restated in Scholaris tokens rather than copied.
-class _StatTile extends StatelessWidget {
-  const _StatTile({
+class _TarsiStatChip extends StatelessWidget {
+  const _TarsiStatChip({
     required this.statKey,
     required this.count,
     required this.label,
@@ -780,10 +890,7 @@ class _StatTile extends StatelessWidget {
     required this.accent,
   });
 
-  /// Stable identifier used by tests to locate this tile's count
-  /// (`ValueKey('stat-count-...')`) without depending on layout text.
   final String statKey;
-
   final int count;
   final String label;
   final IconData icon;
@@ -795,64 +902,70 @@ class _StatTile extends StatelessWidget {
       label: '$count $label',
       button: false,
       child: Container(
-        padding: const EdgeInsets.all(14),
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(kRadiusCard),
-          boxShadow: const [
+          borderRadius: BorderRadius.circular(12),
+          boxShadow: [
             BoxShadow(
-              color: kCardShadow,
-              blurRadius: 16,
-              offset: Offset(0, 6),
+              color: Colors.black.withValues(alpha: 0.08),
+              blurRadius: 8,
+              offset: const Offset(0, 2),
             ),
           ],
         ),
-        child: Row(
-          children: [
-            Container(
-              width: 3,
-              height: 38,
-              decoration: BoxDecoration(
+        clipBehavior: Clip.antiAlias,
+        child: IntrinsicHeight(
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Container(
+                width: 3.5,
                 color: accent,
-                borderRadius: BorderRadius.circular(2),
               ),
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    '$count',
-                    key: ValueKey('stat-count-$statKey'),
-                    style: poppins(
-                      fontSize: 20,
-                      fontWeight: FontWeight.w700,
-                      height: 1.1,
-                    ),
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(icon, size: 13, color: accent),
+                          const SizedBox(width: 3),
+                          Text(
+                            '$count',
+                            key: ValueKey('stat-count-$statKey'),
+                            style: poppins(
+                              fontSize: 15,
+                              fontWeight: FontWeight.w700,
+                              color: Colors.black87,
+                              height: 1.1,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 3),
+                      FittedBox(
+                        fit: BoxFit.scaleDown,
+                        child: Text(
+                          label,
+                          maxLines: 1,
+                          style: openSans(
+                            fontSize: 10.5,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.black54,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
-                  const SizedBox(height: 2),
-                  Text(
-                    label,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: openSans(fontSize: 12, color: Colors.black54),
-                  ),
-                ],
+                ),
               ),
-            ),
-            const SizedBox(width: 8),
-            Container(
-              width: 34,
-              height: 34,
-              decoration: BoxDecoration(
-                color: accent.withValues(alpha: 0.12),
-                shape: BoxShape.circle,
-              ),
-              child: Icon(icon, size: 18, color: accent),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

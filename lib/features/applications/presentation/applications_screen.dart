@@ -35,7 +35,7 @@ import 'package:scholaris/features/scholarships/models/scholarship.dart';
 import 'package:scholaris/features/scholarships/providers/scholarships_provider.dart';
 import 'package:scholaris/shared/theme/app_theme.dart';
 import 'package:scholaris/shared/utils/constants.dart';
-import 'package:scholaris/shared/widgets/eli_mascot.dart';
+import 'package:scholaris/shared/widgets/student_mascot.dart';
 import 'package:scholaris/shared/widgets/responsive_container.dart';
 import 'package:scholaris/shared/widgets/state_views.dart';
 
@@ -98,7 +98,7 @@ class ApplicationsScreen extends ConsumerWidget {
       data: (applications) {
         if (applications.isEmpty) {
           return const EmptyView(
-            mascotPose: EliPose.mail,
+            mascotPose: StudentMascotPose.applicant,
             title: 'No applications yet',
             message:
                 'When you apply to a scholarship it will show up here so '
@@ -167,14 +167,14 @@ class ApplicationsScreen extends ConsumerWidget {
         ? 'this status'
         : ApplicationStatusUi.of(status).label.toLowerCase();
 
-    final EliPose pose;
+    final StudentMascotPose pose;
     if (status == ApplicationStatus.approved ||
         status == ApplicationStatus.awarded) {
-      pose = EliPose.celebrating;
+      pose = StudentMascotPose.celebrating;
     } else if (status == ApplicationStatus.rejected) {
-      pose = EliPose.concerned;
+      pose = StudentMascotPose.concerned;
     } else {
-      pose = EliPose.thinking;
+      pose = StudentMascotPose.thinking;
     }
 
     return Center(

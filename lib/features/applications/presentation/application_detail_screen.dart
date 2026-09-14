@@ -31,7 +31,7 @@ import 'package:scholaris/features/scholarships/presentation/scholarship_detail_
 import 'package:scholaris/features/scholarships/providers/scholarships_provider.dart';
 import 'package:scholaris/shared/theme/app_theme.dart';
 import 'package:scholaris/shared/utils/constants.dart';
-import 'package:scholaris/shared/widgets/eli_mascot.dart';
+import 'package:scholaris/shared/widgets/student_mascot.dart';
 import 'package:scholaris/shared/widgets/primary_button.dart';
 import 'package:scholaris/shared/widgets/responsive_container.dart';
 import 'package:scholaris/shared/widgets/state_views.dart';
@@ -74,7 +74,7 @@ class ApplicationDetailScreen extends ConsumerWidget {
             initial;
         if (application == null) {
           return const EmptyView(
-            mascotPose: EliPose.thinking,
+            mascotPose: StudentMascotPose.thinking,
             title: 'Application not found',
             message: 'This application is no longer available.',
           );
@@ -345,20 +345,20 @@ class _StatusSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final ui = ApplicationStatusUi.of(application.status);
-    final EliPose mascotPose;
+    final StudentMascotPose mascotPose;
     switch (application.status) {
       case ApplicationStatus.approved:
       case ApplicationStatus.awarded:
-        mascotPose = EliPose.celebrating;
+        mascotPose = StudentMascotPose.celebrating;
         break;
       case ApplicationStatus.rejected:
-        mascotPose = EliPose.concerned;
+        mascotPose = StudentMascotPose.thinking;
         break;
       case ApplicationStatus.underReview:
       case ApplicationStatus.submitted:
       case ApplicationStatus.draft:
       case ApplicationStatus.withdrawn:
-        mascotPose = EliPose.thinking;
+        mascotPose = StudentMascotPose.thinking;
         break;
     }
 
@@ -370,7 +370,7 @@ class _StatusSection extends StatelessWidget {
       ),
       child: Row(
         children: [
-          EliMascot(pose: mascotPose, height: 42, width: 42),
+          StudentMascot(pose: mascotPose, height: 42, width: 42),
           const SizedBox(width: 12),
           Expanded(
             child: Column(

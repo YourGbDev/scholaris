@@ -52,8 +52,8 @@ class ApplicationStatusUi {
       case ApplicationStatus.approved:
         return const ApplicationStatusUi(
           label: 'Approved',
-          foreground: kPrimary,
-          background: Color(0xFFE8F2EC),
+          foreground: Color(0xFF8A5B00),
+          background: Color(0xFFFFF3D6),
           icon: Icons.check_circle_rounded,
         );
       case ApplicationStatus.rejected:
@@ -73,8 +73,8 @@ class ApplicationStatusUi {
       case ApplicationStatus.awarded:
         return const ApplicationStatusUi(
           label: 'Awarded',
-          foreground: kPrimary,
-          background: Color(0xFFD8EEDF),
+          foreground: Color(0xFF8A5B00),
+          background: Color(0xFFFFF3D6),
           icon: Icons.workspace_premium_rounded,
         );
     }

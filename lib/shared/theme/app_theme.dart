@@ -24,6 +24,35 @@ const Color kError = Color(0xFFB3261E);
 /// Soft green tint used for focus rings and subtle surfaces.
 const Color kPrimarySoft = Color(0x140F4D2E);
 
+/// Navy Trust — government agencies, official credentials, structural accents.
+const Color kNavyTrust = Color(0xFF1B3A5C);
+
+/// Coral Connect — NGO/foundation partners, applied state, active urgency.
+const Color kCoralConnect = Color(0xFFFF6F59);
+
+// --- Lumi & Outcome Palette -------------------------------------------------
+
+/// Lumi Glow Gold — primary mascot tone, warm glow, hope, and light.
+const Color kLumiGold = Color(0xFFFFC857);
+
+/// Lumi Soft Orange — secondary mascot accent tone.
+const Color kLumiSoftOrange = Color(0xFFFFB74D);
+
+/// Warm Cream — unlit / searching background tone reflecting Lumi's dim glow.
+const Color kWarmCream = Color(0xFFFFF7E6);
+
+/// Warm Cream Border — border for empty/searching states.
+const Color kWarmCreamBorder = Color(0xFFFFE5B4);
+
+/// Translucent gold tint for 'Why this matches you' chips and positive outcome pills.
+const Color kMatchGoldSoft = Color(0x28FFC857);
+
+/// Border for 'Why this matches you' chips.
+const Color kMatchGoldBorder = Color(0x66FFC857);
+
+/// Deep warm amber text for accessible contrast on gold outcome chips.
+const Color kMatchGoldText = Color(0xFF8C5C00);
+
 // --- Shape tokens -----------------------------------------------------------
 
 /// Standard radius for inputs, buttons and small surfaces.

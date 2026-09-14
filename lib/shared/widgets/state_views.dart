@@ -6,7 +6,7 @@
 import 'package:flutter/material.dart';
 
 import '../theme/app_theme.dart';
-import 'eli_mascot.dart';
+import 'student_mascot.dart';
 
 class LoadingView extends StatelessWidget {
   const LoadingView({super.key});
@@ -123,7 +123,7 @@ class EmptyView extends StatelessWidget {
     this.actionLabel,
     this.onAction,
     this.animateSearchIcon = false,
-    this.mascotPose = EliPose.thinking,
+    this.mascotPose = StudentMascotPose.thinking,
   });
 
   final IconData? icon;
@@ -132,13 +132,13 @@ class EmptyView extends StatelessWidget {
   final String? actionLabel;
   final VoidCallback? onAction;
   final bool animateSearchIcon;
-  final EliPose? mascotPose;
+  final StudentMascotPose? mascotPose;
 
   @override
   Widget build(BuildContext context) {
     final Widget visualWidget;
     if (mascotPose != null) {
-      visualWidget = EliMascot(
+      visualWidget = StudentMascot(
         pose: mascotPose!,
         height: 140,
       );
@@ -157,33 +157,56 @@ class EmptyView extends StatelessWidget {
       );
     }
 
-    return Padding(
-      padding: const EdgeInsets.all(40),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          visualWidget,
-          const SizedBox(height: 16),
-          Text(
-            title,
-            textAlign: TextAlign.center,
-            style: poppins(fontSize: 18, fontWeight: FontWeight.w600),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            message,
-            textAlign: TextAlign.center,
-            style: openSans(fontSize: 14, color: Colors.black54),
-          ),
-          if (actionLabel != null && onAction != null) ...[
-            const SizedBox(height: 20),
-            OutlinedButton(
-              onPressed: onAction,
-              style: OutlinedButton.styleFrom(minimumSize: const Size(0, 44)),
-              child: Text(actionLabel!),
+    return Center(
+      child: Container(
+        margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
+        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
+        decoration: BoxDecoration(
+          color: kWarmCream,
+          borderRadius: BorderRadius.circular(kRadiusCard),
+          border: Border.all(color: kWarmCreamBorder),
+          boxShadow: const [
+            BoxShadow(
+              color: Color(0x0A000000),
+              blurRadius: 12,
+              offset: Offset(0, 4),
             ),
           ],
-        ],
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            visualWidget,
+            const SizedBox(height: 16),
+            Text(
+              title,
+              textAlign: TextAlign.center,
+              style: poppins(
+                fontSize: 18,
+                fontWeight: FontWeight.w600,
+                color: const Color(0xFF2C2416),
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              message,
+              textAlign: TextAlign.center,
+              style: openSans(
+                fontSize: 14,
+                color: const Color(0xFF6E5D46),
+                height: 1.4,
+              ),
+            ),
+            if (actionLabel != null && onAction != null) ...[
+              const SizedBox(height: 20),
+              OutlinedButton(
+                onPressed: onAction,
+                style: OutlinedButton.styleFrom(minimumSize: const Size(0, 44)),
+                child: Text(actionLabel!),
+              ),
+            ],
+          ],
+        ),
       ),
     );
   }
@@ -244,17 +267,17 @@ class ErrorView extends StatelessWidget {
     super.key,
     required this.message,
     this.onRetry,
-    this.mascotPose = EliPose.concerned,
+    this.mascotPose = StudentMascotPose.thinking,
   });
 
   final String message;
   final VoidCallback? onRetry;
-  final EliPose? mascotPose;
+  final StudentMascotPose? mascotPose;
 
   @override
   Widget build(BuildContext context) {
     final Widget visualWidget = mascotPose != null
-        ? EliMascot(
+        ? StudentMascot(
             pose: mascotPose!,
             height: 120,
           )

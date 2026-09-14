@@ -567,12 +567,12 @@ class _ReadinessReason extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: kPrimary.withValues(alpha: 0.2)),
+        border: Border.all(color: const Color(0xFF5F6368).withValues(alpha: 0.25)),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const Icon(Icons.remove_circle_outline, size: 15, color: kPrimary),
+          const Icon(Icons.remove_circle_outline, size: 15, color: Color(0xFF5F6368)),
           const SizedBox(width: 5),
           ConstrainedBox(
             constraints: const BoxConstraints(maxWidth: 260),
@@ -581,7 +581,7 @@ class _ReadinessReason extends StatelessWidget {
               style: GoogleFonts.openSans(
                 fontSize: 12,
                 fontWeight: FontWeight.w600,
-                color: kPrimary,
+                color: const Color(0xFF5F6368),
               ),
             ),
           ),
@@ -601,14 +601,14 @@ class _ReasonPill extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
       decoration: BoxDecoration(
-        color: kPrimarySoft,
+        color: kMatchGoldSoft,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: kPrimary.withValues(alpha: 0.2)),
+        border: Border.all(color: kMatchGoldBorder),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const Icon(Icons.check_circle, size: 15, color: kPrimary),
+          const Icon(Icons.check_circle, size: 15, color: kAccent),
           const SizedBox(width: 5),
           ConstrainedBox(
             constraints: const BoxConstraints(maxWidth: 200),
@@ -616,7 +616,11 @@ class _ReasonPill extends StatelessWidget {
               label,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
-              style: GoogleFonts.openSans(fontSize: 12, fontWeight: FontWeight.w600, color: kPrimary),
+              style: GoogleFonts.openSans(
+                fontSize: 12,
+                fontWeight: FontWeight.w600,
+                color: kMatchGoldText,
+              ),
             ),
           ),
         ],

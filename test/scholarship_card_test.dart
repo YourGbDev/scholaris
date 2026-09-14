@@ -180,4 +180,52 @@ void main() {
       expect(find.textContaining('Closing soon'), findsNothing);
     });
   });
+
+  group('Provider type color mapping', () {
+    test('maps government agencies to Navy Trust', () {
+      expect(providerTypeColor('Department of Science and Technology'), const Color(0xFF1B3A5C));
+      expect(providerTypeColor('Commission on Higher Education'), const Color(0xFF1B3A5C));
+      expect(providerTypeColor('City Government of Manila'), const Color(0xFF1B3A5C));
+      expect(providerTypeColor('BARMM Ministry of Basic Education'), const Color(0xFF1B3A5C));
+    });
+
+    test('maps NGOs and foundations to Coral Connect', () {
+      expect(providerTypeColor('Ayala Foundation'), const Color(0xFFFF6F59));
+      expect(providerTypeColor('Philippine Women\'s Technology Alliance'), const Color(0xFFFF6F59));
+      expect(providerTypeColor('Philippine Nurses Association'), const Color(0xFFFF6F59));
+    });
+
+    test('maps university and academic institutions to Bridge Green', () {
+      expect(providerTypeColor('University of the Philippines'), const Color(0xFF0F4D2E));
+      expect(providerTypeColor('De La Salle College of Saint Benilde'), const Color(0xFF0F4D2E));
+    });
+
+    test('maps private and corporate entities to Golden Opportunity', () {
+      expect(providerTypeColor('BPI Bank'), const Color(0xFFF1B41E));
+      expect(providerTypeColor('San Miguel Corporation'), const Color(0xFFF1B41E));
+    });
+
+    test('defaults unknown or null provider to Navy Trust', () {
+      expect(providerTypeColor(null), const Color(0xFF1B3A5C));
+      expect(providerTypeColor(''), const Color(0xFF1B3A5C));
+    });
+
+    testWidgets('renders left-edge accent bar on the scholarship card', (tester) async {
+      await tester.pumpWidget(_wrap(
+        card: ScholarshipCard(
+          scholarship: _scholarship(),
+        ),
+      ));
+
+      // Check for Positioned accent bar with width 4.5
+      final accentBarFinder = find.byWidgetPredicate(
+        (widget) =>
+            widget is Container &&
+            widget.constraints?.maxWidth == 4.5 &&
+            widget.decoration is BoxDecoration &&
+            (widget.decoration as BoxDecoration).color == const Color(0xFF1B3A5C),
+      );
+      expect(accentBarFinder, findsOneWidget);
+    });
+  });
 }

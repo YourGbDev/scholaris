@@ -34,7 +34,7 @@ import 'package:go_router/go_router.dart';
 import 'package:scholaris/features/onboarding/controllers/onboarding_controller.dart';
 import 'package:scholaris/shared/theme/app_theme.dart';
 import 'package:scholaris/shared/widgets/entrance.dart';
-import 'package:scholaris/shared/widgets/eli_mascot.dart';
+import 'package:scholaris/shared/widgets/student_mascot.dart';
 
 /// A single onboarding slide's copy + mascot pose.
 class _SlideSpec {
@@ -44,25 +44,25 @@ class _SlideSpec {
     required this.subtitle,
   });
 
-  final EliPose pose;
+  final StudentMascotPose pose;
   final String title;
   final String subtitle;
 }
 
 const List<_SlideSpec> _kSlides = [
   _SlideSpec(
-    pose: EliPose.welcome,
-    title: 'Meet Eli',
-    subtitle: 'Your guide to greater opportunities',
+    pose: StudentMascotPose.welcome,
+    title: 'Meet Lumi',
+    subtitle: 'Small light. Bigger opportunities.',
   ),
   _SlideSpec(
-    pose: EliPose.thinking,
+    pose: StudentMascotPose.thinking,
     title: 'Smart Matching',
     subtitle:
         'We find the best fit based on your grades, course, and financial need',
   ),
   _SlideSpec(
-    pose: EliPose.celebrating,
+    pose: StudentMascotPose.celebrating,
     title: 'Apply with Ease',
     subtitle: 'Track your applications and never miss a deadline',
   ),
@@ -208,7 +208,7 @@ class _OnboardingSlide extends StatelessWidget {
     required this.onLogin,
   });
 
-  final EliPose pose;
+  final StudentMascotPose pose;
   final String title;
   final String subtitle;
   final int index;
@@ -246,7 +246,7 @@ class _OnboardingSlide extends StatelessWidget {
                         horizontal: 24,
                         vertical: 8,
                       ),
-                      child: EliMascot(
+                      child: StudentMascot(
                         pose: pose,
                         height: illustrationArea,
                         fit: BoxFit.contain,

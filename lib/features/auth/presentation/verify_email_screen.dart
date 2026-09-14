@@ -16,7 +16,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:scholaris/shared/widgets/eli_mascot.dart';
+import 'package:scholaris/shared/widgets/student_mascot.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'package:scholaris/app/confirmation_redirect.dart';
@@ -132,8 +132,8 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen>
                           index: 0,
                           offset: const Offset(0, 0.08),
                           interval: _verifyInterval(200, 900),
-                          child: EliMascot(
-                            pose: EliPose.mail,
+                          child: StudentMascot(
+                            pose: StudentMascotPose.hero,
                             height: heroHeight,
                           ),
                         ),

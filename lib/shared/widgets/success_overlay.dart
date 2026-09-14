@@ -9,7 +9,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 
 import 'package:scholaris/shared/theme/app_theme.dart';
-import 'package:scholaris/shared/widgets/eli_mascot.dart';
+import 'package:scholaris/shared/widgets/student_mascot.dart';
 
 /// Shows the success confirmation overlay as a full-screen modal and returns
 /// when it auto-dismisses.
@@ -108,12 +108,12 @@ class _SuccessPageState extends State<_SuccessPage> {
             child: widget.reduceMotion
                 ? const Icon(
                     Icons.check_circle_rounded,
-                    color: kPrimary,
+                    color: kAccent,
                     size: 96,
                   )
                 : const Center(
-                    child: EliMascot(
-                      pose: EliPose.celebrating,
+                    child: StudentMascot(
+                      pose: StudentMascotPose.celebrating,
                       height: 170,
                     ),
                   ),

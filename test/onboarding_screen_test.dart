@@ -55,9 +55,9 @@ void main() {
   ) async {
     await _pumpOnboarding(tester);
 
-    expect(find.text('Meet Eli'), findsOneWidget);
+    expect(find.text('Meet Lumi'), findsOneWidget);
     expect(
-      find.text('Your guide to greater opportunities'),
+      find.text('Small light. Bigger opportunities.'),
       findsOneWidget,
     );
     expect(

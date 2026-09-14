@@ -52,8 +52,8 @@ class _SlideSpec {
 const List<_SlideSpec> _kSlides = [
   _SlideSpec(
     pose: StudentMascotPose.welcome,
-    title: 'Meet Lumi',
-    subtitle: 'Small light. Bigger opportunities.',
+    title: 'Meet Aris & Aria',
+    subtitle: 'Your student companions to bigger opportunities.',
   ),
   _SlideSpec(
     pose: StudentMascotPose.thinking,

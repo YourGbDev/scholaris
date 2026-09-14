@@ -754,7 +754,7 @@ class _TarsiDashboardHero extends StatelessWidget {
                                 borderRadius: BorderRadius.circular(6),
                               ),
                               child: Text(
-                                'Lumi Guide',
+                                'Scholaris Guide',
                                 style: openSans(
                                   fontSize: 10,
                                   fontWeight: FontWeight.w600,

@@ -331,7 +331,7 @@ void main() {
 
       expect(find.byKey(const ValueKey('eli-advice-card')), findsOneWidget);
       expect(find.text('Deadline Alert!'), findsOneWidget);
-      expect(find.text('Lumi Guide'), findsOneWidget);
+      expect(find.text('Scholaris Guide'), findsOneWidget);
       expect(find.byType(EliMascot), findsWidgets);
     });
   });

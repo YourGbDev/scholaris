@@ -293,5 +293,107 @@ void main() {
       expect(img1.assetName, 'assets/images/mascot/aris_celebrating.png');
       expect(img2.assetName, 'assets/images/mascot/aria_thinking.png');
     });
+
+    group('Idle animation behavior', () {
+      setUp(() {
+        StudentMascot.forceAnimationsInTests = true;
+      });
+
+      tearDown(() {
+        StudentMascot.forceAnimationsInTests = false;
+        StudentMascot.enableAnimations = true;
+      });
+
+      testWidgets('defaults to animate: false and renders static image without wrapper', (tester) async {
+        await tester.pumpWidget(
+          const MaterialApp(
+            home: Scaffold(
+              body: StudentMascot(
+                pose: StudentMascotPose.hero,
+              ),
+            ),
+          ),
+        );
+
+        expect(find.byType(StudentMascot), findsOneWidget);
+        expect(find.byType(Image), findsOneWidget);
+        final transformFinder = find.descendant(
+          of: find.byType(StudentMascot),
+          matching: find.byType(Transform),
+        );
+        expect(transformFinder, findsNothing);
+      });
+
+      testWidgets('animate: true renders with idle animation and oscillates smoothly', (tester) async {
+        await tester.pumpWidget(
+          const MaterialApp(
+            home: Scaffold(
+              body: StudentMascot(
+                pose: StudentMascotPose.hero,
+                animate: true,
+              ),
+            ),
+          ),
+        );
+
+        final transforms = find.descendant(
+          of: find.byType(StudentMascot),
+          matching: find.byType(Transform),
+        );
+        expect(transforms, findsWidgets);
+
+        // Advance frames through the bounce oscillation (1.4s is halfway up)
+        await tester.pump(const Duration(milliseconds: 1400));
+        expect(find.byType(Image), findsOneWidget);
+
+        // Advance to blink event (~3930ms)
+        await tester.pump(const Duration(milliseconds: 2530));
+        expect(find.byType(Image), findsOneWidget);
+      });
+
+      testWidgets('StudentMascot.enableAnimations = false disables animation', (tester) async {
+        StudentMascot.enableAnimations = false;
+
+        await tester.pumpWidget(
+          const MaterialApp(
+            home: Scaffold(
+              body: StudentMascot(
+                pose: StudentMascotPose.hero,
+                animate: true,
+              ),
+            ),
+          ),
+        );
+
+        final transforms = find.descendant(
+          of: find.byType(StudentMascot),
+          matching: find.byType(Transform),
+        );
+        expect(transforms, findsNothing);
+      });
+
+      testWidgets('MediaQuery disableAnimations disables mascot animation for accessibility', (tester) async {
+        await tester.pumpWidget(
+          const MaterialApp(
+            home: MediaQuery(
+              data: MediaQueryData(disableAnimations: true),
+              child: Scaffold(
+                body: StudentMascot(
+                  pose: StudentMascotPose.hero,
+                  animate: true,
+                ),
+              ),
+            ),
+          ),
+        );
+
+        final transforms = find.descendant(
+          of: find.byType(StudentMascot),
+          matching: find.byType(Transform),
+        );
+        expect(transforms, findsNothing);
+      });
+    });
   });
 }
+

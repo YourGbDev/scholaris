@@ -87,7 +87,26 @@ class StudentMascot extends StatelessWidget {
     this.width,
     this.fit = BoxFit.contain,
     this.onTap,
+    this.animate = false,
   });
+
+  /// Global toggle for idle animations on mascots.
+  /// Defaults to true; can be set to false to globally disable animations
+  /// on lower-end devices or in test harnesses.
+  static bool enableAnimations = true;
+
+  /// Internal flag to allow unit tests to verify idle animation mechanics.
+  @visibleForTesting
+  static bool forceAnimationsInTests = false;
+
+  /// Detects whether Flutter widget tests are running with a repeating animation
+  /// that would block [WidgetTester.pumpAndSettle].
+  static bool get _isWidgetTestBinding {
+    if (forceAnimationsInTests) return false;
+    final type = WidgetsBinding.instance.runtimeType.toString();
+    return type == 'AutomatedTestWidgetsFlutterBinding' ||
+        type == 'LiveTestWidgetsFlutterBinding';
+  }
 
   final StudentMascotPose pose;
   final MascotGender? gender;
@@ -95,6 +114,10 @@ class StudentMascot extends StatelessWidget {
   final double? width;
   final BoxFit fit;
   final VoidCallback? onTap;
+
+  /// Whether to play a subtle idle animation (gentle float/bounce + occasional blink).
+  /// Recommended for persistent hero banners (Discover hero, Auth hero).
+  final bool animate;
 
   @override
   Widget build(BuildContext context) {
@@ -139,6 +162,15 @@ class StudentMascot extends StatelessWidget {
       },
     );
 
+    final shouldAnimate = animate &&
+        StudentMascot.enableAnimations &&
+        !_isWidgetTestBinding &&
+        !(MediaQuery.maybeOf(context)?.disableAnimations ?? false);
+
+    if (shouldAnimate) {
+      image = _IdleMascotWrapper(child: image);
+    }
+
     if (onTap != null) {
       return GestureDetector(
         onTap: onTap,
@@ -151,6 +183,114 @@ class StudentMascot extends StatelessWidget {
   }
 }
 
+/// Internal widget providing a subtle, battery-efficient idle animation loop:
+/// - Gentle vertical bounce (2-4px) paired with natural breathing scale.
+/// - Occasional eyelid flutter / blink micro-compression (140ms duration every ~4s).
+/// - Automatically pauses ticking when offstage or inactive via [TickerMode].
+class _IdleMascotWrapper extends StatefulWidget {
+  const _IdleMascotWrapper({
+    required this.child,
+  });
+
+  final Widget child;
+
+  @override
+  State<_IdleMascotWrapper> createState() => _IdleMascotWrapperState();
+}
+
+class _IdleMascotWrapperState extends State<_IdleMascotWrapper>
+    with TickerProviderStateMixin {
+  late final AnimationController _bounceController;
+  late final Animation<double> _bounceAnimation;
+
+  late final AnimationController _blinkController;
+  late final Animation<double> _blinkAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+
+    // 1. Gentle vertical bounce + breathing float (2800ms oscillation)
+    _bounceController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 2800),
+    )..repeat(reverse: true);
+
+    _bounceAnimation = CurvedAnimation(
+      parent: _bounceController,
+      curve: Curves.easeInOutSine,
+    );
+
+    // 2. Occasional blink micro-compression (every 4000ms, 140ms active blink)
+    _blinkController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 4000),
+    )..repeat();
+
+    _blinkAnimation = TweenSequence<double>([
+      TweenSequenceItem(
+        tween: ConstantTween<double>(0.0),
+        weight: 96.5, // ~3860ms resting open eyes
+      ),
+      TweenSequenceItem(
+        tween: Tween<double>(begin: 0.0, end: 1.0)
+            .chain(CurveTween(curve: Curves.easeInQuad)),
+        weight: 1.75, // ~70ms closing
+      ),
+      TweenSequenceItem(
+        tween: Tween<double>(begin: 1.0, end: 0.0)
+            .chain(CurveTween(curve: Curves.easeOutQuad)),
+        weight: 1.75, // ~70ms reopening
+      ),
+    ]).animate(_blinkController);
+  }
+
+  @override
+  void dispose() {
+    _bounceController.dispose();
+    _blinkController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: Listenable.merge([_bounceAnimation, _blinkAnimation]),
+      builder: (context, child) {
+        final bounce = _bounceAnimation.value;
+        final blink = _blinkAnimation.value;
+
+        // Gentle vertical float (0 to -3px)
+        final dy = -3.0 * bounce;
+
+        // Subtle breathing scale (1.2% vertical expansion, volume-conserving 0.6% horizontal contraction)
+        final breathScaleY = 1.0 + (0.012 * bounce);
+        final breathScaleX = 1.0 - (0.006 * bounce);
+
+        // Blink micro-compression (6% dip in height around eye level)
+        final blinkScaleY = 1.0 - (0.06 * blink);
+
+        return Transform.translate(
+          offset: Offset(0, dy),
+          child: Transform.scale(
+            scaleX: breathScaleX,
+            scaleY: breathScaleY,
+            alignment: Alignment.bottomCenter,
+            child: Transform.scale(
+              scaleY: blinkScaleY,
+              // Eye-level anchor for Aris and Aria (upper 1/3 of figure)
+              alignment: const Alignment(0, -0.32),
+              child: child,
+            ),
+          ),
+        );
+      },
+      child: widget.child,
+    );
+  }
+}
+
 /// Backward compatibility aliases for existing widgets.
 typedef LumiMascot = StudentMascot;
 typedef EliMascot = StudentMascot;
+

@@ -704,6 +704,7 @@ class _TarsiDashboardHero extends StatelessWidget {
                       height: 100,
                       width: 100,
                       fit: BoxFit.contain,
+                      animate: true,
                     ),
                   ],
                 ),

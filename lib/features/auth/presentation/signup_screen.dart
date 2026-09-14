@@ -160,6 +160,7 @@ class _SignupScreenState extends State<SignupScreen>
                     child: StudentMascot(
                       pose: StudentMascotPose.thinking,
                       height: heroHeight,
+                      animate: true,
                     ),
                   ),
                 ),

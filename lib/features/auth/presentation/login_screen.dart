@@ -172,6 +172,7 @@ class _LoginScreenState extends State<LoginScreen>
                           child: StudentMascot(
                             pose: StudentMascotPose.hero,
                             height: heroHeight,
+                            animate: true,
                           ),
                         ),
                       ),

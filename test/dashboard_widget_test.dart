@@ -23,7 +23,6 @@ import 'package:scholaris/features/scholarships/screens/discover_screen.dart';
 import 'package:scholaris/features/scholarships/providers/scholarships_provider.dart';
 import 'package:scholaris/features/scholarships/repositories/scholarship_repository.dart';
 import 'package:scholaris/shared/widgets/scholarship_card.dart';
-import 'package:scholaris/shared/widgets/eli_mascot.dart';
 
 import 'helpers/fake_application_data_source.dart';
 import 'helpers/fake_bookmark_data_source.dart';
@@ -324,7 +323,7 @@ void main() {
     });
   });
 
-  group('Eli mascot advice card', () {
+  group('Dashboard advice card', () {
     testWidgets('renders Deadline Alert when scholarships are closing soon',
         (tester) async {
       await _pumpDiscover(tester);
@@ -332,7 +331,6 @@ void main() {
       expect(find.byKey(const ValueKey('eli-advice-card')), findsOneWidget);
       expect(find.text('Deadline Alert!'), findsOneWidget);
       expect(find.text('Scholaris Guide'), findsOneWidget);
-      expect(find.byType(EliMascot), findsWidgets);
     });
   });
 }

@@ -11,7 +11,7 @@
 // for reduced-motion users so the surface stays deterministic and calm.
 
 import 'package:flutter/material.dart';
-import 'package:scholaris/shared/widgets/student_mascot.dart';
+import 'package:lottie/lottie.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'package:scholaris/shared/theme/app_theme.dart';
@@ -143,9 +143,14 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen>
                           index: 0,
                           offset: const Offset(0, 0.08),
                           interval: _resetInterval(200, 1000),
-                          child: StudentMascot(
-                            pose: StudentMascotPose.determined,
-                            height: heroHeight,
+                          child: Lottie.asset(
+                            'assets/animations/selection list clients.json',
+                            fit: BoxFit.contain,
+                            animate:
+                                !(MediaQuery.maybeOf(context)
+                                        ?.disableAnimations ??
+                                    false) &&
+                                !_isWidgetTestBinding,
                           ),
                         ),
                       ),
@@ -458,4 +463,11 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen>
       ),
     );
   }
+}
+
+/// True while running inside a widget test.
+bool get _isWidgetTestBinding {
+  final type = WidgetsBinding.instance.runtimeType.toString();
+  return type == 'AutomatedTestWidgetsFlutterBinding' ||
+      type == 'LiveTestWidgetsFlutterBinding';
 }

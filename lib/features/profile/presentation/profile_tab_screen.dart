@@ -11,7 +11,6 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:scholaris/features/account/presentation/account_settings_screen.dart';
 import 'package:scholaris/features/applications/presentation/applications_screen.dart';
 import 'package:scholaris/shared/theme/app_theme.dart';
-import 'package:scholaris/shared/widgets/student_mascot.dart';
 import 'package:scholaris/shared/widgets/responsive_container.dart';
 import 'package:scholaris/shared/widgets/state_views.dart';
 import '../models/student_profile.dart';
@@ -34,7 +33,7 @@ class ProfileTabScreen extends ConsumerWidget {
           ),
           data: (profile) => profile == null
               ? const EmptyView(
-                  mascotPose: StudentMascotPose.thinking,
+                  icon: Icons.person_outline_rounded,
                   title: 'No profile yet',
                   message: 'Complete your profile to start matching.',
                 )
@@ -60,22 +59,15 @@ class ProfileTabScreen extends ConsumerWidget {
         Row(
           children: [
             Container(
-              width: 58,
-              height: 58,
-              decoration: BoxDecoration(
+              padding: const EdgeInsets.all(14),
+              decoration: const BoxDecoration(
                 color: kPrimarySoft,
                 shape: BoxShape.circle,
-                border: Border.all(
-                  color: kPrimary.withValues(alpha: 0.2),
-                  width: 2,
-                ),
               ),
-              child: const ClipOval(
-                child: StudentMascot(
-                  pose: StudentMascotPose.hero,
-                  height: 58,
-                  width: 58,
-                ),
+              child: const Icon(
+                Icons.person_rounded,
+                size: 30,
+                color: kPrimary,
               ),
             ),
             const SizedBox(width: 14),
@@ -274,9 +266,6 @@ class _EliMilestoneCard extends StatelessWidget {
     if (hasIncome) filledCount++;
     final percentage = (filledCount / 8 * 100).round();
     final isComplete = percentage == 100;
-
-    final StudentMascotPose pose =
-        isComplete ? StudentMascotPose.celebrating : StudentMascotPose.thinking;
     final accentColor = isComplete ? kLumiGold : kAccent;
 
     final String advice;
@@ -318,10 +307,20 @@ class _EliMilestoneCard extends StatelessWidget {
           Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              StudentMascot(
-                pose: pose,
-                height: 52,
-                width: 52,
+              Container(
+                width: 48,
+                height: 48,
+                decoration: BoxDecoration(
+                  color: accentColor.withValues(alpha: 0.14),
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(
+                  isComplete
+                      ? Icons.workspace_premium_rounded
+                      : Icons.trending_up_rounded,
+                  color: accentColor,
+                  size: 26,
+                ),
               ),
               const SizedBox(width: 14),
               Expanded(

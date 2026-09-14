@@ -28,7 +28,6 @@ import 'package:scholaris/shared/widgets/responsive_container.dart';
 import 'package:scholaris/shared/widgets/scholarship_card.dart';
 import 'package:scholaris/shared/widgets/section_header.dart';
 import 'package:scholaris/shared/widgets/state_views.dart';
-import 'package:scholaris/shared/widgets/student_mascot.dart';
 
 class DiscoverScreen extends ConsumerWidget {
   const DiscoverScreen({super.key});
@@ -410,7 +409,14 @@ class DiscoverScreen extends ConsumerWidget {
           ),
           child: Row(
             children: [
-              const StudentMascot(pose: StudentMascotPose.thinking, height: 48, width: 48),
+              Container(
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: kPrimary.withValues(alpha: 0.10),
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(Icons.search_rounded, size: 24, color: kPrimary),
+              ),
               const SizedBox(width: 14),
               Expanded(
                 child: Text(
@@ -625,24 +631,20 @@ class _TarsiDashboardHero extends StatelessWidget {
 
     final topInset = MediaQuery.paddingOf(context).top;
 
-    // Eli's casual message combining greeting + match/deadline insight
-    final String eliMessage;
-    final StudentMascotPose pose;
+    // Casual message combining greeting + match/deadline insight
+    final String guideMessage;
     final bool isDeadlineAlert = info.closingSoonCount > 0;
 
     if (isDeadlineAlert) {
-      pose = StudentMascotPose.determined;
       final count = info.closingSoonCount;
-      eliMessage =
+      guideMessage =
           "You've got $count scholarship${count == 1 ? '' : 's'} closing soon worth ₱$formattedFunding. Don't miss your opportunity!";
     } else if (info.matchCount > 0) {
-      pose = StudentMascotPose.hero;
       final count = info.matchCount;
-      eliMessage =
+      guideMessage =
           "You've got $count new scholarship match${count == 1 ? '' : 'es'} worth ₱$formattedFunding waiting for you.";
     } else {
-      pose = StudentMascotPose.hero;
-      eliMessage =
+      guideMessage =
           "Explore opportunities below and bookmark the ones that match your academic goals!";
     }
 
@@ -675,126 +677,96 @@ class _TarsiDashboardHero extends StatelessWidget {
           ),
           const SizedBox(height: 14),
 
-          // Student mascot full-body illustration + speech bubble
+          // Advice card with Scholaris Guide chip
           Container(
             key: const ValueKey('eli-advice-card'),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
+            width: double.infinity,
+            padding: const EdgeInsets.symmetric(
+              horizontal: 16,
+              vertical: 14,
+            ),
+            decoration: BoxDecoration(
+              color: Colors.white.withValues(alpha: 0.12),
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(
+                color: Colors.white.withValues(alpha: 0.20),
+                width: 1,
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.10),
+                  blurRadius: 8,
+                  offset: const Offset(0, 2),
+                ),
+              ],
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
               children: [
-                Stack(
-                  alignment: Alignment.center,
+                Wrap(
+                  spacing: 6,
+                  runSpacing: 4,
+                  crossAxisAlignment: WrapCrossAlignment.center,
                   children: [
                     Container(
-                      width: 120,
-                      height: 120,
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 3,
+                      ),
                       decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        gradient: RadialGradient(
-                          colors: [
-                            kLumiGold.withValues(alpha: 0.38),
-                            kLumiGold.withValues(alpha: 0.14),
-                            Colors.transparent,
-                          ],
-                          stops: const [0.0, 0.55, 1.0],
-                        ),
+                        color: Colors.white.withValues(alpha: 0.18),
+                        borderRadius: BorderRadius.circular(6),
                       ),
-                    ),
-                    StudentMascot(
-                      pose: pose,
-                      height: 100,
-                      width: 100,
-                      fit: BoxFit.contain,
-                      animate: true,
-                    ),
-                  ],
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 14,
-                      vertical: 12,
-                    ),
-                    decoration: BoxDecoration(
-                      color: Colors.white.withValues(alpha: 0.12),
-                      borderRadius: const BorderRadius.only(
-                        topLeft: Radius.circular(4),
-                        topRight: Radius.circular(16),
-                        bottomLeft: Radius.circular(16),
-                        bottomRight: Radius.circular(16),
-                      ),
-                      border: Border.all(
-                        color: Colors.white.withValues(alpha: 0.20),
-                        width: 1,
-                      ),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withValues(alpha: 0.10),
-                          blurRadius: 8,
-                          offset: const Offset(0, 2),
-                        ),
-                      ],
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Wrap(
-                          spacing: 6,
-                          runSpacing: 4,
-                          crossAxisAlignment: WrapCrossAlignment.center,
-                          children: [
-                            Container(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 7,
-                                vertical: 2,
-                              ),
-                              decoration: BoxDecoration(
-                                color: Colors.white.withValues(alpha: 0.18),
-                                borderRadius: BorderRadius.circular(6),
-                              ),
-                              child: Text(
-                                'Scholaris Guide',
-                                style: openSans(
-                                  fontSize: 10,
-                                  fontWeight: FontWeight.w600,
-                                  color: Colors.white,
-                                ),
-                              ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Icon(
+                            Icons.tips_and_updates_outlined,
+                            size: 13,
+                            color: Colors.white,
+                          ),
+                          const SizedBox(width: 4),
+                          Text(
+                            'Scholaris Guide',
+                            style: openSans(
+                              fontSize: 10,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.white,
                             ),
-                            if (isDeadlineAlert)
-                              Container(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 7,
-                                  vertical: 2,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: kAccent.withValues(alpha: 0.25),
-                                  borderRadius: BorderRadius.circular(6),
-                                ),
-                                child: Text(
-                                  'Deadline Alert!',
-                                  style: openSans(
-                                    fontSize: 10,
-                                    fontWeight: FontWeight.w700,
-                                    color: kAccent,
-                                  ),
-                                ),
-                              ),
-                          ],
+                          ),
+                        ],
+                      ),
+                    ),
+                    if (isDeadlineAlert)
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 7,
+                          vertical: 2,
                         ),
-                        const SizedBox(height: 6),
-                        Text(
-                          eliMessage,
+                        decoration: BoxDecoration(
+                          color: kAccent.withValues(alpha: 0.25),
+                          borderRadius: BorderRadius.circular(6),
+                        ),
+                        child: Text(
+                          'Deadline Alert!',
                           style: openSans(
-                            fontSize: 13,
-                            fontWeight: FontWeight.w400,
-                            color: Colors.white.withValues(alpha: 0.95),
-                            height: 1.38,
+                            fontSize: 10,
+                            fontWeight: FontWeight.w700,
+                            color: kAccent,
                           ),
                         ),
-                      ],
-                    ),
+                      ),
+                  ],
+                ),
+                const SizedBox(height: 6),
+                Text(
+                  guideMessage,
+                  style: openSans(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w400,
+                    color: Colors.white.withValues(alpha: 0.95),
+                    height: 1.38,
                   ),
                 ),
               ],

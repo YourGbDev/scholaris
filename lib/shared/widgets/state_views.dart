@@ -4,9 +4,9 @@
 // a consistent, polished state instead of a raw spinner or exception.
 
 import 'package:flutter/material.dart';
-
 import '../theme/app_theme.dart';
-import 'student_mascot.dart';
+
+
 
 class LoadingView extends StatelessWidget {
   const LoadingView({super.key});
@@ -123,7 +123,6 @@ class EmptyView extends StatelessWidget {
     this.actionLabel,
     this.onAction,
     this.animateSearchIcon = false,
-    this.mascotPose = StudentMascotPose.thinking,
   });
 
   final IconData? icon;
@@ -132,30 +131,21 @@ class EmptyView extends StatelessWidget {
   final String? actionLabel;
   final VoidCallback? onAction;
   final bool animateSearchIcon;
-  final StudentMascotPose? mascotPose;
 
   @override
   Widget build(BuildContext context) {
-    final Widget visualWidget;
-    if (mascotPose != null) {
-      visualWidget = StudentMascot(
-        pose: mascotPose!,
-        height: 140,
-      );
-    } else {
-      final iconWidget = animateSearchIcon
-          ? _SearchIconAnimation(icon: icon ?? Icons.inbox_rounded)
-          : Icon(icon ?? Icons.inbox_rounded, size: 36, color: kPrimary);
+    final iconWidget = animateSearchIcon
+        ? _SearchIconAnimation(icon: icon ?? Icons.inbox_rounded)
+        : Icon(icon ?? Icons.inbox_rounded, size: 36, color: kPrimary);
 
-      visualWidget = Container(
-        padding: const EdgeInsets.all(20),
-        decoration: const BoxDecoration(
-          color: kPrimarySoft,
-          shape: BoxShape.circle,
-        ),
-        child: iconWidget,
-      );
-    }
+    final visualWidget = Container(
+      padding: const EdgeInsets.all(20),
+      decoration: const BoxDecoration(
+        color: kPrimarySoft,
+        shape: BoxShape.circle,
+      ),
+      child: iconWidget,
+    );
 
     return Center(
       child: Container(
@@ -266,21 +256,14 @@ class ErrorView extends StatelessWidget {
     super.key,
     required this.message,
     this.onRetry,
-    this.mascotPose = StudentMascotPose.thinking,
   });
 
   final String message;
   final VoidCallback? onRetry;
-  final StudentMascotPose? mascotPose;
 
   @override
   Widget build(BuildContext context) {
-    final Widget visualWidget = mascotPose != null
-        ? StudentMascot(
-            pose: mascotPose!,
-            height: 120,
-          )
-        : const Icon(Icons.cloud_off, size: 36, color: kError);
+    const visualWidget = Icon(Icons.cloud_off, size: 36, color: kError);
 
     return Center(
       child: Padding(

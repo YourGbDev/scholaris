@@ -12,7 +12,6 @@ import 'package:google_fonts/google_fonts.dart';
 
 import 'package:scholaris/features/auth/presentation/empty_stage.dart';
 import 'package:scholaris/features/auth/presentation/login_screen.dart';
-import 'package:scholaris/shared/widgets/eli_mascot.dart';
 
 void main() {
   setUpAll(() {
@@ -56,7 +55,6 @@ void main() {
 
       expect(find.byType(EmptyStage), findsOneWidget);
       expect(find.byType(Form), findsOneWidget);
-      expect(find.byType(EliMascot), findsOneWidget);
     });
 
     testWidgets('headline is exactly "Your future starts somewhere."', (

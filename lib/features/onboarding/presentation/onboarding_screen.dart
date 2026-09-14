@@ -31,38 +31,39 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import 'package:lottie/lottie.dart';
+
 import 'package:scholaris/features/onboarding/controllers/onboarding_controller.dart';
 import 'package:scholaris/shared/theme/app_theme.dart';
 import 'package:scholaris/shared/widgets/entrance.dart';
-import 'package:scholaris/shared/widgets/student_mascot.dart';
 
-/// A single onboarding slide's copy + mascot pose.
+/// A single onboarding slide's copy + illustration asset.
 class _SlideSpec {
   const _SlideSpec({
-    required this.pose,
+    required this.asset,
     required this.title,
     required this.subtitle,
   });
 
-  final StudentMascotPose pose;
+  final String asset;
   final String title;
   final String subtitle;
 }
 
 const List<_SlideSpec> _kSlides = [
   _SlideSpec(
-    pose: StudentMascotPose.welcome,
-    title: 'Meet Aris & Aria',
-    subtitle: 'Your student companions to bigger opportunities.',
+    asset: 'assets/animations/onboarding_slide1.json',
+    title: 'Find Your Scholarship',
+    subtitle: 'Hundreds of opportunities matched to your profile',
   ),
   _SlideSpec(
-    pose: StudentMascotPose.thinking,
+    asset: 'assets/animations/selection list clients.json',
     title: 'Smart Matching',
     subtitle:
         'We find the best fit based on your grades, course, and financial need',
   ),
   _SlideSpec(
-    pose: StudentMascotPose.celebrating,
+    asset: 'assets/animations/onboarding_slide3.json',
     title: 'Apply with Ease',
     subtitle: 'Track your applications and never miss a deadline',
   ),
@@ -122,7 +123,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
             final isLast = index == _kSlides.length - 1;
             return _SlideFadeRise(
               child: _OnboardingSlide(
-                pose: spec.pose,
+                asset: spec.asset,
                 title: spec.title,
                 subtitle: spec.subtitle,
                 index: index,
@@ -197,7 +198,7 @@ class _SlideFadeRiseState extends State<_SlideFadeRise>
 
 class _OnboardingSlide extends StatelessWidget {
   const _OnboardingSlide({
-    required this.pose,
+    required this.asset,
     required this.title,
     required this.subtitle,
     required this.index,
@@ -208,7 +209,7 @@ class _OnboardingSlide extends StatelessWidget {
     required this.onLogin,
   });
 
-  final StudentMascotPose pose;
+  final String asset;
   final String title;
   final String subtitle;
   final int index;
@@ -246,35 +247,14 @@ class _OnboardingSlide extends StatelessWidget {
                         horizontal: 24,
                         vertical: 8,
                       ),
-                      child: index == 0
-                          ? Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.end,
-                              children: [
-                                Flexible(
-                                  child: StudentMascot(
-                                    pose: pose,
-                                    gender: MascotGender.male,
-                                    height: illustrationArea,
-                                    fit: BoxFit.contain,
-                                  ),
-                                ),
-                                const SizedBox(width: 12),
-                                Flexible(
-                                  child: StudentMascot(
-                                    pose: pose,
-                                    gender: MascotGender.female,
-                                    height: illustrationArea,
-                                    fit: BoxFit.contain,
-                                  ),
-                                ),
-                              ],
-                            )
-                          : StudentMascot(
-                              pose: pose,
-                              height: illustrationArea,
-                              fit: BoxFit.contain,
-                            ),
+                      child: Lottie.asset(
+                        asset,
+                        fit: BoxFit.contain,
+                        animate:
+                            !(MediaQuery.maybeOf(context)?.disableAnimations ??
+                                false) &&
+                            !_isWidgetTestBinding,
+                      ),
                     ),
                   ),
                   const SizedBox(height: 16),
@@ -463,4 +443,11 @@ class _BottomControls extends StatelessWidget {
       ],
     );
   }
+}
+
+/// True while running inside a widget test.
+bool get _isWidgetTestBinding {
+  final type = WidgetsBinding.instance.runtimeType.toString();
+  return type == 'AutomatedTestWidgetsFlutterBinding' ||
+      type == 'LiveTestWidgetsFlutterBinding';
 }

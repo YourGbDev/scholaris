@@ -11,7 +11,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:scholaris/shared/widgets/eli_mascot.dart';
+import 'package:lottie/lottie.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:scholaris/features/onboarding/controllers/onboarding_controller.dart';
@@ -19,9 +19,12 @@ import 'package:scholaris/features/onboarding/presentation/onboarding_screen.dar
 
 const String _loginMarker = 'LOGIN STUB';
 
-/// Finds the [EliMascot] showing [pose].
-Finder _eliPose(EliPose pose) => find.byWidgetPredicate(
-  (w) => w is EliMascot && w.pose == pose,
+/// Finds the [LottieBuilder] loading [asset] (e.g. onboarding_slide1.json).
+Finder _lottieAsset(String asset) => find.byWidgetPredicate(
+  (w) =>
+      w is LottieBuilder &&
+      w.lottie is AssetLottie &&
+      (w.lottie as AssetLottie).assetName == asset,
 );
 
 GoRouter _router() => GoRouter(
@@ -55,14 +58,14 @@ void main() {
   ) async {
     await _pumpOnboarding(tester);
 
-    expect(find.text('Meet Aris & Aria'), findsOneWidget);
+    expect(find.text('Find Your Scholarship'), findsOneWidget);
     expect(
-      find.text('Your student companions to bigger opportunities.'),
+      find.text('Hundreds of opportunities matched to your profile'),
       findsOneWidget,
     );
     expect(
-      _eliPose(EliPose.welcome),
-      findsNWidgets(2),
+      _lottieAsset('assets/animations/onboarding_slide1.json'),
+      findsOneWidget,
     );
 
     // Dots: one active pill + two inactive dots.
@@ -82,7 +85,7 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('Smart Matching'), findsOneWidget);
     expect(
-      _eliPose(EliPose.thinking),
+      _lottieAsset('assets/animations/selection list clients.json'),
       findsOneWidget,
     );
     expect(find.text('Skip'), findsOneWidget);
@@ -92,7 +95,7 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('Apply with Ease'), findsOneWidget);
     expect(
-      _eliPose(EliPose.celebrating),
+      _lottieAsset('assets/animations/onboarding_slide3.json'),
       findsOneWidget,
     );
 

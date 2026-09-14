@@ -11,7 +11,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:scholaris/shared/widgets/student_mascot.dart';
+import 'package:lottie/lottie.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'package:scholaris/app/recovery_redirect.dart';
@@ -131,9 +131,14 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
                           index: 0,
                           offset: const Offset(0, 0.08),
                           interval: _forgotInterval(200, 1000),
-                          child: StudentMascot(
-                            pose: StudentMascotPose.determined,
-                            height: heroHeight,
+                          child: Lottie.asset(
+                            'assets/animations/Forgot password.json',
+                            fit: BoxFit.contain,
+                            animate:
+                                !(MediaQuery.maybeOf(context)
+                                        ?.disableAnimations ??
+                                    false) &&
+                                !_isWidgetTestBinding,
                           ),
                         ),
                       ),
@@ -443,4 +448,11 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
       ),
     );
   }
+}
+
+/// True while running inside a widget test.
+bool get _isWidgetTestBinding {
+  final type = WidgetsBinding.instance.runtimeType.toString();
+  return type == 'AutomatedTestWidgetsFlutterBinding' ||
+      type == 'LiveTestWidgetsFlutterBinding';
 }

@@ -20,9 +20,10 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import 'package:lottie/lottie.dart';
+
 import 'package:scholaris/features/auth/presentation/empty_stage.dart';
 import 'package:scholaris/shared/theme/app_theme.dart';
-import 'package:scholaris/shared/widgets/student_mascot.dart';
 import 'package:scholaris/shared/widgets/entrance.dart';
 
 // --- Tokens ----------------------------------------------------------------
@@ -161,7 +162,7 @@ class _LoginScreenState extends State<LoginScreen>
                       (viewport.maxHeight * 0.40).clamp(0.0, maxHero);
                   return Column(
                     children: [
-                      // --- Top: hero Mascot ------------------------------------
+                      // --- Top: hero Lottie animation --------------------------
                       SizedBox(
                         height: heroHeight,
                         width: double.infinity,
@@ -169,10 +170,14 @@ class _LoginScreenState extends State<LoginScreen>
                           index: 0,
                           offset: const Offset(0, 0.08),
                           interval: _loginInterval(200, 1000),
-                          child: StudentMascot(
-                            pose: StudentMascotPose.hero,
-                            height: heroHeight,
-                            animate: true,
+                          child: Lottie.asset(
+                            'assets/animations/Sign up.json',
+                            fit: BoxFit.contain,
+                            animate:
+                                !(MediaQuery.maybeOf(context)
+                                        ?.disableAnimations ??
+                                    false) &&
+                                !_isWidgetTestBinding,
                           ),
                         ),
                       ),
@@ -603,6 +608,13 @@ class _LoginScreenState extends State<LoginScreen>
       ),
     );
   }
+}
+
+/// True while running inside a widget test.
+bool get _isWidgetTestBinding {
+  final type = WidgetsBinding.instance.runtimeType.toString();
+  return type == 'AutomatedTestWidgetsFlutterBinding' ||
+      type == 'LiveTestWidgetsFlutterBinding';
 }
 
 

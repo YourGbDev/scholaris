@@ -20,7 +20,6 @@ import 'package:scholaris/features/auth/controllers/auth_controller.dart';
 import 'package:scholaris/features/profile/models/student_profile.dart';
 import 'package:scholaris/features/profile/presentation/profile_tab_screen.dart';
 import 'package:scholaris/features/profile/providers/profile_setup_provider.dart';
-import 'package:scholaris/shared/widgets/eli_mascot.dart';
 import 'helpers/fake_account_data_source.dart';
 
 /// Controllable auth session notifier; initial state comes from build() so it
@@ -156,8 +155,8 @@ void main() {
     expect(find.text('Something went wrong'), findsNothing);
   });
 
-  group('Eli mascot on profile', () {
-    testWidgets('renders Eli avatar and milestone matching card',
+  group('Profile matching power milestone card', () {
+    testWidgets('renders avatar and milestone matching card',
         (tester) async {
       tester.view.physicalSize = const Size(800, 1200);
       tester.view.devicePixelRatio = 1.0;
@@ -166,8 +165,9 @@ void main() {
       await tester.pumpWidget(_harness(profileFactory: () async => _profile()));
       await tester.pumpAndSettle();
 
-      // Eli avatar in header + Eli in milestone card
-      expect(find.byType(EliMascot), findsWidgets);
+      // Avatar in header + milestone card
+      expect(find.byIcon(Icons.person_rounded), findsOneWidget);
+      expect(find.byIcon(Icons.trending_up_rounded), findsOneWidget);
       expect(find.byKey(const ValueKey('eli-profile-milestone-card')),
           findsOneWidget);
       expect(find.text('Matching Power'), findsOneWidget);
@@ -202,6 +202,7 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.text('100%'), findsOneWidget);
+      expect(find.byIcon(Icons.workspace_premium_rounded), findsOneWidget);
       expect(
           find.text(
               'Outstanding! Your matching profile is 100% complete. You have all the details unlocked to find your highest-match scholarships!'),

@@ -8,8 +8,9 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 
+import 'package:lottie/lottie.dart';
+
 import 'package:scholaris/shared/theme/app_theme.dart';
-import 'package:scholaris/shared/widgets/student_mascot.dart';
 
 /// Shows the success confirmation overlay as a full-screen modal and returns
 /// when it auto-dismisses.
@@ -22,6 +23,7 @@ import 'package:scholaris/shared/widgets/student_mascot.dart';
 class SuccessOverlay {
   SuccessOverlay._();
 
+  static const _asset = 'assets/animations/Successfully Done.json';
   static const _duration = Duration(milliseconds: 3400);
   static const _reducedDuration = Duration(milliseconds: 1000);
 
@@ -111,11 +113,11 @@ class _SuccessPageState extends State<_SuccessPage> {
                     color: kAccent,
                     size: 96,
                   )
-                : const Center(
-                    child: StudentMascot(
-                      pose: StudentMascotPose.celebrating,
-                      height: 170,
-                    ),
+                : Lottie.asset(
+                    SuccessOverlay._asset,
+                    fit: BoxFit.contain,
+                    repeat: false,
+                    frameRate: FrameRate.max,
                   ),
           ),
         ),

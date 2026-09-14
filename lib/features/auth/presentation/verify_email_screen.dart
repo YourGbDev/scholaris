@@ -16,7 +16,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:scholaris/shared/widgets/student_mascot.dart';
+import 'package:lottie/lottie.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'package:scholaris/app/confirmation_redirect.dart';
@@ -132,9 +132,14 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen>
                           index: 0,
                           offset: const Offset(0, 0.08),
                           interval: _verifyInterval(200, 900),
-                          child: StudentMascot(
-                            pose: StudentMascotPose.hero,
-                            height: heroHeight,
+                          child: Lottie.asset(
+                            'assets/animations/Forgot password.json',
+                            fit: BoxFit.contain,
+                            animate:
+                                !(MediaQuery.maybeOf(context)
+                                        ?.disableAnimations ??
+                                    false) &&
+                                !_isWidgetTestBinding,
                           ),
                         ),
                       ),
@@ -350,4 +355,11 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen>
       ),
     );
   }
+}
+
+/// True while running inside a widget test.
+bool get _isWidgetTestBinding {
+  final type = WidgetsBinding.instance.runtimeType.toString();
+  return type == 'AutomatedTestWidgetsFlutterBinding' ||
+      type == 'LiveTestWidgetsFlutterBinding';
 }

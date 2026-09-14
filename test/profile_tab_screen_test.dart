@@ -174,7 +174,7 @@ void main() {
       expect(find.text('88%'), findsOneWidget);
       expect(
           find.text(
-              'Tip from Lumi: Add your school or university to qualify for campus-partnered grants!'),
+              'Scholaris Tip: Add your school or university to qualify for campus-partnered grants!'),
           findsOneWidget);
     });
 
@@ -204,7 +204,7 @@ void main() {
       expect(find.text('100%'), findsOneWidget);
       expect(
           find.text(
-              'Outstanding! Your matching profile is 100% complete. Lumi has all the facts to unlock your highest-match scholarships!'),
+              'Outstanding! Your matching profile is 100% complete. You have all the details unlocked to find your highest-match scholarships!'),
           findsOneWidget);
     });
   });

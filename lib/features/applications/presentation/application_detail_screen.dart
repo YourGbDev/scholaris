@@ -259,7 +259,7 @@ class _DetailBodyState extends ConsumerState<_DetailBody> {
                     borderRadius: BorderRadius.circular(kRadiusCard),
                     boxShadow: const [
                       BoxShadow(
-                        color: kPrimarySoft,
+                        color: kCardShadow,
                         blurRadius: 16,
                         offset: Offset(0, 6),
                       ),

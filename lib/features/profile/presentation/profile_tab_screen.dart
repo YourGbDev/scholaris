@@ -282,16 +282,16 @@ class _EliMilestoneCard extends StatelessWidget {
     final String advice;
     if (hasSchool && hasIncome) {
       advice =
-          'Outstanding! Your matching profile is 100% complete. Lumi has all the facts to unlock your highest-match scholarships!';
+          'Outstanding! Your matching profile is 100% complete. You have all the details unlocked to find your highest-match scholarships!';
     } else if (!hasSchool && !hasIncome) {
       advice =
-          'Tip from Lumi: Add your school & family income to unlock university grants and need-based tuition assistance!';
+          'Scholaris Tip: Add your school & family income to unlock university grants and need-based tuition assistance!';
     } else if (!hasSchool) {
       advice =
-          'Tip from Lumi: Add your school or university to qualify for campus-partnered grants!';
+          'Scholaris Tip: Add your school or university to qualify for campus-partnered grants!';
     } else {
       advice =
-          'Tip from Lumi: Add your family income bracket to qualify for need-based tuition waivers!';
+          'Scholaris Tip: Add your family income bracket to qualify for need-based tuition waivers!';
     }
 
     return Container(

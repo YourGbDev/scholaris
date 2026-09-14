@@ -38,22 +38,22 @@ class ApplicationStatusUi {
       case ApplicationStatus.submitted:
         return const ApplicationStatusUi(
           label: 'Submitted',
-          foreground: Color(0xFF1A73E8),
-          background: Color(0xFFE8F0FE),
+          foreground: kNavyTrust,
+          background: Color(0x1F1B3A5C),
           icon: Icons.send_rounded,
         );
       case ApplicationStatus.underReview:
         return const ApplicationStatusUi(
           label: 'Under review',
-          foreground: Color(0xFF8A5B00),
-          background: Color(0xFFFFF3D6),
+          foreground: kMatchGoldText,
+          background: kMatchGoldSoft,
           icon: Icons.schedule_rounded,
         );
       case ApplicationStatus.approved:
         return const ApplicationStatusUi(
           label: 'Approved',
-          foreground: Color(0xFF8A5B00),
-          background: Color(0xFFFFF3D6),
+          foreground: kPrimary,
+          background: Color(0xFFD8EEDF),
           icon: Icons.check_circle_rounded,
         );
       case ApplicationStatus.rejected:
@@ -73,8 +73,8 @@ class ApplicationStatusUi {
       case ApplicationStatus.awarded:
         return const ApplicationStatusUi(
           label: 'Awarded',
-          foreground: Color(0xFF8A5B00),
-          background: Color(0xFFFFF3D6),
+          foreground: kPrimary,
+          background: Color(0xFFD8EEDF),
           icon: Icons.workspace_premium_rounded,
         );
     }

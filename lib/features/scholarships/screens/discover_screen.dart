@@ -532,7 +532,7 @@ class _FilterButton extends ConsumerWidget {
                       style: poppins(
                         fontSize: 11,
                         fontWeight: FontWeight.w700,
-                        color: Colors.white,
+                        color: kMatchGoldText,
                       ),
                     ),
                   ),
@@ -558,7 +558,6 @@ class _ActiveFilterChip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.only(left: 12, right: 4, top: 5, bottom: 5),
       decoration: BoxDecoration(
         color: kPrimarySoft,
         borderRadius: BorderRadius.circular(20),
@@ -567,23 +566,28 @@ class _ActiveFilterChip extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Text(
-            label,
-            style: openSans(
-              fontSize: 12,
-              fontWeight: FontWeight.w600,
-              color: kPrimary,
+          Padding(
+            padding: const EdgeInsets.only(left: 12),
+            child: Text(
+              label,
+              style: openSans(
+                fontSize: 12,
+                fontWeight: FontWeight.w600,
+                color: kPrimary,
+              ),
             ),
           ),
-          const SizedBox(width: 2),
           Tooltip(
             message: 'Remove filter',
             child: InkWell(
               onTap: onRemove,
               borderRadius: BorderRadius.circular(20),
-              child: const Padding(
-                padding: EdgeInsets.all(6),
-                child: Icon(Icons.close, size: 14, color: kPrimary),
+              child: const SizedBox(
+                width: 44,
+                height: 44,
+                child: Center(
+                  child: Icon(Icons.close, size: 16, color: kPrimary),
+                ),
               ),
             ),
           ),
@@ -905,11 +909,11 @@ class _TarsiStatChip extends StatelessWidget {
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(12),
-          boxShadow: [
+          boxShadow: const [
             BoxShadow(
-              color: Colors.black.withValues(alpha: 0.08),
-              blurRadius: 8,
-              offset: const Offset(0, 2),
+              color: kCardShadow,
+              blurRadius: 10,
+              offset: Offset(0, 3),
             ),
           ],
         ),

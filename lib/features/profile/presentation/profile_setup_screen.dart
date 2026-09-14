@@ -13,22 +13,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 import 'package:scholaris/app/router.dart';
 import 'package:scholaris/features/auth/controllers/auth_controller.dart';
 import 'package:scholaris/features/profile/models/profile_validator.dart';
 import 'package:scholaris/features/profile/models/student_profile.dart';
 import 'package:scholaris/features/profile/providers/profile_setup_provider.dart';
+import 'package:scholaris/shared/theme/app_theme.dart';
 import 'package:scholaris/shared/widgets/success_overlay.dart';
-
-// Scholaris brand palette.
-const _primary = Color(0xFF0F4D2E);
-const _accent = Color(0xFFF1B41E);
-const _background = Color(0xFFFAFAF8);
-const _errorColor = Color(0xFFB3261E);
-
-const _inputRadius = 12.0;
 
 class ProfileSetupScreen extends ConsumerStatefulWidget {
   const ProfileSetupScreen({super.key, required this.step});
@@ -145,15 +137,15 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
     ref.listen(profileSetupProvider(userId), _syncHydration);
 
     return Scaffold(
-      backgroundColor: _background,
+      backgroundColor: kBackground,
       appBar: AppBar(
-        backgroundColor: _background,
+        backgroundColor: kBackground,
         elevation: 0,
         centerTitle: true,
         title: Text(
           'Profile Setup',
-          style: GoogleFonts.poppins(
-            color: _primary,
+          style: poppins(
+            color: kPrimary,
             fontWeight: FontWeight.w600,
           ),
         ),
@@ -171,8 +163,8 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
                 const SizedBox(height: 24),
                 Text(
                   _stepTitle,
-                  style: GoogleFonts.poppins(
-                    color: _primary,
+                  style: poppins(
+                    color: kPrimary,
                     fontSize: 22,
                     fontWeight: FontWeight.w600,
                   ),
@@ -180,7 +172,7 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
                 const SizedBox(height: 4),
                 Text(
                   _stepSubtitle,
-                  style: GoogleFonts.openSans(
+                  style: openSans(
                     color: Colors.black54,
                     fontSize: 13,
                   ),
@@ -209,8 +201,8 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
       children: [
         Text(
           'Step $_stepIndex of 3',
-          style: GoogleFonts.openSans(
-            color: _primary,
+          style: openSans(
+            color: kPrimary,
             fontSize: 14,
             fontWeight: FontWeight.w600,
           ),
@@ -221,8 +213,8 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
           child: LinearProgressIndicator(
             value: _stepIndex / 3,
             minHeight: 6,
-            backgroundColor: _primary.withValues(alpha: 0.12),
-            color: _accent,
+            backgroundColor: kPrimary.withValues(alpha: 0.12),
+            color: kAccent,
           ),
         ),
       ],
@@ -267,7 +259,7 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
                 value: level,
                 child: Text(
                   '$level${_ordinal(level)} Year',
-                  style: GoogleFonts.openSans(),
+                  style: openSans(),
                 ),
               );
             }),
@@ -324,10 +316,10 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
           CheckboxListTile(
             contentPadding: EdgeInsets.zero,
             controlAffinity: ListTileControlAffinity.leading,
-            activeColor: _primary,
+            activeColor: kPrimary,
             title: Text(
               'Prefer not to say',
-              style: GoogleFonts.openSans(),
+              style: openSans(),
             ),
             value: state.incomeUndisclosed,
             onChanged: (value) {
@@ -346,7 +338,7 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
                 .map(
                   (region) => DropdownMenuItem(
                     value: region,
-                    child: Text(region, style: GoogleFonts.openSans()),
+                    child: Text(region, style: openSans()),
                   ),
                 )
                 .toList(),
@@ -404,12 +396,12 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
           notifier.setBirthDate(picked);
         }
       },
-      borderRadius: BorderRadius.circular(_inputRadius),
+      borderRadius: BorderRadius.circular(kRadiusInput),
       child: InputDecorator(
         decoration: _fieldDecoration(label: 'Birth Date', optional: true),
         child: Text(
           birthDate == null ? 'Select date' : formatDate(birthDate),
-          style: GoogleFonts.openSans(
+          style: openSans(
             color: birthDate == null ? Colors.black54 : Colors.black,
           ),
         ),
@@ -447,7 +439,7 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
       validator: validator,
       keyboardType: keyboardType,
       inputFormatters: inputFormatters,
-      style: GoogleFonts.openSans(),
+      style: openSans(),
       decoration: _fieldDecoration(
         label: label,
         required: required,
@@ -472,11 +464,11 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
       initialValue: value,
       hint: hint == null
           ? null
-          : Text(hint, style: GoogleFonts.openSans(color: Colors.black54)),
+          : Text(hint, style: openSans(color: Colors.black54)),
       onChanged: onChanged,
       items: items,
       validator: validator,
-      style: GoogleFonts.openSans(),
+      style: openSans(),
       decoration: _fieldDecoration(label: label, required: required),
     );
   }
@@ -489,13 +481,13 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
   }) {
     return SwitchListTile(
       contentPadding: EdgeInsets.zero,
-      title: Text(title, style: GoogleFonts.openSans(fontWeight: FontWeight.w600)),
+      title: Text(title, style: openSans(fontWeight: FontWeight.w600)),
       subtitle: Text(
         subtitle,
-        style: GoogleFonts.openSans(color: Colors.black54, fontSize: 12),
+        style: openSans(color: Colors.black54, fontSize: 12),
       ),
       value: value,
-      activeThumbColor: _primary,
+      activeThumbColor: kPrimary,
       onChanged: onChanged,
     );
   }
@@ -514,9 +506,9 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
             : label;
     return InputDecoration(
       labelText: labelText,
-      labelStyle: GoogleFonts.openSans(color: Colors.black54),
+      labelStyle: openSans(color: Colors.black54),
       helperText: helperText,
-      helperStyle: GoogleFonts.openSans(
+      helperStyle: openSans(
         color: Colors.black45,
         fontSize: 12,
       ),
@@ -525,20 +517,20 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
       fillColor: Colors.white,
       contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
       border: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(_inputRadius),
+        borderRadius: BorderRadius.circular(kRadiusInput),
         borderSide: BorderSide.none,
       ),
       focusedBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(_inputRadius),
-        borderSide: const BorderSide(color: _primary, width: 1.5),
+        borderRadius: BorderRadius.circular(kRadiusInput),
+        borderSide: const BorderSide(color: kPrimary, width: 1.5),
       ),
       errorBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(_inputRadius),
-        borderSide: const BorderSide(color: _errorColor),
+        borderRadius: BorderRadius.circular(kRadiusInput),
+        borderSide: const BorderSide(color: kError),
       ),
       focusedErrorBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(_inputRadius),
-        borderSide: const BorderSide(color: _errorColor, width: 1.5),
+        borderRadius: BorderRadius.circular(kRadiusInput),
+        borderSide: const BorderSide(color: kError, width: 1.5),
       ),
     );
   }
@@ -548,16 +540,16 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: const Color(0xFFFDE8E8),
-        borderRadius: BorderRadius.circular(_inputRadius),
+        borderRadius: BorderRadius.circular(kRadiusInput),
       ),
       child: Row(
         children: [
-          const Icon(Icons.error_outline, color: _errorColor),
+          const Icon(Icons.error_outline, color: kError),
           const SizedBox(width: 8),
           Expanded(
             child: Text(
               message,
-              style: GoogleFonts.openSans(color: _errorColor),
+              style: openSans(color: kError),
             ),
           ),
         ],
@@ -580,16 +572,16 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
             child: OutlinedButton(
               onPressed: () => context.go(backRoute),
               style: OutlinedButton.styleFrom(
-                foregroundColor: _primary,
-                side: const BorderSide(color: _primary),
+                foregroundColor: kPrimary,
+                side: const BorderSide(color: kPrimary),
                 padding: const EdgeInsets.symmetric(vertical: 16),
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(_inputRadius),
+                  borderRadius: BorderRadius.circular(kRadiusInput),
                 ),
               ),
               child: Text(
                 'Back',
-                style: GoogleFonts.poppins(fontWeight: FontWeight.w600),
+                style: poppins(fontWeight: FontWeight.w600),
               ),
             ),
           ),
@@ -601,11 +593,11 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
                 ? null
                 : (isLastStep ? _onSubmit : _onNext),
             style: ElevatedButton.styleFrom(
-              backgroundColor: _primary,
+              backgroundColor: kPrimary,
               foregroundColor: Colors.white,
               padding: const EdgeInsets.symmetric(vertical: 16),
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(_inputRadius),
+                borderRadius: BorderRadius.circular(kRadiusInput),
               ),
             ),
             child: state.isSubmitting
@@ -619,7 +611,7 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
                   )
                 : Text(
                     isLastStep ? 'Save Profile' : 'Next',
-                    style: GoogleFonts.poppins(fontWeight: FontWeight.w600),
+                    style: poppins(fontWeight: FontWeight.w600),
                   ),
           ),
         ),

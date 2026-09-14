@@ -14,6 +14,7 @@ import 'package:scholaris/features/bookmarks/providers/bookmarks_provider.dart';
 import 'package:scholaris/features/scholarships/models/scholarship.dart';
 import 'package:scholaris/features/scholarships/providers/scholarships_provider.dart';
 import 'package:scholaris/shared/theme/app_theme.dart';
+import 'package:scholaris/shared/widgets/student_mascot.dart';
 import 'package:scholaris/shared/widgets/responsive_container.dart';
 import 'package:scholaris/shared/widgets/scholarship_card.dart';
 import 'package:scholaris/shared/widgets/state_views.dart';
@@ -63,10 +64,9 @@ class SavedScreen extends ConsumerWidget {
       data: (ids) {
         if (ids.isEmpty) {
           return const EmptyView(
-            icon: Icons.bookmark_border_rounded,
+            mascotPose: StudentMascotPose.curious,
             title: 'Nothing saved yet',
             message: 'Tap the bookmark on any scholarship to keep it here.',
-            animateSearchIcon: true,
           );
         }
 
@@ -82,10 +82,9 @@ class SavedScreen extends ConsumerWidget {
 
             if (saved.isEmpty) {
               return const EmptyView(
-                icon: Icons.bookmark_border_rounded,
+                mascotPose: StudentMascotPose.curious,
                 title: 'Nothing saved yet',
                 message: 'Tap the bookmark on any scholarship to keep it here.',
-                animateSearchIcon: true,
               );
             }
 

@@ -51,7 +51,7 @@ class SectionHeader extends StatelessWidget {
               style: poppins(
                 fontSize: 13,
                 fontWeight: FontWeight.w700,
-                color: Colors.white,
+                color: kMatchGoldText,
               ),
             ),
           ),

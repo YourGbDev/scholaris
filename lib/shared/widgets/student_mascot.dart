@@ -88,6 +88,7 @@ class StudentMascot extends StatelessWidget {
     this.fit = BoxFit.contain,
     this.onTap,
     this.animate = false,
+    this.filterQuality = FilterQuality.high,
   });
 
   /// Global toggle for idle animations on mascots.
@@ -119,6 +120,10 @@ class StudentMascot extends StatelessWidget {
   /// Recommended for persistent hero banners (Discover hero, Auth hero).
   final bool animate;
 
+  /// Resampling filter quality when scaling the mascot asset.
+  /// Defaults to [FilterQuality.high] (bicubic) for smooth, unpixelated line art.
+  final FilterQuality filterQuality;
+
   @override
   Widget build(BuildContext context) {
     if (gender != null) {
@@ -149,7 +154,7 @@ class StudentMascot extends StatelessWidget {
       height: height,
       width: width,
       fit: fit,
-      filterQuality: FilterQuality.medium,
+      filterQuality: filterQuality,
       semanticLabel: pose.semanticsLabel,
       errorBuilder: (context, error, stackTrace) {
         return SizedBox(

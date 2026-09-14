@@ -159,6 +159,7 @@ class _HeroStudentIllustration extends StatelessWidget {
         kHeroStudentIllustrationAsset,
         fit: BoxFit.contain,
         alignment: Alignment.center,
+        filterQuality: FilterQuality.high,
         // Decorative: the greeting carries the meaningful hero content.
         excludeFromSemantics: true,
       ),

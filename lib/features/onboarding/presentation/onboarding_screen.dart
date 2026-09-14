@@ -246,11 +246,35 @@ class _OnboardingSlide extends StatelessWidget {
                         horizontal: 24,
                         vertical: 8,
                       ),
-                      child: StudentMascot(
-                        pose: pose,
-                        height: illustrationArea,
-                        fit: BoxFit.contain,
-                      ),
+                      child: index == 0
+                          ? Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              children: [
+                                Flexible(
+                                  child: StudentMascot(
+                                    pose: pose,
+                                    gender: MascotGender.male,
+                                    height: illustrationArea,
+                                    fit: BoxFit.contain,
+                                  ),
+                                ),
+                                const SizedBox(width: 12),
+                                Flexible(
+                                  child: StudentMascot(
+                                    pose: pose,
+                                    gender: MascotGender.female,
+                                    height: illustrationArea,
+                                    fit: BoxFit.contain,
+                                  ),
+                                ),
+                              ],
+                            )
+                          : StudentMascot(
+                              pose: pose,
+                              height: illustrationArea,
+                              fit: BoxFit.contain,
+                            ),
                     ),
                   ),
                   const SizedBox(height: 16),

@@ -62,7 +62,7 @@ void main() {
     );
     expect(
       _eliPose(EliPose.welcome),
-      findsOneWidget,
+      findsNWidgets(2),
     );
 
     // Dots: one active pill + two inactive dots.

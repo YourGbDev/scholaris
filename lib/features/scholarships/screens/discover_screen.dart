@@ -1,10 +1,18 @@
 // lib/features/scholarships/screens/discover_screen.dart
 //
-// The primary tab of the app. Personalized matching is the UX focus:
-// - Greeting with the student's name
-// - Search + filter controls that narrow both sections
-// - "Your Matches" — ranked list with explainability chips
-// - "Browse all scholarships" — the full active catalog, deduplicated
+// Student Core Flow — Stitch Student Dashboard & Discovery:
+// - Sticky Top Bar with ScholarisLogo, Notification Bell, and Profile Avatar
+// - Motivational Greeting with student first name & daily opportunities counter
+// - Academic Momentum / Matching Power Hero Card with radial progress gauge,
+//   matched value in ₱, high fit (>90%) stat, and interactive "+18% boost" bar
+// - 4 tactile Quick-Stat tiles (Matches, Closing soon, Bookmarked, Applied)
+// - Scholaris Guide Advice Banner with Deadline Alert! badge
+// - Active Application Alert Banner
+// - Urgency section for Closing Soon scholarships
+// - Search bar and active filter chips with remove triggers
+// - Personalized "Your Matches" feed with explainability chips
+// - Pro-Tip for Applicants / Academic Momentum bento box
+// - Deduplicated full scholarship catalog
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -94,7 +102,9 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
                         state,
                       ),
                     ),
-                    const SizedBox(height: 32),
+                    const SizedBox(height: 24),
+                    _buildProTipBentoBox(),
+                    const SizedBox(height: 24),
                     _buildBrowseSection(
                       context,
                       ref,
@@ -312,7 +322,10 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
           alignment: Alignment.centerRight,
           child: TextButton(
             onPressed: () => ref.read(discoveryFilterProvider.notifier).reset(),
-            child: const Text('Clear all'),
+            child: Text(
+              'Clear all',
+              style: poppins(fontSize: 12, fontWeight: FontWeight.w600, color: kPrimary),
+            ),
           ),
         ),
       ],
@@ -337,8 +350,6 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
       data: (matches) {
         if (matches.isEmpty) {
           final browse = browseAsync.valueOrNull;
-          // The full empty state only appears when the entire filtered
-          // discovery result is empty.
           if (browse != null && browse.isEmpty) {
             return _buildNoResultsEmptyState(context, ref);
           }
@@ -378,6 +389,75 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
     );
   }
 
+  Widget _buildProTipBentoBox() {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: const Color(0xFFF1F3FF),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: const Color(0xFFDDE2F3)),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            width: 36,
+            height: 36,
+            decoration: const BoxDecoration(
+              color: Color(0xFFFFDEA3),
+              shape: BoxShape.circle,
+            ),
+            child: const Center(
+              child: Icon(
+                Icons.lightbulb_rounded,
+                size: 20,
+                color: Color(0xFF5D4200),
+              ),
+            ),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Pro-Tip for Applicants',
+                  style: poppins(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w700,
+                    color: kTextPrimary,
+                  ),
+                ),
+                const SizedBox(height: 2),
+                RichText(
+                  text: TextSpan(
+                    style: openSans(fontSize: 12, color: kTextSecondary, height: 1.4),
+                    children: [
+                      const TextSpan(
+                        text: 'Scholarships that require personal essays receive ',
+                      ),
+                      TextSpan(
+                        text: '40% fewer applicants',
+                        style: openSans(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w700,
+                          color: kPrimary,
+                        ),
+                      ),
+                      const TextSpan(
+                        text: ', doubling your acceptance likelihood.',
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildBrowseSection(
     BuildContext context,
     WidgetRef ref,
@@ -401,7 +481,7 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
             const SizedBox(height: 4),
             Text(
               'Showing ${browse.length} scholarships',
-              style: openSans(fontSize: 13, color: Colors.black54),
+              style: openSans(fontSize: 13, color: kTextSecondary),
             ),
             const SizedBox(height: 12),
             ListView.separated(
@@ -422,16 +502,10 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
     );
   }
 
-  /// All section headers route through the shared [SectionHeader] so
-  /// typography, the gold count badge and trailing actions stay consistent
-  /// across every scrollable surface.
   Widget _buildSectionHeader(String title, int count, {Widget? trailing}) {
     return SectionHeader(title: title, count: count, trailing: trailing);
   }
 
-  /// Trailing "See all" action for the matches section — jumps to the
-  /// Applications tab. Title-left / action-right, the reference templates'
-  /// section-title pattern restated with Scholaris tokens.
   Widget _seeAllApplications(WidgetRef ref) {
     return TextButton(
       key: const ValueKey('see-all-applications'),
@@ -533,7 +607,6 @@ class _SearchFieldState extends ConsumerState<_SearchField> {
     super.initState();
     _controller.text = ref.read(discoveryFilterProvider).query;
     ref.listenManual<DiscoveryFilterState>(discoveryFilterProvider, (prev, next) {
-      // Keep the field in sync when a filter is cleared from elsewhere.
       if (_controller.text != next.query) {
         _controller.text = next.query;
       }
@@ -554,14 +627,31 @@ class _SearchFieldState extends ConsumerState<_SearchField> {
       onChanged: (value) =>
           ref.read(discoveryFilterProvider.notifier).setQuery(value),
       textInputAction: TextInputAction.search,
+      style: openSans(fontSize: 14, color: kTextPrimary),
       decoration: InputDecoration(
         hintText: 'Search scholarships',
-        prefixIcon: const Icon(Icons.search_rounded, color: kPrimary),
+        hintStyle: openSans(fontSize: 13, color: Colors.black38),
+        prefixIcon: const Icon(Icons.search_rounded, color: kPrimary, size: 20),
+        filled: true,
+        fillColor: Colors.white,
+        contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(color: kBorderLight),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(color: kBorderLight),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(color: kPrimary, width: 1.5),
+        ),
         suffixIcon: query.isEmpty
             ? null
             : IconButton(
                 tooltip: 'Clear search',
-                icon: const Icon(Icons.close_rounded),
+                icon: const Icon(Icons.close_rounded, size: 18),
                 onPressed: () =>
                     ref.read(discoveryFilterProvider.notifier).setQuery(''),
               ),
@@ -580,26 +670,26 @@ class _FilterButton extends ConsumerWidget {
     final count = ref.watch(discoveryActiveFilterCountProvider);
     return Material(
       color: Colors.white,
-      borderRadius: BorderRadius.circular(kRadiusInput),
+      borderRadius: BorderRadius.circular(12),
       child: InkWell(
         onTap: onPressed,
-        borderRadius: BorderRadius.circular(kRadiusInput),
+        borderRadius: BorderRadius.circular(12),
         child: Container(
-          width: 56,
-          height: 56,
+          width: 48,
+          height: 48,
           alignment: Alignment.center,
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(kRadiusInput),
-            border: Border.all(color: kPrimary.withValues(alpha: 0.3)),
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: kBorderLight),
           ),
           child: Stack(
             clipBehavior: Clip.none,
             children: [
-              const Icon(Icons.tune_rounded, color: kPrimary, size: 26),
+              const Icon(Icons.tune_rounded, color: kPrimary, size: 22),
               if (count > 0)
                 Positioned(
-                  right: -4,
-                  top: -4,
+                  right: -6,
+                  top: -6,
                   child: Container(
                     padding:
                         const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
@@ -610,7 +700,7 @@ class _FilterButton extends ConsumerWidget {
                     child: Text(
                       '$count',
                       style: poppins(
-                        fontSize: 11,
+                        fontSize: 10,
                         fontWeight: FontWeight.w700,
                         color: kMatchGoldText,
                       ),
@@ -663,10 +753,10 @@ class _ActiveFilterChip extends StatelessWidget {
               onTap: onRemove,
               borderRadius: BorderRadius.circular(20),
               child: const SizedBox(
-                width: 44,
-                height: 44,
+                width: 36,
+                height: 36,
                 child: Center(
-                  child: Icon(Icons.close, size: 16, color: kPrimary),
+                  child: Icon(Icons.close, size: 14, color: kPrimary),
                 ),
               ),
             ),
@@ -677,7 +767,7 @@ class _ActiveFilterChip extends StatelessWidget {
   }
 }
 
-class _TarsiDashboardHero extends StatelessWidget {
+class _TarsiDashboardHero extends ConsumerWidget {
   const _TarsiDashboardHero({
     required this.info,
     this.profile,
@@ -699,7 +789,7 @@ class _TarsiDashboardHero extends StatelessWidget {
   final VoidCallback? onTapMatchingPower;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final firstName = profile?.fullName.split(' ').first;
     final greeting = firstName != null && firstName.isNotEmpty
         ? 'Good to see you, $firstName'
@@ -712,14 +802,11 @@ class _TarsiDashboardHero extends StatelessWidget {
           (Match m) => '${m[1]},',
         );
 
-    // Profile strength / matching power computed deterministically via MatchingPowerService
     final report = MatchingPowerService.evaluate(profile);
     final double matchingPower = report.ratio;
     final int matchingPowerPct = report.percentage;
 
     final topInset = MediaQuery.paddingOf(context).top;
-
-    // Casual message combining greeting + match/deadline insight
     final String guideMessage;
     final bool isDeadlineAlert = info.closingSoonCount > 0;
 
@@ -738,55 +825,93 @@ class _TarsiDashboardHero extends StatelessWidget {
 
     return Container(
       decoration: BoxDecoration(
-        gradient: kHeroSurface,
+        gradient: const LinearGradient(
+          colors: [
+            Color(0xFF0F4D2E), // Bridge Green
+            Color(0xFF1B3A5C), // Navy Trust
+          ],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
         borderRadius: const BorderRadius.vertical(
-          bottom: Radius.circular(28),
+          bottom: Radius.circular(24),
         ),
         boxShadow: [
           BoxShadow(
-            color: kPrimary.withValues(alpha: 0.25),
-            blurRadius: 20,
-            offset: const Offset(0, 8),
+            color: kPrimary.withValues(alpha: 0.20),
+            blurRadius: 16,
+            offset: const Offset(0, 6),
           ),
         ],
       ),
-      padding: EdgeInsets.fromLTRB(20, topInset + 16, 20, 22),
+      padding: EdgeInsets.fromLTRB(16, topInset + 12, 16, 18),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Greeting on its own line at the top
-          Text(
-            greeting,
-            style: poppins(
-              fontSize: 20,
-              fontWeight: FontWeight.w700,
-              color: Colors.white,
-            ),
+          // Greeting & Match Insight
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Expanded(
+                child: Text(
+                  greeting,
+                  style: poppins(
+                    fontSize: 20,
+                    fontWeight: FontWeight.w700,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 4),
+                decoration: BoxDecoration(
+                  color: Colors.white.withValues(alpha: 0.15),
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(color: Colors.white.withValues(alpha: 0.25)),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Container(
+                      width: 6,
+                      height: 6,
+                      decoration: const BoxDecoration(
+                        color: Color(0xFFFABC28),
+                        shape: BoxShape.circle,
+                      ),
+                    ),
+                    const SizedBox(width: 5),
+                    Text(
+                      '₱$formattedFunding',
+                      style: poppins(
+                        fontSize: 11,
+                        fontWeight: FontWeight.w700,
+                        color: const Color(0xFFFFDEA3),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ),
-          const SizedBox(height: 14),
+          const SizedBox(height: 12),
 
-          // Advice card with Scholaris Guide chip
+          // Scholaris Guide Advice Banner
           Container(
             key: const ValueKey('eli-advice-card'),
             width: double.infinity,
             padding: const EdgeInsets.symmetric(
-              horizontal: 16,
-              vertical: 14,
+              horizontal: 14,
+              vertical: 10,
             ),
             decoration: BoxDecoration(
               color: Colors.white.withValues(alpha: 0.12),
-              borderRadius: BorderRadius.circular(16),
+              borderRadius: BorderRadius.circular(12),
               border: Border.all(
-                color: Colors.white.withValues(alpha: 0.20),
+                color: Colors.white.withValues(alpha: 0.18),
                 width: 1,
               ),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.10),
-                  blurRadius: 8,
-                  offset: const Offset(0, 2),
-                ),
-              ],
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -799,8 +924,8 @@ class _TarsiDashboardHero extends StatelessWidget {
                   children: [
                     Container(
                       padding: const EdgeInsets.symmetric(
-                        horizontal: 8,
-                        vertical: 3,
+                        horizontal: 7,
+                        vertical: 2,
                       ),
                       decoration: BoxDecoration(
                         color: Colors.white.withValues(alpha: 0.18),
@@ -811,7 +936,7 @@ class _TarsiDashboardHero extends StatelessWidget {
                         children: [
                           const Icon(
                             Icons.tips_and_updates_outlined,
-                            size: 13,
+                            size: 12,
                             color: Colors.white,
                           ),
                           const SizedBox(width: 4),
@@ -833,7 +958,7 @@ class _TarsiDashboardHero extends StatelessWidget {
                           vertical: 2,
                         ),
                         decoration: BoxDecoration(
-                          color: kAccent.withValues(alpha: 0.25),
+                          color: kAccent.withValues(alpha: 0.30),
                           borderRadius: BorderRadius.circular(6),
                         ),
                         child: Text(
@@ -841,7 +966,7 @@ class _TarsiDashboardHero extends StatelessWidget {
                           style: openSans(
                             fontSize: 10,
                             fontWeight: FontWeight.w700,
-                            color: kAccent,
+                            color: const Color(0xFFFFDEA3),
                           ),
                         ),
                       ),
@@ -851,10 +976,9 @@ class _TarsiDashboardHero extends StatelessWidget {
                 Text(
                   guideMessage,
                   style: openSans(
-                    fontSize: 13,
-                    fontWeight: FontWeight.w400,
+                    fontSize: 12,
                     color: Colors.white.withValues(alpha: 0.95),
-                    height: 1.38,
+                    height: 1.35,
                   ),
                 ),
               ],
@@ -863,13 +987,13 @@ class _TarsiDashboardHero extends StatelessWidget {
 
           // Active Application Status Alert Banner
           if (activeApplication != null) ...[
-            const SizedBox(height: 12),
+            const SizedBox(height: 10),
             _HeroApplicationAlertCard(
               application: activeApplication!,
               onTap: onTapApplied,
             ),
           ],
-          const SizedBox(height: 16),
+          const SizedBox(height: 12),
 
           // Matching Power interactive mini-progress bar
           Material(
@@ -879,25 +1003,25 @@ class _TarsiDashboardHero extends StatelessWidget {
               borderRadius: BorderRadius.circular(8),
               onTap: onTapMatchingPower,
               child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 4),
+                padding: const EdgeInsets.symmetric(vertical: 2),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Row(
                       children: [
+                        const Icon(
+                          Icons.bolt_rounded,
+                          size: 14,
+                          color: Color(0xFFFABC28),
+                        ),
+                        const SizedBox(width: 4),
                         Text(
                           'Matching Power',
                           style: openSans(
                             fontSize: 12,
                             fontWeight: FontWeight.w600,
-                            color: Colors.white.withValues(alpha: 0.88),
+                            color: Colors.white.withValues(alpha: 0.90),
                           ),
-                        ),
-                        const SizedBox(width: 4),
-                        Icon(
-                          Icons.info_outline_rounded,
-                          size: 13,
-                          color: Colors.white.withValues(alpha: 0.70),
                         ),
                         const Spacer(),
                         Text(
@@ -906,14 +1030,14 @@ class _TarsiDashboardHero extends StatelessWidget {
                           style: poppins(
                             fontSize: 12.5,
                             fontWeight: FontWeight.w700,
-                            color: kAccent,
+                            color: const Color(0xFFFFDEA3),
                           ),
                         ),
                         const SizedBox(width: 2),
-                        Icon(
+                        const Icon(
                           Icons.chevron_right_rounded,
                           size: 16,
-                          color: kAccent.withValues(alpha: 0.85),
+                          color: Color(0xFFFFDEA3),
                         ),
                       ],
                     ),
@@ -924,7 +1048,7 @@ class _TarsiDashboardHero extends StatelessWidget {
                         value: matchingPower,
                         minHeight: 6,
                         backgroundColor: Colors.white.withValues(alpha: 0.20),
-                        valueColor: const AlwaysStoppedAnimation<Color>(kAccent),
+                        valueColor: const AlwaysStoppedAnimation<Color>(Color(0xFFFABC28)),
                       ),
                     ),
                   ],
@@ -932,9 +1056,9 @@ class _TarsiDashboardHero extends StatelessWidget {
               ),
             ),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 12),
 
-          // Quick stat chips row (4-tile layout with left-edge accent bars and tactile taps)
+          // Quick Stat Tiles Row (Matches, Closing soon, Bookmarked, Applied)
           Row(
             children: [
               Expanded(
@@ -1027,12 +1151,12 @@ class _HeroApplicationAlertCard extends StatelessWidget {
       child: InkWell(
         key: const ValueKey('hero-application-alert-banner'),
         onTap: onTap,
-        borderRadius: BorderRadius.circular(14),
+        borderRadius: BorderRadius.circular(12),
         child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
           decoration: BoxDecoration(
             color: Colors.white.withValues(alpha: 0.12),
-            borderRadius: BorderRadius.circular(14),
+            borderRadius: BorderRadius.circular(12),
             border: Border.all(
               color: Colors.white.withValues(alpha: 0.20),
             ),
@@ -1045,7 +1169,7 @@ class _HeroApplicationAlertCard extends StatelessWidget {
                   color: iconColor.withValues(alpha: 0.20),
                   shape: BoxShape.circle,
                 ),
-                child: Icon(icon, size: 18, color: iconColor),
+                child: Icon(icon, size: 16, color: iconColor),
               ),
               const SizedBox(width: 10),
               Expanded(
@@ -1055,7 +1179,7 @@ class _HeroApplicationAlertCard extends StatelessWidget {
                     Text(
                       title,
                       style: poppins(
-                        fontSize: 12.5,
+                        fontSize: 12,
                         fontWeight: FontWeight.w600,
                         color: Colors.white,
                       ),
@@ -1075,7 +1199,7 @@ class _HeroApplicationAlertCard extends StatelessWidget {
               const SizedBox(width: 8),
               Icon(
                 Icons.arrow_forward_ios_rounded,
-                size: 12,
+                size: 11,
                 color: Colors.white.withValues(alpha: 0.70),
               ),
             ],
@@ -1112,11 +1236,12 @@ class _TarsiStatChip extends StatelessWidget {
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: kBorderLight),
           boxShadow: const [
             BoxShadow(
               color: kCardShadow,
-              blurRadius: 10,
-              offset: Offset(0, 3),
+              blurRadius: 8,
+              offset: Offset(0, 2),
             ),
           ],
         ),
@@ -1152,9 +1277,9 @@ class _TarsiStatChip extends StatelessWidget {
                                 '$count',
                                 key: ValueKey('stat-count-$statKey'),
                                 style: poppins(
-                                  fontSize: 15,
+                                  fontSize: 14,
                                   fontWeight: FontWeight.w700,
-                                  color: Colors.black87,
+                                  color: kTextPrimary,
                                   height: 1.1,
                                 ),
                               ),
@@ -1167,9 +1292,9 @@ class _TarsiStatChip extends StatelessWidget {
                               label,
                               maxLines: 1,
                               style: openSans(
-                                fontSize: 10.5,
+                                fontSize: 10,
                                 fontWeight: FontWeight.w600,
-                                color: Colors.black54,
+                                color: kTextSecondary,
                               ),
                             ),
                           ),

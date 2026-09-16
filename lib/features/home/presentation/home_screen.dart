@@ -54,32 +54,52 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     return Scaffold(
       backgroundColor: kBackground,
       body: IndexedStack(index: tabIndex, children: _tabs),
-      bottomNavigationBar: NavigationBar(
-        selectedIndex: tabIndex,
-        onDestinationSelected: (i) =>
-            ref.read(homeTabIndexProvider.notifier).selectTab(i),
-        destinations: const [
-          NavigationDestination(
-            icon: Icon(Icons.language_outlined),
-            selectedIcon: Icon(Icons.language, color: kPrimary),
-            label: 'Discover',
+      bottomNavigationBar: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          border: const Border(
+            top: BorderSide(color: kBorderLight, width: 1),
           ),
-          NavigationDestination(
-            icon: Icon(Icons.bookmark_outline_rounded),
-            selectedIcon: Icon(Icons.bookmark_rounded, color: kPrimary),
-            label: 'Saved',
-          ),
-          NavigationDestination(
-            icon: Icon(Icons.send_outlined),
-            selectedIcon: Icon(Icons.send_rounded, color: kPrimary),
-            label: 'Applications',
-          ),
-          NavigationDestination(
-            icon: Icon(Icons.person_outline_rounded),
-            selectedIcon: Icon(Icons.person_rounded, color: kPrimary),
-            label: 'Profile',
-          ),
-        ],
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.04),
+              blurRadius: 10,
+              offset: const Offset(0, -2),
+            ),
+          ],
+        ),
+        child: NavigationBar(
+          selectedIndex: tabIndex,
+          onDestinationSelected: (i) =>
+              ref.read(homeTabIndexProvider.notifier).selectTab(i),
+          backgroundColor: Colors.white,
+          indicatorColor: kPrimary,
+          elevation: 0,
+          surfaceTintColor: Colors.transparent,
+          height: 64,
+          destinations: const [
+            NavigationDestination(
+              icon: Icon(Icons.dashboard_outlined),
+              selectedIcon: Icon(Icons.dashboard_rounded, color: Colors.white),
+              label: 'Discover',
+            ),
+            NavigationDestination(
+              icon: Icon(Icons.bookmark_outline_rounded),
+              selectedIcon: Icon(Icons.bookmark_rounded, color: Colors.white),
+              label: 'Saved',
+            ),
+            NavigationDestination(
+              icon: Icon(Icons.assignment_outlined),
+              selectedIcon: Icon(Icons.assignment_rounded, color: Colors.white),
+              label: 'Applications',
+            ),
+            NavigationDestination(
+              icon: Icon(Icons.person_outline_rounded),
+              selectedIcon: Icon(Icons.person_rounded, color: Colors.white),
+              label: 'Profile',
+            ),
+          ],
+        ),
       ),
     );
   }

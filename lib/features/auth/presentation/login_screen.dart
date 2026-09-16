@@ -171,7 +171,7 @@ class _LoginScreenState extends State<LoginScreen>
                           offset: const Offset(0, 0.08),
                           interval: _loginInterval(200, 1000),
                           child: Lottie.asset(
-                            'assets/animations/Sign up.json',
+                            'assets/animations/login_hero.json',
                             fit: BoxFit.contain,
                             animate:
                                 !(MediaQuery.maybeOf(context)

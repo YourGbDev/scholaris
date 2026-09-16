@@ -144,7 +144,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen>
                           offset: const Offset(0, 0.08),
                           interval: _resetInterval(200, 1000),
                           child: Lottie.asset(
-                            'assets/animations/selection list clients.json',
+                            'assets/animations/reset_password_hero.json',
                             fit: BoxFit.contain,
                             animate:
                                 !(MediaQuery.maybeOf(context)

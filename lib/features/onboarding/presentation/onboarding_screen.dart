@@ -57,7 +57,7 @@ const List<_SlideSpec> _kSlides = [
     subtitle: 'Hundreds of opportunities matched to your profile',
   ),
   _SlideSpec(
-    asset: 'assets/animations/selection list clients.json',
+    asset: 'assets/animations/onboarding_slide2_hero.json',
     title: 'Smart Matching',
     subtitle:
         'We find the best fit based on your grades, course, and financial need',

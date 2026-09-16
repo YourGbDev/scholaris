@@ -158,7 +158,7 @@ class _SignupScreenState extends State<SignupScreen>
                     offset: const Offset(0, 0.08),
                     interval: _signupInterval(200, 1000),
                     child: Lottie.asset(
-                      'assets/animations/sign in hover.json',
+                      'assets/animations/signup_hero.json',
                       fit: BoxFit.contain,
                       animate:
                           !(MediaQuery.maybeOf(context)?.disableAnimations ??

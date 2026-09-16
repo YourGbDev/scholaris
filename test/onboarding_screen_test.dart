@@ -85,7 +85,7 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('Smart Matching'), findsOneWidget);
     expect(
-      _lottieAsset('assets/animations/selection list clients.json'),
+      _lottieAsset('assets/animations/onboarding_slide2_hero.json'),
       findsOneWidget,
     );
     expect(find.text('Skip'), findsOneWidget);

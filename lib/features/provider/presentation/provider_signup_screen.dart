@@ -182,7 +182,7 @@ class _ProviderSignupScreenState extends State<ProviderSignupScreen>
                     offset: const Offset(0, 0.08),
                     interval: _providerInterval(200, 1000),
                     child: Lottie.asset(
-                      'assets/animations/Business Team.json',
+                      'assets/animations/provider_signup_hero.json',
                       fit: BoxFit.contain,
                       animate:
                           !(MediaQuery.maybeOf(context)?.disableAnimations ??

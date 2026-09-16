@@ -132,7 +132,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
                           offset: const Offset(0, 0.08),
                           interval: _forgotInterval(200, 1000),
                           child: Lottie.asset(
-                            'assets/animations/Forgot password.json',
+                            'assets/animations/forgot_password_hero.json',
                             fit: BoxFit.contain,
                             animate:
                                 !(MediaQuery.maybeOf(context)

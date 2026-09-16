@@ -133,7 +133,7 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen>
                           offset: const Offset(0, 0.08),
                           interval: _verifyInterval(200, 900),
                           child: Lottie.asset(
-                            'assets/animations/Forgot password.json',
+                            'assets/animations/verify_email_hero.json',
                             fit: BoxFit.contain,
                             animate:
                                 !(MediaQuery.maybeOf(context)

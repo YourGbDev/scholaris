@@ -134,31 +134,92 @@ class EmptyView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final effectiveIcon = icon ?? Icons.inbox_rounded;
     final iconWidget = animateSearchIcon
-        ? _SearchIconAnimation(icon: icon ?? Icons.inbox_rounded)
-        : Icon(icon ?? Icons.inbox_rounded, size: 36, color: kPrimary);
+        ? _SearchIconAnimation(icon: effectiveIcon, color: Colors.white)
+        : Icon(effectiveIcon, size: 24, color: Colors.white);
 
-    final visualWidget = Container(
-      padding: const EdgeInsets.all(20),
-      decoration: const BoxDecoration(
-        color: kPrimarySoft,
-        shape: BoxShape.circle,
+    // Stitch Concentric Halo Assembly
+    final visualWidget = Center(
+      child: Container(
+        width: 88,
+        height: 88,
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          color: kPrimary.withValues(alpha: 0.08),
+        ),
+        alignment: Alignment.center,
+        child: Container(
+          width: 66,
+          height: 66,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: kPrimary.withValues(alpha: 0.14),
+          ),
+          alignment: Alignment.center,
+          child: Stack(
+            clipBehavior: Clip.none,
+            children: [
+              Container(
+                width: 46,
+                height: 46,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: kPrimary,
+                  boxShadow: [
+                    BoxShadow(
+                      color: kPrimary.withValues(alpha: 0.25),
+                      blurRadius: 8,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
+                ),
+                alignment: Alignment.center,
+                child: iconWidget,
+              ),
+              Positioned(
+                bottom: -2,
+                right: -2,
+                child: Container(
+                  width: 18,
+                  height: 18,
+                  decoration: const BoxDecoration(
+                    color: Colors.white,
+                    shape: BoxShape.circle,
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black12,
+                        blurRadius: 4,
+                        offset: Offset(0, 1),
+                      ),
+                    ],
+                  ),
+                  alignment: Alignment.center,
+                  child: const Icon(
+                    Icons.search_rounded,
+                    size: 11,
+                    color: kPrimary,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
-      child: iconWidget,
     );
 
     return Center(
       child: Container(
         margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
-        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
+        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 28),
         decoration: BoxDecoration(
-          color: kWarmCream,
-          borderRadius: BorderRadius.circular(kRadiusCard),
-          border: Border.all(color: kWarmCreamBorder),
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: kBorderLight),
           boxShadow: const [
             BoxShadow(
-              color: Color(0x0A000000),
-              blurRadius: 12,
+              color: Color(0x081B3A5C),
+              blurRadius: 16,
               offset: Offset(0, 4),
             ),
           ],
@@ -172,9 +233,9 @@ class EmptyView extends StatelessWidget {
               title,
               textAlign: TextAlign.center,
               style: poppins(
-                fontSize: 18,
-                fontWeight: FontWeight.w600,
-                color: const Color(0xFF2C2416),
+                fontSize: 17,
+                fontWeight: FontWeight.w700,
+                color: kTextPrimary,
               ),
             ),
             const SizedBox(height: 8),
@@ -182,16 +243,35 @@ class EmptyView extends StatelessWidget {
               message,
               textAlign: TextAlign.center,
               style: openSans(
-                fontSize: 14,
-                color: const Color(0xFF6E5D46),
-                height: 1.4,
+                fontSize: 13.5,
+                color: kTextSecondary,
+                height: 1.45,
               ),
             ),
             if (actionLabel != null && onAction != null) ...[
               const SizedBox(height: 20),
-              OutlinedButton(
+              ElevatedButton(
                 onPressed: onAction,
-                child: Text(actionLabel!),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: kPrimary,
+                  foregroundColor: Colors.white,
+                  elevation: 0,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 20,
+                    vertical: 12,
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+                child: Text(
+                  actionLabel!,
+                  style: poppins(
+                    fontSize: 13.5,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.white,
+                  ),
+                ),
               ),
             ],
           ],
@@ -202,9 +282,10 @@ class EmptyView extends StatelessWidget {
 }
 
 class _SearchIconAnimation extends StatefulWidget {
-  const _SearchIconAnimation({required this.icon});
+  const _SearchIconAnimation({required this.icon, this.color});
 
   final IconData icon;
+  final Color? color;
 
   @override
   State<_SearchIconAnimation> createState() => _SearchIconAnimationState();
@@ -244,7 +325,7 @@ class _SearchIconAnimationState extends State<_SearchIconAnimation>
       builder: (context, child) {
         return Transform.rotate(
           angle: _tilt.value,
-          child: Icon(widget.icon, size: 36, color: kPrimary),
+          child: Icon(widget.icon, size: 24, color: widget.color ?? Colors.white),
         );
       },
     );

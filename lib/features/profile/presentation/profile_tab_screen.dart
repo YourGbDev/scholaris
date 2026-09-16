@@ -15,6 +15,8 @@ import 'package:scholaris/shared/widgets/responsive_container.dart';
 import 'package:scholaris/shared/widgets/state_views.dart';
 import '../models/student_profile.dart';
 import '../providers/profile_setup_provider.dart';
+import '../services/matching_power_service.dart';
+import 'matching_power_sheet.dart';
 
 class ProfileTabScreen extends ConsumerWidget {
   const ProfileTabScreen({super.key});
@@ -89,7 +91,7 @@ class ProfileTabScreen extends ConsumerWidget {
             ),
           ],
         ),
-        _EliMilestoneCard(profile: profile),
+        _ProfileMilestoneCard(profile: profile),
         const SizedBox(height: 20),
         Text(
           'Your matching profile',
@@ -251,154 +253,141 @@ class _DetailRow extends StatelessWidget {
   }
 }
 
-class _EliMilestoneCard extends StatelessWidget {
-  const _EliMilestoneCard({required this.profile});
+class _ProfileMilestoneCard extends StatelessWidget {
+  const _ProfileMilestoneCard({required this.profile});
 
   final StudentProfile profile;
 
   @override
   Widget build(BuildContext context) {
-    final hasSchool =
-        profile.school != null && profile.school!.trim().isNotEmpty;
-    final hasIncome = profile.monthlyFamilyIncome != null;
-    var filledCount = 6;
-    if (hasSchool) filledCount++;
-    if (hasIncome) filledCount++;
-    final percentage = (filledCount / 8 * 100).round();
-    final isComplete = percentage == 100;
+    final report = MatchingPowerService.evaluate(profile);
+    final percentage = report.percentage;
+    final isComplete = report.isFullyComplete;
     final accentColor = isComplete ? kLumiGold : kAccent;
 
-    final String advice;
-    if (hasSchool && hasIncome) {
-      advice =
-          'Outstanding! Your matching profile is 100% complete. You have all the details unlocked to find your highest-match scholarships!';
-    } else if (!hasSchool && !hasIncome) {
-      advice =
-          'Scholaris Tip: Add your school & family income to unlock university grants and need-based tuition assistance!';
-    } else if (!hasSchool) {
-      advice =
-          'Scholaris Tip: Add your school or university to qualify for campus-partnered grants!';
-    } else {
-      advice =
-          'Scholaris Tip: Add your family income bracket to qualify for need-based tuition waivers!';
-    }
-
-    return Container(
-      key: const ValueKey('eli-profile-milestone-card'),
-      margin: const EdgeInsets.only(top: 20, bottom: 4),
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white,
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        key: const ValueKey('profile-milestone-card'),
         borderRadius: BorderRadius.circular(kRadiusCard),
-        border: Border.all(
-          color: accentColor.withValues(alpha: 0.28),
-        ),
-        boxShadow: const [
-          BoxShadow(
-            color: kCardShadow,
-            blurRadius: 12,
-            offset: Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Container(
-                width: 48,
-                height: 48,
-                decoration: BoxDecoration(
-                  color: accentColor.withValues(alpha: 0.14),
-                  shape: BoxShape.circle,
-                ),
-                child: Icon(
-                  isComplete
-                      ? Icons.workspace_premium_rounded
-                      : Icons.trending_up_rounded,
-                  color: accentColor,
-                  size: 26,
-                ),
+        onTap: () => showMatchingPowerSheet(context, profile),
+        child: Container(
+          margin: const EdgeInsets.only(top: 20, bottom: 4),
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(kRadiusCard),
+            border: Border.all(
+              color: accentColor.withValues(alpha: 0.28),
+            ),
+            boxShadow: const [
+              BoxShadow(
+                color: kCardShadow,
+                blurRadius: 12,
+                offset: Offset(0, 4),
               ),
-              const SizedBox(width: 14),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Wrap(
-                      crossAxisAlignment: WrapCrossAlignment.center,
-                      spacing: 8,
-                      runSpacing: 4,
+            ],
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Container(
+                    width: 48,
+                    height: 48,
+                    decoration: BoxDecoration(
+                      color: accentColor.withValues(alpha: 0.14),
+                      shape: BoxShape.circle,
+                    ),
+                    child: Icon(
+                      isComplete
+                          ? Icons.workspace_premium_rounded
+                          : Icons.trending_up_rounded,
+                      color: accentColor,
+                      size: 26,
+                    ),
+                  ),
+                  const SizedBox(width: 14),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          'Matching Power',
-                          style: poppins(
-                            fontSize: 15,
-                            fontWeight: FontWeight.w700,
-                            color: kPrimary,
-                          ),
+                        Wrap(
+                          crossAxisAlignment: WrapCrossAlignment.center,
+                          spacing: 8,
+                          runSpacing: 4,
+                          children: [
+                            Text(
+                              'Matching Power',
+                              style: poppins(
+                                fontSize: 15,
+                                fontWeight: FontWeight.w700,
+                                color: kPrimary,
+                              ),
+                            ),
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 8,
+                                vertical: 2,
+                              ),
+                              decoration: BoxDecoration(
+                                color: isComplete
+                                    ? kPrimary.withValues(alpha: 0.12)
+                                    : kAccent.withValues(alpha: 0.18),
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: Text(
+                                '$percentage%',
+                                style: poppins(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w700,
+                                  color: isComplete
+                                      ? kPrimary
+                                      : kMatchGoldText,
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 8,
-                            vertical: 2,
-                          ),
-                          decoration: BoxDecoration(
-                            color: isComplete
-                                ? kPrimary.withValues(alpha: 0.12)
-                                : kAccent.withValues(alpha: 0.18),
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: Text(
-                            '$percentage%',
-                            style: poppins(
-                              fontSize: 12,
-                              fontWeight: FontWeight.w700,
-                              color: isComplete
-                                  ? kPrimary
-                                  : kMatchGoldText,
+                        const SizedBox(height: 6),
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(4),
+                          child: LinearProgressIndicator(
+                            value: report.ratio,
+                            minHeight: 6,
+                            backgroundColor: kPrimarySoft,
+                            valueColor: AlwaysStoppedAnimation<Color>(
+                              isComplete ? kPrimary : kAccent,
                             ),
                           ),
                         ),
                       ],
                     ),
-                    const SizedBox(height: 6),
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(4),
-                      child: LinearProgressIndicator(
-                        value: filledCount / 8.0,
-                        minHeight: 6,
-                        backgroundColor: kPrimarySoft,
-                        valueColor: AlwaysStoppedAnimation<Color>(
-                          isComplete ? kPrimary : kAccent,
-                        ),
-                      ),
-                    ),
-                  ],
+                  ),
+                ],
+              ),
+              const SizedBox(height: 12),
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                decoration: BoxDecoration(
+                  color: isComplete ? kPrimarySoft : kMatchGoldSoft,
+                  borderRadius: BorderRadius.circular(kRadiusInput),
+                ),
+                child: Text(
+                  report.advice,
+                  style: openSans(
+                    fontSize: 12,
+                    color: isComplete ? kPrimary : kMatchGoldText,
+                    height: 1.35,
+                  ),
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 12),
-          Container(
-            width: double.infinity,
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-            decoration: BoxDecoration(
-              color: isComplete ? kPrimarySoft : kMatchGoldSoft,
-              borderRadius: BorderRadius.circular(kRadiusInput),
-            ),
-            child: Text(
-              advice,
-              style: openSans(
-                fontSize: 12,
-                color: isComplete ? kPrimary : kMatchGoldText,
-                height: 1.35,
-              ),
-            ),
-          ),
-        ],
+        ),
       ),
     );
   }

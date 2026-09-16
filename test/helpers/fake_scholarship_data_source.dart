@@ -12,6 +12,45 @@ class FakeScholarshipDataSource implements ScholarshipDataSource {
   Future<List<Map<String, dynamic>>> fetchScholarships() async =>
       List<Map<String, dynamic>>.of(rows.where((row) => row['is_active'] == true));
 
+  @override
+  Future<List<Map<String, dynamic>>> fetchScholarshipsByProvider(
+    String providerId,
+  ) async =>
+      List<Map<String, dynamic>>.of(
+        rows.where((row) => row['created_by'] == providerId),
+      );
+
+  @override
+  Future<Map<String, dynamic>> createScholarship(
+    Map<String, dynamic> data,
+  ) async {
+    final newRow = Map<String, dynamic>.of(data);
+    newRow['id'] ??= 'sch-${rows.length + 1}';
+    newRow['created_at'] ??= DateTime.now().toIso8601String();
+    newRow['is_active'] ??= true;
+    rows.add(newRow);
+    return newRow;
+  }
+
+  @override
+  Future<Map<String, dynamic>> updateScholarship(
+    String id,
+    Map<String, dynamic> data,
+  ) async {
+    final index = rows.indexWhere((row) => row['id'] == id);
+    if (index == -1) {
+      throw Exception('Scholarship not found: $id');
+    }
+    final updated = Map<String, dynamic>.of(rows[index])..addAll(data);
+    rows[index] = updated;
+    return updated;
+  }
+
+  @override
+  Future<void> deleteScholarship(String id) async {
+    rows.removeWhere((row) => row['id'] == id);
+  }
+
   /// A small set of realistic rows matching the production schema.
   static final List<Map<String, dynamic>> defaultRows = [
     {

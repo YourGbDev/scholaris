@@ -1,27 +1,41 @@
 // lib/features/provider/presentation/provider_home_screen.dart
 //
-// Persistent landing surface for signed-in users whose profiles.role is
-// 'provider'. The router sends role='provider' here instead of /home
-// (see authRedirectDecision).
-//
-// The placeholder "Application Under Review" copy (shown during signup review)
-// has been replaced by the real provider console content:
-// [ProviderIncomingApplications] — a read-only list of applications submitted
-// to scholarships the provider owns, with applicant name, scholarship title,
-// applied date and status resolved client-side.
+// Persistent landing surface for signed-in users whose profiles.role is 'provider'.
+// Hosts the Provider Console shell with tabs for Applications and My Scholarships.
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'package:scholaris/shared/theme/app_theme.dart';
 
 import 'provider_incoming_applications.dart';
+import 'provider_scholarships_tab.dart';
 
-class ProviderHomeScreen extends StatelessWidget {
+class ProviderTabIndexNotifier extends Notifier<int> {
+  @override
+  int build() => 0;
+
+  void selectTab(int index) => state = index;
+}
+
+final providerTabIndexProvider =
+    NotifierProvider<ProviderTabIndexNotifier, int>(
+  ProviderTabIndexNotifier.new,
+);
+
+class ProviderHomeScreen extends ConsumerWidget {
   const ProviderHomeScreen({super.key});
 
+  static const _tabs = <Widget>[
+    ProviderIncomingApplications(),
+    ProviderScholarshipsTab(),
+  ];
+
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final tabIndex = ref.watch(providerTabIndexProvider);
+
     return Scaffold(
       backgroundColor: kBackground,
       appBar: AppBar(
@@ -47,7 +61,27 @@ class ProviderHomeScreen extends StatelessWidget {
       ),
       body: SafeArea(
         top: false,
-        child: ProviderIncomingApplications(),
+        child: IndexedStack(
+          index: tabIndex,
+          children: _tabs,
+        ),
+      ),
+      bottomNavigationBar: NavigationBar(
+        selectedIndex: tabIndex,
+        onDestinationSelected: (i) =>
+            ref.read(providerTabIndexProvider.notifier).selectTab(i),
+        destinations: const [
+          NavigationDestination(
+            icon: Icon(Icons.inbox_outlined),
+            selectedIcon: Icon(Icons.inbox_rounded, color: kPrimary),
+            label: 'Applications',
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.school_outlined),
+            selectedIcon: Icon(Icons.school_rounded, color: kPrimary),
+            label: 'Scholarships',
+          ),
+        ],
       ),
     );
   }

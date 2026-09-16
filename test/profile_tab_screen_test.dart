@@ -168,7 +168,7 @@ void main() {
       // Avatar in header + milestone card
       expect(find.byIcon(Icons.person_rounded), findsOneWidget);
       expect(find.byIcon(Icons.trending_up_rounded), findsOneWidget);
-      expect(find.byKey(const ValueKey('eli-profile-milestone-card')),
+      expect(find.byKey(const ValueKey('profile-milestone-card')),
           findsOneWidget);
       expect(find.text('Matching Power'), findsOneWidget);
       expect(find.text('88%'), findsOneWidget);

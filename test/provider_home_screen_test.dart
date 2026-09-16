@@ -63,5 +63,23 @@ void main() {
         findsOneWidget,
       );
     });
+
+    testWidgets('renders navigation destinations and switches tabs', (tester) async {
+      await tester.pumpWidget(buildApp());
+      await tester.pumpAndSettle();
+
+      expect(find.text('Applications'), findsWidgets);
+      expect(find.text('Scholarships'), findsOneWidget);
+
+      // Initially shows Incoming Applications
+      expect(find.text('Incoming Applications'), findsOneWidget);
+
+      // Tap on Scholarships tab
+      await tester.tap(find.text('Scholarships'));
+      await tester.pumpAndSettle();
+
+      // Now shows My Scholarships
+      expect(find.text('My Scholarships'), findsOneWidget);
+    });
   });
 }

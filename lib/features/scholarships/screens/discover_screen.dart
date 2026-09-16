@@ -15,7 +15,9 @@ import 'package:scholaris/features/applications/services/application_filters.dar
 import 'package:scholaris/features/bookmarks/providers/bookmarks_provider.dart';
 import 'package:scholaris/features/home/presentation/home_screen.dart';
 import 'package:scholaris/features/profile/models/student_profile.dart';
+import 'package:scholaris/features/profile/presentation/matching_power_sheet.dart';
 import 'package:scholaris/features/profile/providers/profile_setup_provider.dart';
+import 'package:scholaris/features/profile/services/matching_power_service.dart';
 import 'package:scholaris/features/scholarships/models/scholarship.dart';
 import 'package:scholaris/features/scholarships/presentation/discovery_filter_sheet.dart';
 import 'package:scholaris/features/scholarships/providers/dashboard_provider.dart';
@@ -29,11 +31,19 @@ import 'package:scholaris/shared/widgets/scholarship_card.dart';
 import 'package:scholaris/shared/widgets/section_header.dart';
 import 'package:scholaris/shared/widgets/state_views.dart';
 
-class DiscoverScreen extends ConsumerWidget {
+class DiscoverScreen extends ConsumerStatefulWidget {
   const DiscoverScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<DiscoverScreen> createState() => _DiscoverScreenState();
+}
+
+class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
+  final GlobalKey _matchesKey = GlobalKey();
+  final GlobalKey _closingSoonKey = GlobalKey();
+
+  @override
+  Widget build(BuildContext context) {
     final profileAsync = ref.watch(currentProfileProvider);
     final filteredMatches = ref.watch(filteredMatchesProvider);
     final filteredBrowse = ref.watch(filteredBrowseProvider);
@@ -49,9 +59,12 @@ class DiscoverScreen extends ConsumerWidget {
       child: ResponsiveContainer(
         child: RefreshIndicator(
           onRefresh: () async {
+            ref.invalidate(dashboardProvider);
             ref.invalidate(currentProfileProvider);
             ref.invalidate(matchesProvider);
             ref.invalidate(scholarshipsProvider);
+            ref.invalidate(applicationsProvider);
+            ref.invalidate(bookmarksProvider);
           },
           child: ListView(
             padding: const EdgeInsets.only(bottom: 32),
@@ -69,14 +82,17 @@ class DiscoverScreen extends ConsumerWidget {
                       _buildActiveFilterChips(context, ref, state),
                     ],
                     const SizedBox(height: 24),
-                    _buildMatchesSection(
-                      context,
-                      ref,
-                      filteredMatches,
-                      filteredBrowse,
-                      bookmarkIds,
-                      appliedIds,
-                      state,
+                    KeyedSubtree(
+                      key: _matchesKey,
+                      child: _buildMatchesSection(
+                        context,
+                        ref,
+                        filteredMatches,
+                        filteredBrowse,
+                        bookmarkIds,
+                        appliedIds,
+                        state,
+                      ),
                     ),
                     const SizedBox(height: 32),
                     _buildBrowseSection(
@@ -115,21 +131,79 @@ class DiscoverScreen extends ConsumerWidget {
           closingSoonScholarships: [],
         );
 
+    final applications = ref.watch(applicationsProvider).valueOrNull ?? const <Application>[];
+    Application? priorityApplication;
+    for (final app in applications) {
+      if (app.status == ApplicationStatus.approved || app.status == ApplicationStatus.awarded) {
+        priorityApplication = app;
+        break;
+      }
+    }
+    if (priorityApplication == null) {
+      for (final app in applications) {
+        if (app.status == ApplicationStatus.underReview) {
+          priorityApplication = app;
+          break;
+        }
+      }
+    }
+    if (priorityApplication == null) {
+      for (final app in applications) {
+        if (app.status == ApplicationStatus.submitted) {
+          priorityApplication = app;
+          break;
+        }
+      }
+    }
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         _TarsiDashboardHero(
           info: info,
           profile: profile,
+          activeApplication: priorityApplication,
+          onTapMatches: () {
+            if (_matchesKey.currentContext != null) {
+              Scrollable.ensureVisible(
+                _matchesKey.currentContext!,
+                duration: const Duration(milliseconds: 350),
+                curve: Curves.easeInOut,
+              );
+            }
+          },
+          onTapClosingSoon: () {
+            if (info.closingSoonScholarships.isNotEmpty && _closingSoonKey.currentContext != null) {
+              Scrollable.ensureVisible(
+                _closingSoonKey.currentContext!,
+                duration: const Duration(milliseconds: 350),
+                curve: Curves.easeInOut,
+              );
+            } else {
+              ref.read(discoveryFilterProvider.notifier).setClosingSoonOnly(true);
+            }
+          },
+          onTapSaved: () {
+            ref.read(homeTabIndexProvider.notifier).selectTab(1);
+          },
+          onTapApplied: () {
+            ref.read(homeTabIndexProvider.notifier).selectTab(2);
+          },
+          onTapMatchingPower: () {
+            showMatchingPowerSheet(context, profile);
+          },
         ),
         if (info.closingSoonScholarships.isNotEmpty) ...[
           Padding(
             padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
-            child: _buildClosingSoonSection(
-              ref,
-              info,
-              bookmarkIds,
-              appliedIds,
+            child: KeyedSubtree(
+              key: _closingSoonKey,
+              child: _buildClosingSoonSection(
+                ref,
+                info,
+                bookmarkIds,
+                appliedIds,
+              ),
             ),
           ),
         ],
@@ -607,10 +681,22 @@ class _TarsiDashboardHero extends StatelessWidget {
   const _TarsiDashboardHero({
     required this.info,
     this.profile,
+    this.activeApplication,
+    this.onTapMatches,
+    this.onTapClosingSoon,
+    this.onTapSaved,
+    this.onTapApplied,
+    this.onTapMatchingPower,
   });
 
   final DashboardInfo info;
   final StudentProfile? profile;
+  final Application? activeApplication;
+  final VoidCallback? onTapMatches;
+  final VoidCallback? onTapClosingSoon;
+  final VoidCallback? onTapSaved;
+  final VoidCallback? onTapApplied;
+  final VoidCallback? onTapMatchingPower;
 
   @override
   Widget build(BuildContext context) {
@@ -626,8 +712,10 @@ class _TarsiDashboardHero extends StatelessWidget {
           (Match m) => '${m[1]},',
         );
 
-    // Profile strength / matching power (85% when setup complete, 45% initial)
-    final double matchingPower = profile?.setupComplete == true ? 0.85 : 0.45;
+    // Profile strength / matching power computed deterministically via MatchingPowerService
+    final report = MatchingPowerService.evaluate(profile);
+    final double matchingPower = report.ratio;
+    final int matchingPowerPct = report.percentage;
 
     final topInset = MediaQuery.paddingOf(context).top;
 
@@ -772,43 +860,81 @@ class _TarsiDashboardHero extends StatelessWidget {
               ],
             ),
           ),
-          const SizedBox(height: 18),
 
-          // Matching Power mini-progress bar
-          Row(
-            children: [
-              Text(
-                'Matching Power',
-                style: openSans(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w600,
-                  color: Colors.white.withValues(alpha: 0.88),
+          // Active Application Status Alert Banner
+          if (activeApplication != null) ...[
+            const SizedBox(height: 12),
+            _HeroApplicationAlertCard(
+              application: activeApplication!,
+              onTap: onTapApplied,
+            ),
+          ],
+          const SizedBox(height: 16),
+
+          // Matching Power interactive mini-progress bar
+          Material(
+            color: Colors.transparent,
+            child: InkWell(
+              key: const ValueKey('hero-matching-power-bar'),
+              borderRadius: BorderRadius.circular(8),
+              onTap: onTapMatchingPower,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 4),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Text(
+                          'Matching Power',
+                          style: openSans(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.white.withValues(alpha: 0.88),
+                          ),
+                        ),
+                        const SizedBox(width: 4),
+                        Icon(
+                          Icons.info_outline_rounded,
+                          size: 13,
+                          color: Colors.white.withValues(alpha: 0.70),
+                        ),
+                        const Spacer(),
+                        Text(
+                          '$matchingPowerPct%',
+                          key: const ValueKey('hero-matching-power-percentage'),
+                          style: poppins(
+                            fontSize: 12.5,
+                            fontWeight: FontWeight.w700,
+                            color: kAccent,
+                          ),
+                        ),
+                        const SizedBox(width: 2),
+                        Icon(
+                          Icons.chevron_right_rounded,
+                          size: 16,
+                          color: kAccent.withValues(alpha: 0.85),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 6),
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(4),
+                      child: LinearProgressIndicator(
+                        value: matchingPower,
+                        minHeight: 6,
+                        backgroundColor: Colors.white.withValues(alpha: 0.20),
+                        valueColor: const AlwaysStoppedAnimation<Color>(kAccent),
+                      ),
+                    ),
+                  ],
                 ),
               ),
-              const Spacer(),
-              Text(
-                '${(matchingPower * 100).toInt()}%',
-                style: poppins(
-                  fontSize: 12.5,
-                  fontWeight: FontWeight.w700,
-                  color: kAccent,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 6),
-          ClipRRect(
-            borderRadius: BorderRadius.circular(4),
-            child: LinearProgressIndicator(
-              value: matchingPower,
-              minHeight: 6,
-              backgroundColor: Colors.white.withValues(alpha: 0.20),
-              valueColor: const AlwaysStoppedAnimation<Color>(kAccent),
             ),
           ),
           const SizedBox(height: 16),
 
-          // Quick stat chips row (4-tile layout with left-edge accent bars)
+          // Quick stat chips row (4-tile layout with left-edge accent bars and tactile taps)
           Row(
             children: [
               Expanded(
@@ -818,6 +944,7 @@ class _TarsiDashboardHero extends StatelessWidget {
                   label: 'Matches',
                   icon: Icons.auto_awesome_rounded,
                   accent: kPrimary,
+                  onTap: onTapMatches,
                 ),
               ),
               const SizedBox(width: 8),
@@ -828,6 +955,7 @@ class _TarsiDashboardHero extends StatelessWidget {
                   label: 'Closing soon',
                   icon: Icons.schedule_rounded,
                   accent: kAccent,
+                  onTap: onTapClosingSoon,
                 ),
               ),
               const SizedBox(width: 8),
@@ -838,6 +966,7 @@ class _TarsiDashboardHero extends StatelessWidget {
                   label: 'Bookmarked',
                   icon: Icons.collections_bookmark_rounded,
                   accent: kNavyTrust,
+                  onTap: onTapSaved,
                 ),
               ),
               const SizedBox(width: 8),
@@ -848,11 +977,110 @@ class _TarsiDashboardHero extends StatelessWidget {
                   label: 'Applied',
                   icon: Icons.send_rounded,
                   accent: kCoralConnect,
+                  onTap: onTapApplied,
                 ),
               ),
             ],
           ),
         ],
+      ),
+    );
+  }
+}
+
+class _HeroApplicationAlertCard extends StatelessWidget {
+  const _HeroApplicationAlertCard({
+    required this.application,
+    this.onTap,
+  });
+
+  final Application application;
+  final VoidCallback? onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final status = application.status;
+    final IconData icon;
+    final Color iconColor;
+    final String title;
+    final String subtitle;
+
+    if (status == ApplicationStatus.approved || status == ApplicationStatus.awarded) {
+      icon = Icons.stars_rounded;
+      iconColor = kLumiGold;
+      title = 'Application Approved!';
+      subtitle = 'Tap to review award details & next steps.';
+    } else if (status == ApplicationStatus.underReview) {
+      icon = Icons.pending_actions_rounded;
+      iconColor = kAccent;
+      title = 'Application Under Review';
+      subtitle = 'A provider is currently evaluating your application.';
+    } else {
+      icon = Icons.mark_email_read_rounded;
+      iconColor = Colors.white;
+      title = 'Application Submitted';
+      subtitle = 'Tap to track your application timeline.';
+    }
+
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        key: const ValueKey('hero-application-alert-banner'),
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(14),
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+          decoration: BoxDecoration(
+            color: Colors.white.withValues(alpha: 0.12),
+            borderRadius: BorderRadius.circular(14),
+            border: Border.all(
+              color: Colors.white.withValues(alpha: 0.20),
+            ),
+          ),
+          child: Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(6),
+                decoration: BoxDecoration(
+                  color: iconColor.withValues(alpha: 0.20),
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(icon, size: 18, color: iconColor),
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      title,
+                      style: poppins(
+                        fontSize: 12.5,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.white,
+                      ),
+                    ),
+                    Text(
+                      subtitle,
+                      style: openSans(
+                        fontSize: 11,
+                        color: Colors.white.withValues(alpha: 0.85),
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(width: 8),
+              Icon(
+                Icons.arrow_forward_ios_rounded,
+                size: 12,
+                color: Colors.white.withValues(alpha: 0.70),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
@@ -865,6 +1093,7 @@ class _TarsiStatChip extends StatelessWidget {
     required this.label,
     required this.icon,
     required this.accent,
+    this.onTap,
   });
 
   final String statKey;
@@ -872,12 +1101,13 @@ class _TarsiStatChip extends StatelessWidget {
   final String label;
   final IconData icon;
   final Color accent;
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
     return Semantics(
       label: '$count $label',
-      button: false,
+      button: true,
       child: Container(
         decoration: BoxDecoration(
           color: Colors.white,
@@ -891,57 +1121,65 @@ class _TarsiStatChip extends StatelessWidget {
           ],
         ),
         clipBehavior: Clip.antiAlias,
-        child: IntrinsicHeight(
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Container(
-                width: 3.5,
-                color: accent,
-              ),
-              Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
+        child: Material(
+          color: Colors.transparent,
+          child: InkWell(
+            key: ValueKey('stat-chip-$statKey'),
+            onTap: onTap,
+            borderRadius: BorderRadius.circular(12),
+            child: IntrinsicHeight(
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Container(
+                    width: 3.5,
+                    color: accent,
+                  ),
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
+                      child: Column(
                         mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          Icon(icon, size: 13, color: accent),
-                          const SizedBox(width: 3),
-                          Text(
-                            '$count',
-                            key: ValueKey('stat-count-$statKey'),
-                            style: poppins(
-                              fontSize: 15,
-                              fontWeight: FontWeight.w700,
-                              color: Colors.black87,
-                              height: 1.1,
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(icon, size: 13, color: accent),
+                              const SizedBox(width: 3),
+                              Text(
+                                '$count',
+                                key: ValueKey('stat-count-$statKey'),
+                                style: poppins(
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.w700,
+                                  color: Colors.black87,
+                                  height: 1.1,
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 3),
+                          FittedBox(
+                            fit: BoxFit.scaleDown,
+                            child: Text(
+                              label,
+                              maxLines: 1,
+                              style: openSans(
+                                fontSize: 10.5,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.black54,
+                              ),
                             ),
                           ),
                         ],
                       ),
-                      const SizedBox(height: 3),
-                      FittedBox(
-                        fit: BoxFit.scaleDown,
-                        child: Text(
-                          label,
-                          maxLines: 1,
-                          style: openSans(
-                            fontSize: 10.5,
-                            fontWeight: FontWeight.w600,
-                            color: Colors.black54,
-                          ),
-                        ),
-                      ),
-                    ],
+                    ),
                   ),
-                ),
+                ],
               ),
-            ],
+            ),
           ),
         ),
       ),

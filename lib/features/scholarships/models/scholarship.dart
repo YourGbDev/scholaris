@@ -33,6 +33,7 @@ abstract class Scholarship with _$Scholarship {
     @JsonKey(name: 'deadline', fromJson: _dateFromJson) required DateTime deadline,
     @JsonKey(name: 'application_url') String? applicationUrl,
     @JsonKey(name: 'is_active') @Default(true) bool isActive,
+    @JsonKey(name: 'created_by') String? createdBy,
     @JsonKey(name: 'created_at') DateTime? createdAt,
   }) = _Scholarship;
 

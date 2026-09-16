@@ -89,10 +89,24 @@ void main() {
       expect(json.containsKey('for_pwd'), isTrue);
       expect(json.containsKey('for_indigenous'), isTrue);
       expect(json.containsKey('slots'), isTrue);
+      expect(json.containsKey('created_by'), isTrue);
       // No camelCase keys leak into the payload.
       expect(json.containsKey('minGpa'), isFalse);
       expect(json.containsKey('requiredYearLevels'), isFalse);
       expect(json.containsKey('maxMonthlyIncome'), isFalse);
+      expect(json.containsKey('createdBy'), isFalse);
+    });
+
+    test('fromJson parses created_by when present', () {
+      final row = {
+        'id': 'sch-3',
+        'title': 'Ayala Foundation Youth Grant',
+        'min_gpa': 2.5,
+        'deadline': '2026-12-31',
+        'created_by': 'provider-uuid-123',
+      };
+      final scholarship = Scholarship.fromJson(row);
+      expect(scholarship.createdBy, 'provider-uuid-123');
     });
   });
 }

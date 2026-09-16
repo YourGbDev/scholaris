@@ -26,6 +26,7 @@ _Scholarship _$ScholarshipFromJson(Map<String, dynamic> json) => _Scholarship(
   deadline: _dateFromJson(json['deadline']),
   applicationUrl: json['application_url'] as String?,
   isActive: json['is_active'] as bool? ?? true,
+  createdBy: json['created_by'] as String?,
   createdAt: json['created_at'] == null
       ? null
       : DateTime.parse(json['created_at'] as String),
@@ -48,5 +49,6 @@ Map<String, dynamic> _$ScholarshipToJson(_Scholarship instance) =>
       'deadline': instance.deadline.toIso8601String(),
       'application_url': instance.applicationUrl,
       'is_active': instance.isActive,
+      'created_by': instance.createdBy,
       'created_at': instance.createdAt?.toIso8601String(),
     };

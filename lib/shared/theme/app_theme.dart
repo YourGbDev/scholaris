@@ -33,6 +33,16 @@ const Color kNavyTrust = Color(0xFF1B3A5C);
 /// Coral Connect — NGO/foundation partners, applied state, active urgency.
 const Color kCoralConnect = Color(0xFFFF6F59);
 
+/// Primary and secondary text tokens matching the Stitch design system.
+const Color kTextPrimary = Color(0xFF161C27);
+const Color kTextSecondary = Color(0xFF5E6573);
+
+/// Warm surface and border tokens.
+const Color kSurfaceWarm = Color(0xFFF9F9FF);
+const Color kSurfaceCard = Colors.white;
+const Color kBorderLight = Color(0xFFE2E4E9);
+const Color kPrimaryLight = Color(0xFFB3F1C6);
+
 // --- Lumi & Outcome Palette -------------------------------------------------
 
 /// Lumi Glow Gold — primary mascot tone, warm glow, hope, and light.
@@ -87,11 +97,15 @@ TextStyle poppins({
   FontWeight fontWeight = FontWeight.w500,
   Color? color,
   double? height,
+  double? letterSpacing,
+  TextDecoration? decoration,
 }) => GoogleFonts.poppins(
   fontSize: fontSize,
   fontWeight: fontWeight,
   color: color,
   height: height,
+  letterSpacing: letterSpacing,
+  decoration: decoration,
 );
 
 TextStyle openSans({
@@ -99,11 +113,15 @@ TextStyle openSans({
   FontWeight fontWeight = FontWeight.w400,
   Color? color,
   double? height,
+  double? letterSpacing,
+  TextDecoration? decoration,
 }) => GoogleFonts.openSans(
   fontSize: fontSize,
   fontWeight: fontWeight,
   color: color,
   height: height,
+  letterSpacing: letterSpacing,
+  decoration: decoration,
 );
 
 /// Builds the Scholaris [ThemeData] used by the root [MaterialApp].

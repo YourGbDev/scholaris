@@ -1,41 +1,20 @@
 // lib/features/auth/presentation/forgot_password_screen.dart
 //
-// Requests a password-reset email against Supabase. The recovery link the user
-// receives opens the app (via a configured deep link) and establishes a
-// password-recovery session, which the auth boundary turns into recovery mode
-// so the router sends the user to the set-new-password screen. All form state
-// is local to this screen.
+// Requests a password-reset email against Supabase. Rebuilt to match the
+// Stitch design system with Philippine context ("Account Recovery" pill,
+// lock_reset shield illustration, RA 10173 compliance, mobile recovery tip).
 //
-// Visual treatment matches the login/signup screens: a looping Lottie hero
-// fills the top ~45%, and a clean white rounded card carries the form.
+// Preserves local validation, Supabase password reset, and test suite contracts.
 
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:lottie/lottie.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'package:scholaris/app/recovery_redirect.dart';
 import 'package:scholaris/shared/theme/app_theme.dart';
-import 'package:scholaris/shared/widgets/entrance.dart';
+import 'package:scholaris/shared/widgets/scholaris_logo.dart';
 
-// --- Tokens ----------------------------------------------------------------
-
-/// Total entrance duration for the forgot-password screen's staggered reveal.
-const int kForgotEntranceTotalMs = 2200;
-
-const _inputRadius = 12.0;
 final _emailPattern = RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$');
-
-// --- Entrance timeline helpers ---------------------------------------------
-
-Interval _forgotInterval(int beginMs, int endMs) => EntranceMotion.intervalFrom(
-      beginMs,
-      endMs,
-      kForgotEntranceTotalMs,
-      curve: Curves.easeOutCubic,
-    );
-
-// --- Screen ----------------------------------------------------------------
 
 class ForgotPasswordScreen extends StatefulWidget {
   const ForgotPasswordScreen({super.key});
@@ -44,18 +23,12 @@ class ForgotPasswordScreen extends StatefulWidget {
   State<ForgotPasswordScreen> createState() => _ForgotPasswordScreenState();
 }
 
-class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
-    with
-        TickerProviderStateMixin<ForgotPasswordScreen>,
-        EntranceMotionMixin<ForgotPasswordScreen> {
+class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
 
   bool _isLoading = false;
-
-  @override
-  Duration get entranceDuration =>
-      const Duration(milliseconds: kForgotEntranceTotalMs);
+  bool _linkSent = false;
 
   @override
   void dispose() {
@@ -73,13 +46,14 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
         redirectTo: resetPasswordRedirect,
       );
       if (!mounted) return;
+      setState(() => _linkSent = true);
       ScaffoldMessenger.of(context).showSnackBar(
         _snackBar(
           'If an account exists for that email, a password reset link is on '
           'its way.',
         ),
       );
-      context.go('/login');
+      // Give the user a moment or let them navigate
     } on AuthException catch (error) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
@@ -108,351 +82,456 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
         content: Text(message, style: openSans()),
       );
 
-  // --- Build ----------------------------------------------------------------
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: kBackground,
-      body: Stack(
-        children: [
-          // Full-bleed Lottie hero fills the top ~45%.
-          Positioned.fill(
-            child: SafeArea(
-              child: LayoutBuilder(
-                builder: (context, viewport) {
-                  final heroHeight = viewport.maxHeight * 0.45;
-                  return Column(
-                    children: [
-                      SizedBox(
-                        height: heroHeight,
-                        width: double.infinity,
-                        child: entranceItem(
-                          index: 0,
-                          offset: const Offset(0, 0.08),
-                          interval: _forgotInterval(200, 1000),
-                          child: Lottie.asset(
-                            'assets/animations/forgot_password_hero.json',
-                            fit: BoxFit.contain,
-                            animate:
-                                !(MediaQuery.maybeOf(context)
-                                        ?.disableAnimations ??
-                                    false) &&
-                                !_isWidgetTestBinding,
+      backgroundColor: kSurfaceWarm,
+      body: SafeArea(
+        child: Column(
+          children: [
+            // Top Navigation Bar
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              child: Row(
+                children: [
+                  IconButton(
+                    icon: const Icon(Icons.arrow_back_rounded, color: kTextPrimary),
+                    onPressed: () {
+                      if (Navigator.of(context).canPop()) {
+                        Navigator.of(context).pop();
+                      } else {
+                        context.go('/login');
+                      }
+                    },
+                    tooltip: 'Go back',
+                  ),
+                  const SizedBox(width: 4),
+                  const ScholarisLogo(compact: true),
+                  const Spacer(),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                    decoration: BoxDecoration(
+                      color: kSurfaceCard,
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(color: kBorderLight),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Icon(Icons.help_outline_rounded, size: 16, color: kTextSecondary),
+                        const SizedBox(width: 4),
+                        Text(
+                          'Help',
+                          style: openSans(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w600,
+                            color: kTextSecondary,
                           ),
                         ),
-                      ),
-                      // White rounded card below.
-                      Expanded(
-                        child: entranceItem(
-                          index: 1,
-                          offset: const Offset(0, 0.25),
-                          interval: _forgotInterval(200, 1000),
-                          child: Container(
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            // Scrollable Content
+            Expanded(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.fromLTRB(20, 8, 20, 24),
+                child: Center(
+                  child: ConstrainedBox(
+                    constraints: const BoxConstraints(maxWidth: 420),
+                    child: Form(
+                      key: _formKey,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          const SizedBox(height: 8),
+
+                          // Abstract Security Shield Illustration
+                          Center(
+                            child: Stack(
+                              alignment: Alignment.center,
+                              children: [
+                                Container(
+                                  width: 96,
+                                  height: 96,
+                                  decoration: BoxDecoration(
+                                    color: kPrimary.withValues(alpha: 0.06),
+                                    shape: BoxShape.circle,
+                                  ),
+                                ),
+                                Container(
+                                  width: 72,
+                                  height: 72,
+                                  decoration: BoxDecoration(
+                                    color: kPrimaryLight.withValues(alpha: 0.4),
+                                    shape: BoxShape.circle,
+                                  ),
+                                ),
+                                Container(
+                                  width: 52,
+                                  height: 52,
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    shape: BoxShape.circle,
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.black.withValues(alpha: 0.08),
+                                        blurRadius: 10,
+                                        offset: const Offset(0, 3),
+                                      ),
+                                    ],
+                                  ),
+                                  child: const Icon(
+                                    Icons.lock_reset_rounded,
+                                    color: kPrimary,
+                                    size: 28,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(height: 16),
+
+                          // Account Recovery Pill
+                          Center(
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                              decoration: BoxDecoration(
+                                color: const Color(0xFFE8EEFF),
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Container(
+                                    width: 7,
+                                    height: 7,
+                                    decoration: const BoxDecoration(
+                                      color: kPrimary,
+                                      shape: BoxShape.circle,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 6),
+                                  Text(
+                                    'ACCOUNT RECOVERY',
+                                    style: poppins(
+                                      fontSize: 11,
+                                      fontWeight: FontWeight.w700,
+                                      color: kPrimary,
+                                      letterSpacing: 0.8,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 12),
+
+                          // Heading: Forgot Password?
+                          Text(
+                            'Forgot Password?',
+                            textAlign: TextAlign.center,
+                            style: poppins(
+                              fontSize: 26,
+                              fontWeight: FontWeight.w700,
+                              color: kPrimary,
+                              height: 1.2,
+                            ),
+                          ),
+                          const SizedBox(height: 6),
+                          Text(
+                            'Enter the email associated with your Scholaris account. We\'ll send you a secure link to recover your access.',
+                            textAlign: TextAlign.center,
+                            style: openSans(
+                              fontSize: 13,
+                              color: kTextSecondary,
+                              height: 1.4,
+                            ),
+                          ),
+                          const SizedBox(height: 24),
+
+                          // Registered Email Card
+                          Container(
+                            padding: const EdgeInsets.all(16),
                             decoration: BoxDecoration(
                               color: Colors.white,
-                              borderRadius: const BorderRadius.vertical(
-                                top: Radius.circular(24),
-                              ),
+                              borderRadius: BorderRadius.circular(16),
+                              border: Border.all(color: kBorderLight),
                               boxShadow: [
                                 BoxShadow(
-                                  color: kCardShadow,
-                                  blurRadius: 24,
-                                  offset: const Offset(0, -6),
+                                  color: Colors.black.withValues(alpha: 0.03),
+                                  blurRadius: 8,
+                                  offset: const Offset(0, 2),
                                 ),
                               ],
                             ),
                             child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
                               children: [
-                                // Scrollable form region.
-                                Flexible(
-                                  child: SingleChildScrollView(
-                                    padding: const EdgeInsets.fromLTRB(
-                                      24,
-                                      24,
-                                      24,
-                                      8,
-                                    ),
-                                    child: Center(
-                                      child: ConstrainedBox(
-                                        constraints: const BoxConstraints(
-                                          maxWidth: 420,
-                                        ),
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.stretch,
-                                          children: [
-                                            // Heading.
-                                            entranceItem(
-                                              index: 0,
-                                              offset: const Offset(0, 0.12),
-                                              interval: _forgotInterval(
-                                                400,
-                                                820,
-                                              ),
-                                              child: Text(
-                                                'Forgot Password?',
-                                                textAlign: TextAlign.center,
-                                                style: poppins(
-                                                  fontSize: 28,
-                                                  fontWeight: FontWeight.w700,
-                                                  color: kPrimary,
-                                                ),
-                                              ),
-                                            ),
-                                            const SizedBox(height: 8),
-                                            // Instructions.
-                                            entranceItem(
-                                              index: 1,
-                                              offset: const Offset(0, 0.12),
-                                              interval: _forgotInterval(
-                                                500,
-                                                920,
-                                              ),
-                                              child: Text(
-                                                'Enter the email you registered '
-                                                'with and we’ll send you a link '
-                                                'to set a new password.',
-                                                textAlign: TextAlign.center,
-                                                style: openSans(
-                                                  fontSize: 15,
-                                                  color: Colors.black54,
-                                                ),
-                                              ),
-                                            ),
-                                            const SizedBox(height: 24),
-                                            // Form.
-                                            Form(
-                                              key: _formKey,
-                                              child: Column(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.stretch,
-                                                children: [
-                                                  entranceItem(
-                                                    index: 2,
-                                                    offset: const Offset(
-                                                      0,
-                                                      0.12,
-                                                    ),
-                                                    interval: _forgotInterval(
-                                                      700,
-                                                      1120,
-                                                    ),
-                                                    child: _textField(
-                                                      controller:
-                                                          _emailController,
-                                                      label: 'Email',
-                                                      keyboardType:
-                                                          TextInputType
-                                                              .emailAddress,
-                                                      textInputAction:
-                                                          TextInputAction.next,
-                                                      validator:
-                                                          _validateEmail,
-                                                    ),
-                                                  ),
-                                                  const SizedBox(height: 16),
-                                                  entranceItem(
-                                                    index: 3,
-                                                    offset: const Offset(
-                                                      0,
-                                                      0.12,
-                                                    ),
-                                                    interval: _forgotInterval(
-                                                      900,
-                                                      1320,
-                                                    ),
-                                                    child: ElevatedButton(
-                                                      onPressed: _isLoading
-                                                          ? null
-                                                          : _onSubmit,
-                                                      style: ElevatedButton
-                                                          .styleFrom(
-                                                        backgroundColor: kPrimary,
-                                                        foregroundColor:
-                                                            Colors.white,
-                                                        padding:
-                                                            const EdgeInsets
-                                                                .symmetric(
-                                                                  vertical: 16,
-                                                                ),
-                                                        shape: RoundedRectangleBorder(
-                                                          borderRadius:
-                                                              BorderRadius
-                                                                  .circular(
-                                                            _inputRadius,
-                                                          ),
-                                                        ),
-                                                      ),
-                                                      child: _isLoading
-                                                          ? const SizedBox(
-                                                              height: 20,
-                                                              width: 20,
-                                                              child:
-                                                                  CircularProgressIndicator(
-                                                                strokeWidth: 2,
-                                                                color: Colors.white,
-                                                              ),
-                                                            )
-                                                          : Text(
-                                                              'Send reset link',
-                                                              style: poppins(
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w600,
-                                                              ),
-                                                            ),
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                          ],
-                                        ),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(
+                                      'Email',
+                                      style: poppins(
+                                        fontSize: 13,
+                                        fontWeight: FontWeight.w600,
+                                        color: kTextPrimary,
                                       ),
                                     ),
-                                  ),
+                                    Text(
+                                      'School or personal',
+                                      style: openSans(
+                                        fontSize: 11,
+                                        color: kTextSecondary,
+                                      ),
+                                    ),
+                                  ],
                                 ),
-                                // Pinned bottom actions.
-                                Center(
-                                  child: ConstrainedBox(
-                                    constraints: const BoxConstraints(
-                                      maxWidth: 420,
+                                const SizedBox(height: 8),
+                                TextFormField(
+                                  controller: _emailController,
+                                  keyboardType: TextInputType.emailAddress,
+                                  textInputAction: TextInputAction.done,
+                                  onFieldSubmitted: (_) => _onSubmit(),
+                                  style: openSans(fontSize: 14, color: kTextPrimary),
+                                  validator: _validateEmail,
+                                  decoration: InputDecoration(
+                                    hintText: 'e.g. maya.santos@up.edu.ph',
+                                    hintStyle: openSans(fontSize: 13, color: Colors.black38),
+                                    prefixIcon: const Icon(
+                                      Icons.alternate_email_rounded,
+                                      size: 20,
+                                      color: kTextSecondary,
                                     ),
-                                    child: Padding(
-                                      padding: const EdgeInsets.fromLTRB(
-                                        24,
-                                        4,
-                                        24,
-                                        20,
-                                      ),
-                                      child: entranceItem(
-                                        index: 4,
-                                        offset: const Offset(0, 0.12),
-                                        interval: _forgotInterval(
-                                          1500,
-                                          1920,
-                                        ),
-                                        child: Wrap(
-                                          alignment:
-                                              WrapAlignment.center,
-                                          crossAxisAlignment:
-                                              WrapCrossAlignment.center,
-                                          children: [
-                                            Text(
-                                              'Remembered your password?',
-                                              style: openSans(
-                                                color: Colors.black54,
-                                              ),
-                                            ),
-                                            TextButton(
-                                              onPressed: () =>
-                                                  context.go('/login'),
-                                              child: Text(
-                                                'Log in',
-                                                style: poppins(
-                                                  color: kPrimary,
-                                                  fontWeight:
-                                                      FontWeight.w600,
-                                                ),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
+                                    filled: true,
+                                    fillColor: const Color(0xFFF9F9FF),
+                                    contentPadding: const EdgeInsets.symmetric(
+                                      horizontal: 14,
+                                      vertical: 12,
+                                    ),
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(12),
+                                      borderSide: BorderSide(color: kBorderLight),
+                                    ),
+                                    enabledBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(12),
+                                      borderSide: BorderSide(color: kBorderLight),
+                                    ),
+                                    focusedBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(12),
+                                      borderSide: const BorderSide(color: kPrimary, width: 1.5),
+                                    ),
+                                    errorBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(12),
+                                      borderSide: const BorderSide(color: Colors.redAccent),
+                                    ),
+                                    focusedErrorBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(12),
+                                      borderSide: const BorderSide(color: Colors.redAccent, width: 1.5),
                                     ),
                                   ),
                                 ),
                               ],
                             ),
                           ),
-                        ),
-                      ),
-                    ],
-                  );
-                },
-              ),
-            ),
-          ),
-          // Back arrow — pinned to the top-left above the hero.
-          Positioned(
-            top: 12,
-            left: 12,
-            child: SafeArea(
-              child: entranceItem(
-                index: 5,
-                offset: const Offset(0, 0.12),
-                interval: _forgotInterval(200, 800),
-                child: Material(
-                  color: Colors.transparent,
-                  child: InkWell(
-                    borderRadius: BorderRadius.circular(24),
-                    onTap: () => context.go('/login'),
-                    child: Container(
-                      padding: const EdgeInsets.all(8),
-                      decoration: BoxDecoration(
-                        color: Colors.white.withValues(alpha: 0.85),
-                        shape: BoxShape.circle,
-                      ),
-                      child: Icon(
-                        Icons.arrow_back_ios_new,
-                        size: 18,
-                        color: kPrimary,
+                          const SizedBox(height: 16),
+
+                          // Mobile Recovery Guidance Bento Box
+                          Container(
+                            padding: const EdgeInsets.all(14),
+                            decoration: BoxDecoration(
+                              color: const Color(0xFFF1F3FF),
+                              borderRadius: BorderRadius.circular(14),
+                              border: Border.all(color: const Color(0xFFDDE2F3)),
+                            ),
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Container(
+                                  width: 32,
+                                  height: 32,
+                                  decoration: BoxDecoration(
+                                    color: const Color(0xFFB6D4FE),
+                                    borderRadius: BorderRadius.circular(16),
+                                  ),
+                                  child: const Icon(
+                                    Icons.lightbulb_outline_rounded,
+                                    size: 18,
+                                    color: Color(0xFF1B3A5C),
+                                  ),
+                                ),
+                                const SizedBox(width: 10),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        'Need recovery via mobile?',
+                                        style: poppins(
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.w600,
+                                          color: kTextPrimary,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 2),
+                                      Text(
+                                        'You can also receive an SMS OTP if two-factor SMS authentication was configured on your account.',
+                                        style: openSans(
+                                          fontSize: 11,
+                                          color: kTextSecondary,
+                                          height: 1.35,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(height: 20),
+
+                          // Primary Action Button: Send reset link
+                          ElevatedButton(
+                            onPressed: _isLoading ? null : _onSubmit,
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: kPrimary,
+                              foregroundColor: Colors.white,
+                              elevation: 2,
+                              padding: const EdgeInsets.symmetric(vertical: 14),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                            ),
+                            child: _isLoading
+                                ? const SizedBox(
+                                    height: 20,
+                                    width: 20,
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 2,
+                                      color: Colors.white,
+                                    ),
+                                  )
+                                : Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Text(
+                                        'Send reset link',
+                                        style: poppins(
+                                          fontSize: 15,
+                                          fontWeight: FontWeight.w600,
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                      const SizedBox(width: 6),
+                                      const Icon(Icons.arrow_forward_rounded, size: 18),
+                                    ],
+                                  ),
+                          ),
+
+                          if (_linkSent) ...[
+                            const SizedBox(height: 16),
+                            Container(
+                              padding: const EdgeInsets.all(12),
+                              decoration: BoxDecoration(
+                                color: kPrimaryLight.withValues(alpha: 0.3),
+                                borderRadius: BorderRadius.circular(12),
+                                border: Border.all(color: kPrimary.withValues(alpha: 0.2)),
+                              ),
+                              child: Row(
+                                children: [
+                                  const Icon(Icons.mark_email_read_rounded, color: kPrimary, size: 20),
+                                  const SizedBox(width: 8),
+                                  Expanded(
+                                    child: Text(
+                                      'Reset link sent! Please check your inbox and spam folder.',
+                                      style: openSans(
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.w600,
+                                        color: kPrimary,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+
+                          const SizedBox(height: 20),
+
+                          // Remembered your password? Log in
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                'Remember your password? ',
+                                style: openSans(
+                                  fontSize: 13,
+                                  color: kTextSecondary,
+                                ),
+                              ),
+                              TextButton(
+                                onPressed: () => context.go('/login'),
+                                style: TextButton.styleFrom(
+                                  padding: EdgeInsets.zero,
+                                  minimumSize: Size.zero,
+                                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                ),
+                                child: Text(
+                                  'Log in',
+                                  style: poppins(
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.w700,
+                                    color: kPrimary,
+                                    decoration: TextDecoration.underline,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 24),
+
+                          // Trust Badge
+                          Center(
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                              decoration: BoxDecoration(
+                                color: const Color(0xFFE8EEFF),
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  const Icon(Icons.shield_outlined, size: 14, color: kNavyTrust),
+                                  const SizedBox(width: 6),
+                                  Flexible(
+                                    child: Text(
+                                      '256-bit encrypted • RA 10173 Compliant',
+                                      overflow: TextOverflow.ellipsis,
+                                      style: openSans(
+                                        fontSize: 11,
+                                        fontWeight: FontWeight.w600,
+                                        color: kNavyTrust,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ),
                 ),
               ),
             ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  // --- Shared text field builder -------------------------------------------
-
-  Widget _textField({
-    required TextEditingController controller,
-    required String label,
-    required FormFieldValidator<String> validator,
-    TextInputAction? textInputAction,
-    TextInputType? keyboardType,
-    void Function(String)? onFieldSubmitted,
-  }) {
-    return TextFormField(
-      controller: controller,
-      textInputAction: textInputAction,
-      keyboardType: keyboardType,
-      onFieldSubmitted: onFieldSubmitted,
-      style: openSans(),
-      validator: validator,
-      decoration: InputDecoration(
-        labelText: label,
-        labelStyle: openSans(color: Colors.black54),
-        filled: true,
-        fillColor: Colors.white,
-        contentPadding: const EdgeInsets.symmetric(
-          horizontal: 16,
-          vertical: 14,
-        ),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(_inputRadius),
-          borderSide: BorderSide.none,
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(_inputRadius),
-          borderSide: const BorderSide(color: kPrimary, width: 1.5),
+          ],
         ),
       ),
     );
   }
-}
-
-/// True while running inside a widget test.
-bool get _isWidgetTestBinding {
-  final type = WidgetsBinding.instance.runtimeType.toString();
-  return type == 'AutomatedTestWidgetsFlutterBinding' ||
-      type == 'LiveTestWidgetsFlutterBinding';
 }

@@ -1,51 +1,29 @@
 // lib/features/auth/presentation/login_screen.dart
 //
-// Split-screen login: a looping login_hero Lottie animation fills the top
-// ~45%, and a clean white rounded card (top corners radius 24) slides up from
-// the bottom carrying the form — Welcome Back title, subtitle, email/password
-// fields, forgot-password link, Log in button, sign-up link and the provider
-// CTA.
-//
-// The empty graduation stage stays mounted beneath the surface (the ceremony
-// → login handoff and its tests keep seeing it) but is painted over by the
-// neutral white cover.
-//
-// All authentication logic (validation, Supabase sign-in, error handling,
-// forgot-password navigation, signup navigation) is preserved from the
-// previous implementation. Only the visual composition and entrance
-// choreography have changed.
+// Rebuilt LoginScreen based on the Stitch design reference (academic momentum,
+// Philippine trust network, institutional SSO, provider portal).
+// Preserves Supabase auth flow, EmptyStage background layer, and form hierarchy.
 
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-import 'package:lottie/lottie.dart';
-
 import 'package:scholaris/features/auth/presentation/empty_stage.dart';
 import 'package:scholaris/shared/theme/app_theme.dart';
 import 'package:scholaris/shared/widgets/entrance.dart';
+import 'package:scholaris/shared/widgets/scholaris_logo.dart';
 
-// --- Tokens ----------------------------------------------------------------
-
-/// Total entrance duration for the login screen's staggered reveal.
-/// Matches the ~2.2s timeline in the spec.
 const int kLoginEntranceTotalMs = 2200;
 
 final _emailPattern = RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$');
 
-// --- Entrance timeline helpers ---------------------------------------------
-
-/// Builds an [Interval] for an entrance element that starts at [beginMs] and
-/// ends at [endMs] within the login's total duration [kLoginEntranceTotalMs].
 Interval _loginInterval(int beginMs, int endMs) => EntranceMotion.intervalFrom(
   beginMs,
   endMs,
   kLoginEntranceTotalMs,
   curve: Curves.easeOutCubic,
 );
-
-// --- Screen ----------------------------------------------------------------
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -127,384 +105,528 @@ class _LoginScreenState extends State<LoginScreen>
   SnackBar _snackBar(String message) =>
       SnackBar(content: Text(message, style: GoogleFonts.openSans()));
 
-  // --- Build ----------------------------------------------------------------
-
   @override
   Widget build(BuildContext context) {
+    final animation = CurvedAnimation(
+      parent: entranceController,
+      curve: _loginInterval(200, 1800),
+    );
+
     return Scaffold(
-      // Clean white — matches the onboarding slides, not the warm off-white.
-      backgroundColor: Colors.white,
+      backgroundColor: kBackground,
       body: Stack(
         children: [
-          // Full-bleed empty stage environment. Kept mounted (the ceremony
-          // handoff and composition tests rely on it) but hidden behind the
-          // neutral cover below so the login surface reads clean white.
+          // EmptyStage mounted beneath the surface for composition test compatibility
           const Positioned.fill(child: EmptyStage()),
 
-          // Neutral cover: paints over the stage's warm cream/gold tones.
-          const Positioned.fill(child: ColoredBox(color: Colors.white)),
+          // Canvas surface background
+          const Positioned.fill(child: ColoredBox(color: kBackground)),
 
-          // Split-screen content: hero illustration on top, white card
-          // (rounded at the top) below.
-          Positioned.fill(
-            child: SafeArea(
-              child: LayoutBuilder(
-                builder: (context, viewport) {
-                  // Responsive split: hero takes ~40% on tall screens, but
-                  // shrinks further on short viewports so the card always
-                  // has room for the form without immediate scrolling.
-                  // 380px is the minimum card height needed to show title,
-                  // both fields, the primary button, and secondary actions
-                  // without scrolling on the smallest supported phones.
-                  final maxHero =
-                      (viewport.maxHeight - 400).clamp(0.0, double.infinity);
-                  final heroHeight =
-                      (viewport.maxHeight * 0.40).clamp(0.0, maxHero);
-                  return Column(
+          // Content
+          SafeArea(
+            child: Column(
+              children: [
+                // Top Header Bar
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      // --- Top: hero Lottie animation --------------------------
-                      SizedBox(
-                        height: heroHeight,
-                        width: double.infinity,
-                        child: entranceItem(
-                          index: 0,
-                          offset: const Offset(0, 0.08),
-                          interval: _loginInterval(200, 1000),
-                          child: Lottie.asset(
-                            'assets/animations/login_hero.json',
-                            fit: BoxFit.contain,
-                            animate:
-                                !(MediaQuery.maybeOf(context)
-                                        ?.disableAnimations ??
-                                    false) &&
-                                !_isWidgetTestBinding,
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          IconButton(
+                            icon: const Icon(Icons.arrow_back_ios_new, size: 18),
+                            color: const Color(0xFF161C27),
+                            tooltip: 'Back',
+                            onPressed: () {
+                              if (context.canPop()) {
+                                context.pop();
+                              } else {
+                                context.go('/onboarding');
+                              }
+                            },
                           ),
-                        ),
+                          const SizedBox(width: 4),
+                          const ScholarisLogo(fontSize: 20, badgeSize: 30, iconSize: 18),
+                        ],
                       ),
-
-                      // --- Bottom: white rounded card ---------------------------
-                      Expanded(
-                        child: entranceItem(
-                          index: 1,
-                          offset: const Offset(0, 0.25),
-                          interval: _loginInterval(200, 1000),
-                          child: Container(
-                            // Deliberately a Container, not a Card: the login
-                            // composition tests assert no Card wraps the form.
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                             decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: const BorderRadius.vertical(
-                                top: Radius.circular(24),
-                              ),
-                              // Soft top shadow keeps the card distinct from
-                              // the white hero area.
-                              boxShadow: [
-                                BoxShadow(
-                                  color: kCardShadow,
-                                  blurRadius: 24,
-                                  offset: const Offset(0, -6),
+                              color: const Color(0xFFF1F3FF),
+                              borderRadius: BorderRadius.circular(16),
+                            ),
+                            child: Row(
+                              children: [
+                                const Icon(Icons.help_outline, size: 14, color: Color(0xFF404942)),
+                                const SizedBox(width: 4),
+                                Text(
+                                  'Help',
+                                  style: poppins(
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w600,
+                                    color: const Color(0xFF404942),
+                                  ),
                                 ),
                               ],
                             ),
+                          ),
+                          const SizedBox(width: 8),
+                          Container(
+                            width: 28,
+                            height: 28,
+                            decoration: const BoxDecoration(
+                              color: kPrimary,
+                              shape: BoxShape.circle,
+                            ),
+                            child: const Icon(Icons.person, size: 16, color: Colors.white),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+                // Form & Scrollable Content
+                Expanded(
+                  child: FadeTransition(
+                    opacity: animation,
+                    child: SingleChildScrollView(
+                      padding: const EdgeInsets.fromLTRB(20, 6, 20, 24),
+                      child: Center(
+                        child: ConstrainedBox(
+                          constraints: const BoxConstraints(maxWidth: 460),
+                          child: Form(
+                            key: _formKey,
                             child: Column(
-                              // When the card is taller than the form, the
-                              // whole block (fields + actions) centers so the
-                              // leftover space never lands between the last
-                              // field and the actions below it.
-                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                // Scrollable heading + fields region.
-                                // Shrink-wraps to its content when the card is
-                                // tall (Flexible, not Expanded) — otherwise the
-                                // slack would open a large gap between the
-                                // password field and the pinned cluster below.
-                                Flexible(
-                                  child: SingleChildScrollView(
-                                    padding: const EdgeInsets.fromLTRB(
-                                      24,
-                                      24,
-                                      24,
-                                      8,
+                                // Motivational Card Banner
+                                Container(
+                                  width: double.infinity,
+                                  padding: const EdgeInsets.all(14),
+                                  decoration: BoxDecoration(
+                                    gradient: const LinearGradient(
+                                      colors: [kPrimary, Color(0xFF1B3A5C)],
+                                      begin: Alignment.topLeft,
+                                      end: Alignment.bottomRight,
                                     ),
-                                    child: Center(
-                                      child: ConstrainedBox(
-                                        constraints: const BoxConstraints(
-                                          maxWidth: 420,
+                                    borderRadius: BorderRadius.circular(14),
+                                    boxShadow: const [
+                                      BoxShadow(
+                                        color: Color(0x180F4D2E),
+                                        blurRadius: 8,
+                                        offset: Offset(0, 3),
+                                      ),
+                                    ],
+                                  ),
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Container(
+                                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                                        decoration: BoxDecoration(
+                                          color: const Color(0xFF583F00).withValues(alpha: 0.8),
+                                          borderRadius: BorderRadius.circular(20),
                                         ),
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.stretch,
+                                        child: Row(
+                                          mainAxisSize: MainAxisSize.min,
                                           children: [
-                                            // 0. Welcome Back title
-                                            entranceItem(
-                                              index: 0,
-                                              offset: const Offset(0, 0.12),
-                                              interval: _loginInterval(
-                                                400,
-                                                820,
-                                              ),
-                                              child: Text(
-                                                'Welcome Back',
-                                                textAlign: TextAlign.center,
-                                                style: poppins(
-                                                  fontSize: 28,
-                                                  fontWeight: FontWeight.w700,
-                                                  color: kPrimary,
-                                                ),
-                                              ),
-                                            ),
-                                            const SizedBox(height: 4),
-
-                                            // 1. Subtitle
-                                            entranceItem(
-                                              index: 1,
-                                              offset: const Offset(0, 0.12),
-                                              interval: _loginInterval(
-                                                500,
-                                                920,
-                                              ),
-                                              child: Text(
-                                                'Your future starts '
-                                                'somewhere.',
-                                                textAlign: TextAlign.center,
-                                                style: openSans(
-                                                  fontSize: 15,
-                                                  color: Colors.black54,
-                                                ),
-                                              ),
-                                            ),
-                                            const SizedBox(height: 12),
-
-                                            // The form wraps only the two
-                                            // fields; validation stays intact.
-                                            Form(
-                                              key: _formKey,
-                                              child: Column(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.stretch,
-                                                children: [
-                                                  // 2. Email
-                                                  entranceItem(
-                                                    index: 2,
-                                                    offset: const Offset(
-                                                      0,
-                                                      0.12,
-                                                    ),
-                                                    interval: _loginInterval(
-                                                      700,
-                                                      1120,
-                                                    ),
-                                                    child: _textField(
-                                                      controller:
-                                                          _emailController,
-                                                      label: 'Email',
-                                                      keyboardType:
-                                                          TextInputType
-                                                              .emailAddress,
-                                                      textInputAction:
-                                                          TextInputAction.next,
-                                                      validator: _validateEmail,
-                                                    ),
-                                                  ),
-                                                  const SizedBox(height: 8),
-
-                                                  // 3. Password
-                                                  entranceItem(
-                                                    index: 3,
-                                                    offset: const Offset(
-                                                      0,
-                                                      0.12,
-                                                    ),
-                                                    interval: _loginInterval(
-                                                      900,
-                                                      1320,
-                                                    ),
-                                                    child: _textField(
-                                                      controller:
-                                                          _passwordController,
-                                                      label: 'Password',
-                                                      obscureText:
-                                                          _obscurePassword,
-                                                      textInputAction:
-                                                          TextInputAction.done,
-                                                      onFieldSubmitted: (_) =>
-                                                          _onLogin(),
-                                                      suffixIcon: IconButton(
-                                                        icon: Icon(
-                                                          _obscurePassword
-                                                              ? Icons
-                                                                    .visibility_off
-                                                              : Icons
-                                                                    .visibility,
-                                                          color: Colors.black45,
-                                                        ),
-                                                        onPressed: () => setState(
-                                                          () => _obscurePassword =
-                                                              !_obscurePassword,
-                                                        ),
-                                                      ),
-                                                      validator: (value) =>
-                                                          (value == null ||
-                                                              value.isEmpty)
-                                                          ? 'Enter your '
-                                                                'password.'
-                                                          : null,
-                                                    ),
-                                                  ),
-                                                ],
+                                            const Icon(Icons.auto_awesome, size: 12, color: Color(0xFFF1B41E)),
+                                            const SizedBox(width: 4),
+                                            Text(
+                                              'Padayon, Iskolar',
+                                              style: poppins(
+                                                fontSize: 10,
+                                                fontWeight: FontWeight.w700,
+                                                color: const Color(0xFFFFDEA3),
+                                                letterSpacing: 0.5,
                                               ),
                                             ),
                                           ],
                                         ),
                                       ),
+                                      const SizedBox(height: 8),
+                                      Text(
+                                        'Welcome Back',
+                                        style: poppins(
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.w600,
+                                          color: const Color(0xFFB3F1C6),
+                                          letterSpacing: 0.5,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 4),
+                                      Text(
+                                        'Your future starts somewhere.',
+                                        style: poppins(
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.white,
+                                          height: 1.2,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 4),
+                                      Text(
+                                        'Sign in to track ongoing applications and unlock newly matched Philippine academic grants.',
+                                        style: openSans(
+                                          fontSize: 12,
+                                          color: const Color(0xFFB3F1C6),
+                                          height: 1.35,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                const SizedBox(height: 16),
+
+                                // Email Field
+                                Text(
+                                  'Email',
+                                  style: poppins(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w600,
+                                    color: const Color(0xFF161C27),
+                                  ),
+                                ),
+                                const SizedBox(height: 6),
+                                TextFormField(
+                                  controller: _emailController,
+                                  keyboardType: TextInputType.emailAddress,
+                                  validator: _validateEmail,
+                                  style: openSans(fontSize: 14),
+                                  decoration: InputDecoration(
+                                    prefixIcon: const Icon(Icons.alternate_email, size: 20, color: Color(0xFF707971)),
+                                    hintText: 'e.g. maya.santos@up.edu.ph',
+                                    hintStyle: openSans(fontSize: 14, color: const Color(0xFF707971)),
+                                    filled: true,
+                                    fillColor: Colors.white,
+                                    contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(12),
+                                      borderSide: const BorderSide(color: Color(0xFFE2E8E5)),
+                                    ),
+                                    enabledBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(12),
+                                      borderSide: const BorderSide(color: Color(0xFFE2E8E5)),
+                                    ),
+                                    focusedBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(12),
+                                      borderSide: const BorderSide(color: kPrimary, width: 1.5),
                                     ),
                                   ),
                                 ),
-                                // Capped spacer between form and bottom actions.
-                                // Keeps the gap reasonable on tall viewports
-                                // without pushing content below the fold.
-                                const SizedBox(height: 24),
-                                // Pinned bottom cluster: forgot link, Log in
-                                // button, sign-up link, provider CTA. Always
-                                // on screen so short surfaces still expose the
-                                // primary actions.
-                                Center(
-                                  child: ConstrainedBox(
-                                    constraints: const BoxConstraints(
-                                      maxWidth: 420,
-                                    ),
-                                    child: Padding(
-                                      padding: const EdgeInsets.fromLTRB(
-                                        24,
-                                        4,
-                                        24,
-                                        16,
+                                const SizedBox(height: 14),
+
+                                // Password Field Header
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(
+                                      'Password',
+                                      style: poppins(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w600,
+                                        color: const Color(0xFF161C27),
                                       ),
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.stretch,
+                                    ),
+                                    TextButton(
+                                      onPressed: _onForgotPassword,
+                                      style: TextButton.styleFrom(
+                                        foregroundColor: kNavyTrust,
+                                        padding: EdgeInsets.zero,
+                                        minimumSize: Size.zero,
+                                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                      ),
+                                      child: Text(
+                                        'Forgot password?',
+                                        style: poppins(
+                                          fontSize: 13,
+                                          fontWeight: FontWeight.w600,
+                                          color: kNavyTrust,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 6),
+                                TextFormField(
+                                  controller: _passwordController,
+                                  obscureText: _obscurePassword,
+                                  validator: (v) => (v == null || v.isEmpty) ? 'Enter your password.' : null,
+                                  style: openSans(fontSize: 14),
+                                  decoration: InputDecoration(
+                                    prefixIcon: const Icon(Icons.lock_outline, size: 20, color: Color(0xFF707971)),
+                                    suffixIcon: IconButton(
+                                      icon: Icon(
+                                        _obscurePassword ? Icons.visibility_outlined : Icons.visibility_off_outlined,
+                                        size: 20,
+                                        color: const Color(0xFF707971),
+                                      ),
+                                      onPressed: () => setState(() => _obscurePassword = !_obscurePassword),
+                                    ),
+                                    hintText: 'Enter your password',
+                                    hintStyle: openSans(fontSize: 14, color: const Color(0xFF707971)),
+                                    filled: true,
+                                    fillColor: Colors.white,
+                                    contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(12),
+                                      borderSide: const BorderSide(color: Color(0xFFE2E8E5)),
+                                    ),
+                                    enabledBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(12),
+                                      borderSide: const BorderSide(color: Color(0xFFE2E8E5)),
+                                    ),
+                                    focusedBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(12),
+                                      borderSide: const BorderSide(color: kPrimary, width: 1.5),
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(height: 14),
+
+                                // Primary Login Button
+                                SizedBox(
+                                  width: double.infinity,
+                                  height: 48,
+                                  child: ElevatedButton(
+                                    onPressed: _isLoading ? null : _onLogin,
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: kPrimary,
+                                      foregroundColor: Colors.white,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(12),
+                                      ),
+                                      elevation: 2,
+                                    ),
+                                    child: _isLoading
+                                        ? const SizedBox(
+                                            width: 20,
+                                            height: 20,
+                                            child: CircularProgressIndicator(
+                                              strokeWidth: 2,
+                                              color: Colors.white,
+                                            ),
+                                          )
+                                        : Row(
+                                            mainAxisAlignment: MainAxisAlignment.center,
+                                            children: [
+                                              Text(
+                                                'Log in',
+                                                style: poppins(fontSize: 16, fontWeight: FontWeight.bold),
+                                              ),
+                                              const SizedBox(width: 8),
+                                              const Icon(Icons.arrow_forward_rounded, size: 18),
+                                            ],
+                                          ),
+                                  ),
+                                ),
+                                const SizedBox(height: 14),
+
+                                // Sign Up Navigation Link
+                                Center(
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Text(
+                                        "Don't have an account?",
+                                        style: openSans(fontSize: 14, color: const Color(0xFF404942)),
+                                      ),
+                                      const SizedBox(width: 4),
+                                      TextButton(
+                                        onPressed: () => context.go('/signup'),
+                                        style: TextButton.styleFrom(
+                                          foregroundColor: kPrimary,
+                                          padding: EdgeInsets.zero,
+                                          minimumSize: Size.zero,
+                                          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                        ),
+                                        child: Text(
+                                          'Sign up',
+                                          style: poppins(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.bold,
+                                            color: kPrimary,
+                                            decoration: TextDecoration.underline,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                const SizedBox(height: 14),
+
+                                // Provider / Partner Callout
+                                InkWell(
+                                  onTap: () => context.push('/become-provider'),
+                                  borderRadius: BorderRadius.circular(12),
+                                  child: Container(
+                                    width: double.infinity,
+                                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                                    decoration: BoxDecoration(
+                                      color: const Color(0xFFF1F3FF),
+                                      borderRadius: BorderRadius.circular(12),
+                                      border: Border.all(color: const Color(0xFFD2E4FF)),
+                                    ),
+                                    child: Column(
+                                      children: [
+                                        Text(
+                                          'Want to help students reach their dreams?',
+                                          textAlign: TextAlign.center,
+                                          style: poppins(
+                                            fontSize: 12,
+                                            fontWeight: FontWeight.bold,
+                                            color: kNavyTrust,
+                                          ),
+                                        ),
+                                        const SizedBox(height: 4),
+                                        Row(
+                                          mainAxisAlignment: MainAxisAlignment.center,
+                                          children: [
+                                            Text(
+                                              'Become a scholarship provider',
+                                              style: poppins(
+                                                fontSize: 12,
+                                                fontWeight: FontWeight.bold,
+                                                color: kPrimary,
+                                                decoration: TextDecoration.underline,
+                                              ),
+                                            ),
+                                            const SizedBox(width: 4),
+                                            const Icon(Icons.arrow_forward_rounded, size: 14, color: kPrimary),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(height: 16),
+
+                                // Divider: OR AUTHENTICATE WITH
+                                Row(
+                                  children: [
+                                    const Expanded(child: Divider(color: Color(0xFFDDE2F3))),
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(horizontal: 10),
+                                      child: Text(
+                                        'OR AUTHENTICATE WITH',
+                                        style: poppins(
+                                          fontSize: 10,
+                                          fontWeight: FontWeight.w700,
+                                          color: const Color(0xFF707971),
+                                          letterSpacing: 0.5,
+                                        ),
+                                      ),
+                                    ),
+                                    const Expanded(child: Divider(color: Color(0xFFDDE2F3))),
+                                  ],
+                                ),
+                                const SizedBox(height: 12),
+
+                                // Institutional Student SSO
+                                Container(
+                                  width: double.infinity,
+                                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(12),
+                                    border: Border.all(color: const Color(0xFFE2E8E5)),
+                                  ),
+                                  child: Row(
+                                    children: [
+                                      Container(
+                                        width: 32,
+                                        height: 32,
+                                        decoration: BoxDecoration(
+                                          color: const Color(0xFFE8EEFF),
+                                          borderRadius: BorderRadius.circular(8),
+                                        ),
+                                        child: const Icon(Icons.account_balance_outlined, color: kNavyTrust, size: 18),
+                                      ),
+                                      const SizedBox(width: 10),
+                                      Expanded(
+                                        child: Column(
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              'Institutional Student SSO',
+                                              style: poppins(fontSize: 12, fontWeight: FontWeight.bold),
+                                            ),
+                                            Text(
+                                              'UP, PUP, UST, DLSU, Ateneo & State Colleges',
+                                              style: openSans(fontSize: 10, color: const Color(0xFF404942)),
+                                              maxLines: 1,
+                                              overflow: TextOverflow.ellipsis,
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      const Icon(Icons.chevron_right, color: Color(0xFF707971), size: 16),
+                                    ],
+                                  ),
+                                ),
+                                const SizedBox(height: 8),
+
+                                // Google Workspace for Education
+                                SizedBox(
+                                  width: double.infinity,
+                                  height: 40,
+                                  child: OutlinedButton(
+                                    onPressed: () {},
+                                    style: OutlinedButton.styleFrom(
+                                      backgroundColor: const Color(0xFFF1F3FF),
+                                      side: const BorderSide(color: Color(0xFFE2E8E5)),
+                                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                                      foregroundColor: kNavyTrust,
+                                    ),
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        const Icon(Icons.school_outlined, size: 16, color: kNavyTrust),
+                                        const SizedBox(width: 6),
+                                        Flexible(
+                                          child: Text(
+                                            'Sign in with Google Workspace for Education',
+                                            style: poppins(fontSize: 11, fontWeight: FontWeight.w600),
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(height: 14),
+
+                                // Trust & Security Notice Footer
+                                Center(
+                                  child: Column(
+                                    children: [
+                                      Row(
+                                        mainAxisSize: MainAxisSize.min,
                                         children: [
-                                          // 4. Forgot password
-                                          entranceItem(
-                                            index: 4,
-                                            offset: const Offset(0, 0.12),
-                                            interval: _loginInterval(
-                                              1100,
-                                              1520,
+                                          const Icon(Icons.verified_user_outlined, size: 14, color: kPrimary),
+                                          const SizedBox(width: 4),
+                                          Text(
+                                            'Philippine Academic Trust Network',
+                                            style: poppins(
+                                              fontSize: 11,
+                                              fontWeight: FontWeight.w700,
+                                              color: kNavyTrust,
                                             ),
-                                            child: Align(
-                                              alignment: Alignment.centerRight,
-                                              child: TextButton(
-                                                onPressed: _onForgotPassword,
-                                                child: Text(
-                                                  'Forgot password?',
-                                                  style: poppins(
-                                                    fontWeight: FontWeight.w600,
-                                                    color: kPrimary,
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                          const SizedBox(height: 4),
-
-                                          // 5. Log in button
-                                          entranceItem(
-                                            index: 5,
-                                            offset: const Offset(0, 0.12),
-                                            interval: _loginInterval(
-                                              1300,
-                                              1720,
-                                            ),
-                                            child: ElevatedButton(
-                                              onPressed: _isLoading
-                                                  ? null
-                                                  : _onLogin,
-                                              style: ElevatedButton.styleFrom(
-                                                backgroundColor: kPrimary,
-                                                foregroundColor: Colors.white,
-                                                padding:
-                                                    const EdgeInsets.symmetric(
-                                                      vertical: 16,
-                                                    ),
-                                                shape: RoundedRectangleBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                        kRadiusInput,
-                                                      ),
-                                                ),
-                                              ),
-                                              child: _isLoading
-                                                  ? const SizedBox(
-                                                      height: 20,
-                                                      width: 20,
-                                                      child:
-                                                          CircularProgressIndicator(
-                                                            strokeWidth: 2,
-                                                            color: Colors.white,
-                                                          ),
-                                                    )
-                                                  : Text(
-                                                      'Log in',
-                                                      style: poppins(
-                                                        fontWeight:
-                                                            FontWeight.w600,
-                                                      ),
-                                                    ),
-                                            ),
-                                          ),
-                                          const SizedBox(height: 10),
-
-                                          // 6. Don't have an account? Sign up
-                                          entranceItem(
-                                            index: 6,
-                                            offset: const Offset(0, 0.12),
-                                            interval: _loginInterval(
-                                              1500,
-                                              1920,
-                                            ),
-                                            child: Wrap(
-                                              alignment: WrapAlignment.center,
-                                              crossAxisAlignment:
-                                                  WrapCrossAlignment.center,
-                                              children: [
-                                                Text(
-                                                  "Don't have an account?",
-                                                  style: openSans(
-                                                    color: Colors.black54,
-                                                  ),
-                                                ),
-                                                TextButton(
-                                                  onPressed: () =>
-                                                      context.push('/signup'),
-                                                  child: Text(
-                                                    'Sign up',
-                                                    style: poppins(
-                                                      color: kPrimary,
-                                                      fontWeight:
-                                                          FontWeight.w600,
-                                                    ),
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                          const SizedBox(height: 12),
-
-                                          // 7. Provider CTA (visual
-                                          // affordance only — no navigation)
-                                          entranceItem(
-                                            index: 7,
-                                            offset: const Offset(0, 0.12),
-                                            interval: _loginInterval(
-                                              1700,
-                                              2120,
-                                            ),
-                                            child: _buildProviderCta(),
                                           ),
                                         ],
                                       ),
-                                    ),
+                                      const SizedBox(height: 3),
+                                      Text(
+                                        'Interfacing with DOST-SEI & CHED UniFAST. Protected under the Philippine Data Privacy Act of 2012 with 256-bit encryption.',
+                                        textAlign: TextAlign.center,
+                                        style: openSans(fontSize: 10, color: const Color(0xFF707971)),
+                                      ),
+                                    ],
                                   ),
                                 ),
                               ],
@@ -512,109 +634,14 @@ class _LoginScreenState extends State<LoginScreen>
                           ),
                         ),
                       ),
-                    ],
-                  );
-                },
-              ),
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
         ],
       ),
     );
   }
-
-  /// Quiet, secondary visual affordance for scholarship providers.
-  Widget _buildProviderCta() {
-    return InkWell(
-      onTap: () => context.push('/become-provider'),
-      borderRadius: BorderRadius.circular(kRadiusCard),
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-        decoration: BoxDecoration(
-          color: Colors.white.withValues(alpha: 0.55),
-          borderRadius: BorderRadius.circular(kRadiusCard),
-          border: Border.all(color: kAccent.withValues(alpha: 0.2)),
-        ),
-        child: Column(
-          children: [
-            Text(
-              'Want to help students reach their dreams?',
-              textAlign: TextAlign.center,
-              style: openSans(fontSize: 13, color: Colors.black54),
-            ),
-            const SizedBox(height: 4),
-            FittedBox(
-              fit: BoxFit.scaleDown,
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    'Become a scholarship provider',
-                    style: poppins(
-                      fontSize: 13,
-                      fontWeight: FontWeight.w600,
-                      color: kPrimary,
-                    ),
-                  ),
-                  const SizedBox(width: 4),
-                  Icon(Icons.arrow_forward, size: 14, color: kPrimary),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  // --- Shared text field builder -------------------------------------------
-
-  Widget _textField({
-    required TextEditingController controller,
-    required String label,
-    required FormFieldValidator<String> validator,
-    bool obscureText = false,
-    TextInputAction? textInputAction,
-    TextInputType? keyboardType,
-    void Function(String)? onFieldSubmitted,
-    Widget? suffixIcon,
-  }) {
-    return TextFormField(
-      controller: controller,
-      obscureText: obscureText,
-      textInputAction: textInputAction,
-      keyboardType: keyboardType,
-      onFieldSubmitted: onFieldSubmitted,
-      style: GoogleFonts.openSans(),
-      validator: validator,
-      decoration: InputDecoration(
-        labelText: label,
-        labelStyle: GoogleFonts.openSans(color: Colors.black54),
-        suffixIcon: suffixIcon,
-        filled: true,
-        fillColor: Colors.white,
-        contentPadding: const EdgeInsets.symmetric(
-          horizontal: 16,
-          vertical: 12,
-        ),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(kRadiusInput),
-          borderSide: BorderSide.none,
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(kRadiusInput),
-          borderSide: const BorderSide(color: kPrimary, width: 1.5),
-        ),
-      ),
-    );
-  }
 }
-
-/// True while running inside a widget test.
-bool get _isWidgetTestBinding {
-  final type = WidgetsBinding.instance.runtimeType.toString();
-  return type == 'AutomatedTestWidgetsFlutterBinding' ||
-      type == 'LiveTestWidgetsFlutterBinding';
-}
-
-

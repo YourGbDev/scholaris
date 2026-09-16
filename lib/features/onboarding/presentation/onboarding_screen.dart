@@ -1,53 +1,43 @@
 // lib/features/onboarding/presentation/onboarding_screen.dart
 //
-// First-launch onboarding for Scholaris: three full-screen slides that teach
-// the app's value before login. Shows exactly once — completing, skipping or
-// choosing "Log in" persists the `onboarding_seen` flag via
-// [onboardingSeenProvider], so the router never routes back here.
+// First-launch onboarding for Scholaris: three high-fidelity slides matching
+// the Stitch design specifications (academic momentum, Philippine context,
+// verified grant ecosystem).
 //
-// Layout follows the introduction_animation template from the
-// Best-Flutter-UI-Templates pack, restyled with Scholaris tokens:
-//   - full-screen warm background (kBackground)
-//   - looping Lottie animation in the upper ~45% of the screen
-//     (BoxFit.contain; frozen on its first frame for reduced motion)
-//   - Poppins title + centered Open Sans subtitle beneath it
-//   - page dots (kPrimary active, kPrimarySoft inactive) hugging the copy
-//   - bottom row: "Skip" left + circular kPrimary next button right
-//     (slides 1–2); full-width "Get Started" CTA + "Log in" link (last)
-//   - bottom controls sit in a 24px gutter so nothing touches the edges
-//
-// The copy cluster is vertically centered above the anchored bottom row, so
-// the slide reads balanced instead of top-heavy.
-//
-// Motion is constrained to the shared EntranceMotion choreography (fade +
-// gentle rise on each slide mount), the PageView's natural horizontal swipe,
-// and the illustrations' built-in Lottie motion (frozen for reduced motion).
-// No bounce, no spring, no shimmer — and no extra float wrapper on top of
-// animations that already move.
+// Shows exactly once — completing, skipping or choosing "Log in" persists the
+// `onboarding_seen` flag via [onboardingSeenProvider].
 
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-
 import 'package:lottie/lottie.dart';
 
 import 'package:scholaris/features/onboarding/controllers/onboarding_controller.dart';
 import 'package:scholaris/shared/theme/app_theme.dart';
 import 'package:scholaris/shared/widgets/entrance.dart';
+import 'package:scholaris/shared/widgets/scholaris_logo.dart';
 
-/// A single onboarding slide's copy + illustration asset.
+bool get _isWidgetTestBinding =>
+    WidgetsBinding.instance.runtimeType.toString().contains('Test');
+
 class _SlideSpec {
   const _SlideSpec({
     required this.asset,
     required this.title,
     required this.subtitle,
+    required this.badgeKicker,
+    required this.badgeIcon,
+    required this.extraFeature,
   });
 
   final String asset;
   final String title;
   final String subtitle;
+  final String badgeKicker;
+  final IconData badgeIcon;
+  final String extraFeature;
 }
 
 const List<_SlideSpec> _kSlides = [
@@ -55,17 +45,26 @@ const List<_SlideSpec> _kSlides = [
     asset: 'assets/animations/onboarding_slide1.json',
     title: 'Find Your Scholarship',
     subtitle: 'Hundreds of opportunities matched to your profile',
+    badgeKicker: 'SIMULAN ANG PANGARAP',
+    badgeIcon: Icons.auto_awesome,
+    extraFeature: '₱480M+ Active Funds',
   ),
   _SlideSpec(
     asset: 'assets/animations/onboarding_slide2_hero.json',
     title: 'Smart Matching',
     subtitle:
         'We find the best fit based on your grades, course, and financial need',
+    badgeKicker: 'SMART CRITERIA MATCHING',
+    badgeIcon: Icons.track_changes,
+    extraFeature: '98% Algorithmic Match',
   ),
   _SlideSpec(
     asset: 'assets/animations/onboarding_slide3.json',
     title: 'Apply with Ease',
     subtitle: 'Track your applications and never miss a deadline',
+    badgeKicker: 'RADICAL TRANSPARENCY',
+    badgeIcon: Icons.verified_user_outlined,
+    extraFeature: 'Live Audit Trail',
   ),
 ];
 
@@ -92,9 +91,6 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
     super.dispose();
   }
 
-  /// Mark onboarding as seen, then hand off to the login funnel. Called from
-  /// "Skip", "Get Started" and the "Log in" link — all three mean the user is
-  /// done with the intro and it must never show again.
   Future<void> _finish() async {
     await ref.read(onboardingSeenProvider.notifier).markSeen();
     if (!mounted) return;
@@ -114,36 +110,68 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
     return Scaffold(
       backgroundColor: kBackground,
       body: SafeArea(
-        child: PageView.builder(
-          controller: _pageController,
-          itemCount: _kSlides.length,
-          onPageChanged: (index) => setState(() => _page = index),
-          itemBuilder: (context, index) {
-            final spec = _kSlides[index];
-            final isLast = index == _kSlides.length - 1;
-            return _SlideFadeRise(
-              child: _OnboardingSlide(
-                asset: spec.asset,
-                title: spec.title,
-                subtitle: spec.subtitle,
-                index: index,
-                isLast: isLast,
-                onSkip: _finish,
-                onNext: _goNext,
-                onFinish: _finish,
-                onLogin: _finish,
+        child: Column(
+          children: [
+            // Top Navigation Bar
+            Padding(
+              padding: const EdgeInsets.fromLTRB(20, 8, 20, 0),
+              child: SizedBox(
+                height: 36,
+                child: Row(
+                  children: [
+                    const Expanded(
+                      child: ScholarisLogo(fontSize: 18, badgeSize: 28, iconSize: 16),
+                    ),
+                    if (_page == 2)
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFE8EEFF),
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                        child: Text(
+                          '3 of 3',
+                          style: poppins(
+                            fontSize: 11,
+                            fontWeight: FontWeight.w700,
+                            color: kPrimary,
+                          ),
+                        ),
+                      ),
+                  ],
+                ),
               ),
-            );
-          },
+            ),
+            // PageView
+            Expanded(
+              child: PageView.builder(
+                controller: _pageController,
+                itemCount: _kSlides.length,
+                onPageChanged: (index) => setState(() => _page = index),
+                itemBuilder: (context, index) {
+                  final spec = _kSlides[index];
+                  final isLast = index == _kSlides.length - 1;
+                  return _SlideFadeRise(
+                    child: _OnboardingSlide(
+                      spec: spec,
+                      index: index,
+                      isLast: isLast,
+                      onSkip: _finish,
+                      onNext: _goNext,
+                      onFinish: _finish,
+                      onLogin: _finish,
+                    ),
+                  );
+                },
+              ),
+            ),
+          ],
         ),
       ),
     );
   }
 }
 
-/// One restrained EntranceMotion fade + rise per slide mount. The PageView
-/// handles the horizontal swipe; this adds the calm settle the shared motion
-/// language prescribes. Reduced-motion honors the settled state directly.
 class _SlideFadeRise extends StatefulWidget {
   const _SlideFadeRise({required this.child});
 
@@ -187,7 +215,7 @@ class _SlideFadeRiseState extends State<_SlideFadeRise>
       opacity: animation,
       child: SlideTransition(
         position: Tween<Offset>(
-          begin: const Offset(0, 0.06),
+          begin: const Offset(0, 0.04),
           end: Offset.zero,
         ).animate(animation),
         child: widget.child,
@@ -198,9 +226,7 @@ class _SlideFadeRiseState extends State<_SlideFadeRise>
 
 class _OnboardingSlide extends StatelessWidget {
   const _OnboardingSlide({
-    required this.asset,
-    required this.title,
-    required this.subtitle,
+    required this.spec,
     required this.index,
     required this.isLast,
     required this.onSkip,
@@ -209,9 +235,7 @@ class _OnboardingSlide extends StatelessWidget {
     required this.onLogin,
   });
 
-  final String asset;
-  final String title;
-  final String subtitle;
+  final _SlideSpec spec;
   final int index;
   final bool isLast;
   final VoidCallback onSkip;
@@ -224,94 +248,152 @@ class _OnboardingSlide extends StatelessWidget {
     return LayoutBuilder(
       builder: (context, constraints) {
         final height = constraints.maxHeight;
+        final illustrationArea = math.min(height * 0.40, 260.0);
 
-        // Illustration occupies the upper ~45% of the screen, capped so the
-        // artwork never crowds the copy on short viewports.
-        final illustrationArea = math.min(height * 0.45, 320.0);
-
-        return Column(
-          children: [
-            // The copy cluster (illustration → title → subtitle → dots) sits
-            // vertically centered in the space above the anchored bottom row,
-            // so the slide reads balanced instead of top-heavy.
-            Expanded(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  // --- Illustration -------------------------------------------
-                  SizedBox(
-                    height: illustrationArea,
-                    width: double.infinity,
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 24,
-                        vertical: 8,
+        return Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20),
+          child: Column(
+            children: [
+              Expanded(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    // Illustration Hero Canvas
+                    Container(
+                      height: illustrationArea,
+                      width: double.infinity,
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFF1F3FF),
+                        borderRadius: BorderRadius.circular(16),
+                        border: Border.all(color: const Color(0xFFE2E8E5)),
                       ),
-                      child: Lottie.asset(
-                        asset,
-                        fit: BoxFit.contain,
-                        animate:
-                            !(MediaQuery.maybeOf(context)?.disableAnimations ??
-                                false) &&
-                            !_isWidgetTestBinding,
+                      child: Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.all(12.0),
+                            child: Lottie.asset(
+                              spec.asset,
+                              fit: BoxFit.contain,
+                              animate:
+                                  !(MediaQuery.maybeOf(context)?.disableAnimations ??
+                                      false) &&
+                                  !_isWidgetTestBinding,
+                            ),
+                          ),
+                          // Feature Pill Tag on Artwork
+                          Positioned(
+                            bottom: 8,
+                            left: 16,
+                            right: 16,
+                            child: Center(
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 10,
+                                  vertical: 3,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: Colors.white.withValues(alpha: 0.92),
+                                  borderRadius: BorderRadius.circular(12),
+                                  boxShadow: const [
+                                    BoxShadow(
+                                      color: Color(0x10000000),
+                                      blurRadius: 4,
+                                      offset: Offset(0, 1),
+                                    ),
+                                  ],
+                                ),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Icon(spec.badgeIcon, size: 13, color: kPrimary),
+                                    const SizedBox(width: 4),
+                                    Flexible(
+                                      child: Text(
+                                        spec.extraFeature,
+                                        style: poppins(
+                                          fontSize: 10,
+                                          fontWeight: FontWeight.bold,
+                                          color: const Color(0xFF161C27),
+                                        ),
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
-                  ),
-                  const SizedBox(height: 16),
-                  // --- Title ----------------------------------------------------
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 24),
-                    child: Text(
-                      title,
+                    const SizedBox(height: 12),
+                    // Kicker Pill
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFB3F1C6),
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Text(
+                        spec.badgeKicker,
+                        style: poppins(
+                          fontSize: 10,
+                          fontWeight: FontWeight.w700,
+                          color: const Color(0xFF145131),
+                          letterSpacing: 0.5,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    // Title
+                    Text(
+                      spec.title,
                       textAlign: TextAlign.center,
                       style: poppins(
-                        fontSize: 28,
-                        fontWeight: FontWeight.w700,
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
                         color: kPrimary,
                         height: 1.2,
                       ),
                     ),
-                  ),
-                  const SizedBox(height: 6),
-                  // --- Subtitle -------------------------------------------------
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 32),
-                    child: Text(
-                      subtitle,
-                      textAlign: TextAlign.center,
-                      style: openSans(
-                        fontSize: 15,
-                        color: Colors.black54,
-                        height: 1.4,
+                    const SizedBox(height: 6),
+                    // Subtitle
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 12),
+                      child: Text(
+                        spec.subtitle,
+                        textAlign: TextAlign.center,
+                        style: openSans(
+                          fontSize: 14,
+                          color: const Color(0xFF404942),
+                          height: 1.35,
+                        ),
                       ),
                     ),
-                  ),
-                  const SizedBox(height: 14),
-                  // --- Page dots ------------------------------------------------
-                  _Dots(count: _kSlides.length, active: index),
-                ],
+                    const SizedBox(height: 14),
+                    // Stepper Dots
+                    _Dots(count: _kSlides.length, active: index),
+                  ],
+                ),
               ),
-            ),
-            // --- Bottom controls: 24px gutters so nothing touches the edges.
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24),
-              child: _BottomControls(
+              // Bottom Controls
+              _BottomControls(
                 isLast: isLast,
                 onSkip: onSkip,
                 onNext: onNext,
                 onFinish: onFinish,
                 onLogin: onLogin,
               ),
-            ),
-            const SizedBox(height: 12),
-          ],
+              const SizedBox(height: 12),
+            ],
+          ),
         );
       },
     );
   }
 }
 
-/// Page dots — kPrimary pill for the active slide, kPrimarySoft for the rest.
 class _Dots extends StatelessWidget {
   const _Dots({required this.count, required this.active});
 
@@ -330,7 +412,7 @@ class _Dots extends StatelessWidget {
             height: 8,
             margin: const EdgeInsets.symmetric(horizontal: 4),
             decoration: BoxDecoration(
-              color: i == active ? kPrimary : kPrimarySoft,
+              color: i == active ? kPrimary : const Color(0xFFDDE2F3),
               borderRadius: BorderRadius.circular(4),
             ),
           ),
@@ -357,16 +439,13 @@ class _BottomControls extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (!isLast) {
-      // Skip on the left, circular kPrimary next button on the right — one
-      // horizontally aligned row (the 24px gutters live on the parent).
       return Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           TextButton(
             onPressed: onSkip,
             style: TextButton.styleFrom(
-              foregroundColor: Colors.black54,
+              foregroundColor: kNavyTrust,
               textStyle: poppins(fontSize: 15, fontWeight: FontWeight.w600),
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             ),
@@ -376,20 +455,18 @@ class _BottomControls extends StatelessWidget {
             button: true,
             label: 'Next',
             child: SizedBox(
-              width: 64,
-              height: 64,
-              child: Material(
-                color: kPrimary,
-                shape: const CircleBorder(),
-                child: InkWell(
-                  customBorder: const CircleBorder(),
-                  onTap: onNext,
-                  child: const Icon(
-                    Icons.arrow_forward_rounded,
-                    color: Colors.white,
-                    size: 28,
-                  ),
+              width: 58,
+              height: 58,
+              child: ElevatedButton(
+                onPressed: onNext,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: kPrimary,
+                  foregroundColor: Colors.white,
+                  shape: const CircleBorder(),
+                  padding: EdgeInsets.zero,
+                  elevation: 2,
                 ),
+                child: const Icon(Icons.arrow_forward_rounded, size: 24),
               ),
             ),
           ),
@@ -397,57 +474,41 @@ class _BottomControls extends StatelessWidget {
       );
     }
 
-    // Last slide: full-width "Get Started" CTA + log-in link. The parent's
-    // 24px gutters keep the button from touching the screen edges.
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
         SizedBox(
           width: double.infinity,
-          height: 52,
+          height: 48,
           child: ElevatedButton(
             onPressed: onFinish,
             style: ElevatedButton.styleFrom(
+              backgroundColor: kPrimary,
+              foregroundColor: Colors.white,
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(kRadiusInput),
+                borderRadius: BorderRadius.circular(12),
               ),
+              elevation: 2,
             ),
             child: Text(
               'Get Started',
-              style: poppins(fontSize: 16, fontWeight: FontWeight.w600),
+              style: poppins(fontSize: 16, fontWeight: FontWeight.bold),
             ),
           ),
         ),
-        const SizedBox(height: 8),
+        const SizedBox(height: 4),
         TextButton(
           onPressed: onLogin,
-          child: Text.rich(
-            TextSpan(
-              children: [
-                TextSpan(
-                  text: 'Already have an account? ',
-                  style: openSans(fontSize: 13.5, color: Colors.black54),
-                ),
-                TextSpan(
-                  text: 'Log in',
-                  style: poppins(
-                    fontSize: 13.5,
-                    fontWeight: FontWeight.w600,
-                    color: kPrimary,
-                  ),
-                ),
-              ],
+          child: Text(
+            'Already have an account? Log in',
+            style: poppins(
+              fontSize: 13,
+              fontWeight: FontWeight.w600,
+              color: kNavyTrust,
             ),
           ),
         ),
       ],
     );
   }
-}
-
-/// True while running inside a widget test.
-bool get _isWidgetTestBinding {
-  final type = WidgetsBinding.instance.runtimeType.toString();
-  return type == 'AutomatedTestWidgetsFlutterBinding' ||
-      type == 'LiveTestWidgetsFlutterBinding';
 }

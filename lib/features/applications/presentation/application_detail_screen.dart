@@ -6,22 +6,12 @@
 // the scholarship, while still providing a clear path back to the scholarship
 // detail.
 //
-// The screen stays reactive: it reads the latest application from
-// [applicationsProvider], so a withdrawal or a notes save performed here is
-// reflected immediately (and the screen itself re-renders).
-//
-// Lifecycle:
-//  - pending (draft / submitted / under review) applications offer a
-//    "Withdraw application" action that requires explicit confirmation;
-//  - terminal applications (approved / rejected / withdrawn) show the status
-//    with no withdrawal affordance.
-//
-// Notes editing is intentionally simple: a plain text field and a Save button
-// that persists through the repository and updates provider state. Saving only
-// touches the notes column — never the status or other fields.
+// Rebuilt to match Stitch design language with crisp white cards, 16px corner
+// radius, and subtle borders.
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 import 'package:scholaris/features/applications/models/application.dart';
 import 'package:scholaris/features/applications/providers/applications_provider.dart';
@@ -232,15 +222,13 @@ class _DetailBodyState extends ConsumerState<_DetailBody> {
 
   @override
   Widget build(BuildContext context) {
-    // Rebuild when the application changes (e.g. after a withdrawal) so the
-    // status chip and lifecycle actions stay accurate.
     ref.watch(applicationsProvider);
     final application = widget.application;
     final scholarship = widget.scholarship;
     final scholarshipKnown = scholarship != null;
 
     return ListView(
-      padding: const EdgeInsets.fromLTRB(20, 8, 20, 40),
+      padding: const EdgeInsets.fromLTRB(20, 12, 20, 40),
       children: [
         if (scholarshipKnown)
           Semantics(
@@ -248,19 +236,20 @@ class _DetailBodyState extends ConsumerState<_DetailBody> {
             label: 'View scholarship details',
             child: Material(
               color: Colors.white,
-              borderRadius: BorderRadius.circular(kRadiusCard),
+              borderRadius: BorderRadius.circular(16),
               child: InkWell(
-                borderRadius: BorderRadius.circular(kRadiusCard),
+                borderRadius: BorderRadius.circular(16),
                 onTap: _openScholarship,
                 child: Container(
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(kRadiusCard),
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(color: const Color(0xFFE2E8E5), width: 1.0),
                     boxShadow: const [
                       BoxShadow(
-                        color: kCardShadow,
-                        blurRadius: 16,
-                        offset: Offset(0, 6),
+                        color: Color(0x081B3A5C),
+                        blurRadius: 12,
+                        offset: Offset(0, 4),
                       ),
                     ],
                   ),
@@ -274,20 +263,20 @@ class _DetailBodyState extends ConsumerState<_DetailBody> {
                               scholarship.title,
                               maxLines: 2,
                               overflow: TextOverflow.ellipsis,
-                              style: poppins(
-                                fontSize: 18,
+                              style: GoogleFonts.poppins(
+                                fontSize: 17,
                                 fontWeight: FontWeight.w700,
                                 color: kPrimary,
                               ),
                             ),
-                            const SizedBox(height: 2),
+                            const SizedBox(height: 3),
                             Text(
                               scholarship.provider ?? 'Scholarship provider',
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
-                              style: openSans(
+                              style: GoogleFonts.openSans(
                                 fontSize: 13,
-                                color: Colors.black54,
+                                color: const Color(0xFF404942),
                               ),
                             ),
                           ],
@@ -296,7 +285,7 @@ class _DetailBodyState extends ConsumerState<_DetailBody> {
                       const SizedBox(width: 8),
                       const Icon(
                         Icons.chevron_right_rounded,
-                        color: Colors.black38,
+                        color: Color(0xFF707971),
                       ),
                     ],
                   ),
@@ -309,24 +298,25 @@ class _DetailBodyState extends ConsumerState<_DetailBody> {
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
               color: Colors.white,
-              borderRadius: BorderRadius.circular(kRadiusCard),
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(color: const Color(0xFFE2E8E5), width: 1.0),
             ),
             child: Text(
               'This scholarship is no longer active.',
-              style: openSans(fontSize: 14, color: Colors.black54),
+              style: GoogleFonts.openSans(fontSize: 14, color: const Color(0xFF404942)),
             ),
           ),
-        const SizedBox(height: 16),
+        const SizedBox(height: 14),
         _StatusSection(application: application),
-        const SizedBox(height: 16),
+        const SizedBox(height: 14),
         _FactsCard(application: application, scholarship: scholarship),
-        const SizedBox(height: 16),
+        const SizedBox(height: 14),
         _NotesCard(
           controller: _notesController,
           saving: _savingNotes,
           onSave: _saveNotes,
         ),
-        const SizedBox(height: 16),
+        const SizedBox(height: 14),
         if (application.status.isPending)
           _WithdrawCard(withdrawing: _withdrawing, onWithdraw: _confirmWithdraw)
         else
@@ -349,7 +339,15 @@ class _StatusSection extends StatelessWidget {
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(kRadiusCard),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: const Color(0xFFE2E8E5), width: 1.0),
+        boxShadow: const [
+          BoxShadow(
+            color: Color(0x06000000),
+            blurRadius: 8,
+            offset: Offset(0, 2),
+          ),
+        ],
       ),
       child: Row(
         children: [
@@ -368,12 +366,12 @@ class _StatusSection extends StatelessWidget {
               children: [
                 Text(
                   'Status',
-                  style: openSans(fontSize: 12, color: Colors.black54),
+                  style: GoogleFonts.openSans(fontSize: 12, color: const Color(0xFF707971)),
                 ),
                 const SizedBox(height: 2),
                 Text(
                   ui.label,
-                  style: poppins(
+                  style: GoogleFonts.poppins(
                     fontSize: 16,
                     fontWeight: FontWeight.w600,
                     color: ui.foreground,
@@ -413,30 +411,45 @@ class _FactsCard extends StatelessWidget {
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(kRadiusCard),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: const Color(0xFFE2E8E5), width: 1.0),
+        boxShadow: const [
+          BoxShadow(
+            color: Color(0x06000000),
+            blurRadius: 8,
+            offset: Offset(0, 2),
+          ),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             'Application details',
-            style: poppins(fontSize: 15, fontWeight: FontWeight.w600),
+            style: GoogleFonts.poppins(
+              fontSize: 15,
+              fontWeight: FontWeight.w600,
+              color: const Color(0xFF161C27),
+            ),
           ),
-          const SizedBox(height: 10),
+          const SizedBox(height: 12),
           for (final fact in facts) ...[
             Row(
               children: [
-                Icon(fact.$1, size: 18, color: kPrimary),
+                Icon(fact.$1, size: 16, color: kPrimary),
                 const SizedBox(width: 10),
                 Expanded(
                   child: Text(
                     fact.$2,
-                    style: openSans(fontSize: 13, color: Colors.black87),
+                    style: GoogleFonts.openSans(
+                      fontSize: 13,
+                      color: const Color(0xFF404942),
+                    ),
                   ),
                 ),
               ],
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: 10),
           ],
         ],
       ),
@@ -469,19 +482,31 @@ class _NotesCard extends StatelessWidget {
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(kRadiusCard),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: const Color(0xFFE2E8E5), width: 1.0),
+        boxShadow: const [
+          BoxShadow(
+            color: Color(0x06000000),
+            blurRadius: 8,
+            offset: Offset(0, 2),
+          ),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             'Notes',
-            style: poppins(fontSize: 15, fontWeight: FontWeight.w600),
+            style: GoogleFonts.poppins(
+              fontSize: 15,
+              fontWeight: FontWeight.w600,
+              color: const Color(0xFF161C27),
+            ),
           ),
-          const SizedBox(height: 4),
+          const SizedBox(height: 3),
           Text(
             'Private notes only you can see.',
-            style: openSans(fontSize: 12, color: Colors.black54),
+            style: GoogleFonts.openSans(fontSize: 12, color: const Color(0xFF707971)),
           ),
           const SizedBox(height: 12),
           TextField(
@@ -490,8 +515,25 @@ class _NotesCard extends StatelessWidget {
             minLines: 3,
             maxLines: 6,
             textInputAction: TextInputAction.newline,
-            decoration: const InputDecoration(
+            style: GoogleFonts.openSans(fontSize: 13.5, color: const Color(0xFF161C27)),
+            decoration: InputDecoration(
               hintText: 'Add notes about this application…',
+              hintStyle: GoogleFonts.openSans(fontSize: 13.5, color: const Color(0xFF707971)),
+              filled: true,
+              fillColor: const Color(0xFFF1F3FF),
+              contentPadding: const EdgeInsets.all(12),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10),
+                borderSide: const BorderSide(color: Color(0xFFE2E8E5)),
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10),
+                borderSide: const BorderSide(color: Color(0xFFE2E8E5)),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10),
+                borderSide: const BorderSide(color: kPrimary, width: 1.5),
+              ),
             ),
           ),
           const SizedBox(height: 12),
@@ -516,8 +558,8 @@ class _WithdrawCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: kErrorSoft,
-        borderRadius: BorderRadius.circular(kRadiusCard),
+        color: const Color(0xFFFFF0ED),
+        borderRadius: BorderRadius.circular(16),
         border: Border.all(color: kError.withValues(alpha: 0.25)),
       ),
       child: Column(
@@ -525,7 +567,7 @@ class _WithdrawCard extends StatelessWidget {
         children: [
           Text(
             'Withdraw application',
-            style: poppins(
+            style: GoogleFonts.poppins(
               fontSize: 15,
               fontWeight: FontWeight.w600,
               color: kError,
@@ -535,7 +577,7 @@ class _WithdrawCard extends StatelessWidget {
           Text(
             'If you no longer want to pursue this scholarship, you can '
             'withdraw. It will stay in your history as Withdrawn.',
-            style: openSans(fontSize: 13, color: Colors.black87),
+            style: GoogleFonts.openSans(fontSize: 13, color: const Color(0xFF404942)),
           ),
           const SizedBox(height: 12),
           SizedBox(
@@ -554,6 +596,9 @@ class _WithdrawCard extends StatelessWidget {
               style: OutlinedButton.styleFrom(
                 foregroundColor: kError,
                 side: const BorderSide(color: kError),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
               ),
             ),
           ),
@@ -582,15 +627,19 @@ class _TerminalNote extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: kPrimarySoft,
-        borderRadius: BorderRadius.circular(kRadiusCard),
+        color: const Color(0xFFF1F3FF),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: const Color(0xFFE2E8E5), width: 1.0),
       ),
       child: Row(
         children: [
           const Icon(Icons.info_outline, color: kPrimary, size: 20),
           const SizedBox(width: 10),
           Expanded(
-            child: Text(message, style: openSans(fontSize: 13, color: kPrimary)),
+            child: Text(
+              message,
+              style: GoogleFonts.openSans(fontSize: 13, color: kPrimary),
+            ),
           ),
         ],
       ),

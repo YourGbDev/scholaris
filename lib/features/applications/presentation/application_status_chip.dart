@@ -1,18 +1,16 @@
 // lib/features/applications/presentation/application_status_chip.dart
 //
-// Renders an application's lifecycle status as a clear, color-coded chip so
-// the student can see at a glance where each application stands. Presentation
-// metadata (label, colors, icon) is centralized in [ApplicationStatusUi] so the
-// tracking surface and any future surface share one consistent rendering.
+// Renders an application's lifecycle status as a clear, color-coded chip matching
+// the Stitch design system. Presentation metadata (label, colors, icon) is centralized
+// in [ApplicationStatusUi] so the tracking surface and any future surface share one
+// consistent rendering.
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import 'package:scholaris/features/applications/models/application.dart';
-import 'package:scholaris/shared/theme/app_theme.dart';
 
-/// Per-status presentation metadata for the supported application lifecycle
-/// statuses.
+/// Per-status presentation metadata for the supported application lifecycle statuses.
 class ApplicationStatusUi {
   const ApplicationStatusUi({
     required this.label,
@@ -31,36 +29,36 @@ class ApplicationStatusUi {
       case ApplicationStatus.draft:
         return const ApplicationStatusUi(
           label: 'Draft',
-          foreground: Color(0xFF5F6368),
-          background: Color(0xFFE9EAEE),
-          icon: Icons.edit_outlined,
+          foreground: Color(0xFF5D4200),
+          background: Color(0xFFFFDEA3),
+          icon: Icons.edit_note_rounded,
         );
       case ApplicationStatus.submitted:
         return const ApplicationStatusUi(
           label: 'Submitted',
-          foreground: kNavyTrust,
-          background: Color(0x1F1B3A5C),
+          foreground: Color(0xFF1B3A5C),
+          background: Color(0xFFD2E4FF),
           icon: Icons.send_rounded,
         );
       case ApplicationStatus.underReview:
         return const ApplicationStatusUi(
           label: 'Under review',
-          foreground: kMatchGoldText,
-          background: kMatchGoldSoft,
+          foreground: Color(0xFF001C38),
+          background: Color(0xFFD2E4FF),
           icon: Icons.schedule_rounded,
         );
       case ApplicationStatus.approved:
         return const ApplicationStatusUi(
           label: 'Approved',
-          foreground: kPrimary,
-          background: Color(0xFFD8EEDF),
-          icon: Icons.check_circle_rounded,
+          foreground: Color(0xFF145131),
+          background: Color(0xFFB3F1C6),
+          icon: Icons.celebration_rounded,
         );
       case ApplicationStatus.rejected:
         return const ApplicationStatusUi(
           label: 'Rejected',
-          foreground: kError,
-          background: Color(0xFFFCE8E6),
+          foreground: Color(0xFFBA1A1A),
+          background: Color(0xFFFFDAD6),
           icon: Icons.cancel_outlined,
         );
       case ApplicationStatus.withdrawn:
@@ -73,8 +71,8 @@ class ApplicationStatusUi {
       case ApplicationStatus.awarded:
         return const ApplicationStatusUi(
           label: 'Awarded',
-          foreground: kPrimary,
-          background: Color(0xFFD8EEDF),
+          foreground: Color(0xFF145131),
+          background: Color(0xFFB3F1C6),
           icon: Icons.workspace_premium_rounded,
         );
     }
@@ -92,7 +90,7 @@ class ApplicationStatusChip extends StatelessWidget {
     return Semantics(
       label: 'Status: ${ui.label}',
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4.5),
         decoration: BoxDecoration(
           color: ui.background,
           borderRadius: BorderRadius.circular(20),
@@ -100,13 +98,26 @@ class ApplicationStatusChip extends StatelessWidget {
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(ui.icon, size: 14, color: ui.foreground),
-            const SizedBox(width: 5),
+            if (status == ApplicationStatus.underReview) ...[
+              Container(
+                width: 6.5,
+                height: 6.5,
+                decoration: BoxDecoration(
+                  color: ui.foreground,
+                  shape: BoxShape.circle,
+                ),
+              ),
+              const SizedBox(width: 6),
+            ] else ...[
+              Icon(ui.icon, size: 14, color: ui.foreground),
+              const SizedBox(width: 5),
+            ],
             Text(
               ui.label,
-              style: GoogleFonts.poppins(
-                fontSize: 12,
-                fontWeight: FontWeight.w600,
+              style: GoogleFonts.outfit(
+                fontSize: 11.5,
+                fontWeight: FontWeight.w700,
+                letterSpacing: 0.2,
                 color: ui.foreground,
               ),
             ),

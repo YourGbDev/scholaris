@@ -10,6 +10,7 @@ import 'admin_providers_tab.dart';
 import 'admin_scholarships_tab.dart';
 import 'admin_theme.dart';
 import 'admin_users_tab.dart';
+import 'package:scholaris/shared/widgets/logout_confirmation_dialog.dart';
 
 class AdminTabIndexNotifier extends Notifier<int> {
   @override
@@ -188,7 +189,15 @@ class AdminHomeScreen extends ConsumerWidget {
                           size: 18,
                         ),
                         tooltip: 'Sign out',
-                        onPressed: () => Supabase.instance.client.auth.signOut(),
+                        onPressed: () async {
+                          final confirmed =
+                              await showLogoutConfirmationDialog(context);
+                          if (confirmed) {
+                            try {
+                              await Supabase.instance.client.auth.signOut();
+                            } catch (_) {}
+                          }
+                        },
                       ),
                     ],
                   ),

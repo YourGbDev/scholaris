@@ -8,6 +8,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'package:scholaris/shared/theme/app_theme.dart';
+import 'package:scholaris/shared/widgets/logout_confirmation_dialog.dart';
 
 import 'provider_incoming_applications.dart';
 import 'provider_scholarships_tab.dart';
@@ -55,7 +56,14 @@ class ProviderHomeScreen extends ConsumerWidget {
           IconButton(
             icon: const Icon(Icons.logout_rounded, color: kError),
             tooltip: 'Sign out',
-            onPressed: () => Supabase.instance.client.auth.signOut(),
+            onPressed: () async {
+              final confirmed = await showLogoutConfirmationDialog(context);
+              if (confirmed) {
+                try {
+                  await Supabase.instance.client.auth.signOut();
+                } catch (_) {}
+              }
+            },
           ),
         ],
       ),

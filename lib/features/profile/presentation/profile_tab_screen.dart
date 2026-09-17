@@ -17,6 +17,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:scholaris/features/account/presentation/account_settings_screen.dart';
 import 'package:scholaris/features/applications/presentation/applications_screen.dart';
 import 'package:scholaris/shared/theme/app_theme.dart';
+import 'package:scholaris/shared/widgets/logout_confirmation_dialog.dart';
 import 'package:scholaris/shared/widgets/responsive_container.dart';
 import 'package:scholaris/shared/widgets/scholaris_logo.dart';
 import 'package:scholaris/shared/widgets/state_views.dart';
@@ -139,10 +140,14 @@ class ProfileTabScreen extends ConsumerWidget {
           ),
           const SizedBox(height: 10),
           OutlinedButton.icon(
+            key: const ValueKey('profile-logout-button'),
             onPressed: () async {
-              try {
-                await Supabase.instance.client.auth.signOut();
-              } catch (_) {}
+              final confirmed = await showLogoutConfirmationDialog(context);
+              if (confirmed) {
+                try {
+                  await Supabase.instance.client.auth.signOut();
+                } catch (_) {}
+              }
             },
             icon: const Icon(Icons.logout_rounded, size: 18),
             label: Text(

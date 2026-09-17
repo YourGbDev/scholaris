@@ -17,9 +17,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import 'package:scholaris/features/applications/models/application.dart';
 import 'package:scholaris/features/applications/providers/applications_provider.dart';
 import 'package:scholaris/features/applications/repositories/application_repository.dart';
 import 'package:scholaris/features/auth/controllers/auth_controller.dart';
+import 'package:scholaris/shared/widgets/save_draft_dialog.dart';
 import 'package:scholaris/features/bookmarks/providers/bookmarks_provider.dart';
 import 'package:scholaris/features/profile/providers/profile_setup_provider.dart';
 import 'package:scholaris/features/scholarships/models/scholarship.dart';
@@ -1159,19 +1161,54 @@ class _ApplySectionState extends ConsumerState<_ApplySection> {
   /// Confirming is what allows the application write to proceed; cancelling
   /// leaves the applications provider and repository untouched.
   Future<bool> _confirmApply() async {
+    Future<void> handleExitIntent(BuildContext dialogCtx) async {
+      final action = await showSaveDraftExitDialog(dialogCtx);
+      if (!dialogCtx.mounted) return;
+      if (action == SaveDraftExitAction.discard) {
+        Navigator.of(dialogCtx).pop(false);
+      } else if (action == SaveDraftExitAction.saveAsDraft) {
+        await _onSaveDraft();
+        if (dialogCtx.mounted) {
+          Navigator.of(dialogCtx).pop(false);
+        }
+      }
+    }
+
     final confirmed = await showDialog<bool>(
       context: context,
-      builder: (dialogContext) => AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        backgroundColor: Colors.white,
-        title: Text(
-          'Apply to this scholarship?',
-          style: GoogleFonts.poppins(
-            fontSize: 18,
-            fontWeight: FontWeight.w700,
-            color: kNavyTrust,
+      builder: (dialogContext) => PopScope(
+        canPop: false,
+        onPopInvokedWithResult: (didPop, _) async {
+          if (didPop) return;
+          await handleExitIntent(dialogContext);
+        },
+        child: AlertDialog(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          backgroundColor: Colors.white,
+          title: Row(
+            children: [
+              Expanded(
+                child: Text(
+                  'Apply to this scholarship?',
+                  style: GoogleFonts.poppins(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w700,
+                    color: kNavyTrust,
+                  ),
+                ),
+              ),
+              IconButton(
+                key: const ValueKey('apply-close-button'),
+                icon: const Icon(
+                  Icons.close_rounded,
+                  size: 20,
+                  color: Color(0xFF707971),
+                ),
+                tooltip: 'Close',
+                onPressed: () => handleExitIntent(dialogContext),
+              ),
+            ],
           ),
-        ),
         content: SizedBox(
           width: 480,
           child: SingleChildScrollView(
@@ -1396,12 +1433,33 @@ class _ApplySectionState extends ConsumerState<_ApplySection> {
           ),
         ),
         actions: [
+          TextButton.icon(
+            key: const ValueKey('apply-save-draft'),
+            icon: const Icon(Icons.save_outlined, size: 16, color: kPrimary),
+            label: Text(
+              'Save as Draft',
+              style: GoogleFonts.poppins(
+                fontWeight: FontWeight.w600,
+                color: kPrimary,
+                fontSize: 13,
+              ),
+            ),
+            onPressed: () async {
+              await _onSaveDraft();
+              if (dialogContext.mounted) {
+                Navigator.of(dialogContext).pop(false);
+              }
+            },
+          ),
           TextButton(
             key: const ValueKey('apply-cancel'),
             onPressed: () => Navigator.of(dialogContext).pop(false),
             child: Text(
               'Cancel',
-              style: GoogleFonts.openSans(fontWeight: FontWeight.w600, color: const Color(0xFF404942)),
+              style: GoogleFonts.openSans(
+                fontWeight: FontWeight.w600,
+                color: const Color(0xFF404942),
+              ),
             ),
           ),
           TextButton(
@@ -1420,8 +1478,30 @@ class _ApplySectionState extends ConsumerState<_ApplySection> {
           ),
         ],
       ),
-    );
-    return confirmed == true;
+    ),
+  );
+  return confirmed == true;
+}
+
+  Future<void> _onSaveDraft() async {
+    try {
+      await ref
+          .read(applicationsProvider.notifier)
+          .saveDraft(widget.scholarship.id);
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Application saved as draft.')),
+        );
+      }
+    } catch (_) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Could not save draft. Please try again.'),
+          ),
+        );
+      }
+    }
   }
 
   Widget _packetItem(String title, String subtitle) {
@@ -1512,6 +1592,19 @@ class _ApplySectionState extends ConsumerState<_ApplySection> {
     // Rebuild whenever the signed-in user's applications change so the applied
     // state is reflected as soon as the provider lands it.
     ref.watch(applicationsProvider);
+    final existingApp =
+        ref.read(applicationsProvider.notifier).applicationFor(widget.scholarship.id);
+
+    if (existingApp != null) {
+      if (existingApp.status == ApplicationStatus.draft) {
+        return _DraftBanner(
+          scholarship: widget.scholarship,
+          onContinue: _apply,
+        );
+      }
+      return _AppliedBanner(scholarship: widget.scholarship);
+    }
+
     final applied =
         ref.read(applicationsProvider.notifier).hasApplied(widget.scholarship.id);
 
@@ -1583,6 +1676,124 @@ class _ApplySectionState extends ConsumerState<_ApplySection> {
         icon: Icons.send_rounded,
         loading: _isApplying,
         onPressed: _isApplying ? null : onPressed,
+      ),
+    );
+  }
+}
+
+/// Draft Application Banner: Displays draft status and "Continue Application" CTA.
+class _DraftBanner extends StatelessWidget {
+  const _DraftBanner({
+    required this.scholarship,
+    required this.onContinue,
+  });
+
+  final Scholarship scholarship;
+  final VoidCallback onContinue;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        color: const Color(0xFFFFFBEB),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: const Color(0xFFFDE68A)),
+        boxShadow: const [
+          BoxShadow(
+            color: Color(0x081B3A5C),
+            blurRadius: 12,
+            offset: Offset(0, 4),
+          ),
+        ],
+      ),
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFFEF3C7),
+                  borderRadius: BorderRadius.circular(6),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Icon(
+                      Icons.edit_note_rounded,
+                      size: 14,
+                      color: Color(0xFFB45309),
+                    ),
+                    const SizedBox(width: 4),
+                    Text(
+                      'DRAFT IN PROGRESS',
+                      style: GoogleFonts.outfit(
+                        fontSize: 10,
+                        fontWeight: FontWeight.w700,
+                        color: const Color(0xFFB45309),
+                        letterSpacing: 0.5,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const Spacer(),
+              Text(
+                'Not submitted',
+                style: GoogleFonts.openSans(
+                  fontSize: 11,
+                  fontWeight: FontWeight.w600,
+                  color: const Color(0xFF92400E),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 10),
+          Text(
+            'You have a saved draft',
+            style: GoogleFonts.poppins(
+              fontSize: 16,
+              fontWeight: FontWeight.w700,
+              color: const Color(0xFF161C27),
+            ),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            'Complete your 4-part application packet and submit before the deadline.',
+            style: GoogleFonts.openSans(
+              fontSize: 12,
+              color: const Color(0xFF404942),
+              height: 1.4,
+            ),
+          ),
+          const SizedBox(height: 14),
+          SizedBox(
+            width: double.infinity,
+            child: ElevatedButton.icon(
+              key: const ValueKey('continue-application'),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: kPrimary,
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(vertical: 12),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                elevation: 2,
+              ),
+              onPressed: onContinue,
+              icon: const Icon(Icons.arrow_forward_rounded, size: 18),
+              label: Text(
+                'Continue Application',
+                style: GoogleFonts.poppins(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

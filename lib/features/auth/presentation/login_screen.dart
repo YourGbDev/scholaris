@@ -41,6 +41,7 @@ class _LoginScreenState extends State<LoginScreen>
   final _passwordController = TextEditingController();
 
   bool _obscurePassword = true;
+  bool _rememberMe = true;
   bool _isLoading = false;
 
   @override
@@ -128,7 +129,7 @@ class _LoginScreenState extends State<LoginScreen>
               children: [
                 // Top Header Bar
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 2),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -157,19 +158,21 @@ class _LoginScreenState extends State<LoginScreen>
                           Container(
                             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                             decoration: BoxDecoration(
-                              color: const Color(0xFFF1F3FF),
-                              borderRadius: BorderRadius.circular(16),
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(20),
+                              border: Border.all(color: const Color(0xFFE2E8E5)),
                             ),
                             child: Row(
+                              mainAxisSize: MainAxisSize.min,
                               children: [
-                                const Icon(Icons.help_outline, size: 14, color: Color(0xFF404942)),
+                                const Icon(Icons.help_outline_rounded, size: 14, color: Color(0xFF707971)),
                                 const SizedBox(width: 4),
                                 Text(
                                   'Help',
-                                  style: poppins(
+                                  style: openSans(
                                     fontSize: 12,
                                     fontWeight: FontWeight.w600,
-                                    color: const Color(0xFF404942),
+                                    color: const Color(0xFF161C27),
                                   ),
                                 ),
                               ],
@@ -195,7 +198,7 @@ class _LoginScreenState extends State<LoginScreen>
                   child: FadeTransition(
                     opacity: animation,
                     child: SingleChildScrollView(
-                      padding: const EdgeInsets.fromLTRB(20, 6, 20, 24),
+                      padding: const EdgeInsets.fromLTRB(20, 2, 20, 8),
                       child: Center(
                         child: ConstrainedBox(
                           constraints: const BoxConstraints(maxWidth: 460),
@@ -207,7 +210,7 @@ class _LoginScreenState extends State<LoginScreen>
                                 // Motivational Card Banner
                                 Container(
                                   width: double.infinity,
-                                  padding: const EdgeInsets.all(14),
+                                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
                                   decoration: BoxDecoration(
                                     gradient: const LinearGradient(
                                       colors: [kPrimary, Color(0xFF1B3A5C)],
@@ -249,7 +252,7 @@ class _LoginScreenState extends State<LoginScreen>
                                           ],
                                         ),
                                       ),
-                                      const SizedBox(height: 8),
+                                      const SizedBox(height: 4),
                                       Text(
                                         'Welcome Back',
                                         style: poppins(
@@ -281,7 +284,7 @@ class _LoginScreenState extends State<LoginScreen>
                                     ],
                                   ),
                                 ),
-                                const SizedBox(height: 16),
+                                const SizedBox(height: 12),
 
                                 // Email Field
                                 Text(
@@ -319,7 +322,7 @@ class _LoginScreenState extends State<LoginScreen>
                                     ),
                                   ),
                                 ),
-                                const SizedBox(height: 14),
+                                const SizedBox(height: 10),
 
                                 // Password Field Header
                                 Row(
@@ -387,7 +390,46 @@ class _LoginScreenState extends State<LoginScreen>
                                     ),
                                   ),
                                 ),
-                                const SizedBox(height: 14),
+                                const SizedBox(height: 8),
+
+                                // Remember Me Checkbox
+                                Row(
+                                  children: [
+                                    SizedBox(
+                                      height: 20,
+                                      width: 20,
+                                      child: Checkbox(
+                                        key: const ValueKey('remember-me-checkbox'),
+                                        value: _rememberMe,
+                                        activeColor: kPrimary,
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(4),
+                                        ),
+                                        side: const BorderSide(
+                                          color: Color(0xFF707971),
+                                          width: 1.5,
+                                        ),
+                                        onChanged: (val) => setState(
+                                          () => _rememberMe = val ?? true,
+                                        ),
+                                      ),
+                                    ),
+                                    const SizedBox(width: 8),
+                                    GestureDetector(
+                                      onTap: () => setState(
+                                        () => _rememberMe = !_rememberMe,
+                                      ),
+                                      child: Text(
+                                        'Remember me for 30 days',
+                                        style: openSans(
+                                          fontSize: 13,
+                                          color: const Color(0xFF404944),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 10),
 
                                 // Primary Login Button
                                 SizedBox(

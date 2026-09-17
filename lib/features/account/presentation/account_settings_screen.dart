@@ -26,6 +26,7 @@ import 'package:scholaris/features/account/providers/account_provider.dart';
 import 'package:scholaris/features/account/repositories/account_repository.dart';
 import 'package:scholaris/features/auth/controllers/auth_controller.dart';
 import 'package:scholaris/shared/theme/app_theme.dart';
+import 'package:scholaris/shared/widgets/logout_confirmation_dialog.dart';
 import 'package:scholaris/shared/widgets/responsive_container.dart';
 import 'package:scholaris/shared/widgets/success_overlay.dart';
 
@@ -224,9 +225,52 @@ class _AccountSettingsScreenState extends ConsumerState<AccountSettingsScreen> {
             ),
             const SizedBox(height: 20),
             _passwordSection(),
+            const SizedBox(height: 20),
+            _sessionSection(),
           ],
         ),
       ),
+    );
+  }
+
+  Widget _sessionSection() {
+    return _AccountCard(
+      icon: Icons.logout_rounded,
+      title: 'Session',
+      children: [
+        Text(
+          'Sign out of your account on this device.',
+          style: openSans(fontSize: 13, color: Colors.black54),
+        ),
+        const SizedBox(height: 14),
+        OutlinedButton.icon(
+          key: const ValueKey('settings-logout-button'),
+          onPressed: () async {
+            final confirmed = await showLogoutConfirmationDialog(context);
+            if (confirmed) {
+              try {
+                await Supabase.instance.client.auth.signOut();
+              } catch (_) {}
+            }
+          },
+          icon: const Icon(Icons.logout_rounded, size: 18, color: kError),
+          label: Text(
+            'Log Out',
+            style: poppins(
+              fontSize: 14,
+              fontWeight: FontWeight.w600,
+              color: kError,
+            ),
+          ),
+          style: OutlinedButton.styleFrom(
+            side: const BorderSide(color: kError, width: 1.5),
+            minimumSize: const Size.fromHeight(48),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+          ),
+        ),
+      ],
     );
   }
 

@@ -308,6 +308,10 @@ class _DetailBodyState extends ConsumerState<_DetailBody> {
           ),
         const SizedBox(height: 14),
         _StatusSection(application: application),
+        if (application.status == ApplicationStatus.draft && scholarshipKnown) ...[
+          const SizedBox(height: 14),
+          _ContinueApplicationCard(onContinue: _openScholarship),
+        ],
         const SizedBox(height: 14),
         _FactsCard(application: application, scholarship: scholarship),
         const SizedBox(height: 14),
@@ -639,6 +643,76 @@ class _TerminalNote extends StatelessWidget {
             child: Text(
               message,
               style: GoogleFonts.openSans(fontSize: 13, color: kPrimary),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _ContinueApplicationCard extends StatelessWidget {
+  const _ContinueApplicationCard({required this.onContinue});
+
+  final VoidCallback onContinue;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: const Color(0xFFFFFBEB),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: const Color(0xFFFDE68A)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              const Icon(Icons.edit_note_rounded, size: 20, color: Color(0xFFB45309)),
+              const SizedBox(width: 8),
+              Text(
+                'Draft In Progress',
+                style: GoogleFonts.poppins(
+                  fontSize: 15,
+                  fontWeight: FontWeight.w700,
+                  color: const Color(0xFF92400E),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 6),
+          Text(
+            'This application has not been submitted yet. Complete and submit your application packet before the deadline.',
+            style: GoogleFonts.openSans(
+              fontSize: 13,
+              color: const Color(0xFF404942),
+              height: 1.35,
+            ),
+          ),
+          const SizedBox(height: 12),
+          SizedBox(
+            width: double.infinity,
+            child: ElevatedButton.icon(
+              key: const ValueKey('detail-continue-application'),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: kPrimary,
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(vertical: 12),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+              onPressed: onContinue,
+              icon: const Icon(Icons.arrow_forward_rounded, size: 18),
+              label: Text(
+                'Continue Application',
+                style: GoogleFonts.poppins(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
             ),
           ),
         ],

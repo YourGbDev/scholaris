@@ -37,19 +37,57 @@ class ApplicationsNotifier extends AsyncNotifier<List<Application>> {
       (state.valueOrNull ?? const <Application>[])
           .any((application) => application.scholarshipId == scholarshipId);
 
-  /// Submits an application for [scholarshipId]. On success the created
-  /// application is appended to the state. Throws
+  /// Returns the existing application for [scholarshipId] if one exists.
+  Application? applicationFor(String scholarshipId) =>
+      (state.valueOrNull ?? const <Application>[])
+          .where((application) => application.scholarshipId == scholarshipId)
+          .firstOrNull;
+
+  /// Submits an application for [scholarshipId]. On success the created or
+  /// updated application is stored in the state. Throws
   /// [ApplicationNotAuthenticatedException] when signed out and
   /// [ApplicationDuplicateException] when the user already applied.
   Future<Application> apply(String scholarshipId, {String? notes}) async {
     final created = await ref
         .read(applicationRepositoryProvider)
         .apply(scholarshipId: scholarshipId, notes: notes);
-    state = AsyncData([
-      ...state.valueOrNull ?? const <Application>[],
-      created,
-    ]);
+    final currentList = state.valueOrNull ?? const <Application>[];
+    final existsIndex =
+        currentList.indexWhere((app) => app.id == created.id);
+    if (existsIndex >= 0) {
+      state = AsyncData([
+        for (int i = 0; i < currentList.length; i++)
+          if (i == existsIndex) created else currentList[i],
+      ]);
+    } else {
+      state = AsyncData([
+        ...currentList,
+        created,
+      ]);
+    }
     return created;
+  }
+
+  /// Saves an application as a draft for [scholarshipId].
+  Future<Application> saveDraft(String scholarshipId, {String? notes}) async {
+    final draft = await ref
+        .read(applicationRepositoryProvider)
+        .saveDraft(scholarshipId: scholarshipId, notes: notes);
+    final currentList = state.valueOrNull ?? const <Application>[];
+    final existsIndex =
+        currentList.indexWhere((app) => app.id == draft.id);
+    if (existsIndex >= 0) {
+      state = AsyncData([
+        for (int i = 0; i < currentList.length; i++)
+          if (i == existsIndex) draft else currentList[i],
+      ]);
+    } else {
+      state = AsyncData([
+        ...currentList,
+        draft,
+      ]);
+    }
+    return draft;
   }
 
   /// Advances the status of one of the signed-in user's own applications,

@@ -204,6 +204,26 @@ void main() {
 
       expect(find.text('Become a Scholarship Provider'), findsOneWidget);
     });
+
+    testWidgets('renders "Remember me for 30 days" checkbox and toggles', (
+      tester,
+    ) async {
+      await useLargeSurface(tester);
+      await pumpSettled(tester);
+
+      expect(find.text('Remember me for 30 days'), findsOneWidget);
+      final checkboxFinder = find.byKey(const ValueKey('remember-me-checkbox'));
+      expect(checkboxFinder, findsOneWidget);
+
+      final checkbox = tester.widget<Checkbox>(checkboxFinder);
+      expect(checkbox.value, isTrue);
+
+      await tester.tap(checkboxFinder);
+      await tester.pumpAndSettle();
+
+      final toggledCheckbox = tester.widget<Checkbox>(checkboxFinder);
+      expect(toggledCheckbox.value, isFalse);
+    });
   });
 
   group('LoginScreen navigation', () {

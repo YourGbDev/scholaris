@@ -252,6 +252,23 @@ class ApplicationRepository {
     final existing =
         await _dataSource.fetchApplicationByScholarship(userId, scholarshipId);
     if (existing != null) {
+      if (existing['status'] == ApplicationStatus.draft.dbValue) {
+        final existingId = existing['id'] as String;
+        final now = DateTime.now().toUtc().toIso8601String();
+        final updates = <String, dynamic>{
+          'status': ApplicationStatus.submitted.dbValue,
+          'applied_at': now,
+          'updated_at': now,
+        };
+        if (notes != null) {
+          updates['notes'] = notes;
+        }
+        await _dataSource.updateApplication(userId, existingId, updates);
+        final updated = await _dataSource.fetchApplication(userId, existingId);
+        if (updated != null) {
+          return Application.fromJson(updated);
+        }
+      }
       throw const ApplicationDuplicateException();
     }
     final created = await _dataSource.insertApplication(userId, {
@@ -261,6 +278,47 @@ class ApplicationRepository {
       'notes': notes,
       'applied_at': DateTime.now().toUtc().toIso8601String(),
     });
+    return Application.fromJson(created);
+  }
+
+  /// Saves an application as a draft for [scholarshipId] on behalf of the
+  /// signed-in user. If a draft already exists, updates notes and timestamp.
+  Future<Application> saveDraft({
+    required String scholarshipId,
+    String? notes,
+  }) async {
+    final userId = _requireUserId();
+    final existing =
+        await _dataSource.fetchApplicationByScholarship(userId, scholarshipId);
+    if (existing != null) {
+      final existingId = existing['id'] as String;
+      final existingStatus = existing['status'] as String;
+      if (existingStatus == ApplicationStatus.draft.dbValue) {
+        final now = DateTime.now().toUtc().toIso8601String();
+        final updates = <String, dynamic>{
+          'updated_at': now,
+        };
+        if (notes != null) {
+          updates['notes'] = notes;
+        }
+        await _dataSource.updateApplication(userId, existingId, updates);
+        final updated = await _dataSource.fetchApplication(userId, existingId);
+        return Application.fromJson(updated ?? existing);
+      }
+      return Application.fromJson(existing);
+    }
+    final now = DateTime.now().toUtc().toIso8601String();
+    final row = <String, dynamic>{
+      'user_id': userId,
+      'scholarship_id': scholarshipId,
+      'status': ApplicationStatus.draft.dbValue,
+      'created_at': now,
+      'updated_at': now,
+    };
+    if (notes != null) {
+      row['notes'] = notes;
+    }
+    final created = await _dataSource.insertApplication(userId, row);
     return Application.fromJson(created);
   }
 

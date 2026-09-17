@@ -228,4 +228,51 @@ void main() {
       expect(accentBarFinder, findsOneWidget);
     });
   });
+
+  group('Stitch V2 Discover Card fidelity', () {
+    testWidgets('high fit card (>=90%) shows Fit badge, View Details, and Apply Now buttons', (tester) async {
+      await tester.pumpWidget(_wrap(
+        card: ScholarshipCard(
+          scholarship: _scholarship(),
+          matchPercentage: 96,
+        ),
+      ));
+
+      // 1. Fit badge
+      expect(find.text('96% Fit'), findsOneWidget);
+      expect(find.textContaining('Match'), findsNothing);
+
+      // 2. Both action buttons present
+      expect(find.text('View Details'), findsOneWidget);
+      expect(find.text('Apply Now'), findsOneWidget);
+      expect(find.byIcon(Icons.arrow_forward_rounded), findsOneWidget);
+
+      // 3. No "Why this matches you" on discover card
+      expect(find.text('Why this matches you'), findsNothing);
+
+      // 4. Requirements line present
+      expect(find.textContaining('STEM Exam Qualifier'), findsOneWidget);
+    });
+
+    testWidgets('lower fit card (<90%) shows single full-width View Details button only', (tester) async {
+      await tester.pumpWidget(_wrap(
+        card: ScholarshipCard(
+          scholarship: _scholarship(),
+          matchPercentage: 88,
+        ),
+      ));
+
+      // 1. Fit badge
+      expect(find.text('88% Fit'), findsOneWidget);
+      expect(find.textContaining('Match'), findsNothing);
+
+      // 2. Only View Details button present; Apply Now is omitted
+      expect(find.text('View Details'), findsOneWidget);
+      expect(find.text('Apply Now'), findsNothing);
+      expect(find.byIcon(Icons.arrow_forward_rounded), findsNothing);
+
+      // 3. Requirements line still present
+      expect(find.textContaining('STEM Exam Qualifier'), findsOneWidget);
+    });
+  });
 }

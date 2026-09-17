@@ -372,15 +372,14 @@ void main() {
       expect(find.text('Browse all scholarships'), findsNothing);
     });
 
-    testWidgets('filtered matches preserve reason chips', (tester) async {
+    testWidgets('filtered matches preserve fit badge and requirements', (tester) async {
       await _pumpDiscover(tester);
 
       await _typeSearch(tester, 'DOST');
 
       expect(find.text('DOST-SEI Scholarship'), findsOneWidget);
-      expect(find.text('Why this matches you'), findsOneWidget);
-      expect(find.text('Your GPA qualifies'), findsWidgets);
-      expect(find.text('Your location is eligible'), findsWidgets);
+      expect(find.textContaining('Fit'), findsWidgets);
+      expect(find.textContaining('STEM Exam Qualifier'), findsOneWidget);
     });
   });
 

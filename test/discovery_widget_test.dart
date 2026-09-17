@@ -175,9 +175,9 @@ void main() {
       // Both seeded scholarships are eligible for this student profile.
       expect(find.text('DOST-SEI Undergraduate Scholarship'), findsOneWidget);
       expect(find.text('CHED Merit Scholarship (MSRS)'), findsOneWidget);
-      // Explainability chips appear on matched cards.
-      expect(find.text('Your GPA qualifies'), findsWidgets);
-      expect(find.text('Your location is eligible'), findsWidgets);
+      // Stitch cards show Fit badge and requirements row
+      expect(find.textContaining('Fit'), findsWidgets);
+      expect(find.textContaining('STEM Exam Qualifier'), findsOneWidget);
     });
 
     testWidgets('matches exclude scholarships below the GPA minimum',

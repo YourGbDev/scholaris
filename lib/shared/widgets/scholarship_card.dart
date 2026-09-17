@@ -90,6 +90,54 @@ String formatScholarshipFrequency(Scholarship s) {
   return '/ year (Renewable)';
 }
 
+/// Formats the right-hand pill in the award highlight tile
+({String text, bool isRenewable}) formatScholarshipBenefit(Scholarship s) {
+  final title = s.title.toLowerCase();
+  if (title.contains('dost')) {
+    return (text: 'Auto-renewable', isRenewable: true);
+  } else if (title.contains('fellowship') || title.contains('tech') || title.contains('women')) {
+    return (text: '+ Tech Mentorship', isRenewable: false);
+  } else if (title.contains('merit')) {
+    return (text: 'Full Tuition', isRenewable: false);
+  } else if (s.maxMonthlyIncome != null) {
+    return (text: 'Living Allowance', isRenewable: false);
+  }
+  return (text: 'Auto-renewable', isRenewable: true);
+}
+
+/// Helper to format requirement snippet matching Stitch V2 Discover cards:
+/// `1 Essay (500 words) • 1 Letter of Rec • Transcript`
+({IconData icon, String text}) formatScholarshipRequirements(Scholarship s) {
+  final title = s.title.toLowerCase();
+  final provider = (s.provider ?? '').toLowerCase();
+
+  if (title.contains('dost') || provider.contains('dost')) {
+    return (
+      icon: Icons.science_outlined,
+      text: 'STEM Exam Qualifier • Form 137 • Cert of Good Moral',
+    );
+  } else if (title.contains('ched') || provider.contains('ched')) {
+    return (
+      icon: Icons.description_outlined,
+      text: '1 Essay (500 words) • 1 Letter of Rec • Transcript',
+    );
+  } else if (s.maxMonthlyIncome != null) {
+    return (
+      icon: Icons.assignment_turned_in_outlined,
+      text: 'ITR / Indigency Certificate • Certificate of Grades',
+    );
+  } else if (s.minGpa >= 3.0) {
+    return (
+      icon: Icons.description_outlined,
+      text: 'Academic Transcript • 2 Letters of Rec • Essay',
+    );
+  }
+  return (
+    icon: Icons.description_outlined,
+    text: '1 Essay (500 words) • 1 Letter of Rec • Transcript',
+  );
+}
+
 class ScholarshipCard extends StatelessWidget {
   const ScholarshipCard({
     super.key,
@@ -136,7 +184,8 @@ class ScholarshipCard extends StatelessWidget {
     final accentColor = providerTypeColor(scholarship.provider);
     final matchPct = _effectiveMatchPercentage();
     final amount = formatScholarshipAmount(scholarship);
-    final frequency = formatScholarshipFrequency(scholarship);
+    final benefit = formatScholarshipBenefit(scholarship);
+    final reqSnippet = formatScholarshipRequirements(scholarship);
 
     // Collect criteria chips
     final criteriaChips = <String>[];
@@ -216,31 +265,40 @@ class ScholarshipCard extends StatelessWidget {
                               runSpacing: 4,
                               crossAxisAlignment: WrapCrossAlignment.center,
                               children: [
-                                // Match % Pill with gold star
+                                // Fit % Pill matching Stitch V2 specification:
                                 Container(
                                   padding: const EdgeInsets.symmetric(
-                                    horizontal: 8.5,
-                                    vertical: 3.5,
+                                    horizontal: 9,
+                                    vertical: 4,
                                   ),
                                   decoration: BoxDecoration(
-                                    color: const Color(0xFFB3F1C6), // primary-fixed
+                                    color: matchPct >= 90
+                                        ? const Color(0xFF0F4D2E) // kPrimaryContainer
+                                        : const Color(0xFFE3E8F9), // kSurfaceContainerHigh
                                     borderRadius: BorderRadius.circular(20),
                                   ),
                                   child: Row(
                                     mainAxisSize: MainAxisSize.min,
                                     children: [
-                                      const Icon(
-                                        Icons.star_rounded,
-                                        size: 14,
-                                        color: Color(0xFF583F00),
+                                      Container(
+                                        width: 6,
+                                        height: 6,
+                                        decoration: BoxDecoration(
+                                          color: matchPct >= 90
+                                              ? const Color(0xFFB3F1C6) // kPrimaryFixed
+                                              : const Color(0xFF436084), // kSecondary
+                                          shape: BoxShape.circle,
+                                        ),
                                       ),
-                                      const SizedBox(width: 3.5),
+                                      const SizedBox(width: 4.5),
                                       Text(
-                                        '$matchPct% Match',
+                                        '$matchPct% Fit',
                                         style: outfit(
-                                          fontSize: 11,
+                                          fontSize: 11.5,
                                           fontWeight: FontWeight.bold,
-                                          color: const Color(0xFF145131),
+                                          color: matchPct >= 90
+                                              ? Colors.white
+                                              : const Color(0xFF161C27),
                                         ),
                                       ),
                                     ],
@@ -309,45 +367,77 @@ class ScholarshipCard extends StatelessWidget {
                       ),
                       const SizedBox(height: 10),
 
-                      // 4. Bold Grant Amount in ₱
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.baseline,
-                        textBaseline: TextBaseline.alphabetic,
-                        children: [
-                          Text(
-                            amount,
-                            style: outfit(
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                              color: const Color(0xFF0F4D2E), // Bridge Green
-                              letterSpacing: -0.5,
-                            ),
-                          ),
-                          const SizedBox(width: 5),
-                          Flexible(
-                            child: Text(
-                              frequency,
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: openSans(
-                                fontSize: 12,
-                                color: const Color(0xFF404942),
-                                fontWeight: FontWeight.w500,
+                      // 4. Award Highlight Tile matching Stitch V2
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFF1F3FF), // kSurfaceContainerLow
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Flexible(
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  const Icon(
+                                    Icons.stars_rounded,
+                                    size: 19,
+                                    color: Color(0xFFFABC28), // kTertiaryFixedDim
+                                  ),
+                                  const SizedBox(width: 6),
+                                  Flexible(
+                                    child: Text(
+                                      amount,
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: outfit(
+                                        fontSize: 18.5,
+                                        fontWeight: FontWeight.bold,
+                                        color: const Color(0xFF0F4D2E), // kPrimary
+                                        letterSpacing: -0.5,
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(width: 4),
+                                  Text(
+                                    '/ year',
+                                    style: openSans(
+                                      fontSize: 11.5,
+                                      color: const Color(0xFF404942),
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
-                          ),
-                          if (scholarship.slots != null) ...[
                             const SizedBox(width: 8),
-                            Text(
-                              '${scholarship.slots} slots',
-                              style: openSans(
-                                fontSize: 11.5,
-                                color: const Color(0xFF436084),
-                                fontWeight: FontWeight.w600,
+                            Flexible(
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2.5),
+                                decoration: BoxDecoration(
+                                  color: benefit.isRenewable
+                                      ? const Color(0xFFB3F1C6) // kPrimaryFixed
+                                      : const Color(0xFFFFDEA3), // kTertiaryFixed
+                                  borderRadius: BorderRadius.circular(4),
+                                ),
+                                child: Text(
+                                  benefit.text,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: outfit(
+                                    fontSize: 10.5,
+                                    fontWeight: FontWeight.w600,
+                                    color: benefit.isRenewable
+                                        ? const Color(0xFF145131) // kOnPrimaryFixedVariant
+                                        : const Color(0xFF5D4200), // kOnTertiaryFixedVariant
+                                  ),
+                                ),
                               ),
                             ),
                           ],
-                        ],
+                        ),
                       ),
                       const SizedBox(height: 10),
 
@@ -376,110 +466,149 @@ class ScholarshipCard extends StatelessWidget {
                           );
                         }).toList(),
                       ),
+                      const SizedBox(height: 10),
 
-                      // Why this matches you chips (if present)
-                      if (reasons.isNotEmpty) ...[
-                        const SizedBox(height: 10),
-                        Text(
-                          'Why this matches you',
-                          style: outfit(
-                            fontSize: 11.5,
-                            fontWeight: FontWeight.bold,
-                            color: const Color(0xFF145131),
-                          ),
-                        ),
-                        const SizedBox(height: 4),
-                        Wrap(
-                          spacing: 5,
-                          runSpacing: 5,
-                          children: reasons.map((r) => _ReasonChip(label: r)).toList(),
-                        ),
-                      ],
-                      const SizedBox(height: 12),
-
-                      // 6. Action Row: Quick Apply + View Details
+                      // 6. Requirements Snippet Row matching Stitch V2
                       Row(
                         children: [
-                          Expanded(
-                            child: SizedBox(
-                              height: 40,
-                              child: ElevatedButton(
-                                onPressed: () {
-                                  if (onQuickApply != null) {
-                                    onQuickApply!();
-                                  } else {
-                                    context.push(
-                                      '/scholarship/${scholarship.id}',
-                                      extra: scholarship,
-                                    );
-                                  }
-                                },
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: const Color(0xFF0F4D2E),
-                                  foregroundColor: Colors.white,
-                                  elevation: 1,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(10),
-                                  ),
-                                  padding: const EdgeInsets.symmetric(horizontal: 10),
-                                ),
-                                child: FittedBox(
-                                  fit: BoxFit.scaleDown,
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Text(
-                                        'Quick Apply',
-                                        style: outfit(
-                                          fontSize: 13.5,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                      const SizedBox(width: 5),
-                                      const Icon(Icons.bolt_rounded, size: 16),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ),
+                          Icon(
+                            reqSnippet.icon,
+                            size: 15,
+                            color: const Color(0xFF404942),
                           ),
-                          const SizedBox(width: 8),
-                          SizedBox(
-                            height: 40,
-                            child: OutlinedButton(
-                              onPressed: () => context.push(
-                                '/scholarship/${scholarship.id}',
-                                extra: scholarship,
-                              ),
-                              style: OutlinedButton.styleFrom(
-                                foregroundColor: const Color(0xFF161C27),
-                                side: const BorderSide(color: Color(0xFFDDE2F3)),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                                padding: const EdgeInsets.symmetric(horizontal: 10),
-                              ),
-                              child: FittedBox(
-                                fit: BoxFit.scaleDown,
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Text(
-                                      'Details',
-                                      style: outfit(
-                                        fontSize: 13,
-                                        fontWeight: FontWeight.w600,
-                                      ),
-                                    ),
-                                    const SizedBox(width: 3),
-                                    const Icon(Icons.arrow_forward_rounded, size: 14),
-                                  ],
-                                ),
+                          const SizedBox(width: 6),
+                          Expanded(
+                            child: Text(
+                              reqSnippet.text,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: openSans(
+                                fontSize: 11.5,
+                                color: const Color(0xFF404942),
+                                fontWeight: FontWeight.w400,
                               ),
                             ),
                           ),
                         ],
                       ),
+                      const SizedBox(height: 12),
+
+                      // 7. Actions Row: View Details (secondary) + Apply Now (primary) if matchPct >= 90,
+                      // or single full-width View Details if matchPct < 90
+                      if (matchPct >= 90)
+                        Row(
+                          children: [
+                            Expanded(
+                              child: SizedBox(
+                                height: 42,
+                                child: TextButton(
+                                  onPressed: () => context.push(
+                                    '/scholarship/${scholarship.id}',
+                                    extra: scholarship,
+                                  ),
+                                  style: TextButton.styleFrom(
+                                    backgroundColor: const Color(0xFFE3E8F9), // kSurfaceContainerHigh
+                                    foregroundColor: const Color(0xFF161C27),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                    padding: const EdgeInsets.symmetric(horizontal: 6),
+                                  ),
+                                  child: FittedBox(
+                                    fit: BoxFit.scaleDown,
+                                    child: Text(
+                                      'View Details',
+                                      style: outfit(
+                                        fontSize: 13,
+                                        fontWeight: FontWeight.w600,
+                                        color: const Color(0xFF161C27),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                            Expanded(
+                              child: SizedBox(
+                                height: 42,
+                                child: ElevatedButton(
+                                  onPressed: () {
+                                    if (onQuickApply != null) {
+                                      onQuickApply!();
+                                    } else {
+                                      context.push(
+                                        '/scholarship/${scholarship.id}',
+                                        extra: scholarship,
+                                      );
+                                    }
+                                  },
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: const Color(0xFF0F4D2E), // kPrimaryContainer
+                                    foregroundColor: Colors.white,
+                                    elevation: 0,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                    padding: const EdgeInsets.symmetric(horizontal: 6),
+                                  ),
+                                  child: FittedBox(
+                                    fit: BoxFit.scaleDown,
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        Text(
+                                          'Apply Now',
+                                          style: outfit(
+                                            fontSize: 13,
+                                            fontWeight: FontWeight.w600,
+                                            color: Colors.white,
+                                          ),
+                                        ),
+                                        const SizedBox(width: 4),
+                                        const Icon(
+                                          Icons.arrow_forward_rounded,
+                                          size: 15,
+                                          color: Colors.white,
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        )
+                      else
+                        SizedBox(
+                          width: double.infinity,
+                          height: 42,
+                          child: TextButton(
+                            onPressed: () => context.push(
+                              '/scholarship/${scholarship.id}',
+                              extra: scholarship,
+                            ),
+                            style: TextButton.styleFrom(
+                              backgroundColor: const Color(0xFFE3E8F9), // kSurfaceContainerHigh
+                              foregroundColor: const Color(0xFF161C27),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              padding: const EdgeInsets.symmetric(horizontal: 6),
+                            ),
+                            child: FittedBox(
+                              fit: BoxFit.scaleDown,
+                              child: Text(
+                                'View Details',
+                                style: outfit(
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.w600,
+                                  color: const Color(0xFF161C27),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
                     ],
                   ),
                 ),
@@ -697,47 +826,6 @@ class _AppliedChip extends StatelessWidget {
               fontSize: 10,
               fontWeight: FontWeight.bold,
               color: const Color(0xFF001C38),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _ReasonChip extends StatelessWidget {
-  const _ReasonChip({required this.label});
-
-  final String label;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2.5),
-      decoration: BoxDecoration(
-        color: const Color(0xFFE8EEFF),
-        borderRadius: BorderRadius.circular(6),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          const Icon(
-            Icons.check_rounded,
-            size: 11,
-            color: Color(0xFF0F4D2E),
-          ),
-          const SizedBox(width: 3),
-          ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 160),
-            child: Text(
-              label,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: openSans(
-                fontSize: 10.5,
-                fontWeight: FontWeight.w600,
-                color: const Color(0xFF145131),
-              ),
             ),
           ),
         ],

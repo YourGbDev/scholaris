@@ -40,19 +40,112 @@ class ProviderHomeScreen extends ConsumerWidget {
     return Scaffold(
       backgroundColor: kBackground,
       appBar: AppBar(
-        title: Text(
-          'Provider Console',
-          style: poppins(
-            fontSize: 20,
-            fontWeight: FontWeight.w700,
-            color: kPrimary,
-          ),
+        title: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: 32,
+              height: 32,
+              decoration: BoxDecoration(
+                color: kPrimary,
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: const Icon(
+                Icons.school_rounded,
+                color: Colors.white,
+                size: 18,
+              ),
+            ),
+            const SizedBox(width: 10),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      'Provider Console',
+                      style: poppins(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w700,
+                        color: kPrimary,
+                      ),
+                    ),
+                    const SizedBox(width: 6),
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 6,
+                        vertical: 2,
+                      ),
+                      decoration: BoxDecoration(
+                        color: kNavyTrust,
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Text(
+                        'PROVIDER',
+                        style: poppins(
+                          fontSize: 9,
+                          fontWeight: FontWeight.w700,
+                          color: Colors.white,
+                          letterSpacing: 0.5,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                Text(
+                  tabIndex == 0 ? 'Applications Console' : 'Scholarship Portfolios',
+                  style: openSans(
+                    fontSize: 11,
+                    color: Colors.black45,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ],
+            ),
+          ],
         ),
         centerTitle: false,
-        backgroundColor: kBackground,
+        backgroundColor: Colors.white,
         elevation: 0,
-        scrolledUnderElevation: 0,
+        scrolledUnderElevation: 1,
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(1),
+          child: Container(
+            color: Colors.black.withValues(alpha: 0.06),
+            height: 1,
+          ),
+        ),
         actions: [
+          IconButton(
+            icon: const Icon(Icons.notifications_outlined, color: Colors.black54),
+            tooltip: 'Notifications',
+            onPressed: () {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('No new notifications.')),
+              );
+            },
+          ),
+          Container(
+            width: 30,
+            height: 30,
+            margin: const EdgeInsets.symmetric(horizontal: 4),
+            decoration: BoxDecoration(
+              color: kPrimarySoft,
+              shape: BoxShape.circle,
+              border: Border.all(color: kPrimary.withValues(alpha: 0.2)),
+            ),
+            alignment: Alignment.center,
+            child: Text(
+              'DO',
+              style: poppins(
+                fontSize: 11,
+                fontWeight: FontWeight.w700,
+                color: kPrimary,
+              ),
+            ),
+          ),
           IconButton(
             icon: const Icon(Icons.logout_rounded, color: kError),
             tooltip: 'Sign out',
@@ -65,6 +158,7 @@ class ProviderHomeScreen extends ConsumerWidget {
               }
             },
           ),
+          const SizedBox(width: 4),
         ],
       ),
       body: SafeArea(
@@ -76,6 +170,9 @@ class ProviderHomeScreen extends ConsumerWidget {
       ),
       bottomNavigationBar: NavigationBar(
         selectedIndex: tabIndex,
+        backgroundColor: Colors.white,
+        elevation: 2,
+        indicatorColor: kPrimarySoft,
         onDestinationSelected: (i) =>
             ref.read(providerTabIndexProvider.notifier).selectTab(i),
         destinations: const [

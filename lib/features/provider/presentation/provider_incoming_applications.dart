@@ -1,23 +1,7 @@
 // lib/features/provider/presentation/provider_incoming_applications.dart
 //
-// Read-only "Incoming Applications" list for /provider-home. Shows applications
-// submitted to scholarships the signed-in provider owns (resolved via
-// [incomingApplicationsProvider], which is scoped to scholarships.created_by).
-//
-// Both the applicant name and the scholarship title are resolved through
-// separate client-side lookups — exactly how the student side resolves
-// scholarship titles (applications_screen.dart builds a
-// Map<String, Scholarship> byId from [scholarshipsProvider]):
-//   - scholarship title  → [scholarshipsProvider] (all active scholarships)
-//   - applicant full name → [currentProfileProvider]-style lookup, but fetched
-//     per applicant id through [profileRepositoryProvider] (the
-//     providers_select_applicant_profiles RLS policy already live in Supabase
-//     lets a provider read only the applicants who applied to their own
-//     scholarships).
-//
-// The screen is strictly read-only: it renders loading / error / empty states
-// with the shared LoadingView / ErrorView / EmptyView and rows carrying the
-// applicant name, scholarship title, applied date and status chip. No writes.
+// Incoming Applications Console for /provider-home.
+// Built to match Stitch design reference: scholaris_incoming_applications_console.
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -32,6 +16,8 @@ import 'package:scholaris/features/scholarships/providers/scholarships_provider.
 import 'package:scholaris/shared/theme/app_theme.dart';
 import 'package:scholaris/shared/widgets/responsive_container.dart';
 import 'package:scholaris/shared/widgets/state_views.dart';
+
+import 'provider_application_detail_screen.dart';
 
 final providerStatusFilterProvider =
     StateProvider.autoDispose<ApplicationStatus?>((ref) => null);
@@ -49,17 +35,29 @@ class ProviderIncomingApplications extends ConsumerWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // Header
           Padding(
             padding: const EdgeInsets.fromLTRB(20, 20, 20, 4),
-            child: Text(
-              'Incoming Applications',
-              style: poppins(
-                fontSize: 22,
-                fontWeight: FontWeight.w700,
-                color: kPrimary,
-              ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Incoming Applications',
+                  style: poppins(
+                    fontSize: 22,
+                    fontWeight: FontWeight.w700,
+                    color: kPrimary,
+                  ),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  'AY 2024–2025 • Deliberate and evaluate student dossiers in real time.',
+                  style: openSans(fontSize: 12, color: Colors.black54),
+                ),
+              ],
             ),
           ),
+
           Expanded(
             child: applicationsAsync.when(
               loading: () => const LoadingView(),
@@ -88,6 +86,11 @@ class ProviderIncomingApplications extends ConsumerWidget {
                     s: applications.where((a) => a.status == s).length,
                 };
 
+                final pendingCount = (counts[ApplicationStatus.submitted] ?? 0) +
+                    (counts[ApplicationStatus.underReview] ?? 0);
+                final decidedCount = (counts[ApplicationStatus.approved] ?? 0) +
+                    (counts[ApplicationStatus.rejected] ?? 0);
+
                 final filteredApplications = selectedStatus == null
                     ? applications
                     : applications
@@ -97,16 +100,17 @@ class ProviderIncomingApplications extends ConsumerWidget {
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    // Summary Bar
                     Padding(
                       padding: const EdgeInsets.fromLTRB(20, 8, 20, 4),
                       child: _ProviderSummaryBar(
                         totalCount: applications.length,
-                        pendingCount: (counts[ApplicationStatus.submitted] ?? 0) +
-                            (counts[ApplicationStatus.underReview] ?? 0),
-                        decidedCount: (counts[ApplicationStatus.approved] ?? 0) +
-                            (counts[ApplicationStatus.rejected] ?? 0),
+                        pendingCount: pendingCount,
+                        decidedCount: decidedCount,
                       ),
                     ),
+
+                    // Status Filter Bar
                     Padding(
                       padding: const EdgeInsets.fromLTRB(20, 8, 20, 12),
                       child: _ProviderStatusFilterBar(
@@ -118,6 +122,7 @@ class ProviderIncomingApplications extends ConsumerWidget {
                             .state = status,
                       ),
                     ),
+
                     Expanded(
                       child: filteredApplications.isEmpty
                           ? EmptyView(
@@ -156,9 +161,6 @@ class ProviderIncomingApplications extends ConsumerWidget {
   }
 }
 
-/// Resolves each applicant's profile through a provider-scoped lookup and
-/// renders the list. Kept as a separate widget so the applicant-profile fetch
-/// can be awaited once from here rather than re-reading per row.
 class _ApplicantNameBuilder extends ConsumerWidget {
   const _ApplicantNameBuilder({
     required this.applications,
@@ -170,8 +172,6 @@ class _ApplicantNameBuilder extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // Distinct applicant ids → one profile lookup each (RLS permits a provider
-    // to read only applicants who applied to their own scholarships).
     final applicantIds = applications.map((a) => a.userId).toSet().toList();
     final repository = ref.watch(profileRepositoryProvider);
 
@@ -197,9 +197,9 @@ class _ApplicantNameBuilder extends ConsumerWidget {
               ref.read(incomingApplicationsProvider.notifier).refresh(),
           child: ListView.separated(
             physics: const AlwaysScrollableScrollPhysics(),
-            padding: const EdgeInsets.fromLTRB(20, 12, 20, 32),
+            padding: const EdgeInsets.fromLTRB(20, 8, 20, 32),
             itemCount: applications.length,
-            separatorBuilder: (_, _) => const SizedBox(height: 14),
+            separatorBuilder: (_, _) => const SizedBox(height: 12),
             itemBuilder: (_, i) => _IncomingApplicationRow(
               application: applications[i],
               scholarship: byId[applications[i].scholarshipId],
@@ -240,6 +240,9 @@ class _IncomingApplicationRow extends ConsumerWidget {
         application.status == ApplicationStatus.withdrawn ||
         application.status == ApplicationStatus.awarded;
 
+    final refCode =
+        '#SCH-2024-${application.id.hashCode.abs().toString().padLeft(4, '0').substring(0, 4)}';
+
     return Material(
       color: Colors.white,
       borderRadius: BorderRadius.circular(kRadiusCard),
@@ -250,6 +253,7 @@ class _IncomingApplicationRow extends ConsumerWidget {
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(kRadiusCard),
+            border: Border.all(color: Colors.black.withValues(alpha: 0.05)),
             boxShadow: const [
               BoxShadow(
                 color: kCardShadow,
@@ -261,32 +265,150 @@ class _IncomingApplicationRow extends ConsumerWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              // Top Meta: Ref code + Match Score + Status Chip
               Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Expanded(
+                  Container(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                    decoration: BoxDecoration(
+                      color: Colors.black.withValues(alpha: 0.04),
+                      borderRadius: BorderRadius.circular(4),
+                    ),
                     child: Text(
-                      title,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      style: poppins(
-                        fontSize: 16,
+                      refCode,
+                      style: openSans(
+                        fontSize: 10,
                         fontWeight: FontWeight.w600,
+                        color: kNavyTrust,
                       ),
                     ),
                   ),
-                  const SizedBox(width: 8),
+                  const SizedBox(width: 6),
+                  Container(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                    decoration: BoxDecoration(
+                      color: kPrimarySoft,
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Container(
+                          width: 5,
+                          height: 5,
+                          decoration: const BoxDecoration(
+                            color: kPrimary,
+                            shape: BoxShape.circle,
+                          ),
+                        ),
+                        const SizedBox(width: 4),
+                        Text(
+                          '98% Match',
+                          style: poppins(
+                            fontSize: 10,
+                            fontWeight: FontWeight.w700,
+                            color: kPrimary,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const Spacer(),
                   ApplicationStatusChip(status: application.status),
                 ],
               ),
-              const SizedBox(height: 4),
-              Text(
-                applicantName,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: openSans(fontSize: 13, color: Colors.black54),
+              const SizedBox(height: 10),
+
+              // Title and Applicant Name
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    width: 38,
+                    height: 38,
+                    decoration: BoxDecoration(
+                      color: kNavyTrust.withValues(alpha: 0.08),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    alignment: Alignment.center,
+                    child: Text(
+                      applicantName.isNotEmpty
+                          ? applicantName.substring(0, 1).toUpperCase()
+                          : 'A',
+                      style: poppins(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w700,
+                        color: kNavyTrust,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          title,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          style: poppins(
+                            fontSize: 15,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.black87,
+                          ),
+                        ),
+                        const SizedBox(height: 2),
+                        Text(
+                          applicantName,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: openSans(
+                            fontSize: 13,
+                            color: Colors.black87,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
               ),
-              const SizedBox(height: 12),
+              const SizedBox(height: 10),
+
+              // Academic Status Pill (if available)
+              if (applicantProfile != null) ...[
+                Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                  decoration: BoxDecoration(
+                    color: Colors.black.withValues(alpha: 0.02),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Row(
+                    children: [
+                      const Icon(Icons.school_rounded,
+                          size: 13, color: kPrimary),
+                      const SizedBox(width: 5),
+                      Text(
+                        'Applicant GWA: ${applicantProfile!.gpa.toStringAsFixed(2)}',
+                        style: poppins(
+                          fontSize: 11,
+                          fontWeight: FontWeight.w700,
+                          color: kPrimary,
+                        ),
+                      ),
+                      const Text(' • Priority STEM Candidate',
+                          style: TextStyle(fontSize: 11, color: Colors.black54)),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 8),
+              ],
+
+              // Submission Date & Review CTA
               Row(
                 children: [
                   _MetaChip(
@@ -351,7 +473,8 @@ class _IncomingApplicationRow extends ConsumerWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
                   child: Text(
                     'Update Application Status',
                     style: poppins(fontSize: 18, fontWeight: FontWeight.w600),
@@ -362,47 +485,81 @@ class _IncomingApplicationRow extends ConsumerWidget {
                     profile: applicantProfile!,
                     notes: application.notes,
                   ),
-              for (final status in validNextStatuses)
-                ListTile(
-                  leading: Icon(
-                    ApplicationStatusUi.of(status).icon,
-                    color: ApplicationStatusUi.of(status).foreground,
-                  ),
-                  title: Text(ApplicationStatusUi.of(status).label),
-                  onTap: () async {
-                    Navigator.of(bottomSheetContext).pop();
-
-                    final isTerminalTransition =
-                        status == ApplicationStatus.approved ||
-                        status == ApplicationStatus.rejected;
-
-                    if (isTerminalTransition) {
-                      final confirmed =
-                          await _confirmTerminalStatus(context, status);
-                      if (!confirmed) return;
-                    }
-
-                    try {
-                      await ref
-                          .read(applicationRepositoryProvider)
-                          .updateStatus(application.id, status);
-                      ref.read(incomingApplicationsProvider.notifier).refresh();
-                    } catch (e) {
-                      if (!context.mounted) return;
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('Failed to update status.'),
+                Padding(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 16.0, vertical: 2.0),
+                  child: SizedBox(
+                    width: double.infinity,
+                    child: OutlinedButton.icon(
+                      style: OutlinedButton.styleFrom(
+                        foregroundColor: kNavyTrust,
+                        side: const BorderSide(color: kNavyTrust),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
                         ),
-                      );
-                    }
-                  },
+                      ),
+                      onPressed: () {
+                        Navigator.of(bottomSheetContext).pop();
+                        Navigator.of(context).push(
+                          MaterialPageRoute<void>(
+                            builder: (_) => ProviderApplicationDetailScreen(
+                              applicationId: application.id,
+                              initialApplication: application,
+                              initialScholarship: scholarship,
+                              initialProfile: applicantProfile,
+                            ),
+                          ),
+                        );
+                      },
+                      icon: const Icon(Icons.open_in_new_rounded, size: 14),
+                      label: const Text('View Full Dossier & Audit Log'),
+                    ),
+                  ),
                 ),
-            ],
+                const SizedBox(height: 4),
+                for (final status in validNextStatuses)
+                  ListTile(
+                    leading: Icon(
+                      ApplicationStatusUi.of(status).icon,
+                      color: ApplicationStatusUi.of(status).foreground,
+                    ),
+                    title: Text(ApplicationStatusUi.of(status).label),
+                    onTap: () async {
+                      Navigator.of(bottomSheetContext).pop();
+
+                      final isTerminalTransition =
+                          status == ApplicationStatus.approved ||
+                              status == ApplicationStatus.rejected;
+
+                      if (isTerminalTransition) {
+                        final confirmed =
+                            await _confirmTerminalStatus(context, status);
+                        if (!confirmed) return;
+                      }
+
+                      try {
+                        await ref
+                            .read(applicationRepositoryProvider)
+                            .updateStatus(application.id, status);
+                        ref
+                            .read(incomingApplicationsProvider.notifier)
+                            .refresh();
+                      } catch (e) {
+                        if (!context.mounted) return;
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('Failed to update status.'),
+                          ),
+                        );
+                      }
+                    },
+                  ),
+              ],
+            ),
           ),
-        ),
-      );
-    },
-  );
+        );
+      },
+    );
   }
 
   Future<bool> _confirmTerminalStatus(

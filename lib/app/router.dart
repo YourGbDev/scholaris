@@ -27,6 +27,7 @@ import 'package:scholaris/features/auth/presentation/forgot_password_screen.dart
 import 'package:scholaris/features/auth/presentation/login_screen.dart';
 import 'package:scholaris/features/auth/presentation/reset_password_screen.dart';
 import 'package:scholaris/features/auth/presentation/signup_screen.dart';
+import 'package:scholaris/features/provider/presentation/provider_application_detail_screen.dart';
 import 'package:scholaris/features/provider/presentation/provider_home_screen.dart';
 import 'package:scholaris/features/provider/presentation/provider_review_screen.dart';
 import 'package:scholaris/features/provider/presentation/provider_signup_screen.dart';
@@ -159,6 +160,15 @@ final routerProvider = Provider<GoRouter>((ref) {
         path: '/provider-home',
         name: 'provider-home',
         builder: (context, state) => const ProviderHomeScreen(),
+      ),
+      GoRoute(
+        path: '/provider-application/:id',
+        name: 'provider-application-detail',
+        builder: (context, state) {
+          return ProviderApplicationDetailScreen(
+            applicationId: state.pathParameters['id']!,
+          );
+        },
       ),
       // Persistent landing route for signed-in users with role='admin'.
       GoRoute(

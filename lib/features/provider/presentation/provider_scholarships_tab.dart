@@ -1,7 +1,7 @@
 // lib/features/provider/presentation/provider_scholarships_tab.dart
 //
 // "My Scholarships" management tab for the Provider Console.
-// Allows scholarship providers to view, filter, create, edit, toggle, and delete listings.
+// Built to match Stitch design reference: scholaris_provider_dashboard.
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -52,7 +52,8 @@ class _ProviderScholarshipsTabState
     );
   }
 
-  Future<void> _confirmDelete(Scholarship scholarship, int applicantCount) async {
+  Future<void> _confirmDelete(
+      Scholarship scholarship, int applicantCount) async {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
@@ -143,58 +144,116 @@ class _ProviderScholarshipsTabState
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Header & Create button
+          // Organization Overview Header & Create Program button
           Padding(
-            padding: const EdgeInsets.fromLTRB(20, 20, 20, 12),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
+            padding: const EdgeInsets.fromLTRB(20, 16, 20, 10),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'My Scholarships',
-                        style: poppins(
-                          fontSize: 22,
-                          fontWeight: FontWeight.w700,
-                          color: kPrimary,
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Row(
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 8, vertical: 3),
+                          decoration: BoxDecoration(
+                            color: kPrimarySoft,
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              const Icon(Icons.verified_rounded,
+                                  size: 13, color: kPrimary),
+                              const SizedBox(width: 4),
+                              Text(
+                                'Accredited Govt Agency',
+                                style: poppins(
+                                  fontSize: 10,
+                                  fontWeight: FontWeight.w700,
+                                  color: kPrimary,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(width: 6),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 8, vertical: 3),
+                          decoration: BoxDecoration(
+                            color: Colors.black.withValues(alpha: 0.04),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Text(
+                            'DOST-SEI Portal',
+                            style: openSans(
+                              fontSize: 10,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.black54,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 8),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'My Scholarships',
+                            style: poppins(
+                              fontSize: 22,
+                              fontWeight: FontWeight.w700,
+                              color: kPrimary,
+                            ),
+                          ),
+                          const SizedBox(height: 1),
+                          Text(
+                            'AY 2024–2025 Cycle • 1st Semester Intake (PHT)',
+                            style:
+                                openSans(fontSize: 11, color: Colors.black54),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    ElevatedButton.icon(
+                      onPressed: _openCreateScreen,
+                      icon: const Icon(Icons.add_rounded, size: 18),
+                      label: Text(
+                        'New Program',
+                        style:
+                            openSans(fontSize: 13, fontWeight: FontWeight.w600),
+                      ),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: kPrimary,
+                        foregroundColor: Colors.white,
+                        elevation: 0,
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 14,
+                          vertical: 10,
+                        ),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
                         ),
                       ),
-                      const SizedBox(height: 2),
-                      Text(
-                        'Manage your active grants, deadlines, and eligibility criteria.',
-                        style: openSans(fontSize: 12, color: Colors.black54),
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(width: 12),
-                ElevatedButton.icon(
-                  onPressed: _openCreateScreen,
-                  icon: const Icon(Icons.add_rounded, size: 18),
-                  label: Text(
-                    'New Program',
-                    style: openSans(fontSize: 13, fontWeight: FontWeight.w600),
-                  ),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: kPrimary,
-                    foregroundColor: Colors.white,
-                    elevation: 0,
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 14,
-                      vertical: 10,
                     ),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                  ),
+                  ],
                 ),
               ],
             ),
           ),
 
-          // Overview Metrics Bar (when data is loaded)
+          // Overview Metrics Bento Grid (when data loaded)
           scholarshipsAsync.maybeWhen(
             data: (all) {
               if (all.isEmpty) return const SizedBox.shrink();
@@ -202,7 +261,7 @@ class _ProviderScholarshipsTabState
               final closedCount = all.length - activeCount;
 
               return Padding(
-                padding: const EdgeInsets.fromLTRB(20, 0, 20, 12),
+                padding: const EdgeInsets.fromLTRB(20, 0, 20, 8),
                 child: Row(
                   children: [
                     _MetricPill(
@@ -242,14 +301,14 @@ class _ProviderScholarshipsTabState
               children: [
                 Expanded(
                   child: SizedBox(
-                    height: 40,
+                    height: 38,
                     child: TextField(
                       controller: _searchController,
                       style: openSans(fontSize: 13),
                       decoration: InputDecoration(
                         hintText: 'Search programs...',
                         hintStyle:
-                            openSans(fontSize: 13, color: Colors.black38),
+                            openSans(fontSize: 12, color: Colors.black38),
                         prefixIcon: const Icon(
                           Icons.search_rounded,
                           size: 18,
@@ -271,7 +330,7 @@ class _ProviderScholarshipsTabState
                               )
                             : null,
                         contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 12,
+                          horizontal: 10,
                           vertical: 0,
                         ),
                         filled: true,
@@ -296,7 +355,7 @@ class _ProviderScholarshipsTabState
                     ),
                   ),
                 ),
-                const SizedBox(width: 10),
+                const SizedBox(width: 8),
                 _FilterChip(
                   label: 'All',
                   selected: statusFilter == 'all',
@@ -324,7 +383,7 @@ class _ProviderScholarshipsTabState
             ),
           ),
 
-          const SizedBox(height: 8),
+          const SizedBox(height: 6),
 
           // Scholarships List
           Expanded(
@@ -337,7 +396,8 @@ class _ProviderScholarshipsTabState
               ),
               data: (scholarships) {
                 if (scholarships.isEmpty) {
-                  final query = ref.watch(providerScholarshipSearchQueryProvider);
+                  final query =
+                      ref.watch(providerScholarshipSearchQueryProvider);
                   if (query.isNotEmpty || statusFilter != 'all') {
                     return const EmptyView(
                       icon: Icons.search_off_rounded,
@@ -353,7 +413,7 @@ class _ProviderScholarshipsTabState
                         children: [
                           Container(
                             padding: const EdgeInsets.all(16),
-                            decoration: BoxDecoration(
+                            decoration: const BoxDecoration(
                               color: kPrimarySoft,
                               shape: BoxShape.circle,
                             ),
@@ -376,7 +436,8 @@ class _ProviderScholarshipsTabState
                           Text(
                             'Publish your organization\'s scholarships so eligible Filipino students can discover and apply for them.',
                             textAlign: TextAlign.center,
-                            style: openSans(fontSize: 13, color: Colors.black54),
+                            style: openSans(
+                                fontSize: 13, color: Colors.black54),
                           ),
                           const SizedBox(height: 16),
                           ElevatedButton.icon(
@@ -402,7 +463,7 @@ class _ProviderScholarshipsTabState
                 }
 
                 return ListView.separated(
-                  padding: const EdgeInsets.fromLTRB(20, 8, 20, 24),
+                  padding: const EdgeInsets.fromLTRB(20, 6, 20, 24),
                   itemCount: scholarships.length,
                   separatorBuilder: (_, _) => const SizedBox(height: 12),
                   itemBuilder: (context, index) {
@@ -537,19 +598,19 @@ class _ScholarshipCard extends StatelessWidget {
     final s = scholarship;
     final isActive = s.isActive;
     final deadlineStr = deadlineLabel(s.deadline);
-    final isPassed = isDeadlinePassed(s.deadline);
 
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(14),
         border: Border.all(
-          color: isActive ? Colors.black12 : Colors.black.withValues(alpha: 0.06),
+          color:
+              isActive ? Colors.black12 : Colors.black.withValues(alpha: 0.06),
         ),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.03),
-            blurRadius: 6,
+            blurRadius: 8,
             offset: const Offset(0, 2),
           ),
         ],
@@ -579,7 +640,8 @@ class _ScholarshipCard extends StatelessWidget {
                         const SizedBox(height: 2),
                         Text(
                           s.provider!,
-                          style: openSans(fontSize: 12, color: Colors.black54),
+                          style:
+                              openSans(fontSize: 12, color: Colors.black54),
                         ),
                       ],
                     ],
@@ -609,133 +671,136 @@ class _ScholarshipCard extends StatelessWidget {
               ],
             ),
 
-            if (s.description != null && s.description!.isNotEmpty) ...[
-              const SizedBox(height: 8),
-              Text(
-                s.description!,
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-                style: openSans(fontSize: 13, color: Colors.black87),
-              ),
-            ],
-
-            const SizedBox(height: 12),
-            const Divider(height: 1, color: Colors.black12),
             const SizedBox(height: 10),
 
-            // Metadata Chips: Deadline, GPA, Slots, Applicants
-            Wrap(
-              spacing: 8,
-              runSpacing: 6,
-              children: [
-                // Deadline chip
-                _InfoChip(
-                  icon: Icons.event_rounded,
-                  label: deadlineStr,
-                  color: isPassed
-                      ? kError
-                      : (isClosingSoon(s.deadline.difference(DateTime.now()).inDays)
-                          ? kAccent
-                          : kPrimary),
-                ),
-                // Min GPA chip
-                _InfoChip(
-                  icon: Icons.grade_rounded,
-                  label: 'Min GPA ${s.minGpa.toStringAsFixed(1)}',
-                  color: Colors.black87,
-                ),
-                // Slots chip
-                _InfoChip(
-                  icon: Icons.group_rounded,
-                  label: s.slots != null ? '${s.slots} slots' : 'Open slots',
-                  color: Colors.black87,
-                ),
-                // Applicants chip
-                _InfoChip(
-                  icon: Icons.send_rounded,
-                  label: '$applicantCount applicant${applicantCount == 1 ? '' : 's'}',
-                  color: kNavyTrust,
-                ),
-              ],
+            // Statistics Strip
+            Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: Colors.black.withValues(alpha: 0.02),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Row(
+                      children: [
+                        const Icon(Icons.group_rounded,
+                            size: 16, color: kPrimary),
+                        const SizedBox(width: 6),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Candidates',
+                                style: openSans(
+                                    fontSize: 10, color: Colors.black45),
+                              ),
+                              Text(
+                                '$applicantCount Total',
+                                style: poppins(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w700,
+                                  color: Colors.black87,
+                                ),
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Row(
+                      children: [
+                        const Icon(Icons.event_available_rounded,
+                            size: 16, color: Color(0xFFD97706)),
+                        const SizedBox(width: 6),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Deadline',
+                                style: openSans(
+                                    fontSize: 10, color: Colors.black45),
+                              ),
+                              Text(
+                                deadlineStr,
+                                style: poppins(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w700,
+                                  color: Colors.black87,
+                                ),
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
             ),
 
             const SizedBox(height: 12),
 
-            // Bottom Actions: Toggle Active Switch, Edit, Delete
+            // Action bar
             Row(
               children: [
-                Text(
-                  'Accepting Applications',
-                  style: openSans(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w500,
-                    color: Colors.black54,
+                OutlinedButton.icon(
+                  onPressed: onEdit,
+                  icon: const Icon(Icons.edit_outlined, size: 14),
+                  label: const Text('Edit'),
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: kPrimary,
+                    side: BorderSide(color: kPrimary.withValues(alpha: 0.3)),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 10, vertical: 6),
+                    visualDensity: VisualDensity.compact,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(6),
+                    ),
                   ),
                 ),
                 const SizedBox(width: 8),
-                Transform.scale(
-                  scale: 0.8,
-                  child: Switch(
-                    value: isActive,
-                    activeThumbColor: kPrimary,
-                    onChanged: onToggleActive,
-                  ),
-                ),
-                const Spacer(),
                 IconButton(
-                  icon: const Icon(Icons.edit_outlined, size: 20),
-                  tooltip: 'Edit Scholarship',
-                  color: kPrimary,
-                  onPressed: onEdit,
-                ),
-                IconButton(
-                  icon: const Icon(Icons.delete_outline_rounded, size: 20),
+                  icon: const Icon(Icons.delete_outline_rounded, size: 18),
                   tooltip: 'Delete Scholarship',
                   color: kError,
                   onPressed: onDelete,
+                  visualDensity: VisualDensity.compact,
+                ),
+                const Spacer(),
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      isActive ? 'Active' : 'Closed',
+                      style: openSans(
+                        fontSize: 11,
+                        color: isActive ? kPrimary : Colors.black45,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    const SizedBox(width: 4),
+                    Switch.adaptive(
+                      value: isActive,
+                      activeTrackColor: kPrimary,
+                      onChanged: onToggleActive,
+                      materialTapTargetSize:
+                          MaterialTapTargetSize.shrinkWrap,
+                    ),
+                  ],
                 ),
               ],
             ),
           ],
         ),
-      ),
-    );
-  }
-}
-
-class _InfoChip extends StatelessWidget {
-  const _InfoChip({
-    required this.icon,
-    required this.label,
-    required this.color,
-  });
-
-  final IconData icon;
-  final String label;
-  final Color color;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-      decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.08),
-        borderRadius: BorderRadius.circular(6),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(icon, size: 13, color: color),
-          const SizedBox(width: 4),
-          Text(
-            label,
-            style: openSans(
-              fontSize: 11,
-              fontWeight: FontWeight.w600,
-              color: color,
-            ),
-          ),
-        ],
       ),
     );
   }

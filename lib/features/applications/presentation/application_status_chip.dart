@@ -90,7 +90,7 @@ class ApplicationStatusChip extends StatelessWidget {
     return Semantics(
       label: 'Status: ${ui.label}',
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4.5),
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3.5),
         decoration: BoxDecoration(
           color: ui.background,
           borderRadius: BorderRadius.circular(20),
@@ -100,24 +100,24 @@ class ApplicationStatusChip extends StatelessWidget {
           children: [
             if (status == ApplicationStatus.underReview) ...[
               Container(
-                width: 6.5,
-                height: 6.5,
+                width: 6,
+                height: 6,
                 decoration: BoxDecoration(
                   color: ui.foreground,
                   shape: BoxShape.circle,
                 ),
               ),
-              const SizedBox(width: 6),
+              const SizedBox(width: 4),
             ] else ...[
-              Icon(ui.icon, size: 14, color: ui.foreground),
-              const SizedBox(width: 5),
+              Icon(ui.icon, size: 13, color: ui.foreground),
+              const SizedBox(width: 4),
             ],
             Text(
               ui.label,
               style: GoogleFonts.outfit(
-                fontSize: 11.5,
+                fontSize: 11,
                 fontWeight: FontWeight.w700,
-                letterSpacing: 0.2,
+                letterSpacing: 0.1,
                 color: ui.foreground,
               ),
             ),

@@ -141,8 +141,8 @@ void main() {
       ),
     );
 
-    expect(find.text('Apply now'), findsOneWidget);
-    await tester.tap(find.text('Apply now'));
+    expect(find.text('Start Application'), findsOneWidget);
+    await tester.tap(find.text('Start Application'));
     await tester.pump(const Duration(milliseconds: 500));
 
     // Day 15: the write only happens after the pre-apply confirmation.
@@ -157,7 +157,7 @@ void main() {
     // ---- Step 2: Home → Applications shows pending -----------------------
     await _pump(tester, h.container, const HomeScreen());
 
-    await tester.tap(find.text('Applications'));
+    await tester.tap(find.text('Tracker'));
     await tester.pump(const Duration(milliseconds: 500));
 
     expect(find.text('My Applications'), findsOneWidget);
@@ -219,7 +219,7 @@ void main() {
     await tester.pump(const Duration(milliseconds: 500));
 
     // ---- Step 6: Discover/Saved applied-state updates --------------------
-    await tester.tap(find.text('Discover'));
+    await tester.tap(find.text('Dashboard'));
     await tester.pump(const Duration(milliseconds: 500));
 
     // The withdrawn application no longer reads as "Applied" on the card.
@@ -254,6 +254,6 @@ void main() {
     // The duplicate guard is unchanged: the preserved (withdrawn) record
     // still shows the applied banner, not a re-apply affordance.
     expect(find.text('Application submitted'), findsOneWidget);
-    expect(find.text('Apply now'), findsNothing);
+    expect(find.text('Start Application'), findsNothing);
   });
 }

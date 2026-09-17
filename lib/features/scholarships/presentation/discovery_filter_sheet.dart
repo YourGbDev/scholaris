@@ -63,32 +63,32 @@ class _DiscoveryFilterSheetState extends ConsumerState<DiscoveryFilterSheet> {
               children: [
                 Text(
                   'Filters',
-                  style: poppins(
+                  style: outfit(
                     fontSize: 18,
-                    fontWeight: FontWeight.w700,
-                    color: kTextPrimary,
+                    fontWeight: FontWeight.bold,
+                    color: const Color(0xFF161C27),
                   ),
                 ),
                 const Spacer(),
                 TextButton(
                   onPressed: notifier.reset,
                   style: TextButton.styleFrom(
-                    foregroundColor: kPrimary,
+                    foregroundColor: const Color(0xFF0F4D2E),
                     padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                   ),
                   child: Text(
                     'Reset',
-                    style: poppins(
+                    style: outfit(
                       fontSize: 13,
                       fontWeight: FontWeight.w600,
-                      color: kPrimary,
+                      color: const Color(0xFF0F4D2E),
                     ),
                   ),
                 ),
               ],
             ),
           ),
-          const Divider(height: 1, color: kBorderLight),
+          const Divider(height: 1, color: Color(0xFFE2E8E5)),
           Expanded(
             child: ListView(
               padding: const EdgeInsets.fromLTRB(20, 16, 20, 24),
@@ -99,7 +99,7 @@ class _DiscoveryFilterSheetState extends ConsumerState<DiscoveryFilterSheet> {
                   style: ButtonStyle(
                     backgroundColor: WidgetStateProperty.resolveWith((states) {
                       if (states.contains(WidgetState.selected)) {
-                        return kPrimary;
+                        return const Color(0xFF0F4D2E);
                       }
                       return Colors.white;
                     }),
@@ -107,20 +107,26 @@ class _DiscoveryFilterSheetState extends ConsumerState<DiscoveryFilterSheet> {
                       if (states.contains(WidgetState.selected)) {
                         return Colors.white;
                       }
-                      return kTextPrimary;
+                      return const Color(0xFF161C27);
                     }),
                     side: const WidgetStatePropertyAll(
-                      BorderSide(color: kBorderLight),
+                      BorderSide(color: Color(0xFFE2E8E5)),
                     ),
                   ),
-                  segments: const [
+                  segments: [
                     ButtonSegment(
                       value: DiscoverySort.defaultSort,
-                      label: Text('Default'),
+                      label: Text(
+                        'Default',
+                        style: outfit(fontSize: 13, fontWeight: FontWeight.w600),
+                      ),
                     ),
                     ButtonSegment(
                       value: DiscoverySort.highestAmount,
-                      label: Text('Highest amount'),
+                      label: Text(
+                        'Highest amount',
+                        style: outfit(fontSize: 13, fontWeight: FontWeight.w600),
+                      ),
                     ),
                   ],
                   selected: {state.sort},
@@ -139,17 +145,17 @@ class _DiscoveryFilterSheetState extends ConsumerState<DiscoveryFilterSheet> {
                     return ChoiceChip(
                       label: Text(
                         incomeLabel(bracket == 'any' ? null : bracket),
-                        style: openSans(
-                          fontSize: 13,
-                          fontWeight: selected ? FontWeight.w600 : FontWeight.w500,
-                          color: selected ? Colors.white : kTextPrimary,
+                        style: outfit(
+                          fontSize: 12.5,
+                          fontWeight: selected ? FontWeight.bold : FontWeight.w500,
+                          color: selected ? Colors.white : const Color(0xFF161C27),
                         ),
                       ),
                       selected: selected,
-                      selectedColor: kPrimary,
+                      selectedColor: const Color(0xFF0F4D2E),
                       backgroundColor: const Color(0xFFF1F3FF),
                       side: BorderSide(
-                        color: selected ? kPrimary : kBorderLight,
+                        color: selected ? const Color(0xFF0F4D2E) : const Color(0xFFDDE2F3),
                       ),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(20),
@@ -166,15 +172,15 @@ class _DiscoveryFilterSheetState extends ConsumerState<DiscoveryFilterSheet> {
                   contentPadding: EdgeInsets.zero,
                   title: Text(
                     'Closing soon',
-                    style: poppins(fontSize: 14, fontWeight: FontWeight.w600),
+                    style: outfit(fontSize: 14, fontWeight: FontWeight.bold, color: const Color(0xFF161C27)),
                   ),
                   subtitle: Text(
                     'Within 14 days of the deadline',
-                    style: openSans(fontSize: 12, color: kTextSecondary),
+                    style: openSans(fontSize: 12, color: const Color(0xFF404942)),
                   ),
                   value: state.closingSoonOnly,
-                  activeThumbColor: kPrimary,
-                  activeTrackColor: kPrimary.withValues(alpha: 0.35),
+                  activeThumbColor: const Color(0xFF0F4D2E),
+                  activeTrackColor: const Color(0xFFB3F1C6),
                   onChanged: notifier.setClosingSoonOnly,
                 ),
                 const SizedBox(height: 24),
@@ -188,17 +194,17 @@ class _DiscoveryFilterSheetState extends ConsumerState<DiscoveryFilterSheet> {
                     return FilterChip(
                       label: Text(
                         region,
-                        style: openSans(
+                        style: outfit(
                           fontSize: 12,
-                          fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
-                          color: isSelected ? Colors.white : kTextPrimary,
+                          fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
+                          color: isSelected ? Colors.white : const Color(0xFF161C27),
                         ),
                       ),
                       selected: isSelected,
-                      selectedColor: kPrimary,
+                      selectedColor: const Color(0xFF0F4D2E),
                       backgroundColor: const Color(0xFFF1F3FF),
                       side: BorderSide(
-                        color: isSelected ? kPrimary : kBorderLight,
+                        color: isSelected ? const Color(0xFF0F4D2E) : const Color(0xFFDDE2F3),
                       ),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(20),
@@ -219,7 +225,7 @@ class _DiscoveryFilterSheetState extends ConsumerState<DiscoveryFilterSheet> {
               child: ElevatedButton(
                 onPressed: () => Navigator.of(context).pop(),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: kPrimary,
+                  backgroundColor: const Color(0xFF0F4D2E), // primary-container
                   foregroundColor: Colors.white,
                   elevation: 0,
                   shape: RoundedRectangleBorder(
@@ -228,9 +234,9 @@ class _DiscoveryFilterSheetState extends ConsumerState<DiscoveryFilterSheet> {
                 ),
                 child: Text(
                   'Done',
-                  style: poppins(
-                    fontSize: 15,
-                    fontWeight: FontWeight.w600,
+                  style: outfit(
+                    fontSize: 14.5,
+                    fontWeight: FontWeight.bold,
                     color: Colors.white,
                   ),
                 ),
@@ -249,16 +255,16 @@ class _DiscoveryFilterSheetState extends ConsumerState<DiscoveryFilterSheet> {
             height: 13,
             margin: const EdgeInsets.only(right: 7),
             decoration: BoxDecoration(
-              color: kPrimary,
+              color: const Color(0xFF0F4D2E),
               borderRadius: BorderRadius.circular(2),
             ),
           ),
           Text(
             title,
-            style: poppins(
+            style: outfit(
               fontSize: 14,
-              fontWeight: FontWeight.w700,
-              color: kTextPrimary,
+              fontWeight: FontWeight.bold,
+              color: const Color(0xFF161C27),
             ),
           ),
         ],

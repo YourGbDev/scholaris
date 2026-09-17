@@ -167,8 +167,8 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      // Tap Apply now
-      await tester.tap(find.text('Apply now'));
+      // Tap Start Application
+      await tester.tap(find.text('Start Application'));
       await tester.pumpAndSettle();
 
       expect(find.text('Apply to this scholarship?'), findsOneWidget);
@@ -202,7 +202,7 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      await tester.tap(find.text('Apply now'));
+      await tester.tap(find.text('Start Application'));
       await tester.pumpAndSettle();
 
       // Tap close button in modal header
@@ -252,6 +252,8 @@ void main() {
       expect(continueBtn, findsOneWidget);
 
       // Tap Continue Application -> opens review dialog
+      await tester.ensureVisible(continueBtn);
+      await tester.pumpAndSettle();
       await tester.tap(continueBtn);
       await tester.pumpAndSettle();
 

@@ -179,7 +179,7 @@ void main() {
 
       final button = tester.widget<ElevatedButton>(find.byType(ElevatedButton));
       expect(button.onPressed, isNotNull);
-      expect(find.text('Apply now'), findsOneWidget);
+      expect(find.text('Start Application'), findsOneWidget);
       expect(find.text('Application submitted'), findsNothing);
     });
 
@@ -198,7 +198,7 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.text('Application submitted'), findsOneWidget);
-      expect(find.text('Apply now'), findsNothing);
+      expect(find.text('Start Application'), findsNothing);
     });
   });
 
@@ -212,7 +212,7 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      await tester.tap(find.text('Apply now'));
+      await tester.tap(find.text('Start Application'));
       await tester.pumpAndSettle();
 
       expect(find.text('Apply to this scholarship?'), findsOneWidget);
@@ -229,13 +229,13 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      await tester.tap(find.text('Apply now'));
+      await tester.tap(find.text('Start Application'));
       await tester.pumpAndSettle();
       await tester.tap(find.byKey(const ValueKey('apply-cancel')));
       await tester.pumpAndSettle();
 
       expect(find.text('Apply to this scholarship?'), findsNothing);
-      expect(find.text('Apply now'), findsOneWidget);
+      expect(find.text('Start Application'), findsOneWidget);
       expect(find.text('Application submitted'), findsNothing);
       expect(await applications.fetchApplications('user-a'), isEmpty);
     });
@@ -249,14 +249,14 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      await tester.tap(find.text('Apply now'));
+      await tester.tap(find.text('Start Application'));
       await tester.pumpAndSettle();
       await tester.tap(find.byKey(const ValueKey('apply-confirm')));
       await tester.pumpAndSettle();
 
       expect(find.text('Application submitted!'), findsOneWidget);
       expect(find.text('Application submitted'), findsOneWidget);
-      expect(find.text('Apply now'), findsNothing);
+      expect(find.text('Start Application'), findsNothing);
 
       final rows = await applications.fetchApplications('user-a');
       expect(rows, hasLength(1));
@@ -275,7 +275,7 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      await tester.tap(find.text('Apply now'));
+      await tester.tap(find.text('Start Application'));
       await tester.pumpAndSettle();
       await tester.tap(find.byKey(const ValueKey('apply-confirm')));
       await tester.pump();
@@ -303,7 +303,7 @@ void main() {
       await tester.pumpAndSettle();
 
       // No Apply affordance at all — the closed state replaces it.
-      expect(find.text('Apply now'), findsNothing);
+      expect(find.text('Start Application'), findsNothing);
       expect(find.text('Applications closed'), findsOneWidget);
       // Never labelled "Closing soon" (regression: Closing soon — Closed).
       expect(find.textContaining('Closing soon'), findsNothing);
@@ -322,7 +322,7 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      expect(find.text('Apply now'), findsNothing);
+      expect(find.text('Start Application'), findsNothing);
       expect(find.text('Not accepting applications'), findsOneWidget);
 
       await tester.tap(
@@ -344,7 +344,7 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      expect(find.text('Apply now'), findsNothing);
+      expect(find.text('Start Application'), findsNothing);
       expect(find.text("Why you can't apply"), findsOneWidget);
       // Deterministic, value-bearing explanation — not just "Not eligible".
       expect(
@@ -373,7 +373,7 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      expect(find.text('Apply now'), findsNothing);
+      expect(find.text('Start Application'), findsNothing);
       expect(find.text('Finish your profile to apply'), findsOneWidget);
       // Must NOT be misrepresented as "not eligible" even though the profile's
       // values would fail the scholarship's requirements.
@@ -411,7 +411,7 @@ void main() {
       // The applied state replaces the Apply affordance, so there is no way to
       // submit a second application from the UI.
       expect(find.text('Application submitted'), findsOneWidget);
-      expect(find.text('Apply now'), findsNothing);
+      expect(find.text('Start Application'), findsNothing);
       expect(await applications.fetchApplications('user-a'), hasLength(1));
     });
   });
@@ -426,7 +426,7 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      await tester.tap(find.text('Apply now'));
+      await tester.tap(find.text('Start Application'));
       await tester.pumpAndSettle();
       await tester.tap(find.byKey(const ValueKey('apply-confirm')));
       await tester.pumpAndSettle();
@@ -436,7 +436,7 @@ void main() {
         findsOneWidget,
       );
       expect(find.text('Application submitted'), findsNothing);
-      expect(find.text('Apply now'), findsOneWidget);
+      expect(find.text('Start Application'), findsOneWidget);
       expect(await failing.fetchApplications('user-a'), isEmpty);
     });
   });
@@ -451,9 +451,9 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      expect(find.text('Apply now'), findsOneWidget);
+      expect(find.text('Start Application'), findsOneWidget);
 
-      await tester.tap(find.text('Apply now'));
+      await tester.tap(find.text('Start Application'));
       await tester.pumpAndSettle();
 
       expect(find.text('You must be signed in to apply.'), findsOneWidget);
@@ -477,14 +477,14 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      expect(find.text('Apply now'), findsOneWidget);
+      expect(find.text('Start Application'), findsOneWidget);
 
       await tester.tap(find.byIcon(Icons.bookmark_border_rounded));
       await tester.pumpAndSettle();
       expect(await bookmarks.fetchScholarshipIds('user-a'), [_scholarship().id]);
 
       // Applying still works after bookmarking.
-      await tester.tap(find.text('Apply now'));
+      await tester.tap(find.text('Start Application'));
       await tester.pumpAndSettle();
       await tester.tap(find.byKey(const ValueKey('apply-confirm')));
       await tester.pumpAndSettle();
@@ -516,11 +516,11 @@ void main() {
       await tester.pumpAndSettle();
 
       await tester.scrollUntilVisible(
-        find.text('Apply now'),
+        find.text('Start Application'),
         200,
         scrollable: find.byType(Scrollable).first,
       );
-      expect(find.text('Apply now'), findsOneWidget);
+      expect(find.text('Start Application'), findsOneWidget);
       expect(find.text('DOST-SEI Undergraduate Scholarship'), findsOneWidget);
 
       await tester.scrollUntilVisible(

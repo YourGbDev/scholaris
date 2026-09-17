@@ -421,7 +421,7 @@ void main() {
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 500));
 
-      await tester.tap(find.text('Applications'));
+      await tester.tap(find.text('Tracker'));
       await tester.pump(const Duration(milliseconds: 500));
 
       expect(find.text('Withdrawn (1)'), findsOneWidget);

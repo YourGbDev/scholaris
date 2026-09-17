@@ -66,7 +66,13 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
   }
 
   SnackBar _snackBar(String message) => SnackBar(
-        content: Text(message, style: openSans()),
+        content: Text(
+          message,
+          style: openSans(color: Colors.white, fontSize: 13),
+        ),
+        backgroundColor: const Color(0xFF161C27),
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       );
 
   @override

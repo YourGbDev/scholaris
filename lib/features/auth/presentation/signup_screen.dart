@@ -8,7 +8,6 @@
 
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'package:scholaris/app/confirmation_redirect.dart';
@@ -115,8 +114,9 @@ class _SignupScreenState extends State<SignupScreen> {
   }
 
   String _friendlyError(AuthException error) {
-    if (error.message.contains('already registered')) {
-      return 'An account with this email already exists.';
+    if (error.message.contains('already registered') ||
+        error.message.toLowerCase().contains('already exists')) {
+      return 'An account with this email already exists. Please log in instead.';
     }
     return error.message;
   }
@@ -145,8 +145,15 @@ class _SignupScreenState extends State<SignupScreen> {
     return null;
   }
 
-  SnackBar _snackBar(String message) =>
-      SnackBar(content: Text(message, style: GoogleFonts.openSans()));
+  SnackBar _snackBar(String message) => SnackBar(
+        content: Text(
+          message,
+          style: openSans(color: Colors.white, fontSize: 13),
+        ),
+        backgroundColor: const Color(0xFF161C27),
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      );
 
   @override
   Widget build(BuildContext context) {

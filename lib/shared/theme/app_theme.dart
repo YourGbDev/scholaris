@@ -209,7 +209,8 @@ ThemeData scholarisTheme() {
       ),
     ),
     snackBarTheme: SnackBarThemeData(
-      contentTextStyle: openSans(),
+      backgroundColor: const Color(0xFF161C27),
+      contentTextStyle: openSans(color: Colors.white, fontSize: 13),
       behavior: SnackBarBehavior.floating,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(kRadiusInput),

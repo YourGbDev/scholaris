@@ -6,7 +6,6 @@
 
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'package:scholaris/features/auth/presentation/empty_stage.dart';
@@ -103,8 +102,15 @@ class _LoginScreenState extends State<LoginScreen>
     return null;
   }
 
-  SnackBar _snackBar(String message) =>
-      SnackBar(content: Text(message, style: GoogleFonts.openSans()));
+  SnackBar _snackBar(String message) => SnackBar(
+        content: Text(
+          message,
+          style: openSans(color: Colors.white, fontSize: 13),
+        ),
+        backgroundColor: const Color(0xFF161C27),
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      );
 
   @override
   Widget build(BuildContext context) {

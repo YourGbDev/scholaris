@@ -108,6 +108,8 @@ void main() {
     await tester.pumpWidget(_harness(profileFactory: () async => _profile()));
     await tester.pumpAndSettle();
 
+    await tester.ensureVisible(find.text('Account Settings'));
+    await tester.pumpAndSettle();
     await tester.tap(find.text('Account Settings'));
     await tester.pumpAndSettle();
 
@@ -207,6 +209,58 @@ void main() {
           find.text(
               'Outstanding! Your matching profile is 100% complete. You have all the details unlocked to find your highest-match scholarships!'),
           findsOneWidget);
+    });
+
+    testWidgets('renders Stitch V2 verified credentials and quick actions',
+        (tester) async {
+      tester.view.physicalSize = const Size(800, 2000);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.reset);
+
+      await tester.pumpWidget(_harness(profileFactory: () async => _profile()));
+      await tester.pumpAndSettle();
+
+      // Top bar & Header
+      expect(find.text('My Profile'), findsOneWidget);
+      expect(find.text('Academic standing & grant eligibility'), findsOneWidget);
+      expect(find.text('UP CRS SSO Verified'), findsOneWidget);
+      expect(find.text('Student ID / SUC:'), findsOneWidget);
+
+      // Verified Credentials section
+      expect(find.text('Verified Credentials'), findsOneWidget);
+      expect(find.text('3 Categories Synced'), findsOneWidget);
+      expect(find.text('Academic Information'), findsOneWidget);
+      expect(find.text('True Copy of Grades (TCG) Validated ✓'), findsOneWidget);
+      expect(find.text('Location & Residency'), findsOneWidget);
+      expect(find.text('Eligible for LGU Tertiary Grant ✓'), findsOneWidget);
+      expect(find.text('Financial Background'), findsOneWidget);
+      expect(find.text('Specific salary shielded per RA 10173 (Data Privacy)'),
+          findsOneWidget);
+
+      // Documents & Quick Actions
+      expect(find.text('Documents & Quick Actions'), findsOneWidget);
+      expect(find.text('Download Scholaris Passport'), findsOneWidget);
+      expect(find.text('Request Verified SUC Transcript Refresh'),
+          findsOneWidget);
+
+      // Tap Download Scholaris Passport
+      await tester.tap(find.text('Download Scholaris Passport'));
+      await tester.pump();
+      expect(find.text('Generating your Scholaris Passport PDF with digital seal...'),
+          findsOneWidget);
+    });
+
+    testWidgets('renders cleanly on narrow 360px screen with no overflow',
+        (tester) async {
+      tester.view.physicalSize = const Size(360, 800);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.reset);
+
+      await tester.pumpWidget(_harness(profileFactory: () async => _profile()));
+      await tester.pumpAndSettle();
+
+      expect(tester.takeException(), isNull);
+      expect(find.text('My Profile'), findsOneWidget);
     });
   });
 }

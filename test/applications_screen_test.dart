@@ -246,6 +246,8 @@ void main() {
       await tester.tap(find.text('Profile'));
       await tester.pump(const Duration(milliseconds: 500));
 
+      await tester.ensureVisible(find.text('My Applications'));
+      await tester.pump(const Duration(milliseconds: 300));
       await tester.tap(find.text('My Applications'));
       // Route pushes need one pump to start the transition and another to
       // complete it; a single pump(500) leaves the pushed screen mid-flight.

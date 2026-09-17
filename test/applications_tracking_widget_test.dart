@@ -191,17 +191,17 @@ void main() {
       await tester.pump(const Duration(milliseconds: 500));
 
       // All four destinations are present — scoped to the NavigationBar,
-      // since the Discover dashboard's stat tiles render similar labels.
+      // matching the Stitch V2 navigation architecture.
+      expect(
+        find.descendant(of: find.byType(NavigationBar), matching: find.text('Dashboard')),
+        findsOneWidget,
+      );
       expect(
         find.descendant(of: find.byType(NavigationBar), matching: find.text('Discover')),
         findsOneWidget,
       );
       expect(
-        find.descendant(of: find.byType(NavigationBar), matching: find.text('Saved')),
-        findsOneWidget,
-      );
-      expect(
-        find.descendant(of: find.byType(NavigationBar), matching: find.text('Applications')),
+        find.descendant(of: find.byType(NavigationBar), matching: find.text('Tracker')),
         findsOneWidget,
       );
       expect(
@@ -209,17 +209,17 @@ void main() {
         findsOneWidget,
       );
 
-      // Switching to the Applications tab surfaces the tracking surface.
-      await tester.tap(find.text('Applications'));
+      // Switching to the Tracker tab surfaces the tracking surface.
+      await tester.tap(find.text('Tracker'));
       await tester.pump(const Duration(milliseconds: 500));
 
       expect(find.text('My Applications'), findsOneWidget);
       expect(find.text('No applications yet'), findsOneWidget);
 
-      // Discover still works after switching back — IndexedStack preserved.
-      await tester.tap(find.text('Discover'));
+      // Dashboard still works after switching back — IndexedStack preserved.
+      await tester.tap(find.text('Dashboard'));
       await tester.pump(const Duration(milliseconds: 500));
-      expect(find.text('Good to see you, Maria'), findsOneWidget);
+      expect(find.textContaining('Maria'), findsOneWidget);
     });
 
     testWidgets('Applications tab shows the filtered tracking surface',
@@ -237,7 +237,7 @@ void main() {
       await tester.pumpWidget(_wrapHomeScreen(applications: applications));
       await tester.pump(const Duration(milliseconds: 500));
 
-      await tester.tap(find.text('Applications'));
+      await tester.tap(find.text('Tracker'));
       await tester.pump(const Duration(milliseconds: 500));
 
       expect(find.text('DOST-SEI Undergraduate Scholarship'), findsOneWidget);

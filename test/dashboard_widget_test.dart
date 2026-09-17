@@ -19,7 +19,7 @@ import 'package:scholaris/features/bookmarks/repositories/bookmark_repository.da
 import 'package:scholaris/features/profile/models/student_profile.dart';
 import 'package:scholaris/features/profile/providers/profile_setup_provider.dart';
 import 'package:scholaris/features/profile/repositories/profile_repository.dart';
-import 'package:scholaris/features/scholarships/screens/discover_screen.dart';
+import 'package:scholaris/features/dashboard/presentation/student_dashboard_screen.dart';
 import 'package:scholaris/features/scholarships/providers/scholarships_provider.dart';
 import 'package:scholaris/features/scholarships/repositories/scholarship_repository.dart';
 import 'package:scholaris/shared/widgets/scholarship_card.dart';
@@ -171,7 +171,7 @@ ProviderScope _wrap({
     ],
     child: MaterialApp(
       home: Scaffold(
-        body: child ?? const DiscoverScreen(),
+        body: child ?? const StudentDashboardScreen(),
       ),
     ),
   );

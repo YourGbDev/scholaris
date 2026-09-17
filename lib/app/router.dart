@@ -40,6 +40,7 @@ import 'package:scholaris/features/profile/presentation/profile_setup_screen.dar
 import 'package:scholaris/features/profile/providers/profile_setup_provider.dart';
 import 'package:scholaris/features/scholarships/models/scholarship.dart';
 import 'package:scholaris/features/scholarships/presentation/scholarship_detail_screen.dart';
+import 'package:scholaris/features/scholarships/screens/saved_screen.dart';
 
 // -----------------------------------------------------------------------------
 // profileCompleteProvider / userRoleProvider
@@ -206,6 +207,13 @@ final routerProvider = Provider<GoRouter>((ref) {
         path: '/home',
         name: 'home',
         builder: (context, state) => const HomeScreen(),
+      ),
+
+      // --- Saved scholarships ------------------------------------------------
+      GoRoute(
+        path: '/saved',
+        name: 'saved',
+        builder: (context, state) => const SavedScreen(),
       ),
 
       // --- Scholarship detail ------------------------------------------------

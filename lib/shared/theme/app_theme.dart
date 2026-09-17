@@ -117,6 +117,7 @@ TextStyle outfit({
   double? letterSpacing,
   TextDecoration? decoration,
 }) => GoogleFonts.outfit(
+  textStyle: const TextStyle(fontFamilyFallback: ['Roboto']),
   fontSize: fontSize,
   fontWeight: fontWeight,
   color: color,
@@ -134,6 +135,7 @@ TextStyle openSans({
   double? letterSpacing,
   TextDecoration? decoration,
 }) => GoogleFonts.openSans(
+  textStyle: const TextStyle(fontFamilyFallback: ['Roboto']),
   fontSize: fontSize,
   fontWeight: fontWeight,
   color: color,
@@ -151,6 +153,7 @@ TextStyle poppins({
   double? letterSpacing,
   TextDecoration? decoration,
 }) => GoogleFonts.poppins(
+  textStyle: const TextStyle(fontFamilyFallback: ['Roboto']),
   fontSize: fontSize,
   fontWeight: fontWeight,
   color: color,

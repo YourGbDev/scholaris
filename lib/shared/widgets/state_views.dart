@@ -232,7 +232,7 @@ class EmptyView extends StatelessWidget {
             Text(
               title,
               textAlign: TextAlign.center,
-              style: poppins(
+              style: outfit(
                 fontSize: 17,
                 fontWeight: FontWeight.w700,
                 color: kTextPrimary,
@@ -266,7 +266,7 @@ class EmptyView extends StatelessWidget {
                 ),
                 child: Text(
                   actionLabel!,
-                  style: poppins(
+                  style: outfit(
                     fontSize: 13.5,
                     fontWeight: FontWeight.w600,
                     color: Colors.white,
@@ -357,7 +357,7 @@ class ErrorView extends StatelessWidget {
             Text(
               'Something went wrong',
               textAlign: TextAlign.center,
-              style: poppins(fontSize: 18, fontWeight: FontWeight.w600),
+              style: outfit(fontSize: 18, fontWeight: FontWeight.w600),
             ),
             const SizedBox(height: 8),
             Text(

@@ -8,6 +8,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import 'package:scholaris/features/applications/providers/applications_provider.dart';
+import 'package:scholaris/features/applications/repositories/application_repository.dart';
 import 'package:scholaris/features/auth/controllers/auth_controller.dart';
 import 'package:scholaris/features/bookmarks/providers/bookmarks_provider.dart';
 import 'package:scholaris/features/bookmarks/repositories/bookmark_repository.dart';
@@ -19,6 +21,7 @@ import 'package:scholaris/features/scholarships/presentation/discovery_filter_sh
 import 'package:scholaris/features/scholarships/providers/scholarships_provider.dart';
 import 'package:scholaris/features/scholarships/repositories/scholarship_repository.dart';
 
+import 'helpers/fake_application_data_source.dart';
 import 'helpers/fake_bookmark_data_source.dart';
 import 'helpers/fake_profile_data_source.dart';
 import 'helpers/fake_scholarship_data_source.dart';
@@ -151,6 +154,12 @@ ProviderScope _wrap({Widget? child}) {
           currentUserId: () => 'user-a',
         ),
       ),
+      applicationRepositoryProvider.overrideWith(
+        (ref) => ApplicationRepository(
+          dataSource: FakeApplicationDataSource(),
+          currentUserId: () => 'user-a',
+        ),
+      ),
     ],
     child: MaterialApp(home: child ?? const HomeScreen()),
   );
@@ -163,6 +172,8 @@ Future<void> _pumpDiscover(WidgetTester tester) async {
   tester.view.devicePixelRatio = 1.0;
   addTearDown(tester.view.reset);
   await tester.pumpWidget(_wrap());
+  await tester.pump(const Duration(milliseconds: 500));
+  await tester.tap(find.text('Discover'));
   await tester.pump(const Duration(milliseconds: 500));
 }
 

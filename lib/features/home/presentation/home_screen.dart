@@ -14,8 +14,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:scholaris/shared/theme/app_theme.dart';
 import 'package:scholaris/features/applications/presentation/applications_screen.dart';
+import 'package:scholaris/features/dashboard/presentation/student_dashboard_screen.dart';
 import 'package:scholaris/features/scholarships/screens/discover_screen.dart';
-import 'package:scholaris/features/scholarships/screens/saved_screen.dart';
 import 'package:scholaris/features/profile/presentation/profile_tab_screen.dart';
 
 /// The selected bottom-navigation tab. Exposed so in-page actions (e.g. the
@@ -41,8 +41,8 @@ class HomeScreen extends ConsumerStatefulWidget {
 
 class _HomeScreenState extends ConsumerState<HomeScreen> {
   static const _tabs = <Widget>[
+    StudentDashboardScreen(),
     DiscoverScreen(),
-    SavedScreen(),
     ApplicationsScreen(embedded: true),
     ProfileTabScreen(),
   ];
@@ -81,17 +81,17 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             NavigationDestination(
               icon: Icon(Icons.dashboard_outlined),
               selectedIcon: Icon(Icons.dashboard_rounded, color: Colors.white),
-              label: 'Discover',
+              label: 'Dashboard',
             ),
             NavigationDestination(
-              icon: Icon(Icons.bookmark_outline_rounded),
-              selectedIcon: Icon(Icons.bookmark_rounded, color: Colors.white),
-              label: 'Saved',
+              icon: Icon(Icons.explore_outlined),
+              selectedIcon: Icon(Icons.explore_rounded, color: Colors.white),
+              label: 'Discover',
             ),
             NavigationDestination(
               icon: Icon(Icons.assignment_outlined),
               selectedIcon: Icon(Icons.assignment_rounded, color: Colors.white),
-              label: 'Applications',
+              label: 'Tracker',
             ),
             NavigationDestination(
               icon: Icon(Icons.person_outline_rounded),

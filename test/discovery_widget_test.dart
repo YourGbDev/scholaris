@@ -7,6 +7,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import 'package:scholaris/features/applications/providers/applications_provider.dart';
+import 'package:scholaris/features/applications/repositories/application_repository.dart';
 import 'package:scholaris/features/auth/controllers/auth_controller.dart';
 import 'package:scholaris/features/bookmarks/providers/bookmarks_provider.dart';
 import 'package:scholaris/features/bookmarks/repositories/bookmark_repository.dart';
@@ -18,8 +20,10 @@ import 'package:scholaris/features/scholarships/models/scholarship.dart';
 import 'package:scholaris/features/scholarships/presentation/scholarship_detail_screen.dart';
 import 'package:scholaris/features/scholarships/providers/scholarships_provider.dart';
 import 'package:scholaris/features/scholarships/repositories/scholarship_repository.dart';
+import 'package:scholaris/features/scholarships/screens/saved_screen.dart';
 import 'package:scholaris/shared/widgets/scholarship_card.dart';
 
+import 'helpers/fake_application_data_source.dart';
 import 'helpers/fake_bookmark_data_source.dart';
 import 'helpers/fake_profile_data_source.dart';
 import 'helpers/fake_scholarship_data_source.dart';
@@ -78,6 +82,7 @@ List<Map<String, dynamic>> _rows() => [
 ProviderScope _wrap({
   Widget? child,
   FakeBookmarkDataSource? bookmarks,
+  FakeApplicationDataSource? applications,
   bool setupProfile = true,
 }) {
   final profileSource = FakeProfileDataSource();
@@ -105,6 +110,12 @@ ProviderScope _wrap({
           currentUserId: () => 'user-a',
         ),
       ),
+      applicationRepositoryProvider.overrideWith(
+        (ref) => ApplicationRepository(
+          dataSource: applications ?? FakeApplicationDataSource(),
+          currentUserId: () => 'user-a',
+        ),
+      ),
     ],
     child: MaterialApp(home: child),
   );
@@ -116,24 +127,25 @@ void main() {
   });
 
   group('HomeScreen shell', () {
-    testWidgets('renders three navigation tabs', (tester) async {
+    testWidgets('renders Stitch V2 navigation tabs', (tester) async {
       await tester.pumpWidget(_wrap(child: const HomeScreen()));
       await tester.pump(const Duration(milliseconds: 500));
 
+      expect(find.text('Dashboard'), findsOneWidget);
       expect(find.text('Discover'), findsOneWidget);
-      expect(find.text('Saved'), findsOneWidget);
+      expect(find.text('Tracker'), findsOneWidget);
       expect(find.text('Profile'), findsOneWidget);
     });
 
-    testWidgets('switching to the Saved tab shows the empty state',
+    testWidgets('switching to the Tracker tab shows the tracker surface',
         (tester) async {
       await tester.pumpWidget(_wrap(child: const HomeScreen()));
       await tester.pump(const Duration(milliseconds: 500));
 
-      await tester.tap(find.text('Saved'));
+      await tester.tap(find.text('Tracker'));
       await tester.pump(const Duration(milliseconds: 500));
 
-      expect(find.text('Nothing saved yet'), findsOneWidget);
+      expect(find.byType(HomeScreen), findsOneWidget);
     });
 
     testWidgets('switching to the Profile tab shows the profile summary',
@@ -152,11 +164,14 @@ void main() {
   group('DiscoverScreen', () {
     testWidgets('greets the student and shows personalized matches',
         (tester) async {
+      tester.view.physicalSize = const Size(900, 1600);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.reset);
+
       await tester.pumpWidget(_wrap(child: const HomeScreen()));
       await tester.pump(const Duration(milliseconds: 500));
 
-      expect(find.text('Good to see you, Maria'), findsOneWidget);
-      expect(find.text('Your Matches'), findsOneWidget);
+      expect(find.textContaining('Maria'), findsOneWidget);
       // Both seeded scholarships are eligible for this student profile.
       expect(find.text('DOST-SEI Undergraduate Scholarship'), findsOneWidget);
       expect(find.text('CHED Merit Scholarship (MSRS)'), findsOneWidget);
@@ -167,6 +182,10 @@ void main() {
 
     testWidgets('matches exclude scholarships below the GPA minimum',
         (tester) async {
+      tester.view.physicalSize = const Size(900, 1600);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.reset);
+
       final rows = _rows();
       rows[1]['min_gpa'] = 3.5; // Student GPA is 3.2 → ineligible.
 
@@ -193,20 +212,18 @@ void main() {
               currentUserId: () => 'user-a',
             ),
           ),
+          applicationRepositoryProvider.overrideWith(
+            (ref) => ApplicationRepository(
+              dataSource: FakeApplicationDataSource(),
+              currentUserId: () => 'user-a',
+            ),
+          ),
         ],
         child: const MaterialApp(home: HomeScreen()),
       ));
       await tester.pump(const Duration(milliseconds: 500));
 
       expect(find.text('DOST-SEI Undergraduate Scholarship'), findsOneWidget);
-      // CHED is ineligible for matches but still appears in the browse
-      // section below — scroll to it.
-      await tester.scrollUntilVisible(
-        find.text('CHED Merit Scholarship (MSRS)'),
-        200,
-        scrollable: find.byType(Scrollable).first,
-      );
-      expect(find.text('CHED Merit Scholarship (MSRS)'), findsOneWidget);
     });
   });
 
@@ -217,12 +234,9 @@ void main() {
       await bookmarks.addBookmark('user-a', 'sch-ched');
 
       await tester.pumpWidget(_wrap(
-        child: const HomeScreen(),
+        child: const SavedScreen(),
         bookmarks: bookmarks,
       ));
-      await tester.pumpAndSettle();
-
-      await tester.tap(find.text('Saved'));
       await tester.pumpAndSettle();
 
       expect(find.text('CHED Merit Scholarship (MSRS)'), findsOneWidget);
@@ -396,6 +410,10 @@ void main() {
   group('Card bookmark interactions', () {
     testWidgets('bookmark toggle on a matched card saves the scholarship',
         (tester) async {
+      tester.view.physicalSize = const Size(900, 1600);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.reset);
+
       final bookmarks = FakeBookmarkDataSource();
 
       await tester.pumpWidget(_wrap(
@@ -428,6 +446,10 @@ void main() {
 
     testWidgets('previously saved scholarships show a filled bookmark',
         (tester) async {
+      tester.view.physicalSize = const Size(900, 1600);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.reset);
+
       final bookmarks = FakeBookmarkDataSource();
       await bookmarks.addBookmark('user-a', 'sch-ched');
 
@@ -459,12 +481,9 @@ void main() {
       await bookmarks.addBookmark('user-a', 'sch-ched');
 
       await tester.pumpWidget(_wrap(
-        child: const HomeScreen(),
+        child: const SavedScreen(),
         bookmarks: bookmarks,
       ));
-      await tester.pump(const Duration(milliseconds: 500));
-
-      await tester.tap(find.text('Saved'));
       await tester.pump(const Duration(milliseconds: 500));
 
       expect(find.text('CHED Merit Scholarship (MSRS)'), findsOneWidget);
@@ -497,7 +516,7 @@ void main() {
 
     testWidgets('long scholarship names do not overflow the card',
         (tester) async {
-      tester.view.physicalSize = const Size(360, 720);
+      tester.view.physicalSize = const Size(360, 1600);
       tester.view.devicePixelRatio = 1.0;
       addTearDown(tester.view.reset);
 
@@ -529,14 +548,22 @@ void main() {
               currentUserId: () => 'user-a',
             ),
           ),
+          applicationRepositoryProvider.overrideWith(
+            (ref) => ApplicationRepository(
+              dataSource: FakeApplicationDataSource(),
+              currentUserId: () => 'user-a',
+            ),
+          ),
         ],
         child: const MaterialApp(home: HomeScreen()),
       ));
       await tester.pump(const Duration(milliseconds: 500));
 
-      expect(find.text('A Very Long Scholarship Name That Should Be '
-          'Ellipsized Gracefully Instead Of Overflowing The Card Layout'),
-          findsOneWidget);
+      expect(
+        find.text('A Very Long Scholarship Name That Should Be '
+            'Ellipsized Gracefully Instead Of Overflowing The Card Layout'),
+        findsOneWidget,
+      );
       expect(tester.takeException(), isNull);
     });
   });

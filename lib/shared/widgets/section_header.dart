@@ -35,7 +35,7 @@ class SectionHeader extends StatelessWidget {
         Flexible(
           child: Text(
             title,
-            style: poppins(fontSize: 18, fontWeight: FontWeight.w600),
+            style: outfit(fontSize: 18, fontWeight: FontWeight.bold),
           ),
         ),
         if (count != null) ...[
@@ -48,7 +48,7 @@ class SectionHeader extends StatelessWidget {
             ),
             child: Text(
               '$count',
-              style: poppins(
+              style: outfit(
                 fontSize: 13,
                 fontWeight: FontWeight.w700,
                 color: kMatchGoldText,

@@ -1,21 +1,18 @@
 // lib/features/scholarships/screens/discover_screen.dart
 //
-// Student Core Flow — Stitch Student Dashboard & Discovery:
-// - Sticky Top Bar with ScholarisLogo, Notification Bell, and Profile Avatar
-// - Motivational Greeting with student first name & daily opportunities counter
-// - Academic Momentum / Matching Power Hero Card with radial progress gauge,
-//   matched value in ₱, high fit (>90%) stat, and interactive "+18% boost" bar
-// - 4 tactile Quick-Stat tiles (Matches, Closing soon, Bookmarked, Applied)
-// - Scholaris Guide Advice Banner with Deadline Alert! badge
-// - Active Application Alert Banner
-// - Urgency section for Closing Soon scholarships
-// - Search bar and active filter chips with remove triggers
-// - Personalized "Your Matches" feed with explainability chips
-// - Pro-Tip for Applicants / Academic Momentum bento box
-// - Deduplicated full scholarship catalog
+// Student Core Flow — Stitch Discover Screen (scholaris_discover_filters/code.html):
+// - Sticky Top Bar with Scholaris logo badge, Notification bell with gold dot, and Profile Avatar
+// - Search & Active Filter Bar (Search input + "Filters" button with active count badge)
+// - Filter Chips Horizontal Carousel (All Matches, Match >90%, Deadline < 14 Days, No Essay, ₱50k - ₱150k+, Need-Based)
+// - Applied Criteria Quick-Bar ("Active: STEM • Undergrad • Need-Based • EFC < ₱50k" + "Edit" action)
+// - Opportunity Feed Header ("Verified Matches", "Showing N targeted opportunities for Maya", "Highest Match %" sort selector)
+// - Feed Cards Container (rebuilt ScholarshipCard components with full Stitch anatomy)
+// - Deduplicated Browse Section
+// - Editorial End-of-Feed Helper Card ("Looking for more niche grants?")
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import 'package:scholaris/features/applications/models/application.dart';
 import 'package:scholaris/features/applications/providers/applications_provider.dart';
@@ -23,9 +20,9 @@ import 'package:scholaris/features/applications/services/application_filters.dar
 import 'package:scholaris/features/bookmarks/providers/bookmarks_provider.dart';
 import 'package:scholaris/features/home/presentation/home_screen.dart';
 import 'package:scholaris/features/profile/models/student_profile.dart';
-import 'package:scholaris/features/profile/presentation/matching_power_sheet.dart';
+import 'package:scholaris/features/profile/presentation/widgets/avatar_display.dart';
+import 'package:scholaris/features/profile/providers/avatar_provider.dart';
 import 'package:scholaris/features/profile/providers/profile_setup_provider.dart';
-import 'package:scholaris/features/profile/services/matching_power_service.dart';
 import 'package:scholaris/features/scholarships/models/scholarship.dart';
 import 'package:scholaris/features/scholarships/presentation/discovery_filter_sheet.dart';
 import 'package:scholaris/features/scholarships/providers/dashboard_provider.dart';
@@ -48,11 +45,11 @@ class DiscoverScreen extends ConsumerStatefulWidget {
 
 class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
   final GlobalKey _matchesKey = GlobalKey();
-  final GlobalKey _closingSoonKey = GlobalKey();
 
   @override
   Widget build(BuildContext context) {
     final profileAsync = ref.watch(currentProfileProvider);
+    final profile = profileAsync.valueOrNull;
     final filteredMatches = ref.watch(filteredMatchesProvider);
     final filteredBrowse = ref.watch(filteredBrowseProvider);
     final bookmarkIds =
@@ -61,202 +58,224 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
       ref.watch(applicationsProvider).valueOrNull ?? const <Application>[],
     );
     final state = ref.watch(discoveryFilterProvider);
+    final avatarState = ref.watch(currentAvatarProvider);
 
-    return SafeArea(
-      top: false,
-      child: ResponsiveContainer(
-        child: RefreshIndicator(
-          onRefresh: () async {
-            ref.invalidate(dashboardProvider);
-            ref.invalidate(currentProfileProvider);
-            ref.invalidate(matchesProvider);
-            ref.invalidate(scholarshipsProvider);
-            ref.invalidate(applicationsProvider);
-            ref.invalidate(bookmarksProvider);
-          },
-          child: ListView(
-            padding: const EdgeInsets.only(bottom: 32),
-            children: [
-              _buildDashboard(context, ref, bookmarkIds, appliedIds, profileAsync),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const SizedBox(height: 16),
-                    _buildSearchBar(context, ref),
-                    if (state.isActive) ...[
-                      const SizedBox(height: 12),
-                      _buildActiveFilterChips(context, ref, state),
-                    ],
-                    const SizedBox(height: 24),
-                    KeyedSubtree(
-                      key: _matchesKey,
-                      child: _buildMatchesSection(
-                        context,
-                        ref,
-                        filteredMatches,
-                        filteredBrowse,
-                        bookmarkIds,
-                        appliedIds,
-                        state,
-                      ),
-                    ),
-                    const SizedBox(height: 24),
-                    _buildProTipBentoBox(),
-                    const SizedBox(height: 24),
-                    _buildBrowseSection(
-                      context,
-                      ref,
-                      filteredBrowse,
-                      bookmarkIds,
-                      appliedIds,
-                    ),
-                  ],
+    final firstName = profile?.fullName.trim().split(' ').first;
+    final studentName = (firstName != null && firstName.isNotEmpty)
+        ? firstName
+        : 'you';
+
+    final matchesList = filteredMatches.valueOrNull ?? const <Scholarship>[];
+    final totalOpportunities = matchesList.length;
+
+    return Scaffold(
+      backgroundColor: const Color(0xFFF9F9FF),
+      body: SafeArea(
+        child: ResponsiveContainer(
+          child: RefreshIndicator(
+            color: const Color(0xFF0F4D2E),
+            onRefresh: () async {
+              ref.invalidate(dashboardProvider);
+              ref.invalidate(currentProfileProvider);
+              ref.invalidate(matchesProvider);
+              ref.invalidate(scholarshipsProvider);
+              ref.invalidate(applicationsProvider);
+              ref.invalidate(bookmarksProvider);
+            },
+            child: ListView(
+              padding: const EdgeInsets.fromLTRB(20, 16, 20, 32),
+              children: [
+                // 1. Sticky Header
+                _buildHeader(context, ref, avatarState),
+                const SizedBox(height: 16),
+
+                // 2. Search & Active Filter Bar
+                _buildSearchBar(context, ref),
+                const SizedBox(height: 12),
+
+                // 3. Filter Chips Horizontal Carousel
+                _buildFilterChipsCarousel(
+                  context,
+                  ref,
+                  state,
+                  totalOpportunities,
                 ),
-              ),
-            ],
+                const SizedBox(height: 12),
+
+                // 4. Applied Criteria Quick-Bar
+                _buildAppliedCriteriaQuickBar(context, ref, profile, state),
+
+                if (state.isActive) ...[
+                  const SizedBox(height: 12),
+                  _buildActiveFilterChips(context, ref, state),
+                ],
+                const SizedBox(height: 20),
+
+                // 5. Opportunity Feed Header
+                _buildFeedHeader(
+                  context,
+                  ref,
+                  totalOpportunities,
+                  studentName,
+                  state.sort,
+                ),
+                const SizedBox(height: 16),
+
+                // 6. Feed Cards Container
+                KeyedSubtree(
+                  key: _matchesKey,
+                  child: _buildMatchesSection(
+                    context,
+                    ref,
+                    filteredMatches,
+                    filteredBrowse,
+                    bookmarkIds,
+                    appliedIds,
+                    state,
+                  ),
+                ),
+                const SizedBox(height: 24),
+
+                // 7. Deduplicated Browse Section
+                _buildBrowseSection(
+                  context,
+                  ref,
+                  filteredBrowse,
+                  bookmarkIds,
+                  appliedIds,
+                ),
+                const SizedBox(height: 28),
+
+                // 8. Editorial End-of-Feed Helper Card
+                _buildEditorialHelperCard(context),
+              ],
+            ),
           ),
         ),
       ),
     );
   }
 
-  Widget _buildDashboard(
+  // --- 1. Sticky Top Bar ---
+  Widget _buildHeader(
     BuildContext context,
     WidgetRef ref,
-    Set<String> bookmarkIds,
-    Set<String> appliedIds,
-    AsyncValue<StudentProfile?> profileAsync,
+    AvatarState avatarState,
   ) {
-    final dashboardAsync = ref.watch(dashboardProvider);
-    final profile = profileAsync.valueOrNull;
-    final info = dashboardAsync.valueOrNull ??
-        const DashboardInfo(
-          matchCount: 0,
-          closingSoonCount: 0,
-          savedCount: 0,
-          appliedCount: 0,
-          pendingApplicationCount: 0,
-          closingSoonScholarships: [],
-        );
-
-    final applications = ref.watch(applicationsProvider).valueOrNull ?? const <Application>[];
-    Application? priorityApplication;
-    for (final app in applications) {
-      if (app.status == ApplicationStatus.approved || app.status == ApplicationStatus.awarded) {
-        priorityApplication = app;
-        break;
-      }
-    }
-    if (priorityApplication == null) {
-      for (final app in applications) {
-        if (app.status == ApplicationStatus.underReview) {
-          priorityApplication = app;
-          break;
-        }
-      }
-    }
-    if (priorityApplication == null) {
-      for (final app in applications) {
-        if (app.status == ApplicationStatus.submitted) {
-          priorityApplication = app;
-          break;
-        }
-      }
-    }
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        _TarsiDashboardHero(
-          info: info,
-          profile: profile,
-          activeApplication: priorityApplication,
-          onTapMatches: () {
-            if (_matchesKey.currentContext != null) {
-              Scrollable.ensureVisible(
-                _matchesKey.currentContext!,
-                duration: const Duration(milliseconds: 350),
-                curve: Curves.easeInOut,
-              );
-            }
-          },
-          onTapClosingSoon: () {
-            if (info.closingSoonScholarships.isNotEmpty && _closingSoonKey.currentContext != null) {
-              Scrollable.ensureVisible(
-                _closingSoonKey.currentContext!,
-                duration: const Duration(milliseconds: 350),
-                curve: Curves.easeInOut,
-              );
-            } else {
-              ref.read(discoveryFilterProvider.notifier).setClosingSoonOnly(true);
-            }
-          },
-          onTapSaved: () {
-            ref.read(homeTabIndexProvider.notifier).selectTab(1);
-          },
-          onTapApplied: () {
-            ref.read(homeTabIndexProvider.notifier).selectTab(2);
-          },
-          onTapMatchingPower: () {
-            showMatchingPowerSheet(context, profile);
-          },
-        ),
-        if (info.closingSoonScholarships.isNotEmpty) ...[
-          Padding(
-            padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
-            child: KeyedSubtree(
-              key: _closingSoonKey,
-              child: _buildClosingSoonSection(
-                ref,
-                info,
-                bookmarkIds,
-                appliedIds,
+        // Scholaris Brand Logo
+        Row(
+          children: [
+            Container(
+              width: 36,
+              height: 36,
+              decoration: BoxDecoration(
+                color: const Color(0xFF0F4D2E), // primary-container
+                borderRadius: BorderRadius.circular(12),
+                boxShadow: [
+                  BoxShadow(
+                    color: const Color(0xFF0F4D2E).withValues(alpha: 0.15),
+                    blurRadius: 6,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
+              ),
+              child: const Center(
+                child: Icon(
+                  Icons.school_rounded,
+                  size: 20,
+                  color: Colors.white,
+                ),
               ),
             ),
-          ),
-        ],
-      ],
-    );
-  }
+            const SizedBox(width: 8),
+            Text(
+              'Scholaris',
+              style: outfit(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: const Color(0xFF161C27),
+                letterSpacing: -0.5,
+              ),
+            ),
+          ],
+        ),
 
-  Widget _buildClosingSoonSection(
-    WidgetRef ref,
-    DashboardInfo info,
-    Set<String> bookmarkIds,
-    Set<String> appliedIds,
-  ) {
-    return Column(
-      key: const ValueKey('closing-soon-section'),
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        _buildSectionHeader('Closing Soon', info.closingSoonCount),
-        const SizedBox(height: 12),
-        ListView.separated(
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          itemCount: info.closingSoonScholarships.length,
-          separatorBuilder: (_, _) => const SizedBox(height: 14),
-          itemBuilder: (_, i) {
-            final s = info.closingSoonScholarships[i];
-            return ScholarshipCard(
-              scholarship: s,
-              isBookmarked: bookmarkIds.contains(s.id),
-              isApplied: appliedIds.contains(s.id),
-              onToggleBookmark: () => _toggleBookmark(ref, s.id),
-            );
-          },
+        // Notifications Bell & Profile Avatar
+        Row(
+          children: [
+            Stack(
+              clipBehavior: Clip.none,
+              children: [
+                IconButton(
+                  tooltip: 'Notifications',
+                  icon: const Icon(
+                    Icons.notifications_none_rounded,
+                    size: 24,
+                    color: Color(0xFF161C27),
+                  ),
+                  onPressed: () {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text("You're all caught up on notifications!"),
+                        duration: Duration(seconds: 2),
+                        behavior: SnackBarBehavior.floating,
+                      ),
+                    );
+                  },
+                ),
+                Positioned(
+                  top: 10,
+                  right: 10,
+                  child: Container(
+                    width: 8,
+                    height: 8,
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFFABC28), // tertiary-fixed-dim
+                      shape: BoxShape.circle,
+                      border: Border.all(color: Colors.white, width: 1.5),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(width: 4),
+
+            GestureDetector(
+              onTap: () {
+                ref.read(homeTabIndexProvider.notifier).selectTab(3);
+              },
+              child: Container(
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  border: Border.all(
+                    color: const Color(0xFFE2E8F9),
+                    width: 1.5,
+                  ),
+                ),
+                child: AvatarDisplay(
+                  avatarId: avatarState.avatarId,
+                  isRealPhoto: avatarState.isRealPhoto,
+                  photoPath: avatarState.photoPath,
+                  size: 32,
+                  showVerifiedBadge: false,
+                ),
+              ),
+            ),
+          ],
         ),
       ],
     );
   }
 
+  // --- 2. Search & Active Filter Bar ---
   Widget _buildSearchBar(BuildContext context, WidgetRef ref) {
     return Row(
       children: [
         const Expanded(child: _SearchField()),
-        const SizedBox(width: 12),
+        const SizedBox(width: 8),
         _FilterButton(
           onPressed: () => showDiscoveryFilterSheet(context),
         ),
@@ -264,6 +283,180 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
     );
   }
 
+  // --- 3. Filter Chips Horizontal Carousel ---
+  Widget _buildFilterChipsCarousel(
+    BuildContext context,
+    WidgetRef ref,
+    DiscoveryFilterState state,
+    int totalMatches,
+  ) {
+    final notifier = ref.read(discoveryFilterProvider.notifier);
+    final highFitActive = state.query.isEmpty && !state.closingSoonOnly && state.incomeBracket == null;
+
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      clipBehavior: Clip.none,
+      child: Row(
+        children: [
+          // All Matches Chip
+          _StitchCarouselChip(
+            label: 'All Matches ($totalMatches)',
+            isActive: !state.isActive,
+            onTap: () => notifier.reset(),
+          ),
+          const SizedBox(width: 8),
+
+          // Match >90% Chip with green dot
+          _StitchCarouselChip(
+            label: 'Match >90%',
+            hasDot: true,
+            isActive: highFitActive && state.isActive,
+            onTap: () {
+              // Toggle search or filter focus
+            },
+          ),
+          const SizedBox(width: 8),
+
+          // Deadline < 14 Days Chip
+          _StitchCarouselChip(
+            label: 'Deadline < 14 Days',
+            icon: Icons.schedule_rounded,
+            isUrgent: true,
+            isActive: state.closingSoonOnly,
+            onTap: () {
+              notifier.setClosingSoonOnly(!state.closingSoonOnly);
+            },
+          ),
+          const SizedBox(width: 8),
+
+          // No Essay Required Chip
+          _StitchCarouselChip(
+            label: 'No Essay Required',
+            isActive: false,
+            onTap: () {
+              notifier.setQuery('No Essay');
+            },
+          ),
+          const SizedBox(width: 8),
+
+          // ₱50k - ₱150k+ Chip
+          _StitchCarouselChip(
+            label: '₱50k - ₱150k+',
+            isActive: false,
+            onTap: () {},
+          ),
+          const SizedBox(width: 8),
+
+          // Need-Based Chip
+          _StitchCarouselChip(
+            label: 'Need-Based',
+            isActive: state.incomeBracket == 'low',
+            onTap: () {
+              if (state.incomeBracket == 'low') {
+                notifier.setIncomeBracket(null);
+              } else {
+                notifier.setIncomeBracket('low');
+              }
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  // --- 4. Applied Criteria Quick-Bar ---
+  Widget _buildAppliedCriteriaQuickBar(
+    BuildContext context,
+    WidgetRef ref,
+    StudentProfile? profile,
+    DiscoveryFilterState state,
+  ) {
+    final items = <String>[];
+    if (profile != null) {
+      if (profile.course.isNotEmpty) {
+        items.add(profile.course);
+      }
+      items.add('College Yr ${profile.yearLevel}');
+      if (profile.region.isNotEmpty) {
+        items.add(profile.region);
+      }
+      if (profile.gpa > 0) {
+        items.add('GPA ${profile.gpa.toStringAsFixed(1)}+');
+      }
+      if (profile.monthlyFamilyIncome != null &&
+          profile.monthlyFamilyIncome! <= 20000) {
+        items.add('Need-Based');
+      }
+    }
+    if (state.incomeBracket != null) {
+      items.add('Income: ${incomeLabel(state.incomeBracket)}');
+    }
+    if (state.closingSoonOnly) {
+      items.add('Closing Soon (<14d)');
+    }
+    final criteriaSummary = items.isNotEmpty
+        ? items.join(' • ')
+        : 'All Fields • General Eligibility';
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 11),
+      decoration: BoxDecoration(
+        color: const Color(0xFFF1F3FF), // surface-container-low
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: const Color(0xFFDDE2F3)),
+      ),
+      child: Row(
+        children: [
+          const Icon(
+            Icons.verified_rounded,
+            size: 18,
+            color: Color(0xFF436084), // secondary
+          ),
+          const SizedBox(width: 8),
+          Expanded(
+            child: RichText(
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              text: TextSpan(
+                style: openSans(
+                  fontSize: 12,
+                  color: const Color(0xFF404942),
+                ),
+                children: [
+                  TextSpan(
+                    text: 'Active: ',
+                    style: outfit(
+                      fontWeight: FontWeight.bold,
+                      color: const Color(0xFF161C27),
+                    ),
+                  ),
+                  TextSpan(text: criteriaSummary),
+                ],
+              ),
+            ),
+          ),
+          const SizedBox(width: 8),
+          InkWell(
+            borderRadius: BorderRadius.circular(4),
+            onTap: () => showDiscoveryFilterSheet(context),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+              child: Text(
+                'Edit',
+                style: outfit(
+                  fontSize: 12,
+                  fontWeight: FontWeight.bold,
+                  color: const Color(0xFF436084),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // --- Active Filter Removable Chips ---
   Widget _buildActiveFilterChips(
     BuildContext context,
     WidgetRef ref,
@@ -324,7 +517,11 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
             onPressed: () => ref.read(discoveryFilterProvider.notifier).reset(),
             child: Text(
               'Clear all',
-              style: poppins(fontSize: 12, fontWeight: FontWeight.w600, color: kPrimary),
+              style: outfit(
+                fontSize: 12,
+                fontWeight: FontWeight.w600,
+                color: const Color(0xFF0F4D2E),
+              ),
             ),
           ),
         ),
@@ -332,6 +529,105 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
     );
   }
 
+  // --- 5. Opportunity Feed Header ---
+  Widget _buildFeedHeader(
+    BuildContext context,
+    WidgetRef ref,
+    int count,
+    String studentName,
+    DiscoverySort currentSort,
+  ) {
+    final sortLabel = currentSort == DiscoverySort.highestAmount
+        ? 'Highest Amount'
+        : 'Highest Match %';
+
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      crossAxisAlignment: CrossAxisAlignment.end,
+      children: [
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Verified Matches',
+                style: outfit(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: const Color(0xFF161C27),
+                  letterSpacing: -0.3,
+                ),
+              ),
+              const SizedBox(height: 2),
+              Text(
+                'Showing $count targeted opportunities for $studentName',
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: openSans(
+                  fontSize: 12,
+                  color: const Color(0xFF404942),
+                ),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(width: 8),
+        PopupMenuButton<DiscoverySort>(
+          initialValue: currentSort,
+          onSelected: (sort) {
+            ref.read(discoveryFilterProvider.notifier).setSort(sort);
+          },
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          itemBuilder: (_) => [
+            const PopupMenuItem(
+              value: DiscoverySort.defaultSort,
+              child: Text('Highest Match %'),
+            ),
+            const PopupMenuItem(
+              value: DiscoverySort.highestAmount,
+              child: Text('Highest Amount'),
+            ),
+          ],
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all(color: const Color(0xFFE2E8E5)),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.04),
+                  blurRadius: 4,
+                  offset: const Offset(0, 2),
+                ),
+              ],
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  sortLabel,
+                  style: outfit(
+                    fontSize: 11.5,
+                    fontWeight: FontWeight.w600,
+                    color: const Color(0xFF161C27),
+                  ),
+                ),
+                const SizedBox(width: 2),
+                const Icon(
+                  Icons.expand_more_rounded,
+                  size: 16,
+                  color: Color(0xFF404942),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  // --- 6. Feed Cards Container ---
   Widget _buildMatchesSection(
     BuildContext context,
     WidgetRef ref,
@@ -348,116 +644,46 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
         onRetry: () => ref.invalidate(matchesProvider),
       ),
       data: (matches) {
+        final browse = browseAsync.valueOrNull ?? const <Scholarship>[];
+        if (matches.isEmpty && browse.isEmpty) {
+          return _buildNoResultsEmptyState(context, ref);
+        }
         if (matches.isEmpty) {
-          final browse = browseAsync.valueOrNull;
-          if (browse != null && browse.isEmpty) {
-            return _buildNoResultsEmptyState(context, ref);
-          }
           return _buildMatchesEmptyNote(context, ref, state);
         }
 
-        final profile = ref.read(currentProfileProvider).valueOrNull!;
+        final profile = ref.watch(currentProfileProvider).valueOrNull;
 
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _buildSectionHeader(
-              'Your Matches',
-              matches.length,
-              trailing: _seeAllApplications(ref),
-            ),
-            const SizedBox(height: 12),
-            ListView.separated(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              itemCount: matches.length,
-              separatorBuilder: (_, _) => const SizedBox(height: 14),
-              itemBuilder: (_, i) {
-                final s = matches[i];
-                return ScholarshipCard(
-                  scholarship: s,
-                  reasons: matchReasonsFor(profile, s),
-                  isBookmarked: bookmarkIds.contains(s.id),
-                  isApplied: appliedIds.contains(s.id),
-                  onToggleBookmark: () => _toggleBookmark(ref, s.id),
+        return ListView.separated(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          itemCount: matches.length,
+          separatorBuilder: (_, _) => const SizedBox(height: 14),
+          itemBuilder: (context, index) {
+            final scholarship = matches[index];
+            final reasons = profile != null
+                ? matchReasonsFor(profile, scholarship)
+                : const <String>[];
+            return ScholarshipCard(
+              scholarship: scholarship,
+              reasons: reasons,
+              isBookmarked: bookmarkIds.contains(scholarship.id),
+              isApplied: appliedIds.contains(scholarship.id),
+              onToggleBookmark: () => _toggleBookmark(ref, scholarship.id),
+              onQuickApply: () {
+                context.push(
+                  '/application/review',
+                  extra: scholarship,
                 );
               },
-            ),
-          ],
+            );
+          },
         );
       },
     );
   }
 
-  Widget _buildProTipBentoBox() {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: const Color(0xFFF1F3FF),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: const Color(0xFFDDE2F3)),
-      ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            width: 36,
-            height: 36,
-            decoration: const BoxDecoration(
-              color: Color(0xFFFFDEA3),
-              shape: BoxShape.circle,
-            ),
-            child: const Center(
-              child: Icon(
-                Icons.lightbulb_rounded,
-                size: 20,
-                color: Color(0xFF5D4200),
-              ),
-            ),
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Pro-Tip for Applicants',
-                  style: poppins(
-                    fontSize: 13,
-                    fontWeight: FontWeight.w700,
-                    color: kTextPrimary,
-                  ),
-                ),
-                const SizedBox(height: 2),
-                RichText(
-                  text: TextSpan(
-                    style: openSans(fontSize: 12, color: kTextSecondary, height: 1.4),
-                    children: [
-                      const TextSpan(
-                        text: 'Scholarships that require personal essays receive ',
-                      ),
-                      TextSpan(
-                        text: '40% fewer applicants',
-                        style: openSans(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w700,
-                          color: kPrimary,
-                        ),
-                      ),
-                      const TextSpan(
-                        text: ', doubling your acceptance likelihood.',
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
+  // --- 7. Deduplicated Browse Section ---
   Widget _buildBrowseSection(
     BuildContext context,
     WidgetRef ref,
@@ -481,7 +707,7 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
             const SizedBox(height: 4),
             Text(
               'Showing ${browse.length} scholarships',
-              style: openSans(fontSize: 13, color: kTextSecondary),
+              style: openSans(fontSize: 13, color: const Color(0xFF404942)),
             ),
             const SizedBox(height: 12),
             ListView.separated(
@@ -494,6 +720,12 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
                 isBookmarked: bookmarkIds.contains(browse[i].id),
                 isApplied: appliedIds.contains(browse[i].id),
                 onToggleBookmark: () => _toggleBookmark(ref, browse[i].id),
+                onQuickApply: () {
+                  context.push(
+                    '/application/review',
+                    extra: browse[i],
+                  );
+                },
               ),
             ),
           ],
@@ -502,21 +734,87 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
     );
   }
 
-  Widget _buildSectionHeader(String title, int count, {Widget? trailing}) {
-    return SectionHeader(title: title, count: count, trailing: trailing);
-  }
-
-  Widget _seeAllApplications(WidgetRef ref) {
-    return TextButton(
-      key: const ValueKey('see-all-applications'),
-      onPressed: () => ref.read(homeTabIndexProvider.notifier).selectTab(2),
-      style: TextButton.styleFrom(
-        visualDensity: VisualDensity.compact,
-        padding: const EdgeInsets.symmetric(horizontal: 8),
+  // --- 8. Editorial End-of-Feed Helper Card ---
+  Widget _buildEditorialHelperCard(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: const Color(0xFFE2E8E5)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.04),
+            blurRadius: 10,
+            offset: const Offset(0, 3),
+          ),
+        ],
       ),
-      child: Text(
-        'See all',
-        style: poppins(fontSize: 13, fontWeight: FontWeight.w600, color: kPrimary),
+      child: Column(
+        children: [
+          Container(
+            width: 48,
+            height: 48,
+            decoration: const BoxDecoration(
+              color: Color(0xFFB6D4FE), // secondary-container
+              shape: BoxShape.circle,
+            ),
+            child: const Center(
+              child: Icon(
+                Icons.hub_rounded,
+                size: 24,
+                color: Color(0xFF001C38),
+              ),
+            ),
+          ),
+          const SizedBox(height: 12),
+          Text(
+            'Looking for more niche grants?',
+            textAlign: TextAlign.center,
+            style: outfit(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: const Color(0xFF161C27),
+            ),
+          ),
+          const SizedBox(height: 6),
+          Text(
+            'Connect your local community college, regional foundation, or alumni affinity groups to unlock hyper-local aid.',
+            textAlign: TextAlign.center,
+            style: openSans(
+              fontSize: 13,
+              color: const Color(0xFF404942),
+              height: 1.4,
+            ),
+          ),
+          const SizedBox(height: 16),
+          ElevatedButton(
+            onPressed: () => showDiscoveryFilterSheet(context),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFF436084), // secondary Slate Navy
+              foregroundColor: Colors.white,
+              elevation: 0,
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Icon(Icons.manage_search_rounded, size: 18),
+                const SizedBox(width: 8),
+                Text(
+                  'Update Eligibility Filters',
+                  style: outfit(
+                    fontSize: 13,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -545,25 +843,28 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _buildSectionHeader('Your Matches', 0),
+        SectionHeader(title: 'Your Matches', count: 0),
         const SizedBox(height: 12),
         Container(
-          width: double.infinity,
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: kWarmCream,
-            borderRadius: BorderRadius.circular(kRadiusCard),
-            border: Border.all(color: kWarmCreamBorder),
+            color: const Color(0xFFF1F3FF),
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: const Color(0xFFDDE2F3)),
           ),
           child: Row(
             children: [
               Container(
                 padding: const EdgeInsets.all(10),
                 decoration: BoxDecoration(
-                  color: kPrimary.withValues(alpha: 0.10),
+                  color: const Color(0xFF0F4D2E).withValues(alpha: 0.10),
                   shape: BoxShape.circle,
                 ),
-                child: const Icon(Icons.search_rounded, size: 24, color: kPrimary),
+                child: const Icon(
+                  Icons.search_rounded,
+                  size: 24,
+                  color: Color(0xFF0F4D2E),
+                ),
               ),
               const SizedBox(width: 14),
               Expanded(
@@ -571,7 +872,7 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
                   message,
                   style: openSans(
                     fontSize: 13,
-                    color: const Color(0xFF5C4D38),
+                    color: const Color(0xFF404942),
                     height: 1.35,
                   ),
                 ),
@@ -587,10 +888,12 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
     try {
       await ref.read(bookmarksProvider.notifier).toggle(id);
     } on Exception {
-      // Silent on card; the icon state is sufficient feedback.
+      // Silent on card
     }
   }
 }
+
+// --- Components ---
 
 class _SearchField extends ConsumerStatefulWidget {
   const _SearchField();
@@ -606,7 +909,8 @@ class _SearchFieldState extends ConsumerState<_SearchField> {
   void initState() {
     super.initState();
     _controller.text = ref.read(discoveryFilterProvider).query;
-    ref.listenManual<DiscoveryFilterState>(discoveryFilterProvider, (prev, next) {
+    ref.listenManual<DiscoveryFilterState>(discoveryFilterProvider,
+        (prev, next) {
       if (_controller.text != next.query) {
         _controller.text = next.query;
       }
@@ -622,39 +926,49 @@ class _SearchFieldState extends ConsumerState<_SearchField> {
   @override
   Widget build(BuildContext context) {
     final query = ref.watch(discoveryFilterProvider).query;
-    return TextField(
-      controller: _controller,
-      onChanged: (value) =>
-          ref.read(discoveryFilterProvider.notifier).setQuery(value),
-      textInputAction: TextInputAction.search,
-      style: openSans(fontSize: 14, color: kTextPrimary),
-      decoration: InputDecoration(
-        hintText: 'Search scholarships',
-        hintStyle: openSans(fontSize: 13, color: Colors.black38),
-        prefixIcon: const Icon(Icons.search_rounded, color: kPrimary, size: 20),
-        filled: true,
-        fillColor: Colors.white,
-        contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: kBorderLight),
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: const Color(0xFFE2E8E5)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.03),
+            blurRadius: 6,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: TextField(
+        controller: _controller,
+        onChanged: (value) =>
+            ref.read(discoveryFilterProvider.notifier).setQuery(value),
+        textInputAction: TextInputAction.search,
+        style: openSans(fontSize: 14, color: const Color(0xFF161C27)),
+        decoration: InputDecoration(
+          hintText: 'Search scholarships',
+          hintStyle: openSans(fontSize: 13, color: const Color(0xFF707971)),
+          prefixIcon: const Icon(
+            Icons.search_rounded,
+            color: Color(0xFF404942),
+            size: 22,
+          ),
+          filled: true,
+          fillColor: Colors.transparent,
+          contentPadding:
+              const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+          border: InputBorder.none,
+          enabledBorder: InputBorder.none,
+          focusedBorder: InputBorder.none,
+          suffixIcon: query.isEmpty
+              ? null
+              : IconButton(
+                  tooltip: 'Clear search',
+                  icon: const Icon(Icons.close_rounded, size: 18),
+                  onPressed: () =>
+                      ref.read(discoveryFilterProvider.notifier).setQuery(''),
+                ),
         ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: kBorderLight),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: kPrimary, width: 1.5),
-        ),
-        suffixIcon: query.isEmpty
-            ? null
-            : IconButton(
-                tooltip: 'Clear search',
-                icon: const Icon(Icons.close_rounded, size: 18),
-                onPressed: () =>
-                    ref.read(discoveryFilterProvider.notifier).setQuery(''),
-              ),
       ),
     );
   }
@@ -675,38 +989,144 @@ class _FilterButton extends ConsumerWidget {
         onTap: onPressed,
         borderRadius: BorderRadius.circular(12),
         child: Container(
-          width: 48,
           height: 48,
+          padding: const EdgeInsets.symmetric(horizontal: 14),
           alignment: Alignment.center,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: kBorderLight),
+            border: Border.all(color: const Color(0xFFE2E8E5)),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.03),
+                blurRadius: 6,
+                offset: const Offset(0, 2),
+              ),
+            ],
           ),
-          child: Stack(
-            clipBehavior: Clip.none,
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
             children: [
-              const Icon(Icons.tune_rounded, color: kPrimary, size: 22),
-              if (count > 0)
-                Positioned(
-                  right: -6,
-                  top: -6,
-                  child: Container(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                    decoration: BoxDecoration(
-                      color: kAccent,
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: Text(
-                      '$count',
-                      style: poppins(
-                        fontSize: 10,
-                        fontWeight: FontWeight.w700,
-                        color: kMatchGoldText,
-                      ),
+              const Icon(
+                Icons.tune_rounded,
+                color: Color(0xFF436084),
+                size: 20,
+              ),
+              const SizedBox(width: 5),
+              Text(
+                'Filter',
+                style: outfit(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w600,
+                  color: const Color(0xFF436084),
+                ),
+              ),
+              if (count > 0) ...[
+                const SizedBox(width: 5),
+                Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 6, vertical: 1.5),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF0F4D2E), // primary-container
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Text(
+                    '$count',
+                    style: outfit(
+                      fontSize: 10,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
                     ),
                   ),
                 ),
+              ],
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _StitchCarouselChip extends StatelessWidget {
+  const _StitchCarouselChip({
+    required this.label,
+    required this.onTap,
+    this.isActive = false,
+    this.isUrgent = false,
+    this.hasDot = false,
+    this.icon,
+  });
+
+  final String label;
+  final VoidCallback onTap;
+  final bool isActive;
+  final bool isUrgent;
+  final bool hasDot;
+  final IconData? icon;
+
+  @override
+  Widget build(BuildContext context) {
+    Color bg;
+    Color fg;
+    Border? border;
+
+    if (isActive) {
+      bg = const Color(0xFF0F4D2E); // primary-container
+      fg = Colors.white;
+    } else if (isUrgent) {
+      bg = const Color(0xFFFFDAD6); // error-container
+      fg = const Color(0xFF93000A);
+    } else {
+      bg = Colors.white;
+      fg = const Color(0xFF0F172A);
+      border = Border.all(color: const Color(0xFFE2E8E5));
+    }
+
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(20),
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
+          decoration: BoxDecoration(
+            color: bg,
+            borderRadius: BorderRadius.circular(20),
+            border: border,
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.03),
+                blurRadius: 4,
+                offset: const Offset(0, 1.5),
+              ),
+            ],
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              if (hasDot) ...[
+                Container(
+                  width: 6,
+                  height: 6,
+                  decoration: const BoxDecoration(
+                    color: Color(0xFFB3F1C6), // primary-fixed
+                    shape: BoxShape.circle,
+                  ),
+                ),
+                const SizedBox(width: 5),
+              ],
+              if (icon != null) ...[
+                Icon(icon, size: 14, color: fg),
+                const SizedBox(width: 4),
+              ],
+              Text(
+                label,
+                style: outfit(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w600,
+                  color: fg,
+                ),
+              ),
             ],
           ),
         ),
@@ -729,9 +1149,9 @@ class _ActiveFilterChip extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: kPrimarySoft,
+        color: const Color(0xFFE8EEFF),
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: kPrimary.withValues(alpha: 0.25)),
+        border: Border.all(color: const Color(0xFF0F4D2E).withValues(alpha: 0.25)),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -743,7 +1163,7 @@ class _ActiveFilterChip extends StatelessWidget {
               style: openSans(
                 fontSize: 12,
                 fontWeight: FontWeight.w600,
-                color: kPrimary,
+                color: const Color(0xFF0F4D2E),
               ),
             ),
           ),
@@ -756,557 +1176,12 @@ class _ActiveFilterChip extends StatelessWidget {
                 width: 36,
                 height: 36,
                 child: Center(
-                  child: Icon(Icons.close, size: 14, color: kPrimary),
+                  child: Icon(Icons.close, size: 14, color: Color(0xFF0F4D2E)),
                 ),
               ),
             ),
           ),
         ],
-      ),
-    );
-  }
-}
-
-class _TarsiDashboardHero extends ConsumerWidget {
-  const _TarsiDashboardHero({
-    required this.info,
-    this.profile,
-    this.activeApplication,
-    this.onTapMatches,
-    this.onTapClosingSoon,
-    this.onTapSaved,
-    this.onTapApplied,
-    this.onTapMatchingPower,
-  });
-
-  final DashboardInfo info;
-  final StudentProfile? profile;
-  final Application? activeApplication;
-  final VoidCallback? onTapMatches;
-  final VoidCallback? onTapClosingSoon;
-  final VoidCallback? onTapSaved;
-  final VoidCallback? onTapApplied;
-  final VoidCallback? onTapMatchingPower;
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final firstName = profile?.fullName.split(' ').first;
-    final greeting = firstName != null && firstName.isNotEmpty
-        ? 'Good to see you, $firstName'
-        : 'Welcome to Scholaris';
-
-    final fundingCount = info.matchCount > 0 ? info.matchCount : 2;
-    final fundingAmount = fundingCount * 90000;
-    final formattedFunding = fundingAmount.toString().replaceAllMapped(
-          RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'),
-          (Match m) => '${m[1]},',
-        );
-
-    final report = MatchingPowerService.evaluate(profile);
-    final double matchingPower = report.ratio;
-    final int matchingPowerPct = report.percentage;
-
-    final topInset = MediaQuery.paddingOf(context).top;
-    final String guideMessage;
-    final bool isDeadlineAlert = info.closingSoonCount > 0;
-
-    if (isDeadlineAlert) {
-      final count = info.closingSoonCount;
-      guideMessage =
-          "You've got $count scholarship${count == 1 ? '' : 's'} closing soon worth ₱$formattedFunding. Don't miss your opportunity!";
-    } else if (info.matchCount > 0) {
-      final count = info.matchCount;
-      guideMessage =
-          "You've got $count new scholarship match${count == 1 ? '' : 'es'} worth ₱$formattedFunding waiting for you.";
-    } else {
-      guideMessage =
-          "Explore opportunities below and bookmark the ones that match your academic goals!";
-    }
-
-    return Container(
-      decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          colors: [
-            Color(0xFF0F4D2E), // Bridge Green
-            Color(0xFF1B3A5C), // Navy Trust
-          ],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-        borderRadius: const BorderRadius.vertical(
-          bottom: Radius.circular(24),
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: kPrimary.withValues(alpha: 0.20),
-            blurRadius: 16,
-            offset: const Offset(0, 6),
-          ),
-        ],
-      ),
-      padding: EdgeInsets.fromLTRB(16, topInset + 12, 16, 18),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Greeting & Match Insight
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Expanded(
-                child: Text(
-                  greeting,
-                  style: poppins(
-                    fontSize: 20,
-                    fontWeight: FontWeight.w700,
-                    color: Colors.white,
-                  ),
-                ),
-              ),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 4),
-                decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: 0.15),
-                  borderRadius: BorderRadius.circular(16),
-                  border: Border.all(color: Colors.white.withValues(alpha: 0.25)),
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Container(
-                      width: 6,
-                      height: 6,
-                      decoration: const BoxDecoration(
-                        color: Color(0xFFFABC28),
-                        shape: BoxShape.circle,
-                      ),
-                    ),
-                    const SizedBox(width: 5),
-                    Text(
-                      '₱$formattedFunding',
-                      style: poppins(
-                        fontSize: 11,
-                        fontWeight: FontWeight.w700,
-                        color: const Color(0xFFFFDEA3),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 12),
-
-          // Scholaris Guide Advice Banner
-          Container(
-            key: const ValueKey('eli-advice-card'),
-            width: double.infinity,
-            padding: const EdgeInsets.symmetric(
-              horizontal: 14,
-              vertical: 10,
-            ),
-            decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha: 0.12),
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(
-                color: Colors.white.withValues(alpha: 0.18),
-                width: 1,
-              ),
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Wrap(
-                  spacing: 6,
-                  runSpacing: 4,
-                  crossAxisAlignment: WrapCrossAlignment.center,
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 7,
-                        vertical: 2,
-                      ),
-                      decoration: BoxDecoration(
-                        color: Colors.white.withValues(alpha: 0.18),
-                        borderRadius: BorderRadius.circular(6),
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          const Icon(
-                            Icons.tips_and_updates_outlined,
-                            size: 12,
-                            color: Colors.white,
-                          ),
-                          const SizedBox(width: 4),
-                          Text(
-                            'Scholaris Guide',
-                            style: openSans(
-                              fontSize: 10,
-                              fontWeight: FontWeight.w600,
-                              color: Colors.white,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    if (isDeadlineAlert)
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 7,
-                          vertical: 2,
-                        ),
-                        decoration: BoxDecoration(
-                          color: kAccent.withValues(alpha: 0.30),
-                          borderRadius: BorderRadius.circular(6),
-                        ),
-                        child: Text(
-                          'Deadline Alert!',
-                          style: openSans(
-                            fontSize: 10,
-                            fontWeight: FontWeight.w700,
-                            color: const Color(0xFFFFDEA3),
-                          ),
-                        ),
-                      ),
-                  ],
-                ),
-                const SizedBox(height: 6),
-                Text(
-                  guideMessage,
-                  style: openSans(
-                    fontSize: 12,
-                    color: Colors.white.withValues(alpha: 0.95),
-                    height: 1.35,
-                  ),
-                ),
-              ],
-            ),
-          ),
-
-          // Active Application Status Alert Banner
-          if (activeApplication != null) ...[
-            const SizedBox(height: 10),
-            _HeroApplicationAlertCard(
-              application: activeApplication!,
-              onTap: onTapApplied,
-            ),
-          ],
-          const SizedBox(height: 12),
-
-          // Matching Power interactive mini-progress bar
-          Material(
-            color: Colors.transparent,
-            child: InkWell(
-              key: const ValueKey('hero-matching-power-bar'),
-              borderRadius: BorderRadius.circular(8),
-              onTap: onTapMatchingPower,
-              child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 2),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        const Icon(
-                          Icons.bolt_rounded,
-                          size: 14,
-                          color: Color(0xFFFABC28),
-                        ),
-                        const SizedBox(width: 4),
-                        Text(
-                          'Matching Power',
-                          style: openSans(
-                            fontSize: 12,
-                            fontWeight: FontWeight.w600,
-                            color: Colors.white.withValues(alpha: 0.90),
-                          ),
-                        ),
-                        const Spacer(),
-                        Text(
-                          '$matchingPowerPct%',
-                          key: const ValueKey('hero-matching-power-percentage'),
-                          style: poppins(
-                            fontSize: 12.5,
-                            fontWeight: FontWeight.w700,
-                            color: const Color(0xFFFFDEA3),
-                          ),
-                        ),
-                        const SizedBox(width: 2),
-                        const Icon(
-                          Icons.chevron_right_rounded,
-                          size: 16,
-                          color: Color(0xFFFFDEA3),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 6),
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(4),
-                      child: LinearProgressIndicator(
-                        value: matchingPower,
-                        minHeight: 6,
-                        backgroundColor: Colors.white.withValues(alpha: 0.20),
-                        valueColor: const AlwaysStoppedAnimation<Color>(Color(0xFFFABC28)),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-          const SizedBox(height: 12),
-
-          // Quick Stat Tiles Row (Matches, Closing soon, Bookmarked, Applied)
-          Row(
-            children: [
-              Expanded(
-                child: _TarsiStatChip(
-                  statKey: 'matches',
-                  count: info.matchCount,
-                  label: 'Matches',
-                  icon: Icons.auto_awesome_rounded,
-                  accent: kPrimary,
-                  onTap: onTapMatches,
-                ),
-              ),
-              const SizedBox(width: 8),
-              Expanded(
-                child: _TarsiStatChip(
-                  statKey: 'closing-soon',
-                  count: info.closingSoonCount,
-                  label: 'Closing soon',
-                  icon: Icons.schedule_rounded,
-                  accent: kAccent,
-                  onTap: onTapClosingSoon,
-                ),
-              ),
-              const SizedBox(width: 8),
-              Expanded(
-                child: _TarsiStatChip(
-                  statKey: 'saved',
-                  count: info.savedCount,
-                  label: 'Bookmarked',
-                  icon: Icons.collections_bookmark_rounded,
-                  accent: kNavyTrust,
-                  onTap: onTapSaved,
-                ),
-              ),
-              const SizedBox(width: 8),
-              Expanded(
-                child: _TarsiStatChip(
-                  statKey: 'applied',
-                  count: info.appliedCount,
-                  label: 'Applied',
-                  icon: Icons.send_rounded,
-                  accent: kCoralConnect,
-                  onTap: onTapApplied,
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _HeroApplicationAlertCard extends StatelessWidget {
-  const _HeroApplicationAlertCard({
-    required this.application,
-    this.onTap,
-  });
-
-  final Application application;
-  final VoidCallback? onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    final status = application.status;
-    final IconData icon;
-    final Color iconColor;
-    final String title;
-    final String subtitle;
-
-    if (status == ApplicationStatus.approved || status == ApplicationStatus.awarded) {
-      icon = Icons.stars_rounded;
-      iconColor = kLumiGold;
-      title = 'Application Approved!';
-      subtitle = 'Tap to review award details & next steps.';
-    } else if (status == ApplicationStatus.underReview) {
-      icon = Icons.pending_actions_rounded;
-      iconColor = kAccent;
-      title = 'Application Under Review';
-      subtitle = 'A provider is currently evaluating your application.';
-    } else {
-      icon = Icons.mark_email_read_rounded;
-      iconColor = Colors.white;
-      title = 'Application Submitted';
-      subtitle = 'Tap to track your application timeline.';
-    }
-
-    return Material(
-      color: Colors.transparent,
-      child: InkWell(
-        key: const ValueKey('hero-application-alert-banner'),
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(12),
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-          decoration: BoxDecoration(
-            color: Colors.white.withValues(alpha: 0.12),
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(
-              color: Colors.white.withValues(alpha: 0.20),
-            ),
-          ),
-          child: Row(
-            children: [
-              Container(
-                padding: const EdgeInsets.all(6),
-                decoration: BoxDecoration(
-                  color: iconColor.withValues(alpha: 0.20),
-                  shape: BoxShape.circle,
-                ),
-                child: Icon(icon, size: 16, color: iconColor),
-              ),
-              const SizedBox(width: 10),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      title,
-                      style: poppins(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.white,
-                      ),
-                    ),
-                    Text(
-                      subtitle,
-                      style: openSans(
-                        fontSize: 11,
-                        color: Colors.white.withValues(alpha: 0.85),
-                      ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(width: 8),
-              Icon(
-                Icons.arrow_forward_ios_rounded,
-                size: 11,
-                color: Colors.white.withValues(alpha: 0.70),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _TarsiStatChip extends StatelessWidget {
-  const _TarsiStatChip({
-    required this.statKey,
-    required this.count,
-    required this.label,
-    required this.icon,
-    required this.accent,
-    this.onTap,
-  });
-
-  final String statKey;
-  final int count;
-  final String label;
-  final IconData icon;
-  final Color accent;
-  final VoidCallback? onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return Semantics(
-      label: '$count $label',
-      button: true,
-      child: Container(
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: kBorderLight),
-          boxShadow: const [
-            BoxShadow(
-              color: kCardShadow,
-              blurRadius: 8,
-              offset: Offset(0, 2),
-            ),
-          ],
-        ),
-        clipBehavior: Clip.antiAlias,
-        child: Material(
-          color: Colors.transparent,
-          child: InkWell(
-            key: ValueKey('stat-chip-$statKey'),
-            onTap: onTap,
-            borderRadius: BorderRadius.circular(12),
-            child: IntrinsicHeight(
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Container(
-                    width: 3.5,
-                    color: accent,
-                  ),
-                  Expanded(
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Icon(icon, size: 13, color: accent),
-                              const SizedBox(width: 3),
-                              Text(
-                                '$count',
-                                key: ValueKey('stat-count-$statKey'),
-                                style: poppins(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w700,
-                                  color: kTextPrimary,
-                                  height: 1.1,
-                                ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 3),
-                          FittedBox(
-                            fit: BoxFit.scaleDown,
-                            child: Text(
-                              label,
-                              maxLines: 1,
-                              style: openSans(
-                                fontSize: 10,
-                                fontWeight: FontWeight.w600,
-                                color: kTextSecondary,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ),
       ),
     );
   }

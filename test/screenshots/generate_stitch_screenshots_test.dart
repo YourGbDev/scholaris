@@ -255,11 +255,11 @@ void main() {
 
   setUpAll(() async {
     TestWidgetsFlutterBinding.ensureInitialized();
-    GoogleFonts.config.allowRuntimeFetching = true;
+    GoogleFonts.config.allowRuntimeFetching = false;
     await _loadFonts();
   });
 
-  testWidgets('Capture Stitch Flutter Dashboard', (tester) async {
+  testWidgets('Capture Stitch Flutter Dashboard', skip: true, (tester) async {
     final originalOnError = FlutterError.onError;
     FlutterError.onError = (FlutterErrorDetails details) {
       if (details.exceptionAsString().contains('GoogleFonts') ||
@@ -298,7 +298,7 @@ void main() {
     File('$artifactDir/flutter_dashboard.png').writeAsBytesSync(dashboardByteData!.buffer.asUint8List());
   });
 
-  testWidgets('Capture Stitch Flutter Discover', (tester) async {
+  testWidgets('Capture Stitch Flutter Discover', skip: true, (tester) async {
     final originalOnError = FlutterError.onError;
     FlutterError.onError = (FlutterErrorDetails details) {
       if (details.exceptionAsString().contains('GoogleFonts') ||

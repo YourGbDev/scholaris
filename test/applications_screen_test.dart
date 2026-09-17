@@ -264,19 +264,21 @@ void main() {
       expect(find.text('No applications yet'), findsOneWidget);
     });
 
-    testWidgets('the three-tab navigation contract remains intact',
+    testWidgets('the navigation contract remains intact',
         (tester) async {
       await tester.pumpWidget(_wrapHomeScreen());
       await tester.pump(const Duration(milliseconds: 500));
 
-      // Scope to the NavigationBar: the Discover dashboard's stat tiles
-      // legitimately render a 'Saved' label on the visible tab.
+      expect(
+        find.descendant(of: find.byType(NavigationBar), matching: find.text('Dashboard')),
+        findsOneWidget,
+      );
       expect(
         find.descendant(of: find.byType(NavigationBar), matching: find.text('Discover')),
         findsOneWidget,
       );
       expect(
-        find.descendant(of: find.byType(NavigationBar), matching: find.text('Saved')),
+        find.descendant(of: find.byType(NavigationBar), matching: find.text('Tracker')),
         findsOneWidget,
       );
       expect(
@@ -285,10 +287,10 @@ void main() {
       );
 
       await tester.tap(
-        find.descendant(of: find.byType(NavigationBar), matching: find.text('Saved')),
+        find.descendant(of: find.byType(NavigationBar), matching: find.text('Tracker')),
       );
       await tester.pump(const Duration(milliseconds: 500));
-      expect(find.text('Nothing saved yet'), findsOneWidget);
+      expect(find.text('My Applications'), findsOneWidget);
     });
   });
 

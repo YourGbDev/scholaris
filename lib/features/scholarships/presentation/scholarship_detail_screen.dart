@@ -19,10 +19,11 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import 'package:scholaris/features/applications/models/application.dart';
+import 'package:scholaris/features/applications/presentation/submit_application_review_dialog.dart';
+import 'package:scholaris/features/applications/presentation/submission_confirmation_receipt_screen.dart';
 import 'package:scholaris/features/applications/providers/applications_provider.dart';
 import 'package:scholaris/features/applications/repositories/application_repository.dart';
 import 'package:scholaris/features/auth/controllers/auth_controller.dart';
-import 'package:scholaris/shared/widgets/save_draft_dialog.dart';
 import 'package:scholaris/features/bookmarks/providers/bookmarks_provider.dart';
 import 'package:scholaris/features/profile/providers/avatar_provider.dart';
 import 'package:scholaris/features/profile/providers/profile_setup_provider.dart';
@@ -1755,324 +1756,10 @@ class _ApplySectionState extends ConsumerState<_ApplySection> {
 
   /// Pre-apply confirmation dialog (Stitch scholaris_submit_application_review).
   Future<bool> _confirmApply() async {
-    Future<void> handleExitIntent(BuildContext dialogCtx) async {
-      final action = await showSaveDraftExitDialog(dialogCtx);
-      if (!dialogCtx.mounted) return;
-      if (action == SaveDraftExitAction.discard) {
-        Navigator.of(dialogCtx).pop(false);
-      } else if (action == SaveDraftExitAction.saveAsDraft) {
-        await _onSaveDraft();
-        if (dialogCtx.mounted) {
-          Navigator.of(dialogCtx).pop(false);
-        }
-      }
-    }
-
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (dialogContext) => PopScope(
-        canPop: false,
-        onPopInvokedWithResult: (didPop, _) async {
-          if (didPop) return;
-          await handleExitIntent(dialogContext);
-        },
-        child: AlertDialog(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-          backgroundColor: Colors.white,
-          title: Row(
-            children: [
-              Expanded(
-                child: Text(
-                  'Apply to this scholarship?',
-                  style: GoogleFonts.outfit(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w700,
-                    color: kOnSurface,
-                  ),
-                ),
-              ),
-              IconButton(
-                key: const ValueKey('apply-close-button'),
-                icon: const Icon(
-                  Icons.close_rounded,
-                  size: 20,
-                  color: Color(0xFF707971),
-                ),
-                tooltip: 'Close',
-                onPressed: () => handleExitIntent(dialogContext),
-              ),
-            ],
-          ),
-          content: SizedBox(
-            width: 480,
-            child: SingleChildScrollView(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                    decoration: BoxDecoration(
-                      color: const Color(0xFFE8EEFF),
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Container(
-                          width: 6,
-                          height: 6,
-                          decoration: const BoxDecoration(
-                            color: kPrimaryContainer,
-                            shape: BoxShape.circle,
-                          ),
-                        ),
-                        const SizedBox(width: 6),
-                        Text(
-                          'FINAL STEP • REVIEW & SUBMIT',
-                          style: GoogleFonts.outfit(
-                            fontSize: 10,
-                            fontWeight: FontWeight.w700,
-                            color: kSecondary,
-                            letterSpacing: 0.5,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    widget.scholarship.title,
-                    style: GoogleFonts.outfit(
-                      fontSize: 15,
-                      fontWeight: FontWeight.w600,
-                      color: const Color(0xFF161C27),
-                    ),
-                  ),
-                  Text(
-                    widget.scholarship.provider ?? 'Scholarship Provider',
-                    style: GoogleFonts.openSans(
-                      fontSize: 12,
-                      color: const Color(0xFF404942),
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-                  Container(
-                    padding: const EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                      color: const Color(0xFFF1F3FF),
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: const Color(0xFFE2E8E5)),
-                    ),
-                    child: Column(
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  'AWARD VALUE',
-                                  style: GoogleFonts.outfit(
-                                    fontSize: 10,
-                                    fontWeight: FontWeight.w700,
-                                    color: const Color(0xFF404942),
-                                  ),
-                                ),
-                                Text(
-                                  _grantValue(widget.scholarship),
-                                  style: GoogleFonts.outfit(
-                                    fontSize: 15,
-                                    fontWeight: FontWeight.bold,
-                                    color: kPrimaryContainer,
-                                  ),
-                                ),
-                              ],
-                            ),
-                            Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                              decoration: BoxDecoration(
-                                color: const Color(0xFFB3F1C6),
-                                borderRadius: BorderRadius.circular(20),
-                              ),
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  const Icon(Icons.stars_rounded, size: 14, color: kPrimaryContainer),
-                                  const SizedBox(width: 4),
-                                  Text(
-                                    '98% Fit',
-                                    style: GoogleFonts.outfit(
-                                      fontSize: 11,
-                                      fontWeight: FontWeight.bold,
-                                      color: kPrimaryContainer,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                        const Divider(height: 16),
-                        Row(
-                          children: [
-                            Expanded(
-                              child: Row(
-                                children: [
-                                  const Icon(Icons.account_balance_outlined, size: 16, color: kSecondary),
-                                  const SizedBox(width: 6),
-                                  Expanded(
-                                    child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          'Recipient',
-                                          style: GoogleFonts.openSans(fontSize: 10, color: const Color(0xFF404942)),
-                                        ),
-                                        Text(
-                                          'UP Diliman',
-                                          maxLines: 1,
-                                          overflow: TextOverflow.ellipsis,
-                                          style: GoogleFonts.openSans(fontSize: 12, fontWeight: FontWeight.w600),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            Expanded(
-                              child: Row(
-                                children: [
-                                  const Icon(Icons.event_outlined, size: 16, color: Color(0xFFBA1A1A)),
-                                  const SizedBox(width: 6),
-                                  Expanded(
-                                    child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          'Deadline',
-                                          style: GoogleFonts.openSans(fontSize: 10, color: const Color(0xFF404942)),
-                                        ),
-                                        Text(
-                                          deadlineLabel(widget.scholarship.deadline),
-                                          maxLines: 1,
-                                          overflow: TextOverflow.ellipsis,
-                                          style: GoogleFonts.openSans(
-                                            fontSize: 12,
-                                            fontWeight: FontWeight.w600,
-                                            color: const Color(0xFFBA1A1A),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-                  Text(
-                    'Application Packet (4 Components)',
-                    style: GoogleFonts.outfit(
-                      fontSize: 13,
-                      fontWeight: FontWeight.bold,
-                      color: const Color(0xFF161C27),
-                    ),
-                  ),
-                  const SizedBox(height: 6),
-                  _packetItem('Personal Narrative Statement', 'Prompt: STEM Innovation for Philippine Communities'),
-                  _packetItem('Official Transcript of Records (TCG)', 'True Copy of Grades synced via UP Registrar'),
-                  _packetItem('Faculty Recommendations', '2 of 2 Recommendations Received'),
-                  _packetItem('Certificate of Indigency / BIR Form 2316', 'Socioeconomic verification verified'),
-                  const SizedBox(height: 10),
-                  Container(
-                    padding: const EdgeInsets.all(10),
-                    decoration: BoxDecoration(
-                      color: const Color(0xFFF1F3FF),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Icon(Icons.gavel_rounded, size: 16, color: kPrimaryContainer),
-                        const SizedBox(width: 8),
-                        Expanded(
-                          child: Text(
-                            'I certify under penalty of law that all personal information, essays, and UP Diliman academic records provided are true, accurate, and original.',
-                            style: GoogleFonts.openSans(
-                              fontSize: 11,
-                              height: 1.4,
-                              color: const Color(0xFF404942),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    'Confirming will create and submit your application for '
-                    '"${widget.scholarship.title}" in Scholaris. You can track it under '
-                    'My Applications.',
-                    style: GoogleFonts.openSans(fontSize: 12, color: Colors.black54),
-                  ),
-                ],
-              ),
-            ),
-          ),
-          actions: [
-            TextButton.icon(
-              key: const ValueKey('apply-save-draft'),
-              icon: const Icon(Icons.save_outlined, size: 16, color: kPrimaryContainer),
-              label: Text(
-                'Save as Draft',
-                style: GoogleFonts.outfit(
-                  fontWeight: FontWeight.w600,
-                  color: kPrimaryContainer,
-                  fontSize: 13,
-                ),
-              ),
-              onPressed: () async {
-                await _onSaveDraft();
-                if (dialogContext.mounted) {
-                  Navigator.of(dialogContext).pop(false);
-                }
-              },
-            ),
-            TextButton(
-              key: const ValueKey('apply-cancel'),
-              onPressed: () => Navigator.of(dialogContext).pop(false),
-              child: Text(
-                'Cancel',
-                style: GoogleFonts.openSans(
-                  fontWeight: FontWeight.w600,
-                  color: const Color(0xFF404942),
-                ),
-              ),
-            ),
-            TextButton(
-              key: const ValueKey('apply-confirm'),
-              style: TextButton.styleFrom(
-                backgroundColor: kPrimaryContainer,
-                foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-              ),
-              onPressed: () => Navigator.of(dialogContext).pop(true),
-              child: Text(
-                'Apply',
-                style: GoogleFonts.outfit(fontWeight: FontWeight.w600),
-              ),
-            ),
-          ],
-        ),
-      ),
+    final confirmed = await SubmitApplicationReviewDialog.show(
+      context,
+      scholarship: widget.scholarship,
+      onSaveDraft: _onSaveDraft,
     );
     return confirmed == true;
   }
@@ -2096,41 +1783,6 @@ class _ApplySectionState extends ConsumerState<_ApplySection> {
         );
       }
     }
-  }
-
-  Widget _packetItem(String title, String subtitle) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 4),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Icon(Icons.check_circle_rounded, size: 14, color: kPrimaryContainer),
-          const SizedBox(width: 6),
-          Expanded(
-            child: RichText(
-              text: TextSpan(
-                text: '$title: ',
-                style: GoogleFonts.openSans(
-                  fontSize: 11,
-                  fontWeight: FontWeight.w600,
-                  color: const Color(0xFF161C27),
-                ),
-                children: [
-                  TextSpan(
-                    text: subtitle,
-                    style: GoogleFonts.openSans(
-                      fontSize: 11,
-                      fontWeight: FontWeight.normal,
-                      color: const Color(0xFF404942),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
   }
 
   Future<void> _apply() async {
@@ -2791,6 +2443,29 @@ class _AppliedBanner extends StatelessWidget {
                     label: Text(
                       'Monitor in Application Tracker',
                       style: GoogleFonts.outfit(fontWeight: FontWeight.w600, fontSize: 13),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Center(
+                  child: TextButton.icon(
+                    onPressed: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (_) => SubmissionConfirmationReceiptScreen(
+                            scholarship: scholarship,
+                          ),
+                        ),
+                      );
+                    },
+                    icon: const Icon(Icons.receipt_long_rounded, size: 16, color: kPrimaryContainer),
+                    label: Text(
+                      'View Full Receipt & Roadmap',
+                      style: GoogleFonts.outfit(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
+                        color: kPrimaryContainer,
+                      ),
                     ),
                   ),
                 ),

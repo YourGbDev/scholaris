@@ -1,14 +1,12 @@
 // lib/shared/widgets/success_overlay.dart
 //
-// Reusable completion overlay: plays "Successfully Done.json" once, then
-// auto-dismisses. Reduced-motion users see a static checkmark for 1s instead
-// of the Lottie.
+// Reusable completion overlay rebuilt to Stitch specifications.
+// Pure Flutter vector checkmark with concentric halo styling and auto-dismiss.
+// Completely removes Lottie animations per Stitch V2 guidelines.
 
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-
-import 'package:lottie/lottie.dart';
 
 import 'package:scholaris/shared/theme/app_theme.dart';
 
@@ -23,9 +21,8 @@ import 'package:scholaris/shared/theme/app_theme.dart';
 class SuccessOverlay {
   SuccessOverlay._();
 
-  static const _asset = 'assets/animations/Successfully Done.json';
-  static const _duration = Duration(milliseconds: 3400);
-  static const _reducedDuration = Duration(milliseconds: 1000);
+  static const _duration = Duration(milliseconds: 1200);
+  static const _reducedDuration = Duration(milliseconds: 800);
 
   static Future<void> show(BuildContext context) {
     final reduceMotion = MediaQuery.maybeOf(context)?.disableAnimations ?? false;
@@ -36,7 +33,7 @@ class SuccessOverlay {
       barrierColor: Colors.black26,
       transitionDuration: reduceMotion
           ? const Duration(milliseconds: 80)
-          : const Duration(milliseconds: 220),
+          : const Duration(milliseconds: 200),
       pageBuilder: (context, animation, secondaryAnimation) {
         return _SuccessPage(reduceMotion: reduceMotion);
       },
@@ -53,12 +50,26 @@ class _SuccessPage extends StatefulWidget {
   State<_SuccessPage> createState() => _SuccessPageState();
 }
 
-class _SuccessPageState extends State<_SuccessPage> {
+class _SuccessPageState extends State<_SuccessPage>
+    with SingleTickerProviderStateMixin {
   Timer? _timer;
+  late final AnimationController _scaleController;
+  late final Animation<double> _scaleAnimation;
 
   @override
   void initState() {
     super.initState();
+    _scaleController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 400),
+    );
+    _scaleAnimation = CurvedAnimation(
+      parent: _scaleController,
+      curve: Curves.easeOutBack,
+    );
+    if (!widget.reduceMotion) {
+      _scaleController.forward();
+    }
     _scheduleDismiss();
   }
 
@@ -73,6 +84,7 @@ class _SuccessPageState extends State<_SuccessPage> {
   @override
   void dispose() {
     _timer?.cancel();
+    _scaleController.dispose();
     super.dispose();
   }
 
@@ -88,40 +100,61 @@ class _SuccessPageState extends State<_SuccessPage> {
 
   @override
   Widget build(BuildContext context) {
+    final iconWidget = Container(
+      width: 140,
+      height: 140,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        shape: BoxShape.circle,
+        boxShadow: const [
+          BoxShadow(
+            color: Color(0x1A0F4D2E),
+            blurRadius: 24,
+            offset: Offset(0, 8),
+          ),
+        ],
+      ),
+      child: Center(
+        child: Container(
+          width: 96,
+          height: 96,
+          decoration: const BoxDecoration(
+            color: kPrimaryFixed,
+            shape: BoxShape.circle,
+          ),
+          child: Center(
+            child: Container(
+              width: 68,
+              height: 68,
+              decoration: const BoxDecoration(
+                color: kPrimaryContainer,
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(
+                Icons.check_rounded,
+                color: Colors.white,
+                size: 40,
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+
     return PopScope(
       canPop: false,
       child: Scaffold(
         backgroundColor: Colors.transparent,
         body: Center(
-          child: Container(
-            width: 200,
-            height: 200,
-            decoration: BoxDecoration(
-              color: Colors.white,
-              shape: BoxShape.circle,
-              boxShadow: const [
-                BoxShadow(
-                  color: Color(0x26000000),
-                  blurRadius: 32,
-                  offset: Offset(0, 12),
+          child: widget.reduceMotion
+              ? iconWidget
+              : ScaleTransition(
+                  scale: _scaleAnimation,
+                  child: iconWidget,
                 ),
-              ],
-            ),
-            child: widget.reduceMotion
-                ? const Icon(
-                    Icons.check_circle_rounded,
-                    color: kAccent,
-                    size: 96,
-                  )
-                : Lottie.asset(
-                    SuccessOverlay._asset,
-                    fit: BoxFit.contain,
-                    repeat: false,
-                    frameRate: FrameRate.max,
-                  ),
-          ),
         ),
       ),
     );
   }
 }
+

@@ -18,7 +18,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:lottie/lottie.dart';
 
 import 'package:scholaris/app/recovery_redirect.dart';
 import 'package:scholaris/app/router.dart';
@@ -168,9 +167,9 @@ void main() {
     ) async {
       await tester.pumpWidget(const MaterialApp(home: ResetPasswordScreen()));
 
-      // V1 treatment: Lottie hero + white card; the wordmark is gone in favor
-      // of the card heading.
-      expect(find.byType(Lottie), findsOneWidget);
+      // Stitch treatment: Credential update chip + verified account card + form
+      expect(find.text('CREDENTIAL UPDATE'), findsOneWidget);
+      expect(find.text('VERIFIED ACCOUNT'), findsOneWidget);
       expect(find.text('Set new password'), findsOneWidget);
       expect(find.text('New Password'), findsOneWidget);
       expect(find.text('Confirm New Password'), findsOneWidget);

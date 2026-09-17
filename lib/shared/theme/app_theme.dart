@@ -1,105 +1,122 @@
 // lib/shared/theme/app_theme.dart
 //
-// Centralized Scholaris design tokens. Every screen derives its look from
-// this theme so the app stays visually consistent as features grow. Screens
-// should read from these constants rather than hardcoding colors/fonts.
+// Centralized Scholaris design tokens derived directly from the Stitch
+// Academic Momentum design specifications (`academic_momentum/DESIGN.md`).
+//
+// Typography:
+// - Display, Headlines, Titles, Labels: Outfit
+// - Body Copy & Analytical Reading: Open Sans
+// - Brand Wordmark: Poppins Bold
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-// --- Brand palette ----------------------------------------------------------
+// --- Stitch Color Tokens ----------------------------------------------------
 
-/// Primary brand green — used for actions, emphasis and the wordmark.
-const Color kPrimary = Color(0xFF0F4D2E);
+// Primary: Institutional Authority & Bridge Green
+const Color kPrimary = Color(0xFF0F4D2E); // Core Bridge Green
+const Color kPrimaryDark = Color(0xFF00351C);
+const Color kPrimaryContainer = Color(0xFF0F4D2E); // Core Bridge Green
+const Color kOnPrimary = Color(0xFFFFFFFF);
+const Color kOnPrimaryContainer = Color(0xFF82BD95);
+const Color kInversePrimary = Color(0xFF98D4AB);
+const Color kPrimaryFixed = Color(0xFFB3F1C6);
+const Color kPrimaryFixedDim = Color(0xFF98D4AB);
+const Color kOnPrimaryFixed = Color(0xFF002110);
+const Color kOnPrimaryFixedVariant = Color(0xFF145131);
 
-/// Accent gold — progress, highlights, urgency cues.
-const Color kAccent = Color(0xFFF1B41E);
-
-/// App background (warm off-white).
-const Color kBackground = Color(0xFFFAFAF8);
-
-/// Error / destructive color.
-const Color kError = Color(0xFFB3261E);
-
-/// Soft error tint used for alert banners and destructive surfaces.
-const Color kErrorSoft = Color(0x14B3261E);
-
-/// Soft green tint used for focus rings and subtle surfaces.
-const Color kPrimarySoft = Color(0x140F4D2E);
-
-/// Navy Trust — government agencies, official credentials, structural accents.
+// Secondary: Navy Trust & Structural Stability
+const Color kSecondary = Color(0xFF436084);
+const Color kOnSecondary = Color(0xFFFFFFFF);
+const Color kSecondaryContainer = Color(0xFFB6D4FE);
+const Color kOnSecondaryContainer = Color(0xFF3F5B7F);
+const Color kSecondaryFixed = Color(0xFFD2E4FF);
+const Color kSecondaryFixedDim = Color(0xFFABC9F2);
+const Color kOnSecondaryFixed = Color(0xFF001C38);
+const Color kOnSecondaryFixedVariant = Color(0xFF2B486B);
 const Color kNavyTrust = Color(0xFF1B3A5C);
 
-/// Coral Connect — NGO/foundation partners, applied state, active urgency.
+// Tertiary & Accent: Golden Opportunity (Achievement & Grants)
+const Color kTertiary = Color(0xFF3C2A00);
+const Color kOnTertiary = Color(0xFFFFFFFF);
+const Color kTertiaryContainer = Color(0xFF583F00);
+const Color kOnTertiaryContainer = Color(0xFFE1A604);
+const Color kTertiaryFixed = Color(0xFFFFDEA3);
+const Color kTertiaryFixedDim = Color(0xFFFABC28);
+const Color kOnTertiaryFixed = Color(0xFF261900);
+const Color kOnTertiaryFixedVariant = Color(0xFF5D4200);
+const Color kAccent = Color(0xFFF1B41E); // Golden Opportunity
+
+// Alert & Urgency: Coral Connect & Error
 const Color kCoralConnect = Color(0xFFFF6F59);
+const Color kError = Color(0xFFBA1A1A);
+const Color kOnError = Color(0xFFFFFFFF);
+const Color kErrorContainer = Color(0xFFFFDAD6);
+const Color kOnErrorContainer = Color(0xFF93000A);
+const Color kErrorSoft = Color(0x14BA1A1A);
+const Color kPrimarySoft = Color(0x140F4D2E);
 
-/// Primary and secondary text tokens matching the Stitch design system.
-const Color kTextPrimary = Color(0xFF161C27);
-const Color kTextSecondary = Color(0xFF5E6573);
-
-/// Warm surface and border tokens.
+// Surfaces & Neutrals
+const Color kBackground = Color(0xFFF9F9FF);
+const Color kSurface = Color(0xFFF9F9FF);
+const Color kSurfaceDim = Color(0xFFD4DAEA);
+const Color kSurfaceBright = Color(0xFFF9F9FF);
+const Color kSurfaceContainerLowest = Color(0xFFFFFFFF);
+const Color kSurfaceContainerLow = Color(0xFFF1F3FF);
+const Color kSurfaceContainer = Color(0xFFE8EEFF);
+const Color kSurfaceContainerHigh = Color(0xFFE3E8F9);
+const Color kSurfaceContainerHighest = Color(0xFFDDE2F3);
 const Color kSurfaceWarm = Color(0xFFF9F9FF);
-const Color kSurfaceCard = Colors.white;
-const Color kBorderLight = Color(0xFFE2E4E9);
+const Color kSurfaceCard = Color(0xFFFFFFFF);
+
+// Content & Outlines
+const Color kOnSurface = Color(0xFF161C27);
+const Color kOnSurfaceVariant = Color(0xFF404942);
+const Color kInverseSurface = Color(0xFF2A303D);
+const Color kInverseOnSurface = Color(0xFFECF0FF);
+const Color kOutline = Color(0xFF707971);
+const Color kOutlineVariant = Color(0xFFC0C9C0);
+const Color kBorderLight = Color(0xFFE2E8E5);
 const Color kPrimaryLight = Color(0xFFB3F1C6);
 
-// --- Lumi & Outcome Palette -------------------------------------------------
+const Color kTextPrimary = Color(0xFF161C27);
+const Color kTextSecondary = Color(0xFF404942);
 
-/// Lumi Glow Gold — primary mascot tone, warm glow, hope, and light.
-const Color kLumiGold = Color(0xFFFFC857);
-
-/// Lumi Soft Orange — secondary mascot accent tone.
+// Backward-compatible alias tokens
+const Color kLumiGold = Color(0xFFFABC28);
 const Color kLumiSoftOrange = Color(0xFFFFB74D);
+const Color kWarmCream = Color(0xFFF1F3FF);
+const Color kWarmCreamBorder = Color(0xFFE3E8F9);
+const Color kMatchGoldSoft = Color(0x28FABC28);
+const Color kMatchGoldBorder = Color(0x66FABC28);
+const Color kMatchGoldText = Color(0xFF5D4200);
 
-/// Warm Cream — unlit / searching background tone reflecting Lumi's dim glow.
-const Color kWarmCream = Color(0xFFFFF7E6);
+// --- Shape & Elevation Tokens -----------------------------------------------
 
-/// Warm Cream Border — border for empty/searching states.
-const Color kWarmCreamBorder = Color(0xFFFFE5B4);
-
-/// Translucent gold tint for 'Why this matches you' chips and positive outcome pills.
-const Color kMatchGoldSoft = Color(0x28FFC857);
-
-/// Border for 'Why this matches you' chips.
-const Color kMatchGoldBorder = Color(0x66FFC857);
-
-/// Deep warm amber text for accessible contrast on gold outcome chips.
-const Color kMatchGoldText = Color(0xFF8C5C00);
-
-// --- Shape tokens -----------------------------------------------------------
-
-/// Standard radius for inputs, buttons and small surfaces.
 const double kRadiusInput = 12.0;
-
-/// Radius for cards and elevated surfaces.
 const double kRadiusCard = 16.0;
-
+const double kRadiusCardFeatured = 24.0;
 const double kSpaceMd = 24.0;
 
-/// Neutral warm-tinted shadow for cards and elevated surfaces. Replaces the
-/// green/glowing shadow language so cards read as calm, flat surfaces.
-const Color kCardShadow = Color(0x14000000);
+const Color kCardShadow = Color(0x0A1B3A5C);
 
-/// Gradient for the Discover hero surface. Deep Bridge Green flowing into a
-/// lighter Scholaris green — the hero is the one surface that gets the full
-/// brand green, so the white greeting text and gold sparkle read with real
-/// contrast. Never neon.
 const LinearGradient kHeroSurface = LinearGradient(
-  begin: Alignment.topCenter,
-  end: Alignment.bottomCenter,
-  colors: [kPrimary, Color(0xFF1A6B42)],
+  begin: Alignment.topLeft,
+  end: Alignment.bottomRight,
+  colors: [Color(0xFF0F4D2E), Color(0xFF1B3A5C)],
 );
 
-// --- Typography helpers -----------------------------------------------------
+// --- Typography Helpers -----------------------------------------------------
 
-TextStyle poppins({
+/// Primary geometric font for headlines, metrics, pills, buttons, and titles.
+TextStyle outfit({
   double fontSize = 16,
-  FontWeight fontWeight = FontWeight.w500,
+  FontWeight fontWeight = FontWeight.w600,
   Color? color,
   double? height,
   double? letterSpacing,
   TextDecoration? decoration,
-}) => GoogleFonts.poppins(
+}) => GoogleFonts.outfit(
   fontSize: fontSize,
   fontWeight: fontWeight,
   color: color,
@@ -108,6 +125,7 @@ TextStyle poppins({
   decoration: decoration,
 );
 
+/// Humanist font for body copy, eligibility descriptions, and analytical text.
 TextStyle openSans({
   double fontSize = 14,
   FontWeight fontWeight = FontWeight.w400,
@@ -124,14 +142,37 @@ TextStyle openSans({
   decoration: decoration,
 );
 
-/// Builds the Scholaris [ThemeData] used by the root [MaterialApp].
+/// Preserved helper for brand wordmarks and headers.
+TextStyle poppins({
+  double fontSize = 16,
+  FontWeight fontWeight = FontWeight.w700,
+  Color? color,
+  double? height,
+  double? letterSpacing,
+  TextDecoration? decoration,
+}) => GoogleFonts.poppins(
+  fontSize: fontSize,
+  fontWeight: fontWeight,
+  color: color,
+  height: height,
+  letterSpacing: letterSpacing,
+  decoration: decoration,
+);
+
+// --- ThemeData --------------------------------------------------------------
+
 ThemeData scholarisTheme() {
   final colorScheme = ColorScheme.fromSeed(
-    seedColor: kPrimary,
-    primary: kPrimary,
-    secondary: kAccent,
+    seedColor: kPrimaryContainer,
+    primary: kPrimaryContainer,
+    onPrimary: kOnPrimary,
+    secondary: kSecondary,
+    onSecondary: kOnSecondary,
+    tertiary: kAccent,
     error: kError,
-    surface: Colors.white,
+    onError: kOnError,
+    surface: kSurfaceContainerLowest,
+    onSurface: kOnSurface,
   );
 
   return ThemeData(
@@ -140,56 +181,51 @@ ThemeData scholarisTheme() {
     scaffoldBackgroundColor: kBackground,
     fontFamily: GoogleFonts.openSans().fontFamily,
     textTheme: TextTheme(
-      displaySmall: poppins(fontSize: 40, fontWeight: FontWeight.w700),
-      headlineMedium: poppins(fontSize: 22, fontWeight: FontWeight.w600),
-      titleLarge: poppins(fontSize: 20, fontWeight: FontWeight.w600),
-      titleMedium: poppins(fontSize: 16, fontWeight: FontWeight.w600),
-      bodyMedium: openSans(fontSize: 14),
-      bodySmall: openSans(fontSize: 12),
-      labelLarge: poppins(fontSize: 15, fontWeight: FontWeight.w600),
+      displayLarge: outfit(fontSize: 36, fontWeight: FontWeight.w700, letterSpacing: -0.02),
+      headlineLarge: outfit(fontSize: 28, fontWeight: FontWeight.w700, letterSpacing: -0.015),
+      headlineMedium: outfit(fontSize: 22, fontWeight: FontWeight.w600, letterSpacing: -0.01),
+      headlineSmall: outfit(fontSize: 18, fontWeight: FontWeight.w600),
+      titleMedium: outfit(fontSize: 16, fontWeight: FontWeight.w600),
+      bodyLarge: openSans(fontSize: 16, fontWeight: FontWeight.w400),
+      bodyMedium: openSans(fontSize: 14, fontWeight: FontWeight.w400),
+      bodySmall: openSans(fontSize: 12, fontWeight: FontWeight.w400),
+      labelLarge: outfit(fontSize: 14, fontWeight: FontWeight.w600, letterSpacing: 0.01),
+      labelMedium: outfit(fontSize: 12, fontWeight: FontWeight.w600, letterSpacing: 0.02),
+      labelSmall: outfit(fontSize: 11, fontWeight: FontWeight.w700, letterSpacing: 0.04),
     ),
     appBarTheme: AppBarTheme(
-      backgroundColor: kBackground,
+      backgroundColor: kSurfaceContainerLowest,
       elevation: 0,
-      centerTitle: true,
-      titleTextStyle: poppins(fontSize: 18, fontWeight: FontWeight.w600),
-      iconTheme: const IconThemeData(color: kPrimary),
+      centerTitle: false,
+      titleTextStyle: outfit(fontSize: 18, fontWeight: FontWeight.w700, color: kOnSurface),
+      iconTheme: const IconThemeData(color: kOnSurface),
     ),
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ElevatedButton.styleFrom(
-        backgroundColor: kPrimary,
+        backgroundColor: kPrimaryContainer,
         foregroundColor: Colors.white,
-        minimumSize: const Size.fromHeight(52),
+        minimumSize: const Size.fromHeight(48),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(kRadiusInput),
         ),
-        textStyle: poppins(fontWeight: FontWeight.w600),
-      ),
-    ),
-    outlinedButtonTheme: OutlinedButtonThemeData(
-      style: OutlinedButton.styleFrom(
-        foregroundColor: kPrimary,
-        side: const BorderSide(color: kPrimary),
-        minimumSize: const Size.fromHeight(52),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(kRadiusInput),
-        ),
-        textStyle: poppins(fontWeight: FontWeight.w600),
+        textStyle: outfit(fontSize: 16, fontWeight: FontWeight.w600),
       ),
     ),
     inputDecorationTheme: InputDecorationTheme(
-      labelStyle: openSans(color: Colors.black54),
-      helperStyle: openSans(color: Colors.black45, fontSize: 12),
       filled: true,
-      fillColor: Colors.white,
+      fillColor: kSurfaceContainerLowest,
       contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(kRadiusInput),
-        borderSide: BorderSide.none,
+        borderSide: const BorderSide(color: kBorderLight),
+      ),
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(kRadiusInput),
+        borderSide: const BorderSide(color: kBorderLight),
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(kRadiusInput),
-        borderSide: const BorderSide(color: kPrimary, width: 1.5),
+        borderSide: const BorderSide(color: kPrimaryContainer, width: 1.5),
       ),
       errorBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(kRadiusInput),
@@ -200,16 +236,8 @@ ThemeData scholarisTheme() {
         borderSide: const BorderSide(color: kError, width: 1.5),
       ),
     ),
-    navigationBarTheme: NavigationBarThemeData(
-      backgroundColor: Colors.white,
-      indicatorColor: kPrimarySoft,
-      height: 68,
-      labelTextStyle: WidgetStatePropertyAll(
-        poppins(fontSize: 12, fontWeight: FontWeight.w600),
-      ),
-    ),
     snackBarTheme: SnackBarThemeData(
-      backgroundColor: const Color(0xFF161C27),
+      backgroundColor: kOnSurface,
       contentTextStyle: openSans(color: Colors.white, fontSize: 13),
       behavior: SnackBarBehavior.floating,
       shape: RoundedRectangleBorder(

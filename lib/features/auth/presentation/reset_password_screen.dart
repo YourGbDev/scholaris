@@ -8,7 +8,6 @@
 // Preserves local validation, Supabase update user, and test suite contracts.
 
 import 'package:flutter/material.dart';
-import 'package:lottie/lottie.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'package:scholaris/shared/theme/app_theme.dart';
@@ -184,20 +183,6 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
-                          // Lottie Hero (required by test suite)
-                          Center(
-                            child: SizedBox(
-                              height: 120,
-                              child: Lottie.asset(
-                                'assets/animations/reset_password_hero.json',
-                                fit: BoxFit.contain,
-                                animate: !(MediaQuery.maybeOf(context)?.disableAnimations ?? false) &&
-                                    !_isWidgetTestBinding,
-                              ),
-                            ),
-                          ),
-                          const SizedBox(height: 12),
-
                           // Status Chip
                           Align(
                             alignment: Alignment.centerLeft,
@@ -667,11 +652,4 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
       ),
     );
   }
-}
-
-/// True while running inside a widget test.
-bool get _isWidgetTestBinding {
-  final type = WidgetsBinding.instance.runtimeType.toString();
-  return type == 'AutomatedTestWidgetsFlutterBinding' ||
-      type == 'LiveTestWidgetsFlutterBinding';
 }

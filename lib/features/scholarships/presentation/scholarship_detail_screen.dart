@@ -23,8 +23,10 @@ import 'package:scholaris/features/applications/repositories/application_reposit
 import 'package:scholaris/features/auth/controllers/auth_controller.dart';
 import 'package:scholaris/shared/widgets/save_draft_dialog.dart';
 import 'package:scholaris/features/bookmarks/providers/bookmarks_provider.dart';
+import 'package:scholaris/features/profile/providers/avatar_provider.dart';
 import 'package:scholaris/features/profile/providers/profile_setup_provider.dart';
 import 'package:scholaris/features/scholarships/models/scholarship.dart';
+import 'package:scholaris/features/scholarships/presentation/widgets/identity_photo_dialog.dart';
 import 'package:scholaris/features/scholarships/providers/scholarships_provider.dart';
 import 'package:scholaris/features/scholarships/services/application_readiness.dart';
 import 'package:scholaris/features/scholarships/services/match_reasons.dart';
@@ -1542,6 +1544,40 @@ class _ApplySectionState extends ConsumerState<_ApplySection> {
   /// Confirmed apply path for an eligible, open scholarship.
   Future<void> _apply() async {
     if (_isApplying) return;
+
+    final userId = ref.read(currentUserIdProvider);
+    if (userId != null) {
+      final avatarState = ref.read(avatarProvider(userId));
+      if (!avatarState.isRealPhoto) {
+        final photoUploaded = await IdentityPhotoRequiredDialog.show(
+          context,
+          userId: userId,
+          scholarshipTitle: widget.scholarship.title,
+        );
+        if (!photoUploaded) {
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text(
+                  'A verified real photo is required to submit your scholarship application. Providers cannot deliberate applications with placeholder avatars.',
+                ),
+                backgroundColor: Color(0xFFBA1A1A),
+              ),
+            );
+          }
+          return;
+        }
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Identity photo verified! Proceeding with application...'),
+            backgroundColor: Color(0xFF145131),
+            duration: Duration(seconds: 2),
+          ),
+        );
+      }
+    }
+
     final confirmed = await _confirmApply();
     if (!confirmed || !mounted) return;
     await _submit();
@@ -1672,6 +1708,7 @@ class _ApplySectionState extends ConsumerState<_ApplySection> {
       button: true,
       label: 'Apply to this scholarship',
       child: PrimaryButton(
+        key: const ValueKey('apply-now'),
         label: _isApplying ? 'Applying...' : 'Apply now',
         icon: Icons.send_rounded,
         loading: _isApplying,

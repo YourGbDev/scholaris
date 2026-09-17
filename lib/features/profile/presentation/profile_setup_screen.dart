@@ -15,8 +15,11 @@ import 'package:go_router/go_router.dart';
 
 import 'package:scholaris/app/router.dart';
 import 'package:scholaris/features/auth/controllers/auth_controller.dart';
+import 'package:scholaris/features/profile/models/avatar_item.dart';
 import 'package:scholaris/features/profile/models/profile_validator.dart';
 import 'package:scholaris/features/profile/models/student_profile.dart';
+import 'package:scholaris/features/profile/presentation/widgets/avatar_display.dart';
+import 'package:scholaris/features/profile/providers/avatar_provider.dart';
 import 'package:scholaris/features/profile/providers/profile_setup_provider.dart';
 import 'package:scholaris/shared/theme/app_theme.dart';
 import 'package:scholaris/shared/widgets/scholaris_logo.dart';
@@ -341,6 +344,8 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
   ) {
     return switch (widget.step) {
       'personal' => [
+          _buildAvatarSetupCard(context),
+          const SizedBox(height: 20),
           _textField(
             label: 'Full Name',
             controller: _fullNameController,
@@ -549,6 +554,137 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
             color: birthDate == null ? Colors.black38 : kTextPrimary,
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildAvatarSetupCard(BuildContext context) {
+    final userId = ref.watch(currentUserIdProvider) ?? 'anonymous';
+    final avatarState = ref.watch(avatarProvider(userId));
+    final notifier = ref.read(avatarProvider(userId).notifier);
+
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: kBorderLight),
+        boxShadow: const [
+          BoxShadow(
+            color: kCardShadow,
+            blurRadius: 8,
+            offset: Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Choose Your Avatar',
+                      style: poppins(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w700,
+                        color: kNavyTrust,
+                      ),
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      'Pick a doodle or set up later',
+                      style: openSans(
+                        fontSize: 11,
+                        color: kTextSecondary,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(width: 8),
+              TextButton(
+                key: const ValueKey('avatar-setup-later'),
+                style: TextButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                  minimumSize: Size.zero,
+                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                ),
+                onPressed: () async {
+                  await notifier.skipToDefault();
+                  if (context.mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Default doodle avatar assigned. You can change this anytime in your profile.'),
+                        duration: Duration(seconds: 2),
+                      ),
+                    );
+                  }
+                },
+                child: Text(
+                  'Set up later',
+                  style: openSans(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
+                    color: kPrimary,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 14),
+          Row(
+            children: [
+              AvatarDisplay(
+                avatarId: avatarState.avatarId,
+                isRealPhoto: avatarState.isRealPhoto,
+                size: 56,
+              ),
+              const SizedBox(width: 14),
+              Expanded(
+                child: SizedBox(
+                  height: 64,
+                  child: ListView.separated(
+                    scrollDirection: Axis.horizontal,
+                    itemCount: AvatarItem.presets.length,
+                    separatorBuilder: (_, _) => const SizedBox(width: 8),
+                    itemBuilder: (context, index) {
+                      final preset = AvatarItem.presets[index];
+                      final isSelected = !avatarState.isRealPhoto && avatarState.avatarId == preset.id;
+                      return GestureDetector(
+                        key: ValueKey('avatar-setup-option-${preset.id}'),
+                        onTap: () => notifier.selectDoodle(preset.id),
+                        child: Container(
+                          width: 52,
+                          height: 52,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            border: Border.all(
+                              color: isSelected ? kPrimary : Colors.transparent,
+                              width: 2.5,
+                            ),
+                          ),
+                          child: Center(
+                            child: AvatarDisplay(
+                              avatarId: preset.id,
+                              isRealPhoto: false,
+                              size: 44,
+                              showVerifiedBadge: false,
+                            ),
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }

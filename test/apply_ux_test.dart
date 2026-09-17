@@ -20,6 +20,7 @@ import 'package:scholaris/features/auth/controllers/auth_controller.dart';
 import 'package:scholaris/features/bookmarks/providers/bookmarks_provider.dart';
 import 'package:scholaris/features/bookmarks/repositories/bookmark_repository.dart';
 import 'package:scholaris/features/profile/models/student_profile.dart';
+import 'package:scholaris/features/profile/providers/avatar_provider.dart';
 import 'package:scholaris/features/profile/providers/profile_setup_provider.dart';
 import 'package:scholaris/features/profile/repositories/profile_repository.dart';
 import 'package:scholaris/features/scholarships/models/scholarship.dart';
@@ -122,6 +123,16 @@ Widget _wrap({
   return ProviderScope(
     overrides: [
       currentUserIdProvider.overrideWithValue(userId),
+      if (userId != null)
+        avatarProvider(userId).overrideWith(
+          (ref) => AvatarNotifier(
+            userId: userId,
+            initialState: const AvatarState(
+              avatarId: 'verified_photo',
+              isRealPhoto: true,
+            ),
+          ),
+        ),
       profileRepositoryProvider.overrideWith(
         (ref) => ProfileRepository(
           dataSource: profileSource,

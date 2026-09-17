@@ -22,9 +22,12 @@ import 'package:scholaris/shared/widgets/responsive_container.dart';
 import 'package:scholaris/shared/widgets/scholaris_logo.dart';
 import 'package:scholaris/shared/widgets/state_views.dart';
 import '../models/student_profile.dart';
+import '../providers/avatar_provider.dart';
 import '../providers/profile_setup_provider.dart';
 import '../services/matching_power_service.dart';
 import 'matching_power_sheet.dart';
+import 'widgets/avatar_display.dart';
+import 'widgets/avatar_selector_sheet.dart';
 
 class ProfileTabScreen extends ConsumerWidget {
   const ProfileTabScreen({super.key});
@@ -49,14 +52,18 @@ class ProfileTabScreen extends ConsumerWidget {
                     title: 'No profile yet',
                     message: 'Complete your profile to start matching.',
                   )
-                : _buildProfileContent(context, profile),
+                : _buildProfileContent(context, ref, profile),
           ),
         ),
       ),
     );
   }
 
-  Widget _buildProfileContent(BuildContext context, StudentProfile profile) {
+  Widget _buildProfileContent(
+    BuildContext context,
+    WidgetRef ref,
+    StudentProfile profile,
+  ) {
     return SingleChildScrollView(
       padding: const EdgeInsets.fromLTRB(16, 12, 16, 32),
       child: Column(
@@ -71,7 +78,7 @@ class ProfileTabScreen extends ConsumerWidget {
           const SizedBox(height: 14),
 
           // Profile Hero Card
-          _buildHeroCard(profile),
+          _buildHeroCard(context, ref, profile),
           const SizedBox(height: 14),
 
           // Matching Power Milestone Card
@@ -239,10 +246,15 @@ class ProfileTabScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildHeroCard(StudentProfile profile) {
+  Widget _buildHeroCard(
+    BuildContext context,
+    WidgetRef ref,
+    StudentProfile profile,
+  ) {
     final hashNum = (profile.fullName.hashCode.abs() % 90000 + 10000);
     final enrollYear = DateTime.now().year - profile.yearLevel + 1;
     final studentId = '$enrollYear-$hashNum';
+    final avatarState = ref.watch(avatarProvider(profile.id));
 
     return Container(
       padding: const EdgeInsets.all(16),
@@ -264,32 +276,15 @@ class ProfileTabScreen extends ConsumerWidget {
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Avatar with Iskolar badge
-              Container(
-                width: 60,
-                height: 60,
-                decoration: BoxDecoration(
-                  gradient: const LinearGradient(
-                    colors: [Color(0xFF98D4AB), Color(0xFF306948)],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  ),
-                  borderRadius: BorderRadius.circular(30),
-                  boxShadow: [
-                    BoxShadow(
-                      color: kPrimary.withValues(alpha: 0.2),
-                      blurRadius: 8,
-                      offset: const Offset(0, 2),
-                    ),
-                  ],
-                ),
-                child: const Center(
-                  child: Icon(
-                    Icons.person_rounded,
-                    size: 34,
-                    color: Colors.white,
-                  ),
-                ),
+              // Avatar with Iskolar badge and tap to customize
+              AvatarDisplay(
+                key: const ValueKey('profile-hero-avatar'),
+                avatarId: avatarState.avatarId,
+                isRealPhoto: avatarState.isRealPhoto,
+                photoPath: avatarState.photoPath,
+                size: 60,
+                showEditOverlay: true,
+                onTap: () => AvatarSelectorSheet.show(context, profile.id),
               ),
               const SizedBox(width: 14),
               Expanded(

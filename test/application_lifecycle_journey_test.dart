@@ -26,6 +26,7 @@ import 'package:scholaris/features/bookmarks/providers/bookmarks_provider.dart';
 import 'package:scholaris/features/bookmarks/repositories/bookmark_repository.dart';
 import 'package:scholaris/features/home/presentation/home_screen.dart';
 import 'package:scholaris/features/profile/models/student_profile.dart';
+import 'package:scholaris/features/profile/providers/avatar_provider.dart';
 import 'package:scholaris/features/profile/providers/profile_setup_provider.dart';
 import 'package:scholaris/features/profile/repositories/profile_repository.dart';
 import 'package:scholaris/features/scholarships/models/scholarship.dart';
@@ -62,6 +63,15 @@ class _JourneyHarness {
     container = ProviderContainer(
       overrides: [
         currentUserIdProvider.overrideWithValue('user-a'),
+        avatarProvider('user-a').overrideWith(
+          (ref) => AvatarNotifier(
+            userId: 'user-a',
+            initialState: const AvatarState(
+              avatarId: 'verified_photo',
+              isRealPhoto: true,
+            ),
+          ),
+        ),
         profileRepositoryProvider.overrideWith(
           (ref) => ProfileRepository(
             dataSource: profileSource,

@@ -915,20 +915,33 @@ class _StudentDashboardScreenState
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(
-                      'Deadline Alert!',
-                      style: outfit(
-                        fontSize: 13,
-                        fontWeight: FontWeight.bold,
-                        color: const Color(0xFF93000A),
+                    Flexible(
+                      child: FittedBox(
+                        fit: BoxFit.scaleDown,
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          'Deadline Alert!',
+                          style: outfit(
+                            fontSize: 13,
+                            fontWeight: FontWeight.bold,
+                            color: const Color(0xFF93000A),
+                          ),
+                        ),
                       ),
                     ),
-                    Text(
-                      'Scholaris Guide',
-                      style: outfit(
-                        fontSize: 11,
-                        fontWeight: FontWeight.w600,
-                        color: const Color(0xFF5D4200),
+                    const SizedBox(width: 8),
+                    Flexible(
+                      child: FittedBox(
+                        fit: BoxFit.scaleDown,
+                        alignment: Alignment.centerRight,
+                        child: Text(
+                          'Scholaris Guide',
+                          style: outfit(
+                            fontSize: 11,
+                            fontWeight: FontWeight.w600,
+                            color: const Color(0xFF5D4200),
+                          ),
+                        ),
                       ),
                     ),
                   ],

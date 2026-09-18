@@ -11,7 +11,6 @@ import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'package:scholaris/shared/theme/app_theme.dart';
-import 'package:scholaris/shared/widgets/scholaris_logo.dart';
 import 'package:scholaris/shared/widgets/success_overlay.dart';
 
 class ResetPasswordScreen extends StatefulWidget {

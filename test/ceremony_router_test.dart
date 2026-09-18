@@ -134,4 +134,132 @@ void main() {
       );
     });
   });
+
+  group('authRedirectDecision: student navigation and detail routing', () {
+    test('signed-in student with complete profile can visit /scholarship/:id', () {
+      final redirect = authRedirectDecision(
+        location: '/scholarship/f8940e50-40e6-43c1-a6aa-724e1b671eb6',
+        isLoggedIn: true,
+        recoveryActive: false,
+        onAuthRoute: false,
+        onSetupRoute: false,
+        profileLoading: false,
+        profileComplete: true,
+        role: 'student',
+      );
+      expect(redirect, isNull);
+    });
+
+    test('signed-in student with complete profile can visit /saved', () {
+      final redirect = authRedirectDecision(
+        location: '/saved',
+        isLoggedIn: true,
+        recoveryActive: false,
+        onAuthRoute: false,
+        onSetupRoute: false,
+        profileLoading: false,
+        profileComplete: true,
+        role: 'student',
+      );
+      expect(redirect, isNull);
+    });
+
+    test('signed-in student with complete profile stays on /home', () {
+      final redirect = authRedirectDecision(
+        location: '/home',
+        isLoggedIn: true,
+        recoveryActive: false,
+        onAuthRoute: false,
+        onSetupRoute: false,
+        profileLoading: false,
+        profileComplete: true,
+        role: 'student',
+      );
+      expect(redirect, isNull);
+    });
+
+    test('signed-in student on auth route is redirected to /home', () {
+      final redirect = authRedirectDecision(
+        location: '/login',
+        isLoggedIn: true,
+        recoveryActive: false,
+        onAuthRoute: true,
+        onSetupRoute: false,
+        profileLoading: false,
+        profileComplete: true,
+        role: 'student',
+      );
+      expect(redirect, '/home');
+    });
+
+    test('signed-in student on setup route is redirected to /home', () {
+      final redirect = authRedirectDecision(
+        location: '/profile-setup/personal',
+        isLoggedIn: true,
+        recoveryActive: false,
+        onAuthRoute: false,
+        onSetupRoute: true,
+        profileLoading: false,
+        profileComplete: true,
+        role: 'student',
+      );
+      expect(redirect, '/home');
+    });
+
+    test('signed-in student on /onboarding is redirected to /home', () {
+      final redirect = authRedirectDecision(
+        location: '/onboarding',
+        isLoggedIn: true,
+        recoveryActive: false,
+        onAuthRoute: false,
+        onSetupRoute: false,
+        profileLoading: false,
+        profileComplete: true,
+        role: 'student',
+      );
+      expect(redirect, '/home');
+    });
+
+    test('signed-in student attempting provider routes is redirected to /home', () {
+      final redirect = authRedirectDecision(
+        location: '/provider-home',
+        isLoggedIn: true,
+        recoveryActive: false,
+        onAuthRoute: false,
+        onSetupRoute: false,
+        profileLoading: false,
+        profileComplete: true,
+        role: 'student',
+      );
+      expect(redirect, '/home');
+    });
+
+    test('signed-in student with incomplete profile is redirected to setup from /scholarship/:id', () {
+      final redirect = authRedirectDecision(
+        location: '/scholarship/f8940e50-40e6-43c1-a6aa-724e1b671eb6',
+        isLoggedIn: true,
+        recoveryActive: false,
+        onAuthRoute: false,
+        onSetupRoute: false,
+        profileLoading: false,
+        profileComplete: false,
+        role: 'student',
+      );
+      expect(redirect, '/profile-setup/personal');
+    });
+
+    test('signed-in provider can visit provider application detail', () {
+      final redirect = authRedirectDecision(
+        location: '/provider-application/123',
+        isLoggedIn: true,
+        recoveryActive: false,
+        onAuthRoute: false,
+        onSetupRoute: false,
+        profileLoading: false,
+        profileComplete: false,
+        role: 'provider',
+      );
+      expect(redirect, isNull);
+    });
+  });
 }

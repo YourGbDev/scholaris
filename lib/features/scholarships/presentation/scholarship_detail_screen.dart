@@ -2290,42 +2290,51 @@ class _AppliedBanner extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Row(
-                      children: [
-                        Container(
-                          width: 32,
-                          height: 32,
-                          decoration: BoxDecoration(
-                            color: const Color(0xFFE8EEFF),
-                            borderRadius: BorderRadius.circular(8),
+                    Expanded(
+                      child: Row(
+                        children: [
+                          Container(
+                            width: 32,
+                            height: 32,
+                            decoration: BoxDecoration(
+                              color: const Color(0xFFE8EEFF),
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: const Icon(Icons.receipt_long_rounded, size: 18, color: kSecondary),
                           ),
-                          child: const Icon(Icons.receipt_long_rounded, size: 18, color: kSecondary),
-                        ),
-                        const SizedBox(width: 8),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'INSTITUTIONAL DOSSIER',
-                              style: GoogleFonts.outfit(
-                                fontSize: 9,
-                                fontWeight: FontWeight.w700,
-                                color: const Color(0xFF404942),
-                                letterSpacing: 0.5,
-                              ),
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'INSTITUTIONAL DOSSIER',
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: GoogleFonts.outfit(
+                                    fontSize: 9,
+                                    fontWeight: FontWeight.w700,
+                                    color: const Color(0xFF404942),
+                                    letterSpacing: 0.5,
+                                  ),
+                                ),
+                                Text(
+                                  'Digital Submission Token',
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: GoogleFonts.outfit(
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.w600,
+                                    color: const Color(0xFF161C27),
+                                  ),
+                                ),
+                              ],
                             ),
-                            Text(
-                              'Digital Submission Token',
-                              style: GoogleFonts.outfit(
-                                fontSize: 13,
-                                fontWeight: FontWeight.w600,
-                                color: const Color(0xFF161C27),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
+                          ),
+                        ],
+                      ),
                     ),
+                    const SizedBox(width: 8),
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                       decoration: BoxDecoration(

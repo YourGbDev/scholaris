@@ -413,8 +413,8 @@ class ScholarshipCard extends StatelessWidget {
                               ),
                             ),
                             const SizedBox(width: 8),
-                            Flexible(
-                              fit: FlexFit.loose,
+                            ConstrainedBox(
+                              constraints: const BoxConstraints(maxWidth: 140),
                               child: Container(
                                 padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2.5),
                                 decoration: BoxDecoration(
@@ -423,16 +423,19 @@ class ScholarshipCard extends StatelessWidget {
                                       : const Color(0xFFFFDEA3), // kTertiaryFixed
                                   borderRadius: BorderRadius.circular(4),
                                 ),
-                                child: Text(
-                                  benefit.text,
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: outfit(
-                                    fontSize: 10.5,
-                                    fontWeight: FontWeight.w600,
-                                    color: benefit.isRenewable
-                                        ? const Color(0xFF145131) // kOnPrimaryFixedVariant
-                                        : const Color(0xFF5D4200), // kOnTertiaryFixedVariant
+                                child: FittedBox(
+                                  fit: BoxFit.scaleDown,
+                                  child: Text(
+                                    benefit.text,
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: outfit(
+                                      fontSize: 10.5,
+                                      fontWeight: FontWeight.w600,
+                                      color: benefit.isRenewable
+                                          ? const Color(0xFF145131) // kOnPrimaryFixedVariant
+                                          : const Color(0xFF5D4200), // kOnTertiaryFixedVariant
+                                    ),
                                   ),
                                 ),
                               ),

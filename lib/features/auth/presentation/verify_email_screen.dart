@@ -13,7 +13,6 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'package:scholaris/app/confirmation_redirect.dart';
 import 'package:scholaris/shared/theme/app_theme.dart';
-import 'package:scholaris/shared/widgets/scholaris_logo.dart';
 
 class VerifyEmailScreen extends StatefulWidget {
   const VerifyEmailScreen({super.key, this.email});

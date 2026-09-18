@@ -591,12 +591,24 @@ String? authRedirectDecision({
   // profileComplete check so a provider row (whose setup_complete is
   // irrelevant) is never forced through the student wizard.
   if (role == 'provider') {
-    return location == ProviderRoute.home ? null : ProviderRoute.home;
+    final isProviderRoute = location == ProviderRoute.home ||
+        location == '/provider-review' ||
+        location.startsWith('/provider-application');
+    return isProviderRoute ? null : ProviderRoute.home;
+  }
+
+  // Student protection: prevent non-providers from accessing provider routes
+  if (location.startsWith('/provider-')) {
+    return profileComplete ? '/home' : ProfileSetupRoute.personal;
   }
 
   if (profileComplete) {
-    return location == '/home' ? null : '/home';
+    if (onAuthRoute || onSetupRoute || onVerifyRoute || location == '/onboarding' || location == '/splash') {
+      return '/home';
+    }
+    return null;
   }
 
   return onSetupRoute ? null : ProfileSetupRoute.personal;
 }
+

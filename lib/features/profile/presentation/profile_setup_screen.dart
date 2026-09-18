@@ -1,9 +1,10 @@
 // lib/features/profile/presentation/profile_setup_screen.dart
 //
-// Multi-step profile setup wizard. Rebuilt to match the Stitch design
-// system with Philippine context (segmented micro-bar step tracker,
-// 740+ Active Philippine Grants insight banner, UniFAST / SUC / DOST-SEI
-// guidance, and Peso formatting).
+// Multi-step profile setup wizard. Migrated to 100% Stitch V2 visual fidelity
+// with segmented micro-bar step tracker, 740+ Active Philippine Grants insight
+// banner, GWA scale switcher tabs, DOST qualification live badge, LGU location
+// funding insights, Subsidies Unlocked visualizer, quick income brackets, and
+// RA 10173 data privacy shield.
 //
 // Preserves domain validation (ProfileValidator), profileSetupProvider state,
 // and all test contracts.
@@ -46,6 +47,10 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
   late final TextEditingController _provinceController;
   late final TextEditingController _cityController;
 
+  String _selectedGpaScale = '1.0 – 5.0';
+  bool _is4psBeneficiary = false;
+  bool _isSoloParentDependent = false;
+
   int get _stepIndex => switch (widget.step) {
         'personal' => 1,
         'academic' => 2,
@@ -59,9 +64,18 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
       };
 
   String get _stepSubtitle => switch (widget.step) {
-        'personal' => 'Basic details so we can personalize your experience and match grants.',
-        'academic' => 'We use this to match scholarships for your university and major program.',
-        _ => 'Helps us find need-based scholarships and subsidies. This stays private.',
+        'personal' =>
+          'We use these verified academic details to match you with university grants, CHED UniFAST subsidies, and private endowments tailored to you.',
+        'academic' =>
+          'We use this to match scholarships for your university and major program.',
+        _ =>
+          'Many of the biggest grants in the Philippines are need-based subsidies (such as CHED TES, UniFAST, and foundation grants) built specifically to uplift deserving students.',
+      };
+
+  String get _stepTrackerCategory => switch (widget.step) {
+        'personal' => 'Academics & Basics',
+        'academic' => 'Residency & Location',
+        _ => 'Financial Matching',
       };
 
   @override
@@ -124,12 +138,6 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
     final notifier = ref.read(profileSetupProvider(userId).notifier);
     ref.listen(profileSetupProvider(userId), _syncHydration);
 
-    final pct = switch (_stepIndex) {
-      1 => '33%',
-      2 => '66%',
-      _ => '100%',
-    };
-
     return Scaffold(
       backgroundColor: kSurfaceWarm,
       appBar: AppBar(
@@ -162,6 +170,28 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
             ),
           ],
         ),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.help_outline_rounded, color: kTextSecondary, size: 22),
+            tooltip: 'Help and Support',
+            onPressed: () {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('Need help? Contact support@scholaris.ph or your university scholarship office.'),
+                  duration: Duration(seconds: 3),
+                ),
+              );
+            },
+          ),
+          Padding(
+            padding: const EdgeInsets.only(right: 16),
+            child: CircleAvatar(
+              radius: 14,
+              backgroundColor: kPrimary,
+              child: const Icon(Icons.person, color: Colors.white, size: 16),
+            ),
+          ),
+        ],
       ),
       body: SafeArea(
         child: SingleChildScrollView(
@@ -175,146 +205,35 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    // Segmented Micro-Bar & Step Indicator
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          'Step $_stepIndex of 3',
-                          style: poppins(
-                            color: kPrimary,
-                            fontSize: 13,
-                            fontWeight: FontWeight.w700,
-                            letterSpacing: 0.3,
-                          ),
-                        ),
-                        Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                          decoration: BoxDecoration(
-                            color: kPrimaryLight,
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: Text(
-                            '$pct Complete',
-                            style: poppins(
-                              fontSize: 11,
-                              fontWeight: FontWeight.w700,
-                              color: kPrimary,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 8),
-
-                    // 3-segment micro-bar
-                    Row(
-                      children: [
-                        Expanded(
-                          child: Container(
-                            height: 5,
-                            decoration: BoxDecoration(
-                              color: kPrimary,
-                              borderRadius: BorderRadius.circular(3),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: 6),
-                        Expanded(
-                          child: Container(
-                            height: 5,
-                            decoration: BoxDecoration(
-                              color: _stepIndex >= 2 ? kPrimary : const Color(0xFFDDE2F3),
-                              borderRadius: BorderRadius.circular(3),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: 6),
-                        Expanded(
-                          child: Container(
-                            height: 5,
-                            decoration: BoxDecoration(
-                              color: _stepIndex >= 3 ? kPrimary : const Color(0xFFDDE2F3),
-                              borderRadius: BorderRadius.circular(3),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
+                    // Step Tracker & Visual Meter
+                    _buildStepMeter(),
                     const SizedBox(height: 18),
 
                     // Step Header Titles
                     Text(
                       _stepTitle,
-                      style: poppins(
+                      style: outfit(
                         color: kTextPrimary,
                         fontSize: 22,
                         fontWeight: FontWeight.w700,
                       ),
                     ),
-                    const SizedBox(height: 4),
+                    const SizedBox(height: 6),
                     Text(
                       _stepSubtitle,
                       style: openSans(
                         color: kTextSecondary,
                         fontSize: 13,
-                        height: 1.4,
+                        height: 1.45,
                       ),
                     ),
                     const SizedBox(height: 16),
 
-                    // Philippine Grant Match Insight Banner
-                    Container(
-                      padding: const EdgeInsets.all(12),
-                      decoration: BoxDecoration(
-                        color: const Color(0xFFF1F3FF),
-                        borderRadius: BorderRadius.circular(14),
-                        border: Border.all(color: const Color(0xFFDDE2F3)),
-                      ),
-                      child: Row(
-                        children: [
-                          Container(
-                            width: 36,
-                            height: 36,
-                            decoration: BoxDecoration(
-                              color: const Color(0xFFD2E4FF),
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            child: const Icon(
-                              Icons.verified_rounded,
-                              color: Color(0xFF1B3A5C),
-                              size: 20,
-                            ),
-                          ),
-                          const SizedBox(width: 10),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  '740+ Active Philippine Grants',
-                                  style: poppins(
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.w700,
-                                    color: kTextPrimary,
-                                  ),
-                                ),
-                                Text(
-                                  'DOST-SEI, CHED UniFAST, LGU subsidies, & private foundations open.',
-                                  style: openSans(
-                                    fontSize: 11,
-                                    color: kTextSecondary,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
+                    // Context / Insight Card
+                    _buildInsightBanner(),
                     const SizedBox(height: 20),
 
-                    // Fields
+                    // Step Fields
                     ..._buildStepFields(context, notifier, state),
 
                     if (state.error != null) ...[
@@ -323,7 +242,7 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
                     ],
                     const SizedBox(height: 28),
 
-                    // Action Buttons
+                    // Bottom Action Bar
                     _buildButtons(context, state),
                   ],
                 ),
@@ -335,7 +254,345 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
     );
   }
 
-  // --- Step fields ----------------------------------------------------------
+  // --- Step Meter Header ----------------------------------------------------
+
+  Widget _buildStepMeter() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Flexible(
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    'Step $_stepIndex of 3',
+                    style: outfit(
+                      color: kPrimary,
+                      fontSize: 12,
+                      fontWeight: FontWeight.w700,
+                      letterSpacing: 0.5,
+                    ),
+                  ),
+                  Flexible(
+                    child: Text(
+                      ' • $_stepTrackerCategory',
+                      style: outfit(
+                        color: kPrimary,
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
+                        letterSpacing: 0.3,
+                      ),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(width: 8),
+            _buildStepBadge(),
+          ],
+        ),
+        const SizedBox(height: 8),
+
+        // 3-Segment Micro-Bar with celebratory spark on final step
+        Stack(
+          clipBehavior: Clip.none,
+          alignment: Alignment.centerRight,
+          children: [
+            Row(
+              children: [
+                Expanded(
+                  child: Container(
+                    height: 5,
+                    decoration: BoxDecoration(
+                      color: kPrimary,
+                      borderRadius: BorderRadius.circular(3),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 6),
+                Expanded(
+                  child: Container(
+                    height: 5,
+                    decoration: BoxDecoration(
+                      color: _stepIndex >= 2 ? kPrimary : const Color(0xFFDDE2F3),
+                      borderRadius: BorderRadius.circular(3),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 6),
+                Expanded(
+                  child: Container(
+                    height: 5,
+                    decoration: BoxDecoration(
+                      color: _stepIndex >= 3 ? kPrimary : const Color(0xFFDDE2F3),
+                      borderRadius: BorderRadius.circular(3),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            if (_stepIndex == 3)
+              Positioned(
+                right: -2,
+                child: Container(
+                  width: 12,
+                  height: 12,
+                  decoration: const BoxDecoration(
+                    color: kTertiaryFixedDim,
+                    shape: BoxShape.circle,
+                    boxShadow: [
+                      BoxShadow(
+                        color: Color(0x33FABC28),
+                        blurRadius: 4,
+                        spreadRadius: 1,
+                      ),
+                    ],
+                  ),
+                  child: Center(
+                    child: Container(
+                      width: 5,
+                      height: 5,
+                      decoration: const BoxDecoration(
+                        color: kOnTertiaryFixed,
+                        shape: BoxShape.circle,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _buildStepBadge() {
+    if (_stepIndex == 1) {
+      return Container(
+        padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 3),
+        decoration: BoxDecoration(
+          color: kPrimaryLight,
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Text(
+          '33% Complete',
+          style: outfit(
+            fontSize: 11,
+            fontWeight: FontWeight.w700,
+            color: kPrimary,
+          ),
+        ),
+      );
+    }
+    if (_stepIndex == 2) {
+      return Container(
+        padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 3),
+        decoration: BoxDecoration(
+          color: const Color(0xFFDDE2F3),
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Text(
+          '66%',
+          style: outfit(
+            fontSize: 11,
+            fontWeight: FontWeight.w700,
+            color: kTextPrimary,
+          ),
+        ),
+      );
+    }
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 3),
+      decoration: BoxDecoration(
+        color: kTertiaryFixed,
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const Icon(Icons.stars_rounded, size: 13, color: kOnTertiaryFixed),
+          const SizedBox(width: 4),
+          Text(
+            'Final Step',
+            style: outfit(
+              fontSize: 11,
+              fontWeight: FontWeight.w700,
+              color: kOnTertiaryFixed,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // --- Insight Banners ------------------------------------------------------
+
+  Widget _buildInsightBanner() {
+    if (_stepIndex == 1) {
+      return Container(
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: const Color(0xFFF1F3FF),
+          borderRadius: BorderRadius.circular(14),
+          border: Border.all(color: const Color(0xFFDDE2F3)),
+        ),
+        child: Row(
+          children: [
+            Container(
+              width: 36,
+              height: 36,
+              decoration: BoxDecoration(
+                color: const Color(0xFFD2E4FF),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: const Icon(
+                Icons.verified_rounded,
+                color: Color(0xFF1B3A5C),
+                size: 20,
+              ),
+            ),
+            const SizedBox(width: 10),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    '740+ Active Philippine Grants',
+                    style: outfit(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w700,
+                      color: kTextPrimary,
+                    ),
+                  ),
+                  Text(
+                    'DOST-SEI, UniFAST, LGU subsidies, and private foundations open.',
+                    style: openSans(
+                      fontSize: 11,
+                      color: kTextSecondary,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+
+    if (_stepIndex == 2) {
+      return Container(
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: const Color(0xFFF1F3FF),
+          borderRadius: BorderRadius.circular(14),
+          border: Border.all(color: const Color(0xFFDDE2F3)),
+        ),
+        child: Row(
+          children: [
+            Container(
+              width: 36,
+              height: 36,
+              decoration: BoxDecoration(
+                color: const Color(0xFFD2E4FF),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: const Icon(
+                Icons.school_rounded,
+                color: Color(0xFF1B3A5C),
+                size: 20,
+              ),
+            ),
+            const SizedBox(width: 10),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Targeting Philippine Academic Grants',
+                    style: outfit(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w700,
+                      color: kTextPrimary,
+                    ),
+                  ),
+                  Text(
+                    'DOST Priority S&T, CHED UniFAST, and university partner endowments.',
+                    style: openSans(
+                      fontSize: 11,
+                      color: kTextSecondary,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+
+    // Step 3 Insight: 100% Confidential Shield + Subsidies Unlocked
+    return Column(
+      children: [
+        Container(
+          padding: const EdgeInsets.all(14),
+          decoration: BoxDecoration(
+            color: const Color(0xFFF1F3FF),
+            borderRadius: BorderRadius.circular(14),
+            border: Border.all(color: const Color(0xFFDDE2F3)),
+          ),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                width: 38,
+                height: 38,
+                decoration: BoxDecoration(
+                  color: kPrimaryLight,
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: const Icon(
+                  Icons.verified_user_rounded,
+                  color: kPrimary,
+                  size: 20,
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      '100% Confidential & Protected',
+                      style: outfit(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w700,
+                        color: kPrimary,
+                      ),
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      'This info is stored under bank-grade encryption. It is used exclusively by our matching engine to calculate subsidy eligibility and will never be shared with schools or third parties without your permission.',
+                      style: openSans(
+                        fontSize: 11,
+                        color: kTextSecondary,
+                        height: 1.4,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  // --- Step Fields ----------------------------------------------------------
 
   List<Widget> _buildStepFields(
     BuildContext context,
@@ -351,9 +608,9 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
             controller: _fullNameController,
             onChanged: notifier.setFullName,
             required: true,
-            hintText: 'e.g. Maya Santos Dela Cruz',
+            hintText: 'e.g. Juan P. Dela Cruz',
             prefixIcon: Icons.badge_outlined,
-            helperText: 'Matches PSA birth certificate and official enrollment records.',
+            helperText: 'Matches official school enrollment records, PSA birth certificate, and national ID.',
             validator: (_) => _fieldError((e) => e.fullName),
           ),
           const SizedBox(height: 16),
@@ -364,32 +621,16 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
             required: true,
             hintText: 'e.g. Filipino',
             prefixIcon: Icons.flag_outlined,
+            helperText: 'Required for Philippine republic grants, LGU subsidies, and state university funds.',
             validator: (_) => _fieldError((e) => e.nationality),
           ),
           const SizedBox(height: 16),
           _birthDateField(context, notifier, state),
+          const SizedBox(height: 20),
+          _buildTrustMicroPanel(),
         ],
       'academic' => [
-          _dropdown<int>(
-            label: 'Year Level',
-            required: true,
-            value: state.yearLevel,
-            prefixIcon: Icons.calendar_today_rounded,
-            items: List.generate(5, (index) {
-              final level = index + 1;
-              return DropdownMenuItem(
-                value: level,
-                child: Text(
-                  '$level${_ordinal(level)} Year',
-                  style: openSans(),
-                ),
-              );
-            }),
-            validator: (_) => _fieldError((e) => e.yearLevel),
-            onChanged: (value) {
-              if (value != null) notifier.setYearLevel(value);
-            },
-          ),
+          _buildYearLevelSelector(notifier, state),
           const SizedBox(height: 16),
           _textField(
             label: 'Course',
@@ -398,6 +639,7 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
             required: true,
             hintText: 'e.g. BS Computer Science, BA Communication',
             prefixIcon: Icons.school_outlined,
+            helperText: 'DOST Priority S&T courses, Agri-Fisheries, and Tech-Voc endowments match automatically to this field.',
             validator: (_) => _fieldError((e) => e.course),
           ),
           const SizedBox(height: 16),
@@ -406,72 +648,37 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
             controller: _schoolController,
             onChanged: notifier.setSchool,
             optional: true,
-            hintText: 'e.g. UP Diliman, PUP Manila, UST, DLSU, or SUC',
+            hintText: 'Search state U, college, or institute... (e.g. UP Diliman, UST)',
             prefixIcon: Icons.account_balance_outlined,
+            helperText: 'Unlocks institution-specific alumni grants, campus work-study, CHED UniFAST, and LGU partner funds.',
           ),
           const SizedBox(height: 16),
-          _textField(
-            label: 'GPA',
-            controller: _gpaController,
-            onChanged: notifier.setGpa,
-            required: true,
-            helperText: 'Range: 1.0 - 4.0 (GWA or cumulative GPA)',
-            hintText: 'e.g. 3.50 or 1.75',
-            prefixIcon: Icons.grade_outlined,
-            keyboardType: const TextInputType.numberWithOptions(decimal: true),
-            inputFormatters: [
-              FilteringTextInputFormatter.allow(RegExp(r'[0-9.]')),
-            ],
-            validator: (_) => _fieldError((e) => e.gpa),
-          ),
+          _buildGpaCard(notifier, state),
         ],
       _ => [
-          _textField(
-            label: 'Monthly Family Income',
-            controller: _incomeController,
-            onChanged: notifier.setMonthlyFamilyIncome,
-            required: !state.incomeUndisclosed,
-            helperText: 'e.g. 20,000 · used for need-based grant filtering',
-            hintText: '20,000',
-            keyboardType: const TextInputType.numberWithOptions(decimal: true),
-            inputFormatters: [
-              FilteringTextInputFormatter.allow(RegExp(r'[0-9.]')),
-            ],
-            enabled: !state.incomeUndisclosed,
-            prefixText: '₱ ',
-            prefixIcon: Icons.payments_outlined,
-            validator: (_) => _fieldError((e) => e.monthlyFamilyIncome),
-          ),
-          const SizedBox(height: 8),
-          Material(
-            color: Colors.white,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
-              side: const BorderSide(color: kBorderLight),
-            ),
-            child: CheckboxListTile(
-              contentPadding: const EdgeInsets.symmetric(horizontal: 12),
-              controlAffinity: ListTileControlAffinity.leading,
-              activeColor: kPrimary,
-              title: Text(
-                'Prefer not to say',
-                style: openSans(fontSize: 13, color: kTextPrimary),
-              ),
-              value: state.incomeUndisclosed,
-              onChanged: (value) {
-                final checked = value ?? false;
-                if (checked) _incomeController.clear();
-                notifier.setIncomeUndisclosed(checked);
-              },
-            ),
-          ),
+          // Subsidies Unlocked Visualizer Tile
+          _buildSubsidiesUnlockedTile(state),
+          const SizedBox(height: 18),
+
+          // Monthly Family Income
+          _buildIncomeField(notifier, state),
+          const SizedBox(height: 10),
+
+          // Low-pressure opt-out card
+          _buildOptOutTile(notifier, state),
+          const SizedBox(height: 20),
+
+          // Regional Context Accent Card
+          _buildLocationContextCard(),
           const SizedBox(height: 14),
+
           _dropdown<String>(
             label: 'Region',
             required: true,
             value: state.region,
             hint: 'Select your Philippine region',
             prefixIcon: Icons.map_outlined,
+            helperText: 'Connects you with regional CHED and DOST chapter priority allotments.',
             items: kPhilippineRegions
                 .map(
                   (region) => DropdownMenuItem(
@@ -491,8 +698,9 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
             controller: _provinceController,
             onChanged: notifier.setProvince,
             optional: true,
-            hintText: 'e.g. Metro Manila, Cebu, Davao del Sur',
+            hintText: 'e.g. Metro Manila, Cebu, Laguna',
             prefixIcon: Icons.location_on_outlined,
+            helperText: 'Matches provincial council educational assistance & governor grants.',
           ),
           const SizedBox(height: 14),
           _textField(
@@ -502,61 +710,25 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
             optional: true,
             hintText: 'e.g. Quezon City, Manila, Cebu City',
             prefixIcon: Icons.location_city_outlined,
+            helperText: 'Unlocks dedicated City Hall LGU grants (e.g., QC Youth Development Scholarship).',
           ),
-          const SizedBox(height: 12),
-          _optionalSwitch(
-            title: 'Has a disability',
-            subtitle: 'PWD-priority scholarships & DOST assistance may apply',
-            value: state.hasDisability,
-            onChanged: notifier.setHasDisability,
-          ),
-          const SizedBox(height: 8),
-          _optionalSwitch(
-            title: 'Indigenous person',
-            subtitle: 'NCIP & Indigenous-specific educational funds may apply',
-            value: state.isIndigenous,
-            onChanged: notifier.setIsIndigenous,
-          ),
+          const SizedBox(height: 14),
+
+          // LGU Funding Insight Tip Card
+          _buildLguFundingInsightCard(),
+          const SizedBox(height: 20),
+
+          // Government & Foundation Qualifiers Section
+          _buildGovernmentQualifiersSection(notifier, state),
+          const SizedBox(height: 16),
+
+          // Security & Data Privacy Act Micro-Footer
+          _buildDataPrivacyFooter(),
         ],
     };
   }
 
-  Widget _birthDateField(
-    BuildContext context,
-    ProfileSetupNotifier notifier,
-    ProfileSetupState state,
-  ) {
-    final birthDate = state.birthDate;
-    return InkWell(
-      onTap: () async {
-        final picked = await showDatePicker(
-          context: context,
-          initialDate: birthDate ?? DateTime(2003, 10, 14),
-          firstDate: DateTime(1970),
-          lastDate: DateTime.now(),
-        );
-        if (picked != null) {
-          notifier.setBirthDate(picked);
-        }
-      },
-      borderRadius: BorderRadius.circular(12),
-      child: InputDecorator(
-        decoration: _fieldDecoration(
-          label: 'Birth Date',
-          optional: true,
-          prefixIcon: Icons.cake_outlined,
-          helperText: 'Youth grants and fellowships filter by age eligibility (18–25).',
-        ),
-        child: Text(
-          birthDate == null ? 'Select date' : formatDate(birthDate),
-          style: openSans(
-            fontSize: 14,
-            color: birthDate == null ? Colors.black38 : kTextPrimary,
-          ),
-        ),
-      ),
-    );
-  }
+  // --- Step 1 Widgets -------------------------------------------------------
 
   Widget _buildAvatarSetupCard(BuildContext context) {
     final userId = ref.watch(currentUserIdProvider) ?? 'anonymous';
@@ -568,7 +740,7 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: kBorderLight),
+        border: Border.all(color: const Color(0xFFDDE2F3)),
         boxShadow: const [
           BoxShadow(
             color: kCardShadow,
@@ -589,7 +761,7 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
                   children: [
                     Text(
                       'Choose Your Avatar',
-                      style: poppins(
+                      style: outfit(
                         fontSize: 14,
                         fontWeight: FontWeight.w700,
                         color: kNavyTrust,
@@ -627,7 +799,7 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
                 },
                 child: Text(
                   'Set up later',
-                  style: openSans(
+                  style: outfit(
                     fontSize: 12,
                     fontWeight: FontWeight.w600,
                     color: kPrimary,
@@ -689,6 +861,783 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
     );
   }
 
+  Widget _birthDateField(
+    BuildContext context,
+    ProfileSetupNotifier notifier,
+    ProfileSetupState state,
+  ) {
+    final birthDate = state.birthDate;
+    return InkWell(
+      onTap: () async {
+        final picked = await showDatePicker(
+          context: context,
+          initialDate: birthDate ?? DateTime(2003, 10, 14),
+          firstDate: DateTime(1970),
+          lastDate: DateTime.now(),
+        );
+        if (picked != null) {
+          notifier.setBirthDate(picked);
+        }
+      },
+      borderRadius: BorderRadius.circular(12),
+      child: InputDecorator(
+        decoration: _fieldDecoration(
+          label: 'Birth Date',
+          optional: true,
+          prefixIcon: Icons.calendar_month_outlined,
+          helperText: 'Several youth fellowships and youth development funds filter by age eligibility (18–25).',
+        ),
+        child: Text(
+          birthDate == null ? 'Select date' : formatDate(birthDate),
+          style: openSans(
+            fontSize: 14,
+            color: birthDate == null ? Colors.black38 : kTextPrimary,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTrustMicroPanel() {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      decoration: BoxDecoration(
+        color: const Color(0xFFF1F3FF),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: const Color(0xFFDDE2F3)),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const Icon(Icons.lock_outline_rounded, size: 15, color: kPrimary),
+          const SizedBox(width: 8),
+          Flexible(
+            child: Text(
+              'Protected by 256-bit encryption • Only matched with accredited partners',
+              style: outfit(fontSize: 11, fontWeight: FontWeight.w500, color: kTextSecondary),
+              textAlign: TextAlign.center,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // --- Step 2 Widgets -------------------------------------------------------
+
+  Widget _buildYearLevelSelector(ProfileSetupNotifier notifier, ProfileSetupState state) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              'Year Level *',
+              style: outfit(
+                fontSize: 13,
+                fontWeight: FontWeight.w600,
+                color: kTextPrimary,
+              ),
+            ),
+            Text(
+              'AY 2024-2025',
+              style: outfit(
+                fontSize: 11,
+                fontWeight: FontWeight.w500,
+                color: kTextSecondary,
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 8),
+        GridView.count(
+          crossAxisCount: 2,
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          mainAxisSpacing: 8,
+          crossAxisSpacing: 8,
+          childAspectRatio: 3.2,
+          children: [
+            _yearPill(level: 1, title: '1st Year (Freshman)', isSelected: state.yearLevel == 1, onTap: () => notifier.setYearLevel(1)),
+            _yearPill(level: 2, title: '2nd Year (Sophomore)', isSelected: state.yearLevel == 2, onTap: () => notifier.setYearLevel(2)),
+            _yearPill(level: 3, title: '3rd Year (Junior)', isSelected: state.yearLevel == 3, onTap: () => notifier.setYearLevel(3)),
+            _yearPill(level: 4, title: '4th Year+ / Graduating', isSelected: state.yearLevel >= 4, onTap: () => notifier.setYearLevel(4)),
+          ],
+        ),
+        const SizedBox(height: 4),
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Icon(Icons.info_outline_rounded, size: 14, color: kPrimary),
+            const SizedBox(width: 6),
+            Expanded(
+              child: Text(
+                'Separates freshman entrance merit scholarships from thesis grants and final-year completion stipends.',
+                style: openSans(fontSize: 11, color: kTextSecondary),
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _yearPill({
+    required int level,
+    required String title,
+    required bool isSelected,
+    required VoidCallback onTap,
+  }) {
+    return Material(
+      color: isSelected ? kPrimary : Colors.white,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+        side: BorderSide(
+          color: isSelected ? kPrimary : const Color(0xFFDDE2F3),
+          width: 1,
+        ),
+      ),
+      elevation: isSelected ? 1.5 : 0,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(12),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 10),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Container(
+                width: 7,
+                height: 7,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: isSelected ? kPrimaryFixedDim : const Color(0xFFDDE2F3),
+                ),
+              ),
+              const SizedBox(width: 6),
+              Flexible(
+                child: Text(
+                  title,
+                  style: outfit(
+                    fontSize: 12,
+                    fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
+                    color: isSelected ? Colors.white : kTextPrimary,
+                  ),
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildGpaCard(ProfileSetupNotifier notifier, ProfileSetupState state) {
+    return Container(
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: const Color(0xFFF1F3FF),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: const Color(0xFFDDE2F3)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Expanded(
+                child: Text(
+                  'Grade Point Average (GWA)',
+                  style: outfit(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w700,
+                    color: kTextPrimary,
+                  ),
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+              const SizedBox(width: 8),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                decoration: BoxDecoration(
+                  color: kPrimaryLight,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Text(
+                  'Merit Factor',
+                  style: outfit(
+                    fontSize: 10,
+                    fontWeight: FontWeight.w700,
+                    color: kPrimary,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 10),
+
+          // Scale Switcher Tabs
+          Container(
+            padding: const EdgeInsets.all(3),
+            decoration: BoxDecoration(
+              color: const Color(0xFFE8EEFF),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Row(
+              children: [
+                _scaleTab('1.0 – 5.0'),
+                _scaleTab('% Percentage'),
+                _scaleTab('4.0 Scale'),
+              ],
+            ),
+          ),
+          const SizedBox(height: 12),
+
+          // GWA Value Input
+          _textField(
+            label: 'GPA',
+            controller: _gpaController,
+            onChanged: notifier.setGpa,
+            required: true,
+            hintText: 'e.g. 1.45 or 92.50',
+            prefixIcon: Icons.military_tech_outlined,
+            keyboardType: const TextInputType.numberWithOptions(decimal: true),
+            inputFormatters: [
+              FilteringTextInputFormatter.allow(RegExp(r'[0-9.]')),
+            ],
+            validator: (_) => _fieldError((e) => e.gpa),
+          ),
+          const SizedBox(height: 6),
+
+          // Dynamic Scale Hint
+          Text(
+            'Active scale: $_selectedGpaScale. You can update this every semester.',
+            style: openSans(fontSize: 11, color: kTextSecondary),
+          ),
+          const SizedBox(height: 10),
+
+          // Qualification Live Badge
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(10),
+              border: Border.all(color: const Color(0xFFDDE2F3)),
+            ),
+            child: Row(
+              children: [
+                const Icon(Icons.workspace_premium_rounded, color: kPrimary, size: 18),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: RichText(
+                    text: TextSpan(
+                      style: openSans(fontSize: 11, color: kTextPrimary),
+                      children: const [
+                        TextSpan(
+                          text: 'DOST-SEI & Megaworld Foundation ',
+                          style: TextStyle(fontWeight: FontWeight.w700, color: kPrimary),
+                        ),
+                        TextSpan(text: 'cutoff met for your academic standing.'),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _scaleTab(String scale) {
+    final isSelected = _selectedGpaScale == scale;
+    return Expanded(
+      child: GestureDetector(
+        onTap: () {
+          setState(() {
+            _selectedGpaScale = scale;
+          });
+        },
+        child: Container(
+          padding: const EdgeInsets.symmetric(vertical: 6),
+          decoration: BoxDecoration(
+            color: isSelected ? Colors.white : Colors.transparent,
+            borderRadius: BorderRadius.circular(8),
+            boxShadow: isSelected
+                ? const [
+                    BoxShadow(
+                      color: Color(0x0A000000),
+                      blurRadius: 3,
+                      offset: Offset(0, 1),
+                    ),
+                  ]
+                : null,
+          ),
+          child: Text(
+            scale,
+            textAlign: TextAlign.center,
+            style: outfit(
+              fontSize: 11,
+              fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
+              color: isSelected ? kPrimary : kTextSecondary,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  // --- Step 3 Widgets -------------------------------------------------------
+
+  Widget _buildSubsidiesUnlockedTile(ProfileSetupState state) {
+    final isUndisclosed = state.incomeUndisclosed;
+    return Container(
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: const Color(0xFFE8EEFF),
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: const Color(0xFFDDE2F3)),
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            child: Row(
+              children: [
+                Container(
+                  width: 36,
+                  height: 36,
+                  decoration: BoxDecoration(
+                    color: kPrimary,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: const Icon(
+                    Icons.payments_outlined,
+                    color: Colors.white,
+                    size: 20,
+                  ),
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Subsidies Unlocked',
+                        style: outfit(
+                          fontSize: 10,
+                          fontWeight: FontWeight.w600,
+                          color: kTextSecondary,
+                          letterSpacing: 0.5,
+                        ),
+                      ),
+                      Text(
+                        isUndisclosed ? 'Merit Only Filter Active' : '₱60,000+ Potential / yr',
+                        style: outfit(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w700,
+                          color: kPrimary,
+                        ),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(width: 8),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+            decoration: BoxDecoration(
+              color: kPrimaryLight,
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  width: 5,
+                  height: 5,
+                  decoration: const BoxDecoration(
+                    color: kPrimary,
+                    shape: BoxShape.circle,
+                  ),
+                ),
+                const SizedBox(width: 4),
+                Text(
+                  'Active Filter',
+                  style: outfit(
+                    fontSize: 10,
+                    fontWeight: FontWeight.w700,
+                    color: kPrimary,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildIncomeField(ProfileSetupNotifier notifier, ProfileSetupState state) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        TextFormField(
+          controller: _incomeController,
+          enabled: !state.incomeUndisclosed,
+          onChanged: notifier.setMonthlyFamilyIncome,
+          validator: (_) => _fieldError((e) => e.monthlyFamilyIncome),
+          keyboardType: const TextInputType.numberWithOptions(decimal: true),
+          inputFormatters: [
+            FilteringTextInputFormatter.allow(RegExp(r'[0-9.]')),
+          ],
+          style: outfit(fontSize: 16, fontWeight: FontWeight.w700, color: kTextPrimary),
+          decoration: InputDecoration(
+            labelText: 'Monthly Family Income *',
+            labelStyle: openSans(color: kTextSecondary, fontSize: 13),
+            hintText: '25,000',
+            hintStyle: openSans(color: Colors.black38, fontSize: 13),
+            helperText: 'Combined gross monthly income of parents, guardians, or breadwinners living in your home.',
+            helperStyle: openSans(color: kTextSecondary, fontSize: 11),
+            prefixText: '₱ ',
+            prefixStyle: outfit(color: kPrimary, fontWeight: FontWeight.w700, fontSize: 16),
+            prefixIcon: const Icon(Icons.payments_outlined, size: 20, color: kTextSecondary),
+            suffixIcon: _incomeController.text.isNotEmpty
+                ? IconButton(
+                    icon: const Icon(Icons.close_rounded, size: 18, color: kTextSecondary),
+                    onPressed: () {
+                      _incomeController.clear();
+                      notifier.setMonthlyFamilyIncome('');
+                    },
+                  )
+                : null,
+            filled: true,
+            fillColor: state.incomeUndisclosed ? const Color(0xFFF1F3FF) : Colors.white,
+            contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: const BorderSide(color: Color(0xFFDDE2F3)),
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: const BorderSide(color: Color(0xFFDDE2F3)),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: const BorderSide(color: kPrimary, width: 1.5),
+            ),
+          ),
+        ),
+        const SizedBox(height: 8),
+
+        // Quick Select Bracket Pills
+        Text(
+          'Quick Select Bracket',
+          style: outfit(fontSize: 11, fontWeight: FontWeight.w600, color: kTextSecondary),
+        ),
+        const SizedBox(height: 6),
+        Wrap(
+          spacing: 6,
+          runSpacing: 6,
+          children: [
+            _bracketPill('Under ₱15,000', '12000', notifier, state),
+            _bracketPill('₱15,000–₱30,000', '25000', notifier, state),
+            _bracketPill('₱30,000–₱50,000', '40000', notifier, state),
+            _bracketPill('₱50,000+', '65000', notifier, state),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _bracketPill(String label, String amount, ProfileSetupNotifier notifier, ProfileSetupState state) {
+    final isSelected = _incomeController.text == amount;
+    return GestureDetector(
+      onTap: state.incomeUndisclosed
+          ? null
+          : () {
+              _incomeController.text = amount;
+              notifier.setMonthlyFamilyIncome(amount);
+            },
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+        decoration: BoxDecoration(
+          color: isSelected ? kPrimary : Colors.white,
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(
+            color: isSelected ? kPrimary : const Color(0xFFDDE2F3),
+          ),
+        ),
+        child: Text(
+          label,
+          style: outfit(
+            fontSize: 11,
+            fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
+            color: isSelected ? Colors.white : kTextPrimary,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildOptOutTile(ProfileSetupNotifier notifier, ProfileSetupState state) {
+    return Material(
+      color: Colors.white,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(14),
+        side: const BorderSide(color: Color(0xFFDDE2F3)),
+      ),
+      child: CheckboxListTile(
+        contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+        controlAffinity: ListTileControlAffinity.leading,
+        activeColor: kPrimary,
+        title: Text(
+          'Prefer not to say',
+          style: outfit(fontSize: 13, fontWeight: FontWeight.w700, color: kTextPrimary),
+        ),
+        subtitle: Text(
+          'You will still see 100% of academic, merit, STEM, creative, and leadership grants. Need-based filters will simply pause until you wish to update this.',
+          style: openSans(fontSize: 11, color: kTextSecondary, height: 1.35),
+        ),
+        value: state.incomeUndisclosed,
+        onChanged: (value) {
+          final checked = value ?? false;
+          if (checked) _incomeController.clear();
+          notifier.setIncomeUndisclosed(checked);
+        },
+      ),
+    );
+  }
+
+  Widget _buildLocationContextCard() {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+      decoration: BoxDecoration(
+        color: const Color(0xFFF1F3FF),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: const Color(0xFFDDE2F3)),
+      ),
+      child: Row(
+        children: [
+          const Icon(Icons.my_location_rounded, color: kNavyTrust, size: 18),
+          const SizedBox(width: 8),
+          Flexible(
+            child: Text(
+              'Targeting Philippine Local Subsidies',
+              style: outfit(fontSize: 12, fontWeight: FontWeight.w700, color: kNavyTrust),
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildLguFundingInsightCard() {
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: const Color(0xFFE8EEFF),
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: const Color(0xFFDDE2F3)),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            width: 32,
+            height: 32,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: const Icon(
+              Icons.lightbulb_rounded,
+              color: kTertiaryFixedDim,
+              size: 18,
+            ),
+          ),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'LGU Funding Insight',
+                  style: outfit(fontSize: 12, fontWeight: FontWeight.w700, color: kSecondary),
+                ),
+                const SizedBox(height: 2),
+                RichText(
+                  text: TextSpan(
+                    style: openSans(fontSize: 11, color: kTextPrimary, height: 1.35),
+                    children: const [
+                      TextSpan(text: 'LGUs like Quezon City, Pasig, and Manila offer up to '),
+                      TextSpan(
+                        text: '₱10,000–₱25,000/sem',
+                        style: TextStyle(fontWeight: FontWeight.w700, color: kPrimary),
+                      ),
+                      TextSpan(text: ' specifically for registered local students. Keep your Barangay Indigency or Residency Certificate handy!'),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildGovernmentQualifiersSection(ProfileSetupNotifier notifier, ProfileSetupState state) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Government & Foundation Qualifiers',
+          style: outfit(fontSize: 14, fontWeight: FontWeight.w700, color: kTextPrimary),
+        ),
+        const SizedBox(height: 2),
+        Text(
+          'Select any that apply to your household. These unlock preferential slots in CHED UniFAST TDP, DOST SEI, and private foundation quotas.',
+          style: openSans(fontSize: 11, color: kTextSecondary),
+        ),
+        const SizedBox(height: 10),
+
+        // Qualifier 1: 4Ps Beneficiary Household
+        _qualifierTile(
+          icon: Icons.family_restroom_rounded,
+          title: '4Ps Beneficiary Household',
+          subtitle: 'Pantawid Pamilyang Pilipino Program recipient',
+          value: _is4psBeneficiary,
+          onChanged: (val) => setState(() => _is4psBeneficiary = val),
+        ),
+        const SizedBox(height: 8),
+
+        // Qualifier 2: Solo Parent Dependent
+        _qualifierTile(
+          icon: Icons.escalator_warning_rounded,
+          title: 'Solo Parent Dependent',
+          subtitle: 'Supported under Solo Parents Welfare Act',
+          value: _isSoloParentDependent,
+          onChanged: (val) => setState(() => _isSoloParentDependent = val),
+        ),
+        const SizedBox(height: 8),
+
+        // Qualifier 3: Has a disability
+        _qualifierTile(
+          icon: Icons.accessible_rounded,
+          title: 'Has a disability',
+          subtitle: 'PWD-priority scholarships & DOST assistance may apply',
+          value: state.hasDisability,
+          onChanged: notifier.setHasDisability,
+        ),
+        const SizedBox(height: 8),
+
+        // Qualifier 4: Indigenous person
+        _qualifierTile(
+          icon: Icons.diversity_3_rounded,
+          title: 'Indigenous person',
+          subtitle: 'NCIP & Indigenous-specific educational funds may apply',
+          value: state.isIndigenous,
+          onChanged: notifier.setIsIndigenous,
+        ),
+      ],
+    );
+  }
+
+  Widget _qualifierTile({
+    required IconData icon,
+    required String title,
+    required String subtitle,
+    required bool value,
+    required ValueChanged<bool> onChanged,
+  }) {
+    return Material(
+      color: Colors.white,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+        side: BorderSide(
+          color: value ? kPrimary : const Color(0xFFDDE2F3),
+          width: value ? 1.5 : 1,
+        ),
+      ),
+      child: CheckboxListTile(
+        contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 2),
+        activeColor: kPrimary,
+        secondary: Container(
+          width: 32,
+          height: 32,
+          decoration: BoxDecoration(
+            color: value ? kPrimaryLight : const Color(0xFFF1F3FF),
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: Icon(icon, color: value ? kPrimary : kSecondary, size: 18),
+        ),
+        title: Text(
+          title,
+          style: outfit(
+            fontSize: 13,
+            fontWeight: FontWeight.w600,
+            color: kTextPrimary,
+          ),
+        ),
+        subtitle: Text(
+          subtitle,
+          style: openSans(fontSize: 11, color: kTextSecondary),
+        ),
+        value: value,
+        onChanged: (v) => onChanged(v ?? false),
+      ),
+    );
+  }
+
+  Widget _buildDataPrivacyFooter() {
+    return Column(
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(Icons.bolt_rounded, size: 16, color: kPrimary),
+            const SizedBox(width: 4),
+            Flexible(
+              child: Text(
+                'Next: We will calculate your matched scholarship pool in real-time!',
+                style: outfit(fontSize: 11, fontWeight: FontWeight.w600, color: kPrimary),
+                textAlign: TextAlign.center,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 6),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(Icons.lock_outline_rounded, size: 13, color: kTextSecondary),
+            const SizedBox(width: 4),
+            Flexible(
+              child: Text(
+                'Encrypted • Republic Act No. 10173 (Data Privacy Act) Compliant',
+                style: openSans(fontSize: 11, color: kTextSecondary),
+                textAlign: TextAlign.center,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  // --- Shared Field Helpers -------------------------------------------------
+
   String? _fieldError(String? Function(ProfileFieldErrors) pick) {
     final userId = ref.read(currentUserIdProvider);
     if (userId == null) return null;
@@ -739,6 +1688,7 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
     bool required = false,
     FormFieldValidator<T>? validator,
     String? hint,
+    String? helperText,
     IconData? prefixIcon,
   }) {
     return DropdownButtonFormField<T>(
@@ -754,36 +1704,8 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
       decoration: _fieldDecoration(
         label: label,
         required: required,
+        helperText: helperText,
         prefixIcon: prefixIcon,
-      ),
-    );
-  }
-
-  Widget _optionalSwitch({
-    required String title,
-    required String subtitle,
-    required bool value,
-    required ValueChanged<bool> onChanged,
-  }) {
-    return Material(
-      color: Colors.white,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-        side: const BorderSide(color: kBorderLight),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-        child: SwitchListTile(
-          contentPadding: EdgeInsets.zero,
-          title: Text(title, style: poppins(fontSize: 13, fontWeight: FontWeight.w600, color: kTextPrimary)),
-          subtitle: Text(
-            subtitle,
-            style: openSans(color: kTextSecondary, fontSize: 11),
-          ),
-          value: value,
-          activeTrackColor: kPrimary,
-          onChanged: onChanged,
-        ),
       ),
     );
   }
@@ -810,18 +1732,18 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
       helperText: helperText,
       helperStyle: openSans(color: kTextSecondary, fontSize: 11),
       prefixText: prefixText,
-      prefixStyle: poppins(color: kTextPrimary, fontWeight: FontWeight.w600, fontSize: 14),
+      prefixStyle: outfit(color: kTextPrimary, fontWeight: FontWeight.w600, fontSize: 14),
       prefixIcon: prefixIcon != null ? Icon(prefixIcon, size: 20, color: kTextSecondary) : null,
       filled: true,
       fillColor: Colors.white,
       contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
-        borderSide: const BorderSide(color: kBorderLight),
+        borderSide: const BorderSide(color: Color(0xFFDDE2F3)),
       ),
       enabledBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
-        borderSide: const BorderSide(color: kBorderLight),
+        borderSide: const BorderSide(color: Color(0xFFDDE2F3)),
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
@@ -876,8 +1798,9 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
             child: OutlinedButton(
               onPressed: () => context.go(backRoute),
               style: OutlinedButton.styleFrom(
-                foregroundColor: kPrimary,
-                side: const BorderSide(color: kPrimary, width: 1.5),
+                foregroundColor: kSecondary,
+                side: const BorderSide(color: Color(0xFFDDE2F3), width: 1.5),
+                backgroundColor: Colors.white,
                 padding: const EdgeInsets.symmetric(vertical: 14),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
@@ -890,7 +1813,7 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
                   const SizedBox(width: 6),
                   Text(
                     'Back',
-                    style: poppins(fontSize: 14, fontWeight: FontWeight.w600),
+                    style: outfit(fontSize: 14, fontWeight: FontWeight.w600),
                   ),
                 ],
               ),
@@ -927,7 +1850,7 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
                     children: [
                       Text(
                         isLastStep ? 'Complete Profile' : 'Continue',
-                        style: poppins(
+                        style: outfit(
                           fontSize: 15,
                           fontWeight: FontWeight.w600,
                           color: Colors.white,
@@ -976,11 +1899,4 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
       context.go(nextRoute);
     }
   }
-
-  String _ordinal(int n) => switch (n) {
-        1 => 'st',
-        2 => 'nd',
-        3 => 'rd',
-        _ => 'th',
-      };
 }

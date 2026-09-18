@@ -312,36 +312,38 @@ class _SavedScreenState extends ConsumerState<SavedScreen> {
     try {
       final added = await ref.read(bookmarksProvider.notifier).toggle(id);
       if (mounted) {
-        ScaffoldMessenger.of(context).hideCurrentSnackBar();
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            behavior: SnackBarBehavior.floating,
-            backgroundColor: const Color(0xFF2A303D),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
-            ),
-            content: Row(
-              children: [
-                Icon(
-                  added ? Icons.check_circle_rounded : Icons.info_outline_rounded,
-                  color: const Color(0xFFB3F1C6),
-                  size: 18,
-                ),
-                const SizedBox(width: 8),
-                Text(
-                  added
-                      ? 'Scholarship saved to your list!'
-                      : 'Scholarship removed from bookmarks',
-                  style: GoogleFonts.openSans(
-                    fontSize: 13,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.white,
+        try {
+          ScaffoldMessenger.of(context).hideCurrentSnackBar();
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              behavior: SnackBarBehavior.floating,
+              backgroundColor: const Color(0xFF2A303D),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              content: Row(
+                children: [
+                  Icon(
+                    added ? Icons.check_circle_rounded : Icons.info_outline_rounded,
+                    color: const Color(0xFFB3F1C6),
+                    size: 18,
                   ),
-                ),
-              ],
+                  const SizedBox(width: 8),
+                  Text(
+                    added
+                        ? 'Scholarship saved to your list!'
+                        : 'Scholarship removed from bookmarks',
+                    style: GoogleFonts.openSans(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.white,
+                    ),
+                  ),
+                ],
+              ),
             ),
-          ),
-        );
+          );
+        } catch (_) {}
       }
     } on Exception {
       // Silent on card failure

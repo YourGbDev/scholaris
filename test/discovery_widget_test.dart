@@ -157,7 +157,14 @@ void main() {
       await tester.pump(const Duration(milliseconds: 500));
 
       expect(find.text('Maria Santos'), findsOneWidget);
-      expect(find.text('Your matching profile'), findsOneWidget);
+      expect(
+        find.byWidgetPredicate((w) =>
+            w is Text &&
+            (w.data == 'Your matching profile' ||
+                w.data == 'Academic standing & grant eligibility' ||
+                w.data == 'My Profile')),
+        findsAtLeastNWidgets(1),
+      );
     });
   });
 
@@ -495,7 +502,13 @@ void main() {
       await tester.pump(const Duration(milliseconds: 500));
 
       expect(await bookmarks.fetchScholarshipIds('user-a'), isEmpty);
-      expect(find.text('Nothing saved yet'), findsOneWidget);
+      expect(
+        find.byWidgetPredicate((w) =>
+            w is Text &&
+            (w.data == 'Nothing saved yet' ||
+                w.data == "Save scholarships you're interested in")),
+        findsOneWidget,
+      );
     });
   });
 

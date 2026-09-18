@@ -377,21 +377,21 @@ class ScholarshipCard extends StatelessWidget {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Flexible(
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  const Icon(
-                                    Icons.stars_rounded,
-                                    size: 19,
-                                    color: Color(0xFFFABC28), // kTertiaryFixedDim
-                                  ),
-                                  const SizedBox(width: 6),
-                                  Flexible(
-                                    child: Text(
+                            Expanded(
+                              child: FittedBox(
+                                fit: BoxFit.scaleDown,
+                                alignment: Alignment.centerLeft,
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    const Icon(
+                                      Icons.stars_rounded,
+                                      size: 19,
+                                      color: Color(0xFFFABC28), // kTertiaryFixedDim
+                                    ),
+                                    const SizedBox(width: 6),
+                                    Text(
                                       amount,
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
                                       style: outfit(
                                         fontSize: 18.5,
                                         fontWeight: FontWeight.bold,
@@ -399,21 +399,22 @@ class ScholarshipCard extends StatelessWidget {
                                         letterSpacing: -0.5,
                                       ),
                                     ),
-                                  ),
-                                  const SizedBox(width: 4),
-                                  Text(
-                                    '/ year',
-                                    style: openSans(
-                                      fontSize: 11.5,
-                                      color: const Color(0xFF404942),
-                                      fontWeight: FontWeight.w500,
+                                    const SizedBox(width: 4),
+                                    Text(
+                                      '/ year',
+                                      style: openSans(
+                                        fontSize: 11.5,
+                                        color: const Color(0xFF404942),
+                                        fontWeight: FontWeight.w500,
+                                      ),
                                     ),
-                                  ),
-                                ],
+                                  ],
+                                ),
                               ),
                             ),
                             const SizedBox(width: 8),
                             Flexible(
+                              fit: FlexFit.loose,
                               child: Container(
                                 padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2.5),
                                 decoration: BoxDecoration(
@@ -555,6 +556,7 @@ class ScholarshipCard extends StatelessWidget {
                                   child: FittedBox(
                                     fit: BoxFit.scaleDown,
                                     child: Row(
+                                      mainAxisSize: MainAxisSize.min,
                                       mainAxisAlignment: MainAxisAlignment.center,
                                       children: [
                                         Text(

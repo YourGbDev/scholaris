@@ -672,7 +672,7 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
               onToggleBookmark: () => _toggleBookmark(ref, scholarship.id),
               onQuickApply: () {
                 context.push(
-                  '/application/review',
+                  '/scholarship/${scholarship.id}',
                   extra: scholarship,
                 );
               },
@@ -722,7 +722,7 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
                 onToggleBookmark: () => _toggleBookmark(ref, browse[i].id),
                 onQuickApply: () {
                   context.push(
-                    '/application/review',
+                    '/scholarship/${browse[i].id}',
                     extra: browse[i],
                   );
                 },
@@ -794,24 +794,27 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
               backgroundColor: const Color(0xFF436084), // secondary Slate Navy
               foregroundColor: Colors.white,
               elevation: 0,
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(10),
               ),
             ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const Icon(Icons.manage_search_rounded, size: 18),
-                const SizedBox(width: 8),
-                Text(
-                  'Update Eligibility Filters',
-                  style: outfit(
-                    fontSize: 13,
-                    fontWeight: FontWeight.bold,
+            child: FittedBox(
+              fit: BoxFit.scaleDown,
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Icon(Icons.manage_search_rounded, size: 18),
+                  const SizedBox(width: 8),
+                  Text(
+                    'Update Eligibility Filters',
+                    style: outfit(
+                      fontSize: 13,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ],

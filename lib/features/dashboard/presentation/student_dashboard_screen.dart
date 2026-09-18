@@ -628,29 +628,28 @@ class _StudentDashboardScreenState
             alignment: WrapAlignment.spaceBetween,
             runSpacing: 8,
             children: [
-              Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const Icon(
-                    Icons.add_task_rounded,
-                    size: 18,
-                    color: Color(0xFFFABC28),
-                  ),
-                  const SizedBox(width: 6),
-                  ConstrainedBox(
-                    constraints: const BoxConstraints(maxWidth: 190),
-                    child: Text(
+              FittedBox(
+                fit: BoxFit.scaleDown,
+                alignment: Alignment.centerLeft,
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Icon(
+                      Icons.add_task_rounded,
+                      size: 18,
+                      color: Color(0xFFFABC28),
+                    ),
+                    const SizedBox(width: 6),
+                    Text(
                       '+18% boost: Add Fall GPA & Verification',
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
                       style: openSans(
                         fontSize: 11.5,
                         color: Colors.white,
                         fontWeight: FontWeight.w500,
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
               ElevatedButton(
                 onPressed: () => showMatchingPowerSheet(context, profile),
@@ -664,19 +663,22 @@ class _StudentDashboardScreenState
                     borderRadius: BorderRadius.circular(20),
                   ),
                 ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      'Boost Matches',
-                      style: outfit(
-                        fontSize: 11.5,
-                        fontWeight: FontWeight.bold,
+                child: FittedBox(
+                  fit: BoxFit.scaleDown,
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        'Boost Matches',
+                        style: outfit(
+                          fontSize: 11.5,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
-                    ),
-                    const SizedBox(width: 3),
-                    const Icon(Icons.arrow_forward_rounded, size: 14),
-                  ],
+                      const SizedBox(width: 3),
+                      const Icon(Icons.arrow_forward_rounded, size: 14),
+                    ],
+                  ),
                 ),
               ),
             ],
@@ -792,22 +794,26 @@ class _StudentDashboardScreenState
               },
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
-                child: Row(
-                  children: [
-                    Text(
-                      'See All ($totalCount)',
-                      style: outfit(
-                        fontSize: 12.5,
-                        fontWeight: FontWeight.w600,
-                        color: const Color(0xFF0F4D2E),
+                child: FittedBox(
+                  fit: BoxFit.scaleDown,
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        'See All ($totalCount)',
+                        style: outfit(
+                          fontSize: 12.5,
+                          fontWeight: FontWeight.w600,
+                          color: const Color(0xFF0F4D2E),
+                        ),
                       ),
-                    ),
-                    const Icon(
-                      Icons.chevron_right_rounded,
-                      size: 16,
-                      color: Color(0xFF0F4D2E),
-                    ),
-                  ],
+                      const Icon(
+                        Icons.chevron_right_rounded,
+                        size: 16,
+                        color: Color(0xFF0F4D2E),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -1154,34 +1160,37 @@ class _StatCard extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 2),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  if (isUrgent) ...[
-                    Container(
-                      width: 5,
-                      height: 5,
-                      decoration: const BoxDecoration(
-                        color: Color(0xFFBA1A1A),
-                        shape: BoxShape.circle,
+              FittedBox(
+                fit: BoxFit.scaleDown,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    if (isUrgent) ...[
+                      Container(
+                        width: 5,
+                        height: 5,
+                        decoration: const BoxDecoration(
+                          color: Color(0xFFBA1A1A),
+                          shape: BoxShape.circle,
+                        ),
+                      ),
+                      const SizedBox(width: 3),
+                    ],
+                    Flexible(
+                      child: Text(
+                        label,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: openSans(
+                          fontSize: 11,
+                          fontWeight: FontWeight.w600,
+                          color: isUrgent ? const Color(0xFFBA1A1A) : const Color(0xFF404942),
+                        ),
                       ),
                     ),
-                    const SizedBox(width: 3),
                   ],
-                  Flexible(
-                    child: Text(
-                      label,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: openSans(
-                        fontSize: 11,
-                        fontWeight: FontWeight.w600,
-                        color: isUrgent ? const Color(0xFFBA1A1A) : const Color(0xFF404942),
-                      ),
-                    ),
-                  ),
-                ],
+                ),
               ),
             ],
           ),

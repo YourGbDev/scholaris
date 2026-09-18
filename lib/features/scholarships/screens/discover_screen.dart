@@ -602,24 +602,27 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
                 ),
               ],
             ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  sortLabel,
-                  style: outfit(
-                    fontSize: 11.5,
-                    fontWeight: FontWeight.w600,
-                    color: const Color(0xFF161C27),
+            child: FittedBox(
+              fit: BoxFit.scaleDown,
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    sortLabel,
+                    style: outfit(
+                      fontSize: 11.5,
+                      fontWeight: FontWeight.w600,
+                      color: const Color(0xFF161C27),
+                    ),
                   ),
-                ),
-                const SizedBox(width: 2),
-                const Icon(
-                  Icons.expand_more_rounded,
-                  size: 16,
-                  color: Color(0xFF404942),
-                ),
-              ],
+                  const SizedBox(width: 2),
+                  const Icon(
+                    Icons.expand_more_rounded,
+                    size: 16,
+                    color: Color(0xFF404942),
+                  ),
+                ],
+              ),
             ),
           ),
         ),

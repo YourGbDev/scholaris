@@ -1363,14 +1363,19 @@ class _ApplicationMaterialsCardState extends State<_ApplicationMaterialsCard> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(
-                        '742 words composed',
-                        style: GoogleFonts.outfit(
-                          fontSize: 11,
-                          fontWeight: FontWeight.w600,
-                          color: kPrimaryContainer,
+                      Flexible(
+                        child: Text(
+                          '742 words composed',
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: GoogleFonts.outfit(
+                            fontSize: 11,
+                            fontWeight: FontWeight.w600,
+                            color: kPrimaryContainer,
+                          ),
                         ),
                       ),
+                      const SizedBox(width: 8),
                       InkWell(
                         onTap: () {
                           ScaffoldMessenger.of(context).showSnackBar(
@@ -1512,14 +1517,19 @@ class _ApplicationMaterialsCardState extends State<_ApplicationMaterialsCard> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text(
-                            'Prof. Marcus Chen (UP Dept of CS)',
-                            style: GoogleFonts.openSans(
-                              fontSize: 11,
-                              fontWeight: FontWeight.w500,
-                              color: kOnSurface,
+                          Expanded(
+                            child: Text(
+                              'Prof. Marcus Chen (UP Dept of CS)',
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: GoogleFonts.openSans(
+                                fontSize: 11,
+                                fontWeight: FontWeight.w500,
+                                color: kOnSurface,
+                              ),
                             ),
                           ),
+                          const SizedBox(width: 6),
                           Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
@@ -1541,14 +1551,19 @@ class _ApplicationMaterialsCardState extends State<_ApplicationMaterialsCard> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text(
-                            'Dr. Sarah Varma (AI Lab)',
-                            style: GoogleFonts.openSans(
-                              fontSize: 11,
-                              fontWeight: FontWeight.w500,
-                              color: kOnSurface,
+                          Expanded(
+                            child: Text(
+                              'Dr. Sarah Varma (AI Lab)',
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: GoogleFonts.openSans(
+                                fontSize: 11,
+                                fontWeight: FontWeight.w500,
+                                color: kOnSurface,
+                              ),
                             ),
                           ),
+                          const SizedBox(width: 6),
                           InkWell(
                             borderRadius: BorderRadius.circular(4),
                             onTap: () {
@@ -2002,6 +2017,7 @@ class _ApplySectionState extends ConsumerState<_ApplySection> {
                   child: FittedBox(
                     fit: BoxFit.scaleDown,
                     child: Row(
+                      mainAxisSize: MainAxisSize.min,
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         if (_isApplying) ...[
@@ -2337,23 +2353,28 @@ class _AppliedBanner extends StatelessWidget {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Reference Identifier',
-                            style: GoogleFonts.openSans(fontSize: 10, color: const Color(0xFF404942)),
-                          ),
-                          Text(
-                            'REC-2025-${scholarship.id.toUpperCase().replaceAll('_', '-')}-PH',
-                            style: GoogleFonts.outfit(
-                              fontSize: 12,
-                              fontWeight: FontWeight.w700,
-                              color: const Color(0xFF161C27),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Reference Identifier',
+                              style: GoogleFonts.openSans(fontSize: 10, color: const Color(0xFF404942)),
                             ),
-                          ),
-                        ],
+                            Text(
+                              'REC-2025-${scholarship.id.toUpperCase().replaceAll('_', '-')}-PH',
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: GoogleFonts.outfit(
+                                fontSize: 12,
+                                fontWeight: FontWeight.w700,
+                                color: const Color(0xFF161C27),
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
+                      const SizedBox(width: 8),
                       IconButton(
                         tooltip: 'Copy Tracking ID',
                         icon: const Icon(Icons.content_copy_rounded, size: 16, color: kSecondary),
@@ -2411,16 +2432,24 @@ class _AppliedBanner extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Row(
-                      children: [
-                        const Icon(Icons.lock_rounded, size: 13, color: kPrimaryContainer),
-                        const SizedBox(width: 4),
-                        Text(
-                          'SHA-256: e3b0c442...8b456',
-                          style: GoogleFonts.outfit(fontSize: 10, color: const Color(0xFF404942)),
-                        ),
-                      ],
+                    Flexible(
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Icon(Icons.lock_rounded, size: 13, color: kPrimaryContainer),
+                          const SizedBox(width: 4),
+                          Flexible(
+                            child: Text(
+                              'SHA-256: e3b0c442...8b456',
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: GoogleFonts.outfit(fontSize: 10, color: const Color(0xFF404942)),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
+                    const SizedBox(width: 6),
                     Text(
                       'Scholaris Vault Sealed',
                       style: GoogleFonts.outfit(fontSize: 10, fontWeight: FontWeight.w600, color: kPrimaryContainer),
@@ -2599,6 +2628,8 @@ class _ReadinessReason extends StatelessWidget {
             constraints: const BoxConstraints(maxWidth: 260),
             child: Text(
               label,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
               style: GoogleFonts.openSans(
                 fontSize: 12,
                 fontWeight: FontWeight.w600,
@@ -2631,12 +2662,16 @@ class _EligibilityChip extends StatelessWidget {
         children: [
           Icon(icon, size: 16, color: kSecondary),
           const SizedBox(width: 6),
-          Text(
-            label,
-            style: GoogleFonts.openSans(
-              fontSize: 13,
-              fontWeight: FontWeight.w600,
-              color: kOnSurface,
+          Flexible(
+            child: Text(
+              label,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: GoogleFonts.openSans(
+                fontSize: 13,
+                fontWeight: FontWeight.w600,
+                color: kOnSurface,
+              ),
             ),
           ),
         ],

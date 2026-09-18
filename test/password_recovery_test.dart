@@ -170,11 +170,11 @@ void main() {
       // Stitch treatment: Credential update chip + verified account card + form
       expect(find.text('CREDENTIAL UPDATE'), findsOneWidget);
       expect(find.text('VERIFIED ACCOUNT'), findsOneWidget);
-      expect(find.text('Set new password'), findsOneWidget);
+      expect(find.text('Create New Password'), findsOneWidget);
       expect(find.text('New Password'), findsOneWidget);
       expect(find.text('Confirm New Password'), findsOneWidget);
-      expect(find.text('Update password'), findsOneWidget);
-      expect(find.text('Sign out'), findsOneWidget);
+      expect(find.text('Reset Password'), findsOneWidget);
+      expect(find.text('Cancel & Back to Login'), findsOneWidget);
     });
 
     testWidgets('rejects empty, short and mismatched passwords locally', (
@@ -184,8 +184,8 @@ void main() {
 
       // The button sits below the fold on the default test viewport (the V1
       // hero takes the top band); scroll it into view before tapping.
-      await tester.ensureVisible(find.text('Update password'));
-      await tester.tap(find.text('Update password'));
+      await tester.ensureVisible(find.text('Reset Password'));
+      await tester.tap(find.text('Reset Password'));
       await tester.pumpAndSettle();
       expect(find.text('Enter a new password.'), findsOneWidget);
       expect(find.text('Confirm your new password.'), findsOneWidget);
@@ -193,7 +193,8 @@ void main() {
       final fields = find.byType(TextFormField);
       await tester.enterText(fields.at(0), 'short');
       await tester.enterText(fields.at(1), 'different');
-      await tester.tap(find.text('Update password'));
+      await tester.ensureVisible(find.text('Reset Password'));
+      await tester.tap(find.text('Reset Password'));
       await tester.pumpAndSettle();
 
       expect(

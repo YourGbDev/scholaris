@@ -137,36 +137,54 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
       body: SafeArea(
         child: Column(
           children: [
-            // Top Navigation Bar
+            // Top Navigation Bar (Stitch V2 Header)
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
               child: Row(
                 children: [
-                  const ScholarisLogo(compact: true),
+                  IconButton(
+                    icon: const Icon(Icons.arrow_back_rounded, color: kTextPrimary),
+                    tooltip: 'Go back',
+                    onPressed: () {
+                      if (Navigator.of(context).canPop()) {
+                        Navigator.of(context).pop();
+                      } else {
+                        try {
+                          Supabase.instance.client.auth.signOut();
+                        } catch (_) {}
+                      }
+                    },
+                  ),
                   const Spacer(),
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                    decoration: BoxDecoration(
-                      color: kSurfaceCard,
-                      borderRadius: BorderRadius.circular(16),
-                      border: Border.all(color: kBorderLight),
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        const Icon(Icons.help_outline_rounded, size: 16, color: kTextSecondary),
-                        const SizedBox(width: 4),
-                        Text(
-                          'Help',
-                          style: openSans(
-                            fontSize: 12,
-                            fontWeight: FontWeight.w600,
-                            color: kTextSecondary,
-                          ),
-                        ),
-                      ],
+                  Text(
+                    'Scholaris',
+                    style: poppins(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w700,
+                      color: kPrimary,
+                      letterSpacing: -0.5,
                     ),
                   ),
+                  const Spacer(),
+                  IconButton(
+                    icon: const Icon(Icons.help_outline_rounded, size: 22, color: kTextSecondary),
+                    tooltip: 'Help and Support',
+                    onPressed: () {},
+                  ),
+                  Container(
+                    width: 32,
+                    height: 32,
+                    decoration: const BoxDecoration(
+                      color: kPrimary,
+                      shape: BoxShape.circle,
+                    ),
+                    child: const Icon(
+                      Icons.person_rounded,
+                      color: Colors.white,
+                      size: 18,
+                    ),
+                  ),
+                  const SizedBox(width: 8),
                 ],
               ),
             ),
@@ -219,9 +237,9 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                           ),
                           const SizedBox(height: 10),
 
-                          // Heading: Set new password
+                          // Heading: Create New Password
                           Text(
-                            'Set new password',
+                            'Create New Password',
                             style: poppins(
                               fontSize: 26,
                               fontWeight: FontWeight.w700,
@@ -468,7 +486,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                           ),
                           const SizedBox(height: 20),
 
-                          // Submit CTA Button: Update password
+                          // Submit CTA Button: Reset Password
                           ElevatedButton(
                             onPressed: _isLoading ? null : _onSubmit,
                             style: ElevatedButton.styleFrom(
@@ -493,7 +511,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
                                       Text(
-                                        'Update password',
+                                        'Reset Password',
                                         style: poppins(
                                           fontSize: 15,
                                           fontWeight: FontWeight.w600,
@@ -507,20 +525,23 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                           ),
                           const SizedBox(height: 12),
 
-                          // Sign out link
+                          // Cancel & Back to Login
                           Center(
                             child: TextButton(
                               onPressed: () {
                                 try {
                                   Supabase.instance.client.auth.signOut();
                                 } catch (_) {}
+                                if (Navigator.of(context).canPop()) {
+                                  Navigator.of(context).pop();
+                                }
                               },
                               child: Text(
-                                'Sign out',
+                                'Cancel & Back to Login',
                                 style: poppins(
                                   fontSize: 13,
                                   fontWeight: FontWeight.w600,
-                                  color: kPrimary,
+                                  color: kNavyTrust,
                                 ),
                               ),
                             ),

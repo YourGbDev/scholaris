@@ -85,9 +85,9 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
       body: SafeArea(
         child: Column(
           children: [
-            // Top Navigation Bar
+            // Top Navigation Bar (Stitch V2 Header)
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
               child: Row(
                 children: [
                   IconButton(
@@ -101,32 +101,36 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
                     },
                     tooltip: 'Go back',
                   ),
-                  const SizedBox(width: 4),
-                  const ScholarisLogo(compact: true),
                   const Spacer(),
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                    decoration: BoxDecoration(
-                      color: kSurfaceCard,
-                      borderRadius: BorderRadius.circular(16),
-                      border: Border.all(color: kBorderLight),
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        const Icon(Icons.help_outline_rounded, size: 16, color: kTextSecondary),
-                        const SizedBox(width: 4),
-                        Text(
-                          'Help',
-                          style: openSans(
-                            fontSize: 12,
-                            fontWeight: FontWeight.w600,
-                            color: kTextSecondary,
-                          ),
-                        ),
-                      ],
+                  Text(
+                    'Scholaris',
+                    style: poppins(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w700,
+                      color: kPrimary,
+                      letterSpacing: -0.5,
                     ),
                   ),
+                  const Spacer(),
+                  IconButton(
+                    icon: const Icon(Icons.help_outline_rounded, size: 22, color: kTextSecondary),
+                    tooltip: 'Help and Support',
+                    onPressed: () {},
+                  ),
+                  Container(
+                    width: 32,
+                    height: 32,
+                    decoration: const BoxDecoration(
+                      color: kPrimary,
+                      shape: BoxShape.circle,
+                    ),
+                    child: const Icon(
+                      Icons.person_rounded,
+                      color: Colors.white,
+                      size: 18,
+                    ),
+                  ),
+                  const SizedBox(width: 8),
                 ],
               ),
             ),
@@ -302,18 +306,35 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
                                 ),
                               ),
                               if (hasEmail)
-                                Container(
-                                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                                  decoration: BoxDecoration(
-                                    color: const Color(0xFFE8EEFF),
-                                    borderRadius: BorderRadius.circular(8),
-                                  ),
-                                  child: Text(
-                                    'Pending',
-                                    style: openSans(
-                                      fontSize: 11,
-                                      fontWeight: FontWeight.w600,
-                                      color: kNavyTrust,
+                                InkWell(
+                                  onTap: () {
+                                    if (Navigator.of(context).canPop()) {
+                                      Navigator.of(context).pop();
+                                    } else {
+                                      context.go('/signup');
+                                    }
+                                  },
+                                  borderRadius: BorderRadius.circular(8),
+                                  child: Container(
+                                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                                    decoration: BoxDecoration(
+                                      color: const Color(0xFFE8EEFF),
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                    child: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        const Icon(Icons.edit_outlined, size: 14, color: kPrimary),
+                                        const SizedBox(width: 4),
+                                        Text(
+                                          'Edit',
+                                          style: openSans(
+                                            fontSize: 12,
+                                            fontWeight: FontWeight.w600,
+                                            color: kPrimary,
+                                          ),
+                                        ),
+                                      ],
                                     ),
                                   ),
                                 ),

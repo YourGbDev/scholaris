@@ -79,6 +79,14 @@ class RlsEnforcingProfileDataSource implements ProfileDataSource {
   }
 
   @override
+  Future<void> updateProfile(String userId, Map<String, dynamic> row) async {
+    final callerId = currentUserId();
+    if (callerId == null) throw Exception('not authenticated');
+    final existing = rawProfiles[userId] ?? {};
+    rawProfiles[userId] = {...existing, ...row, 'id': userId};
+  }
+
+  @override
   Future<void> deleteProfile(String userId) async {
     rawProfiles.remove(userId);
   }

@@ -30,6 +30,12 @@ class FakeProfileDataSource implements ProfileDataSource {
   }
 
   @override
+  Future<void> updateProfile(String userId, Map<String, dynamic> row) async {
+    final existing = rows[userId] ?? {};
+    rows[userId] = {...existing, ...row, 'id': userId};
+  }
+
+  @override
   Future<void> deleteProfile(String userId) async {
     rows.remove(userId);
     rows.removeWhere((key, val) => key == userId || val['id'] == userId);

@@ -553,6 +553,16 @@ String? _redirect(Ref ref, GoRouterState state) {
   final recoveryActive = ref.read(passwordRecoveryProvider);
   final profileAsync = ref.read(profileCompleteProvider);
   final roleAsync = ref.read(userRoleProvider);
+
+  // When a user deep-links directly to /admin-home (e.g. ?tab=4), hold on
+  // the route while their role resolves from the database so the
+  // destination and query parameters are not clobbered by an unhydrated student default.
+  if (location == AdminRoute.home &&
+      (roleAsync.isLoading && roleAsync.value == null)) {
+    debugPrint('[ROUTER] holding on /admin-home while role resolves');
+    return null;
+  }
+
   final authDecision = authRedirectDecision(
     location: location,
     isLoggedIn: ref.read(authSessionProvider) != null,

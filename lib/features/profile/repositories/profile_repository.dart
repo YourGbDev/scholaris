@@ -36,6 +36,7 @@ abstract class ProfileDataSource {
   Future<Map<String, dynamic>?> fetchProfile(String userId);
   Future<List<Map<String, dynamic>>> fetchAllProfiles();
   Future<void> upsertProfile(String userId, Map<String, dynamic> row);
+  Future<void> updateProfile(String userId, Map<String, dynamic> row) async {}
   Future<void> deleteProfile(String userId) async {}
 }
 
@@ -60,6 +61,11 @@ class SupabaseProfileDataSource implements ProfileDataSource {
   @override
   Future<void> upsertProfile(String userId, Map<String, dynamic> row) async {
     await _client.from('profiles').upsert({'id': userId, ...row});
+  }
+
+  @override
+  Future<void> updateProfile(String userId, Map<String, dynamic> row) async {
+    await _client.from('profiles').update(row).eq('id', userId);
   }
 
   @override
@@ -134,9 +140,15 @@ class ProfileRepository {
     await _dataSource.upsertProfile(userId, profile.toDbRow());
   }
 
-  /// Administrative update or creation of any user profile.
+  /// Administrative creation or replacement of a profile.
   Future<void> adminUpsertProfile(String userId, Map<String, dynamic> row) async {
     await _dataSource.upsertProfile(userId, row);
+  }
+
+  /// Administrative update of an existing profile (direct UPDATE/PATCH)
+  /// conforming to Supabase Row-Level Security policies.
+  Future<void> adminUpdateProfile(String userId, Map<String, dynamic> row) async {
+    await _dataSource.updateProfile(userId, row);
   }
 
   /// Administrative deletion of a user profile.

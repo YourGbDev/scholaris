@@ -257,5 +257,8 @@ class _ThrowingProfileDataSource implements ProfileDataSource {
   Future<void> upsertProfile(String userId, Map<String, dynamic> row) async {}
 
   @override
+  Future<void> updateProfile(String userId, Map<String, dynamic> row) async {}
+
+  @override
   Future<void> deleteProfile(String userId) async {}
 }

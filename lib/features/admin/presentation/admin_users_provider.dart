@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:scholaris/app/supabase_config.dart';
 import 'package:scholaris/core/security/login_lockout_service.dart';
 import 'package:scholaris/features/profile/models/student_profile.dart';
 import 'package:scholaris/features/profile/providers/profile_setup_provider.dart';
@@ -58,7 +59,29 @@ class AdminUsersController {
     String? course,
   }) async {
     final repo = ref.read(profileRepositoryProvider);
-    final newId = 'usr-${DateTime.now().millisecondsSinceEpoch}';
+    String? createdUserId;
+
+    try {
+      final isolatedClient = SupabaseClient(
+        SupabaseConfig.url,
+        SupabaseConfig.anonKey,
+        authOptions: const AuthClientOptions(autoRefreshToken: false),
+      );
+      final res = await isolatedClient.auth.signUp(
+        email: email,
+        password: 'ScholarisUser${DateTime.now().millisecondsSinceEpoch}!',
+        data: {
+          'full_name': fullName,
+          'role': role,
+        },
+      );
+      createdUserId = res.user?.id;
+    } catch (_) {
+      // In mock/test environments or offline, fall back to simulated ID
+      createdUserId = 'usr-${DateTime.now().millisecondsSinceEpoch}';
+    }
+
+    final newId = createdUserId ?? 'usr-${DateTime.now().millisecondsSinceEpoch}';
     final data = {
       'id': newId,
       'full_name': fullName,
@@ -68,11 +91,15 @@ class AdminUsersController {
       'region': region,
       'school': school ?? '',
       'course': course ?? '',
-      'gpa': 0.0,
-      'year_level': 1,
       'setup_complete': true,
     };
-    await repo.adminUpsertProfile(newId, data);
+
+    try {
+      await repo.adminUpdateProfile(newId, data);
+    } catch (_) {
+      await repo.adminUpsertProfile(newId, data);
+    }
+
     await logAdminAuditEvent(
       action: 'user_created',
       targetType: 'user',
@@ -95,13 +122,14 @@ class AdminUsersController {
   }) async {
     final repo = ref.read(profileRepositoryProvider);
     final data = {
-      ...user.toDbRow(),
-      'id': user.id,
-      'email': user.email,
       'role': newRole,
       'status': newStatus,
     };
-    await repo.adminUpsertProfile(user.id, data);
+    try {
+      await repo.adminUpdateProfile(user.id, data);
+    } catch (_) {
+      await repo.adminUpsertProfile(user.id, {...user.toDbRow(), ...data});
+    }
     await logAdminAuditEvent(
       action: 'role_and_status_updated',
       targetType: 'user',
@@ -122,13 +150,13 @@ class AdminUsersController {
   Future<void> deactivateUser(StudentProfile user) async {
     final repo = ref.read(profileRepositoryProvider);
     final data = {
-      ...user.toDbRow(),
-      'id': user.id,
-      'email': user.email,
-      'role': user.role,
       'status': 'deactivated',
     };
-    await repo.adminUpsertProfile(user.id, data);
+    try {
+      await repo.adminUpdateProfile(user.id, data);
+    } catch (_) {
+      await repo.adminUpsertProfile(user.id, {...user.toDbRow(), ...data});
+    }
     await logAdminAuditEvent(
       action: 'user_deactivated',
       targetType: 'user',

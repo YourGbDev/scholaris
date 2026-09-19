@@ -11,6 +11,7 @@ import 'package:go_router/go_router.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'package:scholaris/app/confirmation_redirect.dart';
+import 'package:scholaris/core/security/password_validator.dart';
 import 'package:scholaris/shared/theme/app_theme.dart';
 import 'package:scholaris/shared/widgets/scholaris_logo.dart';
 import 'package:scholaris/shared/widgets/success_overlay.dart';
@@ -50,18 +51,8 @@ class _SignupScreenState extends State<SignupScreen> {
     super.dispose();
   }
 
-  int _calculatePasswordStrength(String password) {
-    if (password.isEmpty) return 0;
-    int score = 0;
-    if (password.length >= 8) score++;
-    if (RegExp(r'[0-9]').hasMatch(password) && RegExp(r'[a-zA-Z]').hasMatch(password)) {
-      score++;
-    }
-    if (RegExp(r'[!@#$%^&*(),.?":{}|<>]').hasMatch(password) || password.length >= 12) {
-      score++;
-    }
-    return score;
-  }
+  int _calculatePasswordStrength(String password) =>
+      PasswordValidator.strengthScore(password);
 
   Future<void> _onSignUp() async {
     if (!_formKey.currentState!.validate()) return;
@@ -133,16 +124,37 @@ class _SignupScreenState extends State<SignupScreen> {
     return null;
   }
 
-  String? _validatePassword(String? value) {
-    if (value == null || value.isEmpty) return 'Enter a password.';
-    if (value.length < 8) return 'Password must be at least 8 characters.';
-    return null;
-  }
+  String? _validatePassword(String? value) =>
+      PasswordValidator.validatePassword(value);
 
-  String? _validateConfirmPassword(String? value) {
-    if (value == null || value.isEmpty) return 'Confirm your password.';
-    if (value != _passwordController.text) return 'Passwords do not match.';
-    return null;
+  String? _validateConfirmPassword(String? value) =>
+      PasswordValidator.validateConfirmPassword(value, _passwordController.text);
+
+  Widget _requirementRow(String label, bool met) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 2),
+      child: Row(
+        children: [
+          Icon(
+            met ? Icons.check_circle_rounded : Icons.radio_button_unchecked_rounded,
+            size: 13,
+            color: met ? kPrimary : const Color(0xFF9E9E9E),
+          ),
+          const SizedBox(width: 6),
+          Expanded(
+            child: Text(
+              label,
+              style: openSans(
+                fontSize: 11,
+                color: met ? kPrimary : const Color(0xFF757575),
+                fontWeight: met ? FontWeight.w600 : FontWeight.w400,
+              ),
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   SnackBar _snackBar(String message) => SnackBar(
@@ -183,29 +195,38 @@ class _SignupScreenState extends State<SignupScreen> {
                     tooltip: 'Go back',
                   ),
                   const SizedBox(width: 4),
-                  const ScholarisLogo(compact: true),
-                  const Spacer(),
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                    decoration: BoxDecoration(
-                      color: kSurfaceCard,
-                      borderRadius: BorderRadius.circular(16),
-                      border: Border.all(color: kBorderLight),
+                  const Flexible(
+                    child: FittedBox(
+                      fit: BoxFit.scaleDown,
+                      alignment: Alignment.centerLeft,
+                      child: ScholarisLogo(compact: true),
                     ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        const Icon(Icons.help_outline_rounded, size: 16, color: kTextSecondary),
-                        const SizedBox(width: 4),
-                        Text(
-                          'Help',
-                          style: openSans(
-                            fontSize: 12,
-                            fontWeight: FontWeight.w600,
-                            color: kTextSecondary,
+                  ),
+                  const Spacer(),
+                  FittedBox(
+                    fit: BoxFit.scaleDown,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                      decoration: BoxDecoration(
+                        color: kSurfaceCard,
+                        borderRadius: BorderRadius.circular(16),
+                        border: Border.all(color: kBorderLight),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Icon(Icons.help_outline_rounded, size: 16, color: kTextSecondary),
+                          const SizedBox(width: 4),
+                          Text(
+                            'Help',
+                            style: openSans(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w600,
+                              color: kTextSecondary,
+                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
                 ],
@@ -674,10 +695,43 @@ class _SignupScreenState extends State<SignupScreen> {
                               ),
                             ],
                           ),
-                          const SizedBox(height: 4),
-                          Text(
-                            'At least 8 characters with letters & numbers',
-                            style: openSans(fontSize: 11, color: kTextSecondary),
+                          const SizedBox(height: 6),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                'Password Complexity',
+                                style: openSans(fontSize: 11, color: kTextSecondary),
+                              ),
+                              Text(
+                                PasswordValidator.strengthLabel(passwordStrength),
+                                style: openSans(
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.w600,
+                                  color: passwordStrength >= 3
+                                      ? kPrimary
+                                      : (passwordStrength == 2 ? Colors.orange : const Color(0xFFBA1A1A)),
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 6),
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                            decoration: BoxDecoration(
+                              color: const Color(0xFFF6F8FA),
+                              borderRadius: BorderRadius.circular(8),
+                              border: Border.all(color: const Color(0xFFE2E8E5)),
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                _requirementRow('At least 8 characters', PasswordValidator.hasMinLength(_passwordController.text)),
+                                _requirementRow('Uppercase & lowercase letters', PasswordValidator.hasUppercase(_passwordController.text) && PasswordValidator.hasLowercase(_passwordController.text)),
+                                _requirementRow('At least one number (0-9)', PasswordValidator.hasDigit(_passwordController.text)),
+                                _requirementRow('Special character (!@#\$%^&*)', PasswordValidator.hasSpecialChar(_passwordController.text)),
+                              ],
+                            ),
                           ),
                           const SizedBox(height: 12),
 
@@ -813,19 +867,20 @@ class _SignupScreenState extends State<SignupScreen> {
                                   color: Colors.white,
                                 ),
                               )
-                            : Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Text(
-                                    'Sign up',
-                                    style: poppins(
-                                      fontSize: 15,
-                                      fontWeight: FontWeight.w600,
-                                      color: Colors.white,
+                            : FittedBox(
+                                fit: BoxFit.scaleDown,
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Text(
+                                      'Sign up',
+                                      style: poppins(
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.w600,
+                                        color: Colors.white,
+                                      ),
                                     ),
-                                  ),
-                                  Flexible(
-                                    child: Text(
+                                    Text(
                                       ' — Create Free Account',
                                       overflow: TextOverflow.ellipsis,
                                       style: poppins(
@@ -834,17 +889,18 @@ class _SignupScreenState extends State<SignupScreen> {
                                         color: Colors.white.withValues(alpha: 0.9),
                                       ),
                                     ),
-                                  ),
-                                  const SizedBox(width: 6),
-                                  const Icon(Icons.arrow_forward_rounded, size: 18),
-                                ],
+                                    const SizedBox(width: 6),
+                                    const Icon(Icons.arrow_forward_rounded, size: 18),
+                                  ],
+                                ),
                               ),
                       ),
                       const SizedBox(height: 8),
 
                       // Already have an account? Log in
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
+                      Wrap(
+                        alignment: WrapAlignment.center,
+                        crossAxisAlignment: WrapCrossAlignment.center,
                         children: [
                           Text(
                             'Already have an account? ',

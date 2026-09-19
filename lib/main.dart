@@ -5,6 +5,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'app/router.dart';
 import 'app/supabase_config.dart';
+import 'core/security/login_lockout_service.dart';
 import 'shared/theme/app_theme.dart';
 
 Future<void> main() async {
@@ -19,6 +20,8 @@ Future<void> main() async {
     url: SupabaseConfig.url,
     publishableKey: SupabaseConfig.anonKey,
   );
+
+  await LoginLockoutService.instance.initPrefs();
 
   runApp(const ProviderScope(child: ScholarisApp()));
 }

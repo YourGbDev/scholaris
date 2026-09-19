@@ -9,22 +9,24 @@ part of 'student_profile.dart';
 _StudentProfile _$StudentProfileFromJson(Map<String, dynamic> json) =>
     _StudentProfile(
       id: json['id'] as String,
-      fullName: json['full_name'] as String,
+      fullName: json['full_name'] as String? ?? '',
       nationality: json['nationality'] as String? ?? 'Filipino',
       birthDate: _dateFromJson(json['birth_date']),
       gender: json['gender'] as String?,
-      region: json['region'] as String,
+      region: json['region'] as String? ?? '',
       province: json['province'] as String?,
       cityMunicipality: json['city_municipality'] as String?,
-      gpa: (json['gpa'] as num).toDouble(),
-      yearLevel: (json['year_level'] as num).toInt(),
-      course: json['course'] as String,
+      gpa: (json['gpa'] as num?)?.toDouble() ?? 0.0,
+      yearLevel: (json['year_level'] as num?)?.toInt() ?? 1,
+      course: json['course'] as String? ?? '',
       school: json['school'] as String?,
       monthlyFamilyIncome: (json['monthly_family_income'] as num?)?.toDouble(),
       hasDisability: json['has_disability'] as bool? ?? false,
       isIndigenous: json['is_indigenous'] as bool? ?? false,
       setupComplete: json['setup_complete'] as bool? ?? false,
       role: json['role'] as String? ?? 'student',
+      email: json['email'] as String?,
+      status: json['status'] as String? ?? 'active',
       createdAt: json['created_at'] == null
           ? null
           : DateTime.parse(json['created_at'] as String),
@@ -52,6 +54,8 @@ Map<String, dynamic> _$StudentProfileToJson(_StudentProfile instance) =>
       'is_indigenous': instance.isIndigenous,
       'setup_complete': instance.setupComplete,
       'role': instance.role,
+      'email': instance.email,
+      'status': instance.status,
       'created_at': instance.createdAt?.toIso8601String(),
       'updated_at': instance.updatedAt?.toIso8601String(),
     };

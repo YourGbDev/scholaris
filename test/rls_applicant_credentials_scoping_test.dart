@@ -77,6 +77,11 @@ class RlsEnforcingProfileDataSource implements ProfileDataSource {
   Future<void> upsertProfile(String userId, Map<String, dynamic> row) async {
     rawProfiles[userId] = {...rawProfiles[userId] ?? const {}, ...row};
   }
+
+  @override
+  Future<void> deleteProfile(String userId) async {
+    rawProfiles.remove(userId);
+  }
 }
 
 /// An in-memory application data source that faithfully enforces Supabase Row-Level Security:

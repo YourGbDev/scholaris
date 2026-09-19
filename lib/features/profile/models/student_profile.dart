@@ -87,17 +87,17 @@ String? _dateToJson(DateTime? value) => value == null ? null : formatDate(value)
 abstract class StudentProfile with _$StudentProfile {
   const factory StudentProfile({
     required String id,
-    @JsonKey(name: 'full_name') required String fullName,
+    @JsonKey(name: 'full_name') @Default('') String fullName,
     @Default('Filipino') String nationality,
     @JsonKey(name: 'birth_date', fromJson: _dateFromJson, toJson: _dateToJson)
     DateTime? birthDate,
     String? gender,
-    required String region,
+    @Default('') String region,
     String? province,
     @JsonKey(name: 'city_municipality') String? cityMunicipality,
-    required double gpa,
-    @JsonKey(name: 'year_level') required int yearLevel,
-    required String course,
+    @Default(0.0) double gpa,
+    @JsonKey(name: 'year_level') @Default(1) int yearLevel,
+    @Default('') String course,
     String? school,
     @JsonKey(name: 'monthly_family_income') double? monthlyFamilyIncome,
     @JsonKey(name: 'has_disability') @Default(false) bool hasDisability,
@@ -109,6 +109,8 @@ abstract class StudentProfile with _$StudentProfile {
     // client write path can clobber it. Missing/NULL rows decode to
     // 'student', keeping the legacy behaviour byte-for-byte.
     @JsonKey(name: 'role') @Default('student') String role,
+    @JsonKey(name: 'email') String? email,
+    @JsonKey(name: 'status') @Default('active') String status,
     @JsonKey(name: 'created_at') DateTime? createdAt,
     @JsonKey(name: 'updated_at') DateTime? updatedAt,
   }) = _StudentProfile;

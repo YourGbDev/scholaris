@@ -237,7 +237,11 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/admin-home',
         name: 'admin-home',
-        builder: (context, state) => const AdminHomeScreen(),
+        builder: (context, state) {
+          final tabStr = state.uri.queryParameters['tab'];
+          final tab = tabStr != null ? int.tryParse(tabStr) : null;
+          return AdminHomeScreen(initialTab: tab);
+        },
       ),
 
       // --- First-launch onboarding --------------------------------------------

@@ -7,19 +7,31 @@ class FakeProfileDataSource implements ProfileDataSource {
 
   @override
   Future<Map<String, dynamic>?> fetchProfile(String userId) async {
-    final row = rows[userId];
-    return row == null ? null : Map<String, dynamic>.of(row);
+    for (final entry in rows.entries) {
+      if (entry.key == userId || entry.value['id'] == userId) {
+        return Map<String, dynamic>.of(entry.value);
+      }
+    }
+    return null;
   }
 
   @override
   Future<List<Map<String, dynamic>>> fetchAllProfiles() async {
     return rows.entries
-        .map((e) => Map<String, dynamic>.of({'id': e.key, ...e.value}))
+        .map((e) =>
+            Map<String, dynamic>.of({'id': e.value['id'] ?? e.key, ...e.value}))
         .toList();
   }
 
   @override
   Future<void> upsertProfile(String userId, Map<String, dynamic> row) async {
-    rows[userId] = {...rows[userId] ?? const {}, ...row};
+    rows.removeWhere((key, val) => key == userId || val['id'] == userId);
+    rows[userId] = {'id': userId, ...row};
+  }
+
+  @override
+  Future<void> deleteProfile(String userId) async {
+    rows.remove(userId);
+    rows.removeWhere((key, val) => key == userId || val['id'] == userId);
   }
 }

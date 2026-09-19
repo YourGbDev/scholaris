@@ -10,6 +10,7 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import 'package:scholaris/core/security/password_validator.dart';
 import 'package:scholaris/shared/theme/app_theme.dart';
 import 'package:scholaris/shared/widgets/success_overlay.dart';
 
@@ -45,27 +46,9 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
     }
   }
 
-  int _calculateStrength(String pwd) {
-    if (pwd.isEmpty) return 0;
-    int score = 0;
-    if (pwd.length >= 8) score++;
-    if (RegExp(r'[0-9]').hasMatch(pwd)) score++;
-    if (RegExp(r'[A-Z!@#$%^&*(),.?":{}|<>]').hasMatch(pwd)) score++;
-    return score;
-  }
+  int _calculateStrength(String pwd) => PasswordValidator.strengthScore(pwd);
 
-  String _strengthLabel(int score) {
-    switch (score) {
-      case 1:
-        return 'Weak';
-      case 2:
-        return 'Fair';
-      case 3:
-        return 'Strong';
-      default:
-        return 'Too weak';
-    }
-  }
+  String _strengthLabel(int score) => PasswordValidator.strengthLabel(score);
 
   Future<void> _onSubmit() async {
     if (!_formKey.currentState!.validate()) return;
@@ -97,17 +80,15 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
     return error.message;
   }
 
-  String? _validatePassword(String? value) {
-    if (value == null || value.isEmpty) return 'Enter a new password.';
-    if (value.length < 8) return 'Password must be at least 8 characters.';
-    return null;
-  }
+  String? _validatePassword(String? value) =>
+      PasswordValidator.validatePassword(value, emptyMessage: 'Enter a new password.');
 
-  String? _validateConfirmPassword(String? value) {
-    if (value == null || value.isEmpty) return 'Confirm your new password.';
-    if (value != _passwordController.text) return 'Passwords do not match.';
-    return null;
-  }
+  String? _validateConfirmPassword(String? value) =>
+      PasswordValidator.validateConfirmPassword(
+        value,
+        _passwordController.text,
+        emptyMessage: 'Confirm your new password.',
+      );
 
   SnackBar _snackBar(String message) => SnackBar(
         content: Text(
@@ -126,9 +107,11 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
     final confirmPwd = _confirmPasswordController.text;
     final strength = _calculateStrength(pwd);
 
-    final hasMinLength = pwd.length >= 8;
-    final hasNumber = RegExp(r'[0-9]').hasMatch(pwd);
-    final hasSpecialOrUpper = RegExp(r'[A-Z!@#$%^&*(),.?":{}|<>]').hasMatch(pwd);
+    final hasMinLength = PasswordValidator.hasMinLength(pwd);
+    final hasUppercase = PasswordValidator.hasUppercase(pwd);
+    final hasLowercase = PasswordValidator.hasLowercase(pwd);
+    final hasNumber = PasswordValidator.hasDigit(pwd);
+    final hasSpecial = PasswordValidator.hasSpecialChar(pwd);
     final passwordsMatch = pwd.isNotEmpty && pwd == confirmPwd;
 
     return Scaffold(
@@ -375,7 +358,9 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                                 child: Container(
                                   height: 4,
                                   decoration: BoxDecoration(
-                                    color: strength >= 1 ? Colors.orange : Colors.black12,
+                                    color: strength >= 1
+                                        ? (strength == 1 ? Colors.orange : kPrimary)
+                                        : Colors.black12,
                                     borderRadius: BorderRadius.circular(2),
                                   ),
                                 ),
@@ -427,9 +412,11 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                                 const SizedBox(height: 8),
                                 _guidelineRow('At least 8 characters long', hasMinLength),
                                 const SizedBox(height: 6),
+                                _guidelineRow('Uppercase & lowercase letters', hasUppercase && hasLowercase),
+                                const SizedBox(height: 6),
                                 _guidelineRow('Includes at least one number (0-9)', hasNumber),
                                 const SizedBox(height: 6),
-                                _guidelineRow('Includes uppercase letter or special symbol', hasSpecialOrUpper),
+                                _guidelineRow('Special character (!@#\$%^&*)', hasSpecial),
                               ],
                             ),
                           ),

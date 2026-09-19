@@ -177,14 +177,21 @@ class AdminDashboardTab extends ConsumerWidget {
                     fontWeight: FontWeight.w600,
                     color: kAdminNavyTrust,
                   ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                 ),
               ),
-              Text(
-                'Active policies enforced',
-                style: adminLabelStyle(
-                  fontSize: 11,
-                  fontWeight: FontWeight.w600,
-                  color: kAdminBridgeGreen,
+              const SizedBox(width: 8),
+              Flexible(
+                child: Text(
+                  'Active policies enforced',
+                  style: adminLabelStyle(
+                    fontSize: 11,
+                    fontWeight: FontWeight.w600,
+                    color: kAdminBridgeGreen,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                 ),
               ),
             ],

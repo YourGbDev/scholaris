@@ -36,6 +36,7 @@ abstract class ProfileDataSource {
   Future<Map<String, dynamic>?> fetchProfile(String userId);
   Future<List<Map<String, dynamic>>> fetchAllProfiles();
   Future<void> upsertProfile(String userId, Map<String, dynamic> row);
+  Future<void> deleteProfile(String userId) async {}
 }
 
 /// Production implementation backed by Supabase.
@@ -59,6 +60,11 @@ class SupabaseProfileDataSource implements ProfileDataSource {
   @override
   Future<void> upsertProfile(String userId, Map<String, dynamic> row) async {
     await _client.from('profiles').upsert({'id': userId, ...row});
+  }
+
+  @override
+  Future<void> deleteProfile(String userId) async {
+    await _client.from('profiles').delete().eq('id', userId);
   }
 }
 
@@ -103,13 +109,13 @@ class ProfileRepository {
     final rows = await _dataSource.fetchAllProfiles();
     return rows.map((r) {
       final safeRow = {
+        ...r,
+        'id': r['id'] ?? '',
         'full_name': r['full_name'] ?? '',
         'region': r['region'] ?? '',
         'gpa': (r['gpa'] as num?)?.toDouble() ?? 0.0,
         'year_level': (r['year_level'] as num?)?.toInt() ?? 1,
         'course': r['course'] ?? '',
-        ...r,
-        'id': r['id'] ?? '',
       };
       return StudentProfile.fromJson(safeRow);
     }).toList();
@@ -126,5 +132,15 @@ class ProfileRepository {
       throw const ProfileOwnershipException();
     }
     await _dataSource.upsertProfile(userId, profile.toDbRow());
+  }
+
+  /// Administrative update or creation of any user profile.
+  Future<void> adminUpsertProfile(String userId, Map<String, dynamic> row) async {
+    await _dataSource.upsertProfile(userId, row);
+  }
+
+  /// Administrative deletion of a user profile.
+  Future<void> adminDeleteProfile(String userId) async {
+    await _dataSource.deleteProfile(userId);
   }
 }

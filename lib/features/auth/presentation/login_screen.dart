@@ -4,10 +4,13 @@
 // Philippine trust network, institutional SSO, provider portal).
 // Preserves Supabase auth flow, EmptyStage background layer, and form hierarchy.
 
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import 'package:scholaris/core/security/login_lockout_service.dart';
 import 'package:scholaris/features/auth/presentation/empty_stage.dart';
 import 'package:scholaris/shared/theme/app_theme.dart';
 import 'package:scholaris/shared/widgets/entrance.dart';
@@ -43,12 +46,67 @@ class _LoginScreenState extends State<LoginScreen>
   bool _rememberMe = true;
   bool _isLoading = false;
 
+  LockoutStatus? _lockoutStatus;
+  Timer? _lockoutTimer;
+
+  @override
+  void initState() {
+    super.initState();
+    _emailController.addListener(_onEmailChanged);
+  }
+
+  void _onEmailChanged() {
+    final email = _emailController.text.trim();
+    if (email.isNotEmpty) {
+      final status = LoginLockoutService.instance.checkLockout(email);
+      if (status.isLocked) {
+        if (_lockoutStatus?.isLocked != true || _lockoutStatus?.lockedUntil != status.lockedUntil) {
+          _startLockoutCountdown(status);
+        }
+      } else {
+        if (_lockoutStatus?.isLocked == true) {
+          _lockoutTimer?.cancel();
+          setState(() => _lockoutStatus = status);
+        } else if (_lockoutStatus?.failedAttempts != status.failedAttempts) {
+          setState(() => _lockoutStatus = status);
+        }
+      }
+    } else {
+      _lockoutTimer?.cancel();
+      if (_lockoutStatus != null) {
+        setState(() => _lockoutStatus = null);
+      }
+    }
+  }
+
+  void _startLockoutCountdown(LockoutStatus initialStatus) {
+    _lockoutTimer?.cancel();
+    setState(() => _lockoutStatus = initialStatus);
+
+    _lockoutTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      if (!mounted) {
+        timer.cancel();
+        return;
+      }
+      final email = _emailController.text.trim();
+      final currentStatus = LoginLockoutService.instance.checkLockout(email);
+      if (!currentStatus.isLocked) {
+        timer.cancel();
+        setState(() => _lockoutStatus = currentStatus);
+      } else {
+        setState(() => _lockoutStatus = currentStatus);
+      }
+    });
+  }
+
   @override
   Duration get entranceDuration =>
       const Duration(milliseconds: kLoginEntranceTotalMs);
 
   @override
   void dispose() {
+    _lockoutTimer?.cancel();
+    _emailController.removeListener(_onEmailChanged);
     _emailController.dispose();
     _passwordController.dispose();
     super.dispose();
@@ -57,13 +115,28 @@ class _LoginScreenState extends State<LoginScreen>
   Future<void> _onLogin() async {
     if (!_formKey.currentState!.validate()) return;
 
+    final email = _emailController.text.trim();
+    final lockoutCheck = LoginLockoutService.instance.checkLockout(email);
+    if (lockoutCheck.isLocked) {
+      _startLockoutCountdown(lockoutCheck);
+      ScaffoldMessenger.of(context).showSnackBar(
+        _snackBar(lockoutCheck.lockoutMessage),
+      );
+      return;
+    }
+
     setState(() => _isLoading = true);
     debugPrint('[LOGIN] calling signInWithPassword');
     try {
       final result = await Supabase.instance.client.auth.signInWithPassword(
-        email: _emailController.text.trim(),
+        email: email,
         password: _passwordController.text,
       );
+      LoginLockoutService.instance.recordSuccessfulLogin(email);
+      _lockoutTimer?.cancel();
+      if (mounted) {
+        setState(() => _lockoutStatus = null);
+      }
       debugPrint(
         '[LOGIN] signInWithPassword succeeded session=${result.session != null}',
       );
@@ -71,9 +144,22 @@ class _LoginScreenState extends State<LoginScreen>
       debugPrint(
         '[LOGIN] AuthException statusCode=${error.statusCode} code=${error.code} message=${error.message}',
       );
+      final newStatus = LoginLockoutService.instance.recordFailedAttempt(email);
+      if (newStatus.isLocked) {
+        _startLockoutCountdown(newStatus);
+      } else {
+        if (mounted) {
+          setState(() => _lockoutStatus = newStatus);
+        }
+      }
       if (!mounted) return;
+      final msg = newStatus.isLocked
+          ? newStatus.lockoutMessage
+          : (newStatus.failedAttempts > 0 && newStatus.failedAttempts < 3)
+              ? '${_friendlyError(error)} (${3 - newStatus.failedAttempts} attempt${3 - newStatus.failedAttempts == 1 ? '' : 's'} remaining before lockout)'
+              : _friendlyError(error);
       ScaffoldMessenger.of(context)
-          .showSnackBar(_snackBar(_friendlyError(error)));
+          .showSnackBar(_snackBar(msg));
     } finally {
       if (mounted) setState(() => _isLoading = false);
     }
@@ -112,6 +198,140 @@ class _LoginScreenState extends State<LoginScreen>
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       );
 
+  Widget _buildLockoutBanner() {
+    final status = _lockoutStatus;
+    if (status == null || (!status.isLocked && status.failedAttempts == 0)) {
+      return const SizedBox.shrink();
+    }
+
+    if (status.isLocked) {
+      final mins = status.remainingTime.inMinutes;
+      final secs = status.remainingTime.inSeconds % 60;
+      final timeStr = mins > 0
+          ? '${mins}m ${secs.toString().padLeft(2, '0')}s'
+          : '${secs}s';
+
+      return Container(
+        key: const ValueKey('lockout-active-banner'),
+        margin: const EdgeInsets.only(bottom: 12),
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: const Color(0xFFFFF0F0),
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: const Color(0xFFFFB4AB), width: 1.5),
+        ),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              padding: const EdgeInsets.all(6),
+              decoration: BoxDecoration(
+                color: const Color(0xFFBA1A1A).withValues(alpha: 0.12),
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(
+                Icons.lock_clock_rounded,
+                color: Color(0xFFBA1A1A),
+                size: 20,
+              ),
+            ),
+            const SizedBox(width: 10),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          'Account Temporarily Locked',
+                          style: poppins(
+                            fontSize: 13,
+                            fontWeight: FontWeight.bold,
+                            color: const Color(0xFFBA1A1A),
+                          ),
+                        ),
+                      ),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 8, vertical: 2),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFBA1A1A),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Text(
+                          timeStr,
+                          style: poppins(
+                            fontSize: 11,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    'Due to ${status.failedAttempts} consecutive failed attempts, sign-in is disabled. Please wait for the timer to expire or reset your password.',
+                    style: openSans(
+                      fontSize: 11,
+                      color: const Color(0xFF410002),
+                      height: 1.35,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+
+    // Unlocked, but has failed attempts
+    final String warningText;
+    if (status.failedAttempts >= 3) {
+      warningText =
+          'Security Notice: Account previously locked. 1 more failed attempt will trigger an extended account lockout.';
+    } else {
+      final remainingAttempts = 3 - status.failedAttempts;
+      warningText =
+          'Security Notice: ${status.failedAttempts} failed login attempt${status.failedAttempts == 1 ? '' : 's'}. $remainingAttempts attempt${remainingAttempts == 1 ? '' : 's'} remaining before temporary account lockout.';
+    }
+
+    return Container(
+      key: const ValueKey('lockout-warning-banner'),
+      margin: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+      decoration: BoxDecoration(
+        color: const Color(0xFFFFF8E1),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: const Color(0xFFFFD54F)),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Icon(
+            Icons.warning_amber_rounded,
+            color: Color(0xFFB26B00),
+            size: 18,
+          ),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Text(
+              warningText,
+              style: openSans(
+                fontSize: 11,
+                fontWeight: FontWeight.w600,
+                color: const Color(0xFF5D4037),
+                height: 1.35,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final animation = CurvedAnimation(
@@ -139,62 +359,73 @@ class _LoginScreenState extends State<LoginScreen>
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          IconButton(
-                            icon: const Icon(Icons.arrow_back_ios_new, size: 18),
-                            color: const Color(0xFF161C27),
-                            tooltip: 'Back',
-                            onPressed: () {
-                              if (context.canPop()) {
-                                context.pop();
-                              } else {
-                                context.go('/onboarding');
-                              }
-                            },
-                          ),
-                          const SizedBox(width: 4),
-                          const ScholarisLogo(fontSize: 20, badgeSize: 30, iconSize: 18),
-                        ],
+                      Flexible(
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            IconButton(
+                              icon: const Icon(Icons.arrow_back_ios_new, size: 18),
+                              color: const Color(0xFF161C27),
+                              tooltip: 'Back',
+                              onPressed: () {
+                                if (context.canPop()) {
+                                  context.pop();
+                                } else {
+                                  context.go('/onboarding');
+                                }
+                              },
+                            ),
+                            const SizedBox(width: 4),
+                            const Flexible(
+                              child: FittedBox(
+                                fit: BoxFit.scaleDown,
+                                alignment: Alignment.centerLeft,
+                                child: ScholarisLogo(fontSize: 20, badgeSize: 30, iconSize: 18),
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
-                      Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(20),
-                              border: Border.all(color: const Color(0xFFE2E8E5)),
-                            ),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                const Icon(Icons.help_outline_rounded, size: 14, color: Color(0xFF707971)),
-                                const SizedBox(width: 4),
-                                Text(
-                                  'Help',
-                                  style: openSans(
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.w600,
-                                    color: const Color(0xFF161C27),
+                      FittedBox(
+                        fit: BoxFit.scaleDown,
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(20),
+                                border: Border.all(color: const Color(0xFFE2E8E5)),
+                              ),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  const Icon(Icons.help_outline_rounded, size: 14, color: Color(0xFF707971)),
+                                  const SizedBox(width: 4),
+                                  Text(
+                                    'Help',
+                                    style: openSans(
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w600,
+                                      color: const Color(0xFF161C27),
+                                    ),
                                   ),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
-                          ),
-                          const SizedBox(width: 8),
-                          Container(
-                            width: 28,
-                            height: 28,
-                            decoration: const BoxDecoration(
-                              color: kPrimary,
-                              shape: BoxShape.circle,
+                            const SizedBox(width: 8),
+                            Container(
+                              width: 28,
+                              height: 28,
+                              decoration: const BoxDecoration(
+                                color: kPrimary,
+                                shape: BoxShape.circle,
+                              ),
+                              child: const Icon(Icons.person, size: 16, color: Colors.white),
                             ),
-                            child: const Icon(Icons.person, size: 16, color: Colors.white),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                     ],
                   ),
@@ -292,6 +523,9 @@ class _LoginScreenState extends State<LoginScreen>
                                 ),
                                 const SizedBox(height: 12),
 
+                                // Lockout Banner / Countdown
+                                _buildLockoutBanner(),
+
                                 // Email Field
                                 Text(
                                   'Email',
@@ -342,20 +576,23 @@ class _LoginScreenState extends State<LoginScreen>
                                         color: const Color(0xFF161C27),
                                       ),
                                     ),
-                                    TextButton(
-                                      onPressed: _onForgotPassword,
-                                      style: TextButton.styleFrom(
-                                        foregroundColor: kNavyTrust,
-                                        padding: EdgeInsets.zero,
-                                        minimumSize: Size.zero,
-                                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                                      ),
-                                      child: Text(
-                                        'Forgot password?',
-                                        style: poppins(
-                                          fontSize: 13,
-                                          fontWeight: FontWeight.w600,
-                                          color: kNavyTrust,
+                                    Flexible(
+                                      child: TextButton(
+                                        onPressed: _onForgotPassword,
+                                        style: TextButton.styleFrom(
+                                          foregroundColor: kNavyTrust,
+                                          padding: EdgeInsets.zero,
+                                          minimumSize: Size.zero,
+                                          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                        ),
+                                        child: Text(
+                                          'Forgot password?',
+                                          overflow: TextOverflow.ellipsis,
+                                          style: poppins(
+                                            fontSize: 13,
+                                            fontWeight: FontWeight.w600,
+                                            color: kNavyTrust,
+                                          ),
                                         ),
                                       ),
                                     ),
@@ -365,6 +602,10 @@ class _LoginScreenState extends State<LoginScreen>
                                 TextFormField(
                                   controller: _passwordController,
                                   obscureText: _obscurePassword,
+                                  onFieldSubmitted: (_) =>
+                                      (_isLoading || (_lockoutStatus?.isLocked ?? false))
+                                          ? null
+                                          : _onLogin(),
                                   validator: (v) => (v == null || v.isEmpty) ? 'Enter your password.' : null,
                                   style: openSans(fontSize: 14),
                                   decoration: InputDecoration(
@@ -421,15 +662,18 @@ class _LoginScreenState extends State<LoginScreen>
                                       ),
                                     ),
                                     const SizedBox(width: 8),
-                                    GestureDetector(
-                                      onTap: () => setState(
-                                        () => _rememberMe = !_rememberMe,
-                                      ),
-                                      child: Text(
-                                        'Remember me for 30 days',
-                                        style: openSans(
-                                          fontSize: 13,
-                                          color: const Color(0xFF404944),
+                                    Expanded(
+                                      child: GestureDetector(
+                                        onTap: () => setState(
+                                          () => _rememberMe = !_rememberMe,
+                                        ),
+                                        child: Text(
+                                          'Remember me for 30 days',
+                                          overflow: TextOverflow.ellipsis,
+                                          style: openSans(
+                                            fontSize: 13,
+                                            color: const Color(0xFF404944),
+                                          ),
                                         ),
                                       ),
                                     ),
@@ -442,10 +686,20 @@ class _LoginScreenState extends State<LoginScreen>
                                   width: double.infinity,
                                   height: 48,
                                   child: ElevatedButton(
-                                    onPressed: _isLoading ? null : _onLogin,
+                                    onPressed: (_isLoading || (_lockoutStatus?.isLocked ?? false))
+                                        ? null
+                                        : _onLogin,
                                     style: ElevatedButton.styleFrom(
-                                      backgroundColor: kPrimary,
+                                      backgroundColor: (_lockoutStatus?.isLocked ?? false)
+                                          ? const Color(0xFFBA1A1A)
+                                          : kPrimary,
                                       foregroundColor: Colors.white,
+                                      disabledBackgroundColor: (_lockoutStatus?.isLocked ?? false)
+                                          ? const Color(0xFFE2A0A0)
+                                          : null,
+                                      disabledForegroundColor: (_lockoutStatus?.isLocked ?? false)
+                                          ? Colors.white.withValues(alpha: 0.8)
+                                          : null,
                                       shape: RoundedRectangleBorder(
                                         borderRadius: BorderRadius.circular(12),
                                       ),
@@ -464,11 +718,18 @@ class _LoginScreenState extends State<LoginScreen>
                                             mainAxisAlignment: MainAxisAlignment.center,
                                             children: [
                                               Text(
-                                                'Log in',
+                                                (_lockoutStatus?.isLocked ?? false)
+                                                    ? 'Account Locked'
+                                                    : 'Log in',
                                                 style: poppins(fontSize: 16, fontWeight: FontWeight.bold),
                                               ),
                                               const SizedBox(width: 8),
-                                              const Icon(Icons.arrow_forward_rounded, size: 18),
+                                              Icon(
+                                                (_lockoutStatus?.isLocked ?? false)
+                                                    ? Icons.lock_rounded
+                                                    : Icons.arrow_forward_rounded,
+                                                size: 18,
+                                              ),
                                             ],
                                           ),
                                   ),
@@ -477,8 +738,9 @@ class _LoginScreenState extends State<LoginScreen>
 
                                 // Sign Up Navigation Link
                                 Center(
-                                  child: Row(
-                                    mainAxisSize: MainAxisSize.min,
+                                  child: Wrap(
+                                    alignment: WrapAlignment.center,
+                                    crossAxisAlignment: WrapCrossAlignment.center,
                                     children: [
                                       Text(
                                         "Don't have an account?",
@@ -532,21 +794,25 @@ class _LoginScreenState extends State<LoginScreen>
                                           ),
                                         ),
                                         const SizedBox(height: 4),
-                                        Row(
-                                          mainAxisAlignment: MainAxisAlignment.center,
-                                          children: [
-                                            Text(
-                                              'Become a scholarship provider',
-                                              style: poppins(
-                                                fontSize: 12,
-                                                fontWeight: FontWeight.bold,
-                                                color: kPrimary,
-                                                decoration: TextDecoration.underline,
+                                        FittedBox(
+                                          fit: BoxFit.scaleDown,
+                                          child: Row(
+                                            mainAxisAlignment: MainAxisAlignment.center,
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              Text(
+                                                'Become a scholarship provider',
+                                                style: poppins(
+                                                  fontSize: 12,
+                                                  fontWeight: FontWeight.bold,
+                                                  color: kPrimary,
+                                                  decoration: TextDecoration.underline,
+                                                ),
                                               ),
-                                            ),
-                                            const SizedBox(width: 4),
-                                            const Icon(Icons.arrow_forward_rounded, size: 14, color: kPrimary),
-                                          ],
+                                              const SizedBox(width: 4),
+                                              const Icon(Icons.arrow_forward_rounded, size: 14, color: kPrimary),
+                                            ],
+                                          ),
                                         ),
                                       ],
                                     ),
@@ -653,20 +919,23 @@ class _LoginScreenState extends State<LoginScreen>
                                 Center(
                                   child: Column(
                                     children: [
-                                      Row(
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          const Icon(Icons.verified_user_outlined, size: 14, color: kPrimary),
-                                          const SizedBox(width: 4),
-                                          Text(
-                                            'Philippine Academic Trust Network',
-                                            style: poppins(
-                                              fontSize: 11,
-                                              fontWeight: FontWeight.w700,
-                                              color: kNavyTrust,
+                                      FittedBox(
+                                        fit: BoxFit.scaleDown,
+                                        child: Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            const Icon(Icons.verified_user_outlined, size: 14, color: kPrimary),
+                                            const SizedBox(width: 4),
+                                            Text(
+                                              'Philippine Academic Trust Network',
+                                              style: poppins(
+                                                fontSize: 11,
+                                                fontWeight: FontWeight.w700,
+                                                color: kNavyTrust,
+                                              ),
                                             ),
-                                          ),
-                                        ],
+                                          ],
+                                        ),
                                       ),
                                       const SizedBox(height: 3),
                                       Text(

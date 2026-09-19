@@ -5,6 +5,7 @@
 // (flat, illustrated, non-photorealistic) and verified identity badges.
 
 import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import '../../models/avatar_item.dart';
 
@@ -129,20 +130,37 @@ class AvatarDisplay extends StatelessWidget {
 
   Widget _buildRealPhoto(BuildContext context) {
     if (photoPath != null && photoPath!.isNotEmpty) {
-      final file = File(photoPath!);
-      if (file.existsSync()) {
+      if (photoPath!.startsWith('http://') ||
+          photoPath!.startsWith('https://') ||
+          photoPath!.startsWith('blob:')) {
         return Container(
           width: size,
           height: size,
           decoration: BoxDecoration(
             shape: BoxShape.circle,
             image: DecorationImage(
-              image: FileImage(file),
+              image: NetworkImage(photoPath!),
               fit: BoxFit.cover,
             ),
             border: Border.all(color: const Color(0xFF145131), width: 2),
           ),
         );
+      } else if (!kIsWeb) {
+        final file = File(photoPath!);
+        if (file.existsSync()) {
+          return Container(
+            width: size,
+            height: size,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              image: DecorationImage(
+                image: FileImage(file),
+                fit: BoxFit.cover,
+              ),
+              border: Border.all(color: const Color(0xFF145131), width: 2),
+            ),
+          );
+        }
       }
     }
 

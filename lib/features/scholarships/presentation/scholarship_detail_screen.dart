@@ -1234,19 +1234,45 @@ class _EligibilityCard extends StatelessWidget {
 }
 
 /// 6. Application Materials & Requirements Card: Checklist of documents matching Stitch code.html.
-class _ApplicationMaterialsCard extends StatefulWidget {
+class _ApplicationMaterialsCard extends ConsumerStatefulWidget {
   const _ApplicationMaterialsCard();
 
   @override
-  State<_ApplicationMaterialsCard> createState() =>
+  ConsumerState<_ApplicationMaterialsCard> createState() =>
       _ApplicationMaterialsCardState();
 }
 
-class _ApplicationMaterialsCardState extends State<_ApplicationMaterialsCard> {
-  bool _reminderSent = false;
+class _ApplicationMaterialsCardState
+    extends ConsumerState<_ApplicationMaterialsCard> {
+  bool _isEditingEssay = false;
+  final TextEditingController _essayController = TextEditingController();
+  final List<String> _recommenders = [];
+  final TextEditingController _recEmailController = TextEditingController();
+  bool _isAddingRec = false;
+
+  @override
+  void dispose() {
+    _essayController.dispose();
+    _recEmailController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
+    final profile = ref.watch(currentProfileProvider).valueOrNull;
+    final school = profile?.school;
+    final hasTranscript = profile != null && school != null && school.isNotEmpty;
+
+    final essayText = _essayController.text.trim();
+    final wordCount = essayText.isEmpty
+        ? 0
+        : essayText.split(RegExp(r'\s+')).length;
+    final hasEssay = wordCount > 0;
+    final hasRec = _recommenders.isNotEmpty;
+
+    final readyCount =
+        (hasEssay ? 1 : 0) + (hasTranscript ? 1 : 0) + (hasRec ? 1 : 0);
+
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
@@ -1282,12 +1308,23 @@ class _ApplicationMaterialsCardState extends State<_ApplicationMaterialsCard> {
               const SizedBox(width: 8),
               FittedBox(
                 fit: BoxFit.scaleDown,
-                child: Text(
-                  '2 of 3 Ready',
-                  style: GoogleFonts.outfit(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w600,
-                    color: kSecondary,
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                  decoration: BoxDecoration(
+                    color: readyCount == 3
+                        ? const Color(0xFFB3F1C6)
+                        : const Color(0xFFE8EEFF),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Text(
+                    '$readyCount of 3 Ready',
+                    style: GoogleFonts.outfit(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w600,
+                      color: readyCount == 3
+                          ? const Color(0xFF145131)
+                          : kSecondary,
+                    ),
                   ),
                 ),
               ),
@@ -1331,15 +1368,19 @@ class _ApplicationMaterialsCardState extends State<_ApplicationMaterialsCard> {
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                       decoration: BoxDecoration(
-                        color: const Color(0xFFB3F1C6),
+                        color: hasEssay
+                            ? const Color(0xFFB3F1C6)
+                            : const Color(0xFFFFDAD6),
                         borderRadius: BorderRadius.circular(4),
                       ),
                       child: Text(
-                        'Draft Ready',
+                        hasEssay ? 'Draft Ready' : 'Incomplete',
                         style: GoogleFonts.outfit(
                           fontSize: 10,
                           fontWeight: FontWeight.w600,
-                          color: const Color(0xFF145131),
+                          color: hasEssay
+                              ? const Color(0xFF145131)
+                              : const Color(0xFF93000A),
                         ),
                       ),
                     ),
@@ -1357,50 +1398,94 @@ class _ApplicationMaterialsCardState extends State<_ApplicationMaterialsCard> {
                     ),
                   ),
                 ),
-                const SizedBox(height: 8),
-                Padding(
-                  padding: const EdgeInsets.only(left: 26),
-                  child: Row(
+                if (_isEditingEssay) ...[
+                  const SizedBox(height: 10),
+                  TextField(
+                    controller: _essayController,
+                    maxLines: 4,
+                    style: GoogleFonts.openSans(fontSize: 12, color: kOnSurface),
+                    decoration: InputDecoration(
+                      hintText: 'Type your essay / personal statement here...',
+                      hintStyle: GoogleFonts.openSans(fontSize: 12, color: const Color(0xFF707971)),
+                      fillColor: Colors.white,
+                      filled: true,
+                      contentPadding: const EdgeInsets.all(10),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                        borderSide: const BorderSide(color: Color(0xFFE2E8E5)),
+                      ),
+                    ),
+                    onChanged: (_) => setState(() {}),
+                  ),
+                  const SizedBox(height: 6),
+                  Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Flexible(
-                        child: Text(
-                          '742 words composed',
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: GoogleFonts.outfit(
-                            fontSize: 11,
-                            fontWeight: FontWeight.w600,
-                            color: kPrimaryContainer,
-                          ),
+                      Text(
+                        '$wordCount / 750 words',
+                        style: GoogleFonts.outfit(
+                          fontSize: 11,
+                          fontWeight: FontWeight.w600,
+                          color: wordCount > 750 ? kError : kPrimaryContainer,
                         ),
                       ),
-                      const SizedBox(width: 8),
-                      InkWell(
-                        onTap: () {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text('Personal narrative editor opened.')),
-                          );
-                        },
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Text(
-                              'Edit Statement',
-                              style: GoogleFonts.outfit(
-                                fontSize: 12,
-                                fontWeight: FontWeight.w600,
-                                color: kSecondary,
-                              ),
-                            ),
-                            const SizedBox(width: 2),
-                            const Icon(Icons.edit_note_rounded, size: 16, color: kSecondary),
-                          ],
+                      FilledButton.tonal(
+                        style: FilledButton.styleFrom(
+                          backgroundColor: kPrimaryContainer,
+                          foregroundColor: Colors.white,
+                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                          minimumSize: const Size(60, 30),
+                        ),
+                        onPressed: () => setState(() => _isEditingEssay = false),
+                        child: Text(
+                          'Save Statement',
+                          style: GoogleFonts.outfit(fontSize: 11, fontWeight: FontWeight.w600),
                         ),
                       ),
                     ],
                   ),
-                ),
+                ] else ...[
+                  const SizedBox(height: 8),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 26),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Flexible(
+                          child: Text(
+                            hasEssay ? '$wordCount words composed' : 'No statement composed yet',
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: GoogleFonts.outfit(
+                              fontSize: 11,
+                              fontWeight: FontWeight.w600,
+                              color: hasEssay ? kPrimaryContainer : const Color(0xFF707971),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        InkWell(
+                          onTap: () => setState(() => _isEditingEssay = true),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(
+                                hasEssay ? 'Edit Statement' : 'Write Statement',
+                                style: GoogleFonts.outfit(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w600,
+                                  color: kSecondary,
+                                ),
+                              ),
+                              const SizedBox(width: 2),
+                              const Icon(Icons.edit_note_rounded, size: 16, color: kSecondary),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
               ],
             ),
           ),
@@ -1431,27 +1516,31 @@ class _ApplicationMaterialsCardState extends State<_ApplicationMaterialsCard> {
                       ),
                       const SizedBox(height: 2),
                       Text(
-                        'True Copy of Grades synced via UP Registrar',
+                        hasTranscript
+                            ? 'GPA ${profile.gpa.toStringAsFixed(2)} • ${profile.school ?? ""}'
+                            : 'No academic transcript on file in profile',
                         style: GoogleFonts.openSans(
                           fontSize: 11,
                           fontWeight: FontWeight.w500,
-                          color: kPrimaryContainer,
+                          color: hasTranscript ? kPrimaryContainer : const Color(0xFF707971),
                         ),
                       ),
                     ],
                   ),
                 ),
                 Container(
-                  width: 24,
-                  height: 24,
-                  decoration: const BoxDecoration(
-                    color: Color(0xFFB3F1C6),
-                    shape: BoxShape.circle,
+                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                  decoration: BoxDecoration(
+                    color: hasTranscript ? const Color(0xFFB3F1C6) : const Color(0xFFFFDAD6),
+                    borderRadius: BorderRadius.circular(4),
                   ),
-                  child: const Icon(
-                    Icons.check_rounded,
-                    size: 16,
-                    color: kPrimaryContainer,
+                  child: Text(
+                    hasTranscript ? 'Verified' : 'Incomplete',
+                    style: GoogleFonts.outfit(
+                      fontSize: 10,
+                      fontWeight: FontWeight.w600,
+                      color: hasTranscript ? const Color(0xFF145131) : const Color(0xFF93000A),
+                    ),
                   ),
                 ),
               ],
@@ -1495,15 +1584,19 @@ class _ApplicationMaterialsCardState extends State<_ApplicationMaterialsCard> {
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                       decoration: BoxDecoration(
-                        color: const Color(0xFFFFDEA3),
+                        color: hasRec
+                            ? const Color(0xFFB3F1C6)
+                            : const Color(0xFFFFDEA3),
                         borderRadius: BorderRadius.circular(4),
                       ),
                       child: Text(
-                        '1 Pending',
+                        hasRec ? '${_recommenders.length} Linked' : '0 of 2 Linked',
                         style: GoogleFonts.outfit(
                           fontSize: 10,
                           fontWeight: FontWeight.w600,
-                          color: const Color(0xFF5D4200),
+                          color: hasRec
+                              ? const Color(0xFF145131)
+                              : const Color(0xFF5D4200),
                         ),
                       ),
                     ),
@@ -1513,87 +1606,85 @@ class _ApplicationMaterialsCardState extends State<_ApplicationMaterialsCard> {
                 Padding(
                   padding: const EdgeInsets.only(left: 26),
                   child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Expanded(
-                            child: Text(
-                              'Prof. Marcus Chen (UP Dept of CS)',
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: GoogleFonts.openSans(
-                                fontSize: 11,
-                                fontWeight: FontWeight.w500,
-                                color: kOnSurface,
-                              ),
-                            ),
-                          ),
-                          const SizedBox(width: 6),
-                          Row(
-                            mainAxisSize: MainAxisSize.min,
+                      for (final rec in _recommenders)
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 4),
+                          child: Row(
                             children: [
-                              const Icon(Icons.done_rounded, size: 14, color: kPrimaryContainer),
-                              const SizedBox(width: 2),
-                              Text(
-                                'Received',
-                                style: GoogleFonts.outfit(
-                                  fontSize: 11,
-                                  fontWeight: FontWeight.w600,
-                                  color: kPrimaryContainer,
+                              const Icon(Icons.check_circle_outline_rounded, size: 14, color: kPrimaryContainer),
+                              const SizedBox(width: 6),
+                              Expanded(
+                                child: Text(
+                                  rec,
+                                  style: GoogleFonts.openSans(fontSize: 11, color: kOnSurface),
                                 ),
                               ),
                             ],
                           ),
-                        ],
-                      ),
-                      const SizedBox(height: 6),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Expanded(
-                            child: Text(
-                              'Dr. Sarah Varma (AI Lab)',
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: GoogleFonts.openSans(
-                                fontSize: 11,
-                                fontWeight: FontWeight.w500,
-                                color: kOnSurface,
-                              ),
-                            ),
-                          ),
-                          const SizedBox(width: 6),
-                          InkWell(
-                            borderRadius: BorderRadius.circular(4),
-                            onTap: () {
-                              setState(() => _reminderSent = true);
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(content: Text('Reminder sent to Dr. Sarah Varma.')),
-                              );
-                            },
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                              decoration: BoxDecoration(
-                                color: _reminderSent
-                                    ? const Color(0xFFB3F1C6)
-                                    : const Color(0xFFB6D4FE),
-                                borderRadius: BorderRadius.circular(4),
-                              ),
-                              child: Text(
-                                _reminderSent ? 'Sent' : 'Send Reminder',
-                                style: GoogleFonts.outfit(
-                                  fontSize: 10,
-                                  fontWeight: FontWeight.w600,
-                                  color: _reminderSent
-                                      ? const Color(0xFF145131)
-                                      : const Color(0xFF2B486B),
+                        ),
+                      if (_isAddingRec) ...[
+                        Row(
+                          children: [
+                            Expanded(
+                              child: SizedBox(
+                                height: 32,
+                                child: TextField(
+                                  controller: _recEmailController,
+                                  style: GoogleFonts.openSans(fontSize: 12),
+                                  decoration: InputDecoration(
+                                    hintText: 'Faculty email (e.g. prof@univ.edu)',
+                                    hintStyle: GoogleFonts.openSans(fontSize: 11),
+                                    contentPadding: const EdgeInsets.symmetric(horizontal: 8),
+                                    filled: true,
+                                    fillColor: Colors.white,
+                                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(6)),
+                                  ),
                                 ),
                               ),
                             ),
+                            const SizedBox(width: 6),
+                            FilledButton(
+                              style: FilledButton.styleFrom(
+                                backgroundColor: kPrimaryContainer,
+                                padding: const EdgeInsets.symmetric(horizontal: 10),
+                                minimumSize: const Size(50, 32),
+                              ),
+                              onPressed: () {
+                                final email = _recEmailController.text.trim();
+                                if (email.isNotEmpty) {
+                                  setState(() {
+                                    _recommenders.add(email);
+                                    _recEmailController.clear();
+                                    _isAddingRec = false;
+                                  });
+                                }
+                              },
+                              child: const Text('Add', style: TextStyle(fontSize: 11)),
+                            ),
+                          ],
+                        ),
+                      ] else ...[
+                        InkWell(
+                          onTap: () => setState(() => _isAddingRec = true),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              const Icon(Icons.add_circle_outline_rounded, size: 14, color: kSecondary),
+                              const SizedBox(width: 4),
+                              Text(
+                                'Add Recommender Email',
+                                style: GoogleFonts.outfit(
+                                  fontSize: 11.5,
+                                  fontWeight: FontWeight.w600,
+                                  color: kSecondary,
+                                ),
+                              ),
+                            ],
                           ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ],
                   ),
                 ),
@@ -2077,9 +2168,9 @@ class _DraftBanner extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: const Color(0xFFFFFBEB),
+        color: Colors.white,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: const Color(0xFFFDE68A)),
+        border: Border.all(color: const Color(0xFFE2E8E5), width: 1.0),
         boxShadow: const [
           BoxShadow(
             color: Color(0x081B3A5C),
@@ -2097,7 +2188,7 @@ class _DraftBanner extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: BoxDecoration(
-                  color: const Color(0xFFFEF3C7),
+                  color: const Color(0xFFE8EEFF),
                   borderRadius: BorderRadius.circular(6),
                 ),
                 child: Row(
@@ -2106,7 +2197,7 @@ class _DraftBanner extends StatelessWidget {
                     const Icon(
                       Icons.edit_note_rounded,
                       size: 14,
-                      color: Color(0xFFB45309),
+                      color: kSecondary,
                     ),
                     const SizedBox(width: 4),
                     Text(
@@ -2114,7 +2205,7 @@ class _DraftBanner extends StatelessWidget {
                       style: GoogleFonts.outfit(
                         fontSize: 10,
                         fontWeight: FontWeight.w700,
-                        color: const Color(0xFFB45309),
+                        color: kSecondary,
                         letterSpacing: 0.5,
                       ),
                     ),

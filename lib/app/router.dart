@@ -38,6 +38,8 @@ import 'package:scholaris/features/onboarding/presentation/onboarding_screen.dar
 import 'package:scholaris/features/home/presentation/home_screen.dart';
 import 'package:scholaris/features/profile/presentation/profile_setup_screen.dart';
 import 'package:scholaris/features/profile/providers/profile_setup_provider.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:scholaris/features/applications/presentation/application_detail_screen.dart';
 import 'package:scholaris/features/scholarships/models/scholarship.dart';
 import 'package:scholaris/features/scholarships/presentation/scholarship_detail_screen.dart';
 import 'package:scholaris/features/scholarships/screens/saved_screen.dart';
@@ -100,6 +102,66 @@ final routerProvider = Provider<GoRouter>((ref) {
   final router = GoRouter(
     initialLocation: '/splash',
     redirect: (context, state) => _redirect(ref, state),
+    errorBuilder: (context, state) => Scaffold(
+      backgroundColor: const Color(0xFFF9F9FF),
+      body: Center(
+        child: Padding(
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                width: 64,
+                height: 64,
+                decoration: const BoxDecoration(
+                  color: Color(0xFFFFDAD6),
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(
+                  Icons.error_outline_rounded,
+                  size: 32,
+                  color: Color(0xFFBA1A1A),
+                ),
+              ),
+              const SizedBox(height: 16),
+              Text(
+                'Page Not Found',
+                style: GoogleFonts.outfit(
+                  fontSize: 22,
+                  fontWeight: FontWeight.bold,
+                  color: const Color(0xFF161C27),
+                ),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                'The requested route (${state.uri.path}) does not exist.',
+                textAlign: TextAlign.center,
+                style: GoogleFonts.openSans(
+                  fontSize: 14,
+                  color: const Color(0xFF404942),
+                ),
+              ),
+              const SizedBox(height: 24),
+              ElevatedButton.icon(
+                key: const ValueKey('error-page-return-home'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF0F4D2E),
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                ),
+                onPressed: () => context.go('/home'),
+                icon: const Icon(Icons.home_rounded, size: 18),
+                label: Text(
+                  'Return to Home',
+                  style: GoogleFonts.outfit(fontSize: 14, fontWeight: FontWeight.w600),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    ),
     routes: <RouteBase>[
       // --- Ceremony (opening) ------------------------------------------------
       // First-run opening for signed-out visitors: the graduation ceremony
@@ -227,6 +289,47 @@ final routerProvider = Provider<GoRouter>((ref) {
             initial: scholarship,
           );
         },
+      ),
+
+      // --- Applications & Tracker Routes -------------------------------------
+      GoRoute(
+        path: '/applications',
+        name: 'applications',
+        redirect: (context, state) {
+          ref.read(homeTabIndexProvider.notifier).selectTab(2);
+          return '/home';
+        },
+      ),
+      GoRoute(
+        path: '/tracker',
+        name: 'tracker',
+        redirect: (context, state) {
+          ref.read(homeTabIndexProvider.notifier).selectTab(2);
+          return '/home';
+        },
+      ),
+      GoRoute(
+        path: '/discover',
+        name: 'discover',
+        redirect: (context, state) {
+          ref.read(homeTabIndexProvider.notifier).selectTab(1);
+          return '/home';
+        },
+      ),
+      GoRoute(
+        path: '/profile',
+        name: 'profile',
+        redirect: (context, state) {
+          ref.read(homeTabIndexProvider.notifier).selectTab(3);
+          return '/home';
+        },
+      ),
+      GoRoute(
+        path: '/application/:id',
+        name: 'application-detail',
+        builder: (context, state) => ApplicationDetailScreen(
+          applicationId: state.pathParameters['id']!,
+        ),
       ),
 
       // --- Profile setup (multi-step) ----------------------------------------

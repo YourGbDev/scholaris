@@ -247,5 +247,17 @@ ThemeData scholarisTheme() {
         borderRadius: BorderRadius.circular(kRadiusInput),
       ),
     ),
+    dialogTheme: const DialogThemeData(
+      backgroundColor: kSurfaceContainerLowest,
+      surfaceTintColor: Colors.transparent,
+    ),
+    cardTheme: const CardThemeData(
+      color: kSurfaceContainerLowest,
+      surfaceTintColor: Colors.transparent,
+    ),
+    bottomSheetTheme: const BottomSheetThemeData(
+      backgroundColor: kSurfaceContainerLowest,
+      surfaceTintColor: Colors.transparent,
+    ),
   );
 }

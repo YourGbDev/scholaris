@@ -15,6 +15,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import 'package:scholaris/features/profile/models/student_profile.dart';
 import 'package:scholaris/features/profile/providers/profile_setup_provider.dart';
 import 'package:scholaris/features/scholarships/models/scholarship.dart';
 import 'package:scholaris/shared/theme/app_theme.dart';
@@ -126,8 +127,7 @@ class _SubmitApplicationReviewDialogState
     final profile = ref.watch(currentProfileProvider).valueOrNull;
     final studentName = (profile?.fullName != null && profile!.fullName.trim().isNotEmpty)
         ? profile.fullName.trim()
-        : 'Maya Santos';
-    final gpa = profile?.gpa ?? 3.82;
+        : 'Student';
 
     return Container(
       constraints: BoxConstraints(
@@ -164,8 +164,8 @@ class _SubmitApplicationReviewDialogState
                   _buildAwardCard(),
                   const SizedBox(height: 12),
 
-                  // CARD 3: Application Packet (4 components)
-                  _buildPacketCard(gpa: gpa),
+                  // CARD 3: Application Packet
+                  _buildPacketCard(profile: profile),
                   const SizedBox(height: 12),
 
                   // CARD 4: Affirmations & Honor Code
@@ -659,7 +659,16 @@ class _SubmitApplicationReviewDialogState
   }
 
   // --- CARD 3: Application Packet Card -------------------------------------
-  Widget _buildPacketCard({required double gpa}) {
+  Widget _buildPacketCard({required StudentProfile? profile}) {
+    final school = profile?.school;
+    final hasTranscript = profile != null && school != null && school.isNotEmpty;
+    final transcriptTitle = hasTranscript
+        ? '$school Academic Transcript'
+        : 'Official Academic Transcript';
+    final gpaText = profile != null
+        ? 'GPA ${profile.gpa.toStringAsFixed(2)}'
+        : 'Pending';
+
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -693,7 +702,9 @@ class _SubmitApplicationReviewDialogState
                       ),
                     ),
                     Text(
-                      '4 of 4 verification components complete',
+                      hasTranscript
+                          ? 'Academic records & materials verified'
+                          : 'Materials pending verification',
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: GoogleFonts.openSans(
@@ -708,18 +719,18 @@ class _SubmitApplicationReviewDialogState
               Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const Icon(
-                    Icons.verified_rounded,
+                  Icon(
+                    hasTranscript ? Icons.verified_rounded : Icons.pending_rounded,
                     size: 16,
-                    color: kPrimaryContainer,
+                    color: hasTranscript ? kPrimaryContainer : kSecondary,
                   ),
                   const SizedBox(width: 4),
                   Text(
-                    'Ready',
+                    hasTranscript ? 'Verified' : 'In Review',
                     style: GoogleFonts.outfit(
                       fontSize: 12,
                       fontWeight: FontWeight.bold,
-                      color: kPrimaryContainer,
+                      color: hasTranscript ? kPrimaryContainer : kSecondary,
                     ),
                   ),
                 ],
@@ -734,10 +745,10 @@ class _SubmitApplicationReviewDialogState
             iconBg: kPrimaryFixed,
             iconColor: kOnPrimaryFixed,
             title: 'Personal Statement',
-            tag: '748/750 words',
-            subtitle: '"Solving Clean Water Access via ML"',
+            tag: 'Draft Included',
+            subtitle: 'Personal statement and academic intent',
             statusIcon: Icons.check_rounded,
-            statusLabel: 'Originality Checked & Formatted',
+            statusLabel: 'Attached to Application Packet',
             actionIcon: Icons.visibility_outlined,
           ),
           const SizedBox(height: 8),
@@ -745,13 +756,17 @@ class _SubmitApplicationReviewDialogState
           // 2. Academic Transcript
           _buildPacketItem(
             icon: Icons.school_outlined,
-            iconBg: kSecondaryFixed,
-            iconColor: kOnSecondaryFixed,
-            title: 'UP Diliman Academic Transcript',
-            tag: 'GPA ${gpa.toStringAsFixed(2)}',
-            subtitle: 'Synced directly via UP Registrar SSO',
-            statusIcon: Icons.lock_outline_rounded,
-            statusLabel: 'Official Digital Registrar Seal Validated',
+            iconBg: hasTranscript ? kSecondaryFixed : const Color(0xFFFFDAD6),
+            iconColor: hasTranscript ? kOnSecondaryFixed : const Color(0xFF93000A),
+            title: transcriptTitle,
+            tag: gpaText,
+            subtitle: hasTranscript
+                ? 'Synced and verified from student profile'
+                : 'Academic transcript record pending in profile',
+            statusIcon: hasTranscript ? Icons.lock_outline_rounded : Icons.info_outline_rounded,
+            statusLabel: hasTranscript
+                ? 'Official Academic Record Attached'
+                : 'Pending Profile Verification',
             actionIcon: Icons.open_in_new_rounded,
           ),
           const SizedBox(height: 8),
@@ -785,7 +800,7 @@ class _SubmitApplicationReviewDialogState
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Recommendations (2 of 2 Complete)',
+                        'Faculty Recommendations',
                         style: GoogleFonts.outfit(
                           fontSize: 12,
                           fontWeight: FontWeight.w600,
@@ -793,84 +808,14 @@ class _SubmitApplicationReviewDialogState
                         ),
                       ),
                       const SizedBox(height: 4),
-                      Row(
-                        children: [
-                          Container(
-                            width: 6,
-                            height: 6,
-                            decoration: const BoxDecoration(
-                              color: kPrimaryContainer,
-                              shape: BoxShape.circle,
-                            ),
-                          ),
-                          const SizedBox(width: 6),
-                          Expanded(
-                            child: Text(
-                              'Prof. Marcus Chen (CS Dept)',
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: GoogleFonts.openSans(
-                                fontSize: 11,
-                                color: kOnSurfaceVariant,
-                              ),
-                            ),
-                          ),
-                          Text(
-                            'Oct 8',
-                            style: GoogleFonts.outfit(
-                              fontSize: 10,
-                              color: kOnSurfaceVariant,
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 2),
-                      Row(
-                        children: [
-                          Container(
-                            width: 6,
-                            height: 6,
-                            decoration: const BoxDecoration(
-                              color: kPrimaryContainer,
-                              shape: BoxShape.circle,
-                            ),
-                          ),
-                          const SizedBox(width: 6),
-                          Expanded(
-                            child: Text(
-                              'Dr. Sarah Varma (AI Lab)',
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: GoogleFonts.openSans(
-                                fontSize: 11,
-                                color: kOnSurfaceVariant,
-                              ),
-                            ),
-                          ),
-                          Text(
-                            'Today',
-                            style: GoogleFonts.outfit(
-                              fontSize: 10,
-                              fontWeight: FontWeight.bold,
-                              color: kPrimaryContainer,
-                            ),
-                          ),
-                        ],
+                      Text(
+                        'Institutional endorsements and academic references',
+                        style: GoogleFonts.openSans(
+                          fontSize: 11,
+                          color: kOnSurfaceVariant,
+                        ),
                       ),
                     ],
-                  ),
-                ),
-                const SizedBox(width: 8),
-                Container(
-                  padding: const EdgeInsets.all(6),
-                  decoration: BoxDecoration(
-                    color: kSurfaceContainer,
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: const Icon(
-                    Icons.task_alt_rounded,
-                    size: 18,
-                    color: kPrimaryContainer,
                   ),
                 ),
               ],

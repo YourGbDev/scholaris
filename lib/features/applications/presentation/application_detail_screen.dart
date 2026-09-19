@@ -149,6 +149,9 @@ class _DetailBodyState extends ConsumerState<_DetailBody> {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (dialogContext) => AlertDialog(
+        backgroundColor: Colors.white,
+        surfaceTintColor: Colors.transparent,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         title: const Text('Withdraw application?'),
         content: Text(
           'You are about to withdraw your application for '
@@ -195,12 +198,15 @@ class _DetailBodyState extends ConsumerState<_DetailBody> {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('You must be signed in to withdraw.')),
       );
-    } on Exception {
+    } on Exception catch (e, st) {
+      debugPrint('[WITHDRAW ERROR] $e\n$st');
       if (!mounted) return;
+      final errorStr = e.toString().toLowerCase();
+      final msg = errorStr.contains('check constraint') || errorStr.contains('applications_status_check')
+          ? 'Database migration pending for withdrawal status.'
+          : 'Could not withdraw your application. Try again.';
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Could not withdraw your application. Try again.'),
-        ),
+        SnackBar(content: Text(msg)),
       );
     } finally {
       if (mounted) setState(() => _withdrawing = false);
@@ -661,23 +667,30 @@ class _ContinueApplicationCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: const Color(0xFFFFFBEB),
+        color: Colors.white,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: const Color(0xFFFDE68A)),
+        border: Border.all(color: const Color(0xFFE2E8E5), width: 1.0),
+        boxShadow: const [
+          BoxShadow(
+            color: Color(0x081B3A5C),
+            blurRadius: 10,
+            offset: Offset(0, 3),
+          ),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              const Icon(Icons.edit_note_rounded, size: 20, color: Color(0xFFB45309)),
+              const Icon(Icons.edit_note_rounded, size: 20, color: kPrimaryContainer),
               const SizedBox(width: 8),
               Text(
                 'Draft In Progress',
-                style: GoogleFonts.poppins(
+                style: GoogleFonts.outfit(
                   fontSize: 15,
                   fontWeight: FontWeight.w700,
-                  color: const Color(0xFF92400E),
+                  color: kOnSurface,
                 ),
               ),
             ],

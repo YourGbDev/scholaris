@@ -795,7 +795,7 @@ class _ApplicationCard extends StatelessWidget {
           ? 'Open application for ${scholarship!.title}'
           : 'Open application',
       child: Material(
-        color: isApproved ? const Color(0xFFF7FDF9) : Colors.white,
+        color: Colors.white,
         borderRadius: BorderRadius.circular(16),
         child: InkWell(
           borderRadius: BorderRadius.circular(16),
@@ -803,14 +803,13 @@ class _ApplicationCard extends StatelessWidget {
           child: Container(
             padding: const EdgeInsets.all(15),
             decoration: BoxDecoration(
+              color: Colors.white,
               borderRadius: BorderRadius.circular(16),
               border: Border.all(
                 color: isApproved
                     ? const Color(0xFFB3F1C6)
-                    : isDraft
-                        ? const Color(0xFFFFDEA3)
-                        : const Color(0xFFE2E8E5),
-                width: isApproved ? 1.5 : 1.0,
+                    : const Color(0xFFE2E8E5),
+                width: 1.0,
               ),
               boxShadow: const [
                 BoxShadow(
@@ -941,23 +940,33 @@ class _ApplicationCard extends StatelessWidget {
             Expanded(
               child: SizedBox(
                 height: 36,
-                child: FilledButton.tonalIcon(
+                child: FilledButton.tonal(
                   style: FilledButton.styleFrom(
                     backgroundColor: const Color(0xFFF1F3FF),
                     foregroundColor: const Color(0xFF161C27),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8),
                     ),
-                    padding: const EdgeInsets.symmetric(horizontal: 10),
+                    padding: const EdgeInsets.symmetric(horizontal: 8),
                   ),
                   onPressed: () => _openApplicationDetail(context),
-                  icon: const Icon(Icons.description_outlined, size: 16, color: kSecondary),
-                  label: Text(
-                    'View Submission PDF',
-                    style: GoogleFonts.outfit(
-                      fontSize: 11.5,
-                      fontWeight: FontWeight.w600,
-                    ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Icon(Icons.description_outlined, size: 15, color: kSecondary),
+                      const SizedBox(width: 4),
+                      Flexible(
+                        child: Text(
+                          'View Submission PDF',
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: GoogleFonts.outfit(
+                            fontSize: 11,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ),
@@ -965,27 +974,33 @@ class _ApplicationCard extends StatelessWidget {
             const SizedBox(width: 8),
             SizedBox(
               height: 36,
-              child: OutlinedButton.icon(
+              child: OutlinedButton(
                 style: OutlinedButton.styleFrom(
                   foregroundColor: const Color(0xFF404942),
                   side: const BorderSide(color: Color(0xFFE2E8E5)),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(8),
                   ),
-                  padding: const EdgeInsets.symmetric(horizontal: 10),
+                  padding: const EdgeInsets.symmetric(horizontal: 8),
                 ),
                 onPressed: () {
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(content: Text('Contacting DOST Scholarship Liaison...')),
                   );
                 },
-                icon: const Icon(Icons.support_agent_rounded, size: 16),
-                label: Text(
-                  'Liaison',
-                  style: GoogleFonts.outfit(
-                    fontSize: 11.5,
-                    fontWeight: FontWeight.w600,
-                  ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Icon(Icons.support_agent_rounded, size: 15),
+                    const SizedBox(width: 4),
+                    Text(
+                      'Liaison',
+                      style: GoogleFonts.outfit(
+                        fontSize: 11,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ),
@@ -1305,8 +1320,8 @@ class _ApplicationTimelineStepper extends StatelessWidget {
                 if (i > 0)
                   Expanded(
                     child: Container(
-                      height: 2,
-                      margin: const EdgeInsets.only(bottom: 14),
+                      height: 2.5,
+                      margin: const EdgeInsets.only(bottom: 16),
                       color: i <= currentIndex
                           ? kPrimary
                           : const Color(0xFFC0C9C0),
@@ -1320,38 +1335,34 @@ class _ApplicationTimelineStepper extends StatelessWidget {
               ],
             ],
           ),
-          const SizedBox(height: 6),
+          const SizedBox(height: 8),
           Row(
             children: [
+              Icon(
+                status == ApplicationStatus.underReview
+                    ? Icons.hourglass_top_rounded
+                    : Icons.info_outline_rounded,
+                size: 14,
+                color: const Color(0xFF436084),
+              ),
+              const SizedBox(width: 4),
               Expanded(
-                child: Row(
-                  children: [
-                    Icon(
-                      status == ApplicationStatus.underReview
-                          ? Icons.hourglass_top_rounded
-                          : Icons.info_outline_rounded,
-                      size: 13,
-                      color: const Color(0xFF436084),
-                    ),
-                    const SizedBox(width: 4),
-                    Expanded(
-                      child: Text(
-                        _microStatusText(),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: GoogleFonts.openSans(
-                          fontSize: 11,
-                          color: const Color(0xFF404942),
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ),
-                  ],
+                child: Text(
+                  _microStatusText(),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: GoogleFonts.openSans(
+                    fontSize: 11,
+                    color: const Color(0xFF404942),
+                    fontWeight: FontWeight.w500,
+                  ),
                 ),
               ),
               const SizedBox(width: 8),
               Text(
-                'Step ${currentIndex + 1} of 4',
+                status == ApplicationStatus.underReview
+                    ? 'Est. Decision: Oct 20'
+                    : 'Step ${currentIndex + 1} of 4',
                 style: GoogleFonts.outfit(
                   fontSize: 11,
                   fontWeight: FontWeight.w600,
@@ -1384,12 +1395,12 @@ class _StepNode extends StatelessWidget {
 
     if (isCompleted) {
       circleColor = kPrimary;
-      child = const Icon(Icons.check, size: 11, color: Colors.white);
+      child = const Icon(Icons.check, size: 14, color: Colors.white);
     } else if (isActive) {
       circleColor = const Color(0xFF436084); // Stitch secondary
       child = Container(
-        width: 5,
-        height: 5,
+        width: 7,
+        height: 7,
         decoration: const BoxDecoration(
           color: Colors.white,
           shape: BoxShape.circle,
@@ -1398,8 +1409,8 @@ class _StepNode extends StatelessWidget {
     } else {
       circleColor = const Color(0xFFE3E8F9);
       child = Container(
-        width: 3.5,
-        height: 3.5,
+        width: 5,
+        height: 5,
         decoration: const BoxDecoration(
           color: Color(0xFF707971),
           shape: BoxShape.circle,
@@ -1413,26 +1424,32 @@ class _StepNode extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           Container(
-            width: 18,
-            height: 18,
+            width: 24,
+            height: 24,
             decoration: BoxDecoration(
               color: circleColor,
               shape: BoxShape.circle,
-              border: isActive
-                  ? Border.all(color: const Color(0xFFD2E4FF), width: 2)
+              boxShadow: isActive
+                  ? const [
+                      BoxShadow(
+                        color: Color(0x66ABC9F2),
+                        blurRadius: 0,
+                        spreadRadius: 3,
+                      ),
+                    ]
                   : null,
             ),
             alignment: Alignment.center,
             child: child,
           ),
-          const SizedBox(height: 2),
+          const SizedBox(height: 4),
           Text(
             '$label\u200B',
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
             textAlign: TextAlign.center,
             style: GoogleFonts.outfit(
-              fontSize: 10,
+              fontSize: 10.5,
               fontWeight: isActive ? FontWeight.w700 : FontWeight.w500,
               color: isActive
                   ? const Color(0xFF161C27)

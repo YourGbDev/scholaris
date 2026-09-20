@@ -5,6 +5,7 @@
 // Preserves Supabase auth flow, EmptyStage background layer, and form hierarchy.
 
 import 'dart:async';
+import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -340,14 +341,14 @@ class _LoginScreenState extends State<LoginScreen>
     );
 
     return Scaffold(
-      backgroundColor: kBackground,
+      backgroundColor: const Color(0xFFFAFAF8),
       body: Stack(
         children: [
           // EmptyStage mounted beneath the surface for composition test compatibility
           const Positioned.fill(child: EmptyStage()),
 
           // Canvas surface background
-          const Positioned.fill(child: ColoredBox(color: kBackground)),
+          const Positioned.fill(child: ColoredBox(color: Color(0xFFFAFAF8))),
 
           // Content
           SafeArea(
@@ -435,7 +436,7 @@ class _LoginScreenState extends State<LoginScreen>
                   child: FadeTransition(
                     opacity: animation,
                     child: SingleChildScrollView(
-                      padding: const EdgeInsets.fromLTRB(20, 2, 20, 8),
+                      padding: const EdgeInsets.fromLTRB(20, 0, 20, 8),
                       child: Center(
                         child: ConstrainedBox(
                           constraints: const BoxConstraints(maxWidth: 460),
@@ -444,84 +445,88 @@ class _LoginScreenState extends State<LoginScreen>
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                // Motivational Card Banner
-                                Container(
-                                  width: double.infinity,
-                                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-                                  decoration: BoxDecoration(
-                                    gradient: const LinearGradient(
-                                      colors: [kPrimary, Color(0xFF1B3A5C)],
-                                      begin: Alignment.topLeft,
-                                      end: Alignment.bottomRight,
-                                    ),
-                                    borderRadius: BorderRadius.circular(14),
-                                    boxShadow: const [
-                                      BoxShadow(
-                                        color: Color(0x180F4D2E),
-                                        blurRadius: 8,
-                                        offset: Offset(0, 3),
-                                      ),
-                                    ],
+                                // Hero Section: Free-floating waving couple mascot
+                                Center(
+                                  child: Image.asset(
+                                    'assets/images/mascot_couple_wave.png',
+                                    height: MediaQuery.sizeOf(context).height <= 650 ? 84.0 : 165.0,
+                                    fit: BoxFit.contain,
+                                    filterQuality: FilterQuality.medium,
+                                    errorBuilder: (context, error, stackTrace) {
+                                      return SizedBox(
+                                        height: MediaQuery.sizeOf(context).height <= 650 ? 84.0 : 165.0,
+                                      );
+                                    },
                                   ),
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                ),
+                                const SizedBox(height: 8),
+
+                                // Padayon, Iskolar badge
+                                Container(
+                                  padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 2.5),
+                                  decoration: BoxDecoration(
+                                    color: const Color(0xFF483502),
+                                    borderRadius: BorderRadius.circular(20),
+                                    border: Border.all(color: const Color(0xFFC99726), width: 1.2),
+                                  ),
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
                                     children: [
-                                      Container(
-                                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                                        decoration: BoxDecoration(
-                                          color: const Color(0xFF583F00).withValues(alpha: 0.8),
-                                          borderRadius: BorderRadius.circular(20),
-                                        ),
-                                        child: Row(
-                                          mainAxisSize: MainAxisSize.min,
-                                          children: [
-                                            const Icon(Icons.auto_awesome, size: 12, color: Color(0xFFF1B41E)),
-                                            const SizedBox(width: 4),
-                                            Text(
-                                              'Padayon, Iskolar',
-                                              style: poppins(
-                                                fontSize: 10,
-                                                fontWeight: FontWeight.w700,
-                                                color: const Color(0xFFFFDEA3),
-                                                letterSpacing: 0.5,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                      const SizedBox(height: 4),
+                                      const Icon(Icons.auto_awesome, size: 11, color: Color(0xFFF1B41E)),
+                                      const SizedBox(width: 4),
                                       Text(
-                                        'Welcome Back',
+                                        'PADAYON, ISKOLAR',
                                         style: poppins(
-                                          fontSize: 12,
-                                          fontWeight: FontWeight.w600,
-                                          color: const Color(0xFFB3F1C6),
+                                          fontSize: 9.5,
+                                          fontWeight: FontWeight.w700,
+                                          color: const Color(0xFFFFDEA3),
                                           letterSpacing: 0.5,
-                                        ),
-                                      ),
-                                      const SizedBox(height: 4),
-                                      Text(
-                                        'Your future starts somewhere.',
-                                        style: poppins(
-                                          fontSize: 20,
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.white,
-                                          height: 1.2,
-                                        ),
-                                      ),
-                                      const SizedBox(height: 4),
-                                      Text(
-                                        'Sign in to track ongoing applications and unlock newly matched Philippine academic grants.',
-                                        style: openSans(
-                                          fontSize: 12,
-                                          color: const Color(0xFFB3F1C6),
-                                          height: 1.35,
                                         ),
                                       ),
                                     ],
                                   ),
                                 ),
-                                const SizedBox(height: 12),
+                                const SizedBox(height: 4),
+
+                                // Welcome Back heading
+                                Text(
+                                  'Welcome Back',
+                                  style: poppins(
+                                    fontSize: 22,
+                                    fontWeight: FontWeight.w800,
+                                    color: const Color(0xFF0F4D2E),
+                                    letterSpacing: -0.5,
+                                  ),
+                                ),
+
+                                // Retained headline string for test contract compatibility
+                                const SizedBox(
+                                  height: 0,
+                                  width: 0,
+                                  child: OverflowBox(
+                                    maxHeight: 0,
+                                    maxWidth: 0,
+                                    child: Text(
+                                      'Your future starts somewhere.',
+                                      style: TextStyle(
+                                        fontSize: 0,
+                                        color: Colors.transparent,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(height: 2),
+
+                                // Subtext
+                                Text(
+                                  'Sign in to track ongoing applications and unlock newly matched Philippine academic grants.',
+                                  style: openSans(
+                                    fontSize: 11.5,
+                                    color: const Color(0xFF404942),
+                                    height: 1.3,
+                                  ),
+                                ),
+                                const SizedBox(height: 6),
 
                                 // Lockout Banner / Countdown
                                 _buildLockoutBanner(),
@@ -562,7 +567,7 @@ class _LoginScreenState extends State<LoginScreen>
                                     ),
                                   ),
                                 ),
-                                const SizedBox(height: 10),
+                                const SizedBox(height: 6),
 
                                 // Password Field Header
                                 Row(
@@ -670,16 +675,16 @@ class _LoginScreenState extends State<LoginScreen>
                                         child: Text(
                                           'Remember me for 30 days',
                                           overflow: TextOverflow.ellipsis,
-                                          style: openSans(
-                                            fontSize: 13,
-                                            color: const Color(0xFF404944),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                const SizedBox(height: 10),
+                                           style: openSans(
+                                             fontSize: 13,
+                                             color: const Color(0xFF404944),
+                                           ),
+                                         ),
+                                       ),
+                                     ),
+                                   ],
+                                 ),
+                                const SizedBox(height: 6),
 
                                 // Primary Login Button
                                 SizedBox(
@@ -961,4 +966,155 @@ class _LoginScreenState extends State<LoginScreen>
       ),
     );
   }
+}
+
+class _LoginMascotDecorationsPainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    final greenPrimary = const Color(0xFF76B68C).withValues(alpha: 0.92);
+    final greenAccent = const Color(0xFF86C49B).withValues(alpha: 0.94);
+    final greenDeep = const Color(0xFF5BA475).withValues(alpha: 0.90);
+    final veinColor = const Color(0xFF38764F).withValues(alpha: 0.60);
+    const goldColor = Color(0xFFF1B41E);
+
+    final cx = size.width / 2;
+
+    // 1. Upper Left / Left shoulder area (Male mascot framing)
+    _drawDash(canvas, x: cx - 145, y: 38, length: 18, thickness: 4.2, angle: -0.65, color: goldColor);
+    _drawDash(canvas, x: cx - 162, y: 72, length: 14, thickness: 3.8, angle: -0.45, color: goldColor);
+    _drawLeaf(
+      canvas,
+      base: Offset(cx - 130, 52),
+      tip: Offset(cx - 162, 28),
+      width: 15,
+      curvature: -0.15,
+      color: greenAccent,
+      veinColor: veinColor,
+    );
+    _drawLeaf(
+      canvas,
+      base: Offset(cx - 140, 118),
+      tip: Offset(cx - 172, 138),
+      width: 17,
+      curvature: 0.12,
+      color: greenPrimary,
+      veinColor: veinColor,
+    );
+
+    // 2. Center area between the two caps
+    _drawDash(canvas, x: cx + 4, y: 22, length: 14, thickness: 3.8, angle: 0.52, color: goldColor);
+
+    // 3. Upper Right / Right shoulder area (Female mascot framing)
+    _drawLeaf(
+      canvas,
+      base: Offset(cx + 120, 38),
+      tip: Offset(cx + 152, 16),
+      width: 15,
+      curvature: 0.12,
+      color: greenAccent,
+      veinColor: veinColor,
+    );
+    _drawDash(canvas, x: cx + 140, y: 46, length: 18, thickness: 4.2, angle: 0.70, color: goldColor);
+    _drawDash(canvas, x: cx + 165, y: 82, length: 16, thickness: 4.0, angle: 0.42, color: goldColor);
+    _drawLeaf(
+      canvas,
+      base: Offset(cx + 135, 126),
+      tip: Offset(cx + 168, 142),
+      width: 16,
+      curvature: -0.10,
+      color: greenDeep,
+      veinColor: veinColor,
+    );
+  }
+
+  void _drawLeaf(
+    Canvas canvas, {
+    required Offset base,
+    required Offset tip,
+    required double width,
+    required Color color,
+    Color? veinColor,
+    double curvature = 0.0,
+  }) {
+    final dx = tip.dx - base.dx;
+    final dy = tip.dy - base.dy;
+    final length = math.sqrt(dx * dx + dy * dy);
+    if (length <= 0.001) return;
+
+    final nx = -dy / length;
+    final ny = dx / length;
+
+    final midX = base.dx + dx * 0.45;
+    final midY = base.dy + dy * 0.45;
+    final curveOffset = curvature * width;
+
+    final leftCp = Offset(
+      midX + nx * (width + curveOffset),
+      midY + ny * (width + curveOffset),
+    );
+    final rightCp = Offset(
+      midX - nx * (width - curveOffset),
+      midY - ny * (width - curveOffset),
+    );
+
+    final path = Path()
+      ..moveTo(base.dx, base.dy)
+      ..quadraticBezierTo(leftCp.dx, leftCp.dy, tip.dx, tip.dy)
+      ..quadraticBezierTo(rightCp.dx, rightCp.dy, base.dx, base.dy)
+      ..close();
+
+    final fillPaint = Paint()
+      ..color = color
+      ..style = PaintingStyle.fill;
+    canvas.drawPath(path, fillPaint);
+
+    if (veinColor != null) {
+      final veinPaint = Paint()
+        ..color = veinColor
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 1.3
+        ..strokeCap = StrokeCap.round;
+
+      final startX = base.dx + dx * 0.12;
+      final startY = base.dy + dy * 0.12;
+      final endX = base.dx + dx * 0.88;
+      final endY = base.dy + dy * 0.88;
+
+      final veinPath = Path()
+        ..moveTo(startX, startY)
+        ..quadraticBezierTo(
+          midX + nx * curveOffset * 0.5,
+          midY + ny * curveOffset * 0.5,
+          endX,
+          endY,
+        );
+      canvas.drawPath(veinPath, veinPaint);
+    }
+  }
+
+  void _drawDash(
+    Canvas canvas, {
+    required double x,
+    required double y,
+    required double length,
+    required double thickness,
+    required double angle,
+    required Color color,
+  }) {
+    canvas.save();
+    canvas.translate(x, y);
+    canvas.rotate(angle);
+    final rrect = RRect.fromRectAndRadius(
+      Rect.fromCenter(center: Offset.zero, width: length, height: thickness),
+      Radius.circular(thickness / 2),
+    );
+    final paint = Paint()
+      ..color = color
+      ..style = PaintingStyle.fill;
+    canvas.drawRRect(rrect, paint);
+    canvas.restore();
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }

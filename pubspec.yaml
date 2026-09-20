@@ -48,6 +48,7 @@ flutter:
     - assets/images/mascot_male.png
     - assets/images/mascot_female.png
     - assets/images/intro_scene.png
+    - assets/images/mascot_couple_wave.png
     - assets/images/onboarding_slide1.svg
     - assets/images/onboarding_slide2.svg
     - assets/images/onboarding_slide3.svg

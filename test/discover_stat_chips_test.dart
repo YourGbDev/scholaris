@@ -17,7 +17,6 @@ import 'package:scholaris/features/bookmarks/providers/bookmarks_provider.dart';
 import 'package:scholaris/features/bookmarks/repositories/bookmark_repository.dart';
 import 'package:scholaris/features/home/presentation/home_screen.dart';
 import 'package:scholaris/features/profile/models/student_profile.dart';
-import 'package:scholaris/features/profile/presentation/matching_power_sheet.dart';
 import 'package:scholaris/features/profile/providers/profile_setup_provider.dart';
 import 'package:scholaris/features/profile/repositories/profile_repository.dart';
 import 'package:scholaris/features/scholarships/providers/scholarships_provider.dart';
@@ -135,28 +134,6 @@ void main() {
       expect(container.read(homeTabIndexProvider), equals(2));
     });
 
-    testWidgets('tapping hero matching power bar opens MatchingPowerSheet modal',
-        (tester) async {
-      tester.view.physicalSize = const Size(800, 1200);
-      tester.view.devicePixelRatio = 1.0;
-      addTearDown(() {
-        tester.view.resetPhysicalSize();
-        tester.view.resetDevicePixelRatio();
-      });
-
-      await tester.pumpWidget(_wrap(child: const HomeScreen()));
-      await tester.pump(const Duration(milliseconds: 500));
-
-      final powerBar = find.byKey(const ValueKey('hero-matching-power-bar'));
-      expect(powerBar, findsOneWidget);
-
-      await tester.tap(powerBar);
-      await tester.pump(const Duration(milliseconds: 500));
-
-      expect(find.byType(MatchingPowerSheet), findsOneWidget);
-      expect(find.text('Matching Power Diagnostics'), findsOneWidget);
-      expect(find.byKey(const ValueKey('matching-power-cta-button')), findsOneWidget);
-    });
 
     testWidgets('active application renders alert banner and navigates on tap',
         (tester) async {

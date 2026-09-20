@@ -13,6 +13,8 @@
 // - "Top Recommended For You" section with rebuilt Stitch ScholarshipCards and "See All" link
 // - "Pro-Tip for Applicants" bento box with gold lightbulb badge and statistical insight
 
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -22,18 +24,15 @@ import 'package:scholaris/features/applications/services/application_filters.dar
 import 'package:scholaris/features/bookmarks/providers/bookmarks_provider.dart';
 import 'package:scholaris/features/home/presentation/home_screen.dart';
 import 'package:scholaris/features/profile/models/student_profile.dart';
-import 'package:scholaris/features/profile/presentation/matching_power_sheet.dart';
 import 'package:scholaris/features/profile/presentation/widgets/avatar_display.dart';
 import 'package:scholaris/features/profile/providers/avatar_provider.dart';
 import 'package:scholaris/features/profile/providers/profile_setup_provider.dart';
-import 'package:scholaris/features/profile/services/matching_power_service.dart';
 import 'package:scholaris/features/scholarships/models/scholarship.dart';
 import 'package:scholaris/features/scholarships/providers/dashboard_provider.dart';
 import 'package:scholaris/features/scholarships/providers/scholarships_provider.dart';
 import 'package:scholaris/features/scholarships/screens/saved_screen.dart';
 import 'package:scholaris/features/scholarships/services/match_reasons.dart';
 import 'package:scholaris/shared/theme/app_theme.dart';
-import 'package:scholaris/shared/widgets/radial_matching_gauge.dart';
 import 'package:scholaris/shared/widgets/responsive_container.dart';
 import 'package:scholaris/shared/widgets/scholarship_card.dart';
 
@@ -76,17 +75,10 @@ class _StudentDashboardScreenState
         ? firstName
         : 'Student';
 
-    final report = MatchingPowerService.evaluate(profile);
-
-    // Calculate total matched value in Philippine Peso
+    // Calculate total matched value in Philippine Peso for downstream recommendations
     final opportunitiesCount = info.matchCount > 0 ? info.matchCount : matches.length;
     final effectiveOpportunityCount =
         opportunitiesCount > 0 ? opportunitiesCount : 18;
-    final totalMatchedValue = effectiveOpportunityCount * 75000;
-    final formattedMatchedValue = totalMatchedValue.toString().replaceAllMapped(
-          RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'),
-          (Match m) => '${m[1]},',
-        );
 
     final rawApps =
         ref.watch(applicationsProvider).valueOrNull ?? const <Application>[];
@@ -99,7 +91,7 @@ class _StudentDashboardScreenState
     }
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF9F9FF),
+      backgroundColor: const Color(0xFFFAFAF8),
       body: SafeArea(
         child: ResponsiveContainer(
           child: RefreshIndicator(
@@ -117,26 +109,23 @@ class _StudentDashboardScreenState
               children: [
                 // 1. Sticky Header
                 _buildHeader(context, ref, avatarState),
-                const SizedBox(height: 20),
+                const SizedBox(height: 16),
+
+                // 2. Date & Dynamic Tagalog Greeting
+                _buildDateAndGreeting(greetingName),
+                const SizedBox(height: 6),
+
+                // 3. Free-Floating Mascot Hero Section
+                _buildMascotHeroSection(
+                  profile: profile,
+                  matchCount: info.matchCount > 0 ? info.matchCount : matches.length,
+                ),
+                const SizedBox(height: 16),
 
                 if (activeApp != null) ...[
                   _buildActiveAppBanner(context, ref, activeApp),
                   const SizedBox(height: 16),
                 ],
-
-                // 2. Greeting Section
-                _buildGreetingSection(greetingName, effectiveOpportunityCount, info.matchCount),
-                const SizedBox(height: 20),
-
-                // 3. Matching Power Hero Card
-                _buildMatchingPowerCard(
-                  context,
-                  profile,
-                  report,
-                  formattedMatchedValue,
-                  effectiveOpportunityCount,
-                ),
-                const SizedBox(height: 20),
 
                 // 4. Quick-Stat 3-Tile Grid
                 _buildQuickStatGrid(context, ref, info),
@@ -388,305 +377,202 @@ class _StudentDashboardScreenState
     );
   }
 
-  // --- 2. Greeting Section ---
-  Widget _buildGreetingSection(String firstName, int opportunityCount, int matchCount) {
+  // --- 2. Dynamic Date & Tagalog Greeting ---
+  Widget _buildDateAndGreeting(String greetingName) {
+    final now = DateTime.now();
+    final dateStr = _formatDate(now);
+    final greetingStr = '${_getTagalogGreeting(now)}, $greetingName!';
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Wrap(
-          crossAxisAlignment: WrapCrossAlignment.center,
-          children: [
-            Text(
-              'Good morning, $firstName! ',
-              style: outfit(
-                fontSize: 26,
-                fontWeight: FontWeight.bold,
-                color: const Color(0xFF00351C), // primary
-                letterSpacing: -0.5,
-              ),
-            ),
-            const Text(
-              '☀️',
-              style: TextStyle(fontSize: 24),
-            ),
-          ],
-        ),
-        const SizedBox(height: 4),
-        RichText(
-          text: TextSpan(
-            style: openSans(
-              fontSize: 14,
-              color: const Color(0xFF404942),
-              height: 1.4,
-            ),
-            children: [
-              const TextSpan(text: 'We found '),
-              TextSpan(
-                text: '$opportunityCount new opportunities',
-                style: outfit(
-                  fontWeight: FontWeight.bold,
-                  color: const Color(0xFF0F4D2E),
-                ),
-              ),
-              const TextSpan(text: ' matching your profile today.'),
-            ],
+        Text(
+          dateStr,
+          style: outfit(
+            fontSize: 11.5,
+            fontWeight: FontWeight.w700,
+            color: const Color(0xFF8F9992),
+            letterSpacing: 0.8,
           ),
         ),
-        // Semantic key for count tests
-        SizedBox(
-          height: 0,
-          child: Text(
-            '$matchCount',
-            key: const ValueKey('stat-count-matches'),
-            style: const TextStyle(fontSize: 0, color: Colors.transparent),
+        const SizedBox(height: 3),
+        Text(
+          greetingStr,
+          style: outfit(
+            fontSize: 24,
+            fontWeight: FontWeight.w800,
+            color: const Color(0xFF0F4D2E),
+            letterSpacing: -0.5,
           ),
         ),
       ],
     );
   }
 
-  // --- 3. Matching Power Hero Card ---
-  Widget _buildMatchingPowerCard(
-    BuildContext context,
-    StudentProfile? profile,
-    MatchingPowerReport report,
-    String formattedMatchedValue,
-    int opportunityCount,
-  ) {
-    final highFitCount = (opportunityCount * 0.75).round().clamp(1, 24);
+  String _formatDate(DateTime now) {
+    const days = [
+      'MONDAY',
+      'TUESDAY',
+      'WEDNESDAY',
+      'THURSDAY',
+      'FRIDAY',
+      'SATURDAY',
+      'SUNDAY',
+    ];
+    const months = [
+      'JANUARY',
+      'FEBRUARY',
+      'MARCH',
+      'APRIL',
+      'MAY',
+      'JUNE',
+      'JULY',
+      'AUGUST',
+      'SEPTEMBER',
+      'OCTOBER',
+      'NOVEMBER',
+      'DECEMBER',
+    ];
+    final dayName = days[now.weekday - 1];
+    final monthName = months[now.month - 1];
+    return '$dayName, $monthName ${now.day}';
+  }
 
-    return InkWell(
-      key: const ValueKey('hero-matching-power-bar'),
-      borderRadius: BorderRadius.circular(16),
-      onTap: () => showMatchingPowerSheet(context, profile),
-      child: Container(
-        decoration: BoxDecoration(
-          color: const Color(0xFF436084), // Slate Navy (secondary)
-          borderRadius: BorderRadius.circular(16),
-          boxShadow: [
-            BoxShadow(
-              color: const Color(0xFF436084).withValues(alpha: 0.20),
-              blurRadius: 16,
-              offset: const Offset(0, 6),
-            ),
-          ],
+  String _getTagalogGreeting(DateTime now) {
+    final hour = now.hour;
+    if (hour >= 5 && hour < 12) {
+      return 'Magandang umaga';
+    } else if (hour >= 12 && hour < 13) {
+      return 'Magandang tanghali';
+    } else if (hour >= 13 && hour < 18) {
+      return 'Magandang hapon';
+    } else {
+      return 'Magandang gabi';
+    }
+  }
+
+  // --- 3. Free-Floating Mascot Hero & Dynamic Speech Bubble ---
+  Widget _buildMascotHeroSection({
+    required StudentProfile? profile,
+    required int matchCount,
+  }) {
+    final isFemale = profile?.gender?.trim().toLowerCase() == 'female';
+    final mascotAsset = isFemale
+        ? 'assets/images/mascot_female.png'
+        : 'assets/images/mascot_male.png';
+
+    return Stack(
+      clipBehavior: Clip.none,
+      children: [
+        // Background botanical foliage & gold visual energy dashes
+        Positioned.fill(
+          child: CustomPaint(
+            painter: _MascotDecorationsPainter(),
+          ),
         ),
-        padding: const EdgeInsets.all(16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Top Row: Title, Subtitle, and Radial Gauge
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
+
+        // Foreground: Left Mascot (cropped at waist) + Right Speech Bubble
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            // Upper body mascot, cropped at waist
+            SizedBox(
+              width: 110,
+              height: 172,
+              child: ClipRect(
+                child: OverflowBox(
+                  maxHeight: 320,
+                  maxWidth: 260,
+                  alignment: Alignment.topCenter,
+                  child: Image.asset(
+                    mascotAsset,
+                    height: 310,
+                    fit: BoxFit.contain,
+                    errorBuilder: (context, error, stackTrace) {
+                      debugPrint('[MASCOT ERROR] $error');
+                      return const SizedBox(
+                        width: 110,
+                        height: 172,
+                      );
+                    },
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(width: 6),
+
+            // White rounded speech bubble with thin green border
+            Flexible(
+              child: Container(
+                constraints: const BoxConstraints(maxWidth: 215),
+                child: CustomPaint(
+                  painter: _SpeechBubblePainter(
+                    color: Colors.white,
+                    borderColor: const Color(0xFF0F4D2E),
+                    borderWidth: 1.2,
+                    borderRadius: 16.0,
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(14, 9, 12, 9),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
                       children: [
                         Container(
-                          width: 8,
-                          height: 8,
+                          width: 30,
+                          height: 30,
                           decoration: const BoxDecoration(
-                            color: Color(0xFFFABC28), // tertiary-fixed-dim
+                            color: Color(0xFFDCF3E5),
                             shape: BoxShape.circle,
                           ),
+                          child: const Center(
+                            child: Icon(
+                              Icons.school_rounded,
+                              color: Color(0xFF0F4D2E),
+                              size: 16,
+                            ),
+                          ),
                         ),
-                        const SizedBox(width: 6),
+                        const SizedBox(width: 8),
                         Flexible(
-                          child: Text(
-                            'STRONG MATCH POTENTIAL',
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: outfit(
-                              fontSize: 10.5,
-                              fontWeight: FontWeight.bold,
-                              letterSpacing: 0.8,
-                              color: const Color(0xFFFFDEA3), // tertiary-fixed
+                          child: FittedBox(
+                            fit: BoxFit.scaleDown,
+                            alignment: Alignment.centerLeft,
+                            child: Text(
+                              'You have $matchCount new\nscholarship matches! 🎓',
+                              style: outfit(
+                                fontSize: 12.0,
+                                fontWeight: FontWeight.w600,
+                                color: const Color(0xFF161C27),
+                                height: 1.25,
+                              ),
                             ),
                           ),
                         ),
                       ],
                     ),
-                    const SizedBox(height: 4),
-                    Text(
-                      'Matching Power',
-                      style: outfit(
-                        fontSize: 22,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                        letterSpacing: -0.5,
-                      ),
-                    ),
-                    const SizedBox(height: 2),
-                    Text(
-                      'Boost discovery by finishing verification',
-                      style: openSans(
-                        fontSize: 11.5,
-                        color: const Color(0xFFE3E8F9),
-                      ),
-                    ),
-                  ],
+                  ),
                 ),
               ),
-              const SizedBox(width: 12),
-              RadialMatchingGauge(
-                percentage: report.percentage > 0 ? report.percentage : 82,
-                status: 'ACTIVE',
-                size: 76,
-                progressColor: const Color(0xFFFABC28),
-                trackColor: Colors.white.withValues(alpha: 0.20),
-              ),
-            ],
-          ),
-          const SizedBox(height: 14),
-
-          // Bento Box Row: Matched Value & High Fit
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-            decoration: BoxDecoration(
-              color: const Color(0xFF001C38).withValues(alpha: 0.40),
-              borderRadius: BorderRadius.circular(12),
             ),
-            child: Row(
-              children: [
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'MATCHED VALUE',
-                        style: outfit(
-                          fontSize: 10,
-                          fontWeight: FontWeight.bold,
-                          letterSpacing: 0.5,
-                          color: const Color(0xFFE3E8F9),
-                        ),
-                      ),
-                      const SizedBox(height: 2),
-                      Text(
-                        '₱$formattedMatchedValue',
-                        style: outfit(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: const Color(0xFFFFDEA3),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                Container(
-                  width: 1,
-                  height: 32,
-                  color: Colors.white.withValues(alpha: 0.15),
-                ),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'HIGH FIT (>90%)',
-                        style: outfit(
-                          fontSize: 10,
-                          fontWeight: FontWeight.bold,
-                          letterSpacing: 0.5,
-                          color: const Color(0xFFE3E8F9),
-                        ),
-                      ),
-                      const SizedBox(height: 2),
-                      Row(
-                        children: [
-                          Text(
-                            '$highFitCount',
-                            style: outfit(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white,
-                            ),
-                          ),
-                          const SizedBox(width: 4),
-                          const Icon(
-                            Icons.stars_rounded,
-                            size: 15,
-                            color: Color(0xFFFABC28),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-              ],
+          ],
+        ),
+
+        // Semantic key for widget tests to maintain zero regressions
+        Positioned(
+          left: 0,
+          top: 0,
+          child: SizedBox(
+            height: 0,
+            width: 0,
+            child: Text(
+              '$matchCount',
+              key: const ValueKey('stat-count-matches'),
+              style: const TextStyle(fontSize: 0, color: Colors.transparent),
             ),
           ),
-          const SizedBox(height: 14),
-
-          // Actionable Boost Row
-          Wrap(
-            crossAxisAlignment: WrapCrossAlignment.center,
-            alignment: WrapAlignment.spaceBetween,
-            runSpacing: 8,
-            children: [
-              FittedBox(
-                fit: BoxFit.scaleDown,
-                alignment: Alignment.centerLeft,
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const Icon(
-                      Icons.add_task_rounded,
-                      size: 18,
-                      color: Color(0xFFFABC28),
-                    ),
-                    const SizedBox(width: 6),
-                    Text(
-                      '+18% boost: Add Fall GPA & Verification',
-                      style: openSans(
-                        fontSize: 11.5,
-                        color: Colors.white,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              ElevatedButton(
-                onPressed: () => showMatchingPowerSheet(context, profile),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFFFABC28), // tertiary-fixed-dim
-                  foregroundColor: const Color(0xFF261900), // on-tertiary-fixed
-                  elevation: 0,
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 0),
-                  minimumSize: const Size(0, 34),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                ),
-                child: FittedBox(
-                  fit: BoxFit.scaleDown,
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        'Boost Matches',
-                        style: outfit(
-                          fontSize: 11.5,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      const SizedBox(width: 3),
-                      const Icon(Icons.arrow_forward_rounded, size: 14),
-                    ],
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
-    ),
-  );
+        ),
+      ],
+    );
   }
 
   // --- 4. Quick-Stat 3-Tile Grid ---
@@ -1096,6 +982,311 @@ class _StudentDashboardScreenState
       ),
     );
   }
+}
+
+class _SpeechBubblePainter extends CustomPainter {
+  final Color color;
+  final Color borderColor;
+  final double borderWidth;
+  final double borderRadius;
+
+  _SpeechBubblePainter({
+    required this.color,
+    required this.borderColor,
+    required this.borderWidth,
+    required this.borderRadius,
+  });
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    const tailWidth = 7.0;
+    const tailHeight = 10.0;
+    final r = borderRadius;
+
+    final bodyRRect = RRect.fromRectAndRadius(
+      Rect.fromLTWH(tailWidth, 0, size.width - tailWidth, size.height),
+      Radius.circular(r),
+    );
+
+    final path = Path()..addRRect(bodyRRect);
+
+    final tailY = (size.height - tailHeight) / 2;
+    final tailPath = Path()
+      ..moveTo(tailWidth + 0.5, tailY)
+      ..lineTo(0, tailY + tailHeight / 2)
+      ..lineTo(tailWidth + 0.5, tailY + tailHeight)
+      ..close();
+
+    final combinedPath = Path.combine(PathOperation.union, path, tailPath);
+
+    canvas.drawShadow(
+      combinedPath,
+      Colors.black.withValues(alpha: 0.05),
+      6,
+      false,
+    );
+
+    final paintFill = Paint()
+      ..color = color
+      ..style = PaintingStyle.fill;
+    canvas.drawPath(combinedPath, paintFill);
+
+    final paintStroke = Paint()
+      ..color = borderColor
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = borderWidth
+      ..strokeJoin = StrokeJoin.round;
+    canvas.drawPath(combinedPath, paintStroke);
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
+}
+
+class _MascotDecorationsPainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    // Lush botanical green shades with high opacity and organic vibrancy
+    final greenPrimary = const Color(0xFF76B68C).withValues(alpha: 0.92);
+    final greenAccent = const Color(0xFF86C49B).withValues(alpha: 0.94);
+    final greenDeep = const Color(0xFF5BA475).withValues(alpha: 0.90);
+    final greenLight = const Color(0xFF9DD4B0).withValues(alpha: 0.88);
+    final veinColor = const Color(0xFF38764F).withValues(alpha: 0.60);
+
+    // Dynamic bright gold energy dashes
+    const goldColor = Color(0xFFF1B41E);
+
+    // ----------------------------------------------------
+    // 1. UPPER LEFT / LEFT CLUSTER (Hat Tassel & Shoulder)
+    // ----------------------------------------------------
+    // Gold energy dashes beside tassel
+    _drawDash(canvas, x: 24, y: 64, length: 19, thickness: 4.5, angle: -0.68, color: goldColor);
+    _drawDash(canvas, x: 16, y: 78, length: 14, thickness: 4.0, angle: -0.50, color: goldColor);
+
+    // Foliage behind left shoulder / toga
+    _drawLeaf(
+      canvas,
+      base: const Offset(28, 165),
+      tip: const Offset(10, 102),
+      width: 24,
+      curvature: -0.18,
+      color: greenPrimary,
+      veinColor: veinColor,
+    );
+    _drawLeaf(
+      canvas,
+      base: const Offset(40, 170),
+      tip: const Offset(32, 82),
+      width: 26,
+      curvature: -0.05,
+      color: greenAccent,
+      veinColor: veinColor,
+    );
+    _drawLeaf(
+      canvas,
+      base: const Offset(18, 160),
+      tip: const Offset(4, 128),
+      width: 18,
+      curvature: -0.22,
+      color: greenLight,
+      veinColor: veinColor,
+    );
+
+    // ----------------------------------------------------
+    // 2. CENTER CLUSTER (Between Mascot Neck & Speech Bubble)
+    // ----------------------------------------------------
+    // Gold energy dash near cheek / ear
+    _drawDash(canvas, x: 122, y: 84, length: 18, thickness: 4.5, angle: 0.68, color: goldColor);
+
+    // Leaves rising behind neck / collar
+    _drawLeaf(
+      canvas,
+      base: const Offset(116, 162),
+      tip: const Offset(124, 88),
+      width: 22,
+      curvature: 0.08,
+      color: greenPrimary,
+      veinColor: veinColor,
+    );
+    _drawLeaf(
+      canvas,
+      base: const Offset(124, 166),
+      tip: const Offset(156, 102),
+      width: 26,
+      curvature: 0.15,
+      color: greenAccent,
+      veinColor: veinColor,
+    );
+    _drawLeaf(
+      canvas,
+      base: const Offset(130, 170),
+      tip: const Offset(172, 126),
+      width: 24,
+      curvature: 0.18,
+      color: greenDeep,
+      veinColor: veinColor,
+    );
+
+    // Angled gold energy dashes beneath speech bubble
+    _drawDash(canvas, x: 174, y: 120, length: 22, thickness: 5.0, angle: -0.62, color: goldColor);
+    _drawDash(canvas, x: 184, y: 136, length: 16, thickness: 4.2, angle: -0.48, color: goldColor);
+
+    // ----------------------------------------------------
+    // 3. UPPER RIGHT & RIGHT CLUSTERS (Wrapping Mascot & Speech Bubble)
+    // ----------------------------------------------------
+    // Floating leaf above top-right of speech bubble
+    _drawLeaf(
+      canvas,
+      base: const Offset(298, 30),
+      tip: const Offset(318, 10),
+      width: 14,
+      curvature: 0.12,
+      color: greenAccent,
+      veinColor: veinColor,
+    );
+
+    // Gold energy dash near upper right of speech bubble
+    _drawDash(canvas, x: 318, y: 38, length: 16, thickness: 4.2, angle: -0.60, color: goldColor);
+
+    // Lush botanical foliage seamlessly framing the right side of the speech bubble
+    _drawLeaf(
+      canvas,
+      base: const Offset(265, 110),
+      tip: const Offset(298, 32),
+      width: 22,
+      curvature: -0.08,
+      color: greenLight,
+      veinColor: veinColor,
+    );
+    _drawLeaf(
+      canvas,
+      base: const Offset(275, 95),
+      tip: const Offset(325, 42),
+      width: 26,
+      curvature: 0.10,
+      color: greenAccent,
+      veinColor: veinColor,
+    );
+    _drawLeaf(
+      canvas,
+      base: const Offset(285, 105),
+      tip: const Offset(340, 78),
+      width: 30,
+      curvature: 0.14,
+      color: greenPrimary,
+      veinColor: veinColor,
+    );
+    _drawLeaf(
+      canvas,
+      base: const Offset(280, 115),
+      tip: const Offset(332, 125),
+      width: 26,
+      curvature: 0.15,
+      color: greenDeep,
+      veinColor: veinColor,
+    );
+    _drawLeaf(
+      canvas,
+      base: const Offset(270, 120),
+      tip: const Offset(305, 148),
+      width: 22,
+      curvature: 0.10,
+      color: greenDeep,
+      veinColor: veinColor,
+    );
+  }
+
+  void _drawLeaf(
+    Canvas canvas, {
+    required Offset base,
+    required Offset tip,
+    required double width,
+    required Color color,
+    Color? veinColor,
+    double curvature = 0.0,
+  }) {
+    final dx = tip.dx - base.dx;
+    final dy = tip.dy - base.dy;
+    final length = math.sqrt(dx * dx + dy * dy);
+    if (length <= 0.001) return;
+
+    final nx = -dy / length;
+    final ny = dx / length;
+
+    final midX = base.dx + dx * 0.45;
+    final midY = base.dy + dy * 0.45;
+
+    final curveOffset = curvature * width;
+
+    final leftCp = Offset(
+      midX + nx * (width + curveOffset),
+      midY + ny * (width + curveOffset),
+    );
+    final rightCp = Offset(
+      midX - nx * (width - curveOffset),
+      midY - ny * (width - curveOffset),
+    );
+
+    final path = Path()
+      ..moveTo(base.dx, base.dy)
+      ..quadraticBezierTo(leftCp.dx, leftCp.dy, tip.dx, tip.dy)
+      ..quadraticBezierTo(rightCp.dx, rightCp.dy, base.dx, base.dy)
+      ..close();
+
+    final fillPaint = Paint()
+      ..color = color
+      ..style = PaintingStyle.fill;
+    canvas.drawPath(path, fillPaint);
+
+    if (veinColor != null) {
+      final veinPaint = Paint()
+        ..color = veinColor
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 1.3
+        ..strokeCap = StrokeCap.round;
+
+      final startX = base.dx + dx * 0.12;
+      final startY = base.dy + dy * 0.12;
+      final endX = base.dx + dx * 0.88;
+      final endY = base.dy + dy * 0.88;
+
+      final veinPath = Path()
+        ..moveTo(startX, startY)
+        ..quadraticBezierTo(
+          midX + nx * curveOffset * 0.5,
+          midY + ny * curveOffset * 0.5,
+          endX,
+          endY,
+        );
+      canvas.drawPath(veinPath, veinPaint);
+    }
+  }
+
+  void _drawDash(
+    Canvas canvas, {
+    required double x,
+    required double y,
+    required double length,
+    required double thickness,
+    required double angle,
+    required Color color,
+  }) {
+    canvas.save();
+    canvas.translate(x, y);
+    canvas.rotate(angle);
+    final rrect = RRect.fromRectAndRadius(
+      Rect.fromCenter(center: Offset.zero, width: length, height: thickness),
+      Radius.circular(thickness / 2),
+    );
+    final paint = Paint()
+      ..color = color
+      ..style = PaintingStyle.fill;
+    canvas.drawRRect(rrect, paint);
+    canvas.restore();
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }
 
 class _StatCard extends StatelessWidget {

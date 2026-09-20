@@ -17,6 +17,31 @@ import 'package:shared_preferences/shared_preferences.dart';
 /// shared_preferences key holding the first-launch onboarding flag.
 const String kOnboardingSeenKey = 'onboarding_seen';
 
+/// shared_preferences key holding the first-launch welcome/intro screen flag.
+const String kIntroSeenKey = 'intro_seen';
+
+/// Persisted first-launch intro flag: false until the user taps Get Started
+/// on the intro screen, then true forever.
+class IntroSeenNotifier extends AsyncNotifier<bool> {
+  @override
+  Future<bool> build() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getBool(kIntroSeenKey) ?? false;
+  }
+
+  /// Marks intro as seen and persists the flag so the intro screen never shows again.
+  Future<void> markSeen() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool(kIntroSeenKey, true);
+    state = const AsyncValue.data(true);
+  }
+}
+
+/// The first-launch intro flag provider.
+final introSeenProvider = AsyncNotifierProvider<IntroSeenNotifier, bool>(
+  IntroSeenNotifier.new,
+);
+
 /// Persisted first-launch flag: false until the user completes or skips the
 /// onboarding slides, then true forever.
 class OnboardingSeenNotifier extends AsyncNotifier<bool> {
@@ -42,3 +67,4 @@ final onboardingSeenProvider =
     AsyncNotifierProvider<OnboardingSeenNotifier, bool>(
       OnboardingSeenNotifier.new,
     );
+

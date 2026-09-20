@@ -33,6 +33,7 @@ import 'package:scholaris/features/provider/presentation/provider_review_screen.
 import 'package:scholaris/features/provider/presentation/provider_signup_screen.dart';
 import 'package:scholaris/features/splash/presentation/splash_screen.dart';
 import 'package:scholaris/features/auth/presentation/verify_email_screen.dart';
+import 'package:scholaris/features/intro/presentation/intro_screen.dart';
 import 'package:scholaris/features/onboarding/controllers/onboarding_controller.dart';
 import 'package:scholaris/features/onboarding/presentation/onboarding_screen.dart';
 import 'package:scholaris/features/home/presentation/home_screen.dart';
@@ -244,6 +245,16 @@ final routerProvider = Provider<GoRouter>((ref) {
         },
       ),
 
+      // --- First-launch intro / welcome ---------------------------------------
+      // Shows once, before onboarding, for first-time visitors whose `intro_seen`
+      // flag is still false.
+      GoRoute(
+        path: '/intro',
+        name: 'intro',
+        pageBuilder: (context, state) =>
+            _fadeRisePage(state, child: const IntroScreen()),
+      ),
+
       // --- First-launch onboarding --------------------------------------------
       // Shows once, before login, for signed-out users whose `onboarding_seen`
       // flag is still false. The redirect gate below never routes a signed-in
@@ -409,6 +420,7 @@ final routerProvider = Provider<GoRouter>((ref) {
   // (loading → seen/not-seen), so splash hands off to onboarding or login
   // exactly once.
   ref.listen(onboardingSeenProvider, (_, _) => router.refresh());
+  ref.listen(introSeenProvider, (_, _) => router.refresh());
 
   // Release the splash hold once the animated sequence completes, so the
   // redirect re-runs and proceeds to onboarding/login/home.
@@ -579,11 +591,13 @@ String? _redirect(Ref ref, GoRouterState state) {
 
   // Layered first-launch onboarding gate (see [onboardingRedirectDecision]).
   final onboarding = ref.read(onboardingSeenProvider);
+  final intro = ref.read(introSeenProvider);
   final result = onboardingRedirectDecision(
     authDecision: authDecision,
     location: location,
-    onboardingLoading: onboarding.isLoading,
+    onboardingLoading: onboarding.isLoading || intro.isLoading,
     onboardingSeen: onboarding.valueOrNull ?? false,
+    introSeen: intro.valueOrNull ?? false,
     recoveryActive: recoveryActive,
   );
   debugPrint('[ROUTER] final redirect=$result');
@@ -595,8 +609,8 @@ String? _redirect(Ref ref, GoRouterState state) {
 /// Only the normal "signed out → login" funnel is affected: while the persisted
 /// flag is still resolving, splash is the holding room (so the winner is
 /// decided once, without flashing login); once resolved, a user who has not
-/// seen the intro is routed to /onboarding from any funnel location. After the
-/// flag is set the gate is inert and the auth decision rules as before.
+/// seen the intro is routed to /intro then /onboarding from any funnel location.
+/// After the flag is set the gate is inert and the auth decision rules as before.
 ///
 /// Deliberately inactive for:
 ///   - signed-in users (their auth decision is /home, /profile-setup or
@@ -610,6 +624,7 @@ String? onboardingRedirectDecision({
   required String location,
   required bool onboardingLoading,
   required bool onboardingSeen,
+  bool introSeen = true,
   bool recoveryActive = false,
 }) {
   // Recovery sessions are decided entirely by the auth layer.
@@ -630,6 +645,7 @@ String? onboardingRedirectDecision({
   final funnelsToLogin =
       authDecision == '/login' ||
       location == '/ceremony' ||
+      location == '/intro' ||
       _isAuthRoute(location);
   if (!funnelsToLogin) return authDecision;
 
@@ -638,9 +654,15 @@ String? onboardingRedirectDecision({
     return location == '/splash' ? null : '/splash';
   }
 
-  // Flag known: seen users resume their normal entry point; first-run users
-  // pass through onboarding once (staying on it while they are here).
+  // Flag known: seen users resume their normal entry point.
   if (onboardingSeen) return authDecision;
+
+  // First run: if intro has not been seen yet, route to /intro.
+  if (!introSeen) {
+    return location == '/intro' ? null : '/intro';
+  }
+
+  // Once intro is seen, proceed through onboarding.
   return location == '/onboarding' ? null : '/onboarding';
 }
 

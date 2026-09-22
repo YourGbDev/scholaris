@@ -5,11 +5,11 @@
 // Preserves Supabase auth flow, EmptyStage background layer, and form hierarchy.
 
 import 'dart:async';
-import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import 'package:scholaris/core/security/login_lockout_service.dart';
 import 'package:scholaris/features/auth/presentation/empty_stage.dart';
@@ -168,6 +168,15 @@ class _LoginScreenState extends State<LoginScreen>
 
   void _onForgotPassword() {
     context.go('/forgot-password');
+  }
+
+  Future<void> _openProviderPortal() async {
+    final uri = Uri.parse('https://scholaris.app/#providers');
+    try {
+      await launchUrl(uri, mode: LaunchMode.externalApplication);
+    } catch (e) {
+      debugPrint('Could not launch provider portal URL: $e');
+    }
   }
 
   String _friendlyError(AuthException error) {
@@ -777,7 +786,7 @@ class _LoginScreenState extends State<LoginScreen>
 
                                 // Provider / Partner Callout
                                 InkWell(
-                                  onTap: () => context.push('/become-provider'),
+                                  onTap: _openProviderPortal,
                                   borderRadius: BorderRadius.circular(12),
                                   child: Container(
                                     width: double.infinity,
@@ -966,155 +975,4 @@ class _LoginScreenState extends State<LoginScreen>
       ),
     );
   }
-}
-
-class _LoginMascotDecorationsPainter extends CustomPainter {
-  @override
-  void paint(Canvas canvas, Size size) {
-    final greenPrimary = const Color(0xFF76B68C).withValues(alpha: 0.92);
-    final greenAccent = const Color(0xFF86C49B).withValues(alpha: 0.94);
-    final greenDeep = const Color(0xFF5BA475).withValues(alpha: 0.90);
-    final veinColor = const Color(0xFF38764F).withValues(alpha: 0.60);
-    const goldColor = Color(0xFFF1B41E);
-
-    final cx = size.width / 2;
-
-    // 1. Upper Left / Left shoulder area (Male mascot framing)
-    _drawDash(canvas, x: cx - 145, y: 38, length: 18, thickness: 4.2, angle: -0.65, color: goldColor);
-    _drawDash(canvas, x: cx - 162, y: 72, length: 14, thickness: 3.8, angle: -0.45, color: goldColor);
-    _drawLeaf(
-      canvas,
-      base: Offset(cx - 130, 52),
-      tip: Offset(cx - 162, 28),
-      width: 15,
-      curvature: -0.15,
-      color: greenAccent,
-      veinColor: veinColor,
-    );
-    _drawLeaf(
-      canvas,
-      base: Offset(cx - 140, 118),
-      tip: Offset(cx - 172, 138),
-      width: 17,
-      curvature: 0.12,
-      color: greenPrimary,
-      veinColor: veinColor,
-    );
-
-    // 2. Center area between the two caps
-    _drawDash(canvas, x: cx + 4, y: 22, length: 14, thickness: 3.8, angle: 0.52, color: goldColor);
-
-    // 3. Upper Right / Right shoulder area (Female mascot framing)
-    _drawLeaf(
-      canvas,
-      base: Offset(cx + 120, 38),
-      tip: Offset(cx + 152, 16),
-      width: 15,
-      curvature: 0.12,
-      color: greenAccent,
-      veinColor: veinColor,
-    );
-    _drawDash(canvas, x: cx + 140, y: 46, length: 18, thickness: 4.2, angle: 0.70, color: goldColor);
-    _drawDash(canvas, x: cx + 165, y: 82, length: 16, thickness: 4.0, angle: 0.42, color: goldColor);
-    _drawLeaf(
-      canvas,
-      base: Offset(cx + 135, 126),
-      tip: Offset(cx + 168, 142),
-      width: 16,
-      curvature: -0.10,
-      color: greenDeep,
-      veinColor: veinColor,
-    );
-  }
-
-  void _drawLeaf(
-    Canvas canvas, {
-    required Offset base,
-    required Offset tip,
-    required double width,
-    required Color color,
-    Color? veinColor,
-    double curvature = 0.0,
-  }) {
-    final dx = tip.dx - base.dx;
-    final dy = tip.dy - base.dy;
-    final length = math.sqrt(dx * dx + dy * dy);
-    if (length <= 0.001) return;
-
-    final nx = -dy / length;
-    final ny = dx / length;
-
-    final midX = base.dx + dx * 0.45;
-    final midY = base.dy + dy * 0.45;
-    final curveOffset = curvature * width;
-
-    final leftCp = Offset(
-      midX + nx * (width + curveOffset),
-      midY + ny * (width + curveOffset),
-    );
-    final rightCp = Offset(
-      midX - nx * (width - curveOffset),
-      midY - ny * (width - curveOffset),
-    );
-
-    final path = Path()
-      ..moveTo(base.dx, base.dy)
-      ..quadraticBezierTo(leftCp.dx, leftCp.dy, tip.dx, tip.dy)
-      ..quadraticBezierTo(rightCp.dx, rightCp.dy, base.dx, base.dy)
-      ..close();
-
-    final fillPaint = Paint()
-      ..color = color
-      ..style = PaintingStyle.fill;
-    canvas.drawPath(path, fillPaint);
-
-    if (veinColor != null) {
-      final veinPaint = Paint()
-        ..color = veinColor
-        ..style = PaintingStyle.stroke
-        ..strokeWidth = 1.3
-        ..strokeCap = StrokeCap.round;
-
-      final startX = base.dx + dx * 0.12;
-      final startY = base.dy + dy * 0.12;
-      final endX = base.dx + dx * 0.88;
-      final endY = base.dy + dy * 0.88;
-
-      final veinPath = Path()
-        ..moveTo(startX, startY)
-        ..quadraticBezierTo(
-          midX + nx * curveOffset * 0.5,
-          midY + ny * curveOffset * 0.5,
-          endX,
-          endY,
-        );
-      canvas.drawPath(veinPath, veinPaint);
-    }
-  }
-
-  void _drawDash(
-    Canvas canvas, {
-    required double x,
-    required double y,
-    required double length,
-    required double thickness,
-    required double angle,
-    required Color color,
-  }) {
-    canvas.save();
-    canvas.translate(x, y);
-    canvas.rotate(angle);
-    final rrect = RRect.fromRectAndRadius(
-      Rect.fromCenter(center: Offset.zero, width: length, height: thickness),
-      Radius.circular(thickness / 2),
-    );
-    final paint = Paint()
-      ..color = color
-      ..style = PaintingStyle.fill;
-    canvas.drawRRect(rrect, paint);
-    canvas.restore();
-  }
-
-  @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }

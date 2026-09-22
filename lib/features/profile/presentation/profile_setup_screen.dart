@@ -626,6 +626,8 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
           ),
           const SizedBox(height: 16),
           _birthDateField(context, notifier, state),
+          const SizedBox(height: 16),
+          _buildGenderSelector(notifier, state),
           const SizedBox(height: 20),
           _buildTrustMicroPanel(),
         ],
@@ -895,6 +897,105 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildGenderSelector(ProfileSetupNotifier notifier, ProfileSetupState state) {
+    final selectedGender = state.gender?.trim().toLowerCase();
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            const Icon(Icons.person_outline_rounded, size: 16, color: kPrimary),
+            const SizedBox(width: 6),
+            Text(
+              'Gender',
+              style: outfit(
+                fontSize: 13,
+                fontWeight: FontWeight.w600,
+                color: kTextPrimary,
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 8),
+        Row(
+          children: [
+            Expanded(
+              child: InkWell(
+                onTap: () => notifier.setGender('male'),
+                borderRadius: BorderRadius.circular(12),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 12),
+                  decoration: BoxDecoration(
+                    color: selectedGender == 'male' ? kPrimaryLight : Colors.white,
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(
+                      color: selectedGender == 'male' ? kPrimary : const Color(0xFFDDE2F3),
+                      width: selectedGender == 'male' ? 2 : 1,
+                    ),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Text('👨', style: TextStyle(fontSize: 16)),
+                      const SizedBox(width: 8),
+                      Text(
+                        'Male',
+                        style: outfit(
+                          fontSize: 13,
+                          fontWeight: FontWeight.w600,
+                          color: selectedGender == 'male' ? kPrimary : kTextPrimary,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: InkWell(
+                onTap: () => notifier.setGender('female'),
+                borderRadius: BorderRadius.circular(12),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 12),
+                  decoration: BoxDecoration(
+                    color: selectedGender == 'female' ? kPrimaryLight : Colors.white,
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(
+                      color: selectedGender == 'female' ? kPrimary : const Color(0xFFDDE2F3),
+                      width: selectedGender == 'female' ? 2 : 1,
+                    ),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Text('👩', style: TextStyle(fontSize: 16)),
+                      const SizedBox(width: 8),
+                      Text(
+                        'Female',
+                        style: outfit(
+                          fontSize: 13,
+                          fontWeight: FontWeight.w600,
+                          color: selectedGender == 'female' ? kPrimary : kTextPrimary,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 6),
+        Text(
+          'Personalizes your campus mascot across your dashboard and notifications.',
+          style: openSans(fontSize: 11, color: kTextSecondary),
+        ),
+      ],
     );
   }
 

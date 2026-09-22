@@ -42,6 +42,23 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
   }
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    precacheImage(
+      const AssetImage('assets/images/mascot_female_pointing.png'),
+      context,
+    );
+    precacheImage(
+      const AssetImage('assets/images/mascot_male_thinking.png'),
+      context,
+    );
+    precacheImage(
+      const AssetImage('assets/images/mascot_couple_magnifier.png'),
+      context,
+    );
+  }
+
+  @override
   void dispose() {
     _pageController.dispose();
     super.dispose();
@@ -215,7 +232,7 @@ class _Slide1Ecosystem extends StatelessWidget {
     return LayoutBuilder(
       builder: (context, constraints) {
         final height = constraints.maxHeight;
-        final heroHeight = math.min(math.max(height * 0.36, 180.0), 260.0);
+        final heroHeight = math.min(math.max(height * 0.38, 195.0), 275.0);
 
         return Padding(
           padding: const EdgeInsets.symmetric(horizontal: 18),
@@ -232,7 +249,9 @@ class _Slide1Ecosystem extends StatelessWidget {
                       SizedBox(
                         height: heroHeight,
                         width: double.infinity,
-                        child: const _EcosystemHeroCanvas(),
+                        child: const _MascotHeroPanel(
+                          child: _EcosystemHeroCanvas(),
+                        ),
                       ),
                       const SizedBox(height: 12),
                       // Regional Inspiration Pill
@@ -425,7 +444,7 @@ class _Slide2Matching extends StatelessWidget {
     return LayoutBuilder(
       builder: (context, constraints) {
         final height = constraints.maxHeight;
-        final heroHeight = math.min(math.max(height * 0.36, 180.0), 260.0);
+        final heroHeight = math.min(math.max(height * 0.38, 195.0), 275.0);
 
         return Padding(
           padding: const EdgeInsets.symmetric(horizontal: 18),
@@ -442,7 +461,9 @@ class _Slide2Matching extends StatelessWidget {
                       SizedBox(
                         height: heroHeight,
                         width: double.infinity,
-                        child: const _PrecisionMatchingCanvas(),
+                        child: const _MascotHeroPanel(
+                          child: _PrecisionMatchingCanvas(),
+                        ),
                       ),
                       const SizedBox(height: 12),
                       // Kicker
@@ -626,7 +647,7 @@ class _Slide3AuditTrail extends StatelessWidget {
     return LayoutBuilder(
       builder: (context, constraints) {
         final height = constraints.maxHeight;
-        final heroHeight = math.min(math.max(height * 0.38, 190.0), 280.0);
+        final heroHeight = math.min(math.max(height * 0.32, 190.0), 250.0);
 
         return Padding(
           padding: const EdgeInsets.symmetric(horizontal: 18),
@@ -639,12 +660,17 @@ class _Slide3AuditTrail extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       const SizedBox(height: 4),
-                      // Graphic Hero: Audit Trail Canvas
+                      // Graphic Hero: Couple Mascot with Magnifier Canvas
                       SizedBox(
                         height: heroHeight,
                         width: double.infinity,
-                        child: const _AuditTrailCanvas(),
+                        child: const _MascotHeroPanel(
+                          child: _AuditTrailHeroCanvas(),
+                        ),
                       ),
+                      const SizedBox(height: 8),
+                      // 4-Step End-to-End Audit Trail Card
+                      const _AuditTrailCanvas(),
                       const SizedBox(height: 12),
                       // Kicker
                       Container(
@@ -811,6 +837,98 @@ class _Slide3AuditTrail extends StatelessWidget {
 }
 
 // ---------------------------------------------------------------------------
+// Soft Background Hero Panel & Clouds
+// ---------------------------------------------------------------------------
+class _MascotHeroPanel extends StatelessWidget {
+  const _MascotHeroPanel({
+    required this.child,
+  });
+
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(22),
+        gradient: const LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [
+            Color(0xFFEBF5F0),
+            Color(0xFFD8EDE6),
+          ],
+        ),
+        border: Border.all(
+          color: const Color(0xFFD2E8DD),
+          width: 1.0,
+        ),
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(21),
+        child: Stack(
+          alignment: Alignment.center,
+          children: [
+            // Soft background cloud / organic shapes
+            const Positioned.fill(
+              child: CustomPaint(
+                painter: _SoftCloudsPainter(),
+              ),
+            ),
+            child,
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _SoftCloudsPainter extends CustomPainter {
+  const _SoftCloudsPainter();
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final w = size.width;
+    final h = size.height;
+
+    // Cloud layer 1 (upper subtle white puffs)
+    final cloudPaint1 = Paint()
+      ..color = Colors.white.withValues(alpha: 0.45)
+      ..style = PaintingStyle.fill;
+
+    canvas.drawCircle(Offset(w * 0.12, h * 0.35), w * 0.22, cloudPaint1);
+    canvas.drawCircle(Offset(w * 0.28, h * 0.28), w * 0.18, cloudPaint1);
+    canvas.drawCircle(Offset(w * 0.88, h * 0.35), w * 0.22, cloudPaint1);
+    canvas.drawCircle(Offset(w * 0.72, h * 0.28), w * 0.18, cloudPaint1);
+
+    // Cloud layer 2 (mid/lower organic billowing clouds)
+    final cloudPaint2 = Paint()
+      ..color = Colors.white.withValues(alpha: 0.65)
+      ..style = PaintingStyle.fill;
+
+    final leftPath = Path()
+      ..moveTo(0, h * 0.50)
+      ..quadraticBezierTo(w * 0.10, h * 0.40, w * 0.24, h * 0.48)
+      ..quadraticBezierTo(w * 0.38, h * 0.44, w * 0.44, h * 0.62)
+      ..lineTo(0, h)
+      ..close();
+    canvas.drawPath(leftPath, cloudPaint2);
+
+    final rightPath = Path()
+      ..moveTo(w, h * 0.50)
+      ..quadraticBezierTo(w * 0.90, h * 0.40, w * 0.76, h * 0.48)
+      ..quadraticBezierTo(w * 0.62, h * 0.44, w * 0.56, h * 0.62)
+      ..lineTo(w, h)
+      ..close();
+    canvas.drawPath(rightPath, cloudPaint2);
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
+}
+
+// ---------------------------------------------------------------------------
 // Graphic Canvas 1: Ecosystem Hero Canvas
 // ---------------------------------------------------------------------------
 class _EcosystemHeroCanvas extends StatelessWidget {
@@ -818,193 +936,199 @@ class _EcosystemHeroCanvas extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    return Stack(
+      clipBehavior: Clip.none,
+      alignment: Alignment.center,
+      children: [
+        // Decorative gold dashes (#F1B41E) and green leaves
+        const Positioned.fill(
+          child: CustomPaint(
+            painter: _Slide1DecorationsPainter(),
+          ),
+        ),
+        // Female mascot pointing upward
+        Positioned.fill(
+          child: Image.asset(
+            'assets/images/mascot_female_pointing.png',
+            fit: BoxFit.contain,
+            alignment: Alignment.bottomCenter,
+          ),
+        ),
+        // Badge 1: DOST-SEI STEM (top-left)
+        const Positioned(
+          top: 8,
+          left: 6,
+          child: _EcosystemBadge(
+            icon: Icons.biotech_rounded,
+            iconBg: Color(0xFFD2E4FF),
+            iconColor: Color(0xFF001C38),
+            title: 'DOST-SEI',
+            subtitle: 'Priority STEM',
+          ),
+        ),
+        // Badge 3: LGU Academic Grant (top-right)
+        const Positioned(
+          top: 8,
+          right: 6,
+          child: _EcosystemBadge(
+            icon: Icons.location_city_rounded,
+            iconBg: Color(0xFFFFDEA3),
+            iconColor: Color(0xFF3C2A00),
+            title: 'LGU Honors',
+            subtitle: 'City & Provincial',
+          ),
+        ),
+        // Badge 2: CHED UniFAST (mid/bottom-left)
+        const Positioned(
+          bottom: 46,
+          left: 6,
+          child: _EcosystemBadge(
+            icon: Icons.eco_rounded,
+            iconBg: Color(0xFFB3F1C6),
+            iconColor: Color(0xFF002110),
+            title: 'CHED UniFAST',
+            subtitle: 'Tertiary Subsidy',
+          ),
+        ),
+        // Badge 4: Private Foundations (mid/bottom-right)
+        const Positioned(
+          bottom: 40,
+          right: 6,
+          child: _PrivateEndowmentsBadge(),
+        ),
+        // Verified Grants badge (bottom-center)
+        const Positioned(
+          bottom: 5,
+          child: _VerifiedGrantsBadge(),
+        ),
+      ],
+    );
+  }
+}
+
+class _VerifiedGrantsBadge extends StatelessWidget {
+  const _VerifiedGrantsBadge();
+
+  @override
+  Widget build(BuildContext context) {
     return Container(
+      padding: const EdgeInsets.symmetric(vertical: 4.5, horizontal: 9),
       decoration: BoxDecoration(
-        color: const Color(0xFFF1F3FF),
+        color: Colors.white,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: const Color(0xFFE2E8E5)),
+        border: Border.all(
+          color: const Color(0xFFE8EEF5),
+          width: 0.8,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.08),
+            blurRadius: 10,
+            offset: const Offset(0, 3),
+          ),
+        ],
       ),
-      child: Stack(
-        clipBehavior: Clip.antiAlias,
-        alignment: Alignment.center,
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
         children: [
-          // Ambient Glows
-          Positioned(
-            top: -20,
-            right: -20,
-            child: Container(
-              width: 120,
-              height: 120,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: const Color(0xFFD2E4FF).withValues(alpha: 0.5),
-              ),
-            ),
-          ),
-          Positioned(
-            bottom: -20,
-            left: -20,
-            child: Container(
-              width: 130,
-              height: 130,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: const Color(0xFFB3F1C6).withValues(alpha: 0.4),
-              ),
-            ),
-          ),
-          // Sun Ray Geometric Lines
-          CustomPaint(
-            size: const Size(200, 200),
-            painter: _SunRayPainter(),
-          ),
-          // Center Core Glassmorphic Shield
           Container(
-            padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
-            decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha: 0.95),
-              borderRadius: BorderRadius.circular(16),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.08),
-                  blurRadius: 14,
-                  offset: const Offset(0, 4),
-                ),
-              ],
+            width: 22,
+            height: 22,
+            decoration: const BoxDecoration(
+              color: Color(0xFF0F4D2E),
+              shape: BoxShape.circle,
             ),
-            child: Column(
+            child: const Icon(
+              Icons.verified_rounded,
+              color: Color(0xFFB3F1C6),
+              size: 13,
+            ),
+          ),
+          const SizedBox(width: 5.5),
+          Container(
+            padding: const EdgeInsets.symmetric(
+              horizontal: 7,
+              vertical: 2.5,
+            ),
+            decoration: BoxDecoration(
+              color: const Color(0xFFE3E8F9),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
                 Container(
-                  width: 42,
-                  height: 42,
+                  width: 4.5,
+                  height: 4.5,
                   decoration: const BoxDecoration(
                     color: Color(0xFF0F4D2E),
                     shape: BoxShape.circle,
                   ),
-                  child: const Icon(
-                    Icons.school_rounded,
-                    color: Color(0xFFB3F1C6),
-                    size: 22,
-                  ),
                 ),
-                const SizedBox(height: 5),
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 6,
-                    vertical: 2,
-                  ),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFFE3E8F9),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Container(
-                        width: 4.5,
-                        height: 4.5,
-                        decoration: const BoxDecoration(
-                          color: Color(0xFF0F4D2E),
-                          shape: BoxShape.circle,
-                        ),
-                      ),
-                      const SizedBox(width: 3.5),
-                      Text(
-                        'VERIFIED GRANTS',
-                        style: GoogleFonts.outfit(
-                          fontSize: 8,
-                          fontWeight: FontWeight.w700,
-                          color: const Color(0xFF00351C),
-                          letterSpacing: 0.3,
-                        ),
-                      ),
-                    ],
+                const SizedBox(width: 4),
+                Text(
+                  'VERIFIED GRANTS',
+                  style: GoogleFonts.outfit(
+                    fontSize: 9.5,
+                    fontWeight: FontWeight.w700,
+                    color: const Color(0xFF00351C),
+                    letterSpacing: 0.4,
                   ),
                 ),
               ],
             ),
           ),
-          // Badge 1: DOST-SEI STEM
-          const Positioned(
-            top: 8,
-            left: 8,
-            child: _EcosystemBadge(
-              icon: Icons.biotech_rounded,
-              iconBg: Color(0xFFD2E4FF),
-              iconColor: Color(0xFF001C38),
-              title: 'DOST-SEI',
-              subtitle: 'Priority STEM',
+        ],
+      ),
+    );
+  }
+}
+
+class _PrivateEndowmentsBadge extends StatelessWidget {
+  const _PrivateEndowmentsBadge();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 5.5),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(
+          color: const Color(0xFFE8EEF5),
+          width: 0.8,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.07),
+            blurRadius: 8,
+            offset: const Offset(0, 2.5),
+          ),
+        ],
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            width: 24,
+            height: 24,
+            decoration: const BoxDecoration(
+              color: Color(0xFFDDE2F3),
+              shape: BoxShape.circle,
+            ),
+            child: const Icon(
+              Icons.account_balance_rounded,
+              size: 14,
+              color: Color(0xFF436084),
             ),
           ),
-          // Badge 2: CHED UniFAST
-          const Positioned(
-            bottom: 8,
-            left: 8,
-            child: _EcosystemBadge(
-              icon: Icons.verified_rounded,
-              iconBg: Color(0xFFB3F1C6),
-              iconColor: Color(0xFF002110),
-              title: 'CHED UniFAST',
-              subtitle: 'Tertiary Subsidy',
-            ),
-          ),
-          // Badge 3: LGU Academic Grant
-          const Positioned(
-            top: 8,
-            right: 8,
-            child: _EcosystemBadge(
-              icon: Icons.location_city_rounded,
-              iconBg: Color(0xFFFFDEA3),
-              iconColor: Color(0xFF3C2A00),
-              title: 'LGU Honors',
-              subtitle: 'City & Provincial',
-            ),
-          ),
-          // Badge 4: Private Foundations
-          Positioned(
-            bottom: 8,
-            right: 8,
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 4),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(8),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.06),
-                    blurRadius: 6,
-                    offset: const Offset(0, 2),
-                  ),
-                ],
-              ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Container(
-                    width: 18,
-                    height: 18,
-                    decoration: const BoxDecoration(
-                      color: Color(0xFFDDE2F3),
-                      shape: BoxShape.circle,
-                    ),
-                    child: const Icon(
-                      Icons.foundation_rounded,
-                      size: 11,
-                      color: Color(0xFF436084),
-                    ),
-                  ),
-                  const SizedBox(width: 4),
-                  Text(
-                    'Private Endowments',
-                    style: GoogleFonts.outfit(
-                      fontSize: 9.5,
-                      fontWeight: FontWeight.bold,
-                      color: const Color(0xFF404942),
-                    ),
-                  ),
-                ],
-              ),
+          const SizedBox(width: 5.5),
+          Text(
+            'Private Endowments',
+            style: GoogleFonts.outfit(
+              fontSize: 11.0,
+              fontWeight: FontWeight.bold,
+              color: const Color(0xFF404942),
             ),
           ),
         ],
@@ -1031,15 +1155,19 @@ class _EcosystemBadge extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 4),
+      padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 5.5),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(8),
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(
+          color: const Color(0xFFE8EEF5),
+          width: 0.8,
+        ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.06),
-            blurRadius: 6,
-            offset: const Offset(0, 2),
+            color: Colors.black.withValues(alpha: 0.07),
+            blurRadius: 8,
+            offset: const Offset(0, 2.5),
           ),
         ],
       ),
@@ -1047,15 +1175,15 @@ class _EcosystemBadge extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           Container(
-            width: 18,
-            height: 18,
+            width: 24,
+            height: 24,
             decoration: BoxDecoration(
               color: iconBg,
               shape: BoxShape.circle,
             ),
-            child: Icon(icon, size: 11, color: iconColor),
+            child: Icon(icon, size: 14, color: iconColor),
           ),
-          const SizedBox(width: 4),
+          const SizedBox(width: 5.5),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
@@ -1063,16 +1191,19 @@ class _EcosystemBadge extends StatelessWidget {
               Text(
                 title,
                 style: GoogleFonts.outfit(
-                  fontSize: 9.5,
+                  fontSize: 11.5,
                   fontWeight: FontWeight.bold,
                   color: const Color(0xFF161C27),
+                  height: 1.15,
                 ),
               ),
               Text(
                 subtitle,
                 style: GoogleFonts.openSans(
-                  fontSize: 8,
+                  fontSize: 9.0,
+                  fontWeight: FontWeight.w600,
                   color: const Color(0xFF436084),
+                  height: 1.15,
                 ),
               ),
             ],
@@ -1083,23 +1214,6 @@ class _EcosystemBadge extends StatelessWidget {
   }
 }
 
-class _SunRayPainter extends CustomPainter {
-  @override
-  void paint(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..color = const Color(0xFFFABC28).withValues(alpha: 0.18)
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 1.5;
-
-    final center = Offset(size.width / 2, size.height / 2);
-    canvas.drawCircle(center, 36, paint);
-    canvas.drawCircle(center, 65, paint);
-  }
-
-  @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
-}
-
 // ---------------------------------------------------------------------------
 // Graphic Canvas 2: Precision Matching Visual Matrix
 // ---------------------------------------------------------------------------
@@ -1108,46 +1222,94 @@ class _PrecisionMatchingCanvas extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: const Color(0xFFF1F3FF),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: const Color(0xFFE2E8E5)),
-      ),
-      child: Stack(
-        alignment: Alignment.center,
-        children: [
-          // Orbit rings
-          CustomPaint(
-            size: const Size(220, 220),
-            painter: _DashedOrbitPainter(),
+    return Stack(
+      clipBehavior: Clip.none,
+      alignment: Alignment.center,
+      children: [
+        // Decorative gold dashes (#F1B41E) and green leaves
+        const Positioned.fill(
+          child: CustomPaint(
+            painter: _Slide2DecorationsPainter(),
           ),
-          // Center Matching Priority Card
-          Container(
-            padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 10),
+        ),
+        // Male mascot thinking/analyzing pose
+        Positioned.fill(
+          child: Image.asset(
+            'assets/images/mascot_male_thinking.png',
+            fit: BoxFit.contain,
+            alignment: Alignment.bottomCenter,
+          ),
+        ),
+        // Metadata Badge 1: GWA 1.45 (top-left)
+        const Positioned(
+          top: 8,
+          left: 6,
+          child: _MatrixBadge(
+            dotColor: Color(0xFF0F4D2E),
+            text: 'GWA 1.45',
+          ),
+        ),
+        // Metadata Badge 2: UP Diliman / SUC (top-right)
+        const Positioned(
+          top: 8,
+          right: 6,
+          child: _MatrixBadge(
+            icon: Icons.school_rounded,
+            iconColor: Color(0xFF0F4D2E),
+            text: 'UP Diliman / SUC',
+          ),
+        ),
+        // Metadata Badge 3: ITR Verified (mid/bottom-left)
+        const Positioned(
+          bottom: 46,
+          left: 6,
+          child: _MatrixBadge(
+            icon: Icons.verified_user_rounded,
+            iconColor: Color(0xFF436084),
+            text: 'ITR Verified',
+          ),
+        ),
+        // Metadata Badge 4: BS STEM Priority (mid/bottom-right)
+        const Positioned(
+          bottom: 40,
+          right: 6,
+          child: _MatrixBadge(
+            dotColor: Color(0xFFF1B41E),
+            text: 'BS STEM Priority',
+          ),
+        ),
+        // MATCH circle gauge card (bottom-center)
+        Positioned(
+          bottom: 5,
+          child: Container(
+            padding: const EdgeInsets.symmetric(vertical: 4.5, horizontal: 9),
             decoration: BoxDecoration(
               color: Colors.white,
-              borderRadius: BorderRadius.circular(16),
+              borderRadius: BorderRadius.circular(14),
+              border: Border.all(
+                color: const Color(0xFFE8EEF5),
+                width: 0.8,
+              ),
               boxShadow: [
                 BoxShadow(
                   color: Colors.black.withValues(alpha: 0.08),
-                  blurRadius: 14,
-                  offset: const Offset(0, 4),
+                  blurRadius: 10,
+                  offset: const Offset(0, 3),
                 ),
               ],
             ),
-            child: Column(
+            child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
                 // Circular Gauge
                 SizedBox(
-                  width: 52,
-                  height: 52,
+                  width: 34,
+                  height: 34,
                   child: Stack(
                     alignment: Alignment.center,
                     children: [
                       CustomPaint(
-                        size: const Size(52, 52),
+                        size: const Size(34, 34),
                         painter: _CircularGaugePainter(percentage: 0.98),
                       ),
                       Column(
@@ -1156,7 +1318,7 @@ class _PrecisionMatchingCanvas extends StatelessWidget {
                           RichText(
                             text: TextSpan(
                               style: GoogleFonts.outfit(
-                                fontSize: 13.5,
+                                fontSize: 10.5,
                                 fontWeight: FontWeight.bold,
                                 color: const Color(0xFF0F4D2E),
                               ),
@@ -1165,7 +1327,7 @@ class _PrecisionMatchingCanvas extends StatelessWidget {
                                 TextSpan(
                                   text: '%',
                                   style: GoogleFonts.outfit(
-                                    fontSize: 8.5,
+                                    fontSize: 7.5,
                                     fontWeight: FontWeight.w600,
                                     color: const Color(0xFFF1B41E),
                                   ),
@@ -1176,10 +1338,10 @@ class _PrecisionMatchingCanvas extends StatelessWidget {
                           Text(
                             'MATCH',
                             style: GoogleFonts.outfit(
-                              fontSize: 6.5,
+                              fontSize: 5.5,
                               fontWeight: FontWeight.w700,
                               color: const Color(0xFF436084),
-                              letterSpacing: 0.5,
+                              letterSpacing: 0.3,
                             ),
                           ),
                         ],
@@ -1187,29 +1349,29 @@ class _PrecisionMatchingCanvas extends StatelessWidget {
                     ],
                   ),
                 ),
-                const SizedBox(height: 5),
+                const SizedBox(width: 6.5),
                 Container(
                   padding: const EdgeInsets.symmetric(
-                    horizontal: 6,
-                    vertical: 2,
+                    horizontal: 7,
+                    vertical: 3,
                   ),
                   decoration: BoxDecoration(
                     color: const Color(0xFFE8EEFF),
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: BorderRadius.circular(10),
                   ),
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       const Icon(
                         Icons.verified_rounded,
-                        size: 9.5,
+                        size: 11.5,
                         color: Color(0xFF0F4D2E),
                       ),
-                      const SizedBox(width: 3),
+                      const SizedBox(width: 3.5),
                       Text(
                         'DOST-SEI Merit',
                         style: GoogleFonts.outfit(
-                          fontSize: 8,
+                          fontSize: 10.0,
                           fontWeight: FontWeight.bold,
                           color: const Color(0xFF0F4D2E),
                         ),
@@ -1220,43 +1382,8 @@ class _PrecisionMatchingCanvas extends StatelessWidget {
               ],
             ),
           ),
-          // Metadata Badges
-          const Positioned(
-            top: 7,
-            left: 7,
-            child: _MatrixBadge(
-              dotColor: Color(0xFF0F4D2E),
-              text: 'GWA 1.45',
-            ),
-          ),
-          const Positioned(
-            top: 7,
-            right: 7,
-            child: _MatrixBadge(
-              icon: Icons.school_rounded,
-              iconColor: Color(0xFF0F4D2E),
-              text: 'UP Diliman / SUC',
-            ),
-          ),
-          const Positioned(
-            bottom: 7,
-            left: 7,
-            child: _MatrixBadge(
-              icon: Icons.verified_user_rounded,
-              iconColor: Color(0xFF436084),
-              text: 'ITR Verified',
-            ),
-          ),
-          const Positioned(
-            bottom: 7,
-            right: 7,
-            child: _MatrixBadge(
-              dotColor: Color(0xFFF1B41E),
-              text: 'BS STEM Priority',
-            ),
-          ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }
@@ -1277,15 +1404,19 @@ class _MatrixBadge extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3.5),
+      padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 5),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(8),
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(
+          color: const Color(0xFFE8EEF5),
+          width: 0.8,
+        ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 6,
-            offset: const Offset(0, 2),
+            color: Colors.black.withValues(alpha: 0.07),
+            blurRadius: 8,
+            offset: const Offset(0, 2.5),
           ),
         ],
       ),
@@ -1294,22 +1425,22 @@ class _MatrixBadge extends StatelessWidget {
         children: [
           if (dotColor != null) ...[
             Container(
-              width: 5,
-              height: 5,
+              width: 6.5,
+              height: 6.5,
               decoration: BoxDecoration(
                 color: dotColor,
                 shape: BoxShape.circle,
               ),
             ),
-            const SizedBox(width: 3.5),
+            const SizedBox(width: 4.5),
           ] else if (icon != null) ...[
-            Icon(icon, size: 10, color: iconColor),
-            const SizedBox(width: 3.5),
+            Icon(icon, size: 13, color: iconColor),
+            const SizedBox(width: 4.5),
           ],
           Text(
             text,
             style: GoogleFonts.outfit(
-              fontSize: 9,
+              fontSize: 11.5,
               fontWeight: FontWeight.bold,
               color: const Color(0xFF161C27),
             ),
@@ -1361,21 +1492,82 @@ class _CircularGaugePainter extends CustomPainter {
       oldDelegate.percentage != percentage;
 }
 
-class _DashedOrbitPainter extends CustomPainter {
-  @override
-  void paint(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..color = const Color(0xFF0F4D2E).withValues(alpha: 0.12)
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 1.0;
+// ---------------------------------------------------------------------------
+// Graphic Canvas 3: Audit Trail Hero Canvas (Couple Mascot with Magnifier & Floating Cards)
+// ---------------------------------------------------------------------------
+class _AuditTrailHeroCanvas extends StatelessWidget {
+  const _AuditTrailHeroCanvas();
 
-    final center = Offset(size.width / 2, size.height / 2);
-    canvas.drawCircle(center, 44, paint);
-    canvas.drawCircle(center, 74, paint);
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      clipBehavior: Clip.none,
+      alignment: Alignment.center,
+      children: [
+        // Decorative gold dashes (#F1B41E) and green leaves
+        const Positioned.fill(
+          child: CustomPaint(
+            painter: _Slide3DecorationsPainter(),
+          ),
+        ),
+        // Couple mascot with magnifier
+        Positioned.fill(
+          child: Image.asset(
+            'assets/images/mascot_couple_magnifier.png',
+            fit: BoxFit.contain,
+            alignment: Alignment.bottomCenter,
+          ),
+        ),
+        // Badge 1: DOST-SEI STEM (top-left)
+        const Positioned(
+          top: 8,
+          left: 6,
+          child: _EcosystemBadge(
+            icon: Icons.biotech_rounded,
+            iconBg: Color(0xFFD2E4FF),
+            iconColor: Color(0xFF001C38),
+            title: 'DOST-SEI',
+            subtitle: 'Priority STEM',
+          ),
+        ),
+        // Badge 3: LGU Academic Grant (top-right)
+        const Positioned(
+          top: 8,
+          right: 6,
+          child: _EcosystemBadge(
+            icon: Icons.location_city_rounded,
+            iconBg: Color(0xFFFFDEA3),
+            iconColor: Color(0xFF3C2A00),
+            title: 'LGU Honors',
+            subtitle: 'City & Provincial',
+          ),
+        ),
+        // Badge 2: CHED UniFAST (mid/bottom-left)
+        const Positioned(
+          bottom: 46,
+          left: 6,
+          child: _EcosystemBadge(
+            icon: Icons.eco_rounded,
+            iconBg: Color(0xFFB3F1C6),
+            iconColor: Color(0xFF002110),
+            title: 'CHED UniFAST',
+            subtitle: 'Tertiary Subsidy',
+          ),
+        ),
+        // Badge 4: Private Foundations (mid/bottom-right)
+        const Positioned(
+          bottom: 40,
+          right: 6,
+          child: _PrivateEndowmentsBadge(),
+        ),
+        // Verified Grants badge (bottom-center)
+        const Positioned(
+          bottom: 5,
+          child: _VerifiedGrantsBadge(),
+        ),
+      ],
+    );
   }
-
-  @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }
 
 // ---------------------------------------------------------------------------
@@ -1402,6 +1594,7 @@ class _AuditTrailCanvas extends StatelessWidget {
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
         children: [
           // Header
           Row(
@@ -1420,7 +1613,7 @@ class _AuditTrailCanvas extends StatelessWidget {
                       child: Text(
                         'End-to-End Audit Trail',
                         style: GoogleFonts.outfit(
-                          fontSize: 11,
+                          fontSize: 12,
                           fontWeight: FontWeight.bold,
                           color: const Color(0xFF161C27),
                         ),
@@ -1432,7 +1625,7 @@ class _AuditTrailCanvas extends StatelessWidget {
               ),
               const SizedBox(width: 6),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2.5),
                 decoration: BoxDecoration(
                   color: const Color(0xFFE8EEFF),
                   borderRadius: BorderRadius.circular(12),
@@ -1441,18 +1634,18 @@ class _AuditTrailCanvas extends StatelessWidget {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Container(
-                      width: 4.5,
-                      height: 4.5,
+                      width: 5,
+                      height: 5,
                       decoration: const BoxDecoration(
                         color: Color(0xFF0F4D2E),
                         shape: BoxShape.circle,
                       ),
                     ),
-                    const SizedBox(width: 3.5),
+                    const SizedBox(width: 4),
                     Text(
                       'Live sync',
                       style: GoogleFonts.outfit(
-                        fontSize: 8.5,
+                        fontSize: 9.5,
                         fontWeight: FontWeight.w600,
                         color: const Color(0xFF404942),
                       ),
@@ -1464,7 +1657,8 @@ class _AuditTrailCanvas extends StatelessWidget {
           ),
           const SizedBox(height: 6),
           // Steps
-          Expanded(
+          SizedBox(
+            height: 154,
             child: Stack(
               children: [
                 // Connecting line
@@ -1538,6 +1732,202 @@ class _AuditTrailCanvas extends StatelessWidget {
       ),
     );
   }
+}
+
+// ---------------------------------------------------------------------------
+// Mascot Botanical Framing Painters (Leaves & Gold Dashes)
+// ---------------------------------------------------------------------------
+
+void _drawMascotLeaf(
+  Canvas canvas, {
+  required Offset base,
+  required Offset tip,
+  required double width,
+  required Color color,
+  Color? veinColor,
+  double curvature = 0.0,
+}) {
+  final dx = tip.dx - base.dx;
+  final dy = tip.dy - base.dy;
+  final length = math.sqrt(dx * dx + dy * dy);
+  if (length <= 0.001) return;
+
+  final nx = -dy / length;
+  final ny = dx / length;
+
+  final midX = base.dx + dx * 0.45;
+  final midY = base.dy + dy * 0.45;
+  final curveOffset = curvature * width;
+
+  final leftCp = Offset(
+    midX + nx * (width + curveOffset),
+    midY + ny * (width + curveOffset),
+  );
+  final rightCp = Offset(
+    midX - nx * (width - curveOffset),
+    midY - ny * (width - curveOffset),
+  );
+
+  final path = Path()
+    ..moveTo(base.dx, base.dy)
+    ..quadraticBezierTo(leftCp.dx, leftCp.dy, tip.dx, tip.dy)
+    ..quadraticBezierTo(rightCp.dx, rightCp.dy, base.dx, base.dy)
+    ..close();
+
+  final fillPaint = Paint()
+    ..color = color
+    ..style = PaintingStyle.fill;
+  canvas.drawPath(path, fillPaint);
+
+  if (veinColor != null) {
+    final veinPaint = Paint()
+      ..color = veinColor
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 1.3
+      ..strokeCap = StrokeCap.round;
+
+    final startX = base.dx + dx * 0.12;
+    final startY = base.dy + dy * 0.12;
+    final endX = base.dx + dx * 0.88;
+    final endY = base.dy + dy * 0.88;
+
+    final veinPath = Path()
+      ..moveTo(startX, startY)
+      ..quadraticBezierTo(
+        midX + nx * curveOffset * 0.5,
+        midY + ny * curveOffset * 0.5,
+        endX,
+        endY,
+      );
+    canvas.drawPath(veinPath, veinPaint);
+  }
+}
+
+void _drawMascotDash(
+  Canvas canvas, {
+  required double x,
+  required double y,
+  required double length,
+  required double thickness,
+  required double angle,
+  required Color color,
+}) {
+  canvas.save();
+  canvas.translate(x, y);
+  canvas.rotate(angle);
+  final rrect = RRect.fromRectAndRadius(
+    Rect.fromCenter(center: Offset.zero, width: length, height: thickness),
+    Radius.circular(thickness / 2),
+  );
+  final paint = Paint()
+    ..color = color
+    ..style = PaintingStyle.fill;
+  canvas.drawRRect(rrect, paint);
+  canvas.restore();
+}
+
+class _Slide1DecorationsPainter extends CustomPainter {
+  const _Slide1DecorationsPainter();
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final greenPrimary = const Color(0xFF76B68C).withValues(alpha: 0.92);
+    final greenAccent = const Color(0xFF86C49B).withValues(alpha: 0.94);
+    final greenDeep = const Color(0xFF5BA475).withValues(alpha: 0.90);
+    final veinColor = const Color(0xFF38764F).withValues(alpha: 0.60);
+    const goldColor = Color(0xFFF1B41E);
+
+    final cx = size.width / 2;
+    final cy = size.height / 2;
+
+    // Top-left
+    _drawMascotDash(canvas, x: cx - 72, y: cy - 74, length: 16, thickness: 3.8, angle: -0.65, color: goldColor);
+    _drawMascotLeaf(canvas, base: Offset(cx - 62, cy - 58), tip: Offset(cx - 88, cy - 80), width: 13, curvature: -0.15, color: greenAccent, veinColor: veinColor);
+
+    // Top-right (pointing side)
+    _drawMascotDash(canvas, x: cx + 70, y: cy - 80, length: 18, thickness: 4.0, angle: 0.70, color: goldColor);
+    _drawMascotLeaf(canvas, base: Offset(cx + 60, cy - 65), tip: Offset(cx + 88, cy - 90), width: 14, curvature: 0.12, color: greenPrimary, veinColor: veinColor);
+
+    // Mid-left
+    _drawMascotLeaf(canvas, base: Offset(cx - 78, cy + 12), tip: Offset(cx - 105, cy - 5), width: 12, curvature: 0.1, color: greenDeep, veinColor: veinColor);
+    _drawMascotDash(canvas, x: cx - 82, y: cy + 30, length: 14, thickness: 3.5, angle: 0.5, color: goldColor);
+
+    // Mid-right
+    _drawMascotDash(canvas, x: cx + 78, y: cy + 12, length: 15, thickness: 3.8, angle: -0.5, color: goldColor);
+    _drawMascotLeaf(canvas, base: Offset(cx + 74, cy + 32), tip: Offset(cx + 102, cy + 46), width: 12, curvature: -0.1, color: greenAccent, veinColor: veinColor);
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
+}
+
+class _Slide2DecorationsPainter extends CustomPainter {
+  const _Slide2DecorationsPainter();
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final greenPrimary = const Color(0xFF76B68C).withValues(alpha: 0.92);
+    final greenAccent = const Color(0xFF86C49B).withValues(alpha: 0.94);
+    final greenDeep = const Color(0xFF5BA475).withValues(alpha: 0.90);
+    final veinColor = const Color(0xFF38764F).withValues(alpha: 0.60);
+    const goldColor = Color(0xFFF1B41E);
+
+    final cx = size.width / 2;
+    final cy = size.height / 2;
+
+    // Top-left
+    _drawMascotDash(canvas, x: cx - 72, y: cy - 72, length: 16, thickness: 3.8, angle: -0.65, color: goldColor);
+    _drawMascotLeaf(canvas, base: Offset(cx - 62, cy - 58), tip: Offset(cx - 88, cy - 78), width: 13, curvature: -0.12, color: greenAccent, veinColor: veinColor);
+
+    // Top-right
+    _drawMascotDash(canvas, x: cx + 68, y: cy - 72, length: 18, thickness: 4.0, angle: 0.65, color: goldColor);
+    _drawMascotLeaf(canvas, base: Offset(cx + 58, cy - 58), tip: Offset(cx + 86, cy - 80), width: 14, curvature: 0.12, color: greenPrimary, veinColor: veinColor);
+
+    // Mid-left
+    _drawMascotLeaf(canvas, base: Offset(cx - 78, cy + 18), tip: Offset(cx - 104, cy + 4), width: 12, curvature: 0.1, color: greenDeep, veinColor: veinColor);
+    _drawMascotDash(canvas, x: cx - 82, y: cy + 36, length: 14, thickness: 3.5, angle: 0.45, color: goldColor);
+
+    // Mid-right
+    _drawMascotDash(canvas, x: cx + 78, y: cy + 18, length: 15, thickness: 3.8, angle: -0.45, color: goldColor);
+    _drawMascotLeaf(canvas, base: Offset(cx + 74, cy + 36), tip: Offset(cx + 100, cy + 50), width: 12, curvature: -0.1, color: greenAccent, veinColor: veinColor);
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
+}
+
+class _Slide3DecorationsPainter extends CustomPainter {
+  const _Slide3DecorationsPainter();
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final greenPrimary = const Color(0xFF76B68C).withValues(alpha: 0.92);
+    final greenAccent = const Color(0xFF86C49B).withValues(alpha: 0.94);
+    final greenDeep = const Color(0xFF5BA475).withValues(alpha: 0.90);
+    final veinColor = const Color(0xFF38764F).withValues(alpha: 0.60);
+    const goldColor = Color(0xFFF1B41E);
+
+    final cx = size.width / 2;
+    final cy = size.height / 2;
+
+    // Left cap (male)
+    _drawMascotDash(canvas, x: cx - 80, y: cy - 48, length: 15, thickness: 3.8, angle: -0.60, color: goldColor);
+    _drawMascotLeaf(canvas, base: Offset(cx - 70, cy - 35), tip: Offset(cx - 96, cy - 54), width: 13, curvature: -0.15, color: greenAccent, veinColor: veinColor);
+
+    // Center between caps
+    _drawMascotDash(canvas, x: cx + 4, y: cy - 56, length: 13, thickness: 3.5, angle: 0.5, color: goldColor);
+
+    // Right cap (female)
+    _drawMascotDash(canvas, x: cx + 80, y: cy - 44, length: 15, thickness: 3.8, angle: 0.65, color: goldColor);
+    _drawMascotLeaf(canvas, base: Offset(cx + 70, cy - 32), tip: Offset(cx + 96, cy - 50), width: 13, curvature: 0.12, color: greenPrimary, veinColor: veinColor);
+
+    // Sides
+    _drawMascotLeaf(canvas, base: Offset(cx - 88, cy + 12), tip: Offset(cx - 110, cy + 24), width: 12, curvature: 0.1, color: greenDeep, veinColor: veinColor);
+    _drawMascotDash(canvas, x: cx + 88, y: cy + 14, length: 14, thickness: 3.5, angle: -0.4, color: goldColor);
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }
 
 class _AuditStepRow extends StatelessWidget {
@@ -1614,7 +2004,7 @@ class _AuditStepRow extends StatelessWidget {
                     child: Text(
                       step,
                       style: GoogleFonts.outfit(
-                        fontSize: 10,
+                        fontSize: 11,
                         fontWeight: FontWeight.bold,
                         color: const Color(0xFF161C27),
                       ),
@@ -1625,8 +2015,8 @@ class _AuditStepRow extends StatelessWidget {
                     const SizedBox(width: 4),
                     Container(
                       padding: const EdgeInsets.symmetric(
-                        horizontal: 3.5,
-                        vertical: 1,
+                        horizontal: 4,
+                        vertical: 1.5,
                       ),
                       decoration: BoxDecoration(
                         color: const Color(0xFFB3F1C6),
@@ -1635,7 +2025,7 @@ class _AuditStepRow extends StatelessWidget {
                       child: Text(
                         chip!,
                         style: GoogleFonts.outfit(
-                          fontSize: 7.5,
+                          fontSize: 8.5,
                           fontWeight: FontWeight.bold,
                           color: const Color(0xFF145131),
                         ),
@@ -1647,7 +2037,7 @@ class _AuditStepRow extends StatelessWidget {
               Text(
                 subtitle,
                 style: GoogleFonts.openSans(
-                  fontSize: 8.5,
+                  fontSize: 9.5,
                   color: const Color(0xFF404942),
                 ),
                 maxLines: 1,
@@ -1658,7 +2048,7 @@ class _AuditStepRow extends StatelessWidget {
         ),
         if (badge != null)
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 4.5, vertical: 1),
+            padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 1.5),
             decoration: BoxDecoration(
               color: badgeBg ?? const Color(0xFFE3E8F9),
               borderRadius: BorderRadius.circular(4),
@@ -1666,7 +2056,7 @@ class _AuditStepRow extends StatelessWidget {
             child: Text(
               badge!,
               style: GoogleFonts.outfit(
-                fontSize: 8,
+                fontSize: 9,
                 fontWeight: FontWeight.bold,
                 color: badgeColor ?? const Color(0xFF161C27),
               ),

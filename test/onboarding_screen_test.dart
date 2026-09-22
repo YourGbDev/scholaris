@@ -150,6 +150,7 @@ void main() {
     for (final (label, width, height) in [
       ('phone 360x800', 360.0, 800.0),
       ('phone 390x844', 390.0, 844.0),
+      ('phone 440x956', 440.0, 956.0),
       ('tablet 1024x768', 1024.0, 768.0),
       ('desktop 1280x900', 1280.0, 900.0),
     ]) {
@@ -173,5 +174,51 @@ void main() {
         expect(tester.takeException(), isNull);
       });
     }
+  });
+
+  testWidgets('renders all 3 mascot images on their respective slides', (
+    tester,
+  ) async {
+    await _pumpOnboarding(tester);
+
+    // Slide 1: female pointing mascot
+    expect(
+      find.byWidgetPredicate(
+        (w) =>
+            w is Image &&
+            w.image is AssetImage &&
+            (w.image as AssetImage).assetName ==
+                'assets/images/mascot_female_pointing.png',
+      ),
+      findsOneWidget,
+    );
+
+    // Slide 2: male thinking mascot
+    await tester.tap(find.byIcon(Icons.arrow_forward_rounded));
+    await tester.pumpAndSettle();
+    expect(
+      find.byWidgetPredicate(
+        (w) =>
+            w is Image &&
+            w.image is AssetImage &&
+            (w.image as AssetImage).assetName ==
+                'assets/images/mascot_male_thinking.png',
+      ),
+      findsOneWidget,
+    );
+
+    // Slide 3: couple with magnifier mascot
+    await tester.tap(find.text('Continue'));
+    await tester.pumpAndSettle();
+    expect(
+      find.byWidgetPredicate(
+        (w) =>
+            w is Image &&
+            w.image is AssetImage &&
+            (w.image as AssetImage).assetName ==
+                'assets/images/mascot_couple_magnifier.png',
+      ),
+      findsOneWidget,
+    );
   });
 }

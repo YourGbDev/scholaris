@@ -743,7 +743,7 @@ class _StudentDashboardScreenState
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 if (items.isNotEmpty) ...[
-                  _buildMatchRevealBanner(items.length),
+                  _buildMatchRevealBanner(items.length, gender: profile?.gender),
                   const SizedBox(height: 12),
                 ],
                 ListView.separated(
@@ -773,7 +773,7 @@ class _StudentDashboardScreenState
     );
   }
 
-  Widget _buildMatchRevealBanner(int count) {
+  Widget _buildMatchRevealBanner(int count, {String? gender}) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
       decoration: BoxDecoration(
@@ -793,8 +793,9 @@ class _StudentDashboardScreenState
       ),
       child: Row(
         children: [
-          const MascotPoseView(
+          MascotPoseView(
             pose: MascotPose.celebrating,
+            gender: gender,
             height: 56,
             width: 56,
           ),

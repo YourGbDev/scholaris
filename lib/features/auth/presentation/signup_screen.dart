@@ -9,6 +9,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import 'package:scholaris/app/confirmation_redirect.dart';
 import 'package:scholaris/core/security/password_validator.dart';
@@ -454,8 +455,13 @@ class _SignupScreenState extends State<SignupScreen> {
                                 const SizedBox(width: 4),
                                 Expanded(
                                   child: GestureDetector(
-                                    onTap: () {
-                                      context.push('/become-provider');
+                                    onTap: () async {
+                                      final uri = Uri.parse('https://scholaris.app/#providers');
+                                      try {
+                                        await launchUrl(uri, mode: LaunchMode.externalApplication);
+                                      } catch (e) {
+                                        debugPrint('Could not launch provider portal URL: $e');
+                                      }
                                     },
                                     child: Container(
                                       padding: const EdgeInsets.symmetric(vertical: 8),

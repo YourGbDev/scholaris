@@ -17,10 +17,10 @@ enum MascotPose {
 }
 
 /// Helper function to resolve the asset path for a given pose and gender string.
-/// Falls back to female as the neutral default when gender is unset or not male.
+/// Uses female mascot when gender is female; defaults to male mascot for male/unset profiles.
 String getMascotAssetPath(MascotPose pose, {String? gender}) {
-  final isMale = gender?.trim().toLowerCase() == 'male';
-  final genderStr = isMale ? 'male' : 'female';
+  final isFemale = gender?.trim().toLowerCase() == 'female';
+  final genderStr = isFemale ? 'female' : 'male';
   return 'assets/mascots/mascot_${genderStr}_${pose.name}.png';
 }
 

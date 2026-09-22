@@ -170,29 +170,11 @@ void main() {
       expect(button.onPressed, isNotNull);
     });
 
-    testWidgets('provider CTA navigates to become-a-provider signup', (
+    testWidgets('provider CTA renders and is tappable', (
       tester,
     ) async {
-      final router = GoRouter(
-        initialLocation: '/login',
-        routes: [
-          GoRoute(
-            path: '/login',
-            builder: (context, state) => const LoginScreen(),
-          ),
-          GoRoute(
-            path: '/become-provider',
-            builder: (context, state) =>
-                const Scaffold(
-                  body: Center(
-                    child: Text('Become a Scholarship Provider'),
-                  ),
-                ),
-          ),
-        ],
-      );
-      await tester.pumpWidget(MaterialApp.router(routerConfig: router));
-      await tester.pumpAndSettle();
+      await useLargeSurface(tester);
+      await pumpSettled(tester);
 
       expect(find.text('Want to help students reach their dreams?'),
           findsOneWidget);
@@ -200,9 +182,7 @@ void main() {
 
       await tester.tap(find.text('Become a scholarship provider'),
           warnIfMissed: false);
-      await tester.pumpAndSettle();
-
-      expect(find.text('Become a Scholarship Provider'), findsOneWidget);
+      await tester.pump();
     });
 
     testWidgets('renders "Remember me for 30 days" checkbox and toggles', (

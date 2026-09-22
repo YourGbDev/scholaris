@@ -173,10 +173,10 @@ class MatchingPowerSheet extends StatelessWidget {
                       children: [
                         const MascotPoseView(
                           pose: MascotPose.celebrating,
-                          height: 56,
-                          width: 56,
+                          height: 84,
+                          width: 84,
                         ),
-                        const SizedBox(width: 12),
+                        const SizedBox(width: 14),
                         Expanded(
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,

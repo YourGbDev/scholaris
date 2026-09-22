@@ -151,7 +151,7 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
                         const Center(
                           child: MascotPoseView(
                             pose: MascotPose.celebrating,
-                            height: 130,
+                            height: 165,
                           ),
                         ),
                         const SizedBox(height: 16),

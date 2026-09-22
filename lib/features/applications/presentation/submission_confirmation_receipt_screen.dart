@@ -249,10 +249,10 @@ class _SubmissionConfirmationReceiptScreenState
               ],
             ),
           ),
-          // Mascot Celebrating
+          // Mascot Celebrating Hero Focal Point
           const MascotPoseView(
             pose: MascotPose.celebrating,
-            height: 110,
+            height: 155,
           ),
           const SizedBox(height: 12),
 

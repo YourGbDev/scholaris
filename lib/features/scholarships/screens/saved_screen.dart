@@ -31,6 +31,7 @@ import 'package:scholaris/features/scholarships/models/scholarship.dart';
 import 'package:scholaris/features/scholarships/providers/scholarships_provider.dart';
 import 'package:scholaris/features/scholarships/presentation/scholarship_detail_screen.dart';
 import 'package:scholaris/shared/theme/app_theme.dart';
+import 'package:scholaris/shared/widgets/mascot_pose_view.dart';
 import 'package:scholaris/shared/widgets/responsive_container.dart';
 import 'package:scholaris/shared/widgets/scholarship_card.dart';
 import 'package:scholaris/shared/widgets/state_views.dart';
@@ -365,7 +366,7 @@ class _SavedEmptyState extends ConsumerWidget {
         children: [
           // Hero Card with Dual Concentric Halo
           Container(
-            padding: const EdgeInsets.all(24),
+            padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(16),
@@ -380,83 +381,46 @@ class _SavedEmptyState extends ConsumerWidget {
             ),
             child: Column(
               children: [
-                // Concentric Halo with Bookmark and Star
-                Stack(
-                  alignment: Alignment.center,
-                  clipBehavior: Clip.none,
-                  children: [
-                    Container(
-                      width: 96,
-                      height: 96,
-                      decoration: BoxDecoration(
-                        color: const Color(0xFFD2E4FF).withValues(alpha: 0.5),
-                        shape: BoxShape.circle,
-                      ),
-                    ),
-                    Container(
-                      width: 72,
-                      height: 72,
-                      decoration: const BoxDecoration(
-                        color: Color(0xFFD2E4FF),
-                        shape: BoxShape.circle,
-                      ),
-                      child: const Icon(
-                        Icons.bookmarks_rounded,
-                        size: 36,
-                        color: Color(0xFF436084),
-                      ),
-                    ),
-                    Positioned(
-                      top: -2,
-                      right: -2,
-                      child: Container(
-                        width: 26,
-                        height: 26,
-                        decoration: const BoxDecoration(
-                          color: Colors.white,
-                          shape: BoxShape.circle,
-                          boxShadow: [
-                            BoxShadow(
-                              color: Color(0x1A000000),
-                              blurRadius: 4,
-                              offset: Offset(0, 1),
-                            ),
-                          ],
-                        ),
-                        child: const Icon(
-                          Icons.hotel_class_rounded,
-                          size: 15,
-                          color: Color(0xFFFABC28),
-                        ),
-                      ),
-                    ),
-                  ],
+                // Consoling Mascot Hero
+                const MascotPoseView(
+                  pose: MascotPose.consoling,
+                  height: 76,
                 ),
-                const SizedBox(height: 18),
-                // Literal Stitch copy
+                const SizedBox(height: 10),
+                // Soft nudge copy with Stitch headline
                 Text(
                   "Save scholarships you're interested in",
                   textAlign: TextAlign.center,
                   style: GoogleFonts.outfit(
-                    fontSize: 19,
+                    fontSize: 18,
                     fontWeight: FontWeight.bold,
                     color: const Color(0xFF161C27),
                     letterSpacing: -0.2,
                   ),
                 ),
-                const SizedBox(height: 8),
+                const SizedBox(height: 4),
+                Text(
+                  "Save scholarships you're interested in so you don't lose them.",
+                  textAlign: TextAlign.center,
+                  style: GoogleFonts.openSans(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
+                    color: const Color(0xFF0F4D2E),
+                  ),
+                ),
+                const SizedBox(height: 6),
                 Text(
                   'Keep track of deadlines, compare grant stipends, and prepare your '
                   'application requirements without losing your spot. Tap the bookmark '
                   'icon on any scholarship card to save it here.',
                   textAlign: TextAlign.center,
                   style: GoogleFonts.openSans(
-                    fontSize: 13,
+                    fontSize: 12,
                     color: const Color(0xFF404942),
-                    height: 1.45,
+                    height: 1.4,
                   ),
                 ),
-                const SizedBox(height: 20),
+                const SizedBox(height: 16),
                 SizedBox(
                   width: double.infinity,
                   height: 46,

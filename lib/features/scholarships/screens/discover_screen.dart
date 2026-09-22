@@ -31,6 +31,7 @@ import 'package:scholaris/features/scholarships/providers/scholarships_provider.
 import 'package:scholaris/features/scholarships/services/discovery_filters.dart';
 import 'package:scholaris/features/scholarships/services/match_reasons.dart';
 import 'package:scholaris/shared/theme/app_theme.dart';
+import 'package:scholaris/shared/widgets/mascot_pose_view.dart';
 import 'package:scholaris/shared/widgets/responsive_container.dart';
 import 'package:scholaris/shared/widgets/scholarship_card.dart';
 import 'package:scholaris/shared/widgets/section_header.dart';
@@ -641,7 +642,34 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
     DiscoveryFilterState state,
   ) {
     return matchesAsync.when(
-      loading: () => const LoadingView(),
+      loading: () => Container(
+        padding: const EdgeInsets.symmetric(vertical: 32, horizontal: 16),
+        alignment: Alignment.center,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const MascotPoseView(
+              pose: MascotPose.searching,
+              height: 100,
+            ),
+            const SizedBox(height: 12),
+            Text(
+              'Finding matching scholarships...',
+              style: outfit(
+                fontSize: 15,
+                fontWeight: FontWeight.w600,
+                color: const Color(0xFF161C27),
+              ),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              'Analyzing eligibility requirements against your profile.',
+              textAlign: TextAlign.center,
+              style: openSans(fontSize: 12.5, color: const Color(0xFF707971)),
+            ),
+          ],
+        ),
+      ),
       error: (err, _) => ErrorView(
         message: 'Could not load your matches.',
         onRetry: () => ref.invalidate(matchesProvider),
@@ -826,14 +854,73 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
   }
 
   Widget _buildNoResultsEmptyState(BuildContext context, WidgetRef ref) {
-    return EmptyView(
-      icon: Icons.search_off_rounded,
-      title: 'No scholarships found',
-      message:
-          'No scholarships match your current search and filters. Try adjusting them to see more results.',
-      actionLabel: 'Clear search & filters',
-      onAction: () => ref.read(discoveryFilterProvider.notifier).reset(),
-      animateSearchIcon: true,
+    return Center(
+      child: Container(
+        margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 28),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: const Color(0xFFE2E8E5)),
+          boxShadow: const [
+            BoxShadow(
+              color: Color(0x081B3A5C),
+              blurRadius: 16,
+              offset: Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const MascotPoseView(
+              pose: MascotPose.confused,
+              height: 110,
+            ),
+            const SizedBox(height: 16),
+            Text(
+              'No scholarships found',
+              textAlign: TextAlign.center,
+              style: outfit(
+                fontSize: 18,
+                fontWeight: FontWeight.w700,
+                color: const Color(0xFF161C27),
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'No scholarships match your current search and filters. Try adjusting your filters to see more results.',
+              textAlign: TextAlign.center,
+              style: openSans(
+                fontSize: 13.5,
+                color: const Color(0xFF404942),
+                height: 1.45,
+              ),
+            ),
+            const SizedBox(height: 18),
+            ElevatedButton(
+              onPressed: () => ref.read(discoveryFilterProvider.notifier).reset(),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: kPrimary,
+                foregroundColor: Colors.white,
+                elevation: 0,
+                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+              ),
+              child: Text(
+                'Clear search & filters',
+                style: outfit(
+                  fontSize: 13.5,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.white,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 
@@ -842,9 +929,43 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
     WidgetRef ref,
     DiscoveryFilterState state,
   ) {
-    final message = state.isActive
-        ? 'No scholarships in your matches match the current search and filters.'
-        : 'No matches yet. Update your profile or adjust your preferences to discover scholarships.';
+    if (state.isActive) {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SectionHeader(title: 'Your Matches', count: 0),
+          const SizedBox(height: 12),
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: const Color(0xFFF1F3FF),
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: const Color(0xFFDDE2F3)),
+            ),
+            child: Row(
+              children: [
+                const MascotPoseView(
+                  pose: MascotPose.confused,
+                  height: 48,
+                  width: 48,
+                ),
+                const SizedBox(width: 14),
+                Expanded(
+                  child: Text(
+                    'No scholarships in your matches match the current search and filters.',
+                    style: openSans(
+                      fontSize: 13,
+                      color: const Color(0xFF404942),
+                      height: 1.35,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      );
+    }
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -852,34 +973,63 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
         SectionHeader(title: 'Your Matches', count: 0),
         const SizedBox(height: 12),
         Container(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.all(20),
           decoration: BoxDecoration(
-            color: const Color(0xFFF1F3FF),
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: const Color(0xFFDDE2F3)),
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: const Color(0xFFE2E8E5)),
+            boxShadow: const [
+              BoxShadow(
+                color: Color(0x081B3A5C),
+                blurRadius: 12,
+                offset: Offset(0, 4),
+              ),
+            ],
           ),
-          child: Row(
+          child: Column(
             children: [
-              Container(
-                padding: const EdgeInsets.all(10),
-                decoration: BoxDecoration(
-                  color: const Color(0xFF0F4D2E).withValues(alpha: 0.10),
-                  shape: BoxShape.circle,
-                ),
-                child: const Icon(
-                  Icons.search_rounded,
-                  size: 24,
-                  color: Color(0xFF0F4D2E),
+              const MascotPoseView(
+                pose: MascotPose.consoling,
+                height: 110,
+              ),
+              const SizedBox(height: 14),
+              Text(
+                'No matches found for your profile yet',
+                textAlign: TextAlign.center,
+                style: outfit(
+                  fontSize: 17,
+                  fontWeight: FontWeight.w700,
+                  color: const Color(0xFF161C27),
                 ),
               ),
-              const SizedBox(width: 14),
-              Expanded(
+              const SizedBox(height: 6),
+              Text(
+                'Complete your profile with your course, university, and GWA to unlock targeted grants and scholarships.',
+                textAlign: TextAlign.center,
+                style: openSans(
+                  fontSize: 13,
+                  color: const Color(0xFF404942),
+                  height: 1.4,
+                ),
+              ),
+              const SizedBox(height: 16),
+              ElevatedButton(
+                onPressed: () => context.go('/profile'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: kPrimary,
+                  foregroundColor: Colors.white,
+                  elevation: 0,
+                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
                 child: Text(
-                  message,
-                  style: openSans(
-                    fontSize: 13,
-                    color: const Color(0xFF404942),
-                    height: 1.35,
+                  'Complete your profile',
+                  style: outfit(
+                    fontSize: 13.5,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.white,
                   ),
                 ),
               ),

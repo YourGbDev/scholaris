@@ -9,6 +9,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 
 import 'package:scholaris/shared/theme/app_theme.dart';
+import 'package:scholaris/shared/widgets/mascot_pose_view.dart';
 
 /// Shows the success confirmation overlay as a full-screen modal and returns
 /// when it auto-dismisses.
@@ -21,8 +22,8 @@ import 'package:scholaris/shared/theme/app_theme.dart';
 class SuccessOverlay {
   SuccessOverlay._();
 
-  static const _duration = Duration(milliseconds: 1200);
-  static const _reducedDuration = Duration(milliseconds: 800);
+  static const _duration = Duration(milliseconds: 1600);
+  static const _reducedDuration = Duration(milliseconds: 1000);
 
   static Future<void> show(BuildContext context) {
     final reduceMotion = MediaQuery.maybeOf(context)?.disableAnimations ?? false;
@@ -100,57 +101,62 @@ class _SuccessPageState extends State<_SuccessPage>
 
   @override
   Widget build(BuildContext context) {
-    final iconWidget = Container(
-      width: 140,
-      height: 140,
+    final cardWidget = Container(
+      constraints: const BoxConstraints(maxWidth: 340),
+      margin: const EdgeInsets.symmetric(horizontal: 24),
+      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
       decoration: BoxDecoration(
         color: Colors.white,
-        shape: BoxShape.circle,
+        borderRadius: BorderRadius.circular(20),
         boxShadow: const [
           BoxShadow(
-            color: Color(0x1A0F4D2E),
-            blurRadius: 24,
-            offset: Offset(0, 8),
+            color: Color(0x240F4D2E),
+            blurRadius: 28,
+            offset: Offset(0, 10),
           ),
         ],
       ),
-      child: Center(
-        child: Container(
-          width: 96,
-          height: 96,
-          decoration: const BoxDecoration(
-            color: kPrimaryFixed,
-            shape: BoxShape.circle,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const MascotPoseView(
+            pose: MascotPose.searching,
+            height: 110,
           ),
-          child: Center(
-            child: Container(
-              width: 68,
-              height: 68,
-              decoration: const BoxDecoration(
-                color: kPrimaryContainer,
-                shape: BoxShape.circle,
-              ),
-              child: const Icon(
-                Icons.check_rounded,
-                color: Colors.white,
-                size: 40,
-              ),
+          const SizedBox(height: 14),
+          Text(
+            'Finding your scholarship matches...',
+            textAlign: TextAlign.center,
+            style: outfit(
+              fontSize: 17,
+              fontWeight: FontWeight.w700,
+              color: const Color(0xFF161C27),
             ),
           ),
-        ),
+          const SizedBox(height: 6),
+          Text(
+            'Analyzing university grants, DOST, and private subsidies tailored to you.',
+            textAlign: TextAlign.center,
+            style: openSans(
+              fontSize: 12.5,
+              color: const Color(0xFF404942),
+              height: 1.35,
+            ),
+          ),
+        ],
       ),
     );
 
     return PopScope(
       canPop: false,
       child: Scaffold(
-        backgroundColor: Colors.transparent,
+        backgroundColor: Colors.black26,
         body: Center(
           child: widget.reduceMotion
-              ? iconWidget
+              ? cardWidget
               : ScaleTransition(
                   scale: _scaleAnimation,
-                  child: iconWidget,
+                  child: cardWidget,
                 ),
         ),
       ),

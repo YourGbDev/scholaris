@@ -20,6 +20,7 @@ import 'package:scholaris/features/home/presentation/home_screen.dart';
 import 'package:scholaris/features/profile/providers/profile_setup_provider.dart';
 import 'package:scholaris/features/scholarships/models/scholarship.dart';
 import 'package:scholaris/shared/theme/app_theme.dart';
+import 'package:scholaris/shared/widgets/mascot_pose_view.dart';
 import 'package:scholaris/shared/widgets/responsive_container.dart';
 
 class SubmissionConfirmationReceiptScreen extends ConsumerStatefulWidget {
@@ -248,7 +249,12 @@ class _SubmissionConfirmationReceiptScreenState
               ],
             ),
           ),
-          const SizedBox(height: 10),
+          // Mascot Celebrating
+          const MascotPoseView(
+            pose: MascotPose.celebrating,
+            height: 110,
+          ),
+          const SizedBox(height: 12),
 
           // Headline
           Text(

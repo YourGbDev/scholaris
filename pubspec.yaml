@@ -45,8 +45,12 @@ flutter:
     - assets/animations/verify_email_hero.json
     - assets/animations/Successfully Done.json
     - assets/images/scholaris_hero_student.png
+    - assets/mascots/
     - assets/images/mascot_male.png
     - assets/images/mascot_female.png
+    - assets/images/mascot_female_pointing.png
+    - assets/images/mascot_male_thinking.png
+    - assets/images/mascot_couple_magnifier.png
     - assets/images/intro_scene.png
     - assets/images/mascot_couple_wave.png
     - assets/images/onboarding_slide1.svg

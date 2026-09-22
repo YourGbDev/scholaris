@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../shared/theme/app_theme.dart';
+import '../../../shared/widgets/mascot_pose_view.dart';
 import '../models/student_profile.dart';
 import '../services/matching_power_service.dart';
 
@@ -159,6 +160,51 @@ class MatchingPowerSheet extends StatelessWidget {
                     height: 1.35,
                   ),
                 ),
+                if (isComplete) ...[
+                  const SizedBox(height: 12),
+                  Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(color: kPrimary.withValues(alpha: 0.25)),
+                    ),
+                    child: Row(
+                      children: [
+                        const MascotPoseView(
+                          pose: MascotPose.celebrating,
+                          height: 56,
+                          width: 56,
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                '100% Matching Power!',
+                                style: poppins(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w700,
+                                  color: kPrimary,
+                                ),
+                              ),
+                              const SizedBox(height: 2),
+                              Text(
+                                'Your profile is fully optimized for all Philippine scholarships and government grants.',
+                                style: openSans(
+                                  fontSize: 11.5,
+                                  color: const Color(0xFF404942),
+                                  height: 1.3,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
               ],
             ),
           ),

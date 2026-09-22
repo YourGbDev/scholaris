@@ -5,6 +5,7 @@
 
 import 'package:flutter/material.dart';
 import '../theme/app_theme.dart';
+import 'mascot_pose_view.dart';
 
 
 
@@ -336,44 +337,133 @@ class ErrorView extends StatelessWidget {
   const ErrorView({
     super.key,
     required this.message,
+    this.title = 'Something went wrong',
     this.onRetry,
+    this.isOffline = false,
   });
 
   final String message;
+  final String title;
   final VoidCallback? onRetry;
+  final bool isOffline;
 
   @override
   Widget build(BuildContext context) {
-    const visualWidget = Icon(Icons.cloud_off, size: 36, color: kError);
-
     return Center(
       child: Padding(
-        padding: const EdgeInsets.all(40),
+        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            visualWidget,
-            const SizedBox(height: 12),
+            const MascotPoseView(
+              pose: MascotPose.confused,
+              height: 100,
+            ),
+            const SizedBox(height: 16),
             Text(
-              'Something went wrong',
+              isOffline ? 'No internet connection' : title,
               textAlign: TextAlign.center,
-              style: outfit(fontSize: 18, fontWeight: FontWeight.w600),
+              style: outfit(fontSize: 18, fontWeight: FontWeight.w700, color: kTextPrimary),
             ),
             const SizedBox(height: 8),
             Text(
-              message,
+              isOffline
+                  ? 'Please check your Wi-Fi or cellular network settings and try again.'
+                  : message,
               textAlign: TextAlign.center,
-              style: openSans(fontSize: 14, color: Colors.black54),
+              style: openSans(fontSize: 13.5, color: kTextSecondary, height: 1.4),
             ),
             if (onRetry != null) ...[
               const SizedBox(height: 20),
-              OutlinedButton(
+              ElevatedButton.icon(
                 onPressed: onRetry,
-                child: const Text('Try again'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: kPrimary,
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                  elevation: 0,
+                ),
+                icon: const Icon(Icons.refresh_rounded, size: 18),
+                label: Text(
+                  'Try again',
+                  style: outfit(fontSize: 13.5, fontWeight: FontWeight.w600),
+                ),
               ),
             ],
           ],
         ),
+      ),
+    );
+  }
+}
+
+/// Generic inline form error banner displaying the confused mascot.
+/// NEVER used on login screen.
+class InlineFormErrorBanner extends StatelessWidget {
+  const InlineFormErrorBanner({
+    super.key,
+    required this.message,
+    this.title,
+    this.onDismiss,
+  });
+
+  final String message;
+  final String? title;
+  final VoidCallback? onDismiss;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: kErrorSoft,
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: kError.withValues(alpha: 0.3)),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const MascotPoseView(
+            pose: MascotPose.confused,
+            height: 48,
+            width: 48,
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                if (title != null) ...[
+                  Text(
+                    title!,
+                    style: outfit(
+                      fontSize: 13.5,
+                      fontWeight: FontWeight.w700,
+                      color: kError,
+                    ),
+                  ),
+                  const SizedBox(height: 2),
+                ],
+                Text(
+                  message,
+                  style: openSans(
+                    fontSize: 12.5,
+                    color: kError,
+                    height: 1.35,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          if (onDismiss != null)
+            IconButton(
+              icon: const Icon(Icons.close_rounded, size: 16, color: kError),
+              onPressed: onDismiss,
+              padding: EdgeInsets.zero,
+              constraints: const BoxConstraints(),
+            ),
+        ],
       ),
     );
   }

@@ -43,6 +43,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:scholaris/features/applications/presentation/application_detail_screen.dart';
 import 'package:scholaris/features/scholarships/models/scholarship.dart';
 import 'package:scholaris/features/scholarships/presentation/scholarship_detail_screen.dart';
+import 'package:scholaris/shared/widgets/mascot_pose_view.dart';
 import 'package:scholaris/features/scholarships/screens/saved_screen.dart';
 
 // -----------------------------------------------------------------------------
@@ -111,18 +112,9 @@ final routerProvider = Provider<GoRouter>((ref) {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Container(
-                width: 64,
-                height: 64,
-                decoration: const BoxDecoration(
-                  color: Color(0xFFFFDAD6),
-                  shape: BoxShape.circle,
-                ),
-                child: const Icon(
-                  Icons.error_outline_rounded,
-                  size: 32,
-                  color: Color(0xFFBA1A1A),
-                ),
+              const MascotPoseView(
+                pose: MascotPose.confused,
+                height: 120,
               ),
               const SizedBox(height: 16),
               Text(

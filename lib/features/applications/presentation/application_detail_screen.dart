@@ -19,8 +19,10 @@ import 'package:scholaris/features/applications/repositories/application_reposit
 import 'package:scholaris/features/scholarships/models/scholarship.dart';
 import 'package:scholaris/features/scholarships/presentation/scholarship_detail_screen.dart';
 import 'package:scholaris/features/scholarships/providers/scholarships_provider.dart';
+import 'package:go_router/go_router.dart';
 import 'package:scholaris/shared/theme/app_theme.dart';
 import 'package:scholaris/shared/utils/constants.dart';
+import 'package:scholaris/shared/widgets/mascot_pose_view.dart';
 import 'package:scholaris/shared/widgets/primary_button.dart';
 import 'package:scholaris/shared/widgets/responsive_container.dart';
 import 'package:scholaris/shared/widgets/state_views.dart';
@@ -313,6 +315,13 @@ class _DetailBodyState extends ConsumerState<_DetailBody> {
             ),
           ),
         const SizedBox(height: 14),
+        if (application.status == ApplicationStatus.rejected) ...[
+          _RejectedConsolingBanner(
+            programName: scholarship?.title ?? 'Scholarship Program',
+            reason: application.notes,
+          ),
+          const SizedBox(height: 14),
+        ],
         _StatusSection(application: application),
         if (application.status == ApplicationStatus.draft && scholarshipKnown) ...[
           const SizedBox(height: 14),
@@ -344,6 +353,8 @@ class _StatusSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final ui = ApplicationStatusUi.of(application.status);
+    final isCelebratory = application.status == ApplicationStatus.approved ||
+        application.status == ApplicationStatus.awarded;
 
     return Container(
       padding: const EdgeInsets.all(16),
@@ -361,14 +372,24 @@ class _StatusSection extends StatelessWidget {
       ),
       child: Row(
         children: [
-          Container(
-            padding: const EdgeInsets.all(10),
-            decoration: BoxDecoration(
-              color: ui.background,
-              shape: BoxShape.circle,
+          if (isCelebratory)
+            const Padding(
+              padding: EdgeInsets.only(right: 6),
+              child: MascotPoseView(
+                pose: MascotPose.celebrating,
+                height: 48,
+                width: 48,
+              ),
+            )
+          else
+            Container(
+              padding: const EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                color: ui.background,
+                shape: BoxShape.circle,
+              ),
+              child: Icon(ui.icon, color: ui.foreground, size: 22),
             ),
-            child: Icon(ui.icon, color: ui.foreground, size: 22),
-          ),
           const SizedBox(width: 12),
           Expanded(
             child: Column(
@@ -391,6 +412,117 @@ class _StatusSection extends StatelessWidget {
             ),
           ),
           ApplicationStatusChip(status: application.status),
+        ],
+      ),
+    );
+  }
+}
+
+class _RejectedConsolingBanner extends StatelessWidget {
+  const _RejectedConsolingBanner({
+    required this.programName,
+    this.reason,
+  });
+
+  final String programName;
+  final String? reason;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: const Color(0xFFE2E8E5), width: 1.0),
+        boxShadow: const [
+          BoxShadow(
+            color: Color(0x081B3A5C),
+            blurRadius: 12,
+            offset: Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Column(
+        children: [
+          const MascotPoseView(
+            pose: MascotPose.consoling,
+            height: 120,
+          ),
+          const SizedBox(height: 14),
+          Text(
+            '"Hindi ito ang katapusan."',
+            textAlign: TextAlign.center,
+            style: GoogleFonts.poppins(
+              fontSize: 19,
+              fontWeight: FontWeight.w700,
+              color: const Color(0xFF161C27),
+            ),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            "This isn't the end of the road.",
+            textAlign: TextAlign.center,
+            style: GoogleFonts.openSans(
+              fontSize: 13.5,
+              fontWeight: FontWeight.w500,
+              color: const Color(0xFF404942),
+            ),
+          ),
+          const SizedBox(height: 12),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+            decoration: BoxDecoration(
+              color: const Color(0xFFFFDAD6).withValues(alpha: 0.5),
+              borderRadius: BorderRadius.circular(10),
+              border: Border.all(color: kError.withValues(alpha: 0.2)),
+            ),
+            child: Text(
+              '$programName — Not Selected',
+              textAlign: TextAlign.center,
+              style: GoogleFonts.poppins(
+                fontSize: 13,
+                fontWeight: FontWeight.w600,
+                color: const Color(0xFFBA1A1A),
+              ),
+            ),
+          ),
+          if (reason != null && reason!.trim().isNotEmpty) ...[
+            const SizedBox(height: 8),
+            Text(
+              reason!.trim(),
+              textAlign: TextAlign.center,
+              style: GoogleFonts.openSans(
+                fontSize: 12.5,
+                color: const Color(0xFF707971),
+                fontStyle: FontStyle.italic,
+              ),
+            ),
+          ],
+          const SizedBox(height: 16),
+          SizedBox(
+            width: double.infinity,
+            child: ElevatedButton(
+              onPressed: () => context.go('/discover'),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: kPrimary,
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(vertical: 13),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                elevation: 0,
+              ),
+              child: Text(
+                'See other scholarships you may qualify for',
+                textAlign: TextAlign.center,
+                style: GoogleFonts.outfit(
+                  fontSize: 13.5,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+          ),
         ],
       ),
     );

@@ -13,6 +13,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'package:scholaris/app/confirmation_redirect.dart';
 import 'package:scholaris/shared/theme/app_theme.dart';
+import 'package:scholaris/shared/widgets/mascot_pose_view.dart';
 
 class VerifyEmailScreen extends StatefulWidget {
   const VerifyEmailScreen({super.key, this.email});
@@ -146,48 +147,11 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
                       children: [
                         const SizedBox(height: 8),
 
-                        // Geometric Envelope Graphic with Radiating Rings
-                        Center(
-                          child: Stack(
-                            alignment: Alignment.center,
-                            children: [
-                              Container(
-                                width: 120,
-                                height: 120,
-                                decoration: BoxDecoration(
-                                  color: kPrimary.withValues(alpha: 0.05),
-                                  shape: BoxShape.circle,
-                                ),
-                              ),
-                              Container(
-                                width: 96,
-                                height: 96,
-                                decoration: BoxDecoration(
-                                  color: kPrimaryLight.withValues(alpha: 0.35),
-                                  shape: BoxShape.circle,
-                                ),
-                              ),
-                              Container(
-                                width: 72,
-                                height: 72,
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  shape: BoxShape.circle,
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Colors.black.withValues(alpha: 0.08),
-                                      blurRadius: 10,
-                                      offset: const Offset(0, 3),
-                                    ),
-                                  ],
-                                ),
-                                child: const Icon(
-                                  Icons.mark_email_read_rounded,
-                                  color: kPrimary,
-                                  size: 36,
-                                ),
-                              ),
-                            ],
+                        // Mascot Celebrating Hero Graphic
+                        const Center(
+                          child: MascotPoseView(
+                            pose: MascotPose.celebrating,
+                            height: 130,
                           ),
                         ),
                         const SizedBox(height: 16),

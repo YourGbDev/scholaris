@@ -33,6 +33,7 @@ import 'package:scholaris/features/scholarships/providers/scholarships_provider.
 import 'package:scholaris/features/scholarships/screens/saved_screen.dart';
 import 'package:scholaris/features/scholarships/services/match_reasons.dart';
 import 'package:scholaris/shared/theme/app_theme.dart';
+import 'package:scholaris/shared/widgets/mascot_pose_view.dart';
 import 'package:scholaris/shared/widgets/responsive_container.dart';
 import 'package:scholaris/shared/widgets/scholarship_card.dart';
 
@@ -738,28 +739,100 @@ class _StudentDashboardScreenState
                 ),
               );
             }
-            return ListView.separated(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              itemCount: list.length,
-              separatorBuilder: (_, _) => const SizedBox(height: 12),
-              itemBuilder: (context, i) {
-                final s = list[i];
-                final reasons = profile != null
-                    ? matchReasonsFor(profile, s)
-                    : const <String>[];
-                return ScholarshipCard(
-                  scholarship: s,
-                  reasons: reasons,
-                  isBookmarked: bookmarkIds.contains(s.id),
-                  isApplied: appliedIds.contains(s.id),
-                  onToggleBookmark: () => _toggleBookmark(ref, s.id),
-                );
-              },
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                if (items.isNotEmpty) ...[
+                  _buildMatchRevealBanner(items.length),
+                  const SizedBox(height: 12),
+                ],
+                ListView.separated(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemCount: list.length,
+                  separatorBuilder: (_, _) => const SizedBox(height: 12),
+                  itemBuilder: (context, i) {
+                    final s = list[i];
+                    final reasons = profile != null
+                        ? matchReasonsFor(profile, s)
+                        : const <String>[];
+                    return ScholarshipCard(
+                      scholarship: s,
+                      reasons: reasons,
+                      isBookmarked: bookmarkIds.contains(s.id),
+                      isApplied: appliedIds.contains(s.id),
+                      onToggleBookmark: () => _toggleBookmark(ref, s.id),
+                    );
+                  },
+                ),
+              ],
             );
           },
         ),
       ],
+    );
+  }
+
+  Widget _buildMatchRevealBanner(int count) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+      decoration: BoxDecoration(
+        gradient: const LinearGradient(
+          colors: [Color(0xFF0F4D2E), Color(0xFF1B3A5C)],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: const [
+          BoxShadow(
+            color: Color(0x140F4D2E),
+            blurRadius: 10,
+            offset: Offset(0, 3),
+          ),
+        ],
+      ),
+      child: Row(
+        children: [
+          const MascotPoseView(
+            pose: MascotPose.celebrating,
+            height: 56,
+            width: 56,
+          ),
+          const SizedBox(width: 14),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    const Icon(Icons.auto_awesome, size: 14, color: Color(0xFFF1B41E)),
+                    const SizedBox(width: 4),
+                    Text(
+                      'MATCH REVEAL',
+                      style: outfit(
+                        fontSize: 11,
+                        fontWeight: FontWeight.w700,
+                        color: const Color(0xFFF1B41E),
+                        letterSpacing: 0.5,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  'Found $count verified grant${count > 1 ? 's' : ''} matching your credentials!',
+                  style: openSans(
+                    fontSize: 12.5,
+                    fontWeight: FontWeight.w500,
+                    color: Colors.white,
+                    height: 1.3,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 

@@ -28,6 +28,7 @@ import 'package:scholaris/features/scholarships/models/scholarship.dart';
 import 'package:scholaris/features/scholarships/providers/scholarships_provider.dart';
 import 'package:scholaris/shared/theme/app_theme.dart';
 import 'package:scholaris/shared/utils/constants.dart';
+import 'package:scholaris/shared/widgets/mascot_pose_view.dart';
 import 'package:scholaris/shared/widgets/responsive_container.dart';
 import 'package:scholaris/shared/widgets/state_views.dart';
 
@@ -1627,60 +1628,12 @@ class _EmptyApplicationsState extends ConsumerWidget {
             ),
             child: Column(
               children: [
-                // Concentric Halo with Sparkles
-                Stack(
-                  alignment: Alignment.center,
-                  clipBehavior: Clip.none,
-                  children: [
-                    Container(
-                      width: 80,
-                      height: 80,
-                      decoration: const BoxDecoration(
-                        color: Color(0xFFFFF4DE), // Warm gold halo
-                        shape: BoxShape.circle,
-                      ),
-                    ),
-                    Container(
-                      width: 56,
-                      height: 56,
-                      decoration: const BoxDecoration(
-                        color: Colors.white,
-                        shape: BoxShape.circle,
-                        boxShadow: [
-                          BoxShadow(
-                            color: Color(0x14000000),
-                            blurRadius: 8,
-                            offset: Offset(0, 2),
-                          ),
-                        ],
-                      ),
-                      child: const Icon(
-                        Icons.assignment_outlined,
-                        size: 28,
-                        color: Color(0xFF0F4D2E),
-                      ),
-                    ),
-                    const Positioned(
-                      top: -2,
-                      right: -2,
-                      child: Icon(
-                        Icons.auto_awesome,
-                        size: 20,
-                        color: Color(0xFFFABC28),
-                      ),
-                    ),
-                    const Positioned(
-                      bottom: 0,
-                      left: -4,
-                      child: Icon(
-                        Icons.star_rounded,
-                        size: 16,
-                        color: Color(0xFF98D4AB),
-                      ),
-                    ),
-                  ],
+                // Consoling Mascot Hero
+                const MascotPoseView(
+                  pose: MascotPose.consoling,
+                  height: 110,
                 ),
-                const SizedBox(height: 18),
+                const SizedBox(height: 16),
                 Text(
                   'No applications yet',
                   textAlign: TextAlign.center,
@@ -1730,7 +1683,7 @@ class _EmptyApplicationsState extends ConsumerWidget {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
-                          'Browse Matched Scholarships',
+                          'Start applying',
                           style: GoogleFonts.outfit(
                             fontSize: 14,
                             fontWeight: FontWeight.w700,

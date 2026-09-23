@@ -332,6 +332,19 @@ class ApplicationRepository {
         .updateApplication(userId, applicationId, {'status': status.dbValue});
   }
 
+  /// Advances the status of an application for a provider-owned scholarship.
+  /// Enforced at the database level by RLS policy 0006.
+  Future<void> providerUpdateStatus(
+    String applicationId,
+    ApplicationStatus status,
+  ) async {
+    _requireUserId();
+    await _dataSource.updateApplicationStatus(
+      applicationId,
+      status.dbValue,
+    );
+  }
+
   /// Confirms an award for an approved application. Accessible by administrators.
   Future<void> confirmAward(String applicationId) async {
     _requireUserId();

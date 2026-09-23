@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+
+<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="web_dashboard" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config={darkMode:"class",theme:{extend:{"colors":{"on-error-container":"#93000a","inverse-on-surface":"#f1f0f5","secondary-fixed-dim":"#adc6ff","secondary":"#0058bc","on-tertiary-container":"#f99a00","primary":"#00351c","surface-container":"#eeedf3","on-error":"#ffffff","on-primary":"#ffffff","outline-variant":"#c0c9c0","error-container":"#ffdad6","on-secondary-container":"#fefcff","on-surface":"#1a1b1f","on-tertiary":"#ffffff","on-secondary-fixed-variant":"#004493","on-primary-container":"#82bd95","on-background":"#1a1b1f","on-secondary":"#ffffff","surface-container-high":"#e9e7ed","secondary-container":"#0070eb","tertiary-fixed-dim":"#ffb868","tertiary":"#442600","surface":"#faf9fe","inverse-surface":"#2f3034","background":"#faf9fe","on-tertiary-fixed":"#2b1700","surface-tint":"#306948","secondary-fixed":"#d8e2ff","primary-container":"#0f4d2e","surface-container-highest":"#e3e2e7","outline":"#707971","primary-fixed":"#b3f1c6","on-surface-variant":"#404942","surface-bright":"#faf9fe","surface-container-low":"#f4f3f8","error":"#ba1a1a","tertiary-fixed":"#ffddbb","primary-fixed-dim":"#98d4ab","surface-container-lowest":"#ffffff","tertiary-container":"#623a00","surface-variant":"#e3e2e7","inverse-primary":"#98d4ab","on-secondary-fixed":"#001a41","on-primary-fixed":"#002110","on-tertiary-fixed-variant":"#673d00","surface-dim":"#dad9df","on-primary-fixed-variant":"#145131"},"borderRadius":{"DEFAULT":"0.25rem","lg":"0.5rem","xl":"0.75rem","full":"9999px"},"spacing":{"space-xs":"0.25rem","margin":"2rem","gutter-mobile":"0.75rem","space-xl":"2rem","gutter":"1.25rem","space-md":"1rem","space-lg":"1.5rem","margin-mobile":"1rem","space-sm":"0.5rem"},"fontFamily":{"headline-sm":["Inter"],"headline-lg-mobile":["Inter"],"body-lg":["Inter"],"label-lg":["Inter"],"body-sm":["Inter"],"label-sm":["Inter"],"headline-md":["Inter"],"display":["Inter"],"label-md":["Inter"],"body-md":["Inter"],"headline-lg":["Inter"]},"fontSize":{"headline-sm":["19px",{"lineHeight":"24px","letterSpacing":"-0.015em","fontWeight":"600"}],"headline-lg-mobile":["26px",{"lineHeight":"32px","letterSpacing":"-0.019em","fontWeight":"600"}],"body-lg":["16px",{"lineHeight":"24px","letterSpacing":"-0.011em","fontWeight":"400"}],"label-lg":["14px",{"lineHeight":"18px","letterSpacing":"-0.008em","fontWeight":"500"}],"body-sm":["12px",{"lineHeight":"16px","letterSpacing":"0em","fontWeight":"400"}],"label-sm":["10px",{"lineHeight":"12px","letterSpacing":"0.03em","fontWeight":"600"}],"headline-md":["24px",{"lineHeight":"30px","letterSpacing":"-0.019em","fontWeight":"600"}],"display":["40px",{"lineHeight":"48px","letterSpacing":"-0.022em","fontWeight":"700"}],"label-md":["12px",{"lineHeight":"16px","letterSpacing":"-0.002em","fontWeight":"500"}],"body-md":["14px",{"lineHeight":"20px","letterSpacing":"-0.006em","fontWeight":"400"}],"headline-lg":["32px",{"lineHeight":"38px","letterSpacing":"-0.021em","fontWeight":"600"}]}}}}</script></head><body class="bg-surface font-body-md text-on-surface antialiased selection:bg-primary selection:text-on-primary"><aside class="fixed left-0 top-0 h-full w-64 bg-surface-container-low/80 backdrop-blur-2xl z-50 flex flex-col justify-between shadow-[0_1px_8px_rgba(0,0,0,0.04)]"><div class="flex flex-col flex-1 overflow-y-auto px-4 pt-5"><div class="px-2 pb-6 flex items-center justify-between"><span class="font-headline-sm text-headline-sm text-primary font-bold tracking-tight">Scholaris</span><span class="px-2 py-0.5 rounded-full bg-primary/10 text-primary font-label-sm text-label-sm uppercase tracking-wider font-semibold">EXECUTIVE OPS</span></div><nav class="space-y-6 flex-1" data-active-classes="bg-primary-container text-on-primary font-label-lg rounded-xl shadow-sm"><div class="space-y-1"><div class="px-2.5 pb-1 font-label-sm text-label-sm uppercase tracking-wider text-on-surface-variant/70 font-semibold">OVERVIEW</div><a class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all font-label-lg text-label-lg" data-path="dashboard" href="#"><span class="material-symbols-outlined text-[20px]">space_dashboard</span><span>Dashboard</span></a><a class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all font-label-lg text-label-lg" data-path="applications" href="#"><span class="material-symbols-outlined text-[20px]">assignment</span><span>Applications</span></a><a class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all font-label-lg text-label-lg" data-path="scholarships" href="#"><span class="material-symbols-outlined text-[20px]">school</span><span>Scholarships</span></a></div><div class="space-y-1"><div class="px-2.5 pb-1 font-label-sm text-label-sm uppercase tracking-wider text-on-surface-variant/70 font-semibold">OPERATIONS</div><a aria-current="page" class="flex items-center gap-3 px-3 py-2.5 transition-all bg-primary-container text-on-primary font-label-lg rounded-xl shadow-sm" data-path="disbursements" href="#"><span class="material-symbols-outlined text-[20px]">payments</span><span>Disbursements</span></a><a class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all font-label-lg text-label-lg" data-path="analytics-and-impact" href="#"><span class="material-symbols-outlined text-[20px]">insights</span><span>Analytics & Impact</span></a><a class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all font-label-lg text-label-lg" data-path="user-directory" href="#"><span class="material-symbols-outlined text-[20px]">group</span><span>User Directory</span></a></div><div class="space-y-1"><div class="px-2.5 pb-1 font-label-sm text-label-sm uppercase tracking-wider text-on-surface-variant/70 font-semibold">GOVERNANCE</div><a class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all font-label-lg text-label-lg" data-path="audit-trail" href="#"><span class="material-symbols-outlined text-[20px]">verified_user</span><span>Audit Trail</span></a><a class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all font-label-lg text-label-lg" data-path="system-settings" href="#"><span class="material-symbols-outlined text-[20px]">settings</span><span>System Settings</span></a></div></nav></div><div class="p-3 mx-3 mb-4 rounded-2xl bg-surface-container-lowest/80 backdrop-blur-md shadow-[0_1px_4px_rgba(0,0,0,0.03)]"><div class="flex items-center justify-between pb-2"><div class="flex items-center gap-2.5 min-w-0"><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center shrink-0"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div><div class="min-w-0 flex-1"><div class="font-label-lg text-label-lg font-semibold text-on-surface truncate">Admin Console</div><div class="font-label-sm text-label-sm text-on-surface-variant truncate">CHED Officer</div></div></div><a class="p-1 rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors" data-path="system-settings" href="#"><span class="material-symbols-outlined text-[18px]">settings</span></a></div><div class="pt-2 mt-1 border-t border-surface-container-high/60 flex items-center justify-between px-1"><a class="font-label-md text-label-md text-error hover:text-on-error-container transition-colors flex items-center gap-1.5 font-medium" data-path="login" href="#"><span class="material-symbols-outlined text-[16px]">logout</span><span>Sign Out</span></a><span class="font-label-sm text-label-sm text-on-surface-variant/60">v2.4-ops</span></div></div></aside><div class="pl-64"><header class="fixed top-0 left-64 right-0 h-14 bg-surface/80 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)] z-40 flex items-center justify-between px-8"><div class="flex items-center gap-3 w-80"><div class="relative w-full flex items-center"><span class="material-symbols-outlined absolute left-2.5 text-on-surface-variant text-[18px] pointer-events-none">search</span><input class="w-full h-8 pl-8 pr-12 rounded-lg bg-surface-container-low text-on-surface font-body-sm text-body-sm placeholder:text-on-surface-variant/70 focus:outline-none focus:bg-surface-container-lowest focus:ring-2 focus:ring-primary/20 transition-all" placeholder="Search scholars, grants, audits..." type="text"/><span class="absolute right-2 px-1.5 py-0.5 rounded bg-surface-container-highest/60 text-on-surface-variant font-label-sm text-label-sm font-medium pointer-events-none">⌘K</span></div></div><div class="flex items-center gap-3.5"><div class="px-3 py-1 rounded-full bg-surface-container text-on-surface-variant font-label-sm text-label-sm font-medium flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-primary"></span><span>AY 2024–2025 • Semester 1</span></div><button class="relative p-1.5 rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" type="button"><span class="material-symbols-outlined text-[20px]">notifications</span><span class="absolute top-1 right-1 w-2 h-2 rounded-full bg-error ring-2 ring-surface"></span></button><button class="h-8 px-3 rounded-full bg-primary-container text-on-primary font-label-lg text-label-lg font-medium hover:bg-primary transition-colors flex items-center gap-1.5 shadow-[inset_0_1px_0_rgba(255,255,255,0.2)]" type="button"><span class="material-symbols-outlined text-[16px]">add</span><span>Quick Action</span></button><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center shrink-0 cursor-pointer"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></header><main class="relative pt-14 bg-surface w-full px-8 pb-12"><div class="flex flex-col w-full space-y-8">
+<!-- Subtle ambient decorative glow backdrop (confined) -->
+<div class="relative w-full">
+<div class="absolute -top-10 left-1/4 w-96 h-96 bg-primary-fixed/30 rounded-full blur-3xl pointer-events-none -z-10"></div>
+<div class="absolute top-20 right-10 w-80 h-80 bg-secondary-fixed/30 rounded-full blur-3xl pointer-events-none -z-10"></div>
+<!-- Page Title & Top Actions Strip -->
+<div class="flex flex-col lg:flex-row lg:items-end justify-between gap-6 pb-2">
+<div class="space-y-2 max-w-3xl">
+<div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-surface-container-high/80 text-on-surface-variant font-label-sm text-label-sm uppercase tracking-wider backdrop-blur-md">
+<span class="w-2 h-2 rounded-full bg-primary-container animate-pulse"></span>
+<span>NATIONAL ESCROW & TREASURY LEDGER • LandBank & BDO Fiduciary Depository</span>
+</div>
+<h1 class="font-headline-lg text-headline-lg text-on-surface font-semibold tracking-tight">
+          Disbursements & Financial Clearing
+        </h1>
+<p class="font-body-md text-body-md text-on-surface-variant leading-relaxed">
+          Real-time institutional liquidity, escrow tranches, and statutory stipend releases across accredited Philippine HEI student bank accounts.
+        </p>
+</div>
+<!-- Action Pill Group -->
+<div class="flex items-center gap-3 shrink-0">
+<button class="h-9 px-4 rounded-xl bg-surface-container-lowest text-on-surface hover:bg-surface-container transition-all shadow-sm font-label-lg text-label-lg flex items-center gap-2" type="button">
+<span class="material-symbols-outlined text-[18px] text-on-surface-variant">description</span>
+<span>Audit Release Briefing (PDF)</span>
+</button>
+<button class="h-9 px-4 rounded-xl bg-primary-container text-on-primary hover:bg-primary transition-all shadow-sm font-label-lg text-label-lg flex items-center gap-2 shadow-[inset_0_1px_0_rgba(255,255,255,0.2)]" type="button">
+<span class="material-symbols-outlined text-[18px]">lock_clock</span>
+<span>+ Authorize Batch Release (Tranche 2)</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Telemetry KPI Cards (4-column responsive grid) -->
+<div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+<!-- Card 1 -->
+<div class="p-5 rounded-2xl bg-surface-container-lowest/90 backdrop-blur-xl shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between">
+<div class="flex items-center justify-between pb-3">
+<span class="font-label-md text-label-md text-on-surface-variant font-medium">Total Committed Capital</span>
+<div class="w-8 h-8 rounded-xl bg-primary/5 text-primary flex items-center justify-center">
+<span class="material-symbols-outlined text-[20px]">account_balance</span>
+</div>
+</div>
+<div class="space-y-1">
+<div class="font-headline-lg text-headline-lg font-bold text-on-surface tracking-tight">₱148.65M</div>
+<div class="flex items-center gap-1.5 text-primary-container font-label-sm text-label-sm">
+<span class="material-symbols-outlined text-[14px]">verified</span>
+<span>100% Escrow & Bank-verified (318 funds)</span>
+</div>
+</div>
+</div>
+<!-- Card 2 -->
+<div class="p-5 rounded-2xl bg-surface-container-lowest/90 backdrop-blur-xl shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between">
+<div class="flex items-center justify-between pb-3">
+<span class="font-label-md text-label-md text-on-surface-variant font-medium">Disbursed Year-to-Date</span>
+<div class="w-8 h-8 rounded-xl bg-primary/10 text-primary-container flex items-center justify-center">
+<span class="material-symbols-outlined text-[20px]">trending_up</span>
+</div>
+</div>
+<div class="space-y-1">
+<div class="font-headline-lg text-headline-lg font-bold text-on-surface tracking-tight">₱89.42M</div>
+<div class="font-label-sm text-label-sm text-on-surface-variant">
+          60.1% executed • 4,120 active scholars credited
+        </div>
+</div>
+</div>
+<!-- Card 3 -->
+<div class="p-5 rounded-2xl bg-surface-container-lowest/90 backdrop-blur-xl shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between">
+<div class="flex items-center justify-between pb-3">
+<span class="font-label-md text-label-md text-on-surface-variant font-medium">Pending Release (Queue)</span>
+<div class="w-8 h-8 rounded-xl bg-tertiary-fixed text-on-tertiary-fixed flex items-center justify-center">
+<span class="material-symbols-outlined text-[20px]">schedule</span>
+</div>
+</div>
+<div class="space-y-1">
+<div class="font-headline-lg text-headline-lg font-bold text-on-surface tracking-tight">₱18.25M</div>
+<div class="flex items-center gap-1.5 text-on-surface-variant font-label-sm text-label-sm">
+<span class="w-1.5 h-1.5 rounded-full bg-on-tertiary-container"></span>
+<span>Tranche 2 Nov 15 • LandBank STP</span>
+</div>
+</div>
+</div>
+<!-- Card 4 -->
+<div class="p-5 rounded-2xl bg-surface-container-lowest/90 backdrop-blur-xl shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between">
+<div class="flex items-center justify-between pb-3">
+<span class="font-label-md text-label-md text-on-surface-variant font-medium">Escrow Reserve Ratio</span>
+<div class="w-8 h-8 rounded-xl bg-secondary-fixed text-secondary flex items-center justify-center">
+<span class="material-symbols-outlined text-[20px]">security</span>
+</div>
+</div>
+<div class="space-y-1">
+<div class="font-headline-lg text-headline-lg font-bold text-on-surface tracking-tight">99.4%</div>
+<div class="font-label-sm text-label-sm text-on-surface-variant truncate">
+          ₱40.98M reserve buffer in BSP vaults
+        </div>
+</div>
+</div>
+</div>
+<!-- Disbursement Flow & Velocity Analytics Section (2-Column Sequoia Card Layout) -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+<!-- Left Column: Spline Wave / Velocity Chart (7 cols) -->
+<div class="lg:col-span-7 p-6 rounded-2xl bg-surface-container-lowest/95 backdrop-blur-xl shadow-sm flex flex-col justify-between space-y-6">
+<div class="flex items-center justify-between flex-wrap gap-2">
+<div>
+<div class="font-headline-sm text-headline-sm text-on-surface font-semibold">Monthly Release Velocity & Tranche Waves</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Statutory student fund execution rate (June – October 2024)</p>
+</div>
+<div class="px-2.5 py-1 rounded-full bg-primary-fixed/40 text-on-primary-fixed font-label-sm text-label-sm font-semibold flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">task_alt</span>
+<span>AY 24-25 Fall Midterm Tranche Cleared</span>
+</div>
+</div>
+<!-- SVG Velocity Wave Chart -->
+<div class="relative w-full">
+<svg class="w-full h-44 text-primary" fill="none" viewbox="0 0 600 180" xmlns="http://www.w3.org/2000/svg">
+<defs>
+<lineargradient id="gradientTranche" x1="0" x2="0" y1="0" y2="1">
+<stop offset="0%" stop-color="#0F4D2E" stop-opacity="0.32"></stop>
+<stop offset="100%" stop-color="#0F4D2E" stop-opacity="0.0"></stop>
+</lineargradient>
+</defs>
+<!-- Grid lines -->
+<line stroke="#eeedf3" stroke-dasharray="3 3" stroke-width="1" x1="20" x2="580" y1="30" y2="30"></line>
+<line stroke="#eeedf3" stroke-dasharray="3 3" stroke-width="1" x1="20" x2="580" y1="80" y2="80"></line>
+<line stroke="#eeedf3" stroke-dasharray="3 3" stroke-width="1" x1="20" x2="580" y1="130" y2="130"></line>
+<!-- Area Fill -->
+<path d="M 40 145 C 100 140, 140 120, 180 115 C 220 110, 260 25, 310 25 C 360 25, 410 100, 450 105 C 490 110, 530 118, 560 120 L 560 160 L 40 160 Z" fill="url(#gradientTranche)"></path>
+<!-- Smooth Spline -->
+<path d="M 40 145 C 100 140, 140 120, 180 115 C 220 110, 260 25, 310 25 C 360 25, 410 100, 450 105 C 490 110, 530 118, 560 120" stroke="#0F4D2E" stroke-linecap="round" stroke-width="3"></path>
+<!-- Nodes & Data Indicators -->
+<!-- June -->
+<circle cx="40" cy="145" fill="#0F4D2E" r="4"></circle>
+<!-- July -->
+<circle cx="180" cy="115" fill="#0F4D2E" r="4"></circle>
+<!-- August Peak Surge -->
+<circle cx="310" cy="25" fill="#0F4D2E" r="6" stroke="#ffffff" stroke-width="2"></circle>
+<!-- September -->
+<circle cx="450" cy="105" fill="#0F4D2E" r="4"></circle>
+<!-- October -->
+<circle cx="560" cy="120" fill="#0F4D2E" r="4"></circle>
+<!-- Text Labels -->
+<text fill="#707971" font-family="Inter" font-size="10" text-anchor="middle" x="40" y="172">June (₱8M)</text>
+<text fill="#707971" font-family="Inter" font-size="10" text-anchor="middle" x="180" y="172">July (₱14M)</text>
+<text fill="#0F4D2E" font-family="Inter" font-size="11" font-weight="600" text-anchor="middle" x="310" y="172">Aug Surge (₱38M)</text>
+<text fill="#707971" font-family="Inter" font-size="10" text-anchor="middle" x="450" y="172">Sept (₱16M)</text>
+<text fill="#707971" font-family="Inter" font-size="10" text-anchor="middle" x="560" y="172">Oct (₱13.4M)</text>
+</svg>
+</div>
+<!-- Quick Metrics Legend Footnote -->
+<div class="grid grid-cols-3 gap-2 pt-2 border-t border-surface-container-high/60">
+<div class="p-2 rounded-xl bg-surface-container-low/60">
+<div class="font-label-sm text-label-sm text-on-surface-variant uppercase">Peak Day Throughput</div>
+<div class="font-headline-sm text-headline-sm font-bold text-on-surface">₱11.4M / 24h</div>
+</div>
+<div class="p-2 rounded-xl bg-surface-container-low/60">
+<div class="font-label-sm text-label-sm text-on-surface-variant uppercase">Reconciliation Rate</div>
+<div class="font-headline-sm text-headline-sm font-bold text-primary-container">99.82%</div>
+</div>
+<div class="p-2 rounded-xl bg-surface-container-low/60">
+<div class="font-label-sm text-label-sm text-on-surface-variant uppercase">Average Clearing Time</div>
+<div class="font-headline-sm text-headline-sm font-bold text-on-surface">4.2 Hours</div>
+</div>
+</div>
+</div>
+<!-- Right Column: Disbursement Channel Matrix (5 cols) -->
+<div class="lg:col-span-5 p-6 rounded-2xl bg-surface-container-lowest/95 backdrop-blur-xl shadow-sm flex flex-col justify-between space-y-5">
+<div class="flex items-center justify-between">
+<div>
+<div class="font-headline-sm text-headline-sm text-on-surface font-semibold">Disbursement Channel Matrix</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Active settlement routes & liquidity rails</p>
+</div>
+<div class="px-2.5 py-1 rounded-full bg-secondary-fixed/50 text-on-secondary-fixed-variant font-label-sm text-label-sm font-semibold">
+          SLA 1.4 Banking Days
+        </div>
+</div>
+<!-- Channel Progress Breakdown -->
+<div class="space-y-4">
+<!-- Channel 1: LandBank -->
+<div class="space-y-1.5">
+<div class="flex items-center justify-between font-label-md text-label-md">
+<span class="font-semibold text-on-surface flex items-center gap-1.5">
+<span class="w-2 h-2 rounded-full bg-primary-container"></span>
+              LandBank Direct (GovPH Link)
+            </span>
+<span class="text-on-surface-variant font-medium">₱52.4M (58.6%)</span>
+</div>
+<div class="w-full h-2 rounded-full bg-surface-container overflow-hidden">
+<div class="h-full bg-primary-container rounded-full" style="width: 58.6%"></div>
+</div>
+</div>
+<!-- Channel 2: BPI / Metrobank Escrow -->
+<div class="space-y-1.5">
+<div class="flex items-center justify-between font-label-md text-label-md">
+<span class="font-semibold text-on-surface flex items-center gap-1.5">
+<span class="w-2 h-2 rounded-full bg-secondary"></span>
+              BPI / Metrobank Escrow
+            </span>
+<span class="text-on-surface-variant font-medium">₱26.8M (30.0%)</span>
+</div>
+<div class="w-full h-2 rounded-full bg-surface-container overflow-hidden">
+<div class="h-full bg-secondary rounded-full" style="width: 30.0%"></div>
+</div>
+</div>
+<!-- Channel 3: GCash / Maya Digital Wallet -->
+<div class="space-y-1.5">
+<div class="flex items-center justify-between font-label-md text-label-md">
+<span class="font-semibold text-on-surface flex items-center gap-1.5">
+<span class="w-2 h-2 rounded-full bg-tertiary-fixed-dim"></span>
+              Digital Wallets (UniFAST Direct)
+            </span>
+<span class="text-on-surface-variant font-medium">₱10.2M (11.4%)</span>
+</div>
+<div class="w-full h-2 rounded-full bg-surface-container overflow-hidden">
+<div class="h-full bg-tertiary-fixed-dim rounded-full" style="width: 11.4%"></div>
+</div>
+</div>
+</div>
+<!-- Fiduciary Security Indicator Banner inside Channel Matrix -->
+<div class="p-3.5 rounded-xl bg-surface-container-low/70 flex items-center gap-3">
+<div class="w-9 h-9 rounded-lg bg-surface-container-lowest shadow-sm flex items-center justify-center shrink-0 text-primary">
+<span class="material-symbols-outlined text-[20px]">hub</span>
+</div>
+<div class="min-w-0 flex-1">
+<div class="font-label-md text-label-md font-semibold text-on-surface truncate">ISO-20022 Financial Messaging</div>
+<div class="font-body-sm text-body-sm text-on-surface-variant truncate">Real-time RTGS & PESONet interconnectivity active</div>
+</div>
+<span class="material-symbols-outlined text-primary text-[18px]">verified</span>
+</div>
+</div>
+</div>
+<!-- Filter & Segmented Controls Bar (Apple macOS Style Recessed Segment) -->
+<div class="space-y-3">
+<div class="flex flex-col xl:flex-row items-stretch xl:items-center justify-between gap-3">
+<!-- Recessed Segmented Pill Picker -->
+<div class="p-1 rounded-xl bg-surface-container-high/70 backdrop-blur-md flex items-center overflow-x-auto">
+<button class="px-3.5 py-1.5 rounded-lg bg-surface-container-lowest text-on-surface font-label-md text-label-md font-medium shadow-sm whitespace-nowrap" type="button">
+          All Tranches (₱148.65M)
+        </button>
+<button class="px-3.5 py-1.5 rounded-lg text-on-surface-variant hover:text-on-surface font-label-md text-label-md font-medium transition-colors whitespace-nowrap" type="button">
+          Disbursed (₱89.42M)
+        </button>
+<button class="px-3.5 py-1.5 rounded-lg text-on-surface-variant hover:text-on-surface font-label-md text-label-md font-medium transition-colors whitespace-nowrap" type="button">
+          Pending Authorization (₱18.25M)
+        </button>
+<button class="px-3.5 py-1.5 rounded-lg text-on-surface-variant hover:text-on-surface font-label-md text-label-md font-medium transition-colors whitespace-nowrap" type="button">
+          Flagged Holds (₱1.80M)
+        </button>
+<button class="px-3.5 py-1.5 rounded-lg text-on-surface-variant hover:text-on-surface font-label-md text-label-md font-medium transition-colors whitespace-nowrap" type="button">
+          Completed Batches
+        </button>
+</div>
+<!-- Search & Cycle Selectors -->
+<div class="flex flex-wrap items-center gap-2.5">
+<div class="relative flex-1 min-w-[280px]">
+<span class="material-symbols-outlined absolute left-3 top-2 text-on-surface-variant text-[18px]">search</span>
+<input class="w-full h-9 pl-9 pr-3 rounded-xl bg-surface-container-lowest text-on-surface font-body-sm text-body-sm placeholder:text-on-surface-variant/60 shadow-sm focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all" placeholder="Search tranche ID, provider, beneficiary..." type="text"/>
+</div>
+<button class="h-9 px-3 rounded-xl bg-surface-container-lowest text-on-surface hover:bg-surface-container font-label-md text-label-md font-medium shadow-sm flex items-center gap-1.5" type="button">
+<span>AY 2024–2025 • Semester 1</span>
+<span class="material-symbols-outlined text-[16px] text-on-surface-variant">expand_more</span>
+</button>
+<button class="h-9 px-3 rounded-xl bg-surface-container-lowest text-on-surface hover:bg-surface-container font-label-md text-label-md font-medium shadow-sm flex items-center gap-1.5" type="button">
+<span>All Gateways</span>
+<span class="material-symbols-outlined text-[16px] text-on-surface-variant">tune</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Disbursement Ledger & Batch Clearing Table (MacOS High-Density Dossier View) -->
+<div class="w-full rounded-2xl bg-surface-container-lowest shadow-sm overflow-hidden">
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-container-low/60 text-on-surface-variant font-label-sm text-label-sm uppercase tracking-wider">
+<th class="py-3 px-5 font-semibold">Tranche Reference</th>
+<th class="py-3 px-4 font-semibold">Foundation / Provider</th>
+<th class="py-3 px-4 font-semibold">Target Institution / Cohort</th>
+<th class="py-3 px-4 font-semibold text-center">Beneficiaries</th>
+<th class="py-3 px-4 font-semibold text-right">Amount (PHP)</th>
+<th class="py-3 px-4 font-semibold">Settlement Channel</th>
+<th class="py-3 px-4 font-semibold">Status</th>
+<th class="py-3 px-5 font-semibold text-right">Actions</th>
+</tr>
+</thead>
+<tbody class="divide-y-0 text-on-surface font-body-sm text-body-sm">
+<!-- Row 1: Ayala Foundation -->
+<tr class="hover:bg-surface-container-low/50 transition-colors group">
+<td class="py-3.5 px-5 font-label-md text-label-md font-semibold text-primary">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[16px] text-on-surface-variant">tag</span>
+<span>TRN-2024-0981</span>
+</div>
+</td>
+<td class="py-3.5 px-4 font-medium">Ayala Foundation Inc.</td>
+<td class="py-3.5 px-4 text-on-surface-variant">UP Diliman & UP Los Baños (STEM)</td>
+<td class="py-3.5 px-4 text-center">
+<span class="px-2 py-0.5 rounded-full bg-surface-container text-on-surface font-label-sm text-label-sm">40 Scholars</span>
+</td>
+<td class="py-3.5 px-4 text-right font-semibold font-label-md text-label-md">₱2,400,000.00</td>
+<td class="py-3.5 px-4">
+<span class="px-2 py-1 rounded-md bg-secondary-fixed/30 text-secondary font-label-sm text-label-sm">BPI Escrow Link</span>
+</td>
+<td class="py-3.5 px-4">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-primary-fixed/40 text-on-primary-fixed font-label-sm text-label-sm font-semibold">
+<span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
+                Disbursed / Reconciled
+              </span>
+</td>
+<td class="py-3.5 px-5 text-right">
+<button class="text-primary hover:text-primary-container font-label-md text-label-md font-medium inline-flex items-center gap-1" type="button">
+                Audit Dossier <span class="text-[14px]">→</span>
+</button>
+</td>
+</tr>
+<!-- Row 2: Metrobank Foundation -->
+<tr class="hover:bg-surface-container-low/50 transition-colors group bg-surface-container-lowest">
+<td class="py-3.5 px-5 font-label-md text-label-md font-semibold text-primary">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[16px] text-on-surface-variant">tag</span>
+<span>TRN-2024-0982</span>
+</div>
+</td>
+<td class="py-3.5 px-4 font-medium">Metrobank Foundation Inc.</td>
+<td class="py-3.5 px-4 text-on-surface-variant">PUP Manila & SUCs Aggregate</td>
+<td class="py-3.5 px-4 text-center">
+<span class="px-2 py-0.5 rounded-full bg-surface-container text-on-surface font-label-sm text-label-sm">100 Scholars</span>
+</td>
+<td class="py-3.5 px-4 text-right font-semibold font-label-md text-label-md">₱5,000,000.00</td>
+<td class="py-3.5 px-4">
+<span class="px-2 py-1 rounded-md bg-primary-fixed/30 text-on-primary-fixed font-label-sm text-label-sm">LandBank STP</span>
+</td>
+<td class="py-3.5 px-4">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-primary-fixed/40 text-on-primary-fixed font-label-sm text-label-sm font-semibold">
+<span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
+                Disbursed / Reconciled
+              </span>
+</td>
+<td class="py-3.5 px-5 text-right">
+<button class="text-primary hover:text-primary-container font-label-md text-label-md font-medium inline-flex items-center gap-1" type="button">
+                Audit Dossier <span class="text-[14px]">→</span>
+</button>
+</td>
+</tr>
+<!-- Row 3: Dr. Ernesto Tan Memorial Trust (Pending Dual-Sign) -->
+<tr class="hover:bg-surface-container-low/50 transition-colors group">
+<td class="py-3.5 px-5 font-label-md text-label-md font-semibold text-primary">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[16px] text-on-surface-variant">tag</span>
+<span>TRN-2024-0983</span>
+</div>
+</td>
+<td class="py-3.5 px-4 font-medium">Dr. Ernesto Tan Memorial Trust</td>
+<td class="py-3.5 px-4 text-on-surface-variant">UST Manila & UP College of Medicine</td>
+<td class="py-3.5 px-4 text-center">
+<span class="px-2 py-0.5 rounded-full bg-surface-container text-on-surface font-label-sm text-label-sm">6 Scholars</span>
+</td>
+<td class="py-3.5 px-4 text-right font-semibold font-label-md text-label-md">₱600,000.00</td>
+<td class="py-3.5 px-4">
+<span class="px-2 py-1 rounded-md bg-primary-fixed/30 text-on-primary-fixed font-label-sm text-label-sm">LandBank STP</span>
+</td>
+<td class="py-3.5 px-4">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-tertiary-fixed text-on-tertiary-fixed font-label-sm text-label-sm font-semibold">
+<span class="w-1.5 h-1.5 rounded-full bg-on-tertiary-container animate-ping"></span>
+                Pending Dual-Sign
+              </span>
+</td>
+<td class="py-3.5 px-5 text-right">
+<button class="h-7 px-2.5 rounded-lg bg-tertiary-fixed text-on-tertiary-fixed hover:bg-tertiary-fixed-dim font-label-sm text-label-sm font-semibold inline-flex items-center gap-1" type="button">
+                Dual-Authorize
+              </button>
+</td>
+</tr>
+<!-- Row 4: Gokongwei Brothers Foundation (Processing Batch B) -->
+<tr class="hover:bg-surface-container-low/50 transition-colors group bg-surface-container-lowest">
+<td class="py-3.5 px-5 font-label-md text-label-md font-semibold text-primary">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[16px] text-on-surface-variant">tag</span>
+<span>TRN-2024-0984</span>
+</div>
+</td>
+<td class="py-3.5 px-4 font-medium">Gokongwei Brothers Foundation</td>
+<td class="py-3.5 px-4 text-on-surface-variant">Region VI Western Visayas Hub</td>
+<td class="py-3.5 px-4 text-center">
+<span class="px-2 py-0.5 rounded-full bg-surface-container text-on-surface font-label-sm text-label-sm">65 Scholars</span>
+</td>
+<td class="py-3.5 px-4 text-right font-semibold font-label-md text-label-md">₱3,250,000.00</td>
+<td class="py-3.5 px-4">
+<span class="px-2 py-1 rounded-md bg-primary-fixed/30 text-on-primary-fixed font-label-sm text-label-sm">LandBank STP</span>
+</td>
+<td class="py-3.5 px-4">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-secondary-fixed text-secondary font-label-sm text-label-sm font-semibold">
+<span class="material-symbols-outlined text-[12px] animate-spin">sync</span>
+                Processing Batch B
+              </span>
+</td>
+<td class="py-3.5 px-5 text-right">
+<button class="text-secondary hover:text-secondary-container font-label-md text-label-md font-medium inline-flex items-center gap-1" type="button">
+                Track STP Queue
+              </button>
+</td>
+</tr>
+<!-- Row 5: Bataan Agro-Industrial Bursary (Hold) -->
+<tr class="hover:bg-surface-container-low/50 transition-colors group">
+<td class="py-3.5 px-5 font-label-md text-label-md font-semibold text-primary">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[16px] text-on-surface-variant">tag</span>
+<span>TRN-2024-0985</span>
+</div>
+</td>
+<td class="py-3.5 px-4 font-medium">Bataan Agro-Industrial Bursary</td>
+<td class="py-3.5 px-4 text-on-surface-variant">CLSU Muñoz Agricultural Hub</td>
+<td class="py-3.5 px-4 text-center">
+<span class="px-2 py-0.5 rounded-full bg-surface-container text-on-surface font-label-sm text-label-sm">15 Scholars</span>
+</td>
+<td class="py-3.5 px-4 text-right font-semibold font-label-md text-label-md">₱375,000.00</td>
+<td class="py-3.5 px-4">
+<span class="px-2 py-1 rounded-md bg-surface-container text-on-surface-variant font-label-sm text-label-sm">Manual Hold</span>
+</td>
+<td class="py-3.5 px-4">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-error-container text-on-error-container font-label-sm text-label-sm font-semibold">
+<span class="w-1.5 h-1.5 rounded-full bg-error"></span>
+                Escrow Hold / Compliance
+              </span>
+</td>
+<td class="py-3.5 px-5 text-right">
+<button class="h-7 px-2.5 rounded-lg bg-error-container text-on-error-container hover:bg-error/20 font-label-sm text-label-sm font-semibold inline-flex items-center gap-1" type="button">
+                Resolve Hold
+              </button>
+</td>
+</tr>
+<!-- Row 6: Aboitiz Foundation -->
+<tr class="hover:bg-surface-container-low/50 transition-colors group bg-surface-container-lowest">
+<td class="py-3.5 px-5 font-label-md text-label-md font-semibold text-primary">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[16px] text-on-surface-variant">tag</span>
+<span>TRN-2024-0986</span>
+</div>
+</td>
+<td class="py-3.5 px-4 font-medium">Aboitiz Foundation</td>
+<td class="py-3.5 px-4 text-on-surface-variant">Region VII Cebu IT & Eng Corridor</td>
+<td class="py-3.5 px-4 text-center">
+<span class="px-2 py-0.5 rounded-full bg-surface-container text-on-surface font-label-sm text-label-sm">45 Scholars</span>
+</td>
+<td class="py-3.5 px-4 text-right font-semibold font-label-md text-label-md">₱2,250,000.00</td>
+<td class="py-3.5 px-4">
+<span class="px-2 py-1 rounded-md bg-secondary-fixed/30 text-secondary font-label-sm text-label-sm">Metrobank Escrow</span>
+</td>
+<td class="py-3.5 px-4">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-primary-fixed/40 text-on-primary-fixed font-label-sm text-label-sm font-semibold">
+<span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
+                Disbursed / Reconciled
+              </span>
+</td>
+<td class="py-3.5 px-5 text-right">
+<button class="text-primary hover:text-primary-container font-label-md text-label-md font-medium inline-flex items-center gap-1" type="button">
+                Audit Dossier <span class="text-[14px]">→</span>
+</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Ledger Pagination Footer -->
+<div class="p-4 bg-surface-container-low/40 flex items-center justify-between text-on-surface-variant font-label-sm text-label-sm">
+<div class="flex items-center gap-2">
+<span>Showing 6 of 142 batch tranches</span>
+<span class="w-1 h-1 rounded-full bg-outline-variant"></span>
+<span>Reconciliation Sync: Just now</span>
+</div>
+<div class="flex items-center gap-1">
+<button class="p-1 rounded-lg hover:bg-surface-container-high transition-colors disabled:opacity-40" disabled="" type="button">
+<span class="material-symbols-outlined text-[18px]">chevron_left</span>
+</button>
+<span class="px-2 font-medium text-on-surface">1</span>
+<button class="p-1 rounded-lg hover:bg-surface-container-high transition-colors" type="button">
+<span class="material-symbols-outlined text-[18px]">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Bottom Fiduciary Integrity Card (BSP & COA Regulatory Attestation) -->
+<div class="p-6 rounded-2xl bg-surface-container-lowest/95 shadow-sm relative overflow-hidden">
+<div class="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
+<div class="flex items-start gap-4">
+<div class="w-12 h-12 rounded-2xl bg-primary-container text-on-primary flex items-center justify-center shrink-0 shadow-sm">
+<span class="material-symbols-outlined text-[24px]">verified_user</span>
+</div>
+<div class="space-y-1">
+<div class="flex items-center gap-2">
+<span class="font-headline-sm text-headline-sm text-on-surface font-semibold">
+              Bangko Sentral ng Pilipinas (BSP) & COA Regulatory Attestation
+            </span>
+<span class="px-2 py-0.5 rounded-md bg-primary-fixed/50 text-primary font-label-sm text-label-sm font-semibold">
+              ACTIVE ZERO-LEAKAGE AUDIT
+            </span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant max-w-3xl leading-relaxed">
+            All fund releases are cryptographically anchored to Commission on Audit (COA) Circular 2023-004 guidelines. Direct API STP handshake through LandBank Real-Time Gross Settlement ensures 100% fiduciary transparency with zero third-party disbursement intermediaries.
+          </p>
+<div class="pt-2 flex flex-wrap items-center gap-4 font-label-sm text-label-sm text-on-surface-variant">
+<div class="flex items-center gap-1 font-mono">
+<span class="text-outline">SHA256:</span>
+<span class="text-on-surface font-semibold">8f92a4...d021be73c</span>
+</div>
+<span>•</span>
+<div class="flex items-center gap-1">
+<span class="text-outline">Gateway Latency:</span>
+<span class="text-primary-container font-semibold">142ms LandBank GovPH Bridge</span>
+</div>
+<span>•</span>
+<div class="flex items-center gap-1">
+<span class="text-outline">Next Audit Signoff:</span>
+<span class="text-on-surface font-semibold">15 Nov 2024 (17:00 PST)</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Live Handshake Pill Button -->
+<div class="shrink-0 flex items-center gap-3">
+<button class="h-9 px-4 rounded-xl bg-surface-container text-on-surface hover:bg-surface-container-high transition-colors font-label-md text-label-md font-semibold flex items-center gap-2" type="button">
+<span class="material-symbols-outlined text-[16px] text-primary">gavel</span>
+<span>View Circular 2023-004 Cert</span>
+</button>
+</div>
+</div>
+</div>
+</div></main></div></body></html>

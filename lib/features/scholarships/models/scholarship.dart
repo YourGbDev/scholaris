@@ -40,3 +40,12 @@ abstract class Scholarship with _$Scholarship {
   factory Scholarship.fromJson(Map<String, dynamic> json) =>
       _$ScholarshipFromJson(json);
 }
+
+extension ScholarshipAwardExt on Scholarship {
+  int get awardAmount {
+    final t = title.toLowerCase();
+    if (t.contains('full') || t.contains('excellence')) return 100000;
+    if (t.contains('half') || t.contains('stem')) return 60000;
+    return 50000;
+  }
+}

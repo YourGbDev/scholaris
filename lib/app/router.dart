@@ -204,6 +204,23 @@ final routerProvider = Provider<GoRouter>((ref) {
         name: 'become-provider',
         builder: (context, state) => const ProviderSignupScreen(),
       ),
+      // Landing page and legacy route aliases
+      GoRoute(
+        path: '/student/login',
+        redirect: (context, state) => '/login',
+      ),
+      GoRoute(
+        path: '/provider/login',
+        redirect: (context, state) => '/login',
+      ),
+      GoRoute(
+        path: '/student/signup',
+        redirect: (context, state) => '/signup',
+      ),
+      GoRoute(
+        path: '/provider/signup',
+        redirect: (context, state) => '/become-provider',
+      ),
       GoRoute(
         path: '/provider-review',
         name: 'provider-review',
@@ -521,7 +538,11 @@ abstract final class AdminRoute {
 bool _isAuthRoute(String location) =>
     location == '/login' ||
     location == '/signup' ||
-    location == '/become-provider';
+    location == '/become-provider' ||
+    location == '/student/login' ||
+    location == '/provider/login' ||
+    location == '/student/signup' ||
+    location == '/provider/signup';
 
 /// Auth-aware redirect:
 ///  - forgot-password route       → always allowed (public request screen)

@@ -5,7 +5,10 @@
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../applications/providers/applications_provider.dart';
 import '../../auth/controllers/auth_controller.dart';
+import '../../profile/models/student_profile.dart';
+import '../../profile/providers/profile_setup_provider.dart';
 import '../../scholarships/models/scholarship.dart';
 import '../../scholarships/providers/scholarships_provider.dart';
 
@@ -118,4 +121,23 @@ final filteredProviderScholarshipsProvider =
       return true;
     }).toList();
   });
+});
+
+/// Fetches student profiles for all applicant userIds present in incoming applications.
+final providerApplicantProfilesProvider =
+    FutureProvider<Map<String, StudentProfile>>((ref) async {
+  final apps = await ref.watch(incomingApplicationsProvider.future);
+  final userIds = apps.map((a) => a.userId).toSet();
+  if (userIds.isEmpty) return {};
+  final profileRepo = ref.watch(profileRepositoryProvider);
+  final results = await Future.wait(
+    userIds.map((id) => profileRepo.fetchProfileById(id)),
+  );
+  final map = <String, StudentProfile>{};
+  for (final profile in results) {
+    if (profile != null) {
+      map[profile.id] = profile;
+    }
+  }
+  return map;
 });

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 import 'package:scholaris/features/applications/models/application.dart';
 import 'package:scholaris/features/applications/providers/applications_provider.dart';
@@ -28,10 +29,40 @@ class AdminDashboardTab extends ConsumerWidget {
           physics: const AlwaysScrollableScrollPhysics(),
           padding: const EdgeInsets.fromLTRB(24, 20, 24, 32),
           children: [
+            // Apple Design Header with CHED Eyebrow
+            Row(
+              children: [
+                Container(
+                  width: 20,
+                  height: 20,
+                  decoration: BoxDecoration(
+                    color: kAdminBridgeGreen.withValues(alpha: 0.12),
+                    borderRadius: BorderRadius.circular(6),
+                  ),
+                  child: const Center(
+                    child: Icon(Icons.verified_rounded, size: 13, color: kAdminBridgeGreen),
+                  ),
+                ),
+                Expanded(
+                  child: Text(
+                    'COMMISSION ON HIGHER EDUCATION REGISTRY',
+                    style: GoogleFonts.inter(
+                      fontSize: 10.5,
+                      fontWeight: FontWeight.w700,
+                      letterSpacing: 1.1,
+                      color: kAdminTextSecondary,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 6),
             Text(
               'System Overview',
               style: adminHeaderStyle(
-                fontSize: 20,
+                fontSize: 22,
                 fontWeight: FontWeight.w700,
                 color: kAdminNavyTrust,
               ),
@@ -219,135 +250,157 @@ class _CompactStatStrip extends StatelessWidget {
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (context, constraints) {
-        final isNarrow = constraints.maxWidth < 540;
+        final isNarrow = constraints.maxWidth < 640;
+
+        final card1 = _AppleKpiCard(
+          label: 'Active Scholarships',
+          value: '$activeScholarships',
+          badgeText: 'Catalog',
+          badgeColor: kAdminBridgeGreen,
+          subtext: 'Active grant programs listed',
+        );
+
+        final card2 = _AppleKpiCard(
+          label: 'Total Applications',
+          value: '$totalApplications',
+          badgeText: '+Live',
+          badgeColor: kAdminBridgeGreen,
+          subtext: 'Registered student applicants',
+        );
+
+        final card3 = _AppleKpiCard(
+          label: 'Approved Grants',
+          value: '$approvedCount',
+          badgeText: 'Verified',
+          badgeColor: const Color(0xFF1B3A5C),
+          subtext: 'Dean & committee approved',
+        );
+
+        final card4 = _AppleKpiCard(
+          label: 'Acceptance Rate',
+          value: acceptanceRate,
+          badgeText: 'AY 24–25',
+          badgeColor: const Color(0xFF0070EB),
+          subtext: 'Acceptance rate across all pools',
+        );
 
         if (isNarrow) {
-          return Container(
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: kAdminCardRadius,
-              border: Border.all(color: kAdminHairline, width: 1),
-            ),
-            child: Column(
-              children: [
-                Row(
-                  children: [
-                    Expanded(
-                      child: _StatCell(
-                        label: 'Active Scholarships',
-                        value: '$activeScholarships',
-                      ),
-                    ),
-                    Container(width: 1, height: 50, color: kAdminHairline),
-                    Expanded(
-                      child: _StatCell(
-                        label: 'Total Applications',
-                        value: '$totalApplications',
-                      ),
-                    ),
-                  ],
-                ),
-                const Divider(height: 1, color: kAdminHairline),
-                Row(
-                  children: [
-                    Expanded(
-                      child: _StatCell(
-                        label: 'Approved Grants',
-                        value: '$approvedCount',
-                      ),
-                    ),
-                    Container(width: 1, height: 50, color: kAdminHairline),
-                    Expanded(
-                      child: _StatCell(
-                        label: 'Acceptance Rate',
-                        value: acceptanceRate,
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
+          return Column(
+            children: [
+              Row(
+                children: [
+                  Expanded(child: card1),
+                  const SizedBox(width: 12),
+                  Expanded(child: card2),
+                ],
+              ),
+              const SizedBox(height: 12),
+              Row(
+                children: [
+                  Expanded(child: card3),
+                  const SizedBox(width: 12),
+                  Expanded(child: card4),
+                ],
+              ),
+            ],
           );
         }
 
-        return Container(
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: kAdminCardRadius,
-            border: Border.all(color: kAdminHairline, width: 1),
-          ),
-          child: IntrinsicHeight(
-            child: Row(
-              children: [
-                Expanded(
-                  child: _StatCell(
-                    label: 'Active Scholarships',
-                    value: '$activeScholarships',
-                  ),
-                ),
-                const VerticalDivider(width: 1, thickness: 1, color: kAdminHairline),
-                Expanded(
-                  child: _StatCell(
-                    label: 'Total Applications',
-                    value: '$totalApplications',
-                  ),
-                ),
-                const VerticalDivider(width: 1, thickness: 1, color: kAdminHairline),
-                Expanded(
-                  child: _StatCell(
-                    label: 'Approved Grants',
-                    value: '$approvedCount',
-                  ),
-                ),
-                const VerticalDivider(width: 1, thickness: 1, color: kAdminHairline),
-                Expanded(
-                  child: _StatCell(
-                    label: 'Acceptance Rate',
-                    value: acceptanceRate,
-                  ),
-                ),
-              ],
-            ),
-          ),
+        return Row(
+          children: [
+            Expanded(child: card1),
+            const SizedBox(width: 12),
+            Expanded(child: card2),
+            const SizedBox(width: 12),
+            Expanded(child: card3),
+            const SizedBox(width: 12),
+            Expanded(child: card4),
+          ],
         );
       },
     );
   }
 }
 
-class _StatCell extends StatelessWidget {
-  const _StatCell({
+class _AppleKpiCard extends StatelessWidget {
+  const _AppleKpiCard({
     required this.label,
     required this.value,
+    required this.badgeText,
+    required this.badgeColor,
+    required this.subtext,
   });
 
   final String label;
   final String value;
+  final String badgeText;
+  final Color badgeColor;
+  final String subtext;
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: kAdminCardRadius,
+        border: Border.all(color: kAdminHairline, width: 1),
+        boxShadow: kAdminCardShadow,
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisSize: MainAxisSize.min,
         children: [
-          Text(
-            label,
-            style: adminLabelStyle(
-              fontSize: 12,
-              fontWeight: FontWeight.w500,
-              color: kAdminTextSecondary,
-            ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Flexible(
+                child: Text(
+                  label,
+                  style: GoogleFonts.inter(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
+                    letterSpacing: -0.1,
+                    color: kAdminTextSecondary,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                decoration: BoxDecoration(
+                  color: badgeColor.withValues(alpha: 0.12),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Text(
+                  badgeText,
+                  style: GoogleFonts.inter(
+                    fontSize: 10,
+                    fontWeight: FontWeight.w700,
+                    color: badgeColor,
+                  ),
+                ),
+              ),
+            ],
           ),
-          const SizedBox(height: 4),
+          const SizedBox(height: 10),
           Text(
             value,
-            style: adminDataMono(
-              fontSize: 20,
-              fontWeight: FontWeight.w600,
+            style: GoogleFonts.inter(
+              fontSize: 26,
+              fontWeight: FontWeight.w700,
               color: kAdminNavyTrust,
             ),
+          ),
+          const SizedBox(height: 6),
+          Text(
+            subtext,
+            style: GoogleFonts.inter(
+              fontSize: 11.5,
+              color: kAdminTextSecondary,
+            ),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
           ),
         ],
       ),

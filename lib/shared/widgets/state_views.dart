@@ -210,26 +210,28 @@ class EmptyView extends StatelessWidget {
     );
 
     return Center(
-      child: Container(
-        margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
-        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 28),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: kBorderLight),
-          boxShadow: const [
-            BoxShadow(
-              color: Color(0x081B3A5C),
-              blurRadius: 16,
-              offset: Offset(0, 4),
-            ),
-          ],
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            visualWidget,
-            const SizedBox(height: 16),
+      child: SingleChildScrollView(
+        physics: const ClampingScrollPhysics(),
+        child: Container(
+          margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: kBorderLight),
+            boxShadow: const [
+              BoxShadow(
+                color: Color(0x081B3A5C),
+                blurRadius: 16,
+                offset: Offset(0, 4),
+              ),
+            ],
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              visualWidget,
+              const SizedBox(height: 16),
             Text(
               title,
               textAlign: TextAlign.center,
@@ -277,6 +279,7 @@ class EmptyView extends StatelessWidget {
             ],
           ],
         ),
+      ),
       ),
     );
   }

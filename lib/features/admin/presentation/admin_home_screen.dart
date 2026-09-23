@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:scholaris/shared/widgets/logout_confirmation_dialog.dart';
+import 'package:scholaris/shared/widgets/scholaris_logo.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'admin_analytics_tab.dart';
@@ -82,16 +84,23 @@ class _AdminHomeScreenState extends ConsumerState<AdminHomeScreen> {
         backgroundColor: kAdminSurface,
         body: Row(
           children: [
-            // Persistent Left Sidebar on Desktop (>= 768px)
+            // Persistent Left Sidebar on Desktop (>= 768px, 256px wide Apple design)
             SizedBox(
-              width: 220,
+              width: 256,
               child: _buildSidebar(context, ref, tabIndex, isDrawer: false),
             ),
-            // Main Work Surface
+            // Main Work Surface with Apple Top Bar
             Expanded(
-              child: IndexedStack(
-                index: tabIndex,
-                children: _tabs,
+              child: Column(
+                children: [
+                  _buildTopBar(context, ref),
+                  Expanded(
+                    child: IndexedStack(
+                      index: tabIndex,
+                      children: _tabs,
+                    ),
+                  ),
+                ],
               ),
             ),
           ],
@@ -119,22 +128,7 @@ class _AdminHomeScreenState extends ConsumerState<AdminHomeScreen> {
         title: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Container(
-              padding: const EdgeInsets.all(5),
-              decoration: BoxDecoration(
-                color: kAdminBridgeGreen.withValues(alpha: 0.10),
-                borderRadius: kAdminChromeRadius,
-                border: Border.all(
-                  color: kAdminBridgeGreen.withValues(alpha: 0.20),
-                  width: 1,
-                ),
-              ),
-              child: const Icon(
-                Icons.admin_panel_settings_rounded,
-                color: kAdminBridgeGreen,
-                size: 16,
-              ),
-            ),
+            const ScholarisLogo(compact: true, showWordmark: false, badgeSize: 28),
             const SizedBox(width: 8),
             Flexible(
               child: Text(
@@ -155,7 +149,7 @@ class _AdminHomeScreenState extends ConsumerState<AdminHomeScreen> {
             icon: const Icon(
               Icons.logout_rounded,
               color: kAdminCoralConnect,
-              size: 18,
+              size: 20,
             ),
             tooltip: 'Sign out',
             onPressed: () => _handleSignOut(context),
@@ -171,6 +165,104 @@ class _AdminHomeScreenState extends ConsumerState<AdminHomeScreen> {
       body: IndexedStack(
         index: tabIndex,
         children: _tabs,
+      ),
+    );
+  }
+
+  Widget _buildTopBar(BuildContext context, WidgetRef ref) {
+    return Container(
+      height: 56,
+      padding: const EdgeInsets.symmetric(horizontal: 24),
+      decoration: const BoxDecoration(
+        color: Colors.white,
+        border: Border(
+          bottom: BorderSide(color: kAdminHairline, width: 1),
+        ),
+      ),
+      child: Row(
+        children: [
+          // Search box
+          Expanded(
+            child: Align(
+              alignment: Alignment.centerLeft,
+              child: Container(
+                constraints: const BoxConstraints(maxWidth: 360),
+                height: 36,
+                padding: const EdgeInsets.symmetric(horizontal: 12),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFF4F3F8),
+                  borderRadius: BorderRadius.circular(10),
+                  border: Border.all(color: kAdminHairline),
+                ),
+                child: Row(
+                  children: [
+                    const Icon(Icons.search_rounded, size: 18, color: kAdminTextSecondary),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        '⌘K Search scholars, grants, audits...',
+                        style: GoogleFonts.inter(
+                          fontSize: 13,
+                          color: kAdminTextSecondary.withValues(alpha: 0.8),
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(width: 16),
+          // Academic Year badge
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+            decoration: BoxDecoration(
+              color: const Color(0xFFF4F3F8),
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  width: 6,
+                  height: 6,
+                  decoration: const BoxDecoration(
+                    color: kAdminBridgeGreen,
+                    shape: BoxShape.circle,
+                  ),
+                ),
+                const SizedBox(width: 6),
+                Text(
+                  'AY 2024–2025 • Semester 1',
+                  style: GoogleFonts.inter(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w500,
+                    color: kAdminTextPrimary,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(width: 12),
+          // User avatar
+          Container(
+            width: 32,
+            height: 32,
+            decoration: const BoxDecoration(
+              color: kAdminBridgeGreen,
+              shape: BoxShape.circle,
+            ),
+            child: const Center(
+              child: Icon(
+                Icons.admin_panel_settings_rounded,
+                size: 16,
+                color: Colors.white,
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -193,33 +285,24 @@ class _AdminHomeScreenState extends ConsumerState<AdminHomeScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Brand Header
+          // Brand Header with real Scholaris Logo (strictly NO window-chrome dots)
           Padding(
-            padding: const EdgeInsets.fromLTRB(16, 20, 16, 16),
+            padding: const EdgeInsets.fromLTRB(16, 14, 16, 10),
             child: Row(
               children: [
-                Container(
-                  padding: const EdgeInsets.all(6),
-                  decoration: BoxDecoration(
-                    color: kAdminBridgeGreen.withValues(alpha: 0.10),
-                    borderRadius: kAdminChromeRadius,
-                    border: Border.all(
-                      color: kAdminBridgeGreen.withValues(alpha: 0.20),
-                      width: 1,
-                    ),
-                  ),
-                  child: const Icon(
-                    Icons.admin_panel_settings_rounded,
-                    color: kAdminBridgeGreen,
-                    size: 18,
-                  ),
+                const ScholarisLogo(
+                  badgeSize: 30,
+                  iconSize: 18,
+                  fontSize: 18,
+                  compact: true,
+                  showWordmark: false,
                 ),
-                const SizedBox(width: 10),
+                const SizedBox(width: 8),
                 Expanded(
                   child: Text(
                     'Scholaris Admin',
                     style: adminHeaderStyle(
-                      fontSize: 16,
+                      fontSize: 15.5,
                       fontWeight: FontWeight.w700,
                       color: kAdminNavyTrust,
                     ),
@@ -227,19 +310,37 @@ class _AdminHomeScreenState extends ConsumerState<AdminHomeScreen> {
                     overflow: TextOverflow.ellipsis,
                   ),
                 ),
-                if (isDrawer)
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFE3E2E7),
+                    borderRadius: BorderRadius.circular(6),
+                  ),
+                  child: Text(
+                    'OPS',
+                    style: GoogleFonts.inter(
+                      fontSize: 9,
+                      fontWeight: FontWeight.w700,
+                      letterSpacing: 0.8,
+                      color: const Color(0xFF404942),
+                    ),
+                  ),
+                ),
+                if (isDrawer) ...[
+                  const SizedBox(width: 4),
                   IconButton(
                     icon: const Icon(Icons.close_rounded,
                         size: 18, color: kAdminTextSecondary),
                     onPressed: () => Navigator.of(context).pop(),
                   ),
+                ],
               ],
             ),
           ),
           const Divider(height: 1, color: kAdminHairline),
           Expanded(
             child: SingleChildScrollView(
-              padding: const EdgeInsets.symmetric(vertical: 8),
+              padding: const EdgeInsets.symmetric(vertical: 4),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -275,7 +376,7 @@ class _AdminHomeScreenState extends ConsumerState<AdminHomeScreen> {
                       if (isDrawer) Navigator.of(context).pop();
                     },
                   ),
-                  const SizedBox(height: 12),
+                  const SizedBox(height: 6),
                   // Management Section
                   _sectionHeader('Management'),
                   _SidebarNavItem(
@@ -298,7 +399,7 @@ class _AdminHomeScreenState extends ConsumerState<AdminHomeScreen> {
                       if (isDrawer) Navigator.of(context).pop();
                     },
                   ),
-                  const SizedBox(height: 12),
+                  const SizedBox(height: 6),
                   // Intelligence Section
                   _sectionHeader('Intelligence'),
                   _SidebarNavItem(
@@ -325,35 +426,131 @@ class _AdminHomeScreenState extends ConsumerState<AdminHomeScreen> {
               ),
             ),
           ),
-          const Divider(height: 1, color: kAdminHairline),
-          // Footer: Ops info & Sign out
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-            child: Row(
+          // Consistent Apple-style profile / sign-out footer block
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            decoration: const BoxDecoration(
+              color: Colors.white,
+              border: Border(
+                top: BorderSide(color: kAdminHairline, width: 1),
+              ),
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
               children: [
-                Container(
-                  width: 8,
-                  height: 8,
-                  decoration: const BoxDecoration(
-                    color: kAdminBridgeGreen,
-                    shape: BoxShape.circle,
-                  ),
+                Row(
+                  children: [
+                    Container(
+                      width: 6,
+                      height: 6,
+                      decoration: const BoxDecoration(
+                        color: kAdminBridgeGreen,
+                        shape: BoxShape.circle,
+                      ),
+                    ),
+                    const SizedBox(width: 6),
+                    Text(
+                      'Console active',
+                      style: GoogleFonts.inter(
+                        fontSize: 10.5,
+                        fontWeight: FontWeight.w500,
+                        color: kAdminTextSecondary,
+                      ),
+                    ),
+                  ],
                 ),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: Text(
-                    'Console active',
-                    style: adminLabelStyle(fontSize: 11),
-                  ),
+                const SizedBox(height: 8),
+                Row(
+                  children: [
+                    Container(
+                      width: 34,
+                      height: 34,
+                      decoration: const BoxDecoration(
+                        color: kAdminBridgeGreen,
+                        shape: BoxShape.circle,
+                      ),
+                      child: const Center(
+                        child: Icon(
+                          Icons.admin_panel_settings_rounded,
+                          size: 18,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            'Admin Console',
+                            style: GoogleFonts.inter(
+                              fontSize: 13,
+                              fontWeight: FontWeight.w600,
+                              color: kAdminTextPrimary,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          Text(
+                            'CHED Officer',
+                            style: GoogleFonts.inter(
+                              fontSize: 11,
+                              color: kAdminTextSecondary,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
                 ),
-                IconButton(
-                  icon: const Icon(
-                    Icons.logout_rounded,
-                    color: kAdminCoralConnect,
-                    size: 18,
-                  ),
-                  tooltip: 'Sign out',
-                  onPressed: () => _handleSignOut(context),
+                const SizedBox(height: 10),
+                const Divider(height: 1, color: kAdminHairline),
+                const SizedBox(height: 8),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Flexible(
+                      child: InkWell(
+                        borderRadius: BorderRadius.circular(6),
+                        onTap: () {
+                          // Switch to audit logs / settings tab
+                          ref.read(adminTabIndexProvider.notifier).selectTab(6);
+                          if (isDrawer) Navigator.of(context).pop();
+                        },
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              const Icon(Icons.tune_rounded, size: 14, color: kAdminTextSecondary),
+                              const SizedBox(width: 4),
+                              Flexible(
+                                child: Text(
+                                  'Settings',
+                                  style: GoogleFonts.inter(
+                                    fontSize: 11.5,
+                                    fontWeight: FontWeight.w500,
+                                    color: kAdminTextSecondary,
+                                  ),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                    IconButton(
+                      icon: const Icon(Icons.logout_rounded, size: 16, color: Color(0xFFE53935)),
+                      tooltip: 'Sign out',
+                      onPressed: () => _handleSignOut(context),
+                    ),
+                  ],
                 ),
               ],
             ),
@@ -365,13 +562,14 @@ class _AdminHomeScreenState extends ConsumerState<AdminHomeScreen> {
 
   Widget _sectionHeader(String title) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 6, 16, 4),
+      padding: const EdgeInsets.fromLTRB(16, 10, 16, 4),
       child: Text(
         title,
-        style: adminLabelStyle(
-          fontSize: 11,
+        style: GoogleFonts.inter(
+          fontSize: 11.5,
           fontWeight: FontWeight.w600,
-          color: kAdminTextSecondary,
+          letterSpacing: 0.5,
+          color: const Color(0xFF707971),
         ),
       ),
     );
@@ -396,43 +594,47 @@ class _SidebarNavItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
       child: Material(
-        color: isSelected
-            ? kAdminBridgeGreen.withValues(alpha: 0.08)
-            : Colors.transparent,
-        borderRadius: kAdminChromeRadius,
+        color: isSelected ? kAdminActiveNavBackground : Colors.transparent,
+        borderRadius: BorderRadius.circular(10),
         child: InkWell(
-          borderRadius: kAdminChromeRadius,
+          borderRadius: BorderRadius.circular(10),
+          hoverColor: isSelected ? null : const Color(0xFFE9E7ED),
           onTap: onTap,
           child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
             decoration: BoxDecoration(
-              borderRadius: kAdminChromeRadius,
-              border: isSelected
-                  ? Border.all(
-                      color: kAdminBridgeGreen.withValues(alpha: 0.20),
-                      width: 1,
-                    )
-                  : Border.all(color: Colors.transparent, width: 1),
+              borderRadius: BorderRadius.circular(10),
+              boxShadow: isSelected
+                  ? const [
+                      BoxShadow(
+                        color: Color(0x1F0F4D2E),
+                        blurRadius: 4,
+                        offset: Offset(0, 1),
+                      ),
+                    ]
+                  : null,
             ),
             child: Row(
               children: [
                 Icon(
                   isSelected ? selectedIcon : icon,
-                  size: 18,
-                  color: isSelected ? kAdminBridgeGreen : kAdminTextSecondary,
+                  size: 19,
+                  color: isSelected ? kAdminActiveNavText : const Color(0xFF5E6D66),
                 ),
-                const SizedBox(width: 10),
+                const SizedBox(width: 12),
                 Expanded(
                   child: Text(
                     label,
-                    style: adminLabelStyle(
-                      fontSize: 13,
-                      fontWeight:
-                          isSelected ? FontWeight.w600 : FontWeight.w500,
-                      color: isSelected ? kAdminBridgeGreen : kAdminNavyTrust,
+                    style: GoogleFonts.inter(
+                      fontSize: 13.5,
+                      fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+                      color: isSelected ? kAdminActiveNavText : kAdminInactiveNavText,
+                      letterSpacing: -0.1,
                     ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ),
               ],

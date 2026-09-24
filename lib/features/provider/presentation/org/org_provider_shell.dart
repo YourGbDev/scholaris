@@ -255,6 +255,8 @@ class _OrgProviderShellState extends ConsumerState<OrgProviderShell> {
               style: ElevatedButton.styleFrom(
                 backgroundColor: kOrgPrimary,
                 elevation: 0,
+                minimumSize: Size.zero,
+                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                 padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(8),

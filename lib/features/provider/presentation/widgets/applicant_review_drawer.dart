@@ -566,7 +566,7 @@ class _ApplicantReviewDrawerState extends ConsumerState<ApplicantReviewDrawer> {
                       ),
                     ),
                     const SizedBox(width: 6),
-                    const Text('•', style: TextStyle(color: Color(0xFF707971), fontSize: 12)),
+                    const Text('•', style: TextStyle(color: Color(0xFF707971), fontSize: 12, letterSpacing: 0.15)),
                     const SizedBox(width: 6),
                     Expanded(
                       child: Text(
@@ -674,7 +674,7 @@ class _ApplicantReviewDrawerState extends ConsumerState<ApplicantReviewDrawer> {
                         fontSize: 10,
                         fontWeight: FontWeight.w600,
                         color: const Color(0xFF404942),
-                        letterSpacing: 0.5,
+                        letterSpacing: 0.2,
                       ),
                     ),
                     const SizedBox(height: 2),
@@ -706,7 +706,7 @@ class _ApplicantReviewDrawerState extends ConsumerState<ApplicantReviewDrawer> {
                       fontSize: 10,
                       fontWeight: FontWeight.w600,
                       color: const Color(0xFF404942),
-                      letterSpacing: 0.5,
+                      letterSpacing: 0.2,
                     ),
                   ),
                   const SizedBox(height: 2),
@@ -945,7 +945,7 @@ class _ApplicantReviewDrawerState extends ConsumerState<ApplicantReviewDrawer> {
                 fontSize: 11,
                 fontWeight: FontWeight.w600,
                 color: const Color(0xFF404942),
-                letterSpacing: 0.5,
+                letterSpacing: 0.2,
               ),
             ),
             Container(
@@ -1053,7 +1053,7 @@ class _ApplicantReviewDrawerState extends ConsumerState<ApplicantReviewDrawer> {
                       fontSize: 10,
                       fontWeight: FontWeight.w600,
                       color: const Color(0xFF404942),
-                      letterSpacing: 0.5,
+                      letterSpacing: 0.2,
                     ),
                   ),
                   const SizedBox(height: 2),
@@ -1092,7 +1092,7 @@ class _ApplicantReviewDrawerState extends ConsumerState<ApplicantReviewDrawer> {
                             fontSize: 9,
                             fontWeight: FontWeight.w600,
                             color: const Color(0xFF82BD95),
-                            letterSpacing: 0.5,
+                            letterSpacing: 0.2,
                           ),
                         ),
                         Text(
@@ -1303,7 +1303,7 @@ class _ApplicantReviewDrawerState extends ConsumerState<ApplicantReviewDrawer> {
                 fontSize: 11,
                 fontWeight: FontWeight.w600,
                 color: const Color(0xFF404942),
-                letterSpacing: 0.5,
+                letterSpacing: 0.2,
               ),
             ),
             Text(
@@ -1647,7 +1647,7 @@ class _ApplicantReviewDrawerState extends ConsumerState<ApplicantReviewDrawer> {
                         fit: BoxFit.scaleDown,
                         child: Text(
                           'Ineligible',
-                          style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13),
+                          style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13, letterSpacing: 0.1),
                         ),
                       ),
                     ),
@@ -1680,7 +1680,7 @@ class _ApplicantReviewDrawerState extends ConsumerState<ApplicantReviewDrawer> {
                         fit: BoxFit.scaleDown,
                         child: Text(
                           'Request Info',
-                          style: TextStyle(fontWeight: FontWeight.w500, fontSize: 13),
+                          style: TextStyle(fontWeight: FontWeight.w500, fontSize: 13, letterSpacing: 0.1),
                         ),
                       ),
                     ),
@@ -1713,7 +1713,7 @@ class _ApplicantReviewDrawerState extends ConsumerState<ApplicantReviewDrawer> {
                         fit: BoxFit.scaleDown,
                         child: Text(
                           'Approve Award',
-                          style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13),
+                          style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13, letterSpacing: 0.1),
                         ),
                       ),
                     ),

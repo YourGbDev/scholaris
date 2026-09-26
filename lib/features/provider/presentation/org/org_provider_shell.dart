@@ -242,6 +242,7 @@ class _OrgProviderShellState extends ConsumerState<OrgProviderShell> {
                         '⌘K Search applicants, grants...',
                         style: GoogleFonts.inter(
                           fontSize: 13,
+                          letterSpacing: 0.1,
                           color: kOrgTextSecondary.withValues(alpha: 0.8),
                         ),
                         maxLines: 1,
@@ -279,6 +280,7 @@ class _OrgProviderShellState extends ConsumerState<OrgProviderShell> {
                     style: GoogleFonts.inter(
                       fontSize: 12,
                       fontWeight: FontWeight.w500,
+                      letterSpacing: 0.15,
                       color: kOrgTextPrimary,
                     ),
                   ),
@@ -299,6 +301,7 @@ class _OrgProviderShellState extends ConsumerState<OrgProviderShell> {
                 style: GoogleFonts.inter(
                   fontSize: 12.5,
                   fontWeight: FontWeight.w600,
+                  letterSpacing: 0.15,
                   color: Colors.white,
                 ),
               ),
@@ -331,6 +334,7 @@ class _OrgProviderShellState extends ConsumerState<OrgProviderShell> {
               style: GoogleFonts.inter(
                 fontSize: 11,
                 fontWeight: FontWeight.w700,
+                letterSpacing: 0.2,
                 color: Colors.white,
               ),
             ),
@@ -394,7 +398,7 @@ class _OrgProviderShellState extends ConsumerState<OrgProviderShell> {
                     style: GoogleFonts.inter(
                       fontSize: 9,
                       fontWeight: FontWeight.w700,
-                      letterSpacing: 0.8,
+                      letterSpacing: 0.2,
                       color: const Color(0xFF404942),
                     ),
                   ),
@@ -493,6 +497,7 @@ class _OrgProviderShellState extends ConsumerState<OrgProviderShell> {
                         style: GoogleFonts.inter(
                           fontSize: 11,
                           fontWeight: FontWeight.w700,
+                          letterSpacing: 0.2,
                           color: Colors.white,
                         ),
                       ),
@@ -508,6 +513,7 @@ class _OrgProviderShellState extends ConsumerState<OrgProviderShell> {
                             style: GoogleFonts.inter(
                               fontSize: 13,
                               fontWeight: FontWeight.w600,
+                              letterSpacing: 0.1,
                               color: kOrgTextPrimary,
                             ),
                             maxLines: 1,
@@ -517,6 +523,7 @@ class _OrgProviderShellState extends ConsumerState<OrgProviderShell> {
                             'Lead Grant Administrator',
                             style: GoogleFonts.inter(
                               fontSize: 11,
+                              letterSpacing: 0.2,
                               color: kOrgTextSecondary,
                             ),
                             maxLines: 1,
@@ -553,6 +560,7 @@ class _OrgProviderShellState extends ConsumerState<OrgProviderShell> {
                                   style: GoogleFonts.inter(
                                     fontSize: 11.5,
                                     fontWeight: FontWeight.w500,
+                                    letterSpacing: 0.2,
                                     color: kOrgTextSecondary,
                                   ),
                                   maxLines: 1,
@@ -581,6 +589,7 @@ class _OrgProviderShellState extends ConsumerState<OrgProviderShell> {
                                   style: GoogleFonts.inter(
                                     fontSize: 11.5,
                                     fontWeight: FontWeight.w600,
+                                    letterSpacing: 0.2,
                                     color: kOrgError,
                                   ),
                                   maxLines: 1,
@@ -610,7 +619,7 @@ class _OrgProviderShellState extends ConsumerState<OrgProviderShell> {
         style: GoogleFonts.inter(
           fontSize: 11,
           fontWeight: FontWeight.w600,
-          letterSpacing: 0.5,
+          letterSpacing: 0.2,
           color: const Color(0xFF707971),
         ),
       ),
@@ -693,7 +702,7 @@ class _OrgProviderShellState extends ConsumerState<OrgProviderShell> {
                         color: isSelected
                             ? kOrgActiveNavText
                             : kOrgInactiveNavText,
-                        letterSpacing: -0.1,
+                        letterSpacing: 0,
                       ),
                       child: Text(
                         label,

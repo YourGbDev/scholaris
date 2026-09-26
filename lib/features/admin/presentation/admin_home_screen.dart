@@ -13,6 +13,8 @@ import 'admin_providers_tab.dart';
 import 'admin_scholarships_tab.dart';
 import 'admin_theme.dart';
 import 'admin_users_tab.dart';
+import 'package:scholaris/admin/screens/admin_settings_screen.dart';
+import 'package:scholaris/admin/screens/disbursements_oversight_screen.dart';
 
 class AdminTabIndexNotifier extends Notifier<int> {
   @override
@@ -26,24 +28,31 @@ final adminTabIndexProvider = NotifierProvider<AdminTabIndexNotifier, int>(
 );
 
 class AdminHomeScreen extends ConsumerStatefulWidget {
-  const AdminHomeScreen({super.key, this.initialTab});
+  const AdminHomeScreen({
+    super.key,
+    this.initialTab,
+    this.inspectApproved = false,
+  });
 
   final int? initialTab;
+  final bool inspectApproved;
 
   @override
   ConsumerState<AdminHomeScreen> createState() => _AdminHomeScreenState();
 }
 
 class _AdminHomeScreenState extends ConsumerState<AdminHomeScreen> {
-  static const _tabs = <Widget>[
-    AdminDashboardTab(),
-    AdminScholarshipsTab(),
-    AdminProvidersTab(),
-    AdminApplicantsTab(),
-    AdminUsersTab(),
-    AdminAnalyticsTab(),
-    AdminAuditLogsTab(),
-  ];
+  List<Widget> _buildTabs() => [
+        const AdminDashboardTab(),
+        const AdminScholarshipsTab(),
+        const AdminProvidersTab(),
+        AdminApplicantsTab(initialInspectApproved: widget.inspectApproved),
+        const DisbursementsOversightScreen(),
+        const AdminUsersTab(),
+        const AdminAnalyticsTab(),
+        const AdminAuditLogsTab(),
+        const AdminSettingsScreen(),
+      ];
 
   @override
   void initState() {
@@ -97,7 +106,7 @@ class _AdminHomeScreenState extends ConsumerState<AdminHomeScreen> {
                   Expanded(
                     child: IndexedStack(
                       index: tabIndex,
-                      children: _tabs,
+                      children: _buildTabs(),
                     ),
                   ),
                 ],
@@ -164,7 +173,7 @@ class _AdminHomeScreenState extends ConsumerState<AdminHomeScreen> {
       ),
       body: IndexedStack(
         index: tabIndex,
-        children: _tabs,
+        children: _buildTabs(),
       ),
     );
   }
@@ -359,12 +368,22 @@ class _AdminHomeScreenState extends ConsumerState<AdminHomeScreen> {
                     },
                   ),
                   _SidebarNavItem(
-                    label: 'Users',
-                    icon: Icons.manage_accounts_outlined,
-                    selectedIcon: Icons.manage_accounts_rounded,
+                    label: 'Disbursements',
+                    icon: Icons.payments_outlined,
+                    selectedIcon: Icons.payments_rounded,
                     isSelected: tabIndex == 4,
                     onTap: () {
                       ref.read(adminTabIndexProvider.notifier).selectTab(4);
+                      if (isDrawer) Navigator.of(context).pop();
+                    },
+                  ),
+                  _SidebarNavItem(
+                    label: 'Users',
+                    icon: Icons.manage_accounts_outlined,
+                    selectedIcon: Icons.manage_accounts_rounded,
+                    isSelected: tabIndex == 5,
+                    onTap: () {
+                      ref.read(adminTabIndexProvider.notifier).selectTab(5);
                       if (isDrawer) Navigator.of(context).pop();
                     },
                   ),
@@ -375,9 +394,9 @@ class _AdminHomeScreenState extends ConsumerState<AdminHomeScreen> {
                     label: 'Analytics',
                     icon: Icons.insights_outlined,
                     selectedIcon: Icons.insights_rounded,
-                    isSelected: tabIndex == 5,
+                    isSelected: tabIndex == 6,
                     onTap: () {
-                      ref.read(adminTabIndexProvider.notifier).selectTab(5);
+                      ref.read(adminTabIndexProvider.notifier).selectTab(6);
                       if (isDrawer) Navigator.of(context).pop();
                     },
                   ),
@@ -385,9 +404,22 @@ class _AdminHomeScreenState extends ConsumerState<AdminHomeScreen> {
                     label: 'Audit Logs',
                     icon: Icons.fact_check_outlined,
                     selectedIcon: Icons.fact_check_rounded,
-                    isSelected: tabIndex == 6,
+                    isSelected: tabIndex == 7,
                     onTap: () {
-                      ref.read(adminTabIndexProvider.notifier).selectTab(6);
+                      ref.read(adminTabIndexProvider.notifier).selectTab(7);
+                      if (isDrawer) Navigator.of(context).pop();
+                    },
+                  ),
+                  const SizedBox(height: 6),
+                  // System Section
+                  _sectionHeader('System'),
+                  _SidebarNavItem(
+                    label: 'Settings',
+                    icon: Icons.settings_outlined,
+                    selectedIcon: Icons.settings_rounded,
+                    isSelected: tabIndex == 8,
+                    onTap: () {
+                      ref.read(adminTabIndexProvider.notifier).selectTab(8);
                       if (isDrawer) Navigator.of(context).pop();
                     },
                   ),
@@ -486,8 +518,8 @@ class _AdminHomeScreenState extends ConsumerState<AdminHomeScreen> {
                       child: InkWell(
                         borderRadius: BorderRadius.circular(6),
                         onTap: () {
-                          // Switch to audit logs / settings tab
-                          ref.read(adminTabIndexProvider.notifier).selectTab(6);
+                          // Switch to settings tab
+                          ref.read(adminTabIndexProvider.notifier).selectTab(8);
                           if (isDrawer) Navigator.of(context).pop();
                         },
                         child: Padding(

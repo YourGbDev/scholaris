@@ -569,7 +569,7 @@ class ReportsAnalyticsScreen extends ConsumerWidget {
               ),
               TextButton.icon(
                 onPressed: () {
-                  ref.read(adminTabIndexProvider.notifier).selectTab(6);
+                  ref.read(adminTabIndexProvider.notifier).selectTab(7);
                 },
                 icon: const Icon(Icons.arrow_forward_rounded, size: 16),
                 label: const Text('View full audit trail'),

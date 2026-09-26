@@ -181,7 +181,12 @@ final adminApplicationStatusFilterProvider =
 // =============================================================================
 
 class ApplicationsOversightScreen extends ConsumerStatefulWidget {
-  const ApplicationsOversightScreen({super.key});
+  const ApplicationsOversightScreen({
+    super.key,
+    this.initialInspectApproved = false,
+  });
+
+  final bool initialInspectApproved;
 
   @override
   ConsumerState<ApplicationsOversightScreen> createState() =>
@@ -190,7 +195,37 @@ class ApplicationsOversightScreen extends ConsumerStatefulWidget {
 
 class _ApplicationsOversightScreenState
     extends ConsumerState<ApplicationsOversightScreen> {
-  final TextEditingController _searchController = TextEditingController();
+  final _searchController = TextEditingController();
+  bool _isDetailOpen = false;
+
+  @override
+  void didUpdateWidget(ApplicationsOversightScreen oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.initialInspectApproved) {
+      _checkAndAutoOpen();
+    }
+  }
+
+  void _checkAndAutoOpen([List<ApplicationRecord>? appsList]) {
+    if (_isDetailOpen) return;
+    final apps = appsList ?? ref.read(adminApplicationsProvider).valueOrNull;
+    if (apps != null) {
+      final approvedApp = apps.cast<ApplicationRecord?>().firstWhere(
+        (a) => a?.status.toLowerCase().trim() == 'approved',
+        orElse: () => null,
+      );
+      if (approvedApp != null) {
+        _isDetailOpen = true;
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (mounted) {
+            _showApplicationDetail(context, approvedApp).then((_) {
+              _isDetailOpen = false;
+            });
+          }
+        });
+      }
+    }
+  }
 
   @override
   void dispose() {
@@ -256,6 +291,12 @@ class _ApplicationsOversightScreenState
         ),
         data: (allApplications) {
           final totalCount = allApplications.length;
+
+          if (!_isDetailOpen &&
+              (widget.initialInspectApproved ||
+                  Uri.base.queryParameters['inspect'] == 'approved')) {
+            _checkAndAutoOpen(allApplications);
+          }
 
           // Status Counts computed strictly from live database rows
           final statusCounts = <String, int>{
@@ -999,7 +1040,7 @@ class _ApplicationsOversightScreenState
 
   // --- 3e. Application Detail Drawer / Dialog (Read-Only) --------------------
 
-  void _showApplicationDetail(BuildContext context, ApplicationRecord item) {
+  Future<void> _showApplicationDetail(BuildContext context, ApplicationRecord item) {
     final isDesktop = MediaQuery.sizeOf(context).width >= 768;
     final applicantDisplayName = item.applicantName ?? 'Name not set';
     final schoolDisplayName = item.school ?? 'School not set';
@@ -1009,7 +1050,7 @@ class _ApplicationsOversightScreenState
     final appliedAtFormatted = _formatDate(item.appliedAt);
     final updatedAtFormatted = _formatDate(item.updatedAt);
 
-    showDialog<void>(
+    return showDialog<void>(
       context: context,
       builder: (dialogContext) => AlertDialog(
         backgroundColor: kSeqSurfaceContainerLowest,
@@ -1178,23 +1219,146 @@ class _ApplicationsOversightScreenState
                         : seqBodySm(color: kSeqOutline),
                   ),
                 ),
+
               ],
             ),
           ),
         ),
+        actionsPadding: const EdgeInsets.fromLTRB(24, 0, 24, 20),
         actions: [
-          TextButton(
-            onPressed: () => Navigator.of(dialogContext).pop(),
-            child: Text(
-              'Close',
-              style: seqLabelMd(
-                color: kSeqOnSurfaceVariant,
-                fontWeight: FontWeight.w600,
+          Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              if (item.status.toLowerCase().trim() == 'approved') ...[
+                FutureBuilder<Map<String, dynamic>?>(
+                  future: Supabase.instance.client
+                      .from('disbursements')
+                      .select('id')
+                      .eq('application_id', item.id)
+                      .maybeSingle(),
+                  builder: (fContext, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const Center(
+                        child: Padding(
+                          padding: EdgeInsets.symmetric(vertical: 8),
+                          child: SizedBox(
+                            width: 20,
+                            height: 20,
+                            child: CircularProgressIndicator(strokeWidth: 2),
+                          ),
+                        ),
+                      );
+                    }
+                    final existing = snapshot.data;
+                    if (existing != null) {
+                      return Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 14,
+                          vertical: 10,
+                        ),
+                        decoration: BoxDecoration(
+                          color: kSeqPrimaryFixed,
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Container(
+                              width: 8,
+                              height: 8,
+                              decoration: const BoxDecoration(
+                                color: kSeqPrimary,
+                                shape: BoxShape.circle,
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                            Text(
+                              '● Disbursement on record',
+                              style: seqLabelSm(
+                                color: kSeqOnPrimaryFixedVariant,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    }
+                    return SizedBox(
+                      width: double.infinity,
+                      child: FilledButton.icon(
+                        onPressed: () {
+                          _openCreateDisbursementSheet(
+                            context,
+                            dialogContext,
+                            item,
+                          );
+                        },
+                        icon: const Icon(Icons.payments_outlined, size: 18),
+                        label: const Text('Create Disbursement'),
+                        style: FilledButton.styleFrom(
+                          backgroundColor: kSeqPrimary,
+                          foregroundColor: kSeqOnPrimary,
+                          padding: const EdgeInsets.symmetric(vertical: 14),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          textStyle: seqLabelMd(
+                            fontWeight: FontWeight.w600,
+                            color: kSeqOnPrimary,
+                          ),
+                        ),
+                      ),
+                    );
+                  },
+                ),
+                const SizedBox(height: 8),
+              ],
+              SizedBox(
+                width: double.infinity,
+                child: TextButton(
+                  onPressed: () => Navigator.of(dialogContext).pop(),
+                  child: Text(
+                    'Close',
+                    style: seqLabelMd(
+                      color: kSeqOnSurfaceVariant,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
               ),
-            ),
+            ],
           ),
         ],
       ),
+    );
+  }
+
+  void _openCreateDisbursementSheet(
+    BuildContext parentContext,
+    BuildContext dialogContext,
+    ApplicationRecord item,
+  ) {
+    showModalBottomSheet<void>(
+      context: parentContext,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (sheetContext) {
+        return _CreateDisbursementSheet(
+          item: item,
+          onSuccess: () {
+            Navigator.of(sheetContext).pop();
+            Navigator.of(dialogContext).pop();
+            ScaffoldMessenger.of(parentContext).showSnackBar(
+              const SnackBar(
+                content: Text('Disbursement created successfully'),
+                behavior: SnackBarBehavior.floating,
+              ),
+            );
+            ref.invalidate(adminApplicationsProvider);
+          },
+        );
+      },
     );
   }
 
@@ -1440,3 +1604,328 @@ class StatusBadge extends StatelessWidget {
     );
   }
 }
+
+// =============================================================================
+// 5. Create Disbursement Bottom Sheet
+// =============================================================================
+
+class _CreateDisbursementSheet extends StatefulWidget {
+  const _CreateDisbursementSheet({
+    required this.item,
+    required this.onSuccess,
+  });
+
+  final ApplicationRecord item;
+  final VoidCallback onSuccess;
+
+  @override
+  State<_CreateDisbursementSheet> createState() =>
+      _CreateDisbursementSheetState();
+}
+
+class _CreateDisbursementSheetState extends State<_CreateDisbursementSheet> {
+  static const _paymentMethods = [
+    {'value': 'gcash', 'label': 'GCash'},
+    {'value': 'bank_transfer', 'label': 'Bank Transfer'},
+    {'value': 'cash', 'label': 'Cash'},
+    {'value': 'check', 'label': 'Check'},
+  ];
+
+  late String _selectedPaymentMethod;
+  late final TextEditingController _referenceController;
+  late final TextEditingController _notesController;
+  bool _isSubmitting = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _selectedPaymentMethod = 'gcash';
+    _referenceController = TextEditingController();
+    _notesController = TextEditingController();
+  }
+
+  @override
+  void dispose() {
+    _referenceController.dispose();
+    _notesController.dispose();
+    super.dispose();
+  }
+
+  String _formatAmount(double? amount) {
+    if (amount == null) return '₱0';
+    final rounded = amount.toInt();
+    final chars = rounded.toString().split('');
+    final buffer = StringBuffer();
+    for (int i = 0; i < chars.length; i++) {
+      if (i > 0 && (chars.length - i) % 3 == 0) {
+        buffer.write(',');
+      }
+      buffer.write(chars[i]);
+    }
+    return '₱$buffer';
+  }
+
+  Future<void> _submit() async {
+    setState(() => _isSubmitting = true);
+    try {
+      final supabase = Supabase.instance.client;
+      await supabase.from('disbursements').insert({
+        'application_id': widget.item.id,
+        'scholarship_id': widget.item.scholarshipId,
+        'recipient_id': widget.item.userId,
+        'amount': widget.item.scholarshipAmount ?? 0,
+        'status': 'pending',
+        'payment_method': _selectedPaymentMethod,
+        'reference_number': _referenceController.text.trim().isEmpty
+            ? null
+            : _referenceController.text.trim(),
+        'notes': _notesController.text.trim().isEmpty
+            ? null
+            : _notesController.text.trim(),
+      });
+      widget.onSuccess();
+    } catch (e) {
+      if (mounted) {
+        setState(() => _isSubmitting = false);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to create disbursement: $e'),
+            backgroundColor: kSeqError,
+          ),
+        );
+      }
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final bottomInset = MediaQuery.of(context).viewInsets.bottom;
+    final recipientName = widget.item.applicantName ?? 'Name not set';
+    final scholarshipTitle = widget.item.scholarshipTitle ?? 'General Bursary';
+    final amountFormatted = _formatAmount(widget.item.scholarshipAmount);
+
+    return Container(
+      decoration: BoxDecoration(
+        color: kSeqSurfaceContainerLowest,
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+      ),
+      padding: EdgeInsets.fromLTRB(24, 16, 24, 24 + bottomInset),
+      child: SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Center(
+              child: Container(
+                width: 36,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: kSeqOutlineVariant,
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+            ),
+            const SizedBox(height: 16),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  'Create Disbursement',
+                  style: seqHeadlineSm(fontWeight: FontWeight.w700),
+                ),
+                IconButton(
+                  icon: const Icon(Icons.close_rounded, size: 20),
+                  onPressed: () => Navigator.of(context).pop(),
+                ),
+              ],
+            ),
+            const SizedBox(height: 16),
+            // Read-only pre-filled card
+            Container(
+              padding: const EdgeInsets.all(14),
+              decoration: BoxDecoration(
+                color: kSeqSurfaceContainerLow,
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(
+                  color: kSeqOutlineVariant.withValues(alpha: 0.3),
+                ),
+              ),
+              child: Column(
+                children: [
+                  _readOnlyRow('Recipient', recipientName),
+                  const SizedBox(height: 8),
+                  _readOnlyRow('Scholarship', scholarshipTitle),
+                  const SizedBox(height: 8),
+                  _readOnlyRow('Amount', amountFormatted),
+                ],
+              ),
+            ),
+            const SizedBox(height: 16),
+            // Payment Method Dropdown
+            Text(
+              'PAYMENT METHOD',
+              style:
+                  seqLabelSm(color: kSeqOutline, fontWeight: FontWeight.w700),
+            ),
+            const SizedBox(height: 6),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 14),
+              decoration: BoxDecoration(
+                color: kSeqSurfaceContainerLow,
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(
+                  color: kSeqOutlineVariant.withValues(alpha: 0.3),
+                ),
+              ),
+              child: DropdownButtonHideUnderline(
+                child: DropdownButton<String>(
+                  value: _selectedPaymentMethod,
+                  isExpanded: true,
+                  icon: const Icon(Icons.keyboard_arrow_down_rounded, size: 20),
+                  items: _paymentMethods.map((pm) {
+                    return DropdownMenuItem<String>(
+                      value: pm['value'],
+                      child: Text(
+                        pm['label']!,
+                        style: seqBodyMd(color: kSeqOnSurface),
+                      ),
+                    );
+                  }).toList(),
+                  onChanged: (val) {
+                    if (val != null) {
+                      setState(() => _selectedPaymentMethod = val);
+                    }
+                  },
+                ),
+              ),
+            ),
+            const SizedBox(height: 14),
+            // Reference Number
+            Text(
+              'REFERENCE NUMBER (OPTIONAL)',
+              style:
+                  seqLabelSm(color: kSeqOutline, fontWeight: FontWeight.w700),
+            ),
+            const SizedBox(height: 6),
+            TextField(
+              controller: _referenceController,
+              decoration: InputDecoration(
+                hintText: 'e.g. GC-2026-XXXX',
+                hintStyle: seqBodySm(color: kSeqOutline),
+                filled: true,
+                fillColor: kSeqSurfaceContainerLow,
+                contentPadding: const EdgeInsets.symmetric(
+                  horizontal: 14,
+                  vertical: 12,
+                ),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide(
+                    color: kSeqOutlineVariant.withValues(alpha: 0.3),
+                  ),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide(
+                    color: kSeqOutlineVariant.withValues(alpha: 0.3),
+                  ),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: const BorderSide(color: kSeqPrimary, width: 1.5),
+                ),
+              ),
+            ),
+            const SizedBox(height: 14),
+            // Notes
+            Text(
+              'NOTES (OPTIONAL)',
+              style:
+                  seqLabelSm(color: kSeqOutline, fontWeight: FontWeight.w700),
+            ),
+            const SizedBox(height: 6),
+            TextField(
+              controller: _notesController,
+              maxLines: 3,
+              decoration: InputDecoration(
+                hintText: 'Add internal disbursement notes or instructions...',
+                hintStyle: seqBodySm(color: kSeqOutline),
+                filled: true,
+                fillColor: kSeqSurfaceContainerLow,
+                contentPadding: const EdgeInsets.all(14),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide(
+                    color: kSeqOutlineVariant.withValues(alpha: 0.3),
+                  ),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide(
+                    color: kSeqOutlineVariant.withValues(alpha: 0.3),
+                  ),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: const BorderSide(color: kSeqPrimary, width: 1.5),
+                ),
+              ),
+            ),
+            const SizedBox(height: 20),
+            // Submit Button
+            SizedBox(
+              width: double.infinity,
+              child: FilledButton(
+                onPressed: _isSubmitting ? null : _submit,
+                style: FilledButton.styleFrom(
+                  backgroundColor: kSeqPrimary,
+                  foregroundColor: kSeqOnPrimary,
+                  padding: const EdgeInsets.symmetric(vertical: 14),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  textStyle: seqLabelMd(
+                    fontWeight: FontWeight.w700,
+                    color: kSeqOnPrimary,
+                  ),
+                ),
+                child: _isSubmitting
+                    ? const SizedBox(
+                        width: 20,
+                        height: 20,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: Colors.white,
+                        ),
+                      )
+                    : const Text('Confirm Disbursement'),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _readOnlyRow(String label, String value) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        SizedBox(
+          width: 110,
+          child: Text(
+            label,
+            style: seqLabelSm(color: kSeqOutline, fontWeight: FontWeight.w500),
+          ),
+        ),
+        Expanded(
+          child: Text(
+            value,
+            style: seqBodySm(color: kSeqOnSurface, fontWeight: FontWeight.w600),
+          ),
+        ),
+      ],
+    );
+  }
+}
+

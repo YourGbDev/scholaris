@@ -288,7 +288,12 @@ final routerProvider = Provider<GoRouter>((ref) {
         builder: (context, state) {
           final tabStr = state.uri.queryParameters['tab'];
           final tab = tabStr != null ? int.tryParse(tabStr) : null;
-          return AdminHomeScreen(initialTab: tab);
+          final inspectApproved =
+              state.uri.queryParameters['inspect'] == 'approved';
+          return AdminHomeScreen(
+            initialTab: tab,
+            inspectApproved: inspectApproved,
+          );
         },
       ),
 

@@ -29,19 +29,32 @@ void main() {
       },
     );
 
-    test('login / signup / ceremony entries funnel to /onboarding', () {
-      for (final location in ['/login', '/signup', '/ceremony']) {
+    test('direct visits to auth routes (/login, /provider-login, /signup, /become-provider) stay accessible on first launch', () {
+      for (final location in ['/login', '/provider-login', '/signup', '/become-provider']) {
         expect(
           onboardingRedirectDecision(
-            authDecision: null, // these are auth-allowed routes
+            authDecision: null, // auth-allowed routes
             location: location,
             onboardingLoading: false,
             onboardingSeen: false,
           ),
-          '/onboarding',
-          reason: 'first run should precede $location',
+          isNull,
+          reason: 'direct navigation to $location should render directly without being hijacked',
         );
       }
+    });
+
+    test('fresh unauthenticated request to /splash funnels to /intro on first launch', () {
+      expect(
+        onboardingRedirectDecision(
+          authDecision: '/login',
+          location: '/splash',
+          onboardingLoading: false,
+          onboardingSeen: false,
+          introSeen: false,
+        ),
+        '/intro',
+      );
     });
 
     test('the user may stay on /onboarding', () {

@@ -29,6 +29,7 @@ import 'package:scholaris/features/auth/presentation/reset_password_screen.dart'
 import 'package:scholaris/features/auth/presentation/signup_screen.dart';
 import 'package:scholaris/features/provider/presentation/provider_application_detail_screen.dart';
 import 'package:scholaris/features/provider/presentation/provider_home_screen.dart';
+import 'package:scholaris/features/provider/presentation/provider_login_screen.dart';
 import 'package:scholaris/features/provider/presentation/provider_review_screen.dart';
 import 'package:scholaris/features/provider/presentation/provider_signup_screen.dart';
 import 'package:scholaris/features/splash/presentation/splash_screen.dart';
@@ -202,15 +203,30 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/become-provider',
         name: 'become-provider',
-        builder: (context, state) => const ProviderSignupScreen(),
+        builder: (context, state) => ProviderSignupScreen(
+          initialType: state.uri.queryParameters['type'],
+        ),
+      ),
+      GoRoute(
+        path: '/provider/login',
+        name: 'provider-login',
+        builder: (context, state) => ProviderLoginScreen(
+          initialType: state.uri.queryParameters['type'],
+        ),
+      ),
+      // Retarget legacy /provider-login alias -> /provider/login
+      GoRoute(
+        path: '/provider-login',
+        redirect: (context, state) {
+          final type = state.uri.queryParameters['type'];
+          return type != null
+              ? '/provider/login?type=$type'
+              : '/provider/login';
+        },
       ),
       // Landing page and legacy route aliases
       GoRoute(
         path: '/student/login',
-        redirect: (context, state) => '/login',
-      ),
-      GoRoute(
-        path: '/provider/login',
         redirect: (context, state) => '/login',
       ),
       GoRoute(
@@ -219,7 +235,12 @@ final routerProvider = Provider<GoRouter>((ref) {
       ),
       GoRoute(
         path: '/provider/signup',
-        redirect: (context, state) => '/become-provider',
+        redirect: (context, state) {
+          final type = state.uri.queryParameters['type'];
+          return type != null
+              ? '/become-provider?type=$type'
+              : '/become-provider';
+        },
       ),
       GoRoute(
         path: '/provider-review',
@@ -232,7 +253,24 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/provider-home',
         name: 'provider-home',
-        builder: (context, state) => const ProviderHomeScreen(),
+        builder: (context, state) {
+          final tabStr = state.uri.queryParameters['tab'];
+          final openDrawer = state.uri.queryParameters['drawer'] == 'open' ||
+              state.uri.queryParameters['drawer'] == 'true';
+          int initialTab = 0;
+          if (tabStr == 'disbursements' || tabStr == '4') {
+            initialTab = 4;
+          } else if (tabStr == 'analytics' || tabStr == '3') {
+            initialTab = 3;
+          } else if (tabStr == 'scholarships' || tabStr == '2') {
+            initialTab = 2;
+          } else if (tabStr == 'decisioning' || tabStr == '1') {
+            initialTab = 1;
+          } else if (tabStr == 'settings' || tabStr == '5') {
+            initialTab = 5;
+          }
+          return ProviderHomeScreen(initialTab: initialTab, autoOpenDrawer: openDrawer);
+        },
       ),
       GoRoute(
         path: '/provider-application/:id',
@@ -537,6 +575,7 @@ abstract final class AdminRoute {
 /// (allowlist omission from 9de9f5f, fixed 2026-09-08).
 bool _isAuthRoute(String location) =>
     location == '/login' ||
+    location == '/provider-login' ||
     location == '/signup' ||
     location == '/become-provider' ||
     location == '/student/login' ||
@@ -655,11 +694,12 @@ String? onboardingRedirectDecision({
   if (signedInDestination) return authDecision;
 
   // Locations that resolve to the login funnel for a signed-out user.
+  // Direct navigation to auth routes (/login, /signup, /become-provider, etc.)
+  // renders the requested screen directly, even for unauthenticated / first-time
+  // visitors, rather than being hijacked to /intro or /onboarding.
   final funnelsToLogin =
       authDecision == '/login' ||
-      location == '/ceremony' ||
-      location == '/intro' ||
-      _isAuthRoute(location);
+      location == '/intro';
   if (!funnelsToLogin) return authDecision;
 
   // Flag still loading → hold on splash.

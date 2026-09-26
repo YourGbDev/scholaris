@@ -14,7 +14,13 @@ import 'individual/individual_provider_shell.dart';
 import 'org/org_provider_shell.dart';
 
 class ProviderHomeScreen extends ConsumerWidget {
-  const ProviderHomeScreen({super.key});
+  final int initialTab;
+  final bool autoOpenDrawer;
+  const ProviderHomeScreen({
+    super.key,
+    this.initialTab = 0,
+    this.autoOpenDrawer = false,
+  });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -24,6 +30,9 @@ class ProviderHomeScreen extends ConsumerWidget {
       return const IndividualProviderShell();
     }
 
-    return const OrgProviderShell();
+    return OrgProviderShell(
+      initialTab: initialTab,
+      autoOpenDrawer: autoOpenDrawer,
+    );
   }
 }

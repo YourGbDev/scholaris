@@ -87,7 +87,10 @@ class _IndividualApplicationsTabState
                   a.status == ApplicationStatus.awarded)
               .toList();
 
-          final totalGrantAmount = approvedApps.length * 50000;
+          final totalGrantAmount = approvedApps.fold<int>(
+            0,
+            (sum, a) => sum + (scholarshipsMap[a.scholarshipId]?.awardAmount ?? 50000),
+          );
 
           final filteredApps = _selectedStatus == null
               ? apps

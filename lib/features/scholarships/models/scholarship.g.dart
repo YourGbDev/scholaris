@@ -30,6 +30,9 @@ _Scholarship _$ScholarshipFromJson(Map<String, dynamic> json) => _Scholarship(
   createdAt: json['created_at'] == null
       ? null
       : DateTime.parse(json['created_at'] as String),
+  amount: json['amount'] == null ? 50000.0 : _amountFromJson(json['amount']),
+  coverage: json['coverage'] as String? ?? 'Tuition + Allowance',
+  frequency: json['frequency'] as String? ?? 'annual',
 );
 
 Map<String, dynamic> _$ScholarshipToJson(_Scholarship instance) =>
@@ -51,4 +54,7 @@ Map<String, dynamic> _$ScholarshipToJson(_Scholarship instance) =>
       'is_active': instance.isActive,
       'created_by': instance.createdBy,
       'created_at': instance.createdAt?.toIso8601String(),
+      'amount': instance.amount,
+      'coverage': instance.coverage,
+      'frequency': instance.frequency,
     };

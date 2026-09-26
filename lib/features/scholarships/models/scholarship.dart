@@ -15,6 +15,12 @@ part 'scholarship.g.dart';
 
 DateTime _dateFromJson(Object? value) => DateTime.parse(value as String);
 
+double _amountFromJson(Object? value) {
+  if (value is num) return value.toDouble();
+  if (value is String) return double.tryParse(value) ?? 50000.0;
+  return 50000.0;
+}
+
 @freezed
 abstract class Scholarship with _$Scholarship {
   const factory Scholarship({
@@ -35,6 +41,9 @@ abstract class Scholarship with _$Scholarship {
     @JsonKey(name: 'is_active') @Default(true) bool isActive,
     @JsonKey(name: 'created_by') String? createdBy,
     @JsonKey(name: 'created_at') DateTime? createdAt,
+    @JsonKey(name: 'amount', fromJson: _amountFromJson) @Default(50000.0) double amount,
+    @JsonKey(name: 'coverage') @Default('Tuition + Allowance') String coverage,
+    @JsonKey(name: 'frequency') @Default('annual') String frequency,
   }) = _Scholarship;
 
   factory Scholarship.fromJson(Map<String, dynamic> json) =>
@@ -42,10 +51,29 @@ abstract class Scholarship with _$Scholarship {
 }
 
 extension ScholarshipAwardExt on Scholarship {
-  int get awardAmount {
-    final t = title.toLowerCase();
-    if (t.contains('full') || t.contains('excellence')) return 100000;
-    if (t.contains('half') || t.contains('stem')) return 60000;
-    return 50000;
+  int get awardAmount => amount.round();
+
+  String get formattedAmount {
+    final whole = awardAmount;
+    final formatted = whole.toString().replaceAllMapped(
+      RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'),
+      (Match m) => '${m[1]},',
+    );
+    return '₱$formatted';
+  }
+
+  String get formattedFrequency {
+    switch (frequency.toLowerCase()) {
+      case 'per_semester':
+      case 'semester':
+        return '/ semester';
+      case 'one_time':
+      case 'onetime':
+        return 'One-time';
+      case 'annual':
+      case 'year':
+      default:
+        return '/ year (Renewable)';
+    }
   }
 }

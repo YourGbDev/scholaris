@@ -2071,24 +2071,10 @@ class _RoadmapStep extends StatelessWidget {
 
 double _scholarshipAmountValue(Scholarship? scholarship) {
   if (scholarship == null) return 50000;
-  final provider = scholarship.provider?.toLowerCase() ?? '';
-  final title = scholarship.title.toLowerCase();
-  if (provider.contains('dost') || title.contains('dost')) {
-    return 40000;
-  } else if (provider.contains('ched') || title.contains('ched')) {
-    return 60000;
-  } else if (provider.contains('gokongwei') || provider.contains('ayala') || provider.contains('sm')) {
-    return 100000;
-  }
-  return 50000;
+  return scholarship.amount;
 }
 
 String _grantValue(Scholarship? scholarship) {
-  final amount = _scholarshipAmountValue(scholarship);
-  final whole = amount.toInt();
-  final formatted = whole.toString().replaceAllMapped(
-        RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'),
-        (Match m) => '${m[1]},',
-      );
-  return '₱$formatted';
+  if (scholarship == null) return '₱50,000';
+  return scholarship.formattedAmount;
 }

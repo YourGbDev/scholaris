@@ -200,9 +200,7 @@ class IndividualGrantTab extends ConsumerWidget {
                                       style: orgLabel(
                                           fontSize: 9, color: kOrgTextMuted)),
                                   Text(
-                                    s.slots != null
-                                        ? '₱50,000 / Sem'
-                                        : 'Full Grant',
+                                    '${s.formattedAmount} ${s.formattedFrequency}',
                                     style: orgHeadline(
                                         fontSize: 16, color: kOrgPrimary),
                                   ),

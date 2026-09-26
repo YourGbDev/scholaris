@@ -63,46 +63,20 @@ Color providerTypeColor(String? provider) {
   return kNavyTrust;
 }
 
-/// Helper to estimate and format realistic Philippine grant amounts.
+/// Helper to format canonical Philippine grant amounts from scholarship model.
 String formatScholarshipAmount(Scholarship s) {
-  final title = s.title.toLowerCase();
-  final provider = (s.provider ?? '').toLowerCase();
-
-  if (title.contains('dost') || provider.contains('dost')) {
-    return '₱40,000';
-  } else if (title.contains('ched') || provider.contains('ched')) {
-    return '₱60,000';
-  } else if (title.contains('merit') || title.contains('excellence')) {
-    return '₱100,000';
-  } else if (title.contains('megaworld') || title.contains('ayala') || title.contains('sm foundation')) {
-    return '₱120,000';
-  }
-  return '₱50,000';
+  return s.formattedAmount;
 }
 
 String formatScholarshipFrequency(Scholarship s) {
-  final title = s.title.toLowerCase();
-  if (title.contains('dost')) {
-    return '/ semester';
-  } else if (title.contains('fellowship') || title.contains('one-time')) {
-    return 'One-time';
-  }
-  return '/ year (Renewable)';
+  return s.formattedFrequency;
 }
 
-/// Formats the right-hand pill in the award highlight tile
+/// Formats the right-hand pill in the award highlight tile from canonical coverage & frequency
 ({String text, bool isRenewable}) formatScholarshipBenefit(Scholarship s) {
-  final title = s.title.toLowerCase();
-  if (title.contains('dost')) {
-    return (text: 'Auto-renewable', isRenewable: true);
-  } else if (title.contains('fellowship') || title.contains('tech') || title.contains('women')) {
-    return (text: '+ Tech Mentorship', isRenewable: false);
-  } else if (title.contains('merit')) {
-    return (text: 'Full Tuition', isRenewable: false);
-  } else if (s.maxMonthlyIncome != null) {
-    return (text: 'Living Allowance', isRenewable: false);
-  }
-  return (text: 'Auto-renewable', isRenewable: true);
+  final isRenewable = s.frequency == 'annual' || s.frequency == 'per_semester';
+  final text = s.coverage.trim().isNotEmpty ? s.coverage : 'Tuition + Allowance';
+  return (text: text, isRenewable: isRenewable);
 }
 
 /// Helper to format requirement snippet matching Stitch V2 Discover cards:
@@ -401,7 +375,7 @@ class ScholarshipCard extends StatelessWidget {
                                     ),
                                     const SizedBox(width: 4),
                                     Text(
-                                      '/ year',
+                                      scholarship.formattedFrequency,
                                       style: openSans(
                                         fontSize: 11.5,
                                         color: const Color(0xFF404942),

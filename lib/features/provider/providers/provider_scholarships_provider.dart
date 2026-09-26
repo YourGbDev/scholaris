@@ -2,6 +2,7 @@
 //
 // Provider-scoped state management for scholarship listings.
 // Supports full CRUD: create, edit, toggle active/closed, and delete.
+import 'dart:convert';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -139,5 +140,26 @@ final providerApplicantProfilesProvider =
       map[profile.id] = profile;
     }
   }
+
+  // Gracefully fallback to student metadata in application notes if database RLS
+  // isolates the profiles table
+  for (final app in apps) {
+    if (!map.containsKey(app.userId) && app.notes != null && app.notes!.trim().startsWith('{')) {
+      try {
+        final decoded = jsonDecode(app.notes!) as Map<String, dynamic>;
+        map[app.userId] = StudentProfile(
+          id: app.userId,
+          fullName: decoded['full_name'] as String? ?? '',
+          school: decoded['school'] as String?,
+          course: decoded['course'] as String? ?? '',
+          gpa: (decoded['gpa'] as num?)?.toDouble() ?? 1.5,
+          yearLevel: (decoded['year_level'] as num?)?.toInt() ?? 1,
+          region: decoded['region'] as String? ?? 'NCR',
+          monthlyFamilyIncome: (decoded['monthly_family_income'] as num?)?.toDouble(),
+        );
+      } catch (_) {}
+    }
+  }
+
   return map;
 });

@@ -999,10 +999,10 @@ class _AwardOverviewCard extends StatelessWidget {
               Expanded(
                 child: _MetricTile(
                   label: 'Total Pool',
-                  value: '₱250,000',
+                  value: '₱${(((scholarship.slots != null && scholarship.slots! > 0) ? scholarship.slots! * scholarship.awardAmount : scholarship.awardAmount)).toString().replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (m) => '${m[1]},')}',
                   caption: scholarship.slots != null
                       ? '${scholarship.slots} grants'
-                      : '25 grants',
+                      : 'Active grant',
                 ),
               ),
               const SizedBox(width: 8),
@@ -2793,25 +2793,13 @@ String _incomeBracketLabel(double? maxMonthlyIncome) {
 }
 
 String _grantValue(Scholarship scholarship) {
-  final provider = scholarship.provider?.toLowerCase() ?? '';
-  final title = scholarship.title.toLowerCase();
-  if (provider.contains('dost') || title.contains('dost')) {
-    return '₱40,000';
-  } else if (provider.contains('ched') || title.contains('ched')) {
-    return '₱60,000';
-  } else if (provider.contains('gokongwei') || provider.contains('ayala') || provider.contains('sm')) {
-    return '₱100,000';
-  }
-  return '₱50,000';
+  return scholarship.formattedAmount;
 }
 
 String _grantSubtext(Scholarship scholarship) {
-  final provider = scholarship.provider?.toLowerCase() ?? '';
-  final title = scholarship.title.toLowerCase();
-  if (provider.contains('dost') || title.contains('dost')) {
-    return '/ semester + ₱7,000/mo allowance & book subsidies';
-  } else if (provider.contains('ched') || title.contains('ched')) {
-    return '/ semester + tuition subsidy & book stipend';
-  }
-  return '/ year + full educational grant & book support';
+  final freq = scholarship.formattedFrequency;
+  final cov = scholarship.coverage.trim().isNotEmpty
+      ? scholarship.coverage
+      : 'Full educational grant & book support';
+  return '$freq • $cov';
 }

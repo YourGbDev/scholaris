@@ -10,6 +10,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'app_motion.dart';
 
 // --- Stitch Color Tokens ----------------------------------------------------
 
@@ -238,6 +239,15 @@ ThemeData scholarisTheme() {
         borderRadius: BorderRadius.circular(kRadiusInput),
         borderSide: const BorderSide(color: kError, width: 1.5),
       ),
+    ),
+    pageTransitionsTheme: const PageTransitionsTheme(
+      builders: {
+        TargetPlatform.android: ScholarisPageTransitionsBuilder(),
+        TargetPlatform.iOS: ScholarisPageTransitionsBuilder(),
+        TargetPlatform.linux: ScholarisPageTransitionsBuilder(),
+        TargetPlatform.macOS: ScholarisPageTransitionsBuilder(),
+        TargetPlatform.windows: ScholarisPageTransitionsBuilder(),
+      },
     ),
     snackBarTheme: SnackBarThemeData(
       backgroundColor: kOnSurface,

@@ -9,20 +9,30 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import 'package:scholaris/features/applications/providers/applications_provider.dart';
 import 'package:scholaris/features/profile/providers/profile_setup_provider.dart';
 import 'package:scholaris/shared/widgets/logout_confirmation_dialog.dart';
 import 'package:scholaris/shared/widgets/scholaris_logo.dart';
+import '../../providers/provider_scholarships_provider.dart';
+import '../widgets/applicant_review_drawer.dart';
+import '../widgets/provider_verification_banner.dart';
 import 'org_analytics_tab.dart';
 import 'org_disbursements_tab.dart';
 import 'org_incoming_applications_tab.dart';
 import 'org_provider_theme.dart';
 import 'org_scholarships_tab.dart';
 import 'org_settings_tab.dart';
+import '../../../../shared/theme/app_motion.dart';
 
 class OrgProviderShell extends ConsumerStatefulWidget {
-  const OrgProviderShell({super.key, this.initialTab = 0});
+  const OrgProviderShell({
+    super.key,
+    this.initialTab = 0,
+    this.autoOpenDrawer = false,
+  });
 
   final int initialTab;
+  final bool autoOpenDrawer;
 
   @override
   ConsumerState<OrgProviderShell> createState() => _OrgProviderShellState();
@@ -30,11 +40,36 @@ class OrgProviderShell extends ConsumerStatefulWidget {
 
 class _OrgProviderShellState extends ConsumerState<OrgProviderShell> {
   late int _selectedTab;
+  bool _drawerOpened = false;
 
   @override
   void initState() {
     super.initState();
     _selectedTab = widget.initialTab;
+    if (widget.autoOpenDrawer) {
+      WidgetsBinding.instance.addPostFrameCallback((_) => _openDrawerOnce());
+    }
+  }
+
+  void _openDrawerOnce() async {
+    if (_drawerOpened || !mounted) return;
+    _drawerOpened = true;
+    final apps = await ref.read(incomingApplicationsProvider.future);
+    if (apps.isEmpty || !mounted) return;
+    final app = apps.first;
+    final profiles = ref.read(providerApplicantProfilesProvider).valueOrNull ?? {};
+    final scholarships = ref.read(providerScholarshipsProvider).valueOrNull ?? [];
+    final scholarshipsMap = {for (final s in scholarships) s.id: s};
+    if (!mounted) return;
+    ApplicantReviewDrawer.show(
+      context,
+      application: app,
+      scholarship: scholarshipsMap[app.scholarshipId],
+      applicantProfile: profiles[app.userId],
+      onStatusChanged: () {
+        ref.read(incomingApplicationsProvider.notifier).refresh();
+      },
+    );
   }
 
   static Future<void> _handleSignOut(BuildContext context) async {
@@ -60,15 +95,20 @@ class _OrgProviderShellState extends ConsumerState<OrgProviderShell> {
         : 'AF';
 
     final tabs = [
-      const OrgIncomingApplicationsTab(),
+      const OrgIncomingApplicationsTab(key: ValueKey('org_applications_tab')),
+      const OrgIncomingApplicationsTab(
+        key: ValueKey('org_decisioning_tab'),
+        isDecisioningMode: true,
+      ),
       OrgScholarshipsTab(
+        key: const ValueKey('org_scholarships_tab'),
         onViewApplicationsForScholarship: (scholarshipId) {
           setState(() => _selectedTab = 0);
         },
       ),
-      const OrgAnalyticsTab(),
-      const OrgDisbursementsTab(),
-      const OrgSettingsTab(),
+      const OrgAnalyticsTab(key: ValueKey('org_analytics_tab')),
+      const OrgDisbursementsTab(key: ValueKey('org_disbursements_tab')),
+      const OrgSettingsTab(key: ValueKey('org_settings_tab')),
     ];
 
     if (isDesktop) {
@@ -85,12 +125,14 @@ class _OrgProviderShellState extends ConsumerState<OrgProviderShell> {
             // Main Workspace (Top Bar + Active Tab Surface)
             Expanded(
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   _buildTopBar(context, orgName, initials),
+                  const ProviderVerificationBanner(),
                   Expanded(
-                    child: IndexedStack(
-                      index: _selectedTab,
-                      children: tabs,
+                    child: TabContentCrossFade(
+                      activeKey: ValueKey<int>(_selectedTab),
+                      child: tabs[_selectedTab],
                     ),
                   ),
                 ],
@@ -149,9 +191,17 @@ class _OrgProviderShellState extends ConsumerState<OrgProviderShell> {
             child: _buildSidebarContent(context, orgName, initials, isDrawer: true),
           ),
         ),
-        body: IndexedStack(
-          index: _selectedTab,
-          children: tabs,
+        body: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            const ProviderVerificationBanner(),
+            Expanded(
+              child: TabContentCrossFade(
+                activeKey: ValueKey<int>(_selectedTab),
+                child: tabs[_selectedTab],
+              ),
+            ),
+          ],
         ),
       );
     }
@@ -241,7 +291,7 @@ class _OrgProviderShellState extends ConsumerState<OrgProviderShell> {
           if (screenWidth >= 880) ...[
             ElevatedButton.icon(
               onPressed: () {
-                setState(() => _selectedTab = 1);
+                setState(() => _selectedTab = 2);
               },
               icon: const Icon(Icons.add_rounded, size: 16, color: Colors.white),
               label: Text(
@@ -379,22 +429,29 @@ class _OrgProviderShellState extends ConsumerState<OrgProviderShell> {
                   ),
                   _buildNavItem(
                     index: 1,
-                    icon: Icons.school_outlined,
-                    activeIcon: Icons.school_rounded,
-                    label: 'Scholarships',
+                    icon: Icons.rate_review_outlined,
+                    activeIcon: Icons.rate_review_rounded,
+                    label: 'Decisioning',
+                    isDrawer: isDrawer,
+                  ),
+                  _buildNavItem(
+                    index: 2,
+                    icon: Icons.folder_special_outlined,
+                    activeIcon: Icons.folder_special_rounded,
+                    label: 'My Scholarships',
                     isDrawer: isDrawer,
                   ),
                   const SizedBox(height: 12),
                   _sectionHeader('Operations'),
                   _buildNavItem(
-                    index: 2,
+                    index: 3,
                     icon: Icons.insights_outlined,
                     activeIcon: Icons.insights_rounded,
                     label: 'Analytics & Impact',
                     isDrawer: isDrawer,
                   ),
                   _buildNavItem(
-                    index: 3,
+                    index: 4,
                     icon: Icons.payments_outlined,
                     activeIcon: Icons.payments_rounded,
                     label: 'Disbursements',
@@ -403,7 +460,7 @@ class _OrgProviderShellState extends ConsumerState<OrgProviderShell> {
                   const SizedBox(height: 12),
                   _sectionHeader('Account'),
                   _buildNavItem(
-                    index: 4,
+                    index: 5,
                     icon: Icons.manage_accounts_outlined,
                     activeIcon: Icons.manage_accounts_rounded,
                     label: 'Settings',
@@ -480,7 +537,7 @@ class _OrgProviderShellState extends ConsumerState<OrgProviderShell> {
                       child: InkWell(
                         borderRadius: BorderRadius.circular(6),
                         onTap: () {
-                          setState(() => _selectedTab = 4);
+                          setState(() => _selectedTab = 5);
                           if (isDrawer) Navigator.of(context).pop();
                         },
                         child: Padding(
@@ -571,52 +628,82 @@ class _OrgProviderShellState extends ConsumerState<OrgProviderShell> {
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
-      child: Material(
-        color: isSelected ? kOrgActiveNavBg : Colors.transparent,
-        borderRadius: BorderRadius.circular(10),
-        child: InkWell(
+      child: PressableScale(
+        scale: 0.98,
+        child: Material(
+          color: Colors.transparent,
           borderRadius: BorderRadius.circular(10),
-          hoverColor: isSelected ? null : const Color(0xFFE9E7ED),
-          onTap: () {
-            setState(() => _selectedTab = index);
-            if (isDrawer) Navigator.of(context).pop();
-          },
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 9),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(10),
-              boxShadow: isSelected
-                  ? const [
-                      BoxShadow(
-                        color: Color(0x1F0F4D2E),
-                        blurRadius: 4,
-                        offset: Offset(0, 1),
-                      ),
-                    ]
-                  : null,
-            ),
-            child: Row(
-              children: [
-                Icon(
-                  isSelected ? activeIcon : icon,
-                  size: 19,
-                  color: isSelected ? kOrgActiveNavText : const Color(0xFF5E6D66),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Text(
-                    label,
-                    style: GoogleFonts.inter(
-                      fontSize: 13.5,
-                      fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
-                      color: isSelected ? kOrgActiveNavText : kOrgInactiveNavText,
-                      letterSpacing: -0.1,
-                    ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
+          child: InkWell(
+            borderRadius: BorderRadius.circular(10),
+            splashColor: Colors.transparent,
+            highlightColor: Colors.transparent,
+            focusColor: Colors.transparent,
+            hoverColor: isSelected ? Colors.transparent : const Color(0xFFE9E7ED),
+            onTap: () {
+              setState(() => _selectedTab = index);
+              if (isDrawer) Navigator.of(context).pop();
+            },
+            child: AnimatedContainer(
+              duration: kDurationStandard,
+              curve: kEaseInOut,
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 9),
+              decoration: BoxDecoration(
+                // Interpolates strictly in green channel alpha without ever touching transparent black
+                color: isSelected
+                    ? kOrgActiveNavBg
+                    : kOrgActiveNavBg.withValues(alpha: 0),
+                borderRadius: BorderRadius.circular(10),
+                boxShadow: [
+                  BoxShadow(
+                    color: isSelected
+                        ? const Color(0x1F0F4D2E)
+                        : const Color(0x000F4D2E),
+                    blurRadius: 4,
+                    offset: const Offset(0, 1),
                   ),
-                ),
-              ],
+                ],
+              ),
+              child: Row(
+                children: [
+                  TweenAnimationBuilder<Color?>(
+                    duration: kDurationStandard,
+                    curve: kEaseInOut,
+                    tween: ColorTween(
+                      end: isSelected
+                          ? kOrgActiveNavText
+                          : const Color(0xFF5E6D66),
+                    ),
+                    builder: (context, color, _) {
+                      return Icon(
+                        isSelected ? activeIcon : icon,
+                        size: 19,
+                        color: color,
+                      );
+                    },
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: AnimatedDefaultTextStyle(
+                      duration: kDurationStandard,
+                      curve: kEaseInOut,
+                      style: GoogleFonts.inter(
+                        fontSize: 13.5,
+                        fontWeight:
+                            isSelected ? FontWeight.w600 : FontWeight.w500,
+                        color: isSelected
+                            ? kOrgActiveNavText
+                            : kOrgInactiveNavText,
+                        letterSpacing: -0.1,
+                      ),
+                      child: Text(
+                        label,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ),

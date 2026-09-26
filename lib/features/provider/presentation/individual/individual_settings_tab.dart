@@ -11,6 +11,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:scholaris/features/profile/providers/profile_setup_provider.dart';
 import 'package:scholaris/shared/widgets/logout_confirmation_dialog.dart';
 import '../../providers/provider_type_provider.dart';
+import '../../../../core/auth/landing_redirect.dart';
 import '../org/org_provider_theme.dart';
 
 class IndividualSettingsTab extends ConsumerStatefulWidget {
@@ -286,9 +287,7 @@ class _IndividualSettingsTabState extends ConsumerState<IndividualSettingsTab> {
                     final confirmed =
                         await showLogoutConfirmationDialog(context);
                     if (confirmed) {
-                      try {
-                        await Supabase.instance.client.auth.signOut();
-                      } catch (_) {}
+                      await handleProviderSignOut();
                     }
                   },
                   icon: const Icon(Icons.logout_rounded, size: 16),

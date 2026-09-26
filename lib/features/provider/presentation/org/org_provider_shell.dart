@@ -7,7 +7,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'package:scholaris/features/applications/providers/applications_provider.dart';
 import 'package:scholaris/features/profile/providers/profile_setup_provider.dart';
@@ -22,6 +21,7 @@ import 'org_incoming_applications_tab.dart';
 import 'org_provider_theme.dart';
 import 'org_scholarships_tab.dart';
 import 'org_settings_tab.dart';
+import '../../../../core/auth/landing_redirect.dart';
 import '../../../../shared/theme/app_motion.dart';
 
 class OrgProviderShell extends ConsumerStatefulWidget {
@@ -75,9 +75,7 @@ class _OrgProviderShellState extends ConsumerState<OrgProviderShell> {
   static Future<void> _handleSignOut(BuildContext context) async {
     final confirmed = await showLogoutConfirmationDialog(context);
     if (confirmed) {
-      try {
-        await Supabase.instance.client.auth.signOut();
-      } catch (_) {}
+      await handleProviderSignOut();
     }
   }
 

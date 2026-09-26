@@ -6,14 +6,15 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'package:scholaris/shared/widgets/logout_confirmation_dialog.dart';
 import 'package:scholaris/shared/widgets/scholaris_logo.dart';
 import '../org/org_provider_theme.dart';
+import '../widgets/provider_verification_banner.dart';
 import 'individual_applications_tab.dart';
 import 'individual_grant_tab.dart';
 import 'individual_settings_tab.dart';
+import '../../../../core/auth/landing_redirect.dart';
 
 class IndividualProviderShell extends ConsumerStatefulWidget {
   const IndividualProviderShell({super.key, this.initialIndex = 0});
@@ -84,17 +85,22 @@ class _IndividualProviderShellState
             onPressed: () async {
               final confirmed = await showLogoutConfirmationDialog(context);
               if (confirmed) {
-                try {
-                  await Supabase.instance.client.auth.signOut();
-                } catch (_) {}
+                await handleProviderSignOut();
               }
             },
           ),
         ],
       ),
-      body: IndexedStack(
-        index: _currentIndex,
-        children: _tabs,
+      body: Column(
+        children: [
+          const ProviderVerificationBanner(),
+          Expanded(
+            child: IndexedStack(
+              index: _currentIndex,
+              children: _tabs,
+            ),
+          ),
+        ],
       ),
       bottomNavigationBar: NavigationBar(
         selectedIndex: _currentIndex,

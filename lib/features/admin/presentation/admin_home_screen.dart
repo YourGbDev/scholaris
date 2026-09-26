@@ -215,37 +215,6 @@ class _AdminHomeScreenState extends ConsumerState<AdminHomeScreen> {
             ),
           ),
           const SizedBox(width: 16),
-          // Academic Year badge
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-            decoration: BoxDecoration(
-              color: const Color(0xFFF4F3F8),
-              borderRadius: BorderRadius.circular(20),
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Container(
-                  width: 6,
-                  height: 6,
-                  decoration: const BoxDecoration(
-                    color: kAdminBridgeGreen,
-                    shape: BoxShape.circle,
-                  ),
-                ),
-                const SizedBox(width: 6),
-                Text(
-                  'AY 2024–2025 • Semester 1',
-                  style: GoogleFonts.inter(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w500,
-                    color: kAdminTextPrimary,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(width: 12),
           // User avatar
           Container(
             width: 32,

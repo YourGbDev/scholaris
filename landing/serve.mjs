@@ -27,6 +27,32 @@ const server = http.createServer((req, res) => {
   const safePath = path.normalize(reqPath).replace(/^(\.\.[/\\])+/, '');
   const filePath = path.join(__dirname, safePath);
 
+  const FLUTTER_PORT = process.env.FLUTTER_PORT || 5000;
+  const FLUTTER_HOST = process.env.FLUTTER_HOST || `http://localhost:${FLUTTER_PORT}`;
+
+  // If a request hits an app route, redirect to Flutter dev web server
+  if (
+    reqPath === '/login' ||
+    reqPath.startsWith('/login') ||
+    reqPath === '/provider-login' ||
+    reqPath.startsWith('/provider-login') ||
+    reqPath === '/become-provider' ||
+    reqPath.startsWith('/become-provider') ||
+    reqPath === '/provider-home' ||
+    reqPath.startsWith('/provider-home') ||
+    reqPath === '/student/login' ||
+    reqPath === '/provider/login' ||
+    reqPath.startsWith('/provider/login')
+  ) {
+    const targetUrl = `${FLUTTER_HOST}${req.url}`;
+    res.writeHead(302, {
+      'Location': targetUrl,
+      'Access-Control-Allow-Origin': '*'
+    });
+    res.end(`Redirecting to Scholaris App at ${targetUrl}`);
+    return;
+  }
+
   if (!fs.existsSync(filePath) || fs.statSync(filePath).isDirectory()) {
     res.writeHead(404, { 'Content-Type': 'text/plain' });
     res.end('404 Not Found');

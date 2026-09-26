@@ -1,2323 +1,911 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Scholaris — Find the Scholarship You Actually Deserve</title>
-  
-  <!-- Google Fonts: Poppins & Open Sans -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Poppins:wght@500;600;700;800&display=swap" rel="stylesheet">
+<!DOCTYPE html><html lang="en" style=""><head><meta charset="utf-8"><meta content="width=device-width, initial-scale=1.0" name="viewport"><title>Scholaris — Philippine Academic Scholarship Infrastructure</title>
+<link rel="icon" type="image/png" href="assets/images/hero_mascot.png"><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"><link href="https://fonts.googleapis.com" rel="preconnect"><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&amp;family=Plus+Jakarta+Sans:wght@600;700;800&amp;family=Poppins:wght@700&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}
+@keyframes marqueeGlide {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+.marquee-track {
+  display: flex;
+  width: max-content;
+  animation: marqueeGlide 35s linear infinite;
+  will-change: transform;
+}
+.marquee-container:hover .marquee-track {
+  animation-play-state: paused;
+}
+.marquee-mask {
+  mask-image: linear-gradient(to right, transparent 0%, black 4%, black 96%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to right, transparent 0%, black 4%, black 96%, transparent 100%);
+}
 
-  <style>
-    :root {
-      --color-bridge-green: #0F4D2E;
-      --color-bridge-green-light: #18633D;
-      --color-bridge-green-soft: #EBF4EE;
-      --color-golden-opportunity: #F1B41E;
-      --color-golden-opportunity-hover: #D89F15;
-      --color-navy-trust: #1B3A5C;
-      --color-coral-connect: #FF6F59;
-      --color-warm-white: #FAFAF8;
-      --color-pure-white: #FFFFFF;
-      --color-text-main: #1D2939;
-      --color-text-muted: #475467;
-      --color-border: #E4E7EC;
-      --color-trust-bg: #F2F4F7;
-      
-      --font-heading: 'Poppins', sans-serif;
-      --font-body: 'Open Sans', sans-serif;
-      
-      --shadow-sm: 0 1px 3px rgba(16, 24, 40, 0.06), 0 1px 2px rgba(16, 24, 40, 0.04);
-      --shadow-md: 0 4px 12px -2px rgba(15, 77, 46, 0.08), 0 2px 6px -2px rgba(15, 77, 46, 0.04);
-      --shadow-card-hover: 0 16px 32px -6px rgba(15, 77, 46, 0.15);
-      
-      --container-max: 1200px;
-      --radius-sm: 8px;
-      --radius-md: 14px;
-      --radius-lg: 20px;
-      --radius-pill: 9999px;
-    }
+/* Material Symbols Font Face & Ligatures */
+@font-face {
+  font-family: 'Material Symbols Outlined';
+  font-style: normal;
+  font-weight: 100 700;
+  font-display: block;
+  src: url(https://fonts.gstatic.com/s/materialsymbolsoutlined/v374/kJEhBvYX7BgnkSrUwT8OhrdQw4oELdPIeeII9v6oFsI.woff2) format('woff2');
+}
+.material-symbols-outlined {
+  font-family: 'Material Symbols Outlined' !important;
+  font-weight: normal;
+  font-style: normal;
+  line-height: 1;
+  letter-spacing: normal;
+  text-transform: none;
+  display: inline-block;
+  white-space: nowrap;
+  word-wrap: normal;
+  direction: ltr;
+  font-feature-settings: 'liga';
+  -webkit-font-feature-settings: 'liga';
+  -webkit-font-smoothing: antialiased;
+}
 
-    *, *::before, *::after {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
+/* Smooth hover scale and elevation interactions */
+.hover-lift {
+  transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.28s ease;
+}
+.hover-lift:hover {
+  transform: translateY(-4px) scale(1.03);
+}
+.hover-scale-subtle {
+  transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.28s ease;
+}
+.hover-scale-subtle:hover {
+  transform: translateY(-2px) scale(1.025);
+}
+.card-hover-lift {
+  transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.28s ease, border-color 0.28s ease;
+}
+.card-hover-lift:hover {
+  transform: translateY(-3px) scale(1.02);
+  box-shadow: 0 12px 28px -4px rgba(15, 77, 46, 0.09), 0 2px 6px -1px rgba(0, 0, 0, 0.04);
+}
+.mockup-hover-zoom {
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.35s ease;
+}
+.mockup-hover-zoom:hover {
+  transform: scale(1.04) translateY(-3px);
+  box-shadow: 0 20px 40px -8px rgba(15, 77, 46, 0.16);
+}
+/* Touch scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #f4f4f2;
+}
+::-webkit-scrollbar-thumb {
+  background: #c0c9c0;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #98d4ab;
+}
 
-    html {
-      scroll-behavior: smooth;
-      font-size: 16px;
-    }
-
-    body {
-      font-family: var(--font-body);
-      color: var(--color-text-main);
-      background-color: var(--color-warm-white);
-      line-height: 1.6;
-      -webkit-font-smoothing: antialiased;
-      overflow-x: hidden;
-    }
-
-    img {
-      max-width: 100%;
-      height: auto;
-      display: block;
-    }
-
-    a {
-      color: inherit;
-      text-decoration: none;
-    }
-
-    button {
-      font-family: inherit;
-      cursor: pointer;
-      border: none;
-      background: none;
-    }
-
-    .container {
-      width: 100%;
-      max-width: var(--container-max);
-      margin: 0 auto;
-      padding: 0 24px;
-    }
-
-    /* 1. NAV */
-    .site-header {
-      position: sticky;
-      top: 0;
-      z-index: 1000;
-      background-color: rgba(250, 250, 248, 0.95);
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
-      border-bottom: 1px solid rgba(228, 231, 236, 0.8);
-      transition: background-color 0.2s ease, box-shadow 0.2s ease;
-    }
-
-    .site-header.scrolled {
-      background-color: rgba(255, 255, 255, 0.98);
-      box-shadow: 0 4px 16px rgba(15, 77, 46, 0.06);
-    }
-
-    .nav-container {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      height: 74px;
-    }
-
-    .brand-logo {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .brand-logo svg {
-      width: 32px;
-      height: 32px;
-      color: var(--color-bridge-green);
-    }
-
-    .brand-wordmark {
-      font-family: var(--font-heading);
-      font-weight: 800;
-      font-size: 1.55rem;
-      color: var(--color-bridge-green);
-      letter-spacing: -0.5px;
-      display: flex;
-      align-items: center;
-    }
-
-    .brand-wordmark .dot {
-      color: var(--color-golden-opportunity);
-      margin-left: 2px;
-    }
-
-    .nav-actions {
-      display: flex;
-      align-items: center;
-      gap: 16px;
-    }
-
-    .btn-nav-outline {
-      font-family: var(--font-heading);
-      font-weight: 600;
-      font-size: 0.95rem;
-      color: var(--color-bridge-green);
-      border: 1.5px solid var(--color-bridge-green);
-      padding: 8px 20px;
-      border-radius: var(--radius-pill);
-      background: transparent;
-      transition: all 0.2s ease;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-    }
-
-    .btn-nav-outline:hover {
-      background-color: var(--color-bridge-green-soft);
-      transform: translateY(-1px);
-    }
-
-    .btn-nav-solid {
-      font-family: var(--font-heading);
-      font-weight: 600;
-      font-size: 0.95rem;
-      color: var(--color-pure-white);
-      background-color: var(--color-bridge-green);
-      border: 1.5px solid var(--color-bridge-green);
-      padding: 8px 22px;
-      border-radius: var(--radius-pill);
-      box-shadow: 0 4px 10px rgba(15, 77, 46, 0.2);
-      transition: all 0.2s ease;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-    }
-
-    .btn-nav-solid:hover {
-      background-color: var(--color-bridge-green-light);
-      border-color: var(--color-bridge-green-light);
-      transform: translateY(-1px);
-      box-shadow: 0 6px 14px rgba(15, 77, 46, 0.25);
-    }
-
-    /* Backwards-compatible aliases */
-    .btn-student {
-      font-family: var(--font-heading);
-      font-weight: 600;
-      font-size: 0.95rem;
-      color: var(--color-bridge-green);
-      border: 1.5px solid var(--color-bridge-green);
-      padding: 8px 22px;
-      border-radius: var(--radius-pill);
-      background: transparent;
-      transition: all 0.2s ease;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .btn-download {
-      font-family: var(--font-heading);
-      font-weight: 600;
-      font-size: 0.95rem;
-      color: var(--color-pure-white);
-      background-color: var(--color-bridge-green);
-      border: 1.5px solid var(--color-bridge-green);
-      padding: 8px 24px;
-      border-radius: var(--radius-pill);
-      box-shadow: 0 4px 10px rgba(15, 77, 46, 0.2);
-      transition: all 0.2s ease;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .nav-hamburger {
-      display: none;
-      width: 42px;
-      height: 42px;
-      border-radius: var(--radius-sm);
-      align-items: center;
-      justify-content: center;
-      color: var(--color-bridge-green);
-      cursor: pointer;
-    }
-
-    .nav-hamburger svg {
-      width: 26px;
-      height: 26px;
-    }
-
-    .mobile-menu {
-      display: none;
-      position: absolute;
-      top: 74px;
-      left: 0;
-      right: 0;
-      background-color: var(--color-pure-white);
-      border-bottom: 2px solid var(--color-bridge-green-soft);
-      box-shadow: 0 12px 24px rgba(0, 0, 0, 0.08);
-      padding: 24px;
-      flex-direction: column;
-      gap: 16px;
-    }
-
-    .mobile-menu.open {
-      display: flex;
-    }
-
-    .mobile-menu .btn-nav-outline,
-    .mobile-menu .btn-nav-solid,
-    .mobile-menu .btn-student,
-    .mobile-menu .btn-download {
-      width: 100%;
-      text-align: center;
-      padding: 12px;
-      box-sizing: border-box;
-    }
-
-    /* DOWNLOAD APP MODAL */
-    .modal-backdrop {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      background-color: rgba(15, 30, 20, 0.65);
-      backdrop-filter: blur(8px);
-      -webkit-backdrop-filter: blur(8px);
-      z-index: 2000;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
-      opacity: 0;
-      visibility: hidden;
-      transition: opacity 0.25s ease, visibility 0.25s ease;
-    }
-
-    .modal-backdrop.active {
-      opacity: 1;
-      visibility: visible;
-    }
-
-    .modal-dialog {
-      background-color: var(--color-pure-white);
-      border-radius: var(--radius-lg);
-      padding: 38px 32px;
-      max-width: 480px;
-      width: 100%;
-      position: relative;
-      box-shadow: 0 24px 48px -12px rgba(15, 77, 46, 0.25);
-      border: 1px solid var(--color-border);
-      transform: scale(0.92) translateY(12px);
-      transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-      text-align: center;
-    }
-
-    .modal-backdrop.active .modal-dialog {
-      transform: scale(1) translateY(0);
-    }
-
-    .modal-close-btn {
-      position: absolute;
-      top: 16px;
-      right: 16px;
-      width: 36px;
-      height: 36px;
-      border-radius: 50%;
-      background-color: var(--color-trust-bg);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: var(--color-text-muted);
-      cursor: pointer;
-      transition: all 0.2s ease;
-      border: none;
-    }
-
-    .modal-close-btn:hover {
-      background-color: #E2E8E5;
-      color: var(--color-text-main);
-      transform: rotate(90deg);
-    }
-
-    .modal-icon-badge {
-      width: 60px;
-      height: 60px;
-      border-radius: 50%;
-      background: linear-gradient(135deg, var(--color-bridge-green-soft), #DDF0E4);
-      color: var(--color-bridge-green);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin: 0 auto 18px;
-    }
-
-    .modal-title {
-      font-family: var(--font-heading);
-      font-weight: 700;
-      font-size: 1.35rem;
-      color: var(--color-bridge-green);
-      margin-bottom: 10px;
-    }
-
-    .modal-body-copy {
-      font-family: var(--font-body);
-      font-size: 0.98rem;
-      color: var(--color-text-muted);
-      line-height: 1.6;
-      margin-bottom: 26px;
-    }
-
-    .modal-buttons-group {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
-
-    .btn-modal-primary {
-      font-family: var(--font-heading);
-      font-weight: 600;
-      font-size: 1rem;
-      color: var(--color-pure-white);
-      background-color: var(--color-bridge-green);
-      border: 1.5px solid var(--color-bridge-green);
-      padding: 13px 24px;
-      border-radius: var(--radius-pill);
-      box-shadow: 0 4px 12px rgba(15, 77, 46, 0.2);
-      transition: all 0.2s ease;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      text-decoration: none;
-    }
-
-    .btn-modal-primary:hover {
-      background-color: var(--color-bridge-green-light);
-      border-color: var(--color-bridge-green-light);
-      transform: translateY(-1px);
-    }
-
-    .btn-modal-secondary {
-      font-family: var(--font-heading);
-      font-weight: 600;
-      font-size: 0.98rem;
-      color: var(--color-navy-trust);
-      background-color: transparent;
-      border: 1.5px solid var(--color-border);
-      padding: 12px 24px;
-      border-radius: var(--radius-pill);
-      transition: all 0.2s ease;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      text-decoration: none;
-    }
-
-    .btn-modal-secondary:hover {
-      border-color: var(--color-navy-trust);
-      background-color: var(--color-trust-bg);
-      transform: translateY(-1px);
-    }
-
-    /* 6B. PROVIDER DESKTOP SECTION */
-    .provider-desktop-section {
-      padding: 110px 0 120px;
-      background: linear-gradient(180deg, #F6F8F6 0%, #EBF1ED 100%);
-      position: relative;
-      overflow: hidden;
-      border-top: 1px solid rgba(228, 231, 236, 0.8);
-      border-bottom: 1px solid rgba(228, 231, 236, 0.8);
-    }
-
-    .provider-desktop-showcase {
-      perspective: 1200px;
-      perspective-origin: 50% 35%;
-      margin: 48px auto 36px;
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 28px;
-      max-width: 1140px;
-    }
-
-    .provider-mockup-frame {
-      border-radius: 12px;
-      box-shadow: 0 20px 40px -12px rgba(15, 77, 46, 0.16), 0 10px 20px -8px rgba(27, 58, 92, 0.10);
-      background: var(--color-pure-white);
-      overflow: hidden;
-      transform: rotateX(10deg) translateY(24px) scale(0.97);
-      opacity: 0.85;
-      transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.45s ease, box-shadow 0.45s ease, border-color 0.45s ease;
-      will-change: transform, opacity, box-shadow;
-      border: 1px solid rgba(15, 77, 46, 0.08);
-      position: relative;
-      cursor: pointer;
-    }
-
-    .provider-mockup-frame img {
-      width: 100%;
-      height: auto;
-      display: block;
-      transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1);
-    }
-
-    /* Tandem straighten to 0deg as section enters viewport */
-    .provider-desktop-section.in-view .provider-mockup-frame {
-      transform: rotateX(0deg) translateY(0) scale(1);
-      opacity: 1;
-      box-shadow: 0 32px 64px -16px rgba(15, 77, 46, 0.22), 0 16px 32px -8px rgba(27, 58, 92, 0.16);
-    }
-
-    /* Interactive hover expansion: hovered picture gets big and lifts */
-    @media (hover: hover) and (pointer: fine) {
-      .provider-desktop-section.in-view .provider-mockup-frame:hover {
-        transform: rotateX(0deg) translateY(-14px) scale(1.06);
-        z-index: 20;
-        opacity: 1;
-        box-shadow: 0 44px 88px -14px rgba(15, 77, 46, 0.32), 0 24px 44px -8px rgba(27, 58, 92, 0.22);
-        border-color: rgba(15, 77, 46, 0.24);
-      }
-
-      /* Non-hovered sibling softens to spotlight the hovered picture */
-      .provider-desktop-showcase:hover .provider-mockup-frame:not(:hover) {
-        transform: rotateX(0deg) translateY(0) scale(0.97);
-        opacity: 0.82;
+</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = {
+  darkMode: "class",
+  theme: {
+    extend: {
+      "colors": {
+        "on-surface-variant": "#404942",
+        "secondary-fixed": "#d2e4ff",
+        "primary-fixed-dim": "#98d4ab",
+        "on-error": "#ffffff",
+        "error-container": "#ffdad6",
+        "outline": "#707971",
+        "surface-container-low": "#f4f4f2",
+        "surface-bright": "#f9f9f7",
+        "on-surface": "#1a1c1b",
+        "on-secondary": "#ffffff",
+        "on-primary-fixed": "#002110",
+        "inverse-on-surface": "#f1f1ef",
+        "on-secondary-fixed": "#001c38",
+        "surface-dim": "#dadad8",
+        "on-primary-container": "#82bd95",
+        "on-secondary-fixed-variant": "#2b486b",
+        "inverse-surface": "#2f3130",
+        "outline-variant": "#c0c9c0",
+        "surface-container": "#eeeeec",
+        "surface-container-lowest": "#ffffff",
+        "primary-fixed": "#b3f1c6",
+        "tertiary-container": "#583f00",
+        "primary-container": "#0f4d2e",
+        "background": "#f9f9f7",
+        "on-primary": "#ffffff",
+        "surface-tint": "#306948",
+        "tertiary-fixed-dim": "#fabc28",
+        "on-tertiary": "#ffffff",
+        "surface-variant": "#e2e3e1",
+        "on-primary-fixed-variant": "#145131",
+        "surface-container-highest": "#e2e3e1",
+        "on-secondary-container": "#3f5b7f",
+        "inverse-primary": "#98d4ab",
+        "on-tertiary-fixed-variant": "#5d4200",
+        "secondary": "#436084",
+        "secondary-fixed-dim": "#abc9f2",
+        "on-background": "#1a1c1b",
+        "surface-container-high": "#e8e8e6",
+        "secondary-container": "#b6d4fe",
+        "primary": "#00351c",
+        "on-tertiary-container": "#e1a604",
+        "error": "#ba1a1a",
+        "surface": "#f9f9f7",
+        "on-error-container": "#93000a",
+        "on-tertiary-fixed": "#261900",
+        "tertiary": "#3c2a00",
+        "tertiary-fixed": "#ffdea3"
+      },
+      "borderRadius": {
+        "DEFAULT": "0.25rem",
+        "lg": "0.5rem",
+        "xl": "0.75rem",
+        "full": "9999px"
+      },
+      "spacing": {
+        "space-2xs": "0.25rem",
+        "space-xs": "0.5rem",
+        "margin": "1.5rem",
+        "margin-mobile": "1rem",
+        "space-lg": "1.25rem",
+        "space-md": "1rem",
+        "gutter-mobile": "0.75rem",
+        "gutter": "1rem",
+        "space-sm": "0.75rem",
+        "space-2xl": "2.5rem",
+        "space-xl": "1.75rem"
+      },
+      "fontFamily": {
+        "label-lg": [
+          "Inter"
+        ],
+        "display-lg-mobile": [
+          "Plus Jakarta Sans"
+        ],
+        "headline-sm": [
+          "Plus Jakarta Sans"
+        ],
+        "label-md": [
+          "Inter"
+        ],
+        "display-lg": [
+          "Plus Jakarta Sans"
+        ],
+        "headline-lg": [
+          "Plus Jakarta Sans"
+        ],
+        "currency-stat": [
+          "Plus Jakarta Sans"
+        ],
+        "body-sm": [
+          "Inter"
+        ],
+        "body-lg": [
+          "Inter"
+        ],
+        "label-sm": [
+          "Inter"
+        ],
+        "headline-md": [
+          "Plus Jakarta Sans"
+        ],
+        "body-md": [
+          "Inter"
+        ]
+      },
+      "fontSize": {
+        "label-lg": [
+          "14px",
+          {
+            "lineHeight": "20px",
+            "fontWeight": "600"
+          }
+        ],
+        "display-lg-mobile": [
+          "30px",
+          {
+            "lineHeight": "36px",
+            "fontWeight": "700"
+          }
+        ],
+        "headline-sm": [
+          "16px",
+          {
+            "lineHeight": "24px",
+            "fontWeight": "600"
+          }
+        ],
+        "label-md": [
+          "12px",
+          {
+            "lineHeight": "16px",
+            "fontWeight": "600"
+          }
+        ],
+        "display-lg": [
+          "40px",
+          {
+            "lineHeight": "48px",
+            "fontWeight": "700"
+          }
+        ],
+        "headline-lg": [
+          "26px",
+          {
+            "lineHeight": "34px",
+            "fontWeight": "700"
+          }
+        ],
+        "currency-stat": [
+          "22px",
+          {
+            "lineHeight": "28px",
+            "fontWeight": "800"
+          }
+        ],
+        "body-sm": [
+          "12px",
+          {
+            "lineHeight": "16px",
+            "fontWeight": "400"
+          }
+        ],
+        "body-lg": [
+          "16px",
+          {
+            "lineHeight": "24px",
+            "fontWeight": "400"
+          }
+        ],
+        "label-sm": [
+          "10px",
+          {
+            "lineHeight": "12px",
+            "letterSpacing": "0.04em",
+            "fontWeight": "700"
+          }
+        ],
+        "headline-md": [
+          "20px",
+          {
+            "lineHeight": "28px",
+            "fontWeight": "600"
+          }
+        ],
+        "body-md": [
+          "14px",
+          {
+            "lineHeight": "20px",
+            "fontWeight": "400"
+          }
+        ]
       }
     }
-
-    .provider-desktop-ctas {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 16px;
-      margin-top: 20px;
-      flex-wrap: wrap;
-    }
-
-    .btn-provider-cta-primary {
-      font-family: var(--font-heading);
-      font-weight: 600;
-      font-size: 1rem;
-      color: var(--color-pure-white);
-      background-color: var(--color-bridge-green);
-      border: 1.5px solid var(--color-bridge-green);
-      padding: 13px 28px;
-      border-radius: var(--radius-pill);
-      box-shadow: 0 4px 14px rgba(15, 77, 46, 0.25);
-      transition: all 0.2s ease;
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      text-decoration: none;
-    }
-
-    .btn-provider-cta-primary:hover {
-      background-color: var(--color-bridge-green-light);
-      border-color: var(--color-bridge-green-light);
-      transform: translateY(-2px);
-      box-shadow: 0 8px 20px rgba(15, 77, 46, 0.3);
-    }
-
-    .btn-provider-cta-secondary {
-      font-family: var(--font-heading);
-      font-weight: 600;
-      font-size: 1rem;
-      color: var(--color-navy-trust);
-      background-color: var(--color-pure-white);
-      border: 1.5px solid var(--color-border);
-      padding: 13px 28px;
-      border-radius: var(--radius-pill);
-      box-shadow: var(--shadow-sm);
-      transition: all 0.2s ease;
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      text-decoration: none;
-    }
-
-    .btn-provider-cta-secondary:hover {
-      border-color: var(--color-navy-trust);
-      transform: translateY(-2px);
-      box-shadow: var(--shadow-md);
-    }
-
-    @media (max-width: 960px) {
-      .provider-desktop-showcase {
-        grid-template-columns: 1fr;
-        gap: 24px;
-        max-width: 600px;
-      }
-    }
-
-    @media (prefers-reduced-motion: reduce) {
-      .provider-mockup-frame {
-        transform: none !important;
-        opacity: 1 !important;
-        transition: none !important;
-      }
-    }
-
-    /* 2. HERO */
-    .hero-section {
-      padding: 60px 0 80px;
-      position: relative;
-    }
-
-    .hero-grid {
-      display: grid;
-      grid-template-columns: 1.1fr 0.9fr;
-      align-items: center;
-      gap: 48px;
-    }
-
-    .hero-content {
-      max-width: 600px;
-    }
-
-    .hero-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      background-color: var(--color-bridge-green-soft);
-      color: var(--color-bridge-green);
-      font-size: 0.85rem;
-      font-weight: 700;
-      font-family: var(--font-heading);
-      padding: 6px 14px;
-      border-radius: var(--radius-pill);
-      margin-bottom: 20px;
-    }
-
-    .hero-badge-dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background-color: var(--color-golden-opportunity);
-    }
-
-    .hero-headline {
-      font-family: var(--font-heading);
-      font-weight: 800;
-      font-size: 3.25rem;
-      line-height: 1.18;
-      letter-spacing: -1px;
-      color: var(--color-bridge-green);
-      margin-bottom: 22px;
-    }
-
-    .hero-sub {
-      font-family: var(--font-body);
-      font-size: 1.15rem;
-      line-height: 1.65;
-      color: var(--color-text-muted);
-      margin-bottom: 34px;
-    }
-
-    .hero-cta-group {
-      display: flex;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 22px;
-    }
-
-    .hero-cta-primary {
-      font-family: var(--font-heading);
-      font-weight: 700;
-      font-size: 1.05rem;
-      color: var(--color-pure-white);
-      background-color: var(--color-bridge-green);
-      padding: 14px 34px;
-      border-radius: var(--radius-pill);
-      box-shadow: 0 8px 20px rgba(15, 77, 46, 0.25);
-      transition: all 0.25s ease;
-      display: inline-flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .hero-cta-primary:hover {
-      background-color: var(--color-bridge-green-light);
-      transform: translateY(-2px);
-      box-shadow: 0 12px 24px rgba(15, 77, 46, 0.32);
-    }
-
-    .hero-cta-secondary {
-      font-family: var(--font-heading);
-      font-weight: 700;
-      font-size: 1.05rem;
-      color: var(--color-golden-opportunity);
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      transition: all 0.2s ease;
-      padding: 8px 4px;
-    }
-
-    .hero-cta-secondary:hover {
-      color: var(--color-golden-opportunity-hover);
-      transform: translateX(4px);
-    }
-
-    .hero-mascot-wrapper {
-      position: relative;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    }
-
-    .mascot-backdrop-glow {
-      position: absolute;
-      width: 420px;
-      height: 420px;
-      border-radius: 50%;
-      background: radial-gradient(circle, rgba(241, 180, 30, 0.25) 0%, rgba(15, 77, 46, 0.08) 55%, transparent 72%);
-      filter: blur(24px);
-      z-index: 1;
-      pointer-events: none;
-    }
-
-    .mascot-image-floating {
-      position: relative;
-      z-index: 2;
-      max-width: 420px;
-      width: 100%;
-      filter: drop-shadow(0 14px 24px rgba(15, 77, 46, 0.15));
-      animation: floatUpDown 4s ease-in-out infinite;
-    }
-
-    @keyframes floatUpDown {
-      0%, 100% {
-        transform: translateY(0px);
-      }
-      50% {
-        transform: translateY(-14px);
-      }
-    }
-
-    /* 3. STATS BAR */
-    .stats-bar-section {
-      background-color: var(--color-bridge-green);
-      color: var(--color-pure-white);
-      padding: 46px 0;
-      position: relative;
-    }
-
-    .stats-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 32px;
-      text-align: center;
-    }
-
-    .stat-item {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      position: relative;
-    }
-
-    .stat-item:not(:last-child)::after {
-      content: '';
-      position: absolute;
-      right: -16px;
-      top: 20%;
-      height: 60%;
-      width: 1px;
-      background-color: rgba(255, 255, 255, 0.2);
-    }
-
-    .stat-number {
-      font-family: var(--font-heading);
-      font-weight: 800;
-      font-size: 3rem;
-      line-height: 1;
-      color: var(--color-golden-opportunity);
-      margin-bottom: 8px;
-    }
-
-    .stat-label {
-      font-family: var(--font-body);
-      font-weight: 600;
-      font-size: 1.05rem;
-      color: rgba(255, 255, 255, 0.95);
-    }
-
-    /* 4. WHY SCHOLARIS? */
-    .why-section {
-      padding: 100px 0;
-      background-color: var(--color-warm-white);
-    }
-
-    .section-header {
-      text-align: center;
-      max-width: 760px;
-      margin: 0 auto 56px;
-    }
-
-    .section-eyebrow {
-      font-family: var(--font-heading);
-      font-weight: 700;
-      font-size: 0.88rem;
-      text-transform: uppercase;
-      letter-spacing: 1.2px;
-      color: var(--color-coral-connect);
-      margin-bottom: 12px;
-      display: block;
-    }
-
-    .section-title {
-      font-family: var(--font-heading);
-      font-weight: 800;
-      font-size: 2.35rem;
-      line-height: 1.25;
-      color: var(--color-bridge-green);
-      letter-spacing: -0.5px;
-    }
-
-    .section-sub {
-      font-family: var(--font-body);
-      font-size: 1.1rem;
-      color: var(--color-text-muted);
-      margin-top: 14px;
-    }
-
-    .cards-grid-3 {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 28px;
-    }
-
-    .why-card {
-      background-color: var(--color-pure-white);
-      border-radius: var(--radius-lg);
-      padding: 38px 30px;
-      border: 1px solid var(--color-border);
-      box-shadow: var(--shadow-sm);
-      transition: all 0.3s ease;
-      display: flex;
-      flex-direction: column;
-      position: relative;
-    }
-
-    .why-card:hover {
-      transform: translateY(-6px);
-      box-shadow: var(--shadow-card-hover);
-      border-color: rgba(15, 77, 46, 0.18);
-    }
-
-    .why-icon-wrap {
-      width: 58px;
-      height: 58px;
-      border-radius: var(--radius-md);
-      background-color: rgba(241, 180, 30, 0.15);
-      color: var(--color-golden-opportunity-hover);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin-bottom: 22px;
-      font-size: 1.8rem;
-    }
-
-    .why-card-title {
-      font-family: var(--font-heading);
-      font-weight: 700;
-      font-size: 1.35rem;
-      color: var(--color-bridge-green);
-      margin-bottom: 14px;
-    }
-
-    .why-card-text {
-      font-family: var(--font-body);
-      font-size: 1rem;
-      color: var(--color-text-muted);
-      line-height: 1.65;
-    }
-
-    /* 5. HOW IT WORKS */
-    .how-section {
-      padding: 100px 0;
-      background-color: #F3F6F4;
-    }
-
-    .steps-row {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 32px;
-      position: relative;
-    }
-
-    .steps-row::before {
-      content: '';
-      position: absolute;
-      top: 36px;
-      left: 12%;
-      right: 12%;
-      height: 3px;
-      background: linear-gradient(90deg, var(--color-bridge-green) 0%, var(--color-golden-opportunity) 100%);
-      z-index: 1;
-    }
-
-    .step-card {
-      position: relative;
-      z-index: 2;
-      background-color: var(--color-pure-white);
-      border-radius: var(--radius-lg);
-      padding: 38px 28px;
-      border: 1px solid var(--color-border);
-      box-shadow: var(--shadow-sm);
-      text-align: center;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      transition: all 0.25s ease;
-    }
-
-    .step-card:hover {
-      transform: translateY(-4px);
-      box-shadow: var(--shadow-md);
-    }
-
-    .step-number-bubble {
-      width: 64px;
-      height: 64px;
-      border-radius: 50%;
-      background-color: var(--color-bridge-green);
-      color: var(--color-golden-opportunity);
-      font-family: var(--font-heading);
-      font-weight: 800;
-      font-size: 1.55rem;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin-bottom: 24px;
-      box-shadow: 0 6px 16px rgba(15, 77, 46, 0.25);
-      border: 4px solid var(--color-pure-white);
-    }
-
-    .step-title {
-      font-family: var(--font-heading);
-      font-weight: 700;
-      font-size: 1.25rem;
-      color: var(--color-bridge-green);
-      margin-bottom: 12px;
-    }
-
-    .step-desc {
-      font-family: var(--font-body);
-      font-size: 0.98rem;
-      color: var(--color-text-muted);
-      line-height: 1.6;
-    }
-
-    /* 6. APP SCREENSHOTS - PURE MOBILE PHONE SHOWCASE */
-    .screenshots-section {
-      padding: 64px 0 72px;
-      background-color: var(--color-warm-white);
-      overflow: hidden;
-    }
-
-    .screenshots-scroller-wrap {
-      position: relative;
-      width: 100vw;
-      margin-left: calc(-50vw + 50%);
-      padding: 16px 0 16px;
-      overflow-x: auto;
-      overflow-y: hidden;
-      scroll-behavior: smooth;
-      -webkit-overflow-scrolling: touch;
-      scrollbar-width: none;
-      -ms-overflow-style: none;
-      cursor: grab;
-    }
-
-    .screenshots-scroller-wrap::-webkit-scrollbar {
-      display: none;
-    }
-
-    .screenshots-scroller-wrap:active {
-      cursor: grabbing;
-    }
-
-    .screenshots-track {
-      display: flex;
-      gap: 32px;
-      padding: 10px max(24px, calc((100vw - var(--container-max)) / 2 + 24px)) 24px;
-      width: max-content;
-      list-style: none;
-      margin: 0;
-    }
-
-    .mockup-item {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      flex-shrink: 0;
-      width: 270px;
-    }
-
-    .phone-mockup {
-      width: 270px;
-      flex-shrink: 0;
-      background-color: #121316;
-      border-radius: 44px;
-      padding: 10px;
-      box-shadow: 0 20px 40px -10px rgba(15, 77, 46, 0.18), 0 8px 18px rgba(0, 0, 0, 0.12);
-      border: 3.5px solid #2D3139;
-      position: relative;
-      transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-    }
-
-    .phone-mockup:hover {
-      transform: translateY(-8px);
-      box-shadow: 0 28px 52px -10px rgba(15, 77, 46, 0.28), 0 12px 24px rgba(0, 0, 0, 0.18);
-    }
-
-    .phone-screen {
-      background-color: #000000;
-      border-radius: 34px;
-      overflow: hidden;
-      aspect-ratio: 9 / 19.5;
-      position: relative;
-    }
-
-    .phone-screen::before {
-      content: '';
-      position: absolute;
-      top: 6px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 50px;
-      height: 13px;
-      background-color: #000000;
-      border-radius: 8px;
-      z-index: 10;
-    }
-
-    .phone-screen::after {
-      content: '';
-      position: absolute;
-      bottom: 6px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 80px;
-      height: 4px;
-      background-color: rgba(0, 0, 0, 0.25);
-      border-radius: 2px;
-      z-index: 10;
-    }
-
-    .phone-screen img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      display: block;
-    }
-
-    .mockup-caption {
-      margin-top: 18px;
-      text-align: center;
-      max-width: 260px;
-    }
-
-    .mockup-caption-title {
-      font-family: var(--font-heading);
-      font-size: 1rem;
-      font-weight: 700;
-      color: var(--color-text-main);
-      margin-bottom: 4px;
-    }
-
-    .mockup-caption-sub {
-      font-family: var(--font-body);
-      font-size: 0.8rem;
-      color: var(--color-text-muted);
-      line-height: 1.4;
-      margin: 0;
-    }
-
-    @media (max-width: 600px) {
-      .screenshots-section {
-        padding: 44px 0 52px;
-      }
-      .mockup-item,
-      .phone-mockup {
-        width: 240px;
-      }
-      .phone-mockup {
-        border-radius: 38px;
-        padding: 8px;
-      }
-      .phone-screen {
-        border-radius: 30px;
-      }
-      .phone-screen::before {
-        top: 5px;
-        width: 44px;
-        height: 11px;
-        border-radius: 6px;
-      }
-      .screenshots-track {
-        gap: 20px;
-      }
-    }
-
-    @media (prefers-reduced-motion: reduce) {
-      .phone-mockup {
-        transition: none !important;
-        transform: none !important;
-      }
-    }
-
-    .scroll-controls {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 16px;
-      margin-top: 24px;
-    }
-
-    .scroll-btn {
-      width: 48px;
-      height: 48px;
-      border-radius: 50%;
-      background-color: var(--color-pure-white);
-      border: 1.5px solid var(--color-border);
-      color: var(--color-bridge-green);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: all 0.2s ease;
-      box-shadow: var(--shadow-sm);
-    }
-
-    .scroll-btn:hover {
-      background-color: var(--color-bridge-green);
-      border-color: var(--color-bridge-green);
-      color: var(--color-pure-white);
-      transform: scale(1.06);
-    }
-
-    .scroll-btn svg {
-      width: 22px;
-      height: 22px;
-    }
-
-    /* 7. FOR PROVIDERS */
-    .providers-section {
-      padding: 100px 0;
-      background-color: #F8FAF9;
-      border-top: 1px solid var(--color-border);
-    }
-
-    .providers-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 32px;
-      max-width: 960px;
-      margin: 0 auto;
-    }
-
-    .provider-card {
-      background-color: var(--color-pure-white);
-      border-radius: var(--radius-lg);
-      padding: 44px 36px;
-      border: 1px solid var(--color-border);
-      box-shadow: var(--shadow-sm);
-      transition: all 0.3s ease;
-      display: flex;
-      flex-direction: column;
-      position: relative;
-    }
-
-    .provider-card:hover {
-      transform: translateY(-6px);
-      box-shadow: var(--shadow-card-hover);
-      border-color: rgba(15, 77, 46, 0.2);
-    }
-
-    .provider-badge-pill {
-      position: absolute;
-      top: 24px;
-      right: 24px;
-      background-color: var(--color-bridge-green-soft);
-      color: var(--color-bridge-green);
-      font-family: var(--font-heading);
-      font-size: 0.76rem;
-      font-weight: 700;
-      padding: 5px 12px;
-      border-radius: var(--radius-pill);
-      border: 1px solid rgba(15, 77, 46, 0.15);
-    }
-
-    .provider-icon-circle {
-      width: 64px;
-      height: 64px;
-      border-radius: var(--radius-md);
-      background-color: var(--color-bridge-green-soft);
-      color: var(--color-bridge-green);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin-bottom: 24px;
-    }
-
-    .provider-icon-circle svg {
-      width: 32px;
-      height: 32px;
-    }
-
-    .provider-card-title {
-      font-family: var(--font-heading);
-      font-weight: 700;
-      font-size: 1.45rem;
-      color: var(--color-bridge-green);
-      margin-bottom: 12px;
-    }
-
-    .provider-card-desc {
-      font-family: var(--font-body);
-      font-size: 1.02rem;
-      color: var(--color-text-muted);
-      line-height: 1.6;
-      margin-bottom: 30px;
-      flex-grow: 1;
-    }
-
-    .provider-cta-link {
-      font-family: var(--font-heading);
-      font-weight: 700;
-      font-size: 1.05rem;
-      color: var(--color-bridge-green);
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      transition: all 0.2s ease;
-      width: fit-content;
-    }
-
-    .provider-cta-link:hover {
-      color: var(--color-golden-opportunity-hover);
-      transform: translateX(4px);
-    }
-
-    /* 8. FAQ (ACCORDION) */
-    .faq-section {
-      padding: 100px 0;
-      background-color: var(--color-warm-white);
-    }
-
-    .faq-wrapper {
-      max-width: 820px;
-      margin: 0 auto;
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-    }
-
-    .faq-item {
-      background-color: var(--color-pure-white);
-      border: 1px solid var(--color-border);
-      border-radius: var(--radius-md);
-      overflow: hidden;
-      transition: border-color 0.25s ease, box-shadow 0.25s ease;
-    }
-
-    .faq-item:hover {
-      border-color: rgba(15, 77, 46, 0.25);
-    }
-
-    .faq-item.active {
-      border-color: var(--color-bridge-green);
-      box-shadow: var(--shadow-sm);
-    }
-
-    .faq-question-btn {
-      width: 100%;
-      padding: 22px 26px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 16px;
-      text-align: left;
-      font-family: var(--font-heading);
-      font-weight: 600;
-      font-size: 1.15rem;
-      color: var(--color-text-main);
-      transition: color 0.2s ease;
-    }
-
-    .faq-item.active .faq-question-btn {
-      color: var(--color-bridge-green);
-    }
-
-    .faq-icon-chevron {
-      width: 24px;
-      height: 24px;
-      flex-shrink: 0;
-      color: var(--color-text-muted);
-      transition: transform 0.3s ease, color 0.2s ease;
-    }
-
-    .faq-item.active .faq-icon-chevron {
-      transform: rotate(180deg);
-      color: var(--color-bridge-green);
-    }
-
-    .faq-answer-panel {
-      max-height: 0;
-      overflow: hidden;
-      transition: max-height 0.35s ease;
-      background-color: #FAFCFA;
-    }
-
-    .faq-item.active .faq-answer-panel {
-      max-height: 300px;
-    }
-
-    .faq-answer-content {
-      padding: 0 26px 24px;
-      font-family: var(--font-body);
-      font-size: 1.02rem;
-      color: var(--color-text-muted);
-      line-height: 1.7;
-    }
-
-    /* 9. TRUST BAR */
-    .trust-bar-section {
-      background-color: var(--color-trust-bg);
-      border-top: 1px solid var(--color-border);
-      border-bottom: 1px solid var(--color-border);
-      padding: 22px 0;
-      text-align: center;
-    }
-
-    .trust-content {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 12px;
-      color: var(--color-navy-trust);
-      font-family: var(--font-body);
-      font-size: 0.95rem;
-      font-weight: 600;
-      line-height: 1.4;
-      max-width: 900px;
-    }
-
-    .trust-shield-icon {
-      width: 22px;
-      height: 22px;
-      flex-shrink: 0;
-      color: var(--color-bridge-green);
-    }
-
-    /* 10. FOOTER */
-    .site-footer {
-      background-color: #0A321E;
-      color: #E2E8E5;
-      padding: 72px 0 32px;
-    }
-
-    .footer-top-grid {
-      display: grid;
-      grid-template-columns: 1.5fr 1fr 1fr 1fr;
-      gap: 40px;
-      margin-bottom: 56px;
-    }
-
-    .footer-brand {
-      max-width: 320px;
-    }
-
-    .footer-brand .brand-wordmark {
-      color: var(--color-pure-white);
-      margin-bottom: 14px;
-    }
-
-    .footer-tagline {
-      font-family: var(--font-body);
-      font-size: 0.96rem;
-      color: #B2C4B8;
-      line-height: 1.6;
-    }
-
-    .footer-col-title {
-      font-family: var(--font-heading);
-      font-weight: 700;
-      font-size: 1.05rem;
-      color: var(--color-pure-white);
-      margin-bottom: 20px;
-      letter-spacing: 0.2px;
-    }
-
-    .footer-links-list {
-      list-style: none;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
-
-    .footer-links-list a {
-      color: #B2C4B8;
-      font-size: 0.95rem;
-      transition: all 0.2s ease;
-    }
-
-    .footer-links-list a:hover {
-      color: var(--color-golden-opportunity);
-      transform: translateX(2px);
-    }
-
-    .footer-bottom-bar {
-      border-top: 1px solid rgba(255, 255, 255, 0.12);
-      padding-top: 30px;
-      text-align: center;
-      font-size: 0.88rem;
-      color: #8CA395;
-    }
-
-    /* RESPONSIVE BREAKPOINTS */
-    @media (max-width: 1024px) {
-      .hero-headline {
-        font-size: 2.75rem;
-      }
-      .footer-top-grid {
-        grid-template-columns: 1fr 1fr;
-        gap: 36px;
-      }
-    }
-
-    @media (max-width: 768px) {
-      .nav-actions {
-        display: none;
-      }
-
-      .nav-hamburger {
-        display: flex;
-      }
-
-      .hero-grid {
-        grid-template-columns: 1fr;
-        gap: 40px;
-      }
-
-      .hero-mascot-wrapper {
-        order: 1;
-      }
-
-      .hero-content {
-        order: 2;
-        text-align: center;
-        max-width: 100%;
-      }
-
-      .hero-headline {
-        font-size: 2.2rem;
-      }
-
-      .hero-sub {
-        font-size: 1.05rem;
-        margin-left: auto;
-        margin-right: auto;
-      }
-
-      .hero-cta-group {
-        justify-content: center;
-      }
-
-      .mascot-image-floating {
-        max-width: 320px;
-      }
-
-      .mascot-backdrop-glow {
-        width: 320px;
-        height: 320px;
-      }
-
-      .stats-grid {
-        grid-template-columns: 1fr;
-        gap: 24px;
-      }
-
-      .stat-item:not(:last-child)::after {
-        display: none;
-      }
-
-      .cards-grid-3,
-      .steps-row,
-      .providers-grid {
-        grid-template-columns: 1fr;
-        gap: 24px;
-      }
-
-      .steps-row::before {
-        display: none;
-      }
-
-      .section-title {
-        font-size: 1.85rem;
-      }
-
-      .phone-mockup {
-        width: 250px;
-      }
-
-      .trust-content {
-        flex-direction: column;
-        text-align: center;
-        gap: 8px;
-        font-size: 0.88rem;
-      }
-    }
-
-    @media (max-width: 480px) {
-      .container {
-        padding: 0 16px;
-      }
-
-      .hero-headline {
-        font-size: 1.85rem;
-      }
-
-      .hero-cta-group {
-        flex-direction: column;
-        width: 100%;
-      }
-
-      .hero-cta-primary {
-        width: 100%;
-        justify-content: center;
-      }
-
-      .mascot-image-floating {
-        max-width: 270px;
-      }
-
-      .footer-top-grid {
-        grid-template-columns: 1fr;
-        gap: 28px;
-      }
-    }
-  </style>
-</head>
-<body>
-
-  <!-- 1. NAV -->
-  <header class="site-header" id="siteHeader">
-    <div class="container nav-container">
-      <a href="#hero" class="brand-logo" aria-label="Scholaris Home">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M22 10v6M2 10l10-5 10 5-10 5z"/>
-          <path d="M6 12v5c3 3 9 3 12 0v-5"/>
-        </svg>
-        <span class="brand-wordmark">Scholaris<span class="dot">•</span></span>
-      </a>
-
-      <nav class="nav-actions" aria-label="Main Navigation">
-        <a href="/login" class="btn-nav-outline">Log In</a>
-        <a href="/signup" class="btn-nav-outline">Sign Up</a>
-        <button type="button" class="btn-nav-solid" id="navDownloadBtn">Download App</button>
-      </nav>
-
-      <button class="nav-hamburger" id="hamburgerBtn" aria-label="Toggle navigation menu" aria-expanded="false">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <line x1="3" y1="12" x2="21" y2="12"></line>
-          <line x1="3" y1="6" x2="21" y2="6"></line>
-          <line x1="3" y1="18" x2="21" y2="18"></line>
-        </svg>
-      </button>
-    </div>
-
-    <div class="mobile-menu" id="mobileMenu">
-      <a href="/login" class="btn-nav-outline">Log In</a>
-      <a href="/signup" class="btn-nav-outline">Sign Up</a>
-      <button type="button" class="btn-nav-solid" id="mobileDownloadBtn" style="border: none; cursor: pointer;">Download App</button>
-      <a href="#provider-desktop" class="btn-nav-outline" onclick="toggleMenu(false)" style="border-color: var(--color-golden-opportunity); color: var(--color-golden-opportunity-hover);">Provider Portal</a>
-    </div>
-  </header>
-
-  <main>
-    <!-- 2. HERO -->
-    <section class="hero-section" id="hero">
-      <div class="container hero-grid">
-        <div class="hero-content">
-          <div class="hero-badge">
-            <span class="hero-badge-dot"></span>
-            100% Free for Filipino Students
-          </div>
-          <h1 class="hero-headline">Find the Scholarship You Actually Deserve.</h1>
-          <p class="hero-sub">
-            Scholaris matches Filipino students to academic grants based on your real profile — no connections, no guesswork.
+  }
+}</script></head><body class="bg-surface text-on-surface antialiased"><header class="fixed top-0 left-0 right-0 z-50 bg-surface/80 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)]"><div class="h-20 max-w-7xl mx-auto px-6 lg:px-12 flex items-center justify-between gap-space-lg"><a class="font-['Poppins'] font-bold text-headline-lg tracking-tight text-primary transition-opacity hover:opacity-90" data-path="home" href="#hero">Scholaris</a><nav class="hidden lg:flex items-center gap-space-lg" data-active-classes="text-primary font-bold"><a aria-current="page" class="transition-colors text-primary font-bold" data-path="home" href="#">Home</a><a class="font-label-lg text-label-lg text-on-surface-variant hover:text-on-surface transition-colors" data-path="how-it-works" href="#how-it-works">How It Works</a><a class="font-label-lg text-label-lg text-on-surface-variant hover:text-on-surface transition-colors" data-path="for-providers" href="#provider-portal-section">For Providers</a><a class="font-label-lg text-label-lg text-on-surface-variant hover:text-on-surface transition-colors" data-path="impact-and-stats" href="#impact-section">Impact &amp; Stats</a><a class="font-label-lg text-label-lg text-on-surface-variant hover:text-on-surface transition-colors" data-path="about" href="#how-it-works">About</a></nav><div class="flex items-center gap-space-sm"><a class="hidden sm:inline-flex items-center gap-space-xs px-space-md py-space-xs rounded-full bg-surface-container-low text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all font-label-md text-label-md" data-path="provider-login" href="http://localhost:5000/provider/login"><span class="material-symbols-outlined text-[16px]">domain</span><span class="">Provider Login</span></a><a class="hidden sm:inline-flex items-center gap-space-xs px-space-lg py-space-xs rounded-full bg-primary-container text-on-primary font-label-md text-label-md shadow-[0_2px_8px_rgba(15,77,46,0.18)] hover:bg-primary transition-all" data-path="download-app" href="#download-app-section" onclick="openDownloadModal()"><span class="material-symbols-outlined text-[16px]">smartphone</span><span class="">Download App</span></a><a href="http://localhost:5000/provider/login" class="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-on-primary hover:opacity-90 transition-opacity" title="Provider Login">
+  <span class="material-symbols-outlined text-[18px]">person</span>
+</a>
+<button id="mobileMenuBtn" class="lg:hidden p-1.5 text-on-surface-variant hover:text-on-surface focus:outline-none" aria-label="Open menu" onclick="toggleMobileMenu()">
+  <span class="material-symbols-outlined text-[24px]">menu</span>
+</button>
+</div></div>
+<div id="mobileMenuDrawer" class="hidden lg:hidden border-t border-outline-variant/30 bg-surface/98 backdrop-blur-xl px-6 py-4 space-y-3 shadow-xl">
+  <a href="#hero" onclick="toggleMobileMenu(false)" class="block font-label-lg text-label-lg text-primary font-bold py-1">Home</a>
+  <a href="#how-it-works" onclick="toggleMobileMenu(false)" class="block font-label-lg text-label-lg text-on-surface-variant hover:text-on-surface py-1">How It Works</a>
+  <a href="#provider-portal-section" onclick="toggleMobileMenu(false)" class="block font-label-lg text-label-lg text-on-surface-variant hover:text-on-surface py-1">For Providers</a>
+  <a href="#impact-section" onclick="toggleMobileMenu(false)" class="block font-label-lg text-label-lg text-on-surface-variant hover:text-on-surface py-1">Impact & Stats</a>
+  <a href="#download-app-section" onclick="toggleMobileMenu(false)" class="block font-label-lg text-label-lg text-on-surface-variant hover:text-on-surface py-1">Student App</a>
+  <a href="#faq-section" onclick="toggleMobileMenu(false)" class="block font-label-lg text-label-lg text-on-surface-variant hover:text-on-surface py-1">FAQ</a>
+  <div class="pt-3 border-t border-outline-variant/20 flex flex-col gap-2">
+    <a href="http://localhost:5000/provider/login" class="flex items-center justify-center gap-2 py-2.5 rounded-full bg-surface-container text-on-surface font-label-md text-label-md font-semibold">
+      <span class="material-symbols-outlined text-[16px]">domain</span> Provider Login
+    </a>
+    <a href="#download-app-section" onclick="toggleMobileMenu(false); openDownloadModal();" class="flex items-center justify-center gap-2 py-2.5 rounded-full bg-primary text-on-primary font-label-md text-label-md font-semibold shadow-sm">
+      <span class="material-symbols-outlined text-[16px]">smartphone</span> Download Student App
+    </a>
+  </div>
+</div>
+</header><main class="w-full pt-20 bg-surface"><div class="flex flex-col w-full">
+<!-- HERO SECTION -->
+<section id="hero" class="relative w-full overflow-hidden pb-space-2xl bg-surface">
+<!-- Ambient organic green/gold blurs -->
+<div class="pointer-events-none absolute -top-24 left-1/2 -translate-x-1/2 w-[900px] h-[500px] bg-primary-container/10 rounded-full blur-[140px] -z-10"></div>
+<div class="pointer-events-none absolute top-1/3 right-10 w-[380px] h-[380px] bg-tertiary-fixed/20 rounded-full blur-[110px] -z-10"></div>
+<div class="max-w-7xl mx-auto px-6 lg:px-12 pt-space-xl lg:pt-space-2xl">
+<!-- Overline Pill Tag -->
+<div class="flex items-center justify-center lg:justify-start mb-space-md">
+<div class="inline-flex items-center gap-space-xs px-space-md py-space-2xs rounded-full bg-primary-fixed/30 text-on-primary-fixed text-label-md font-label-md shadow-sm">
+<span class="inline-block w-2 h-2 rounded-full bg-primary animate-pulse"></span>
+<span class="">CHED Unified Aligned • 2025/2026 Academic Grants Active</span>
+<span class="material-symbols-outlined text-[14px]">arrow_forward</span>
+</div>
+</div>
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-space-xl lg:gap-space-2xl items-center">
+<!-- Left Column: Copy & Dual Actions -->
+<div class="lg:col-span-7 flex flex-col items-center lg:items-start text-center lg:text-left">
+<h1 class="font-['Poppins'] font-bold text-display-lg text-primary tracking-tight max-w-2xl leading-[1.12]">
+            Empowering Filipino Ambition Through Accessible Scholarships.
+          </h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant mt-space-md max-w-xl leading-relaxed">
+            Scholaris bridges ambitious students across Luzon, Visayas, and Mindanao with vetted grants, while providing private foundations and benefactors a seamless portal to fund the nation’s future.
           </p>
-          <div class="hero-cta-group">
-            <a href="/login" class="hero-cta-primary">
-              Get Matched Now
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                <line x1="5" y1="12" x2="19" y2="12"></line>
-                <polyline points="12 5 19 12 12 19"></polyline>
-              </svg>
-            </a>
-            <a href="/become-provider" class="hero-cta-secondary">
-              List a Scholarship &rarr;
-            </a>
-          </div>
-        </div>
-
-        <div class="hero-mascot-wrapper">
-          <div class="mascot-backdrop-glow"></div>
-          <img 
-            src="assets/images/mascot_couple_celebrating.png" 
-            alt="Scholaris Mascots Aris and Aria celebrating graduation in green togas with gold trim" 
-            class="mascot-image-floating"
-            width="460"
-            height="690"
-            loading="eager"
-          />
-        </div>
-      </div>
-    </section>
-
-    <!-- 3. STATS BAR -->
-    <section class="stats-bar-section" aria-label="Key Platform Metrics">
-      <div class="container">
-        <div class="stats-grid">
-          <div class="stat-item">
-            <span class="stat-number">15+</span>
-            <span class="stat-label">Scholarships Listed</span>
-          </div>
-          <div class="stat-item">
-            <span class="stat-number">100%</span>
-            <span class="stat-label">Free for Students</span>
-          </div>
-          <div class="stat-item">
-            <span class="stat-number">1</span>
-            <span class="stat-label">Platform Built for Filipino Students</span>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- 4. WHY SCHOLARIS? -->
-    <section class="why-section" id="why-scholaris">
-      <div class="container">
-        <div class="section-header">
-          <span class="section-eyebrow">Fair Opportunity For All</span>
-          <h2 class="section-title">No connections. No favoritism. Just your merit.</h2>
-        </div>
-
-        <div class="cards-grid-3">
-          <div class="why-card">
-            <div class="why-icon-wrap" aria-hidden="true">🎯</div>
-            <h3 class="why-card-title">Matched to You</h3>
-            <p class="why-card-text">
-              We check your GPA, course, year level, income, and location to find scholarships you actually qualify for.
-            </p>
-          </div>
-
-          <div class="why-card">
-            <div class="why-icon-wrap" aria-hidden="true">💸</div>
-            <h3 class="why-card-title">Always Free</h3>
-            <p class="why-card-text">
-              Scholaris is 100% free for students. No hidden fees, no premium tiers.
-            </p>
-          </div>
-
-          <div class="why-card">
-            <div class="why-icon-wrap" aria-hidden="true">🇵🇭</div>
-            <h3 class="why-card-title">Built for Filipino Students</h3>
-            <p class="why-card-text">
-              Every scholarship listed is a real PH academic grant — DOST, CHED, LGU, and private providers.
-            </p>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- 5. HOW IT WORKS -->
-    <section class="how-section" id="how-it-works">
-      <div class="container">
-        <div class="section-header">
-          <span class="section-eyebrow">Simple & Transparent Process</span>
-          <h2 class="section-title">Three steps to your scholarship.</h2>
-        </div>
-
-        <div class="steps-row">
-          <div class="step-card">
-            <div class="step-number-bubble">1</div>
-            <h3 class="step-title">Create Your Profile</h3>
-            <p class="step-desc">
-              fill in your GPA, course, year level, income
-            </p>
-          </div>
-
-          <div class="step-card">
-            <div class="step-number-bubble">2</div>
-            <h3 class="step-title">Get Matched</h3>
-            <p class="step-desc">
-              our engine finds scholarships you qualify for
-            </p>
-          </div>
-
-          <div class="step-card">
-            <div class="step-number-bubble">3</div>
-            <h3 class="step-title">Apply with Confidence</h3>
-            <p class="step-desc">
-              track deadlines and applications in one place
-            </p>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- 6. APP SCREENSHOTS - PURE MOBILE PHONE SHOWCASE -->
-    <section class="screenshots-section" id="download">
-      <div class="container">
-        <div class="section-header">
-          <span class="section-eyebrow">The Student Experience</span>
-          <h2 class="section-title">Everything you need, right in your pocket.</h2>
-          <p class="section-sub">From automated grant discovery to verified submission receipts and live status updates — Scholaris keeps your academic journey moving forward.</p>
-        </div>
-      </div>
-
-      <div class="screenshots-scroller-wrap" id="screenshotsScroller" aria-label="Screenshots continuous showcase">
-        <div class="screenshots-track" id="screenshotsTrack">
-          <!-- Item 1: Smart Dashboard -->
-          <div class="mockup-item">
-            <div class="phone-mockup">
-              <div class="phone-screen">
-                <img src="assets/images/screen_dashboard.png" alt="Scholaris Student Dashboard with personalized greeting and mascot" loading="lazy">
-              </div>
-            </div>
-            <div class="mockup-caption">
-              <h4 class="mockup-caption-title">Smart Dashboard</h4>
-              <p class="mockup-caption-sub">Personalized matches & deadline alerts</p>
-            </div>
-          </div>
-
-          <!-- Item 2: Grant Discovery -->
-          <div class="mockup-item">
-            <div class="phone-mockup">
-              <div class="phone-screen">
-                <img src="assets/images/screen_discover.png" alt="Scholaris Scholarship Discovery with active criteria filters" loading="lazy">
-              </div>
-            </div>
-            <div class="mockup-caption">
-              <h4 class="mockup-caption-title">Grant Discovery</h4>
-              <p class="mockup-caption-sub">Filtered DOST, CHED & institutional listings</p>
-            </div>
-          </div>
-
-          <!-- Item 3: Requirements Checklist -->
-          <div class="mockup-item">
-            <div class="phone-mockup">
-              <div class="phone-screen">
-                <img src="assets/images/screen_detail.png" alt="Scholaris Scholarship Details with 98% Algorithmic Fit and requirements checklist" loading="lazy">
-              </div>
-            </div>
-            <div class="mockup-caption">
-              <h4 class="mockup-caption-title">Requirements Checklist</h4>
-              <p class="mockup-caption-sub">Institutional criteria & required documents</p>
-            </div>
-          </div>
-
-          <!-- Item 4: Application Tracker -->
-          <div class="mockup-item">
-            <div class="phone-mockup">
-              <div class="phone-screen">
-                <img src="assets/images/screen_tracker.png" alt="Scholaris Application Tracker with ₱110,000 potential awards" loading="lazy">
-              </div>
-            </div>
-            <div class="mockup-caption">
-              <h4 class="mockup-caption-title">Application Tracker</h4>
-              <p class="mockup-caption-sub">Real-time milestone stages & review timeline</p>
-            </div>
-          </div>
-
-          <!-- Item 5: Submission Receipt -->
-          <div class="mockup-item">
-            <div class="phone-mockup">
-              <div class="phone-screen">
-                <img src="assets/images/screen_receipt.png" alt="Scholaris Application Submission Confirmation with male mascot and Digital Submission Token" loading="lazy">
-              </div>
-            </div>
-            <div class="mockup-caption">
-              <h4 class="mockup-caption-title">Submission Receipt</h4>
-              <p class="mockup-caption-sub">Tamper-proof digital token & proof of filing</p>
-            </div>
-          </div>
-
-          <!-- Item 6: Grant Awarded -->
-          <div class="mockup-item">
-            <div class="phone-mockup">
-              <div class="phone-screen">
-                <img src="assets/images/screen_approved.png" alt="Scholaris Application Status Approved with celebrating male mascot in toga" loading="lazy">
-              </div>
-            </div>
-            <div class="mockup-caption">
-              <h4 class="mockup-caption-title">Grant Awarded</h4>
-              <p class="mockup-caption-sub">Official approval status & disbursement voucher</p>
-            </div>
-          </div>
-
-          <!-- Duplicate 6 items for seamless infinite smooth glide loop -->
-          <!-- Duplicate 1 -->
-          <div class="mockup-item" aria-hidden="true">
-            <div class="phone-mockup">
-              <div class="phone-screen">
-                <img src="assets/images/screen_dashboard.png" alt="" loading="lazy">
-              </div>
-            </div>
-            <div class="mockup-caption">
-              <h4 class="mockup-caption-title">Smart Dashboard</h4>
-              <p class="mockup-caption-sub">Personalized matches & deadline alerts</p>
-            </div>
-          </div>
-
-          <!-- Duplicate 2 -->
-          <div class="mockup-item" aria-hidden="true">
-            <div class="phone-mockup">
-              <div class="phone-screen">
-                <img src="assets/images/screen_discover.png" alt="" loading="lazy">
-              </div>
-            </div>
-            <div class="mockup-caption">
-              <h4 class="mockup-caption-title">Grant Discovery</h4>
-              <p class="mockup-caption-sub">Filtered DOST, CHED & institutional listings</p>
-            </div>
-          </div>
-
-          <!-- Duplicate 3 -->
-          <div class="mockup-item" aria-hidden="true">
-            <div class="phone-mockup">
-              <div class="phone-screen">
-                <img src="assets/images/screen_detail.png" alt="" loading="lazy">
-              </div>
-            </div>
-            <div class="mockup-caption">
-              <h4 class="mockup-caption-title">Requirements Checklist</h4>
-              <p class="mockup-caption-sub">Institutional criteria & required documents</p>
-            </div>
-          </div>
-
-          <!-- Duplicate 4 -->
-          <div class="mockup-item" aria-hidden="true">
-            <div class="phone-mockup">
-              <div class="phone-screen">
-                <img src="assets/images/screen_tracker.png" alt="" loading="lazy">
-              </div>
-            </div>
-            <div class="mockup-caption">
-              <h4 class="mockup-caption-title">Application Tracker</h4>
-              <p class="mockup-caption-sub">Real-time milestone stages & review timeline</p>
-            </div>
-          </div>
-
-          <!-- Duplicate 5 -->
-          <div class="mockup-item" aria-hidden="true">
-            <div class="phone-mockup">
-              <div class="phone-screen">
-                <img src="assets/images/screen_receipt.png" alt="" loading="lazy">
-              </div>
-            </div>
-            <div class="mockup-caption">
-              <h4 class="mockup-caption-title">Submission Receipt</h4>
-              <p class="mockup-caption-sub">Tamper-proof digital token & proof of filing</p>
-            </div>
-          </div>
-
-          <!-- Duplicate 6 -->
-          <div class="mockup-item" aria-hidden="true">
-            <div class="phone-mockup">
-              <div class="phone-screen">
-                <img src="assets/images/screen_approved.png" alt="" loading="lazy">
-              </div>
-            </div>
-            <div class="mockup-caption">
-              <h4 class="mockup-caption-title">Grant Awarded</h4>
-              <p class="mockup-caption-sub">Official approval status & disbursement voucher</p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="scroll-controls">
-        <button type="button" class="scroll-btn" id="scrollPrev" aria-label="Previous screenshot">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="15 18 9 12 15 6"></polyline>
-          </svg>
-        </button>
-        <button type="button" class="scroll-btn" id="scrollNext" aria-label="Next screenshot">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="9 18 15 12 9 6"></polyline>
-          </svg>
-        </button>
-      </div>
-    </section>
-
-    <!-- 6B. PROVIDER DESKTOP APP -->
-    <section class="provider-desktop-section" id="provider-desktop">
-      <div class="container">
-        <div class="section-header">
-          <span class="section-eyebrow">Built for Providers • Individuals & Institutions</span>
-          <h2 class="section-title">A custom console built just for you.</h2>
-          <p class="section-sub">Whether you're an alumnus sponsoring your first scholar, a family trust, or an institution managing hundreds of grants — review applications, track milestones, and disburse stipends right from your browser.</p>
-        </div>
-
-        <div class="provider-desktop-showcase" id="providerShowcase">
-          <div class="provider-mockup-frame">
-            <img src="assets/images/provider-applications.png" alt="Scholaris Provider Console - Applications review and candidate tracking" loading="lazy">
-          </div>
-          <div class="provider-mockup-frame">
-            <img src="assets/images/provider-my-scholarships.png" alt="Scholaris Provider Console - My Scholarships management and disbursements" loading="lazy">
-          </div>
-        </div>
-
-        <div class="provider-desktop-ctas">
-          <a href="/login" class="btn-provider-cta-secondary">
-            Provider Login &rarr;
-          </a>
-          <a href="#providers" class="btn-provider-cta-primary">
-            List a Scholarship &rarr;
-          </a>
-        </div>
-      </div>
-    </section>
-
-    <!-- 7. FOR PROVIDERS -->
-    <section class="providers-section" id="providers">
-      <div class="container">
-        <div class="section-header">
-          <span class="section-eyebrow">Scholarship Grantors & Donors</span>
-          <h2 class="section-title">Help students find your scholarship.</h2>
-          <p class="section-sub">List your scholarship on Scholaris and reach thousands of qualified Filipino students across every region.</p>
-        </div>
-
-        <div class="providers-grid">
-          <!-- Card 1: Individual Provider -->
-          <div class="provider-card">
-            <div class="provider-icon-circle">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                <circle cx="12" cy="7" r="4"></circle>
-              </svg>
-            </div>
-            <h3 class="provider-card-title">Individual Benefactor</h3>
-            <p class="provider-card-desc">
-              For alumni sponsors, individual donors, OFWs, and personal family scholarship funds. Sponsor students directly with zero administrative friction.
-            </p>
-            <a href="/become-provider" class="provider-cta-link">
-              Start Sponsoring &rarr;
-            </a>
-          </div>
-
-          <!-- Card 2: Organization Provider -->
-          <div class="provider-card">
-            <span class="provider-badge-pill">Desktop recommended</span>
-            <div class="provider-icon-circle">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                <rect x="4" y="2" width="16" height="20" rx="2" ry="2"></rect>
-                <line x1="9" y1="22" x2="9" y2="22.01"></line>
-                <line x1="15" y1="22" x2="15" y2="22.01"></line>
-                <line x1="8" y1="6" x2="8" y2="6.01"></line>
-                <line x1="16" y1="6" x2="16" y2="6.01"></line>
-                <line x1="8" y1="10" x2="8" y2="10.01"></line>
-                <line x1="16" y1="10" x2="16" y2="10.01"></line>
-                <line x1="8" y1="14" x2="8" y2="14.01"></line>
-                <line x1="16" y1="14" x2="16" y2="14.01"></line>
-                <line x1="8" y1="18" x2="8" y2="18.01"></line>
-                <line x1="16" y1="18" x2="16" y2="18.01"></line>
-              </svg>
-            </div>
-            <h3 class="provider-card-title">Institutional Provider</h3>
-            <p class="provider-card-desc">
-              For universities, LGUs, corporate CSR foundations, and non-profits managing dozens or hundreds of grants. High-volume review and automated compliance.
-            </p>
-            <a href="/become-provider" class="provider-cta-link">
-              Launch Foundation Portal &rarr;
-            </a>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- 8. FAQ -->
-    <section class="faq-section" id="faq">
-      <div class="container">
-        <div class="section-header">
-          <span class="section-eyebrow">Got Questions?</span>
-          <h2 class="section-title">Common questions.</h2>
-        </div>
-
-        <div class="faq-wrapper">
-          <div class="faq-item">
-            <button class="faq-question-btn" aria-expanded="false">
-              <span>Is Scholaris free for students?</span>
-              <svg class="faq-icon-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                <polyline points="6 9 12 15 18 9"></polyline>
-              </svg>
-            </button>
-            <div class="faq-answer-panel">
-              <div class="faq-answer-content">
-                Yes, completely. Scholaris will always be free for students.
-              </div>
-            </div>
-          </div>
-
-          <div class="faq-item">
-            <button class="faq-question-btn" aria-expanded="false">
-              <span>What scholarships are listed?</span>
-              <svg class="faq-icon-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                <polyline points="6 9 12 15 18 9"></polyline>
-              </svg>
-            </button>
-            <div class="faq-answer-panel">
-              <div class="faq-answer-content">
-                We list real Philippine academic grants from DOST-SEI, CHED, LGUs, private companies, and individual donors.
-              </div>
-            </div>
-          </div>
-
-          <div class="faq-item">
-            <button class="faq-question-btn" aria-expanded="false">
-              <span>How does the matching work?</span>
-              <svg class="faq-icon-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                <polyline points="6 9 12 15 18 9"></polyline>
-              </svg>
-            </button>
-            <div class="faq-answer-panel">
-              <div class="faq-answer-content">
-                You fill out your profile once — GPA, course, year level, monthly family income, and location. Our engine automatically filters and ranks scholarships you qualify for.
-              </div>
-            </div>
-          </div>
-
-          <div class="faq-item">
-            <button class="faq-question-btn" aria-expanded="false">
-              <span>I'm a provider. How do I list my scholarship?</span>
-              <svg class="faq-icon-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                <polyline points="6 9 12 15 18 9"></polyline>
-              </svg>
-            </button>
-            <div class="faq-answer-panel">
-              <div class="faq-answer-content">
-                Click 'List a Scholarship' above and choose your provider type. Individual donors and organizations have separate signup flows.
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- 9. TRUST BAR -->
-    <section class="trust-bar-section" aria-label="Trust and compliance guarantee">
-      <div class="container">
-        <div class="trust-content">
-          <svg class="trust-shield-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
-            <polyline points="9 12 11 14 15 10"></polyline>
-          </svg>
-          <span>
-            Protected under the Philippine Data Privacy Act of 2012. Interfacing with DOST-SEI and CHED UniFAST.
-          </span>
-        </div>
-      </div>
-    </section>
-  </main>
-
-  <!-- 10. FOOTER -->
-  <footer class="site-footer">
-    <div class="container">
-      <div class="footer-top-grid">
-        <div class="footer-brand">
-          <div class="brand-wordmark">Scholaris<span class="dot">•</span></div>
-          <p class="footer-tagline">
-            Connecting Filipino students to the scholarships they deserve.
-          </p>
-        </div>
-
-        <div class="footer-col">
-          <h4 class="footer-col-title">Students</h4>
-          <ul class="footer-links-list">
-            <li><a href="#download">Download</a></li>
-            <li><a href="/login">Log in</a></li>
-          </ul>
-        </div>
-
-        <div class="footer-col">
-          <h4 class="footer-col-title">Providers</h4>
-          <ul class="footer-links-list">
-            <li><a href="/become-provider">List a Scholarship</a></li>
-            <li><a href="/login">Provider Login</a></li>
-          </ul>
-        </div>
-
-        <div class="footer-col">
-          <h4 class="footer-col-title">Legal</h4>
-          <ul class="footer-links-list">
-            <li><a href="#privacy">Privacy Policy</a></li>
-            <li><a href="#terms">Terms of Use</a></li>
-          </ul>
-        </div>
-      </div>
-
-      <div class="footer-bottom-bar">
-        &copy; 2026 Scholaris. All rights reserved.
-      </div>
-    </div>
-  </footer>
-
-  <!-- DOWNLOAD APP MODAL -->
-  <div class="modal-backdrop" id="downloadModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
-    <div class="modal-dialog">
-      <button class="modal-close-btn" id="modalCloseBtn" aria-label="Close dialog">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-          <line x1="18" y1="6" x2="6" y2="18"></line>
-          <line x1="6" y1="6" x2="18" y2="18"></line>
-        </svg>
-      </button>
-      <div class="modal-icon-badge">
-        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-          <rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect>
-          <line x1="12" y1="18" x2="12.01" y2="18"></line>
-        </svg>
-      </div>
-      <h3 class="modal-title" id="modalTitle">Get Scholaris</h3>
-      <p class="modal-body-copy">
-        Scholaris mobile is designed for students. If you're a provider, use the web portal instead.
+<!-- Dual CTA Cluster -->
+<div class="flex flex-col sm:flex-row items-center gap-space-md mt-space-xl w-full sm:w-auto">
+<!-- Student Action -->
+<a class="w-full sm:w-auto inline-flex items-center justify-center gap-space-xs px-space-xl py-3.5 rounded-full bg-primary text-on-primary font-label-lg text-label-lg shadow-md hover:bg-primary-container transition-all hover:scale-[1.02]" href="#download-app-section">
+<span class="material-symbols-outlined text-[20px]">download</span>
+<span class="">Download Scholaris App</span>
+</a>
+<!-- Benefactor Portal Action -->
+<a class="w-full sm:w-auto inline-flex items-center justify-center gap-space-xs px-space-xl py-3.5 rounded-full bg-surface-container-lowest text-secondary font-label-lg text-label-lg shadow-sm hover:bg-surface-container transition-all hover:scale-[1.02]" href="#provider-portal-section">
+<span class="material-symbols-outlined text-[20px] text-secondary">lock</span>
+<span class="">Provider Portal Login</span>
+<span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+</a>
+</div>
+<!-- Micro Trust Stats -->
+<div class="grid grid-cols-3 gap-space-md mt-space-xl pt-space-md max-w-lg w-full">
+<div class="flex flex-col">
+<span class="font-currency-stat text-currency-stat text-primary font-bold">₱185M+</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider mt-0.5">Disbursed</span>
+</div>
+<div class="flex flex-col">
+<span class="font-currency-stat text-currency-stat text-secondary font-bold">42,000+</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider mt-0.5">Scholars</span>
+</div>
+<div class="flex flex-col">
+<span class="font-currency-stat text-currency-stat text-on-tertiary-container font-bold">82 Prov.</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider mt-0.5">Nationwide</span>
+</div>
+</div>
+</div>
+<!-- Right Column: Visual Centerpiece & Floating Apple-style Micro Cards -->
+<div class="lg:col-span-5 relative flex justify-center items-center"><div class="relative w-full flex items-center justify-center"><img alt="Scholaris graduating Filipino scholars celebrating success in green academic regalia" class="w-full h-auto object-contain drop-shadow-md transition-transform duration-500 hover:scale-105" src="assets/images/hero_mascot.png"></div></div>
+</div>
+</div>
+</section>
+<!-- TRUST & PARTNERS BANNER -->
+<section id="partners" class="w-full py-space-xl bg-surface">
+<div class="max-w-7xl mx-auto px-6 lg:px-12">
+<p class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-widest text-center font-bold mb-space-lg">
+        Trusted by Premier Philippine Educational Foundations &amp; Government Agencies
       </p>
-      <div class="modal-buttons-group">
-        <a href="#download" class="btn-modal-primary" id="modalDownloadBtn">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-            <polyline points="7 10 12 15 17 10"></polyline>
-            <line x1="12" y1="15" x2="12" y2="3"></line>
-          </svg>
-          Download for Students
+<div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-space-md items-center">
+<!-- DOST-SEI -->
+<div class="flex items-center justify-center p-space-md rounded-xl bg-surface-container-low hover:bg-surface-container transition-all text-center hover-lift">
+<div class="flex flex-col items-center">
+<span class="material-symbols-outlined text-primary text-[28px]">biotech</span>
+<span class="font-label-md text-label-md font-bold text-on-surface mt-1">DOST-SEI</span>
+<span class="font-label-sm text-[10px] text-on-surface-variant">Science &amp; Tech</span>
+</div>
+</div>
+<!-- Ayala Foundation -->
+<div class="flex items-center justify-center p-space-md rounded-xl bg-surface-container-low hover:bg-surface-container transition-all text-center hover-lift">
+<div class="flex flex-col items-center">
+<span class="material-symbols-outlined text-secondary text-[28px]">corporate_fare</span>
+<span class="font-label-md text-label-md font-bold text-on-surface mt-1">Ayala Foundation</span>
+<span class="font-label-sm text-[10px] text-on-surface-variant">Centennial Grants</span>
+</div>
+</div>
+<!-- SM Foundation -->
+<div class="flex items-center justify-center p-space-md rounded-xl bg-surface-container-low hover:bg-surface-container transition-all text-center hover-lift">
+<div class="flex flex-col items-center">
+<span class="material-symbols-outlined text-primary-container text-[28px]">school</span>
+<span class="font-label-md text-label-md font-bold text-on-surface mt-1">SM Foundation</span>
+<span class="font-label-sm text-[10px] text-on-surface-variant">College Scholars</span>
+</div>
+</div>
+<!-- Gokongwei Brothers -->
+<div class="flex items-center justify-center p-space-md rounded-xl bg-surface-container-low hover:bg-surface-container transition-all text-center hover-lift">
+<div class="flex flex-col items-center">
+<span class="material-symbols-outlined text-tertiary-container text-[28px]">engineering</span>
+<span class="font-label-md text-label-md font-bold text-on-surface mt-1">Gokongwei Bros.</span>
+<span class="font-label-sm text-[10px] text-on-surface-variant">STEM Pathways</span>
+</div>
+</div>
+<!-- Megaworld Foundation -->
+<div class="flex items-center justify-center p-space-md rounded-xl bg-surface-container-low hover:bg-surface-container transition-all text-center hover-lift">
+<div class="flex flex-col items-center">
+<span class="material-symbols-outlined text-secondary text-[28px]">domain_add</span>
+<span class="font-label-md text-label-md font-bold text-on-surface mt-1">Megaworld Fdn.</span>
+<span class="font-label-sm text-[10px] text-on-surface-variant">Urban Scholars</span>
+</div>
+</div>
+<!-- Aboitiz Foundation -->
+<div class="flex items-center justify-center p-space-md rounded-xl bg-surface-container-low hover:bg-surface-container transition-all text-center hover-lift">
+<div class="flex flex-col items-center">
+<span class="material-symbols-outlined text-primary text-[28px]">bolt</span>
+<span class="font-label-md text-label-md font-bold text-on-surface mt-1">Aboitiz Foundation</span>
+<span class="font-label-sm text-[10px] text-on-surface-variant">Powering Degrees</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- HOW IT WORKS (FOR STUDENTS) -->
+<section class="w-full py-space-2xl bg-surface" id="how-it-works">
+<div class="max-w-7xl mx-auto px-6 lg:px-12">
+<div class="text-center max-w-2xl mx-auto mb-space-2xl">
+<span class="px-space-md py-space-2xs rounded-full bg-primary-fixed/40 text-on-primary-fixed font-label-md text-label-md uppercase tracking-wider font-bold">
+          Student Pathway
+        </span>
+<h2 class="font-['Poppins'] font-bold text-display-lg text-primary mt-space-sm tracking-tight">
+          Your Journey from Dream to Degree in 3 Simple Steps
+        </h2>
+<p class="font-body-lg text-body-lg text-on-surface-variant mt-space-xs">
+          Engineered to dismantle Philippine bureaucratic roadblocks so you spend less time filling forms and more time excelling.
+        </p>
+</div>
+<!-- 3 Steps Interactive Grid -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-space-lg">
+<!-- Step 1: Discover & Match -->
+<div class="bg-surface-container-lowest rounded-2xl p-space-lg shadow-sm card-hover-lift hover:shadow-lg transition-all card-hover-lift flex flex-col justify-between group">
+<div>
+<div class="flex items-center justify-between mb-space-md">
+<span class="w-10 h-10 rounded-full bg-primary-container text-on-primary flex items-center justify-center font-bold text-headline-sm">01</span>
+<span class="px-space-sm py-1 rounded-full bg-surface-container text-on-surface-variant text-label-sm font-bold">Smart Algorithm</span>
+</div>
+<div class="w-full rounded-xl overflow-hidden aspect-[1] bg-transparent mb-space-md relative flex items-center justify-center drop-shadow-sm"><img alt="Female graduate scholar inspecting scholarship match with magnifying glass" class="w-full h-full object-cover object-top transition-transform duration-500 group-hover:scale-105" src="assets/images/step1_mascot.png"><div class="absolute top-3 left-3 bg-surface-container-lowest border border-outline-variant px-2.5 py-1 rounded-lg shadow-sm flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-primary animate-ping"></span><span class="font-label-sm text-[10px] text-primary font-bold">GWA 1.25 Detected</span></div><div class="absolute top-3 right-3 bg-surface-container-lowest border border-outline-variant px-2.5 py-1 rounded-lg shadow-sm flex items-center gap-1.5"><span class="material-symbols-outlined text-[14px] text-primary">science</span><span class="font-label-sm text-[10px] text-on-surface font-bold">DOST-SEI Priority STEM</span></div><div class="absolute bottom-12 left-3 bg-surface-container-lowest border border-outline-variant px-2.5 py-1 rounded-lg shadow-sm flex items-center gap-1.5"><span class="material-symbols-outlined text-[14px] text-secondary">location_city</span><span class="font-label-sm text-[10px] text-on-surface font-bold">LGU Honors City &amp; Prov.</span></div><div class="absolute bottom-3 left-3 bg-surface-container-lowest border border-outline-variant px-2.5 py-1 rounded-lg shadow-sm flex items-center gap-1.5"><span class="material-symbols-outlined text-[14px] text-primary-container">school</span><span class="font-label-sm text-[10px] text-on-surface font-bold">CHED UniFAST Subsidy</span></div><div class="absolute bottom-3 right-3 bg-surface-container-lowest border border-outline-variant px-2.5 py-1 rounded-lg shadow-sm flex items-center gap-1.5"><span class="material-symbols-outlined text-[14px] text-tertiary-container">military_tech</span><span class="font-label-sm text-[10px] text-on-surface font-bold">Private Endowments</span></div></div>
+<h3 class="font-headline-md text-headline-md text-on-surface font-bold">Discover &amp; Match</h3>
+<p class="font-body-md text-body-md text-on-surface-variant mt-space-xs">
+              Input your GWA, Senior High Track, or college degree alongside your home province. Our AI indexes 450+ accredited grants matching your genuine academic qualification.
+            </p>
+</div>
+<div class="pt-space-md mt-space-md flex items-center gap-space-xs text-primary font-label-md text-label-md">
+<span class="">Filter by SUCs &amp; Private HEIs</span>
+<span class="material-symbols-outlined text-[16px]">chevron_right</span>
+</div>
+</div>
+<!-- Step 2: One-Click Application & Central Vault -->
+<div class="bg-surface-container-lowest rounded-2xl p-space-lg shadow-sm card-hover-lift hover:shadow-lg transition-all card-hover-lift flex flex-col justify-between group">
+<div>
+<div class="flex items-center justify-between mb-space-md">
+<span class="w-10 h-10 rounded-full bg-secondary text-on-secondary flex items-center justify-center font-bold text-headline-sm">02</span>
+<span class="px-space-sm py-1 rounded-full bg-secondary-fixed text-on-secondary-fixed font-label-sm text-label-sm font-bold">Centralized Vault</span>
+</div>
+<!-- Interactive Vault Visualization -->
+<div class="w-full rounded-xl overflow-hidden aspect-[1] bg-transparent mb-space-md relative flex items-center justify-center drop-shadow-sm"><img alt="Male Filipino scholar mascot in graduation toga holding up smartphone with green checkmark" class="w-full h-full object-cover object-top transition-transform duration-500 group-hover:scale-105" src="assets/images/step2_mascot.png"><div class="absolute top-3 left-3 bg-surface-container-lowest border border-outline-variant px-3 py-1.5 rounded-lg shadow-md flex items-center gap-1.5"><span class="material-symbols-outlined text-secondary text-[16px]">verified</span><span class="font-label-sm text-label-sm text-secondary font-bold">Smart Match Active</span></div></div>
+<h3 class="font-headline-md text-headline-md text-on-surface font-bold">One-Click Application</h3>
+<p class="font-body-md text-body-md text-on-surface-variant mt-space-xs">
+              Upload your Philippine documents once. Reuse your authenticated identity package across multiple concurrent foundations with no repetitive notarizations.
+            </p>
+</div>
+<div class="pt-space-md mt-space-md flex items-center gap-space-xs text-secondary font-label-md text-label-md">
+<span class="">Encrypted with National Privacy Standard</span>
+<span class="material-symbols-outlined text-[16px]">verified_user</span>
+</div>
+</div>
+<!-- Step 3: Get Funded & Thrive -->
+<div class="bg-surface-container-lowest rounded-2xl p-space-lg shadow-sm card-hover-lift hover:shadow-lg transition-all card-hover-lift flex flex-col justify-between group">
+<div>
+<div class="flex items-center justify-between mb-space-md">
+<span class="w-10 h-10 rounded-full bg-primary-container text-on-primary flex items-center justify-center font-bold text-headline-sm">03</span>
+<span class="px-space-sm py-1 rounded-full bg-tertiary-fixed text-on-tertiary-fixed text-label-sm font-bold">Direct Disbursement</span>
+</div>
+<div class="w-full rounded-xl overflow-hidden aspect-[1] bg-transparent mb-space-md relative flex items-center justify-center drop-shadow-sm"><img alt="Graduating Filipino scholars celebrating academic triumph with confetti" class="w-full h-full object-cover object-top transition-transform duration-500 group-hover:scale-105" src="assets/images/step3_mascot.png"><div class="absolute bottom-3 right-3 bg-surface-container-lowest border border-outline-variant px-3 py-1.5 rounded-lg shadow-md flex items-center gap-1.5"><span class="material-symbols-outlined text-primary text-[18px]">payments</span><span class="font-currency-stat text-label-md text-primary font-extrabold">+₱15,000 Credited</span></div></div>
+<h3 class="font-headline-md text-headline-md text-on-surface font-bold">Get Funded &amp; Thrive</h3>
+<p class="font-body-md text-body-md text-on-surface-variant mt-space-xs">
+              Receive semester stipends directly in Philippine Peso (₱). Track grade requirements, submit renewals, and unlock mentor networks until your graduation day.
+            </p>
+</div>
+<div class="pt-space-md mt-space-md flex items-center gap-space-xs text-primary font-label-md text-label-md">
+<span class="">Direct Landbank / Maya / GCash sync</span>
+<span class="material-symbols-outlined text-[16px]">sync_alt</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- IMPACT & STATS SECTION -->
+<section id="impact-section" class="w-full py-space-2xl bg-surface">
+<div class="max-w-7xl mx-auto px-6 lg:px-12">
+<!-- Section Header -->
+<div class="flex flex-col md:flex-row items-start md:items-end justify-between mb-space-xl gap-space-md">
+<div>
+<span class="font-label-sm text-label-sm uppercase tracking-widest text-primary font-bold">Archipelago Scale</span>
+<h2 class="font-['Poppins'] font-bold text-display-lg text-on-surface mt-1">Measurable Academic Lift</h2>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant max-w-md">
+          Connecting underserved academic talent with equitable private and institutional funding across all 17 administrative regions.
+        </p>
+</div>
+<!-- Bento Grid Stats -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-space-md mb-space-xl">
+<div class="bg-surface-container-lowest rounded-2xl p-space-lg shadow-sm card-hover-lift">
+<span class="material-symbols-outlined text-primary text-[32px] mb-2">payments</span>
+<div class="font-currency-stat text-[36px] leading-tight text-primary font-black">₱185,420,000</div>
+<p class="font-headline-sm text-headline-sm text-on-surface font-bold mt-1">Direct Grants Disbursed</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1">Zero platform fee deduction taken from student allowance tranches.</p>
+</div>
+<div class="bg-surface-container-lowest rounded-2xl p-space-lg shadow-sm card-hover-lift">
+<span class="material-symbols-outlined text-secondary text-[32px] mb-2">diversity_3</span>
+<div class="font-currency-stat text-[36px] leading-tight text-secondary font-black">42,180+</div>
+<p class="font-headline-sm text-headline-sm text-on-surface font-bold mt-1">Filipino Scholars Supported</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1">Representing low-income households and first-generation degree seekers.</p>
+</div>
+<div class="bg-surface-container-lowest rounded-2xl p-space-lg shadow-sm card-hover-lift">
+<span class="material-symbols-outlined text-tertiary-container text-[32px] mb-2">handshake</span>
+<div class="font-currency-stat text-[36px] leading-tight text-tertiary-container font-black">350+</div>
+<p class="font-headline-sm text-headline-sm text-on-surface font-bold mt-1">Verified Benefactor Programs</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1">Corporate CSRs, alumni endowments, and provincial foundations.</p>
+</div>
+<div class="bg-surface-container-lowest rounded-2xl p-space-lg shadow-sm card-hover-lift">
+<span class="material-symbols-outlined text-primary-fixed-variant text-[32px] mb-2">task_alt</span>
+<div class="font-currency-stat text-[36px] leading-tight text-primary-container font-black">94.2%</div>
+<p class="font-headline-sm text-headline-sm text-on-surface font-bold mt-1">Application Completion</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1">Compared to the 31% national manual paper drop-off rate.</p>
+</div>
+</div>
+<!-- Regional Distribution Callout Box -->
+<div class="bg-surface-container-lowest rounded-2xl p-space-lg shadow-sm card-hover-lift flex flex-col lg:flex-row items-center justify-between gap-space-lg">
+<div class="flex items-center gap-space-md">
+<div class="w-14 h-14 rounded-2xl bg-primary-fixed/50 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[32px]">map</span>
+</div>
+<div>
+<h4 class="font-headline-sm text-headline-sm text-on-surface font-bold">Verified Presence Across 82 Provinces</h4>
+<p class="font-body-md text-body-md text-on-surface-variant">Top Scholar Hubs: National Capital Region (NCR), Region IV-A (CALABARZON), Region VII (Central Visayas), Region XI (Davao), and BARMM.</p>
+</div>
+</div>
+<div class="flex items-center gap-space-sm shrink-0">
+<span class="px-space-md py-space-xs rounded-full bg-surface-container text-on-surface font-label-md text-label-md">112 State Universities (SUCs)</span>
+<span class="px-space-md py-space-xs rounded-full bg-surface-container text-on-surface font-label-md text-label-md">240+ Private HEIs</span>
+</div>
+</div>
+</div>
+</section>
+<!-- MOBILE APP SHOWCASE TEASER -->
+<section class="w-full py-space-2xl bg-surface" id="download-app-section"><div class="max-w-7xl mx-auto px-6 lg:px-12"><div class="bg-gradient-to-br from-primary-container via-primary to-primary-container rounded-3xl p-space-xl lg:p-space-2xl text-on-primary shadow-2xl relative overflow-hidden"><div class="pointer-events-none absolute -right-20 -top-20 w-96 h-96 bg-primary-fixed/20 rounded-full blur-3xl"></div><div class="pointer-events-none absolute left-1/3 -bottom-20 w-80 h-80 bg-tertiary-fixed/10 rounded-full blur-2xl"></div><div class="relative z-10 flex flex-col items-center text-center max-w-4xl mx-auto mb-space-2xl"><span class="inline-flex items-center gap-space-xs px-space-md py-space-2xs rounded-full bg-primary-fixed/20 border border-primary-fixed/30 text-primary-fixed font-label-sm text-[11px] font-bold uppercase tracking-wider mb-space-sm"><span class="w-2 h-2 rounded-full bg-primary-fixed animate-pulse"></span>STUDENT MOBILE APP • AVAILABLE ON IOS &amp; ANDROID</span><h2 class="font-['Poppins'] font-bold text-display-lg-mobile lg:text-display-lg text-on-primary tracking-tight leading-[1.15]">One Platform. Every Step Toward Education.</h2><p class="font-body-lg text-body-lg text-on-primary-container mt-space-sm max-w-2xl leading-relaxed">Discover scholarships that match your profile, manage your applications, and stay on top of every opportunity with Scholaris.</p><div class="flex flex-wrap items-center justify-center gap-space-md mt-space-lg"><a class="inline-flex items-center gap-space-xs px-space-lg py-2.5 rounded-full bg-surface-container-lowest text-primary font-label-md text-label-md shadow-sm hover:bg-surface-container transition-all hover:scale-105" href="#"><span class="material-symbols-outlined text-[20px]">download</span><span class="">Download for iOS</span></a><a class="inline-flex items-center gap-space-xs px-space-lg py-2.5 rounded-full bg-surface-container-lowest text-primary font-label-md text-label-md shadow-sm hover:bg-surface-container transition-all hover:scale-105" href="#"><span class="material-symbols-outlined text-[20px]">android</span><span class="">Download for Android</span></a></div></div><div class="relative z-10 max-w-7xl mx-auto w-full px-2 marquee-container" id="mobile-carousel-container"><div class="flex items-center justify-between mb-space-md px-2"><div class="flex items-center gap-2"><span class="text-on-tertiary-fixed font-label-sm text-[12px] font-bold tracking-widest uppercase">Interactive Mobile Preview</span><span class="px-2 py-0.5 rounded-full bg-primary-fixed/20 text-primary-fixed text-[11px] font-bold">6 Core Screens • Seamless Continuous Flow</span></div><div class="flex items-center gap-2 text-primary-fixed/70 text-label-sm text-[11px]"><span class="material-symbols-outlined text-[16px] animate-pulse">pause_circle</span><span class="">Hover anywhere to pause</span></div></div><div class="w-full overflow-hidden marquee-mask py-2"><div class="marquee-track flex gap-space-lg select-none"><div class="shrink-0 w-[270px] sm:w-[285px] flex flex-col items-center group"><div class="w-full rounded-[32px] overflow-hidden shadow-2xl transition-all duration-300 group-hover:scale-[1.04] group-hover:-translate-y-1 group-hover:shadow-2xl border border-outline-variant/30 bg-surface-container-lowest relative"><img alt="Scholaris Smart Dashboard Screen" class="w-full h-auto block object-contain" src="assets/images/screen_dashboard.png" style="image-rendering: -webkit-optimize-contrast;"></div><div class="text-center mt-space-md w-full px-2"><span class="text-on-tertiary-container font-label-sm text-[11px] font-bold tracking-wider uppercase block mb-1">01 — DASHBOARD</span><h3 class="text-on-primary font-headline-sm text-headline-sm font-bold">Smart Dashboard</h3><p class="text-on-primary-container font-body-sm text-body-sm mt-1 leading-relaxed">Personalized matches &amp; deadline alerts</p></div></div><div class="shrink-0 w-[270px] sm:w-[285px] flex flex-col items-center group"><div class="w-full rounded-[32px] overflow-hidden shadow-2xl transition-all duration-300 group-hover:scale-[1.04] group-hover:-translate-y-1 group-hover:shadow-2xl border border-outline-variant/30 bg-surface-container-lowest relative"><img alt="Scholaris Grant Discovery Screen" class="w-full h-auto block object-contain" src="assets/images/screen_discover.png" style="image-rendering: -webkit-optimize-contrast;"></div><div class="text-center mt-space-md w-full px-2"><span class="text-on-tertiary-container font-label-sm text-[11px] font-bold tracking-wider uppercase block mb-1">02 — DISCOVER</span><h3 class="text-on-primary font-headline-sm text-headline-sm font-bold">Grant Discovery</h3><p class="text-on-primary-container font-body-sm text-body-sm mt-1 leading-relaxed">Filtered DOST, CHED &amp; institutional listings</p></div></div><div class="shrink-0 w-[270px] sm:w-[285px] flex flex-col items-center group"><div class="w-full rounded-[32px] overflow-hidden shadow-2xl transition-all duration-300 group-hover:scale-[1.04] group-hover:-translate-y-1 group-hover:shadow-2xl border border-outline-variant/30 bg-surface-container-lowest relative"><img alt="Scholaris Application Tracker Screen" class="w-full h-auto block object-contain" src="assets/images/screen_tracker.png" style="image-rendering: -webkit-optimize-contrast;"></div><div class="text-center mt-space-md w-full px-2"><span class="text-on-tertiary-container font-label-sm text-[11px] font-bold tracking-wider uppercase block mb-1">03 — TRACKER</span><h3 class="text-on-primary font-headline-sm text-headline-sm font-bold">Application Tracker</h3><p class="text-on-primary-container font-body-sm text-body-sm mt-1 leading-relaxed">Real-time milestone stages &amp; review timeline</p></div></div><div class="shrink-0 w-[270px] sm:w-[285px] flex flex-col items-center group"><div class="w-full rounded-[32px] overflow-hidden shadow-2xl transition-all duration-300 group-hover:scale-[1.04] group-hover:-translate-y-1 group-hover:shadow-2xl border border-outline-variant/30 bg-surface-container-lowest relative"><img alt="Scholaris Scholarship Details Screen" class="w-full h-auto block object-contain" src="assets/images/screen_detail.png" style="image-rendering: -webkit-optimize-contrast;"></div><div class="text-center mt-space-md w-full px-2"><span class="text-on-tertiary-container font-label-sm text-[11px] font-bold tracking-wider uppercase block mb-1">04 — SCHOLARSHIP DETAILS</span><h3 class="text-on-primary font-headline-sm text-headline-sm font-bold">Scholarship Details</h3><p class="text-on-primary-container font-body-sm text-body-sm mt-1 leading-relaxed">Institutional criteria, GWA cutoff &amp; award values</p></div></div><div class="shrink-0 w-[270px] sm:w-[285px] flex flex-col items-center group"><div class="w-full rounded-[32px] overflow-hidden shadow-2xl transition-all duration-300 group-hover:scale-[1.04] group-hover:-translate-y-1 group-hover:shadow-2xl border border-outline-variant/30 bg-surface-container-lowest relative"><img alt="Scholaris Document Vault &amp; Receipt Screen" class="w-full h-auto block object-contain" src="assets/images/screen_receipt.png" style="image-rendering: -webkit-optimize-contrast;"></div><div class="text-center mt-space-md w-full px-2"><span class="text-on-tertiary-container font-label-sm text-[11px] font-bold tracking-wider uppercase block mb-1">05 — DOCUMENT VAULT</span><h3 class="text-on-primary font-headline-sm text-headline-sm font-bold">Document Vault &amp; Receipt</h3><p class="text-on-primary-container font-body-sm text-body-sm mt-1 leading-relaxed">Tamper-proof digital token &amp; proof of filing</p></div></div><div class="shrink-0 w-[270px] sm:w-[285px] flex flex-col items-center group"><div class="w-full rounded-[32px] overflow-hidden shadow-2xl transition-all duration-300 group-hover:scale-[1.04] group-hover:-translate-y-1 group-hover:shadow-2xl border border-outline-variant/30 bg-surface-container-lowest relative"><img alt="Scholaris Profile &amp; Settings Screen" class="w-full h-auto block object-contain" src="assets/images/screen_profile.png" style="image-rendering: -webkit-optimize-contrast;"></div><div class="text-center mt-space-md w-full px-2"><span class="text-on-tertiary-container font-label-sm text-[11px] font-bold tracking-wider uppercase block mb-1">06 — PROFILE &amp; SETTINGS</span><h3 class="text-on-primary font-headline-sm text-headline-sm font-bold">Profile &amp; Settings</h3><p class="text-on-primary-container font-body-sm text-body-sm mt-1 leading-relaxed">Verified credentials, income tier &amp; preferences</p></div></div><div aria-hidden="true" class="shrink-0 w-[270px] sm:w-[285px] flex flex-col items-center group"><div class="w-full rounded-[32px] overflow-hidden shadow-2xl transition-all duration-300 group-hover:scale-[1.04] group-hover:-translate-y-1 group-hover:shadow-2xl border border-outline-variant/30 bg-surface-container-lowest relative"><img alt="Scholaris Smart Dashboard Screen" class="w-full h-auto block object-contain" src="assets/images/screen_dashboard.png" style="image-rendering: -webkit-optimize-contrast;"></div><div class="text-center mt-space-md w-full px-2"><span class="text-on-tertiary-container font-label-sm text-[11px] font-bold tracking-wider uppercase block mb-1">01 — DASHBOARD</span><h3 class="text-on-primary font-headline-sm text-headline-sm font-bold">Smart Dashboard</h3><p class="text-on-primary-container font-body-sm text-body-sm mt-1 leading-relaxed">Personalized matches &amp; deadline alerts</p></div></div><div aria-hidden="true" class="shrink-0 w-[270px] sm:w-[285px] flex flex-col items-center group"><div class="w-full rounded-[32px] overflow-hidden shadow-2xl transition-all duration-300 group-hover:scale-[1.04] group-hover:-translate-y-1 group-hover:shadow-2xl border border-outline-variant/30 bg-surface-container-lowest relative"><img alt="Scholaris Grant Discovery Screen" class="w-full h-auto block object-contain" src="assets/images/screen_discover.png" style="image-rendering: -webkit-optimize-contrast;"></div><div class="text-center mt-space-md w-full px-2"><span class="text-on-tertiary-container font-label-sm text-[11px] font-bold tracking-wider uppercase block mb-1">02 — DISCOVER</span><h3 class="text-on-primary font-headline-sm text-headline-sm font-bold">Grant Discovery</h3><p class="text-on-primary-container font-body-sm text-body-sm mt-1 leading-relaxed">Filtered DOST, CHED &amp; institutional listings</p></div></div><div aria-hidden="true" class="shrink-0 w-[270px] sm:w-[285px] flex flex-col items-center group"><div class="w-full rounded-[32px] overflow-hidden shadow-2xl transition-all duration-300 group-hover:scale-[1.04] group-hover:-translate-y-1 group-hover:shadow-2xl border border-outline-variant/30 bg-surface-container-lowest relative"><img alt="Scholaris Application Tracker Screen" class="w-full h-auto block object-contain" src="assets/images/screen_tracker.png" style="image-rendering: -webkit-optimize-contrast;"></div><div class="text-center mt-space-md w-full px-2"><span class="text-on-tertiary-container font-label-sm text-[11px] font-bold tracking-wider uppercase block mb-1">03 — TRACKER</span><h3 class="text-on-primary font-headline-sm text-headline-sm font-bold">Application Tracker</h3><p class="text-on-primary-container font-body-sm text-body-sm mt-1 leading-relaxed">Real-time milestone stages &amp; review timeline</p></div></div><div aria-hidden="true" class="shrink-0 w-[270px] sm:w-[285px] flex flex-col items-center group"><div class="w-full rounded-[32px] overflow-hidden shadow-2xl transition-all duration-300 group-hover:scale-[1.04] group-hover:-translate-y-1 group-hover:shadow-2xl border border-outline-variant/30 bg-surface-container-lowest relative"><img alt="Scholaris Scholarship Details Screen" class="w-full h-auto block object-contain" src="assets/images/screen_detail.png" style="image-rendering: -webkit-optimize-contrast;"></div><div class="text-center mt-space-md w-full px-2"><span class="text-on-tertiary-container font-label-sm text-[11px] font-bold tracking-wider uppercase block mb-1">04 — SCHOLARSHIP DETAILS</span><h3 class="text-on-primary font-headline-sm text-headline-sm font-bold">Scholarship Details</h3><p class="text-on-primary-container font-body-sm text-body-sm mt-1 leading-relaxed">Institutional criteria, GWA cutoff &amp; award values</p></div></div><div aria-hidden="true" class="shrink-0 w-[270px] sm:w-[285px] flex flex-col items-center group"><div class="w-full rounded-[32px] overflow-hidden shadow-2xl transition-all duration-300 group-hover:scale-[1.04] group-hover:-translate-y-1 group-hover:shadow-2xl border border-outline-variant/30 bg-surface-container-lowest relative"><img alt="Scholaris Document Vault &amp; Receipt Screen" class="w-full h-auto block object-contain" src="assets/images/screen_receipt.png" style="image-rendering: -webkit-optimize-contrast;"></div><div class="text-center mt-space-md w-full px-2"><span class="text-on-tertiary-container font-label-sm text-[11px] font-bold tracking-wider uppercase block mb-1">05 — DOCUMENT VAULT</span><h3 class="text-on-primary font-headline-sm text-headline-sm font-bold">Document Vault &amp; Receipt</h3><p class="text-on-primary-container font-body-sm text-body-sm mt-1 leading-relaxed">Tamper-proof digital token &amp; proof of filing</p></div></div><div aria-hidden="true" class="shrink-0 w-[270px] sm:w-[285px] flex flex-col items-center group"><div class="w-full rounded-[32px] overflow-hidden shadow-2xl transition-all duration-300 group-hover:scale-[1.04] group-hover:-translate-y-1 group-hover:shadow-2xl border border-outline-variant/30 bg-surface-container-lowest relative"><img alt="Scholaris Profile &amp; Settings Screen" class="w-full h-auto block object-contain" src="assets/images/screen_profile.png" style="image-rendering: -webkit-optimize-contrast;"></div><div class="text-center mt-space-md w-full px-2"><span class="text-on-tertiary-container font-label-sm text-[11px] font-bold tracking-wider uppercase block mb-1">06 — PROFILE &amp; SETTINGS</span><h3 class="text-on-primary font-headline-sm text-headline-sm font-bold">Profile &amp; Settings</h3><p class="text-on-primary-container font-body-sm text-body-sm mt-1 leading-relaxed">Verified credentials, income tier &amp; preferences</p></div></div></div></div></div><div class="relative z-10 mt-space-2xl pt-space-xl border-t border-outline-variant/20 max-w-4xl mx-auto w-full"><div class="bg-surface-container-lowest/10 backdrop-blur-xl rounded-2xl p-space-lg border border-outline-variant/30 flex flex-col md:flex-row items-center justify-between gap-space-md"><div class="text-center md:text-left"><h4 class="font-headline-sm text-headline-sm font-bold text-on-primary flex items-center justify-center md:justify-start gap-2"><span class="material-symbols-outlined text-primary-fixed">corporate_fare</span>Are you a scholarship provider?</h4><p class="font-body-md text-body-md text-on-primary-container mt-1">Manage scholarship programs and connect with eligible students nationwide.</p></div><a class="inline-flex items-center gap-space-xs px-space-xl py-3 rounded-full bg-surface-container-lowest text-primary font-label-md text-label-md font-bold shadow-md hover:bg-surface-container transition-all hover:scale-105 shrink-0" href="#provider-portal-section"><span class="">Explore the Provider Portal</span><span class="material-symbols-outlined text-[18px]">arrow_forward</span></a></div></div></div></div></section>
+<!-- FOR PROVIDERS & BENEFACTORS PORTAL SECTION -->
+<section class="w-full py-space-2xl bg-surface" id="provider-portal-section">
+<div class="max-w-7xl mx-auto px-6 lg:px-12">
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-space-xl items-center">
+<div class="lg:col-span-6 flex flex-col items-start">
+<span class="px-space-md py-space-2xs rounded-full bg-secondary-fixed text-on-secondary-fixed font-label-md text-label-md font-bold uppercase tracking-wider">
+            Corporate CSR, Foundations &amp; Benefactors
+          </span>
+<h2 class="font-['Poppins'] font-bold text-display-lg text-on-surface mt-space-sm tracking-tight">
+            Scale Your Educational Impact with Zero Administrative Friction.
+          </h2>
+<p class="font-body-lg text-body-lg text-on-surface-variant mt-space-sm">
+            Managing scholarship endowments shouldn't require rooms of paper files and manual GWA validation. Scholaris gives Philippine philanthropists an audited, enterprise-grade disbursement infrastructure.
+          </p>
+<!-- Provider Benefits Grid -->
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-space-md mt-space-xl w-full">
+<div class="p-space-md rounded-xl bg-surface-container-low">
+<span class="material-symbols-outlined text-primary text-[26px]">rule</span>
+<h4 class="font-headline-sm text-headline-sm text-on-surface font-bold mt-1">Automated GWA Checks</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1">Direct integration with State Universities &amp; Colleges (SUCs) registrar databases.</p>
+</div>
+<div class="p-space-md rounded-xl bg-surface-container-low">
+<span class="material-symbols-outlined text-secondary text-[26px]">account_balance</span>
+<h4 class="font-headline-sm text-headline-sm text-on-surface font-bold mt-1">BSP-Audited Rails</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1">Direct, timestamped Peso disbursements via certified banking channels.</p>
+</div>
+<div class="p-space-md rounded-xl bg-surface-container-low">
+<span class="material-symbols-outlined text-tertiary-container text-[26px]">monitoring</span>
+<h4 class="font-headline-sm text-headline-sm text-on-surface font-bold mt-1">Cohort Analytics</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1">Real-time scholar retention, grade metrics, and employment outcomes.</p>
+</div>
+<div class="p-space-md rounded-xl bg-surface-container-low">
+<span class="material-symbols-outlined text-primary-container text-[26px]">receipt_long</span>
+<h4 class="font-headline-sm text-headline-sm text-on-surface font-bold mt-1">BIR Tax Certificates</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1">Compliant certificates of donation and deduction receipts generated automatically.</p>
+</div>
+</div>
+<!-- Provider Call to Action Buttons -->
+<div class="flex flex-col sm:flex-row items-center gap-space-md mt-space-xl w-full sm:w-auto">
+<a class="w-full sm:w-auto inline-flex items-center justify-center gap-space-xs px-space-xl py-3.5 rounded-full bg-secondary text-on-secondary font-label-lg text-label-lg shadow-md hover:bg-on-secondary-fixed-variant transition-all hover:scale-[1.02]" data-path="provider-login" href="http://localhost:5000/provider/login?type=organization">
+<span class="material-symbols-outlined text-[20px]">admin_panel_settings</span>
+<span class="">Provider Portal Login</span>
+</a>
+<a class="w-full sm:w-auto inline-flex items-center justify-center gap-space-xs px-space-xl py-3.5 rounded-full bg-surface-container text-on-surface font-label-lg text-label-lg hover:bg-surface-container-high transition-all" data-path="for-providers" href="http://localhost:5000/become-provider?type=organization">
+<span class="">Schedule Foundation Demo</span>
+<span class="material-symbols-outlined text-[16px]">calendar_today</span>
+</a>
+</div>
+</div>
+<!-- Right: Ambassador Mascot & Enterprise Dashboard Preview -->
+<div class="lg:col-span-6 flex flex-col items-center">
+<div class="relative w-full max-w-lg bg-surface-container-low rounded-3xl p-space-lg shadow-md">
+<!-- Header bar -->
+<div class="flex items-center justify-between mb-space-md">
+<div class="flex items-center gap-2">
+<span class="w-3 h-3 rounded-full bg-error"></span>
+<span class="w-3 h-3 rounded-full bg-tertiary-fixed-dim"></span>
+<span class="w-3 h-3 rounded-full bg-primary"></span>
+<span class="font-label-sm text-label-sm text-on-surface-variant font-bold ml-2">Ayala Foundation Endowment Portal</span>
+</div>
+<span class="px-2.5 py-0.5 rounded-full bg-primary-fixed text-on-primary-fixed font-label-sm text-[11px] font-bold">Active Cohort 2025</span>
+</div>
+<!-- Inner Provider Data Table Mockup -->
+<div class="bg-surface-container-lowest rounded-2xl p-space-md shadow-sm space-y-3">
+<div class="flex items-center justify-between pb-2 border-b border-surface-container">
+<div>
+<p class="font-label-md text-label-md font-bold text-on-surface">Batch 14: Engineering &amp; Data Science</p>
+<p class="font-body-sm text-[11px] text-on-surface-variant">120 Selected Scholars • 100% Retained</p>
+</div>
+<span class="font-currency-stat text-label-lg text-primary font-black">₱7,200,000 Total</span>
+</div>
+<!-- Candidate row 1 -->
+<div class="flex items-center justify-between py-1.5 px-2 rounded-lg hover:bg-surface-container-low transition-colors">
+<div class="flex items-center gap-2.5">
+<div class="w-8 h-8 rounded-full bg-primary-container text-on-primary text-[12px] font-bold flex items-center justify-center">GM</div>
+<div>
+<p class="font-label-md text-label-md text-on-surface font-semibold">Gilbert M.</p>
+<p class="font-body-sm text-[11px] text-on-surface-variant">BS Computer Science • UP Diliman</p>
+</div>
+</div>
+<div class="text-right">
+<span class="px-2 py-0.5 rounded-full bg-primary-fixed text-on-primary-fixed text-[10px] font-bold">GWA 1.22</span>
+<p class="text-[10px] text-on-surface-variant mt-0.5">Disbursed (₱10k)</p>
+</div>
+</div>
+<!-- Candidate row 2 -->
+<div class="flex items-center justify-between py-1.5 px-2 rounded-lg hover:bg-surface-container-low transition-colors">
+<div class="flex items-center gap-2.5">
+<div class="w-8 h-8 rounded-full bg-secondary text-on-secondary text-[12px] font-bold flex items-center justify-center">AC</div>
+<div>
+<p class="font-label-md text-label-md text-on-surface font-semibold">Alyssa C.</p>
+<p class="font-body-sm text-[11px] text-on-surface-variant">BS Civil Engineering • PUP Manila</p>
+</div>
+</div>
+<div class="text-right">
+<span class="px-2 py-0.5 rounded-full bg-primary-fixed text-on-primary-fixed text-[10px] font-bold">GWA 1.18</span>
+<p class="text-[10px] text-on-surface-variant mt-0.5">Disbursed (₱10k)</p>
+</div>
+</div>
+</div>
+<!-- Sponsor Banner note -->
+<div class="mt-space-md p-space-sm rounded-xl bg-secondary-fixed/50 flex items-center gap-3">
+<span class="material-symbols-outlined text-secondary text-[24px]">verified</span>
+<div>
+<p class="font-label-md text-label-md text-on-secondary-fixed font-bold">Official CHED Partner Standard</p>
+<p class="font-body-sm text-body-sm text-on-secondary-fixed-variant">All applicant data protected under Republic Act No. 10173 (Data Privacy Act of 2012).</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section><section class="w-full py-space-2xl bg-surface-container-low" id="provider-preview-section"><div class="max-w-7xl mx-auto px-6 lg:px-12"><div class="text-center max-w-3xl mx-auto mb-space-2xl"><div class="inline-flex items-center gap-space-xs px-space-md py-space-2xs rounded-full bg-primary-fixed/40 border border-primary-fixed/30 text-on-primary-fixed font-label-sm text-[11px] font-bold uppercase tracking-wider mb-space-sm"><span class="w-2 h-2 rounded-full bg-primary animate-pulse"></span><span class="">PROVIDER EXPERIENCE • BUILT FOR FOUNDATIONS &amp; LGUs</span></div><h2 class="font-['Poppins'] font-bold text-display-lg-mobile lg:text-display-lg text-primary tracking-tight leading-[1.15]">One Console. Total Visibility Over Every Peso.</h2><p class="font-body-lg text-body-lg text-on-surface-variant mt-space-sm max-w-2xl mx-auto leading-relaxed">From cohort quotas to applicant reviews, the Org Provider Console gives foundations and LGUs a single, audited dashboard for every scholarship they fund.</p></div><div class="grid grid-cols-1 lg:grid-cols-2 gap-space-xl"><div class="flex flex-col bg-surface-container-lowest rounded-3xl p-space-md lg:p-space-lg shadow-sm border border-outline-variant/30 hover:shadow-xl transition-all card-hover-lift group"><div class="w-full rounded-2xl overflow-hidden border border-outline-variant/30 bg-surface-container shadow-sm mb-space-md"><div class="bg-surface-container-high px-4 py-2.5 flex items-center gap-2 border-b border-outline-variant/20"><div class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-error inline-block"></span><span class="w-2.5 h-2.5 rounded-full bg-tertiary-fixed-dim inline-block"></span><span class="w-2.5 h-2.5 rounded-full bg-primary inline-block"></span></div><div class="flex-1 mx-3 px-3 py-1 rounded-md bg-surface-container-lowest text-[11px] text-on-surface-variant font-mono truncate border border-outline-variant/20 flex items-center gap-1.5"><span class="material-symbols-outlined text-[13px] text-primary">lock</span><span class="">console.scholaris.ph/providers/scholarships</span></div><span class="material-symbols-outlined text-outline text-[16px]">more_vert</span></div><div class="w-full overflow-hidden bg-surface-container-lowest relative"><img alt="Scholaris Provider Console - My Scholarships" class="w-full h-auto block object-cover transition-transform duration-500 group-hover:scale-[1.02]" src="assets/images/provider-my-scholarships.png"></div></div><div class="px-2"><div class="flex items-center gap-2 mb-1.5"><span class="px-2.5 py-0.5 rounded-full bg-primary-fixed/30 text-on-primary-fixed font-label-sm text-[11px] font-bold">My Scholarships</span></div><h3 class="font-headline-md text-headline-md font-bold text-on-surface">Manage Every Scholarship at a Glance</h3><p class="font-body-md text-body-md text-on-surface-variant mt-1">Cohort quotas, regional target scopes, and automated GWA &amp; document compliance.</p></div></div><div class="flex flex-col bg-surface-container-lowest rounded-3xl p-space-md lg:p-space-lg shadow-sm border border-outline-variant/30 hover:shadow-xl transition-all card-hover-lift group"><div class="w-full rounded-2xl overflow-hidden border border-outline-variant/30 bg-surface-container shadow-sm mb-space-md"><div class="bg-surface-container-high px-4 py-2.5 flex items-center gap-2 border-b border-outline-variant/20"><div class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-error inline-block"></span><span class="w-2.5 h-2.5 rounded-full bg-tertiary-fixed-dim inline-block"></span><span class="w-2.5 h-2.5 rounded-full bg-primary inline-block"></span></div><div class="flex-1 mx-3 px-3 py-1 rounded-md bg-surface-container-lowest text-[11px] text-on-surface-variant font-mono truncate border border-outline-variant/20 flex items-center gap-1.5"><span class="material-symbols-outlined text-[13px] text-secondary">lock</span><span class="">console.scholaris.ph/providers/applications</span></div><span class="material-symbols-outlined text-outline text-[16px]">more_vert</span></div><div class="w-full overflow-hidden bg-surface-container-lowest relative"><img alt="Scholaris Provider Console - Applications" class="w-full h-auto block object-cover transition-transform duration-500 group-hover:scale-[1.02]" src="assets/images/provider-applications.png"></div></div><div class="px-2"><div class="flex items-center gap-2 mb-1.5"><span class="px-2.5 py-0.5 rounded-full bg-secondary-fixed text-on-secondary-fixed font-label-sm text-[11px] font-bold">Applications</span></div><h3 class="font-headline-md text-headline-md font-bold text-on-surface">Review Applicants Without the Paper Trail</h3><p class="font-body-md text-body-md text-on-surface-variant mt-1">Real-time submission tracking, verification status, and one-click endorsements.</p></div></div></div><div class="flex flex-col sm:flex-row items-center justify-center gap-space-md mt-space-2xl"><a class="w-full sm:w-auto inline-flex items-center justify-center gap-space-xs px-space-xl py-3.5 rounded-full bg-primary text-on-primary font-label-lg text-label-lg shadow-md hover:bg-primary-container transition-all hover:scale-[1.02]" data-path="provider-login" href="http://localhost:5000/provider/login?type=organization"><span class="material-symbols-outlined text-[20px]">admin_panel_settings</span><span class="">Access Provider Console</span><span class="material-symbols-outlined text-[18px]">arrow_forward</span></a><a class="w-full sm:w-auto inline-flex items-center justify-center gap-space-xs px-space-xl py-3.5 rounded-full bg-surface-container-lowest text-secondary font-label-lg text-label-lg shadow-sm hover:bg-surface-container transition-all hover:scale-[1.02]" data-path="for-providers" href="http://localhost:5000/become-provider?type=organization"><span class="">Schedule Institutional Walkthrough</span><span class="material-symbols-outlined text-[18px]">arrow_forward</span></a></div></div></section>
+<!-- FREQUENTLY ASKED QUESTIONS SECTION -->
+<section id="faq-section" class="w-full py-space-2xl bg-surface">
+<div class="max-w-4xl mx-auto px-6 lg:px-12">
+<div class="text-center mb-space-xl">
+<span class="px-space-md py-space-2xs rounded-full bg-surface-container text-on-surface-variant font-label-md text-label-md font-bold uppercase tracking-wider">
+          Got Questions?
+        </span>
+<h2 class="font-['Poppins'] font-bold text-headline-lg text-on-surface mt-space-sm">Frequently Asked Questions</h2>
+<p class="font-body-md text-body-md text-on-surface-variant mt-1">Everything you need to know about Scholaris for both scholars and benefactors.</p>
+</div>
+<div class="space-y-space-md" id="faq-container">
+<!-- FAQ 1 -->
+<div class="bg-surface-container-lowest rounded-2xl p-space-md shadow-sm">
+<button class="w-full flex items-center justify-between text-left font-headline-sm text-headline-sm text-on-surface font-bold gap-space-md" onclick="toggleFaq(this)">
+<span class="">Is Scholaris free for Filipino students and applicants?</span>
+<span class="material-symbols-outlined text-primary text-[20px] transition-transform duration-300">expand_more</span>
+</button>
+<div class="mt-space-sm font-body-md text-body-md text-on-surface-variant">
+            Yes, 100% free forever. Scholaris does not charge students any application fees, matching subscriptions, or commissions deducted from granted scholarship amounts. Our mission is pure educational equity.
+          </div>
+</div>
+<!-- FAQ 2 -->
+<div class="bg-surface-container-lowest rounded-2xl p-space-md shadow-sm">
+<button class="w-full flex items-center justify-between text-left font-headline-sm text-headline-sm text-on-surface font-bold gap-space-md" onclick="toggleFaq(this)">
+<span class="">What documents are required to build my Student Vault?</span>
+<span class="material-symbols-outlined text-primary text-[20px] transition-transform duration-300">expand_more</span>
+</button>
+<div class="mt-space-sm font-body-md text-body-md text-on-surface-variant">
+            Standard requirements include: (1) Form 137/138 or Certified Transcript of Records (TOR), (2) Barangay Certificate of Indigency or parent/guardian BIR ITR, (3) Certificate of Enrollment/Registration, and (4) Valid government or student ID. Upload them once to apply across multiple sponsors.
+          </div>
+</div>
+<!-- FAQ 3 -->
+<div class="bg-surface-container-lowest rounded-2xl p-space-md shadow-sm">
+<button class="w-full flex items-center justify-between text-left font-headline-sm text-headline-sm text-on-surface font-bold gap-space-md" onclick="toggleFaq(this)">
+<span class="">How do corporate foundations and CSR groups list their grants?</span>
+<span class="material-symbols-outlined text-primary text-[20px] transition-transform duration-300">expand_more</span>
+</button>
+<div class="mt-space-sm font-body-md text-body-md text-on-surface-variant">
+            Organizations can sign in via the Provider Portal, establish custom eligibility rules (e.g., specific STEM majors, provincial residency, minimum GWA), and immediately leverage our verified applicant pipeline with automated document screening.
+          </div>
+</div>
+<!-- FAQ 4 -->
+<div class="bg-surface-container-lowest rounded-2xl p-space-md shadow-sm">
+<button class="w-full flex items-center justify-between text-left font-headline-sm text-headline-sm text-on-surface font-bold gap-space-md" onclick="toggleFaq(this)">
+<span class="">Are students enrolled in State Universities and Colleges (SUCs) eligible?</span>
+<span class="material-symbols-outlined text-primary text-[20px] transition-transform duration-300">expand_more</span>
+</button>
+<div class="mt-space-sm font-body-md text-body-md text-on-surface-variant">
+            Absolutely. While tuition is subsidized under Republic Act 10931 (Universal Access to Quality Tertiary Education), students in SUCs and LUCs are widely qualified for living allowances, thesis subsidies, technology equipment grants, and transport stipends.
+          </div>
+</div>
+</div>
+</div>
+</section>
+<!-- FINAL CALL TO ACTION STRIP -->
+<section class="w-full py-space-xl bg-surface-container-high/50">
+<div class="max-w-7xl mx-auto px-6 lg:px-12 flex flex-col md:flex-row items-center justify-between gap-space-lg">
+<div class="text-center md:text-left">
+<h3 class="font-headline-lg text-headline-lg text-on-surface font-bold">Ready to fund or achieve your academic dream?</h3>
+<p class="font-body-md text-body-md text-on-surface-variant mt-1">Join thousands of scholars and benefactors building the Philippines’ future today.</p>
+</div>
+<div class="flex items-center gap-space-md shrink-0">
+<a class="px-space-xl py-3 rounded-full bg-primary text-on-primary font-label-lg text-label-lg hover:bg-primary-container transition-all" href="#download-app-section">
+          Get Started as Scholar
         </a>
-        <a href="#provider-desktop" class="btn-modal-secondary" id="modalProviderBtn">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-            <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
-            <line x1="8" y1="21" x2="16" y2="21"></line>
-            <line x1="12" y1="17" x2="12" y2="21"></line>
-          </svg>
-          Go to Provider Portal
+<a class="px-space-xl py-3 rounded-full bg-surface-container-lowest text-secondary font-label-lg text-label-lg shadow-sm hover:bg-surface-container transition-all" href="#provider-portal-section">
+          Sponsor a Batch
         </a>
-      </div>
+</div>
+</div>
+</section>
+</div>
+<script>
+  function toggleFaq(btn) {
+    const content = btn.nextElementSibling;
+    const icon = btn.querySelector('.material-symbols-outlined');
+    if (content.classList.contains('hidden')) {
+      content.classList.remove('hidden');
+      icon.style.transform = 'rotate(180deg)';
+    } else {
+      content.classList.add('hidden');
+      icon.style.transform = 'rotate(0deg)';
+    }
+  }
+</script></main><footer class="w-full bg-surface-container-low pt-space-2xl pb-space-xl"><div class="max-w-7xl mx-auto px-6 lg:px-12"><div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-space-xl mb-space-2xl"><div class="lg:col-span-2 flex flex-col gap-space-sm"><div class="font-['Poppins'] font-bold text-headline-lg tracking-tight text-primary">Scholaris</div><p class="font-body-md text-body-md text-on-surface-variant max-w-sm">Empowering Filipino scholars through unified, dignified, and AI-accelerated academic grant opportunities across the Philippine archipelago.</p><div class="flex items-center gap-space-sm mt-space-xs"><span class="px-space-sm py-space-2xs rounded-full bg-surface-container font-label-sm text-label-sm text-on-surface-variant">CHED Unified Aligned</span><span class="px-space-sm py-space-2xs rounded-full bg-surface-container font-label-sm text-label-sm text-on-surface-variant">DOST-SEI Synced</span></div></div><div class="flex flex-col gap-space-sm"><h4 class="font-headline-sm text-headline-sm text-on-surface">For Scholars</h4><nav class="flex flex-col gap-space-xs" data-active-classes="text-primary font-bold"><a class="font-body-md text-body-md text-on-surface-variant hover:text-on-surface transition-colors" data-path="undergraduate-grants" href="#">Undergraduate Grants</a><a class="font-body-md text-body-md text-on-surface-variant hover:text-on-surface transition-colors" data-path="stem-priority" href="#">STEM Priority Funds</a><a class="font-body-md text-body-md text-on-surface-variant hover:text-on-surface transition-colors" data-path="provincial-assistance" href="#">Provincial Assistance</a><a class="font-body-md text-body-md text-on-surface-variant hover:text-on-surface transition-colors" data-path="eligibility-calculator" href="#">Eligibility Calculator</a></nav></div><div class="flex flex-col gap-space-sm"><h4 class="font-headline-sm text-headline-sm text-on-surface">For Providers</h4><nav class="flex flex-col gap-space-xs" data-active-classes="text-primary font-bold"><a class="font-body-md text-body-md text-on-surface-variant hover:text-on-surface transition-colors" data-path="for-providers" href="http://localhost:5000/become-provider">List a Scholarship</a><a class="font-body-md text-body-md text-on-surface-variant hover:text-on-surface transition-colors" data-path="provider-login" href="http://localhost:5000/provider-login">Sponsor Portal</a><a class="font-body-md text-body-md text-on-surface-variant hover:text-on-surface transition-colors" data-path="verification-framework" href="#">Verification Standard</a><a class="font-body-md text-body-md text-on-surface-variant hover:text-on-surface transition-colors" data-path="institutional-partnerships" href="#">SUC Partnerships</a></nav></div><div class="flex flex-col gap-space-sm"><h4 class="font-headline-sm text-headline-sm text-on-surface">Metro Manila HQ</h4><p class="font-body-md text-body-md text-on-surface-variant">One Bonifacio High Street, 28th St.<br>Bonifacio Global City, Taguig<br>Metro Manila, Philippines 1634</p><a class="font-label-md text-label-md text-primary hover:underline" href="mailto:support@scholaris.ph">support@scholaris.ph</a></div></div><div class="pt-space-lg flex flex-col md:flex-row items-center justify-between gap-space-md bg-surface-container-high/40 p-space-md rounded-xl"><div class="font-body-sm text-body-sm text-on-surface-variant text-center md:text-left">© 2025 Scholaris Philippines. Serving higher education nationwide. All rights reserved.</div><div class="flex items-center gap-space-md"><a class="font-label-md text-label-md text-on-surface-variant hover:text-on-surface transition-colors" data-path="privacy-policy" href="#">Privacy Notice</a><a class="font-label-md text-label-md text-on-surface-variant hover:text-on-surface transition-colors" data-path="terms-of-service" href="#">Terms of Service</a><a class="font-label-md text-label-md text-on-surface-variant hover:text-on-surface transition-colors" data-path="contact" href="#">Contact Center</a></div></div></div></footer>
+
+
+
+<!-- DOWNLOAD APP MODAL -->
+<div id="downloadModal" class="hidden fixed inset-0 z-[100] bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 transition-opacity duration-200">
+  <div class="bg-surface-container-lowest rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-2xl border border-outline-variant/30 text-center relative animate-in fade-in zoom-in-95 duration-200" onclick="event.stopPropagation()">
+    <button onclick="closeDownloadModal()" class="absolute top-4 right-4 w-9 h-9 rounded-full bg-surface-container-low hover:bg-surface-container text-on-surface-variant flex items-center justify-center transition-colors" aria-label="Close">
+      <span class="material-symbols-outlined text-[20px]">close</span>
+    </button>
+    <div class="w-16 h-16 rounded-2xl bg-primary-fixed/50 flex items-center justify-center text-primary mx-auto mb-4">
+      <span class="material-symbols-outlined text-[32px]">smartphone</span>
+    </div>
+    <h3 class="font-['Poppins'] font-bold text-headline-md text-on-surface mb-2">Get Scholaris Mobile</h3>
+    <p class="font-body-md text-body-md text-on-surface-variant mb-6 leading-relaxed">
+      Discover curated grants, track stipend tranches, and manage your verified credential vault from your pocket.
+    </p>
+    <div class="space-y-3">
+      <a href="#" onclick="alert('Scholaris iOS build is currently being distributed via Apple TestFlight to enrolled Philippine university students. Check your university inbox or register via Web Portal.');" class="w-full inline-flex items-center justify-center gap-2 py-3.5 px-6 rounded-full bg-primary text-on-primary font-label-lg text-label-lg font-bold shadow-md hover:bg-primary-container transition-all hover:scale-[1.02]">
+        <span class="material-symbols-outlined text-[20px]">download</span>
+        <span>Download for iOS (TestFlight)</span>
+      </a>
+      <a href="#" onclick="alert('Scholaris Android APK is currently in pilot preview for state university scholars. Direct download begins soon.');" class="w-full inline-flex items-center justify-center gap-2 py-3.5 px-6 rounded-full bg-surface-container text-on-surface font-label-lg text-label-lg font-bold hover:bg-surface-container-high transition-all hover:scale-[1.02]">
+        <span class="material-symbols-outlined text-[20px]">android</span>
+        <span>Download Android APK</span>
+      </a>
+    </div>
+    <div class="mt-6 pt-4 border-t border-outline-variant/20 flex items-center justify-between text-[11px] text-on-surface-variant">
+      <span>Are you a provider?</span>
+      <a href="http://localhost:5000/login" class="text-primary font-bold hover:underline flex items-center gap-1">
+        <span>Go to Provider Console</span>
+        <span class="material-symbols-outlined text-[13px]">arrow_forward</span>
+      </a>
     </div>
   </div>
+</div>
 
-  <!-- VANILLA JS -->
-  <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      // 1. Header scroll effect
-      const header = document.getElementById('siteHeader');
-      window.addEventListener('scroll', () => {
-        if (window.scrollY > 20) {
-          header.classList.add('scrolled');
-        } else {
-          header.classList.remove('scrolled');
-        }
-      });
+<script>
+  // Mobile Menu Toggle
+  function toggleMobileMenu(forceState) {
+    const drawer = document.getElementById('mobileMenuDrawer');
+    if (!drawer) return;
+    if (typeof forceState === 'boolean') {
+      if (forceState) drawer.classList.remove('hidden');
+      else drawer.classList.add('hidden');
+    } else {
+      drawer.classList.toggle('hidden');
+    }
+  }
 
-      // 2. Mobile Menu Toggle
-      const hamburgerBtn = document.getElementById('hamburgerBtn');
-      const mobileMenu = document.getElementById('mobileMenu');
-      
-      window.toggleMenu = function(state) {
-        const shouldOpen = typeof state === 'boolean' ? state : !mobileMenu.classList.contains('open');
-        if (shouldOpen) {
-          mobileMenu.classList.add('open');
-          hamburgerBtn.setAttribute('aria-expanded', 'true');
-        } else {
-          mobileMenu.classList.remove('open');
-          hamburgerBtn.setAttribute('aria-expanded', 'false');
-        }
-      };
+  // Download Modal Logic
+  function openDownloadModal() {
+    const modal = document.getElementById('downloadModal');
+    if (!modal) return;
+    modal.classList.remove('hidden');
+    document.body.style.overflow = 'hidden';
+  }
 
-      hamburgerBtn.addEventListener('click', () => toggleMenu());
+  function closeDownloadModal() {
+    const modal = document.getElementById('downloadModal');
+    if (!modal) return;
+    modal.classList.add('hidden');
+    document.body.style.overflow = '';
+  }
 
-      // 3. FAQ Accordion Logic
-      const faqItems = document.querySelectorAll('.faq-item');
-      faqItems.forEach((item) => {
-        const btn = item.querySelector('.faq-question-btn');
-        btn.addEventListener('click', () => {
-          const isActive = item.classList.contains('active');
-          faqItems.forEach((other) => {
-            other.classList.remove('active');
-            other.querySelector('.faq-question-btn').setAttribute('aria-expanded', 'false');
-          });
-          if (!isActive) {
-            item.classList.add('active');
-            btn.setAttribute('aria-expanded', 'true');
-          }
-        });
-      });
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      closeDownloadModal();
+      toggleMobileMenu(false);
+    }
+  });
 
-      if (faqItems.length > 0) {
-        faqItems[0].classList.add('active');
-        faqItems[0].querySelector('.faq-question-btn').setAttribute('aria-expanded', 'true');
-      }
+  const modalEl = document.getElementById('downloadModal');
+  if (modalEl) {
+    modalEl.addEventListener('click', (e) => {
+      if (e.target === modalEl) closeDownloadModal();
+    });
+  }
 
-      // 4. Screenshots Smooth Glide with Arrows Carousel
-      const scroller = document.getElementById('screenshotsScroller');
-      const prevBtn = document.getElementById('scrollPrev');
-      const nextBtn = document.getElementById('scrollNext');
-
-      if (scroller) {
-        let isPaused = false;
-        let resumeTimer = null;
-        const glideSpeed = 0.75; // px per tick for gentle, readable motion
-
-        function tick() {
-          if (!isPaused) {
-            scroller.scrollLeft += glideSpeed;
-            // Seamless wrap when reaching half of the scrollWidth
-            const halfScroll = scroller.scrollWidth / 2;
-            if (scroller.scrollLeft >= halfScroll) {
-              scroller.scrollLeft -= halfScroll;
-            }
-          }
-          requestAnimationFrame(tick);
-        }
-
-        function pauseGlide(delayMs = 4500) {
-          isPaused = true;
-          clearTimeout(resumeTimer);
-          resumeTimer = setTimeout(() => {
-            isPaused = false;
-          }, delayMs);
-        }
-
-        // Start autonomous loop
-        requestAnimationFrame(tick);
-
-        // Hover pause
-        scroller.addEventListener('mouseenter', () => { isPaused = true; });
-        scroller.addEventListener('mouseleave', () => { 
-          clearTimeout(resumeTimer); 
-          isPaused = false; 
-        });
-
-        // Arrow navigation: smoothly scroll by 1 phone mockup width + gap (~302px)
-        const stepAmount = 302;
-
-        if (nextBtn) {
-          nextBtn.addEventListener('click', () => {
-            pauseGlide(5000);
-            scroller.scrollBy({ left: stepAmount, behavior: 'smooth' });
-          });
-        }
-
-        if (prevBtn) {
-          prevBtn.addEventListener('click', () => {
-            pauseGlide(5000);
-            if (scroller.scrollLeft <= 10) {
-              scroller.scrollLeft += scroller.scrollWidth / 2;
-            }
-            scroller.scrollBy({ left: -stepAmount, behavior: 'smooth' });
-          });
-        }
-
-        // Drag to scroll on desktop & touch
-        let isDown = false;
-        let startX = 0;
-        let scrollStart = 0;
-
-        scroller.addEventListener('mousedown', (e) => {
-          isDown = true;
-          pauseGlide(5000);
-          startX = e.pageX - scroller.offsetLeft;
-          scrollStart = scroller.scrollLeft;
-        });
-
-        window.addEventListener('mouseup', () => {
-          if (isDown) {
-            isDown = false;
-            pauseGlide(3500);
-          }
-        });
-
-        scroller.addEventListener('mousemove', (e) => {
-          if (!isDown) return;
-          e.preventDefault();
-          const x = e.pageX - scroller.offsetLeft;
-          const walk = (x - startX) * 1.4;
-          scroller.scrollLeft = scrollStart - walk;
-        });
-
-        scroller.addEventListener('touchstart', () => {
-          pauseGlide(6000);
-        }, { passive: true });
-
-        scroller.addEventListener('touchend', () => {
-          pauseGlide(4000);
-        }, { passive: true });
-      }
-
-      // 5. Download App Modal Logic
-      const downloadModal = document.getElementById('downloadModal');
-      const navDownloadBtn = document.getElementById('navDownloadBtn');
-      const mobileDownloadBtn = document.getElementById('mobileDownloadBtn');
-      const modalCloseBtn = document.getElementById('modalCloseBtn');
-      const modalDownloadBtn = document.getElementById('modalDownloadBtn');
-      const modalProviderBtn = document.getElementById('modalProviderBtn');
-
-      window.openDownloadModal = function() {
-        if (!downloadModal) return;
-        downloadModal.classList.add('active');
-        document.body.style.overflow = 'hidden';
-      };
-
-      window.closeDownloadModal = function() {
-        if (!downloadModal) return;
-        downloadModal.classList.remove('active');
-        document.body.style.overflow = '';
-      };
-
-      if (navDownloadBtn) {
-        navDownloadBtn.addEventListener('click', () => openDownloadModal());
-      }
-      if (mobileDownloadBtn) {
-        mobileDownloadBtn.addEventListener('click', () => {
-          toggleMenu(false);
-          openDownloadModal();
-        });
-      }
-      if (modalCloseBtn) {
-        modalCloseBtn.addEventListener('click', () => closeDownloadModal());
-      }
-      if (downloadModal) {
-        downloadModal.addEventListener('click', (e) => {
-          if (e.target === downloadModal) {
-            closeDownloadModal();
-          }
-        });
-      }
-      document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape' && downloadModal && downloadModal.classList.contains('active')) {
-          closeDownloadModal();
-        }
-      });
-
-      if (modalDownloadBtn) {
-        modalDownloadBtn.addEventListener('click', () => {
-          closeDownloadModal();
-        });
-      }
-      if (modalProviderBtn) {
-        modalProviderBtn.addEventListener('click', () => {
-          closeDownloadModal();
-        });
-      }
-
-      // 6. Provider Desktop 3D Tilt-on-scroll
-      const providerSection = document.getElementById('provider-desktop');
-      if (providerSection && 'IntersectionObserver' in window) {
-        const tiltObserver = new IntersectionObserver((entries) => {
-          entries.forEach(entry => {
-            if (entry.isIntersecting) {
-              providerSection.classList.add('in-view');
-            } else {
-              providerSection.classList.remove('in-view');
-            }
-          });
-        }, {
-          threshold: 0.25,
-          rootMargin: '0px 0px -10% 0px'
-        });
-        tiltObserver.observe(providerSection);
+  // Enhanced FAQ toggle logic
+  function toggleFaq(btn) {
+    const content = btn.nextElementSibling;
+    const icon = btn.querySelector('.material-symbols-outlined');
+    const isHidden = content.classList.contains('hidden');
+    
+    // Close other FAQ items
+    document.querySelectorAll('#faq-container > div').forEach(item => {
+      const otherContent = item.querySelector('div:not([class*="flex"])');
+      const otherIcon = item.querySelector('button .material-symbols-outlined');
+      if (otherContent && otherContent !== content) {
+        otherContent.classList.add('hidden');
+        if (otherIcon) otherIcon.style.transform = 'rotate(0deg)';
       }
     });
-  </script>
-</body>
-</html>
+
+    if (isHidden) {
+      content.classList.remove('hidden');
+      if (icon) icon.style.transform = 'rotate(180deg)';
+    } else {
+      content.classList.add('hidden');
+      if (icon) icon.style.transform = 'rotate(0deg)';
+    }
+  }
+
+  // Setup initial FAQ state: Item 1 open, others collapsed
+  document.addEventListener('DOMContentLoaded', () => {
+    const faqContainer = document.getElementById('faq-container');
+    if (faqContainer) {
+      const items = faqContainer.querySelectorAll('& > div');
+      items.forEach((item, index) => {
+        const content = item.querySelector('div:not([class*="flex"])');
+        const icon = item.querySelector('button .material-symbols-outlined');
+        if (index === 0) {
+          if (content) content.classList.remove('hidden');
+          if (icon) icon.style.transform = 'rotate(180deg)';
+        } else {
+          if (content) content.classList.add('hidden');
+          if (icon) icon.style.transform = 'rotate(0deg)';
+        }
+      });
+    }
+  });
+
+  // Dynamic Flutter App URL synchronization
+  (function() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const customPort = urlParams.get('flutter_port') || (window.location.port === '8080' ? '5000' : window.location.port);
+    const flutterOrigin = window.FLUTTER_BASE_URL || (customPort ? `http://${window.location.hostname || 'localhost'}:${customPort}` : '');
+
+    if (flutterOrigin) {
+      document.querySelectorAll('a[data-path="provider-login"], a[href*="/provider-login"], a[href*="/provider/login"]').forEach(a => {
+        const query = a.search || '';
+        a.href = `${flutterOrigin}/provider/login${query}`;
+      });
+      document.querySelectorAll('a[href*="/become-provider"], a[href*="/provider/signup"]').forEach(a => {
+        const query = a.search || '';
+        a.href = `${flutterOrigin}/become-provider${query}`;
+      });
+      document.querySelectorAll('a[data-path="student-login"], a[href$="/login"]').forEach(a => {
+        const href = a.getAttribute('href') || '';
+        if (!href.includes('provider')) {
+          a.href = `${flutterOrigin}/login`;
+        }
+      });
+    }
+  })();
+</script>
+
+</body></html>

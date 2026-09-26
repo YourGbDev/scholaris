@@ -59,3 +59,4 @@ lib/app/supabase_config.dart
 scratch/
 fix_emulator.ps1
 design-reference/
+supabase/.temp/

@@ -3,6 +3,7 @@
 // Centralized Scholaris Motion System Tokens & Components
 // Derived directly from scholaris-design-system.md Section 5 (Motion).
 
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/physics.dart';
 
@@ -671,4 +672,173 @@ void showScholarisToast(
       ),
     ),
   );
+}
+
+// --- 5.7 Staggered List Item Reveal & Count-Up Dynamics -----------------------
+
+/// Animates a list item sequentially on load per HIG Motion guidelines:
+/// Start: opacity: 0, translateY: 12px
+/// End: opacity: 1, translateY: 0
+/// Duration: 200ms per item, 40ms stagger between items
+/// Curve: Curves.easeOut
+class StaggeredListItem extends StatefulWidget {
+  const StaggeredListItem({
+    super.key,
+    required this.index,
+    required this.child,
+    this.durationMs = 200,
+    this.staggerMs = 40,
+  });
+
+  final int index;
+  final Widget child;
+  final int durationMs;
+  final int staggerMs;
+
+  @override
+  State<StaggeredListItem> createState() => _StaggeredListItemState();
+}
+
+class _StaggeredListItemState extends State<StaggeredListItem>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _controller;
+  late final Animation<double> _animation;
+  Timer? _timer;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: Duration(milliseconds: widget.durationMs),
+    );
+    _animation = CurvedAnimation(parent: _controller, curve: Curves.easeOut);
+    final delay = Duration(milliseconds: widget.index.clamp(0, 20) * widget.staggerMs);
+    _timer = Timer(delay, () {
+      if (mounted) _controller.forward();
+    });
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (isReducedMotion(context)) return widget.child;
+    return AnimatedBuilder(
+      animation: _animation,
+      builder: (context, child) {
+        return Opacity(
+          opacity: _animation.value,
+          child: Transform.translate(
+            offset: Offset(0, 12.0 * (1.0 - _animation.value)),
+            child: child,
+          ),
+        );
+      },
+      child: widget.child,
+    );
+  }
+}
+
+/// Count-up animation for hero stat numbers:
+/// Animates from 0 to targetValue over 800ms with Curves.easeOut.
+/// Native Flutter implementation using AnimationController + CurvedAnimation + IntTween.
+class CountUpAnimation extends StatefulWidget {
+  const CountUpAnimation({
+    super.key,
+    required this.targetValue,
+    this.prefix = '',
+    this.suffix = '',
+    this.duration = const Duration(milliseconds: 800),
+    this.style,
+    this.formatWithCommas = true,
+  });
+
+  final int targetValue;
+  final String prefix;
+  final String suffix;
+  final Duration duration;
+  final TextStyle? style;
+  final bool formatWithCommas;
+
+  @override
+  State<CountUpAnimation> createState() => _CountUpAnimationState();
+}
+
+class _CountUpAnimationState extends State<CountUpAnimation>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _controller;
+  late Animation<int> _animation;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: widget.duration,
+    );
+    _animation = IntTween(begin: 0, end: widget.targetValue).animate(
+      CurvedAnimation(parent: _controller, curve: Curves.easeOut),
+    );
+    _controller.forward();
+  }
+
+  @override
+  void didUpdateWidget(CountUpAnimation oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.targetValue != widget.targetValue) {
+      _animation = IntTween(
+        begin: _animation.value,
+        end: widget.targetValue,
+      ).animate(
+        CurvedAnimation(parent: _controller, curve: Curves.easeOut),
+      );
+      _controller
+        ..reset()
+        ..forward();
+    }
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  String _format(int value) {
+    if (!widget.formatWithCommas) return '$value';
+    final s = value.toString();
+    final buffer = StringBuffer();
+    for (int i = 0; i < s.length; i++) {
+      if (i > 0 && (s.length - i) % 3 == 0) {
+        buffer.write(',');
+      }
+      buffer.write(s[i]);
+    }
+    return buffer.toString();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (isReducedMotion(context)) {
+      return Text(
+        '${widget.prefix}${_format(widget.targetValue)}${widget.suffix}',
+        style: widget.style,
+      );
+    }
+    return AnimatedBuilder(
+      animation: _animation,
+      builder: (context, _) {
+        return Text(
+          '${widget.prefix}${_format(_animation.value)}${widget.suffix}',
+          style: widget.style,
+        );
+      },
+    );
+  }
 }

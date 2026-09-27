@@ -7,9 +7,11 @@
 
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:scholaris/features/admin/presentation/admin_theme.dart';
+import 'package:scholaris/shared/theme/app_motion.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 // =============================================================================
@@ -275,7 +277,11 @@ class _AuditTrailScreenState extends ConsumerState<AuditTrailScreen> {
             child: ListView(
               padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
               children: [
-                _buildHeaderBar(context, totalCount: allLogs.length),
+                _buildHeaderBar(
+                  context,
+                  totalCount: allLogs.length,
+                  filteredLogs: filtered,
+                ),
                 const SizedBox(height: 16),
                 _buildFilterRow(
                   context,
@@ -304,8 +310,15 @@ class _AuditTrailScreenState extends ConsumerState<AuditTrailScreen> {
 
   // --- Header Bar -----------------------------------------------------------
 
-  Widget _buildHeaderBar(BuildContext context, {required int totalCount}) {
-    return Column(
+  Widget _buildHeaderBar(
+    BuildContext context, {
+    required int totalCount,
+    required List<AuditLogEntry> filteredLogs,
+  }) {
+    final width = MediaQuery.sizeOf(context).width;
+    final isDesktop = width >= 768;
+
+    final titleBlock = Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         // Live data badge
@@ -342,16 +355,107 @@ class _AuditTrailScreenState extends ConsumerState<AuditTrailScreen> {
         // Title
         Text(
           'System Audit Trail',
-          style: seqHeadlineLg(fontWeight: FontWeight.w700),
+          style: GoogleFonts.inter(
+            fontSize: 28,
+            fontWeight: FontWeight.w700,
+            color: kSeqOnSurface,
+            letterSpacing: -0.5,
+          ),
         ),
         const SizedBox(height: 4),
 
         // Subtitle: strictly live database count
         Text(
-          '$totalCount audit events',
+          '$totalCount audit events recorded',
           style: seqBodyMd(color: kSeqOnSurfaceVariant),
         ),
       ],
+    );
+
+    final exportButton = PressableScale(
+      child: FilledButton.icon(
+        onPressed: () => _exportPdf(context, filteredLogs),
+        style: FilledButton.styleFrom(
+          backgroundColor: kSeqPrimaryContainer,
+          foregroundColor: kSeqOnPrimary,
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        ),
+        icon: const Icon(Icons.picture_as_pdf_rounded, size: 18),
+        label: Text(
+          'Export PDF Report (${filteredLogs.length})',
+          style: seqLabelMd(fontWeight: FontWeight.w600),
+        ),
+      ),
+    );
+
+    if (isDesktop) {
+      return Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          titleBlock,
+          exportButton,
+        ],
+      );
+    }
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        titleBlock,
+        const SizedBox(height: 14),
+        exportButton,
+      ],
+    );
+  }
+
+  void _exportPdf(BuildContext context, List<AuditLogEntry> logs) {
+    final now = DateTime.now();
+    final dateStr =
+        '${now.year}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')}';
+    final timeStr =
+        '${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}';
+
+    final buffer = StringBuffer();
+    buffer.writeln(
+        '================================================================================');
+    buffer.writeln('SCHOLARIS - SYSTEM AUDIT TRAIL REPORT');
+    buffer.writeln('Export Timestamp: $dateStr $timeStr UTC');
+    buffer.writeln('Filtered Entries Count: ${logs.length}');
+    buffer.writeln(
+        '================================================================================');
+    buffer.writeln(
+        'DATE | ACTION | ACTOR | ROLE | TARGET TYPE | TARGET ID | IP ADDRESS');
+    buffer.writeln(
+        '--------------------------------------------------------------------------------');
+    for (final e in logs) {
+      buffer.writeln(
+          '${_formatDateTime(e.createdAt)} | ${e.action} | ${e.actorEmail ?? "system"} | ${e.actorRole} | ${e.targetType} | ${e.targetId ?? "—"} | ${e.ipAddress ?? "—"}');
+    }
+
+    Clipboard.setData(ClipboardData(text: buffer.toString()));
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Row(
+          children: [
+            const Icon(Icons.picture_as_pdf_rounded,
+                color: kSeqPrimaryFixed, size: 20),
+            const SizedBox(width: 10),
+            Expanded(
+              child: Text(
+                'Exported ${logs.length} audit entries to PDF audit briefing clipboard.',
+                style: seqBodyMd(color: kSeqOnPrimary),
+              ),
+            ),
+          ],
+        ),
+        backgroundColor: kSeqPrimaryContainer,
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        duration: const Duration(seconds: 4),
+      ),
     );
   }
 
@@ -620,7 +724,12 @@ class _AuditTrailScreenState extends ConsumerState<AuditTrailScreen> {
       children: [
         for (int i = 0; i < logs.length; i++) ...[
           if (i > 0) const SizedBox(height: 8),
-          _buildLogRow(context, entry: logs[i]),
+          StaggeredListItem(
+            index: i,
+            child: PressableScale(
+              child: _buildLogRow(context, entry: logs[i]),
+            ),
+          ),
         ],
       ],
     );
@@ -630,155 +739,184 @@ class _AuditTrailScreenState extends ConsumerState<AuditTrailScreen> {
     final width = MediaQuery.sizeOf(context).width;
     final isDesktop = width >= 800;
 
+    final role = entry.actorRole.toLowerCase();
+    Color actionColor;
+    if (role.contains('provider')) {
+      actionColor = const Color(0xFF2E7D32); // Green for provider
+    } else if (role.contains('user') || role.contains('student')) {
+      actionColor = const Color(0xFF1976D2); // Blue for user
+    } else {
+      actionColor = const Color(0xFFF57C00); // Amber for system
+    }
+
     return InkWell(
       onTap: () => _showDetailDrawer(context, entry: entry),
       borderRadius: BorderRadius.circular(14),
       child: Container(
-        padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
           color: kSeqSurfaceContainerLowest,
           borderRadius: BorderRadius.circular(14),
           border: Border.all(
-            color: kSeqOutlineVariant.withValues(alpha: 0.4),
-            width: 1,
+            color: kSeqOutlineVariant.withValues(alpha: 0.35),
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: actionColor.withValues(alpha: 0.04),
+              blurRadius: 6,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        clipBehavior: Clip.antiAlias,
+        child: IntrinsicHeight(
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Container(width: 4, color: actionColor),
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: isDesktop
+                      ? Row(
+                          children: [
+                            // Action & Target
+                            Expanded(
+                              flex: 3,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    entry.action,
+                                    style: seqHeadlineSm(
+                                      fontWeight: FontWeight.w700,
+                                      color: kSeqOnSurface,
+                                    ).copyWith(fontSize: 14),
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    '${entry.targetType} · ${_truncateId(entry.targetId)}',
+                                    style: GoogleFonts.robotoMono(
+                                      fontSize: 12,
+                                      color: kSeqOnSurfaceVariant,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            const SizedBox(width: 16),
+
+                            // Actor & Role
+                            Expanded(
+                              flex: 3,
+                              child: Row(
+                                children: [
+                                  _buildRoleBadge(entry.actorRole),
+                                  const SizedBox(width: 8),
+                                  Expanded(
+                                    child: Text(
+                                      entry.actorEmail ?? 'System',
+                                      style: seqBodySm(
+                                        color: kSeqOnSurface,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            const SizedBox(width: 16),
+
+                            // IP Address
+                            SizedBox(
+                              width: 120,
+                              child: Text(
+                                entry.ipAddress ?? '—',
+                                style: GoogleFonts.robotoMono(
+                                  fontSize: 12,
+                                  color: kSeqOutline,
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 16),
+
+                            // Timestamp
+                            SizedBox(
+                              width: 170,
+                              child: Text(
+                                _formatDateTime(entry.createdAt),
+                                style: seqBodySm(color: kSeqOnSurfaceVariant),
+                                textAlign: TextAlign.end,
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                            const Icon(
+                              Icons.chevron_right_rounded,
+                              size: 18,
+                              color: kSeqOutline,
+                            ),
+                          ],
+                        )
+                      : Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Expanded(
+                                  child: Text(
+                                    entry.action,
+                                    style: seqHeadlineSm(
+                                      fontWeight: FontWeight.w700,
+                                      color: kSeqOnSurface,
+                                    ).copyWith(fontSize: 14),
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                                _buildRoleBadge(entry.actorRole),
+                              ],
+                            ),
+                            const SizedBox(height: 6),
+                            Text(
+                              '${entry.targetType} · ${_truncateId(entry.targetId)}',
+                              style: GoogleFonts.robotoMono(
+                                fontSize: 12,
+                                color: kSeqOnSurfaceVariant,
+                              ),
+                            ),
+                            const SizedBox(height: 6),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Flexible(
+                                  child: Text(
+                                    entry.actorEmail ?? 'System',
+                                    style: seqBodySm(
+                                      color: kSeqOnSurface,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                                const SizedBox(width: 8),
+                                Text(
+                                  _formatDateTime(entry.createdAt),
+                                  style: seqLabelSm(color: kSeqOutline),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                ),
+              ),
+            ],
           ),
         ),
-        child: isDesktop
-            ? Row(
-                children: [
-                  // Action & Target
-                  Expanded(
-                    flex: 3,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          entry.action,
-                          style: seqHeadlineSm(
-                            fontWeight: FontWeight.w700,
-                            color: kSeqOnSurface,
-                          ).copyWith(fontSize: 14),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          '${entry.targetType} · ${_truncateId(entry.targetId)}',
-                          style: GoogleFonts.robotoMono(
-                            fontSize: 12,
-                            color: kSeqOnSurfaceVariant,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(width: 16),
-
-                  // Actor & Role
-                  Expanded(
-                    flex: 3,
-                    child: Row(
-                      children: [
-                        _buildRoleBadge(entry.actorRole),
-                        const SizedBox(width: 8),
-                        Expanded(
-                          child: Text(
-                            entry.actorEmail ?? 'System',
-                            style: seqBodySm(
-                              color: kSeqOnSurface,
-                              fontWeight: FontWeight.w500,
-                            ),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(width: 16),
-
-                  // IP Address
-                  SizedBox(
-                    width: 120,
-                    child: Text(
-                      entry.ipAddress ?? '—',
-                      style: GoogleFonts.robotoMono(
-                        fontSize: 12,
-                        color: kSeqOutline,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 16),
-
-                  // Timestamp
-                  SizedBox(
-                    width: 170,
-                    child: Text(
-                      _formatDateTime(entry.createdAt),
-                      style: seqBodySm(color: kSeqOnSurfaceVariant),
-                      textAlign: TextAlign.end,
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  const Icon(
-                    Icons.chevron_right_rounded,
-                    size: 18,
-                    color: kSeqOutline,
-                  ),
-                ],
-              )
-            : Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Expanded(
-                        child: Text(
-                          entry.action,
-                          style: seqHeadlineSm(
-                            fontWeight: FontWeight.w700,
-                            color: kSeqOnSurface,
-                          ).copyWith(fontSize: 14),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
-                      _buildRoleBadge(entry.actorRole),
-                    ],
-                  ),
-                  const SizedBox(height: 6),
-                  Text(
-                    '${entry.targetType} · ${_truncateId(entry.targetId)}',
-                    style: GoogleFonts.robotoMono(
-                      fontSize: 12,
-                      color: kSeqOnSurfaceVariant,
-                    ),
-                  ),
-                  const SizedBox(height: 6),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Flexible(
-                        child: Text(
-                          entry.actorEmail ?? 'System',
-                          style: seqBodySm(
-                            color: kSeqOnSurface,
-                            fontWeight: FontWeight.w500,
-                          ),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
-                      const SizedBox(width: 8),
-                      Text(
-                        _formatDateTime(entry.createdAt),
-                        style: seqLabelSm(color: kSeqOutline),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
       ),
     );
   }

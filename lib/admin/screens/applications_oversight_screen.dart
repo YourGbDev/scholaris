@@ -729,17 +729,17 @@ class _ApplicationsOversightScreenState
           ref.read(adminApplicationStatusFilterProvider.notifier).state = key;
         },
         child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
           margin: const EdgeInsets.symmetric(horizontal: 2),
           decoration: BoxDecoration(
-            color: isSelected ? kSeqSurfaceContainerLowest : Colors.transparent,
+            color: isSelected ? kSeqPrimaryContainer : Colors.transparent,
             borderRadius: BorderRadius.circular(8),
             boxShadow: isSelected
-                ? const [
+                ? [
                     BoxShadow(
-                      color: Color(0x14000000),
-                      blurRadius: 3,
-                      offset: Offset(0, 1),
+                      color: kSeqPrimaryContainer.withValues(alpha: 0.25),
+                      blurRadius: 4,
+                      offset: const Offset(0, 1),
                     )
                   ]
                 : null,
@@ -747,8 +747,8 @@ class _ApplicationsOversightScreenState
           child: Text(
             label,
             style: seqLabelSm(
-              color: isSelected ? kSeqOnSurface : kSeqOnSurfaceVariant,
-              fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+              color: isSelected ? kSeqOnPrimary : kSeqOnSurfaceVariant,
+              fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
             ),
           ),
         ),
@@ -790,7 +790,10 @@ class _ApplicationsOversightScreenState
       physics: const NeverScrollableScrollPhysics(),
       itemCount: list.length,
       separatorBuilder: (_, _) => const SizedBox(height: 10),
-      itemBuilder: (ctx, index) => _buildApplicationCard(ctx, list[index]),
+      itemBuilder: (ctx, index) => StaggeredListItem(
+        index: index,
+        child: _buildApplicationCard(ctx, list[index]),
+      ),
     );
   }
 
@@ -867,11 +870,12 @@ class _ApplicationsOversightScreenState
                       children: [
                         Text(
                           applicantDisplayName,
-                          style: seqLabelLg(
+                          style: GoogleFonts.inter(
+                            fontSize: 16,
                             color: hasApplicantName
                                 ? kSeqOnSurface
                                 : kSeqOutline,
-                            fontWeight: FontWeight.w600,
+                            fontWeight: FontWeight.w700,
                           ),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
@@ -937,8 +941,8 @@ class _ApplicationsOversightScreenState
                         Text(
                           scholarshipTitleText,
                           style: seqBodyMd(
-                            color: kSeqOnSurface,
-                            fontWeight: FontWeight.w600,
+                            color: kSeqOnSurfaceVariant,
+                            fontWeight: FontWeight.w500,
                           ),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
@@ -1286,26 +1290,28 @@ class _ApplicationsOversightScreenState
                     }
                     return SizedBox(
                       width: double.infinity,
-                      child: FilledButton.icon(
-                        onPressed: () {
-                          _openCreateDisbursementSheet(
-                            context,
-                            dialogContext,
-                            item,
-                          );
-                        },
-                        icon: const Icon(Icons.payments_outlined, size: 18),
-                        label: const Text('Create Disbursement'),
-                        style: FilledButton.styleFrom(
-                          backgroundColor: kSeqPrimary,
-                          foregroundColor: kSeqOnPrimary,
-                          padding: const EdgeInsets.symmetric(vertical: 14),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          textStyle: seqLabelMd(
-                            fontWeight: FontWeight.w600,
-                            color: kSeqOnPrimary,
+                      child: PressableScale(
+                        child: FilledButton.icon(
+                          onPressed: () {
+                            _openCreateDisbursementSheet(
+                              context,
+                              dialogContext,
+                              item,
+                            );
+                          },
+                          icon: const Icon(Icons.payments_outlined, size: 18),
+                          label: const Text('Create Disbursement'),
+                          style: FilledButton.styleFrom(
+                            backgroundColor: kSeqPrimary,
+                            foregroundColor: kSeqOnPrimary,
+                            padding: const EdgeInsets.symmetric(vertical: 14),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            textStyle: seqLabelMd(
+                              fontWeight: FontWeight.w600,
+                              color: kSeqOnPrimary,
+                            ),
                           ),
                         ),
                       ),

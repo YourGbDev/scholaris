@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:scholaris/features/admin/presentation/admin_theme.dart';
+import 'package:scholaris/shared/theme/app_motion.dart';
 import 'package:scholaris/shared/widgets/state_views.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -376,29 +377,31 @@ class _DisbursementsOversightScreenState
 
           return Padding(
             padding: const EdgeInsets.only(right: 8),
-            child: ChoiceChip(
-              label: Text('$label ($count)'),
-              selected: isSelected,
-              onSelected: (_) {
-                ref
-                    .read(adminDisbursementFilterProvider.notifier)
-                    .state = key;
-              },
-              backgroundColor: kSeqSurfaceContainerLow,
-              selectedColor: kSeqPrimary,
-              labelStyle: seqLabelSm(
-                color: isSelected ? kSeqOnPrimary : kSeqOnSurfaceVariant,
-                fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
-              ),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10),
-                side: BorderSide(
-                  color: isSelected
-                      ? kSeqPrimary
-                      : kSeqOutlineVariant.withValues(alpha: 0.4),
+            child: PressableScale(
+              child: ChoiceChip(
+                label: Text('$label ($count)'),
+                selected: isSelected,
+                onSelected: (_) {
+                  ref
+                      .read(adminDisbursementFilterProvider.notifier)
+                      .state = key;
+                },
+                backgroundColor: kSeqSurfaceContainerLow,
+                selectedColor: kSeqPrimaryContainer,
+                labelStyle: seqLabelSm(
+                  color: isSelected ? kSeqOnPrimary : kSeqOnSurfaceVariant,
+                  fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
                 ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                  side: BorderSide(
+                    color: isSelected
+                        ? kSeqPrimaryContainer
+                        : kSeqOutlineVariant.withValues(alpha: 0.35),
+                  ),
+                ),
+                showCheckmark: false,
               ),
-              showCheckmark: false,
             ),
           );
         }).toList(),
@@ -410,43 +413,57 @@ class _DisbursementsOversightScreenState
   Widget _buildEmptyState({required String activeTab}) {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.symmetric(vertical: 56, horizontal: 24),
+      padding: const EdgeInsets.symmetric(vertical: 64, horizontal: 24),
       decoration: BoxDecoration(
         color: kSeqSurfaceContainerLowest,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: kSeqOutlineVariant.withValues(alpha: 0.3),
+          color: kSeqOutlineVariant.withValues(alpha: 0.35),
         ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.02),
+            blurRadius: 10,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
           Container(
-            width: 56,
-            height: 56,
+            width: 72,
+            height: 72,
             decoration: BoxDecoration(
               color: kSeqSurfaceContainerLow,
               shape: BoxShape.circle,
               border: Border.all(
-                color: kSeqOutlineVariant.withValues(alpha: 0.3),
+                color: kSeqOutlineVariant.withValues(alpha: 0.35),
               ),
             ),
             child: const Icon(
               Icons.account_balance_wallet_outlined,
-              size: 26,
+              size: 34,
               color: kSeqOutline,
             ),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 18),
           Text(
             'No disbursements yet',
-            style: seqHeadlineSm(fontWeight: FontWeight.w600),
+            style: GoogleFonts.inter(
+              fontSize: 20,
+              fontWeight: FontWeight.w700,
+              color: kSeqOnSurface,
+            ),
           ),
-          const SizedBox(height: 6),
-          Text(
-            'Disbursements appear here once created from an approved application.',
-            style: seqBodySm(color: kSeqOnSurfaceVariant),
-            textAlign: TextAlign.center,
+          const SizedBox(height: 8),
+          ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 420),
+            child: Text(
+              'Disbursements appear here once authorized and created from an approved scholarship application.',
+              style: seqBodyMd(color: kSeqOnSurfaceVariant),
+              textAlign: TextAlign.center,
+            ),
           ),
         ],
       ),

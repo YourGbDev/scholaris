@@ -109,19 +109,6 @@ final reportsAnalyticsDataProvider =
 class ReportsAnalyticsScreen extends ConsumerWidget {
   const ReportsAnalyticsScreen({super.key});
 
-  String _formatCurrency(double amount) {
-    final rounded = amount.toInt();
-    final chars = rounded.toString().split('');
-    final buffer = StringBuffer();
-    for (int i = 0; i < chars.length; i++) {
-      if (i > 0 && (chars.length - i) % 3 == 0) {
-        buffer.write(',');
-      }
-      buffer.write(chars[i]);
-    }
-    return '₱$buffer';
-  }
-
   String _formatDateTime(DateTime dt) {
     const months = [
       'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
@@ -353,14 +340,30 @@ class ReportsAnalyticsScreen extends ConsumerWidget {
             ],
           ),
           const SizedBox(height: 12),
-          Text(
-            _formatCurrency(data.totalScholarshipValue),
-            style: GoogleFonts.inter(
-              fontSize: 36,
-              fontWeight: FontWeight.w800,
-              color: kSeqPrimary,
-              height: 1.1,
-            ),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.baseline,
+            textBaseline: TextBaseline.alphabetic,
+            children: [
+              Text(
+                '₱',
+                style: GoogleFonts.inter(
+                  fontSize: 26,
+                  fontWeight: FontWeight.w700,
+                  color: kSeqPrimary,
+                ),
+              ),
+              const SizedBox(width: 3),
+              Text(
+                _formatCurrencyValue(data.totalScholarshipValue),
+                style: GoogleFonts.inter(
+                  fontSize: 36,
+                  fontWeight: FontWeight.w800,
+                  color: kSeqPrimary,
+                  height: 1.1,
+                  letterSpacing: -0.5,
+                ),
+              ),
+            ],
           ),
           const SizedBox(height: 6),
           Text(
@@ -375,6 +378,19 @@ class ReportsAnalyticsScreen extends ConsumerWidget {
     );
   }
 
+  String _formatCurrencyValue(double val) {
+    final whole = val.round();
+    final chars = whole.toString().split('');
+    final buffer = StringBuffer();
+    for (int i = 0; i < chars.length; i++) {
+      if (i > 0 && (chars.length - i) % 3 == 0) {
+        buffer.write(',');
+      }
+      buffer.write(chars[i]);
+    }
+    return buffer.toString();
+  }
+
   // --- Section 1: Applications by Status ------------------------------------
 
   Widget _buildApplicationsStatusSection(
@@ -384,14 +400,14 @@ class ReportsAnalyticsScreen extends ConsumerWidget {
     final total = counts.values.fold<int>(0, (sum, val) => sum + val);
 
     final statusList = [
-      {'key': 'submitted', 'label': 'Submitted', 'color': kSeqSecondary},
-      {'key': 'approved', 'label': 'Approved', 'color': kSeqPrimaryContainer},
-      {'key': 'withdrawn', 'label': 'Withdrawn', 'color': kSeqOutline},
-      {'key': 'draft', 'label': 'Draft', 'color': kSeqOnSurfaceVariant},
-      {'key': 'under_review', 'label': 'Under Review', 'color': kSeqTertiaryContainer},
-      {'key': 'shortlisted', 'label': 'Shortlisted', 'color': const Color(0xFF5D4037)},
+      {'key': 'submitted', 'label': 'Submitted', 'color': const Color(0xFF2E7D32)},
+      {'key': 'approved', 'label': 'Approved', 'color': const Color(0xFF2E7D32)},
+      {'key': 'under_review', 'label': 'Under Review', 'color': const Color(0xFFE65100)},
+      {'key': 'shortlisted', 'label': 'Shortlisted', 'color': const Color(0xFFFFA000)},
       {'key': 'awarded', 'label': 'Awarded', 'color': const Color(0xFF1B5E20)},
-      {'key': 'rejected', 'label': 'Rejected', 'color': kSeqError},
+      {'key': 'draft', 'label': 'Draft', 'color': const Color(0xFF757575)},
+      {'key': 'withdrawn', 'label': 'Withdrawn', 'color': const Color(0xFFC62828)},
+      {'key': 'rejected', 'label': 'Rejected', 'color': const Color(0xFFC62828)},
     ];
 
     return Container(
@@ -424,11 +440,12 @@ class ReportsAnalyticsScreen extends ConsumerWidget {
           ),
           const SizedBox(height: 16),
           for (int i = 0; i < statusList.length; i++) ...[
-            if (i > 0) const Divider(height: 16, color: kSeqSurfaceContainerHigh),
-            _buildBreakdownRow(
+            if (i > 0) const SizedBox(height: 12),
+            _buildProportionalBarRow(
               label: statusList[i]['label'] as String,
               count: counts[statusList[i]['key']] ?? 0,
-              indicatorColor: statusList[i]['color'] as Color,
+              total: total,
+              color: statusList[i]['color'] as Color,
             ),
           ],
         ],
@@ -476,11 +493,12 @@ class ReportsAnalyticsScreen extends ConsumerWidget {
           ),
           const SizedBox(height: 16),
           for (int i = 0; i < roles.length; i++) ...[
-            if (i > 0) const Divider(height: 16, color: kSeqSurfaceContainerHigh),
-            _buildBreakdownRow(
-              label: roles[i].toUpperCase(),
+            if (i > 0) const SizedBox(height: 12),
+            _buildProportionalBarRow(
+              label: _formatRoleName(roles[i]),
               count: counts[roles[i]] ?? 0,
-              indicatorColor: _roleColor(roles[i]),
+              total: total,
+              color: _roleColor(roles[i]),
             ),
           ],
         ],
@@ -488,37 +506,90 @@ class ReportsAnalyticsScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildBreakdownRow({
+  String _formatRoleName(String role) {
+    switch (role.toLowerCase()) {
+      case 'admin':
+        return 'Administrators';
+      case 'provider':
+        return 'Grant Providers';
+      case 'student':
+        return 'Student Scholars';
+      default:
+        return role[0].toUpperCase() + role.substring(1);
+    }
+  }
+
+  Widget _buildProportionalBarRow({
     required String label,
     required int count,
-    required Color indicatorColor,
+    required int total,
+    required Color color,
   }) {
-    return Row(
+    final double fraction = total > 0 ? (count / total).clamp(0.0, 1.0) : 0.0;
+    final pct = total > 0 ? (fraction * 100).toStringAsFixed(0) : '0';
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Container(
-          width: 8,
-          height: 8,
-          decoration: BoxDecoration(
-            color: indicatorColor,
-            shape: BoxShape.circle,
-          ),
-        ),
-        const SizedBox(width: 10),
-        Expanded(
-          child: Text(
-            label,
-            style: seqBodyMd(
-              color: kSeqOnSurface,
-              fontWeight: FontWeight.w500,
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Row(
+              children: [
+                Container(
+                  width: 8,
+                  height: 8,
+                  decoration: BoxDecoration(
+                    color: count > 0 ? color : kSeqOutline.withValues(alpha: 0.35),
+                    shape: BoxShape.circle,
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Text(
+                  label,
+                  style: seqBodyMd(
+                    color: kSeqOnSurface,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ],
             ),
-          ),
+            Row(
+              children: [
+                Text(
+                  '$count',
+                  style: GoogleFonts.inter(
+                    fontSize: 15,
+                    fontWeight: FontWeight.w700,
+                    color: kSeqOnSurface,
+                  ),
+                ),
+                const SizedBox(width: 6),
+                Text(
+                  '($pct%)',
+                  style: seqLabelSm(color: kSeqOutline),
+                ),
+              ],
+            ),
+          ],
         ),
-        Text(
-          '$count',
-          style: GoogleFonts.inter(
-            fontSize: 16,
-            fontWeight: FontWeight.w700,
-            color: kSeqOnSurface,
+        const SizedBox(height: 6),
+        ClipRRect(
+          borderRadius: BorderRadius.circular(4),
+          child: Container(
+            height: 6,
+            width: double.infinity,
+            color: kSeqSurfaceContainerLow,
+            child: FractionallySizedBox(
+              alignment: Alignment.centerLeft,
+              widthFactor: count > 0 ? fraction : 0.0,
+              child: Container(
+                decoration: BoxDecoration(
+                  color: count > 0 ? color : Colors.transparent,
+                  borderRadius: BorderRadius.circular(4),
+                ),
+              ),
+            ),
           ),
         ),
       ],
@@ -594,95 +665,121 @@ class ReportsAnalyticsScreen extends ConsumerWidget {
     final width = MediaQuery.sizeOf(context).width;
     final isDesktop = width >= 720;
 
+    final role = entry.actorRole.toLowerCase();
+    Color actionColor;
+    if (role.contains('provider')) {
+      actionColor = const Color(0xFF2E7D32);
+    } else if (role.contains('user') || role.contains('student')) {
+      actionColor = const Color(0xFF1976D2);
+    } else {
+      actionColor = const Color(0xFFF57C00);
+    }
+
     return Container(
-      padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: kSeqSurfaceContainerLow,
+        color: kSeqSurfaceContainerLowest,
         borderRadius: BorderRadius.circular(10),
+        border: Border.all(
+          color: kSeqOutlineVariant.withValues(alpha: 0.35),
+        ),
       ),
-      child: isDesktop
-          ? Row(
-              children: [
-                Expanded(
-                  flex: 3,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        entry.action,
-                        style: seqBodyMd(
-                          fontWeight: FontWeight.w700,
-                          color: kSeqOnSurface,
-                        ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
+      clipBehavior: Clip.antiAlias,
+      child: IntrinsicHeight(
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Container(width: 3.5, color: actionColor),
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                child: isDesktop
+                    ? Row(
+                        children: [
+                          Expanded(
+                            flex: 3,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  entry.action,
+                                  style: seqBodyMd(
+                                    fontWeight: FontWeight.w700,
+                                    color: kSeqOnSurface,
+                                  ),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                                Text(
+                                  '${entry.targetType} · ${_truncateId(entry.targetId)}',
+                                  style: GoogleFonts.robotoMono(
+                                    fontSize: 11,
+                                    color: kSeqOnSurfaceVariant,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            flex: 2,
+                            child: Text(
+                              entry.actorEmail ?? 'System',
+                              style: seqBodySm(color: kSeqOnSurface),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          Text(
+                            _formatDateTime(entry.createdAt),
+                            style: seqLabelSm(color: kSeqOutline),
+                          ),
+                        ],
+                      )
+                    : Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            entry.action,
+                            style: seqBodyMd(
+                              fontWeight: FontWeight.w700,
+                              color: kSeqOnSurface,
+                            ),
+                          ),
+                          const SizedBox(height: 2),
+                          Text(
+                            '${entry.targetType} · ${_truncateId(entry.targetId)}',
+                            style: GoogleFonts.robotoMono(
+                              fontSize: 11,
+                              color: kSeqOnSurfaceVariant,
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Expanded(
+                                child: Text(
+                                  entry.actorEmail ?? 'System',
+                                  style: seqBodySm(color: kSeqOnSurface),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                              const SizedBox(width: 8),
+                              Text(
+                                _formatDateTime(entry.createdAt),
+                                style: seqLabelSm(color: kSeqOutline),
+                              ),
+                            ],
+                          ),
+                        ],
                       ),
-                      Text(
-                        '${entry.targetType} · ${_truncateId(entry.targetId)}',
-                        style: GoogleFonts.robotoMono(
-                          fontSize: 11,
-                          color: kSeqOnSurfaceVariant,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  flex: 2,
-                  child: Text(
-                    entry.actorEmail ?? 'System',
-                    style: seqBodySm(color: kSeqOnSurface),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Text(
-                  _formatDateTime(entry.createdAt),
-                  style: seqLabelSm(color: kSeqOutline),
-                ),
-              ],
-            )
-          : Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  entry.action,
-                  style: seqBodyMd(
-                    fontWeight: FontWeight.w700,
-                    color: kSeqOnSurface,
-                  ),
-                ),
-                const SizedBox(height: 2),
-                Text(
-                  '${entry.targetType} · ${_truncateId(entry.targetId)}',
-                  style: GoogleFonts.robotoMono(
-                    fontSize: 11,
-                    color: kSeqOnSurfaceVariant,
-                  ),
-                ),
-                const SizedBox(height: 4),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Expanded(
-                      child: Text(
-                        entry.actorEmail ?? 'System',
-                        style: seqBodySm(color: kSeqOnSurface),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    Text(
-                      _formatDateTime(entry.createdAt),
-                      style: seqLabelSm(color: kSeqOutline),
-                    ),
-                  ],
-                ),
-              ],
+              ),
             ),
+          ],
+        ),
+      ),
     );
   }
 }

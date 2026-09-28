@@ -48,6 +48,26 @@ class StudentDashboardScreen extends ConsumerStatefulWidget {
 
 class _StudentDashboardScreenState
     extends ConsumerState<StudentDashboardScreen> {
+  bool _hasAnimated = false;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _hasAnimated = true;
+    });
+  }
+
+  Widget _wrapSection({required int index, required Widget child}) {
+    if (_hasAnimated) return child;
+    return StaggeredListItem(
+      index: index,
+      staggerMs: 50,
+      spring: AppleSpringDescription.pip,
+      child: child,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final profileAsync = ref.watch(currentProfileProvider);
@@ -108,7 +128,9 @@ class _StudentDashboardScreenState
               ref.invalidate(bookmarksProvider);
             },
             child: ListView(
-              physics: const AppleBouncingScrollPhysics(),
+              physics: const AppleBouncingScrollPhysics(
+                parent: AlwaysScrollableScrollPhysics(),
+              ),
               padding: EdgeInsets.fromLTRB(
                 20,
                 16,
@@ -117,27 +139,42 @@ class _StudentDashboardScreenState
               ),
               children: [
                 // 1. Sticky Header
-                _buildHeader(context, ref, avatarState),
+                _wrapSection(
+                  index: 0,
+                  child: _buildHeader(context, ref, avatarState),
+                ),
                 const SizedBox(height: 16),
 
                 // 2. Date & Dynamic Tagalog Greeting
-                _buildDateAndGreeting(greetingName),
+                _wrapSection(
+                  index: 1,
+                  child: _buildDateAndGreeting(greetingName),
+                ),
                 const SizedBox(height: 6),
 
                 // 3. Free-Floating Mascot Hero Section
-                _buildMascotHeroSection(
-                  profile: profile,
-                  matchCount: info.matchCount > 0 ? info.matchCount : matches.length,
+                _wrapSection(
+                  index: 2,
+                  child: _buildMascotHeroSection(
+                    profile: profile,
+                    matchCount: info.matchCount > 0 ? info.matchCount : matches.length,
+                  ),
                 ),
                 const SizedBox(height: 16),
 
                 if (activeApp != null) ...[
-                  _buildActiveAppBanner(context, ref, activeApp),
+                  _wrapSection(
+                    index: 3,
+                    child: _buildActiveAppBanner(context, ref, activeApp),
+                  ),
                   const SizedBox(height: 16),
                 ],
 
                 // 4. Quick-Stat 3-Tile Grid
-                _buildQuickStatGrid(context, ref, info),
+                _wrapSection(
+                  index: 4,
+                  child: _buildQuickStatGrid(context, ref, info),
+                ),
                 const SizedBox(height: 20),
 
                 // 4b. Deadline Alert & Urgency Sections (when closing soon)
@@ -168,7 +205,10 @@ class _StudentDashboardScreenState
                 const SizedBox(height: 20),
 
                 // 6. Pro-Tip for Applicants Bento Box
-                _buildProTipBentoBox(),
+                _wrapSection(
+                  index: 5,
+                  child: _buildProTipBentoBox(),
+                ),
               ],
             ),
           ),
@@ -269,22 +309,20 @@ class _StudentDashboardScreenState
 
             // Profile Avatar
             PressableScale(
-              child: GestureDetector(
-                onTap: () {
-                  ref.read(homeTabIndexProvider.notifier).selectTab(3);
-                },
-                child: Container(
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    border: Border.all(color: const Color(0xFFE2E8F9), width: 1.5),
-                  ),
-                  child: AvatarDisplay(
-                    avatarId: avatarState.avatarId,
-                    isRealPhoto: avatarState.isRealPhoto,
-                    photoPath: avatarState.photoPath,
-                    size: 32,
-                    showVerifiedBadge: false,
-                  ),
+              onTap: () {
+                ref.read(homeTabIndexProvider.notifier).selectTab(3);
+              },
+              child: Container(
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  border: Border.all(color: const Color(0xFFE2E8F9), width: 1.5),
+                ),
+                child: AvatarDisplay(
+                  avatarId: avatarState.avatarId,
+                  isRealPhoto: avatarState.isRealPhoto,
+                  photoPath: avatarState.photoPath,
+                  size: 32,
+                  showVerifiedBadge: false,
                 ),
               ),
             ),
@@ -706,7 +744,7 @@ class _StudentDashboardScreenState
                   fontSize: 17,
                   fontWeight: FontWeight.bold,
                   color: const Color(0xFF161C27),
-                  letterSpacing: -0.3,
+                  letterSpacing: -0.34,
                 ),
               ),
             ),
@@ -904,7 +942,7 @@ class _StudentDashboardScreenState
                     fontSize: 12.5,
                     fontWeight: FontWeight.w500,
                     color: Colors.white,
-                    height: 1.3,
+                    height: 1.45,
                   ),
                 ),
               ],
@@ -1028,6 +1066,7 @@ class _StudentDashboardScreenState
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
                 color: const Color(0xFF93000A),
+                letterSpacing: -0.32,
               ),
             ),
           ],
@@ -1111,7 +1150,7 @@ class _StudentDashboardScreenState
                     style: openSans(
                       fontSize: 12,
                       color: const Color(0xFF404942),
-                      height: 1.4,
+                      height: 1.45,
                     ),
                     children: [
                       const TextSpan(

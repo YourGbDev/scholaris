@@ -26,6 +26,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'package:scholaris/features/account/presentation/account_settings_screen.dart';
 import 'package:scholaris/features/applications/presentation/applications_screen.dart';
+import 'package:scholaris/shared/theme/app_motion.dart';
 import 'package:scholaris/shared/theme/app_theme.dart';
 import 'package:scholaris/shared/widgets/logout_confirmation_dialog.dart';
 import 'package:scholaris/shared/widgets/responsive_container.dart';
@@ -49,9 +50,14 @@ class ProfileTabScreen extends ConsumerWidget {
     return Scaffold(
       backgroundColor: kSurfaceWarm,
       body: SafeArea(
+        bottom: false,
         child: ResponsiveContainer(
           child: profileAsync.when(
-            loading: () => const LoadingView(),
+            loading: () => CrossFadeLoading(
+              isLoading: true,
+              skeleton: _buildProfileSkeleton(context),
+              child: const SizedBox.shrink(),
+            ),
             error: (error, stackTrace) => ErrorView(
               message: 'We could not load your profile.',
               onRetry: () => ref.invalidate(currentProfileProvider),
@@ -69,13 +75,51 @@ class ProfileTabScreen extends ConsumerWidget {
     );
   }
 
+  Widget _buildProfileSkeleton(BuildContext context) {
+    return SingleChildScrollView(
+      physics: const AppleBouncingScrollPhysics(),
+      padding: EdgeInsets.fromLTRB(
+        16,
+        12,
+        16,
+        MediaQuery.of(context).padding.bottom + 64 + 16,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: const [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              SkeletonBand(width: 120, height: 24, borderRadius: 6),
+              SkeletonBand(width: 32, height: 32, borderRadius: 16),
+            ],
+          ),
+          SizedBox(height: 14),
+          SkeletonBand(width: 150, height: 28, borderRadius: 6),
+          SizedBox(height: 14),
+          SkeletonBand(height: 140, borderRadius: 16),
+          SizedBox(height: 14),
+          SkeletonBand(height: 120, borderRadius: 16),
+          SizedBox(height: 18),
+          SkeletonBand(height: 160, borderRadius: 16),
+        ],
+      ),
+    );
+  }
+
   Widget _buildProfileContent(
     BuildContext context,
     WidgetRef ref,
     StudentProfile profile,
   ) {
     return SingleChildScrollView(
-      padding: const EdgeInsets.fromLTRB(16, 12, 16, 32),
+      physics: const AppleBouncingScrollPhysics(),
+      padding: EdgeInsets.fromLTRB(
+        16,
+        12,
+        16,
+        MediaQuery.of(context).padding.bottom + 64 + 16,
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -435,15 +479,24 @@ class ProfileTabScreen extends ConsumerWidget {
         const SizedBox(height: 10),
 
         // Card 1: Academic Information
-        _buildAcademicCard(context, profile),
+        StaggeredListItem(
+          index: 0,
+          child: _buildAcademicCard(context, profile),
+        ),
         const SizedBox(height: 12),
 
         // Card 2: Location & Residency
-        _buildLocationCard(context, profile),
+        StaggeredListItem(
+          index: 1,
+          child: _buildLocationCard(context, profile),
+        ),
         const SizedBox(height: 12),
 
         // Card 3: Financial Background
-        _buildFinancialCard(context, profile),
+        StaggeredListItem(
+          index: 2,
+          child: _buildFinancialCard(context, profile),
+        ),
       ],
     );
   }
@@ -969,73 +1022,75 @@ class ProfileTabScreen extends ConsumerWidget {
         const SizedBox(height: 10),
 
         // Download Scholaris Passport Button
-        Material(
-          color: kPrimaryDark,
-          borderRadius: BorderRadius.circular(14),
-          elevation: 2,
-          shadowColor: kCardShadow,
-          child: InkWell(
+        PressableScale(
+          child: Material(
+            color: kPrimaryDark,
             borderRadius: BorderRadius.circular(14),
-            onTap: () {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(
-                    'Generating your Scholaris Passport PDF with digital seal...',
-                    style: openSans(fontSize: 13, color: Colors.white),
-                  ),
-                  behavior: SnackBarBehavior.floating,
-                  backgroundColor: kPrimary,
-                  duration: const Duration(seconds: 3),
-                ),
-              );
-            },
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-              child: Row(
-                children: [
-                  Container(
-                    width: 36,
-                    height: 36,
-                    decoration: BoxDecoration(
-                      color: kPrimaryContainer,
-                      borderRadius: BorderRadius.circular(10),
+            elevation: 2,
+            shadowColor: kCardShadow,
+            child: InkWell(
+              borderRadius: BorderRadius.circular(14),
+              onTap: () {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(
+                      'Generating your Scholaris Passport PDF with digital seal...',
+                      style: openSans(fontSize: 13, color: Colors.white),
                     ),
-                    child: const Icon(
-                      Icons.card_membership_rounded,
-                      size: 20,
+                    behavior: SnackBarBehavior.floating,
+                    backgroundColor: kPrimary,
+                    duration: const Duration(seconds: 3),
+                  ),
+                );
+              },
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                child: Row(
+                  children: [
+                    Container(
+                      width: 36,
+                      height: 36,
+                      decoration: BoxDecoration(
+                        color: kPrimaryContainer,
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: const Icon(
+                        Icons.card_membership_rounded,
+                        size: 20,
+                        color: Colors.white,
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Download Scholaris Passport',
+                            style: outfit(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.white,
+                            ),
+                          ),
+                          const SizedBox(height: 2),
+                          Text(
+                            'Official PDF with verified digital seal',
+                            style: openSans(
+                              fontSize: 12,
+                              color: kPrimaryFixedDim,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const Icon(
+                      Icons.download_rounded,
+                      size: 22,
                       color: Colors.white,
                     ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Download Scholaris Passport',
-                          style: outfit(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w600,
-                            color: Colors.white,
-                          ),
-                        ),
-                        const SizedBox(height: 2),
-                        Text(
-                          'Official PDF with verified digital seal',
-                          style: openSans(
-                            fontSize: 12,
-                            color: kPrimaryFixedDim,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const Icon(
-                    Icons.download_rounded,
-                    size: 22,
-                    color: Colors.white,
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ),
@@ -1043,50 +1098,52 @@ class ProfileTabScreen extends ConsumerWidget {
         const SizedBox(height: 10),
 
         // Request Verified SUC Transcript Refresh Button
-        Material(
-          color: kSurfaceContainerHigh,
-          borderRadius: BorderRadius.circular(14),
-          child: InkWell(
+        PressableScale(
+          child: Material(
+            color: kSurfaceContainerHigh,
             borderRadius: BorderRadius.circular(14),
-            onTap: () {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(
-                    'Transcript refresh request submitted to university registrar.',
-                    style: openSans(fontSize: 13, color: Colors.white),
+            child: InkWell(
+              borderRadius: BorderRadius.circular(14),
+              onTap: () {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(
+                      'Transcript refresh request submitted to university registrar.',
+                      style: openSans(fontSize: 13, color: Colors.white),
+                    ),
+                    behavior: SnackBarBehavior.floating,
+                    backgroundColor: kPrimary,
+                    duration: const Duration(seconds: 3),
                   ),
-                  behavior: SnackBarBehavior.floating,
-                  backgroundColor: kPrimary,
-                  duration: const Duration(seconds: 3),
-                ),
-              );
-            },
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-              child: Row(
-                children: [
-                  const Icon(
-                    Icons.sync_rounded,
-                    size: 20,
-                    color: kSecondary,
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: Text(
-                      'Request Verified SUC Transcript Refresh',
-                      style: outfit(
-                        fontSize: 13,
-                        fontWeight: FontWeight.w600,
-                        color: kOnSurface,
+                );
+              },
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                child: Row(
+                  children: [
+                    const Icon(
+                      Icons.sync_rounded,
+                      size: 20,
+                      color: kSecondary,
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Text(
+                        'Request Verified SUC Transcript Refresh',
+                        style: outfit(
+                          fontSize: 13,
+                          fontWeight: FontWeight.w600,
+                          color: kOnSurface,
+                        ),
                       ),
                     ),
-                  ),
-                  const Icon(
-                    Icons.chevron_right_rounded,
-                    size: 18,
-                    color: kOnSurfaceVariant,
-                  ),
-                ],
+                    const Icon(
+                      Icons.chevron_right_rounded,
+                      size: 18,
+                      color: kOnSurfaceVariant,
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
@@ -1141,44 +1198,48 @@ class ProfileTabScreen extends ConsumerWidget {
         const SizedBox(height: 16),
 
         // Action Buttons
-        OutlinedButton.icon(
-          onPressed: () => context.go('/profile-setup/personal'),
-          icon: const Icon(Icons.edit_outlined, size: 18),
-          label: Text(
-            'Update profile',
-            style: outfit(fontSize: 14, fontWeight: FontWeight.w600),
-          ),
-          style: OutlinedButton.styleFrom(
-            foregroundColor: kPrimary,
-            side: const BorderSide(color: kPrimary, width: 1.5),
-            minimumSize: const Size.fromHeight(48),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
+        PressableScale(
+          child: OutlinedButton.icon(
+            onPressed: () => context.go('/profile-setup/personal'),
+            icon: const Icon(Icons.edit_outlined, size: 18),
+            label: Text(
+              'Update profile',
+              style: outfit(fontSize: 14, fontWeight: FontWeight.w600),
+            ),
+            style: OutlinedButton.styleFrom(
+              foregroundColor: kPrimary,
+              side: const BorderSide(color: kPrimary, width: 1.5),
+              minimumSize: const Size.fromHeight(48),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
             ),
           ),
         ),
         const SizedBox(height: 10),
-        OutlinedButton.icon(
-          key: const ValueKey('profile-logout-button'),
-          onPressed: () async {
-            final confirmed = await showLogoutConfirmationDialog(context);
-            if (confirmed) {
-              try {
-                await Supabase.instance.client.auth.signOut();
-              } catch (_) {}
-            }
-          },
-          icon: const Icon(Icons.logout_rounded, size: 18),
-          label: Text(
-            'Sign out',
-            style: outfit(fontSize: 14, fontWeight: FontWeight.w600),
-          ),
-          style: OutlinedButton.styleFrom(
-            minimumSize: const Size.fromHeight(48),
-            foregroundColor: kError,
-            side: const BorderSide(color: kError, width: 1.5),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
+        PressableScale(
+          child: OutlinedButton.icon(
+            key: const ValueKey('profile-logout-button'),
+            onPressed: () async {
+              final confirmed = await showLogoutConfirmationDialog(context);
+              if (confirmed) {
+                try {
+                  await Supabase.instance.client.auth.signOut();
+                } catch (_) {}
+              }
+            },
+            icon: const Icon(Icons.logout_rounded, size: 18),
+            label: Text(
+              'Sign out',
+              style: outfit(fontSize: 14, fontWeight: FontWeight.w600),
+            ),
+            style: OutlinedButton.styleFrom(
+              minimumSize: const Size.fromHeight(48),
+              foregroundColor: kError,
+              side: const BorderSide(color: kError, width: 1.5),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
             ),
           ),
         ),
@@ -1256,58 +1317,60 @@ class ProfileTabScreen extends ConsumerWidget {
     required String subtitle,
     required VoidCallback onTap,
   }) {
-    return Material(
-      color: Colors.white,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(14),
-        side: const BorderSide(color: kBorderLight),
-      ),
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(14),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-          child: Row(
-            children: [
-              Container(
-                width: 36,
-                height: 36,
-                decoration: BoxDecoration(
-                  color: kPrimarySoft,
-                  borderRadius: BorderRadius.circular(10),
+    return PressableScale(
+      child: Material(
+        color: Colors.white,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(14),
+          side: const BorderSide(color: kBorderLight),
+        ),
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(14),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            child: Row(
+              children: [
+                Container(
+                  width: 36,
+                  height: 36,
+                  decoration: BoxDecoration(
+                    color: kPrimarySoft,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Icon(icon, size: 18, color: kPrimary),
                 ),
-                child: Icon(icon, size: 18, color: kPrimary),
-              ),
-              const SizedBox(width: 14),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      title,
-                      style: outfit(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600,
-                        color: kTextPrimary,
+                const SizedBox(width: 14),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        title,
+                        style: outfit(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                          color: kTextPrimary,
+                        ),
                       ),
-                    ),
-                    const SizedBox(height: 2),
-                    Text(
-                      subtitle,
-                      style: openSans(
-                        fontSize: 12,
-                        color: kTextSecondary,
+                      const SizedBox(height: 2),
+                      Text(
+                        subtitle,
+                        style: openSans(
+                          fontSize: 12,
+                          color: kTextSecondary,
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
-              const Icon(
-                Icons.chevron_right_rounded,
-                color: kTextSecondary,
-                size: 20,
-              ),
-            ],
+                const Icon(
+                  Icons.chevron_right_rounded,
+                  color: kTextSecondary,
+                  size: 20,
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -1345,247 +1408,250 @@ class _ProfileMilestoneCard extends StatelessWidget {
     final isComplete = report.isFullyComplete;
     final accentColor = isComplete ? kPrimary : kAccent;
 
-    return Material(
-      color: Colors.transparent,
-      child: InkWell(
-        key: const ValueKey('profile-milestone-card'),
-        borderRadius: BorderRadius.circular(16),
-        onTap: () => showMatchingPowerSheet(context, profile),
-        child: Container(
-          padding: const EdgeInsets.all(16),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(16),
-            border: Border.all(
-              color: isComplete
-                  ? kPrimary.withValues(alpha: 0.3)
-                  : kAccent.withValues(alpha: 0.35),
-            ),
-            boxShadow: const [
-              BoxShadow(
-                color: kCardShadow,
-                blurRadius: 10,
-                offset: Offset(0, 3),
+    return PressableScale(
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          key: const ValueKey('profile-milestone-card'),
+          borderRadius: BorderRadius.circular(16),
+          onTap: () => showMatchingPowerSheet(context, profile),
+          child: Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(
+                color: isComplete
+                    ? kPrimary.withValues(alpha: 0.3)
+                    : kAccent.withValues(alpha: 0.35),
               ),
-            ],
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Container(
-                    width: 44,
-                    height: 44,
-                    decoration: BoxDecoration(
-                      color: isComplete
-                          ? kPrimarySoft
-                          : kTertiaryFixed.withValues(alpha: 0.6),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Icon(
-                      isComplete
-                          ? Icons.workspace_premium_rounded
-                          : Icons.trending_up_rounded,
-                      color: isComplete ? kPrimary : const Color(0xFF583F00),
-                      size: 24,
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Expanded(
-                              child: Text(
-                                'GRANT ENGINE',
-                                style: outfit(
-                                  fontSize: 10,
-                                  fontWeight: FontWeight.w700,
-                                  color: kOnSurfaceVariant,
-                                  letterSpacing: 1.0,
-                                ),
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ),
-                            const SizedBox(width: 4),
-                            Container(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 8,
-                                vertical: 2,
-                              ),
-                              decoration: BoxDecoration(
-                                color: isComplete
-                                    ? kPrimaryFixed
-                                    : const Color(0xFF98D4AB).withValues(alpha: 0.25),
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              child: Text(
-                                isComplete ? 'Peak Fit' : 'High Fit',
-                                style: outfit(
-                                  fontSize: 10,
-                                  fontWeight: FontWeight.w700,
-                                  color: kPrimary,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 2),
-                        Row(
-                          children: [
-                            Flexible(
-                              child: Text(
-                                'Matching Power',
-                                style: outfit(
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.w700,
-                                  color: kOnSurface,
-                                ),
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ),
-                            const SizedBox(width: 6),
-                            Text(
-                              '$percentage%',
-                              style: outfit(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w700,
-                                color: isComplete ? kPrimary : kMatchGoldText,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 12),
-
-              // Progress bar
-              ClipRRect(
-                borderRadius: BorderRadius.circular(6),
-                child: LinearProgressIndicator(
-                  value: report.ratio,
-                  minHeight: 8,
-                  backgroundColor: kSurfaceContainerHighest,
-                  valueColor: AlwaysStoppedAnimation<Color>(
-                    accentColor,
-                  ),
+              boxShadow: const [
+                BoxShadow(
+                  color: kCardShadow,
+                  blurRadius: 10,
+                  offset: Offset(0, 3),
                 ),
-              ),
-              const SizedBox(height: 10),
-
-              // Unlocks copy
-              RichText(
-                text: TextSpan(
-                  style: openSans(fontSize: 12, color: kOnSurfaceVariant),
+              ],
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    const TextSpan(text: 'Your profile unlocks '),
-                    TextSpan(
-                      text: '${((percentage * 42) / 100).round()} of 42',
-                      style: outfit(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w700,
-                        color: kPrimary,
+                    Container(
+                      width: 44,
+                      height: 44,
+                      decoration: BoxDecoration(
+                        color: isComplete
+                            ? kPrimarySoft
+                            : kTertiaryFixed.withValues(alpha: 0.6),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Icon(
+                        isComplete
+                            ? Icons.workspace_premium_rounded
+                            : Icons.trending_up_rounded,
+                        color: isComplete ? kPrimary : const Color(0xFF583F00),
+                        size: 24,
                       ),
                     ),
-                    const TextSpan(text: ' active Philippine grants.'),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Expanded(
+                                child: Text(
+                                  'GRANT ENGINE',
+                                  style: outfit(
+                                    fontSize: 10,
+                                    fontWeight: FontWeight.w700,
+                                    color: kOnSurfaceVariant,
+                                    letterSpacing: 1.0,
+                                  ),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                              const SizedBox(width: 4),
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 8,
+                                  vertical: 2,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: isComplete
+                                      ? kPrimaryFixed
+                                      : const Color(0xFF98D4AB).withValues(alpha: 0.25),
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                child: Text(
+                                  isComplete ? 'Peak Fit' : 'High Fit',
+                                  style: outfit(
+                                    fontSize: 10,
+                                    fontWeight: FontWeight.w700,
+                                    color: kPrimary,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 2),
+                          Row(
+                            children: [
+                              Flexible(
+                                child: Text(
+                                  'Matching Power',
+                                  style: outfit(
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.w700,
+                                    color: kOnSurface,
+                                  ),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                              const SizedBox(width: 6),
+                              CountUpAnimation(
+                                targetValue: percentage,
+                                suffix: '%',
+                                style: outfit(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w700,
+                                  color: isComplete ? kPrimary : kMatchGoldText,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
                   ],
                 ),
-              ),
-              const SizedBox(height: 10),
+                const SizedBox(height: 12),
 
-              // Metric Breakdown Chips (Distinct labels so find.text('100%') remains unique)
-              Row(
-                children: [
-                  Expanded(
-                    child: _buildMetricChip(
-                      label: 'Academics',
-                      status: 'Full Fit',
-                      valueColor: kPrimary,
+                // Progress bar
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(6),
+                  child: LinearProgressIndicator(
+                    value: report.ratio,
+                    minHeight: 8,
+                    backgroundColor: kSurfaceContainerHighest,
+                    valueColor: AlwaysStoppedAnimation<Color>(
+                      accentColor,
                     ),
                   ),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: _buildMetricChip(
-                      label: 'Location',
-                      status: 'Eligible',
-                      valueColor: kPrimary,
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: _buildMetricChip(
-                      label: 'Financials',
-                      status: profile.monthlyFamilyIncome != null ? 'Verified' : 'General',
-                      valueColor: const Color(0xFF436084),
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 12),
+                ),
+                const SizedBox(height: 10),
 
-              // Advice Banner
-              Container(
-                width: double.infinity,
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 9),
-                decoration: BoxDecoration(
-                  color: isComplete ? kPrimarySoft : kMatchGoldSoft,
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: Text(
-                  report.advice,
-                  style: openSans(
-                    fontSize: 12,
-                    color: isComplete ? kPrimary : kMatchGoldText,
-                    height: 1.35,
-                  ),
-                ),
-              ),
-              const SizedBox(height: 12),
-
-              // View Matching Power Breakdown CTA button
-              Container(
-                width: double.infinity,
-                height: 38,
-                padding: const EdgeInsets.symmetric(horizontal: 10),
-                decoration: BoxDecoration(
-                  color: kSurfaceContainerHigh,
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Flexible(
-                      child: Text(
-                        'View Matching Power Breakdown',
+                // Unlocks copy
+                RichText(
+                  text: TextSpan(
+                    style: openSans(fontSize: 12, color: kOnSurfaceVariant),
+                    children: [
+                      const TextSpan(text: 'Your profile unlocks '),
+                      TextSpan(
+                        text: '${((percentage * 42) / 100).round()} of 42',
                         style: outfit(
                           fontSize: 12,
-                          fontWeight: FontWeight.w600,
+                          fontWeight: FontWeight.w700,
                           color: kPrimary,
                         ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
+                      ),
+                      const TextSpan(text: ' active Philippine grants.'),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 10),
+
+                // Metric Breakdown Chips (Distinct labels so find.text('100%') remains unique)
+                Row(
+                  children: [
+                    Expanded(
+                      child: _buildMetricChip(
+                        label: 'Academics',
+                        status: 'Full Fit',
+                        valueColor: kPrimary,
                       ),
                     ),
-                    const SizedBox(width: 4),
-                    const Icon(
-                      Icons.arrow_forward_rounded,
-                      size: 16,
-                      color: kPrimary,
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: _buildMetricChip(
+                        label: 'Location',
+                        status: 'Eligible',
+                        valueColor: kPrimary,
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: _buildMetricChip(
+                        label: 'Financials',
+                        status: profile.monthlyFamilyIncome != null ? 'Verified' : 'General',
+                        valueColor: const Color(0xFF436084),
+                      ),
                     ),
                   ],
                 ),
-              ),
-            ],
+                const SizedBox(height: 12),
+
+                // Advice Banner
+                Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 9),
+                  decoration: BoxDecoration(
+                    color: isComplete ? kPrimarySoft : kMatchGoldSoft,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Text(
+                    report.advice,
+                    style: openSans(
+                      fontSize: 12,
+                      color: isComplete ? kPrimary : kMatchGoldText,
+                      height: 1.35,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 12),
+
+                // View Matching Power Breakdown CTA button
+                Container(
+                  width: double.infinity,
+                  height: 38,
+                  padding: const EdgeInsets.symmetric(horizontal: 10),
+                  decoration: BoxDecoration(
+                    color: kSurfaceContainerHigh,
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Flexible(
+                        child: Text(
+                          'View Matching Power Breakdown',
+                          style: outfit(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w600,
+                            color: kPrimary,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                      const SizedBox(width: 4),
+                      const Icon(
+                        Icons.arrow_forward_rounded,
+                        size: 16,
+                        color: kPrimary,
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),

@@ -30,6 +30,7 @@ import 'package:scholaris/features/scholarships/providers/discovery_provider.dar
 import 'package:scholaris/features/scholarships/providers/scholarships_provider.dart';
 import 'package:scholaris/features/scholarships/services/discovery_filters.dart';
 import 'package:scholaris/features/scholarships/services/match_reasons.dart';
+import 'package:scholaris/shared/theme/app_motion.dart';
 import 'package:scholaris/shared/theme/app_theme.dart';
 import 'package:scholaris/shared/widgets/mascot_pose_view.dart';
 import 'package:scholaris/shared/widgets/responsive_container.dart';
@@ -72,6 +73,7 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
     return Scaffold(
       backgroundColor: const Color(0xFFF9F9FF),
       body: SafeArea(
+        bottom: false,
         child: ResponsiveContainer(
           child: RefreshIndicator(
             color: const Color(0xFF0F4D2E),
@@ -84,7 +86,13 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
               ref.invalidate(bookmarksProvider);
             },
             child: ListView(
-              padding: const EdgeInsets.fromLTRB(20, 16, 20, 32),
+              physics: const AppleBouncingScrollPhysics(),
+              padding: EdgeInsets.fromLTRB(
+                20,
+                16,
+                20,
+                MediaQuery.of(context).padding.bottom + 64 + 16,
+              ),
               children: [
                 // 1. Sticky Header
                 _buildHeader(context, ref, avatarState),
@@ -641,76 +649,93 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
     Set<String> appliedIds,
     DiscoveryFilterState state,
   ) {
-    return matchesAsync.when(
-      loading: () => Container(
-        padding: const EdgeInsets.symmetric(vertical: 32, horizontal: 16),
-        alignment: Alignment.center,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const MascotPoseView(
-              pose: MascotPose.searching,
-              height: 100,
+    return CrossFadeLoading(
+      isLoading: matchesAsync.isLoading,
+      skeleton: _buildDiscoverSkeleton(),
+      child: matchesAsync.when(
+        loading: _buildDiscoverSkeleton,
+        error: (err, _) => ErrorView(
+          message: 'Could not load your matches.',
+          onRetry: () => ref.invalidate(matchesProvider),
+        ),
+        data: (matches) {
+          final browse = browseAsync.valueOrNull ?? const <Scholarship>[];
+          if (matches.isEmpty && browse.isEmpty) {
+            return _buildNoResultsEmptyState(context, ref);
+          }
+          if (matches.isEmpty) {
+            return _buildMatchesEmptyNote(context, ref, state);
+          }
+
+          final profile = ref.watch(currentProfileProvider).valueOrNull;
+
+          return ListView.separated(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            itemCount: matches.length,
+            separatorBuilder: (_, _) => const SizedBox(height: 14),
+            itemBuilder: (context, index) {
+              final scholarship = matches[index];
+              final reasons = profile != null
+                  ? matchReasonsFor(profile, scholarship)
+                  : const <String>[];
+              return StaggeredListItem(
+                index: index,
+                child: ScholarshipCard(
+                  scholarship: scholarship,
+                  reasons: reasons,
+                  isBookmarked: bookmarkIds.contains(scholarship.id),
+                  isApplied: appliedIds.contains(scholarship.id),
+                  onToggleBookmark: () => _toggleBookmark(ref, scholarship.id),
+                  onQuickApply: () {
+                    context.push(
+                      '/scholarship/${scholarship.id}',
+                      extra: scholarship,
+                    );
+                  },
+                ),
+              );
+            },
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _buildDiscoverSkeleton() {
+    return Column(
+      children: List.generate(
+        3,
+        (index) => Padding(
+          padding: const EdgeInsets.only(bottom: 14),
+          child: Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(color: const Color(0xFFE2E8E5)),
             ),
-            const SizedBox(height: 12),
-            Text(
-              'Finding matching scholarships...',
-              style: outfit(
-                fontSize: 15,
-                fontWeight: FontWeight.w600,
-                color: const Color(0xFF161C27),
-              ),
+            child: const Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    SkeletonBand(width: 80, height: 22, borderRadius: 11),
+                    SkeletonBand(width: 90, height: 22, borderRadius: 6),
+                  ],
+                ),
+                SizedBox(height: 12),
+                SkeletonBand(width: 240, height: 20, borderRadius: 6),
+                SizedBox(height: 8),
+                SkeletonBand(width: 160, height: 14, borderRadius: 4),
+                SizedBox(height: 12),
+                SkeletonBand(height: 48, borderRadius: 8),
+              ],
             ),
-            const SizedBox(height: 4),
-            Text(
-              'Analyzing eligibility requirements against your profile.',
-              textAlign: TextAlign.center,
-              style: openSans(fontSize: 12.5, color: const Color(0xFF707971)),
-            ),
-          ],
+          ),
         ),
       ),
-      error: (err, _) => ErrorView(
-        message: 'Could not load your matches.',
-        onRetry: () => ref.invalidate(matchesProvider),
-      ),
-      data: (matches) {
-        final browse = browseAsync.valueOrNull ?? const <Scholarship>[];
-        if (matches.isEmpty && browse.isEmpty) {
-          return _buildNoResultsEmptyState(context, ref);
-        }
-        if (matches.isEmpty) {
-          return _buildMatchesEmptyNote(context, ref, state);
-        }
-
-        final profile = ref.watch(currentProfileProvider).valueOrNull;
-
-        return ListView.separated(
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          itemCount: matches.length,
-          separatorBuilder: (_, _) => const SizedBox(height: 14),
-          itemBuilder: (context, index) {
-            final scholarship = matches[index];
-            final reasons = profile != null
-                ? matchReasonsFor(profile, scholarship)
-                : const <String>[];
-            return ScholarshipCard(
-              scholarship: scholarship,
-              reasons: reasons,
-              isBookmarked: bookmarkIds.contains(scholarship.id),
-              isApplied: appliedIds.contains(scholarship.id),
-              onToggleBookmark: () => _toggleBookmark(ref, scholarship.id),
-              onQuickApply: () {
-                context.push(
-                  '/scholarship/${scholarship.id}',
-                  extra: scholarship,
-                );
-              },
-            );
-          },
-        );
-      },
     );
   }
 
@@ -746,17 +771,20 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
               physics: const NeverScrollableScrollPhysics(),
               itemCount: browse.length,
               separatorBuilder: (_, _) => const SizedBox(height: 14),
-              itemBuilder: (_, i) => ScholarshipCard(
-                scholarship: browse[i],
-                isBookmarked: bookmarkIds.contains(browse[i].id),
-                isApplied: appliedIds.contains(browse[i].id),
-                onToggleBookmark: () => _toggleBookmark(ref, browse[i].id),
-                onQuickApply: () {
-                  context.push(
-                    '/scholarship/${browse[i].id}',
-                    extra: browse[i],
-                  );
-                },
+              itemBuilder: (_, i) => StaggeredListItem(
+                index: i,
+                child: ScholarshipCard(
+                  scholarship: browse[i],
+                  isBookmarked: bookmarkIds.contains(browse[i].id),
+                  isApplied: appliedIds.contains(browse[i].id),
+                  onToggleBookmark: () => _toggleBookmark(ref, browse[i].id),
+                  onQuickApply: () {
+                    context.push(
+                      '/scholarship/${browse[i].id}',
+                      extra: browse[i],
+                    );
+                  },
+                ),
               ),
             ),
           ],
@@ -819,32 +847,34 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
             ),
           ),
           const SizedBox(height: 16),
-          ElevatedButton(
-            onPressed: () => showDiscoveryFilterSheet(context),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFF436084), // secondary Slate Navy
-              foregroundColor: Colors.white,
-              elevation: 0,
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10),
+          PressableScale(
+            child: ElevatedButton(
+              onPressed: () => showDiscoveryFilterSheet(context),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFF436084), // secondary Slate Navy
+                foregroundColor: Colors.white,
+                elevation: 0,
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
               ),
-            ),
-            child: FittedBox(
-              fit: BoxFit.scaleDown,
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const Icon(Icons.manage_search_rounded, size: 18),
-                  const SizedBox(width: 8),
-                  Text(
-                    'Update Eligibility Filters',
-                    style: outfit(
-                      fontSize: 13,
-                      fontWeight: FontWeight.bold,
+              child: FittedBox(
+                fit: BoxFit.scaleDown,
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Icon(Icons.manage_search_rounded, size: 18),
+                    const SizedBox(width: 8),
+                    Text(
+                      'Update Eligibility Filters',
+                      style: outfit(
+                        fontSize: 13,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ),
@@ -1138,64 +1168,66 @@ class _FilterButton extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final count = ref.watch(discoveryActiveFilterCountProvider);
-    return Material(
-      color: Colors.white,
-      borderRadius: BorderRadius.circular(12),
-      child: InkWell(
-        onTap: onPressed,
+    return PressableScale(
+      child: Material(
+        color: Colors.white,
         borderRadius: BorderRadius.circular(12),
-        child: Container(
-          height: 48,
-          padding: const EdgeInsets.symmetric(horizontal: 14),
-          alignment: Alignment.center,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: const Color(0xFFE2E8E5)),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: 0.03),
-                blurRadius: 6,
-                offset: const Offset(0, 2),
-              ),
-            ],
-          ),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Icon(
-                Icons.tune_rounded,
-                color: Color(0xFF436084),
-                size: 20,
-              ),
-              const SizedBox(width: 5),
-              Text(
-                'Filter',
-                style: outfit(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w600,
-                  color: const Color(0xFF436084),
-                ),
-              ),
-              if (count > 0) ...[
-                const SizedBox(width: 5),
-                Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 6, vertical: 1.5),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFF0F4D2E), // primary-container
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: Text(
-                    '$count',
-                    style: outfit(
-                      fontSize: 10,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                    ),
-                  ),
+        child: InkWell(
+          onTap: onPressed,
+          borderRadius: BorderRadius.circular(12),
+          child: Container(
+            height: 48,
+            padding: const EdgeInsets.symmetric(horizontal: 14),
+            alignment: Alignment.center,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: const Color(0xFFE2E8E5)),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.03),
+                  blurRadius: 6,
+                  offset: const Offset(0, 2),
                 ),
               ],
-            ],
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Icon(
+                  Icons.tune_rounded,
+                  color: Color(0xFF436084),
+                  size: 20,
+                ),
+                const SizedBox(width: 5),
+                Text(
+                  'Filter',
+                  style: outfit(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
+                    color: const Color(0xFF436084),
+                  ),
+                ),
+                if (count > 0) ...[
+                  const SizedBox(width: 5),
+                  Container(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 6, vertical: 1.5),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF0F4D2E), // primary-container
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: Text(
+                      '$count',
+                      style: outfit(
+                        fontSize: 10,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ],
+              ],
+            ),
           ),
         ),
       ),
@@ -1238,52 +1270,53 @@ class _StitchCarouselChip extends StatelessWidget {
       border = Border.all(color: const Color(0xFFE2E8E5));
     }
 
-    return Material(
-      color: Colors.transparent,
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(20),
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
-          decoration: BoxDecoration(
-            color: bg,
-            borderRadius: BorderRadius.circular(20),
-            border: border,
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: 0.03),
-                blurRadius: 4,
-                offset: const Offset(0, 1.5),
-              ),
-            ],
-          ),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              if (hasDot) ...[
-                Container(
-                  width: 6,
-                  height: 6,
-                  decoration: const BoxDecoration(
-                    color: Color(0xFFB3F1C6), // primary-fixed
-                    shape: BoxShape.circle,
+    return PressableScale(
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(20),
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
+            decoration: BoxDecoration(
+              color: bg,
+              borderRadius: BorderRadius.circular(20),
+              border: border,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.03),
+                  blurRadius: 4,
+                  offset: const Offset(0, 1.5),
+                ),
+              ],
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                if (hasDot) ...[
+                  Container(
+                    width: 6,
+                    height: 6,
+                    decoration: const BoxDecoration(
+                      color: Color(0xFFB3F1C6), // primary-fixed
+                    ),
+                  ),
+                  const SizedBox(width: 5),
+                ],
+                if (icon != null) ...[
+                  Icon(icon, size: 14, color: fg),
+                  const SizedBox(width: 4),
+                ],
+                Text(
+                  label,
+                  style: outfit(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
+                    color: fg,
                   ),
                 ),
-                const SizedBox(width: 5),
               ],
-              if (icon != null) ...[
-                Icon(icon, size: 14, color: fg),
-                const SizedBox(width: 4),
-              ],
-              Text(
-                label,
-                style: outfit(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w600,
-                  color: fg,
-                ),
-              ),
-            ],
+            ),
           ),
         ),
       ),
@@ -1325,14 +1358,16 @@ class _ActiveFilterChip extends StatelessWidget {
           ),
           Tooltip(
             message: 'Remove filter',
-            child: InkWell(
-              onTap: onRemove,
-              borderRadius: BorderRadius.circular(20),
-              child: const SizedBox(
-                width: 36,
-                height: 36,
-                child: Center(
-                  child: Icon(Icons.close, size: 14, color: Color(0xFF0F4D2E)),
+            child: PressableScale(
+              child: InkWell(
+                onTap: onRemove,
+                borderRadius: BorderRadius.circular(20),
+                child: const SizedBox(
+                  width: 36,
+                  height: 36,
+                  child: Center(
+                    child: Icon(Icons.close, size: 14, color: Color(0xFF0F4D2E)),
+                  ),
                 ),
               ),
             ),

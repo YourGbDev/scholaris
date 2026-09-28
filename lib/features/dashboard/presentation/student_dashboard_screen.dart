@@ -32,6 +32,7 @@ import 'package:scholaris/features/scholarships/providers/dashboard_provider.dar
 import 'package:scholaris/features/scholarships/providers/scholarships_provider.dart';
 import 'package:scholaris/features/scholarships/screens/saved_screen.dart';
 import 'package:scholaris/features/scholarships/services/match_reasons.dart';
+import 'package:scholaris/shared/theme/app_motion.dart';
 import 'package:scholaris/shared/theme/app_theme.dart';
 import 'package:scholaris/shared/widgets/mascot_pose_view.dart';
 import 'package:scholaris/shared/widgets/responsive_container.dart';
@@ -94,6 +95,7 @@ class _StudentDashboardScreenState
     return Scaffold(
       backgroundColor: const Color(0xFFFAFAF8),
       body: SafeArea(
+        bottom: false,
         child: ResponsiveContainer(
           child: RefreshIndicator(
             color: const Color(0xFF0F4D2E),
@@ -106,7 +108,13 @@ class _StudentDashboardScreenState
               ref.invalidate(bookmarksProvider);
             },
             child: ListView(
-              padding: const EdgeInsets.fromLTRB(20, 16, 20, 32),
+              physics: const AppleBouncingScrollPhysics(),
+              padding: EdgeInsets.fromLTRB(
+                20,
+                16,
+                20,
+                MediaQuery.of(context).padding.bottom + 64 + 16,
+              ),
               children: [
                 // 1. Sticky Header
                 _buildHeader(context, ref, avatarState),
@@ -220,59 +228,63 @@ class _StudentDashboardScreenState
         Row(
           children: [
             // Notifications Bell with Gold Dot
-            Stack(
-              clipBehavior: Clip.none,
-              children: [
-                IconButton(
-                  tooltip: 'Notifications',
-                  icon: const Icon(
-                    Icons.notifications_none_rounded,
-                    size: 24,
-                    color: Color(0xFF161C27),
+            PressableScale(
+              child: Stack(
+                clipBehavior: Clip.none,
+                children: [
+                  IconButton(
+                    tooltip: 'Notifications',
+                    icon: const Icon(
+                      Icons.notifications_none_rounded,
+                      size: 24,
+                      color: Color(0xFF161C27),
+                    ),
+                    onPressed: () {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text("You're all caught up on notifications!"),
+                          duration: Duration(seconds: 2),
+                          behavior: SnackBarBehavior.floating,
+                        ),
+                      );
+                    },
                   ),
-                  onPressed: () {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text("You're all caught up on notifications!"),
-                        duration: Duration(seconds: 2),
-                        behavior: SnackBarBehavior.floating,
+                  Positioned(
+                    top: 10,
+                    right: 10,
+                    child: Container(
+                      width: 8,
+                      height: 8,
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFFABC28), // tertiary-fixed-dim
+                        shape: BoxShape.circle,
+                        border: Border.all(color: Colors.white, width: 1.5),
                       ),
-                    );
-                  },
-                ),
-                Positioned(
-                  top: 10,
-                  right: 10,
-                  child: Container(
-                    width: 8,
-                    height: 8,
-                    decoration: BoxDecoration(
-                      color: const Color(0xFFFABC28), // tertiary-fixed-dim
-                      shape: BoxShape.circle,
-                      border: Border.all(color: Colors.white, width: 1.5),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
             const SizedBox(width: 4),
 
             // Profile Avatar
-            GestureDetector(
-              onTap: () {
-                ref.read(homeTabIndexProvider.notifier).selectTab(3);
-              },
-              child: Container(
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  border: Border.all(color: const Color(0xFFE2E8F9), width: 1.5),
-                ),
-                child: AvatarDisplay(
-                  avatarId: avatarState.avatarId,
-                  isRealPhoto: avatarState.isRealPhoto,
-                  photoPath: avatarState.photoPath,
-                  size: 32,
-                  showVerifiedBadge: false,
+            PressableScale(
+              child: GestureDetector(
+                onTap: () {
+                  ref.read(homeTabIndexProvider.notifier).selectTab(3);
+                },
+                child: Container(
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    border: Border.all(color: const Color(0xFFE2E8F9), width: 1.5),
+                  ),
+                  child: AvatarDisplay(
+                    avatarId: avatarState.avatarId,
+                    isRealPhoto: avatarState.isRealPhoto,
+                    photoPath: avatarState.photoPath,
+                    size: 32,
+                    showVerifiedBadge: false,
+                  ),
                 ),
               ),
             ),
@@ -315,63 +327,65 @@ class _StudentDashboardScreenState
       subtitle = 'Tap to track your application timeline.';
     }
 
-    return Material(
-      color: Colors.transparent,
-      child: InkWell(
-        key: const ValueKey('hero-application-alert-banner'),
-        onTap: () {
-          ref.read(homeTabIndexProvider.notifier).selectTab(2);
-        },
-        borderRadius: BorderRadius.circular(12),
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-          decoration: BoxDecoration(
-            color: bgColor.withValues(alpha: 0.35),
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: bgColor),
-          ),
-          child: Row(
-            children: [
-              Container(
-                padding: const EdgeInsets.all(6),
-                decoration: BoxDecoration(
-                  color: bgColor,
-                  shape: BoxShape.circle,
+    return PressableScale(
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          key: const ValueKey('hero-application-alert-banner'),
+          onTap: () {
+            ref.read(homeTabIndexProvider.notifier).selectTab(2);
+          },
+          borderRadius: BorderRadius.circular(12),
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+            decoration: BoxDecoration(
+              color: bgColor.withValues(alpha: 0.35),
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: bgColor),
+            ),
+            child: Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(6),
+                  decoration: BoxDecoration(
+                    color: bgColor,
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(icon, size: 16, color: iconColor),
                 ),
-                child: Icon(icon, size: 16, color: iconColor),
-              ),
-              const SizedBox(width: 10),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      title,
-                      style: outfit(
-                        fontSize: 13,
-                        fontWeight: FontWeight.bold,
-                        color: const Color(0xFF161C27),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        title,
+                        style: outfit(
+                          fontSize: 13,
+                          fontWeight: FontWeight.bold,
+                          color: const Color(0xFF161C27),
+                        ),
                       ),
-                    ),
-                    Text(
-                      subtitle,
-                      style: openSans(
-                        fontSize: 11,
-                        color: const Color(0xFF404942),
+                      Text(
+                        subtitle,
+                        style: openSans(
+                          fontSize: 11,
+                          color: const Color(0xFF404942),
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                       ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
-              const SizedBox(width: 6),
-              const Icon(
-                Icons.arrow_forward_ios_rounded,
-                size: 13,
-                color: Color(0xFF404942),
-              ),
-            ],
+                const SizedBox(width: 6),
+                const Icon(
+                  Icons.arrow_forward_ios_rounded,
+                  size: 13,
+                  color: Color(0xFF404942),
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -538,14 +552,37 @@ class _StudentDashboardScreenState
                           child: FittedBox(
                             fit: BoxFit.scaleDown,
                             alignment: Alignment.centerLeft,
-                            child: Text(
-                              'You have $matchCount new\nscholarship matches! 🎓',
-                              style: outfit(
-                                fontSize: 12.0,
-                                fontWeight: FontWeight.w600,
-                                color: const Color(0xFF161C27),
-                                height: 1.25,
-                              ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Text(
+                                  'You have ',
+                                  style: outfit(
+                                    fontSize: 12.0,
+                                    fontWeight: FontWeight.w600,
+                                    color: const Color(0xFF161C27),
+                                    height: 1.25,
+                                  ),
+                                ),
+                                CountUpAnimation(
+                                  targetValue: matchCount,
+                                  style: outfit(
+                                    fontSize: 12.0,
+                                    fontWeight: FontWeight.w700,
+                                    color: const Color(0xFF0F4D2E),
+                                    height: 1.25,
+                                  ),
+                                ),
+                                Text(
+                                  ' new\nscholarship matches! 🎓',
+                                  style: outfit(
+                                    fontSize: 12.0,
+                                    fontWeight: FontWeight.w600,
+                                    color: const Color(0xFF161C27),
+                                    height: 1.25,
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
                         ),
@@ -674,32 +711,34 @@ class _StudentDashboardScreenState
               ),
             ),
             const SizedBox(width: 8),
-            InkWell(
-              borderRadius: BorderRadius.circular(6),
-              onTap: () {
-                ref.read(homeTabIndexProvider.notifier).selectTab(1);
-              },
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
-                child: FittedBox(
-                  fit: BoxFit.scaleDown,
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        'See All ($totalCount)',
-                        style: outfit(
-                          fontSize: 12.5,
-                          fontWeight: FontWeight.w600,
-                          color: const Color(0xFF0F4D2E),
+            PressableScale(
+              child: InkWell(
+                borderRadius: BorderRadius.circular(6),
+                onTap: () {
+                  ref.read(homeTabIndexProvider.notifier).selectTab(1);
+                },
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+                  child: FittedBox(
+                    fit: BoxFit.scaleDown,
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          'See All ($totalCount)',
+                          style: outfit(
+                            fontSize: 12.5,
+                            fontWeight: FontWeight.w600,
+                            color: const Color(0xFF0F4D2E),
+                          ),
                         ),
-                      ),
-                      const Icon(
-                        Icons.chevron_right_rounded,
-                        size: 16,
-                        color: Color(0xFF0F4D2E),
-                      ),
-                    ],
+                        const Icon(
+                          Icons.chevron_right_rounded,
+                          size: 16,
+                          color: Color(0xFF0F4D2E),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
@@ -707,13 +746,11 @@ class _StudentDashboardScreenState
           ],
         ),
         const SizedBox(height: 12),
-        matchesAsync.when(
-          loading: () => const Center(
-            child: Padding(
-              padding: EdgeInsets.all(24),
-              child: CircularProgressIndicator(),
-            ),
-          ),
+        CrossFadeLoading(
+          isLoading: matchesAsync.isLoading,
+          skeleton: _buildDashboardSkeleton(),
+          child: matchesAsync.when(
+            loading: _buildDashboardSkeleton,
           error: (_, _) => const SizedBox.shrink(),
           data: (items) {
             final list = items.isNotEmpty
@@ -756,12 +793,15 @@ class _StudentDashboardScreenState
                     final reasons = profile != null
                         ? matchReasonsFor(profile, s)
                         : const <String>[];
-                    return ScholarshipCard(
-                      scholarship: s,
-                      reasons: reasons,
-                      isBookmarked: bookmarkIds.contains(s.id),
-                      isApplied: appliedIds.contains(s.id),
-                      onToggleBookmark: () => _toggleBookmark(ref, s.id),
+                    return StaggeredListItem(
+                      index: i,
+                      child: ScholarshipCard(
+                        scholarship: s,
+                        reasons: reasons,
+                        isBookmarked: bookmarkIds.contains(s.id),
+                        isApplied: appliedIds.contains(s.id),
+                        onToggleBookmark: () => _toggleBookmark(ref, s.id),
+                      ),
                     );
                   },
                 ),
@@ -769,7 +809,45 @@ class _StudentDashboardScreenState
             );
           },
         ),
-      ],
+      ),
+    ],
+  );
+}
+
+  Widget _buildDashboardSkeleton() {
+    return Column(
+      children: List.generate(
+        2,
+        (index) => Padding(
+          padding: const EdgeInsets.only(bottom: 12),
+          child: Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(color: const Color(0xFFE2E8E5)),
+            ),
+            child: const Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    SkeletonBand(width: 80, height: 22, borderRadius: 11),
+                    SkeletonBand(width: 70, height: 22, borderRadius: 6),
+                  ],
+                ),
+                SizedBox(height: 12),
+                SkeletonBand(width: 220, height: 20, borderRadius: 6),
+                SizedBox(height: 8),
+                SkeletonBand(width: 140, height: 14, borderRadius: 4),
+                SizedBox(height: 14),
+                SkeletonBand(height: 40, borderRadius: 8),
+              ],
+            ),
+          ),
+        ),
+      ),
     );
   }
 
@@ -965,12 +1043,15 @@ class _StudentDashboardScreenState
             final reasons = profile != null
                 ? matchReasonsFor(profile, s)
                 : const <String>[];
-            return ScholarshipCard(
-              scholarship: s,
-              reasons: reasons,
-              isBookmarked: bookmarkIds.contains(s.id),
-              isApplied: appliedIds.contains(s.id),
-              onToggleBookmark: () => _toggleBookmark(ref, s.id),
+            return StaggeredListItem(
+              index: i,
+              child: ScholarshipCard(
+                scholarship: s,
+                reasons: reasons,
+                isBookmarked: bookmarkIds.contains(s.id),
+                isApplied: appliedIds.contains(s.id),
+                onToggleBookmark: () => _toggleBookmark(ref, s.id),
+              ),
             );
           },
         ),
@@ -1390,87 +1471,92 @@ class _StatCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Material(
-      key: itemKey,
-      color: isUrgent ? const Color(0xFFFFDAD6).withValues(alpha: 0.65) : Colors.white,
-      borderRadius: BorderRadius.circular(12),
-      child: InkWell(
+    final numericValue = int.tryParse(rawCount ?? count.replaceAll(RegExp(r'[^0-9]'), '')) ?? 0;
+
+    return PressableScale(
+      child: Material(
+        key: itemKey,
+        color: isUrgent ? const Color(0xFFFFDAD6).withValues(alpha: 0.65) : Colors.white,
         borderRadius: BorderRadius.circular(12),
-        onTap: onTap,
-        child: Container(
-          padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(
-              color: isUrgent ? const Color(0xFFFFB4AB) : const Color(0xFFE2E8E5),
-              width: 1,
+        child: InkWell(
+          borderRadius: BorderRadius.circular(12),
+          onTap: onTap,
+          child: Container(
+            padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(
+                color: isUrgent ? const Color(0xFFFFB4AB) : const Color(0xFFE2E8E5),
+                width: 1,
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.02),
+                  blurRadius: 6,
+                  offset: const Offset(0, 2),
+                ),
+              ],
             ),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: 0.02),
-                blurRadius: 6,
-                offset: const Offset(0, 2),
-              ),
-            ],
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Container(
-                width: 30,
-                height: 30,
-                decoration: BoxDecoration(
-                  color: iconBg,
-                  shape: BoxShape.circle,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  width: 30,
+                  height: 30,
+                  decoration: BoxDecoration(
+                    color: iconBg,
+                    shape: BoxShape.circle,
+                  ),
+                  child: Center(
+                    child: Icon(icon, size: 16, color: iconColor),
+                  ),
                 ),
-                child: Center(
-                  child: Icon(icon, size: 16, color: iconColor),
+                const SizedBox(height: 6),
+                CountUpAnimation(
+                  key: countKey,
+                  targetValue: numericValue,
+                  suffix: (rawCount == null && count.contains('Action')) ? ' Action' : '',
+                  style: outfit(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: isUrgent ? const Color(0xFF93000A) : const Color(0xFF161C27),
+                  ),
                 ),
-              ),
-              const SizedBox(height: 6),
-              Text(
-                rawCount ?? count,
-                key: countKey,
-                style: outfit(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  color: isUrgent ? const Color(0xFF93000A) : const Color(0xFF161C27),
-                ),
-              ),
-              const SizedBox(height: 2),
-              FittedBox(
-                fit: BoxFit.scaleDown,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    if (isUrgent) ...[
-                      Container(
-                        width: 5,
-                        height: 5,
-                        decoration: const BoxDecoration(
-                          color: Color(0xFFBA1A1A),
-                          shape: BoxShape.circle,
+                const SizedBox(height: 2),
+                FittedBox(
+                  fit: BoxFit.scaleDown,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      if (isUrgent) ...[
+                        Container(
+                          width: 5,
+                          height: 5,
+                          decoration: const BoxDecoration(
+                            color: Color(0xFFBA1A1A),
+                            shape: BoxShape.circle,
+                          ),
+                        ),
+                        const SizedBox(width: 3),
+                      ],
+                      Flexible(
+                        child: Text(
+                          label,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: openSans(
+                            fontSize: 11,
+                            fontWeight: FontWeight.w600,
+                            color: isUrgent ? const Color(0xFFBA1A1A) : const Color(0xFF404942),
+                          ),
                         ),
                       ),
-                      const SizedBox(width: 3),
                     ],
-                    Flexible(
-                      child: Text(
-                        label,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: openSans(
-                          fontSize: 11,
-                          fontWeight: FontWeight.w600,
-                          color: isUrgent ? const Color(0xFFBA1A1A) : const Color(0xFF404942),
-                        ),
-                      ),
-                    ),
-                  ],
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

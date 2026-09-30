@@ -174,7 +174,14 @@ class _StudentDashboardScreenState
                 // 4. Quick-Stat 3-Tile Grid
                 _wrapSection(
                   index: 4,
-                  child: _buildQuickStatGrid(context, ref, info),
+                  child: _buildQuickStatGrid(
+                    context,
+                    ref,
+                    info,
+                    ref.watch(applicationsProvider).hasValue
+                        ? ref.watch(applicationsProvider).value!.where(ApplicationFilters.isActive).length
+                        : info.appliedCount,
+                  ),
                 ),
                 const SizedBox(height: 20),
 
@@ -651,6 +658,7 @@ class _StudentDashboardScreenState
     BuildContext context,
     WidgetRef ref,
     DashboardInfo info,
+    int appliedCount,
   ) {
     final urgentCount = info.closingSoonCount;
 
@@ -684,7 +692,7 @@ class _StudentDashboardScreenState
             icon: Icons.pending_actions_rounded,
             iconBg: const Color(0xFFF1F3FF),
             iconColor: const Color(0xFF436084),
-            count: '${info.appliedCount}',
+            count: '$appliedCount',
             label: 'In Progress',
             onTap: () {
               ref.read(homeTabIndexProvider.notifier).selectTab(2);

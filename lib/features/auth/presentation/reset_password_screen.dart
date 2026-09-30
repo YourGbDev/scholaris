@@ -11,6 +11,7 @@ import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'package:scholaris/core/security/password_validator.dart';
+import 'package:scholaris/shared/theme/app_motion.dart';
 import 'package:scholaris/shared/theme/app_theme.dart';
 import 'package:scholaris/shared/widgets/success_overlay.dart';
 
@@ -39,10 +40,13 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
 
   String get _userEmail {
     try {
-      return Supabase.instance.client.auth.currentUser?.email ??
-          'iskolar.account@up.edu.ph';
+      final email = Supabase.instance.client.auth.currentUser?.email;
+      if (email != null && email.trim().isNotEmpty) {
+        return email;
+      }
+      return 'your email';
     } catch (_) {
-      return 'iskolar.account@up.edu.ph';
+      return 'your email';
     }
   }
 
@@ -174,6 +178,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
             // Scrollable Content
             Expanded(
               child: SingleChildScrollView(
+                physics: const AppleBouncingScrollPhysics(),
                 padding: const EdgeInsets.fromLTRB(20, 8, 20, 24),
                 child: Center(
                   child: ConstrainedBox(

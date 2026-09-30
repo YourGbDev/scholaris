@@ -110,7 +110,7 @@ void main() {
 
     // KPI cards
     expect(find.text('Total Intake'), findsOneWidget);
-    expect(find.text('Under Review'), findsOneWidget);
+    expect(find.text('Under Review'), findsNWidgets(2));
     expect(find.text('Confirmed Awardees'), findsOneWidget);
 
     // Applicant data

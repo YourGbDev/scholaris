@@ -10,6 +10,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:scholaris/features/admin/presentation/admin_home_screen.dart';
 import 'package:scholaris/features/admin/presentation/admin_theme.dart';
+import 'package:scholaris/shared/theme/app_motion.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'audit_trail_screen.dart';
 
@@ -135,46 +136,44 @@ class ReportsAnalyticsScreen extends ConsumerWidget {
 
     return Scaffold(
       backgroundColor: kSeqSurface,
-      body: reportsAsync.when(
-        loading: () => const Center(
-          child: CircularProgressIndicator(
-            color: kSeqPrimaryContainer,
-            strokeWidth: 2.5,
-          ),
-        ),
-        error: (err, _) => Center(
-          child: Padding(
-            padding: const EdgeInsets.all(24),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const Icon(Icons.error_outline, size: 48, color: kSeqError),
-                const SizedBox(height: 12),
-                Text(
-                  'Failed to load analytics summaries',
-                  style: seqHeadlineSm(color: kSeqOnSurface),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  err.toString(),
-                  style: seqBodyMd(color: kSeqOnSurfaceVariant),
-                  textAlign: TextAlign.center,
-                ),
-                const SizedBox(height: 16),
-                ElevatedButton.icon(
-                  onPressed: () => ref.invalidate(reportsAnalyticsDataProvider),
-                  icon: const Icon(Icons.refresh),
-                  label: const Text('Retry'),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: kSeqPrimary,
-                    foregroundColor: kSeqOnPrimary,
+      body: CrossFadeLoading(
+        isLoading: reportsAsync.isLoading,
+        skeleton: _buildSkeletonLoader(context),
+        child: reportsAsync.when(
+          loading: () => _buildSkeletonLoader(context),
+          error: (err, _) => Center(
+            child: Padding(
+              padding: const EdgeInsets.all(24),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Icon(Icons.error_outline, size: 48, color: kSeqError),
+                  const SizedBox(height: 12),
+                  Text(
+                    'Failed to load analytics summaries',
+                    style: seqHeadlineSm(color: kSeqOnSurface),
                   ),
-                ),
-              ],
+                  const SizedBox(height: 4),
+                  Text(
+                    err.toString(),
+                    style: seqBodyMd(color: kSeqOnSurfaceVariant),
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 16),
+                  ElevatedButton.icon(
+                    onPressed: () => ref.invalidate(reportsAnalyticsDataProvider),
+                    icon: const Icon(Icons.refresh),
+                    label: const Text('Retry'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: kSeqPrimary,
+                      foregroundColor: kSeqOnPrimary,
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
-        ),
-        data: (data) {
+          data: (data) {
           final width = MediaQuery.sizeOf(context).width;
           final isDesktop = width >= 900;
 
@@ -185,6 +184,7 @@ class ReportsAnalyticsScreen extends ConsumerWidget {
               await ref.read(reportsAnalyticsDataProvider.future);
             },
             child: ListView(
+              physics: const AppleBouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
               padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
               children: [
                 _buildHeaderBar(context),
@@ -231,8 +231,37 @@ class ReportsAnalyticsScreen extends ConsumerWidget {
           );
         },
       ),
-    );
-  }
+    ),
+  );
+}
+
+Widget _buildSkeletonLoader(BuildContext context) {
+  return ListView(
+    physics: const NeverScrollableScrollPhysics(),
+    padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
+    children: [
+      Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: const [
+          SkeletonBand(width: 220, height: 28),
+          SkeletonBand(width: 100, height: 28, borderRadius: 14),
+        ],
+      ),
+      const SizedBox(height: 24),
+      const SkeletonBand(height: 140, borderRadius: 16),
+      const SizedBox(height: 20),
+      Row(
+        children: const [
+          Expanded(child: SkeletonBand(height: 200, borderRadius: 16)),
+          SizedBox(width: 16),
+          Expanded(child: SkeletonBand(height: 200, borderRadius: 16)),
+        ],
+      ),
+      const SizedBox(height: 24),
+      const SkeletonBand(height: 180, borderRadius: 16),
+    ],
+  );
+}
 
   // --- Header Bar -----------------------------------------------------------
 
@@ -346,22 +375,22 @@ class ReportsAnalyticsScreen extends ConsumerWidget {
             children: [
               Text(
                 '₱',
-                style: GoogleFonts.inter(
+                style: seqTabularFigures(GoogleFonts.inter(
                   fontSize: 26,
                   fontWeight: FontWeight.w700,
                   color: kSeqPrimary,
-                ),
+                )),
               ),
               const SizedBox(width: 3),
               Text(
                 _formatCurrencyValue(data.totalScholarshipValue),
-                style: GoogleFonts.inter(
+                style: seqTabularFigures(GoogleFonts.inter(
                   fontSize: 36,
                   fontWeight: FontWeight.w800,
                   color: kSeqPrimary,
                   height: 1.1,
                   letterSpacing: -0.5,
-                ),
+                )),
               ),
             ],
           ),
@@ -558,16 +587,16 @@ class ReportsAnalyticsScreen extends ConsumerWidget {
               children: [
                 Text(
                   '$count',
-                  style: GoogleFonts.inter(
+                  style: seqTabularFigures(GoogleFonts.inter(
                     fontSize: 15,
                     fontWeight: FontWeight.w700,
                     color: kSeqOnSurface,
-                  ),
+                  )),
                 ),
                 const SizedBox(width: 6),
                 Text(
                   '($pct%)',
-                  style: seqLabelSm(color: kSeqOutline),
+                  style: seqTabularFigures(seqLabelSm(color: kSeqOutline)),
                 ),
               ],
             ),

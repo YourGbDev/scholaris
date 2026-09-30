@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:scholaris/shared/theme/app_motion.dart';
 import 'package:scholaris/shared/widgets/logout_confirmation_dialog.dart';
 import 'package:scholaris/shared/widgets/scholaris_logo.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -104,9 +105,9 @@ class _AdminHomeScreenState extends ConsumerState<AdminHomeScreen> {
                 children: [
                   _buildTopBar(context, ref),
                   Expanded(
-                    child: IndexedStack(
-                      index: tabIndex,
-                      children: _buildTabs(),
+                    child: TabContentCrossFade(
+                      activeKey: ValueKey<int>(tabIndex),
+                      child: _buildTabs()[tabIndex],
                     ),
                   ),
                 ],
@@ -171,9 +172,9 @@ class _AdminHomeScreenState extends ConsumerState<AdminHomeScreen> {
           child: _buildSidebar(context, ref, tabIndex, isDrawer: true),
         ),
       ),
-      body: IndexedStack(
-        index: tabIndex,
-        children: _buildTabs(),
+      body: TabContentCrossFade(
+        activeKey: ValueKey<int>(tabIndex),
+        child: _buildTabs()[tabIndex],
       ),
     );
   }
@@ -185,7 +186,10 @@ class _AdminHomeScreenState extends ConsumerState<AdminHomeScreen> {
       decoration: const BoxDecoration(
         color: Colors.white,
         border: Border(
-          bottom: BorderSide(color: kAdminHairline, width: 1),
+          bottom: BorderSide(
+            color: kAdminHairline,
+            width: 1,
+          ),
         ),
       ),
       child: Row(
@@ -257,12 +261,15 @@ class _AdminHomeScreenState extends ConsumerState<AdminHomeScreen> {
         border: isDrawer
             ? null
             : const Border(
-                right: BorderSide(color: kAdminHairline, width: 1),
+                right: BorderSide(
+                  color: kAdminHairline,
+                  width: 1,
+                ),
               ),
       ),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
           // Brand Header with real Scholaris Logo (strictly NO window-chrome dots)
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 14, 16, 10),
@@ -318,6 +325,7 @@ class _AdminHomeScreenState extends ConsumerState<AdminHomeScreen> {
           const Divider(height: 1, color: kAdminHairline),
           Expanded(
             child: SingleChildScrollView(
+              physics: const AppleBouncingScrollPhysics(),
               padding: const EdgeInsets.symmetric(vertical: 4),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -570,7 +578,7 @@ class _AdminHomeScreenState extends ConsumerState<AdminHomeScreen> {
           fontSize: 11.5,
           fontWeight: FontWeight.w600,
           letterSpacing: 0.5,
-          color: const Color(0xFF707971),
+          color: kSeqOutline,
         ),
       ),
     );
@@ -596,13 +604,18 @@ class _SidebarNavItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
-      child: Material(
-        color: isSelected ? kAdminActiveNavBackground : Colors.transparent,
-        borderRadius: BorderRadius.circular(10),
-        child: InkWell(
+      child: PressableScale(
+        scale: 0.98,
+        spring: AppleSpringDescription.snappyPress,
+        child: Material(
+          color: isSelected ? kAdminActiveNavBackground : const Color(0x000F4D2E),
           borderRadius: BorderRadius.circular(10),
-          hoverColor: isSelected ? null : const Color(0xFFE9E7ED),
-          onTap: onTap,
+          child: InkWell(
+            borderRadius: BorderRadius.circular(10),
+            hoverColor: isSelected ? null : const Color(0xFFE9E7ED),
+            splashColor: Colors.transparent,
+            highlightColor: Colors.transparent,
+            onTap: onTap,
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
             decoration: BoxDecoration(
@@ -643,6 +656,7 @@ class _SidebarNavItem extends StatelessWidget {
           ),
         ),
       ),
-    );
-  }
+    ),
+  );
+}
 }

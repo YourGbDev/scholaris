@@ -195,6 +195,7 @@ class _AdminUsersTabState extends ConsumerState<AdminUsersTab> {
     final paddingH = isDesktop ? 32.0 : 16.0;
 
     return SingleChildScrollView(
+      physics: const AppleBouncingScrollPhysics(),
       padding: EdgeInsets.symmetric(horizontal: paddingH, vertical: 24),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -591,7 +592,7 @@ class _AdminUsersTabState extends ConsumerState<AdminUsersTab> {
             children: [
               Text(
                 value,
-                style: seqDisplay(fontWeight: FontWeight.w700),
+                style: seqTabularFigures(seqDisplay(fontWeight: FontWeight.w700)),
               ),
               const SizedBox(width: 8),
               Text(
@@ -1116,7 +1117,7 @@ class _AdminUsersTabState extends ConsumerState<AdminUsersTab> {
                       const SizedBox(height: 2),
                       Text(
                         u.email ?? 'ID: ${u.id.substring(0, 10)}...',
-                        style: GoogleFonts.robotoMono(
+                        style: adminDataMono(
                           fontSize: 11,
                           color: kSeqOutline,
                           fontWeight: FontWeight.w400,
@@ -1181,7 +1182,7 @@ class _AdminUsersTabState extends ConsumerState<AdminUsersTab> {
                 ),
                 Text(
                   _getAttributeValue(u, v),
-                  style: seqLabelMd(fontWeight: FontWeight.w600),
+                  style: seqTabularFigures(seqLabelMd(fontWeight: FontWeight.w600)),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -1197,8 +1198,8 @@ class _AdminUsersTabState extends ConsumerState<AdminUsersTab> {
                 PressableScale(
                   child: TextButton(
                     style: TextButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                      minimumSize: Size.zero,
+                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                      minimumSize: const Size(0, 36),
                       tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                     ),
                     onPressed: () => _showUserDetails(context, u, v),
@@ -1255,7 +1256,7 @@ class _AdminUsersTabState extends ConsumerState<AdminUsersTab> {
                     ),
                     Text(
                       u.email ?? u.id,
-                      style: GoogleFonts.robotoMono(fontSize: 10, color: kSeqOutline),
+                      style: adminDataMono(fontSize: 10, color: kSeqOutline),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
@@ -1286,13 +1287,13 @@ class _AdminUsersTabState extends ConsumerState<AdminUsersTab> {
             children: [
               Text(
                 '${_getAttributeLabel(u)}: ${_getAttributeValue(u, v)}',
-                style: seqLabelSm(color: kSeqOutline, fontWeight: FontWeight.w600),
+                style: seqTabularFigures(seqLabelSm(color: kSeqOutline, fontWeight: FontWeight.w600)),
               ),
               PressableScale(
                 child: TextButton(
                   style: TextButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                    minimumSize: Size.zero,
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                    minimumSize: const Size(0, 36),
                     tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                   ),
                   onPressed: () => _showUserDetails(context, u, v),
@@ -2378,6 +2379,15 @@ class _AdminUsersTabState extends ConsumerState<AdminUsersTab> {
 
   Widget _detailRow(BuildContext context, String label, String value) {
     final isDesktop = MediaQuery.sizeOf(context).width >= 768;
+    final isMono = label.contains('ID') ||
+        label.contains('Date') ||
+        label.contains('At') ||
+        label.contains('GWA') ||
+        label.contains('Income') ||
+        label.contains('Registered');
+    final valStyle = isMono
+        ? seqTabularFigures(adminDataMono(fontSize: 13, color: kSeqOnSurface))
+        : seqBodyMd(fontWeight: FontWeight.w500);
 
     if (!isDesktop) {
       return Padding(
@@ -2389,7 +2399,7 @@ class _AdminUsersTabState extends ConsumerState<AdminUsersTab> {
             const SizedBox(height: 2),
             SelectableText(
               value,
-              style: seqBodyMd(fontWeight: FontWeight.w500),
+              style: valStyle,
             ),
           ],
         ),
@@ -2408,7 +2418,7 @@ class _AdminUsersTabState extends ConsumerState<AdminUsersTab> {
           Expanded(
             child: SelectableText(
               value,
-              style: seqBodyMd(fontWeight: FontWeight.w500),
+              style: valStyle,
             ),
           ),
         ],

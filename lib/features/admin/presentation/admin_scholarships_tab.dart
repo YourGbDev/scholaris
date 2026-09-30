@@ -189,6 +189,7 @@ class _AdminScholarshipsTabState extends ConsumerState<AdminScholarshipsTab> {
             }).toList();
 
             return SingleChildScrollView(
+              physics: const AppleBouncingScrollPhysics(),
               padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 24),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -323,7 +324,7 @@ class _AdminScholarshipsTabState extends ConsumerState<AdminScholarshipsTab> {
             icon: const Icon(Icons.flag_rounded, size: 16),
             label: Text(
               'Flag Program for Review',
-              style: seqLabelMd(fontWeight: FontWeight.w600),
+              style: seqLabelMd(fontWeight: FontWeight.w600, color: Colors.white),
             ),
             onPressed: () => _showFlagProgramModal(context, allScholarships),
           ),
@@ -354,65 +355,82 @@ class _AdminScholarshipsTabState extends ConsumerState<AdminScholarshipsTab> {
       return '₱$formatted';
     }
 
-    final card1 = _buildSquircleMetricCard(
-      title: 'Monitored Grants',
-      icon: Icons.school_rounded,
-      iconColor: kSeqPrimaryContainer,
-      iconBg: kSeqPrimaryFixed,
-      value: '$totalGrants',
-      badge: 'Live Catalog',
-      badgeBg: kSeqPrimaryFixed,
-      badgeFg: kSeqOnPrimaryFixedVariant,
-      subtitle: '$activeGrants Active Intake • $pausedGrants Paused',
-      progress: totalGrants > 0 ? (activeGrants / totalGrants) : 1.0,
-      progressColor: kSeqPrimaryContainer,
+    final card1 = StaggeredListItem(
+      index: 0,
+      child: _buildSquircleMetricCard(
+        title: 'Monitored Grants',
+        icon: Icons.school_rounded,
+        iconColor: kSeqPrimaryContainer,
+        iconBg: kSeqPrimaryFixed,
+        value: '$totalGrants',
+        numericValue: totalGrants,
+        badge: 'Live Catalog',
+        badgeBg: kSeqPrimaryFixed,
+        badgeFg: kSeqOnPrimaryFixedVariant,
+        subtitle: '$activeGrants Active Intake • $pausedGrants Paused',
+        progress: totalGrants > 0 ? (activeGrants / totalGrants) : 1.0,
+        progressColor: kSeqPrimaryContainer,
+      ),
     );
 
-    final card2 = _buildSquircleMetricCard(
-      title: 'Total Committed Capital',
-      icon: Icons.account_balance_wallet_rounded,
-      iconColor: kSeqSecondary,
-      iconBg: kSeqSecondaryFixed,
-      value: formatCapital(totalCapital),
-      badge: 'Verified Funds',
-      badgeBg: kSeqSecondaryFixed,
-      badgeFg: kSeqOnSecondaryFixedVariant,
-      subtitle: 'Canonical amounts across all programs',
-      progress: 1.0,
-      progressColor: kSeqSecondary,
+    final card2 = StaggeredListItem(
+      index: 1,
+      child: _buildSquircleMetricCard(
+        title: 'Total Committed Capital',
+        icon: Icons.account_balance_wallet_rounded,
+        iconColor: kSeqSecondary,
+        iconBg: kSeqSecondaryFixed,
+        value: formatCapital(totalCapital),
+        numericValue: totalCapital.round(),
+        prefix: '₱',
+        badge: 'Verified Funds',
+        badgeBg: kSeqSecondaryFixed,
+        badgeFg: kSeqOnSecondaryFixedVariant,
+        subtitle: 'Canonical amounts across all programs',
+        progress: 1.0,
+        progressColor: kSeqSecondary,
+      ),
     );
 
-    final card3 = _buildSquircleMetricCard(
-      title: 'Total Capacity Slots',
-      icon: Icons.groups_rounded,
-      iconColor: kSeqPrimary,
-      iconBg: kSeqSurfaceContainerHigh,
-      value: totalSlots.toString().replaceAllMapped(
-            RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'),
-            (Match m) => '${m[1]},',
-          ),
-      badge: 'Scholar Intake',
-      badgeBg: kSeqSurfaceContainerHigh,
-      badgeFg: kSeqOnSurface,
-      subtitle: '$totalApplications received applications recorded',
-      progress: 0.65,
-      progressColor: kSeqPrimary,
+    final card3 = StaggeredListItem(
+      index: 2,
+      child: _buildSquircleMetricCard(
+        title: 'Total Capacity Slots',
+        icon: Icons.groups_rounded,
+        iconColor: kSeqPrimary,
+        iconBg: kSeqSurfaceContainerHigh,
+        value: totalSlots.toString().replaceAllMapped(
+              RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'),
+              (Match m) => '${m[1]},',
+            ),
+        numericValue: totalSlots,
+        badge: 'Scholar Intake',
+        badgeBg: kSeqSurfaceContainerHigh,
+        badgeFg: kSeqOnSurface,
+        subtitle: '$totalApplications received applications recorded',
+        progress: 0.65,
+        progressColor: kSeqPrimary,
+      ),
     );
 
-    final card4 = _buildSquircleMetricCard(
-      title: 'Moderation Attention',
-      icon: Icons.assignment_late_rounded,
-      iconColor: pausedGrants > 0 ? kSeqError : kSeqTertiaryContainer,
-      iconBg: pausedGrants > 0 ? kSeqErrorContainer : kSeqTertiaryFixed,
-      value: '$pausedGrants',
-      badge: pausedGrants > 0 ? 'Requires Action' : 'All Clear',
-      badgeBg: pausedGrants > 0 ? kSeqErrorContainer : kSeqPrimaryFixed,
-      badgeFg: pausedGrants > 0 ? kSeqOnErrorContainer : kSeqOnPrimaryFixedVariant,
-      subtitle: pausedGrants > 0
-          ? '$pausedGrants listings currently paused / inactive'
-          : 'Zero listing escalations pending',
-      progress: pausedGrants > 0 ? 0.35 : 1.0,
-      progressColor: pausedGrants > 0 ? kSeqError : kSeqPrimaryContainer,
+    final card4 = StaggeredListItem(
+      index: 3,
+      child: _buildSquircleMetricCard(
+        title: 'Moderation Attention',
+        icon: Icons.assignment_late_rounded,
+        iconColor: pausedGrants > 0 ? kSeqError : kSeqTertiaryContainer,
+        iconBg: pausedGrants > 0 ? kSeqErrorContainer : kSeqTertiaryFixed,
+        value: '$pausedGrants',
+        numericValue: pausedGrants,
+        badge: pausedGrants > 0 ? 'Requires Action' : 'All Clear',
+        badgeBg: pausedGrants > 0 ? kSeqErrorContainer : kSeqPrimaryFixed,
+        badgeFg: pausedGrants > 0 ? kSeqOnErrorContainer : kSeqOnPrimaryFixedVariant,
+        subtitle: pausedGrants > 0
+            ? '$pausedGrants listings currently paused / inactive'
+            : 'Zero listing escalations pending',
+        progress: pausedGrants > 0 ? 0.35 : 1.0,
+        progressColor: pausedGrants > 0 ? kSeqError : kSeqPrimaryContainer,
+      ),
     );
 
     if (width >= 1100) {
@@ -456,6 +474,9 @@ class _AdminScholarshipsTabState extends ConsumerState<AdminScholarshipsTab> {
     required Color iconColor,
     required Color iconBg,
     required String value,
+    int? numericValue,
+    String? prefix,
+    String? suffix,
     required String badge,
     required Color badgeBg,
     required Color badgeFg,
@@ -507,10 +528,17 @@ class _AdminScholarshipsTabState extends ConsumerState<AdminScholarshipsTab> {
             children: [
               FittedBox(
                 fit: BoxFit.scaleDown,
-                child: Text(
-                  value,
-                  style: seqHeadlineLg(fontWeight: FontWeight.w700),
-                ),
+                child: numericValue != null
+                    ? CountUpAnimation(
+                        targetValue: numericValue,
+                        prefix: prefix ?? '',
+                        suffix: suffix ?? '',
+                        style: seqTabularFigures(seqHeadlineLg(fontWeight: FontWeight.w700)),
+                      )
+                    : Text(
+                        value,
+                        style: seqTabularFigures(seqHeadlineLg(fontWeight: FontWeight.w700)),
+                      ),
               ),
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
@@ -1159,12 +1187,12 @@ class _AdminScholarshipsTabState extends ConsumerState<AdminScholarshipsTab> {
           alignment: Alignment.centerLeft,
           child: Text(
             value,
-            style: GoogleFonts.inter(
+            style: seqTabularFigures(GoogleFonts.inter(
               fontSize: 18,
               color: valColor,
               fontWeight: FontWeight.w800,
               letterSpacing: -0.3,
-            ),
+            )),
           ),
         ),
         FittedBox(
@@ -1213,6 +1241,7 @@ class _AdminScholarshipsTabState extends ConsumerState<AdminScholarshipsTab> {
         PressableScale(
           child: TextButton(
             style: TextButton.styleFrom(
+              minimumSize: const Size(0, 36),
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
               backgroundColor: kSeqSurfaceContainerHigh,
               foregroundColor: kSeqOnSurface,
@@ -1228,6 +1257,7 @@ class _AdminScholarshipsTabState extends ConsumerState<AdminScholarshipsTab> {
         PressableScale(
           child: TextButton(
             style: TextButton.styleFrom(
+              minimumSize: const Size(0, 36),
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
               backgroundColor: s.isActive
                   ? kSeqErrorContainer.withValues(alpha: 0.5)
@@ -1733,12 +1763,18 @@ class _AdminScholarshipsTabState extends ConsumerState<AdminScholarshipsTab> {
         actions: [
           TextButton(
             onPressed: () => Navigator.of(dialogContext).pop(),
+            style: TextButton.styleFrom(
+              minimumSize: const Size(0, 36),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            ),
             child: Text('Close', style: seqLabelMd(color: kSeqOutline)),
           ),
           FilledButton(
             style: FilledButton.styleFrom(
               backgroundColor: s.isActive ? kSeqError : kSeqPrimaryContainer,
               foregroundColor: s.isActive ? kSeqOnError : kSeqOnPrimary,
+              minimumSize: const Size(0, 36),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
             ),
             onPressed: () async {
@@ -1756,6 +1792,12 @@ class _AdminScholarshipsTabState extends ConsumerState<AdminScholarshipsTab> {
   }
 
   Widget _dossierRow(String label, String value) {
+    final isMono = label.contains('ID') ||
+        label.contains('Amount') ||
+        label.contains('Slots') ||
+        label.contains('Deadline') ||
+        label.contains('GWA') ||
+        label.contains('Ceiling');
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 5),
       child: Row(
@@ -1766,7 +1808,17 @@ class _AdminScholarshipsTabState extends ConsumerState<AdminScholarshipsTab> {
             child: Text(label, style: seqLabelSm(color: kSeqOutline, fontWeight: FontWeight.w500)),
           ),
           Expanded(
-            child: Text(value, style: seqBodySm(color: kSeqOnSurface, fontWeight: FontWeight.w600)),
+            child: isMono && label.contains('ID')
+                ? Align(
+                    alignment: Alignment.centerLeft,
+                    child: adminIdPill(value),
+                  )
+                : Text(
+                    value,
+                    style: isMono
+                        ? seqTabularFigures(adminDataMono(fontSize: 12.5, color: kSeqOnSurface))
+                        : seqBodySm(color: kSeqOnSurface, fontWeight: FontWeight.w600),
+                  ),
           ),
         ],
       ),
@@ -1801,11 +1853,21 @@ class _AdminScholarshipsTabState extends ConsumerState<AdminScholarshipsTab> {
                 DropdownButtonFormField<Scholarship>(
                   initialValue: selected,
                   isExpanded: true,
-                  decoration: const InputDecoration(labelText: 'Select Program'),
+                  style: seqBodyMd(color: kSeqOnSurface),
+                  dropdownColor: kSeqSurfaceContainerLowest,
+                  decoration: InputDecoration(
+                    labelText: 'Select Program',
+                    labelStyle: seqBodySm(color: kSeqOnSurfaceVariant),
+                  ),
                   items: all
                       .map((s) => DropdownMenuItem(
                             value: s,
-                            child: Text(s.title, maxLines: 1, overflow: TextOverflow.ellipsis),
+                            child: Text(
+                              s.title,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: seqBodyMd(color: kSeqOnSurface),
+                            ),
                           ))
                       .toList(),
                   onChanged: (val) {
@@ -1816,9 +1878,12 @@ class _AdminScholarshipsTabState extends ConsumerState<AdminScholarshipsTab> {
                 TextField(
                   controller: noteCtrl,
                   maxLines: 3,
-                  decoration: const InputDecoration(
+                  style: seqBodyMd(color: kSeqOnSurface),
+                  decoration: InputDecoration(
                     labelText: 'Compliance / Moderation Reason',
+                    labelStyle: seqBodySm(color: kSeqOnSurfaceVariant),
                     hintText: 'e.g. Quota allocation audit or residency clause inquiry...',
+                    hintStyle: seqBodySm(color: kSeqOutline),
                   ),
                 ),
               ],
@@ -1827,12 +1892,18 @@ class _AdminScholarshipsTabState extends ConsumerState<AdminScholarshipsTab> {
           actions: [
             TextButton(
               onPressed: () => Navigator.of(dialogContext).pop(),
+              style: TextButton.styleFrom(
+                minimumSize: const Size(0, 36),
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              ),
               child: Text('Cancel', style: seqLabelMd(color: kSeqOutline)),
             ),
             FilledButton(
               style: FilledButton.styleFrom(
                 backgroundColor: kSeqError,
                 foregroundColor: kSeqOnError,
+                minimumSize: const Size(0, 36),
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
               ),
               onPressed: () async {
@@ -1845,7 +1916,10 @@ class _AdminScholarshipsTabState extends ConsumerState<AdminScholarshipsTab> {
                   if (context.mounted) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
-                        content: Text('Program "${selected!.title}" flagged for review.'),
+                        content: Text(
+                          'Program "${selected!.title}" flagged for review.',
+                          style: seqBodyMd(color: kSeqOnError),
+                        ),
                         backgroundColor: kSeqError,
                       ),
                     );

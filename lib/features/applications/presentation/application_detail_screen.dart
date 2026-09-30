@@ -11,15 +11,17 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 import 'package:scholaris/features/applications/models/application.dart';
+import 'package:scholaris/features/applications/providers/application_document_provider.dart';
+import 'package:scholaris/features/applications/presentation/widgets/document_upload_sheet.dart';
 import 'package:scholaris/features/applications/providers/applications_provider.dart';
 import 'package:scholaris/features/applications/repositories/application_repository.dart';
 import 'package:scholaris/features/scholarships/models/scholarship.dart';
 import 'package:scholaris/features/scholarships/presentation/scholarship_detail_screen.dart';
 import 'package:scholaris/features/scholarships/providers/scholarships_provider.dart';
 import 'package:go_router/go_router.dart';
+import 'package:scholaris/shared/theme/app_motion.dart';
 import 'package:scholaris/shared/theme/app_theme.dart';
 import 'package:scholaris/shared/utils/constants.dart';
 import 'package:scholaris/shared/widgets/mascot_pose_view.dart';
@@ -236,110 +238,141 @@ class _DetailBodyState extends ConsumerState<_DetailBody> {
     final scholarshipKnown = scholarship != null;
 
     return ListView(
+      physics: const AppleBouncingScrollPhysics(),
       padding: const EdgeInsets.fromLTRB(20, 12, 20, 40),
       children: [
         if (scholarshipKnown)
-          Semantics(
-            button: true,
-            label: 'View scholarship details',
-            child: Material(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(16),
-              child: InkWell(
-                borderRadius: BorderRadius.circular(16),
-                onTap: _openScholarship,
-                child: Container(
-                  padding: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(
+          StaggeredListItem(
+            index: 0,
+            child: PressableScale(
+              child: Semantics(
+                button: true,
+                label: 'View scholarship details',
+                child: Material(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(16),
+                  child: InkWell(
                     borderRadius: BorderRadius.circular(16),
-                    border: Border.all(color: const Color(0xFFE2E8E5), width: 1.0),
-                    boxShadow: const [
-                      BoxShadow(
-                        color: Color(0x081B3A5C),
-                        blurRadius: 12,
-                        offset: Offset(0, 4),
+                    onTap: _openScholarship,
+                    child: Container(
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(16),
+                        border: Border.all(color: const Color(0xFFE2E8E5), width: 1.0),
+                        boxShadow: const [
+                          BoxShadow(
+                            color: Color(0x081B3A5C),
+                            blurRadius: 12,
+                            offset: Offset(0, 4),
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              scholarship.title,
-                              maxLines: 2,
-                              overflow: TextOverflow.ellipsis,
-                              style: GoogleFonts.poppins(
-                                fontSize: 17,
-                                fontWeight: FontWeight.w700,
-                                color: kPrimary,
-                              ),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  scholarship.title,
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: poppins(
+                                    fontSize: 17,
+                                    fontWeight: FontWeight.w700,
+                                    color: kPrimary,
+                                  ),
+                                ),
+                                const SizedBox(height: 3),
+                                Text(
+                                  scholarship.provider ?? 'Scholarship provider',
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: openSans(
+                                    fontSize: 13,
+                                    color: const Color(0xFF404942),
+                                  ),
+                                ),
+                              ],
                             ),
-                            const SizedBox(height: 3),
-                            Text(
-                              scholarship.provider ?? 'Scholarship provider',
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: GoogleFonts.openSans(
-                                fontSize: 13,
-                                color: const Color(0xFF404942),
-                              ),
-                            ),
-                          ],
-                        ),
+                          ),
+                          const SizedBox(width: 8),
+                          const Icon(
+                            Icons.chevron_right_rounded,
+                            color: Color(0xFF707971),
+                          ),
+                        ],
                       ),
-                      const SizedBox(width: 8),
-                      const Icon(
-                        Icons.chevron_right_rounded,
-                        color: Color(0xFF707971),
-                      ),
-                    ],
+                    ),
                   ),
                 ),
               ),
             ),
           )
         else
-          Container(
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: const Color(0xFFE2E8E5), width: 1.0),
-            ),
-            child: Text(
-              'This scholarship is no longer active.',
-              style: GoogleFonts.openSans(fontSize: 14, color: const Color(0xFF404942)),
+          StaggeredListItem(
+            index: 0,
+            child: Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(color: const Color(0xFFE2E8E5), width: 1.0),
+              ),
+              child: Text(
+                'This scholarship is no longer active.',
+                style: openSans(fontSize: 14, color: const Color(0xFF404942)),
+              ),
             ),
           ),
         const SizedBox(height: 14),
         if (application.status == ApplicationStatus.rejected) ...[
-          _RejectedConsolingBanner(
-            programName: scholarship?.title ?? 'Scholarship Program',
-            reason: application.notes,
+          StaggeredListItem(
+            index: 1,
+            child: _RejectedConsolingBanner(
+              programName: scholarship?.title ?? 'Scholarship Program',
+              reason: application.notes,
+            ),
           ),
           const SizedBox(height: 14),
         ],
-        _StatusSection(application: application),
+        StaggeredListItem(
+          index: 2,
+          child: _StatusSection(application: application),
+        ),
         if (application.status == ApplicationStatus.draft && scholarshipKnown) ...[
           const SizedBox(height: 14),
-          _ContinueApplicationCard(onContinue: _openScholarship),
+          StaggeredListItem(
+            index: 3,
+            child: _ContinueApplicationCard(onContinue: _openScholarship),
+          ),
         ],
         const SizedBox(height: 14),
-        _FactsCard(application: application, scholarship: scholarship),
-        const SizedBox(height: 14),
-        _NotesCard(
-          controller: _notesController,
-          saving: _savingNotes,
-          onSave: _saveNotes,
+        StaggeredListItem(
+          index: 4,
+          child: _FactsCard(application: application, scholarship: scholarship),
         ),
         const SizedBox(height: 14),
-        if (application.status.isPending)
-          _WithdrawCard(withdrawing: _withdrawing, onWithdraw: _confirmWithdraw)
-        else
-          _TerminalNote(application: application),
+        StaggeredListItem(
+          index: 5,
+          child: _SubmittedDocumentsCard(applicationId: application.id),
+        ),
+        const SizedBox(height: 14),
+        StaggeredListItem(
+          index: 6,
+          child: _NotesCard(
+            controller: _notesController,
+            saving: _savingNotes,
+            onSave: _saveNotes,
+          ),
+        ),
+        const SizedBox(height: 14),
+        StaggeredListItem(
+          index: 7,
+          child: application.status.isPending
+              ? _WithdrawCard(withdrawing: _withdrawing, onWithdraw: _confirmWithdraw)
+              : _TerminalNote(application: application),
+        ),
       ],
     );
   }
@@ -397,12 +430,12 @@ class _StatusSection extends StatelessWidget {
               children: [
                 Text(
                   'Status',
-                  style: GoogleFonts.openSans(fontSize: 12, color: const Color(0xFF707971)),
+                  style: openSans(fontSize: 12, color: const Color(0xFF707971)),
                 ),
                 const SizedBox(height: 2),
                 Text(
                   ui.label,
-                  style: GoogleFonts.poppins(
+                  style: poppins(
                     fontSize: 16,
                     fontWeight: FontWeight.w600,
                     color: ui.foreground,
@@ -453,7 +486,7 @@ class _RejectedConsolingBanner extends StatelessWidget {
           Text(
             '"Hindi ito ang katapusan."',
             textAlign: TextAlign.center,
-            style: GoogleFonts.poppins(
+            style: poppins(
               fontSize: 19,
               fontWeight: FontWeight.w700,
               color: const Color(0xFF161C27),
@@ -463,7 +496,7 @@ class _RejectedConsolingBanner extends StatelessWidget {
           Text(
             "This isn't the end of the road.",
             textAlign: TextAlign.center,
-            style: GoogleFonts.openSans(
+            style: openSans(
               fontSize: 13.5,
               fontWeight: FontWeight.w500,
               color: const Color(0xFF404942),
@@ -480,7 +513,7 @@ class _RejectedConsolingBanner extends StatelessWidget {
             child: Text(
               '$programName — Not Selected',
               textAlign: TextAlign.center,
-              style: GoogleFonts.poppins(
+              style: poppins(
                 fontSize: 13,
                 fontWeight: FontWeight.w600,
                 color: const Color(0xFFBA1A1A),
@@ -492,7 +525,7 @@ class _RejectedConsolingBanner extends StatelessWidget {
             Text(
               reason!.trim(),
               textAlign: TextAlign.center,
-              style: GoogleFonts.openSans(
+              style: openSans(
                 fontSize: 12.5,
                 color: const Color(0xFF707971),
                 fontStyle: FontStyle.italic,
@@ -502,23 +535,25 @@ class _RejectedConsolingBanner extends StatelessWidget {
           const SizedBox(height: 16),
           SizedBox(
             width: double.infinity,
-            child: ElevatedButton(
-              onPressed: () => context.go('/discover'),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: kPrimary,
-                foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(vertical: 13),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
+            child: PressableScale(
+              child: ElevatedButton(
+                onPressed: () => context.go('/discover'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: kPrimary,
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(vertical: 13),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  elevation: 0,
                 ),
-                elevation: 0,
-              ),
-              child: Text(
-                'See other scholarships you may qualify for',
-                textAlign: TextAlign.center,
-                style: GoogleFonts.outfit(
-                  fontSize: 13.5,
-                  fontWeight: FontWeight.w600,
+                child: Text(
+                  'See other scholarships you may qualify for',
+                  textAlign: TextAlign.center,
+                  style: outfit(
+                    fontSize: 13.5,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
               ),
             ),
@@ -568,7 +603,7 @@ class _FactsCard extends StatelessWidget {
         children: [
           Text(
             'Application details',
-            style: GoogleFonts.poppins(
+            style: poppins(
               fontSize: 15,
               fontWeight: FontWeight.w600,
               color: const Color(0xFF161C27),
@@ -583,7 +618,7 @@ class _FactsCard extends StatelessWidget {
                 Expanded(
                   child: Text(
                     fact.$2,
-                    style: GoogleFonts.openSans(
+                    style: openSans(
                       fontSize: 13,
                       color: const Color(0xFF404942),
                     ),
@@ -604,6 +639,172 @@ class _FactsCard extends StatelessWidget {
       'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
     ];
     return '${months[date.month - 1]} ${date.day}, ${date.year}';
+  }
+}
+
+class _SubmittedDocumentsCard extends ConsumerWidget {
+  const _SubmittedDocumentsCard({required this.applicationId});
+
+  final String applicationId;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final docsAsync = ref.watch(applicationDocumentsProvider(applicationId));
+
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: const Color(0xFFE2E8E5), width: 1.0),
+        boxShadow: const [
+          BoxShadow(
+            color: Color(0x06000000),
+            blurRadius: 8,
+            offset: Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              const Icon(Icons.attach_file_rounded, size: 18, color: kPrimary),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  'Attached Documents',
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: poppins(
+                    fontSize: 14.5,
+                    fontWeight: FontWeight.w600,
+                    color: const Color(0xFF161C27),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 8),
+              PressableScale(
+                child: TextButton.icon(
+                  onPressed: () => showDocumentUploadSheet(
+                    context,
+                    preselectedApplicationId: applicationId,
+                  ),
+                  icon: const Icon(Icons.add_rounded, size: 15),
+                  label: Text(
+                    'Upload',
+                    style: outfit(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  style: TextButton.styleFrom(
+                    foregroundColor: kPrimary,
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                    visualDensity: VisualDensity.compact,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          docsAsync.when(
+            loading: () => const Padding(
+              padding: EdgeInsets.symmetric(vertical: 12),
+              child: Center(
+                child: SizedBox(
+                  width: 20,
+                  height: 20,
+                  child: CircularProgressIndicator(strokeWidth: 2),
+                ),
+              ),
+            ),
+            error: (e, _) => Padding(
+              padding: const EdgeInsets.symmetric(vertical: 4),
+              child: Text(
+                'Could not load attached documents.',
+                style: openSans(
+                  fontSize: 12.5,
+                  color: kError,
+                ),
+              ),
+            ),
+            data: (docs) {
+              if (docs.isEmpty) {
+                return Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 6),
+                  child: Text(
+                    'No documents uploaded yet. Tap "Upload" to attach transcripts or certificates.',
+                    style: openSans(
+                      fontSize: 12.5,
+                      color: const Color(0xFF707971),
+                      fontStyle: FontStyle.italic,
+                    ),
+                  ),
+                );
+              }
+
+              return Column(
+                children: [
+                  for (var i = 0; i < docs.length; i++) ...[
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 6),
+                      child: Row(
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.all(8),
+                            decoration: BoxDecoration(
+                              color: kPrimary.withValues(alpha: 0.08),
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: const Icon(
+                              Icons.description_outlined,
+                              size: 18,
+                              color: kPrimary,
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  docs[i].humanType,
+                                  style: poppins(
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.w600,
+                                    color: const Color(0xFF161C27),
+                                  ),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                                const SizedBox(height: 2),
+                                Text(
+                                  '${docs[i].fileName}${docs[i].formattedSize.isNotEmpty ? ' • ${docs[i].formattedSize}' : ''}',
+                                  style: openSans(
+                                    fontSize: 11.5,
+                                    color: const Color(0xFF707971),
+                                  ),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    if (i < docs.length - 1)
+                      const Divider(height: 12, thickness: 0.5, color: Color(0xFFE2E8E5)),
+                  ],
+                ],
+              );
+            },
+          ),
+        ],
+      ),
+    );
   }
 }
 
@@ -639,7 +840,7 @@ class _NotesCard extends StatelessWidget {
         children: [
           Text(
             'Notes',
-            style: GoogleFonts.poppins(
+            style: poppins(
               fontSize: 15,
               fontWeight: FontWeight.w600,
               color: const Color(0xFF161C27),
@@ -648,7 +849,7 @@ class _NotesCard extends StatelessWidget {
           const SizedBox(height: 3),
           Text(
             'Private notes only you can see.',
-            style: GoogleFonts.openSans(fontSize: 12, color: const Color(0xFF707971)),
+            style: openSans(fontSize: 12, color: const Color(0xFF707971)),
           ),
           const SizedBox(height: 12),
           TextField(
@@ -657,10 +858,10 @@ class _NotesCard extends StatelessWidget {
             minLines: 3,
             maxLines: 6,
             textInputAction: TextInputAction.newline,
-            style: GoogleFonts.openSans(fontSize: 13.5, color: const Color(0xFF161C27)),
+            style: openSans(fontSize: 13.5, color: const Color(0xFF161C27)),
             decoration: InputDecoration(
               hintText: 'Add notes about this application…',
-              hintStyle: GoogleFonts.openSans(fontSize: 13.5, color: const Color(0xFF707971)),
+              hintStyle: openSans(fontSize: 13.5, color: const Color(0xFF707971)),
               filled: true,
               fillColor: const Color(0xFFF1F3FF),
               contentPadding: const EdgeInsets.all(12),
@@ -679,9 +880,11 @@ class _NotesCard extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 12),
-          PrimaryButton(
-            label: saving ? 'Saving…' : 'Save notes',
-            onPressed: saving ? null : onSave,
+          PressableScale(
+            child: PrimaryButton(
+              label: saving ? 'Saving…' : 'Save notes',
+              onPressed: saving ? null : onSave,
+            ),
           ),
         ],
       ),
@@ -709,7 +912,7 @@ class _WithdrawCard extends StatelessWidget {
         children: [
           Text(
             'Withdraw application',
-            style: GoogleFonts.poppins(
+            style: poppins(
               fontSize: 15,
               fontWeight: FontWeight.w600,
               color: kError,
@@ -719,27 +922,29 @@ class _WithdrawCard extends StatelessWidget {
           Text(
             'If you no longer want to pursue this scholarship, you can '
             'withdraw. It will stay in your history as Withdrawn.',
-            style: GoogleFonts.openSans(fontSize: 13, color: const Color(0xFF404942)),
+            style: openSans(fontSize: 13, color: const Color(0xFF404942)),
           ),
           const SizedBox(height: 12),
           SizedBox(
             width: double.infinity,
-            child: OutlinedButton.icon(
-              key: const ValueKey('withdraw-action'),
-              onPressed: withdrawing ? null : onWithdraw,
-              icon: withdrawing
-                  ? const SizedBox(
-                      height: 18,
-                      width: 18,
-                      child: CircularProgressIndicator(strokeWidth: 2),
-                    )
-                  : const Icon(Icons.unsubscribe_rounded),
-              label: const Text('Withdraw application'),
-              style: OutlinedButton.styleFrom(
-                foregroundColor: kError,
-                side: const BorderSide(color: kError),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
+            child: PressableScale(
+              child: OutlinedButton.icon(
+                key: const ValueKey('withdraw-action'),
+                onPressed: withdrawing ? null : onWithdraw,
+                icon: withdrawing
+                    ? const SizedBox(
+                        height: 18,
+                        width: 18,
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      )
+                    : const Icon(Icons.unsubscribe_rounded),
+                label: const Text('Withdraw application'),
+                style: OutlinedButton.styleFrom(
+                  foregroundColor: kError,
+                  side: const BorderSide(color: kError),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
                 ),
               ),
             ),
@@ -780,7 +985,7 @@ class _TerminalNote extends StatelessWidget {
           Expanded(
             child: Text(
               message,
-              style: GoogleFonts.openSans(fontSize: 13, color: kPrimary),
+              style: openSans(fontSize: 13, color: kPrimary),
             ),
           ),
         ],
@@ -819,7 +1024,7 @@ class _ContinueApplicationCard extends StatelessWidget {
               const SizedBox(width: 8),
               Text(
                 'Draft In Progress',
-                style: GoogleFonts.outfit(
+                style: outfit(
                   fontSize: 15,
                   fontWeight: FontWeight.w700,
                   color: kOnSurface,
@@ -830,7 +1035,7 @@ class _ContinueApplicationCard extends StatelessWidget {
           const SizedBox(height: 6),
           Text(
             'This application has not been submitted yet. Complete and submit your application packet before the deadline.',
-            style: GoogleFonts.openSans(
+            style: openSans(
               fontSize: 13,
               color: const Color(0xFF404942),
               height: 1.35,
@@ -839,23 +1044,25 @@ class _ContinueApplicationCard extends StatelessWidget {
           const SizedBox(height: 12),
           SizedBox(
             width: double.infinity,
-            child: ElevatedButton.icon(
-              key: const ValueKey('detail-continue-application'),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: kPrimary,
-                foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(vertical: 12),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
+            child: PressableScale(
+              child: ElevatedButton.icon(
+                key: const ValueKey('detail-continue-application'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: kPrimary,
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(vertical: 12),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
                 ),
-              ),
-              onPressed: onContinue,
-              icon: const Icon(Icons.arrow_forward_rounded, size: 18),
-              label: Text(
-                'Continue Application',
-                style: GoogleFonts.poppins(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w600,
+                onPressed: onContinue,
+                icon: const Icon(Icons.arrow_forward_rounded, size: 18),
+                label: Text(
+                  'Continue Application',
+                  style: poppins(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
               ),
             ),

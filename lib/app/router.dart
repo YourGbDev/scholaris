@@ -850,7 +850,7 @@ String? authRedirectDecision({
   }
 
   if (profileComplete) {
-    if (onAuthRoute || onVerifyRoute || location == '/onboarding' || location == '/splash') {
+    if (onAuthRoute || onSetupRoute || onVerifyRoute || location == '/onboarding' || location == '/splash') {
       return '/home';
     }
     return null;

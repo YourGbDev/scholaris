@@ -1,3 +1,4 @@
+import 'package:scholaris/shared/theme/app_theme.dart';
 // lib/features/provider/presentation/org/org_settings_tab.dart
 //
 // Organization Settings & Profile Screen matching Stitch mockup
@@ -17,6 +18,7 @@ import '../../providers/provider_scholarships_provider.dart';
 import '../../providers/provider_type_provider.dart';
 import '../../../../core/auth/landing_redirect.dart';
 import 'org_provider_theme.dart';
+import '../../../../shared/theme/app_motion.dart';
 
 class OrgSettingsTab extends ConsumerStatefulWidget {
   const OrgSettingsTab({super.key});
@@ -77,7 +79,7 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
     if (!_initialized) {
       _legalEntityNameController.text = fullName.isNotEmpty ? fullName : 'Ayala Foundation Partner';
       // Real database fields for demo provider are unrecorded / null
-      // We leave unrecorded registration/address fields empty with honest hints
+      // We leave unrecorded registration/address fields empty with honest hints (kOrgTextMuted #545D56 passes 4.5:1 contrast)
       _secRegController.text = '';
       _tinController.text = '';
       _websiteController.text = '';
@@ -116,7 +118,7 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
         backgroundColor: kOrgTextPrimary,
         content: Text(
           'Draft discarded. Reverted to saved database state.',
-          style: GoogleFonts.inter(fontSize: 13, color: Colors.white),
+          style: inter(fontSize: 13, color: Colors.white),
         ),
       ),
     );
@@ -151,7 +153,7 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
               const SizedBox(width: 10),
               Text(
                 'Organization profile and preferences updated successfully.',
-                style: GoogleFonts.inter(fontSize: 13, color: Colors.white, fontWeight: FontWeight.w500),
+                style: inter(fontSize: 13, color: Colors.white, fontWeight: FontWeight.w500),
               ),
             ],
           ),
@@ -164,7 +166,7 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
           behavior: SnackBarBehavior.floating,
           backgroundColor: kOrgError,
           content: Text('Failed to update organization profile: $e',
-              style: GoogleFonts.inter(fontSize: 13, color: Colors.white)),
+              style: inter(fontSize: 13, color: Colors.white)),
         ),
       );
     } finally {
@@ -211,18 +213,18 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
             const SizedBox(width: 12),
             Text(
               'Archive Organization Account',
-              style: GoogleFonts.inter(fontSize: 16, fontWeight: FontWeight.w700, color: kOrgTextPrimary),
+              style: inter(fontSize: 16, fontWeight: FontWeight.w700, color: kOrgTextPrimary),
             ),
           ],
         ),
         content: Text(
           'Are you sure you want to archive your grantor account? This will pause all active scholarship application cycles and freeze pending disbursements. Awarded scholar historical records will remain retained under statutory compliance.',
-          style: GoogleFonts.inter(fontSize: 13, color: kOrgTextSecondary, height: 1.4),
+          style: inter(fontSize: 13, color: kOrgTextSecondary, height: 1.4),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(),
-            child: Text('Cancel', style: GoogleFonts.inter(fontSize: 13, color: kOrgTextSecondary)),
+            child: Text('Cancel', style: inter(fontSize: 13, color: kOrgTextSecondary)),
           ),
           FilledButton(
             style: FilledButton.styleFrom(
@@ -239,7 +241,7 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
                 ),
               );
             },
-            child: Text('Archive Account', style: GoogleFonts.inter(fontSize: 13, color: Colors.white)),
+            child: Text('Archive Account', style: inter(fontSize: 13, color: Colors.white)),
           ),
         ],
       ),
@@ -339,17 +341,17 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
           children: [
             Text(
               orgName.toUpperCase(),
-              style: GoogleFonts.inter(
+              style: inter(
                 fontSize: 11,
                 fontWeight: FontWeight.w700,
                 color: kOrgPrimary,
                 letterSpacing: 0.6,
               ),
             ),
-            Text('/', style: GoogleFonts.inter(fontSize: 11, color: kOrgBorderDark)),
+            Text('/', style: inter(fontSize: 11, color: kOrgBorderDark)),
             Text(
               'Account & Organization',
-              style: GoogleFonts.inter(
+              style: inter(
                 fontSize: 11,
                 fontWeight: FontWeight.w500,
                 color: kOrgTextSecondary,
@@ -375,7 +377,7 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
                   const SizedBox(width: 4),
                   Text(
                     'ACTIVE GRANTOR',
-                    style: GoogleFonts.inter(
+                    style: inter(
                       fontSize: 10,
                       fontWeight: FontWeight.w700,
                       color: const Color(0xFF00351C),
@@ -389,11 +391,11 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
         const SizedBox(height: 8),
         Text(
           'Organization Settings & Profile',
-          style: GoogleFonts.inter(
+          style: inter(
             fontSize: isDesktop ? 26 : 21,
             fontWeight: FontWeight.w700,
             color: kOrgTextPrimary,
-            letterSpacing: -0.5,
+
           ),
         ),
         const SizedBox(height: 4),
@@ -401,7 +403,7 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
           constraints: const BoxConstraints(maxWidth: 680),
           child: Text(
             'Manage your organization profile, authorized representative credentials, notification preferences, and grant documentation templates.',
-            style: GoogleFonts.inter(
+            style: inter(
               fontSize: 13,
               color: kOrgTextSecondary,
               height: 1.35,
@@ -416,6 +418,9 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
       runSpacing: 10,
       children: [
         // Discard Draft Button
+        PressableScale(
+          scale: 0.97,
+          child:
         Material(
           color: const Color(0xFFEEEDF3),
           borderRadius: BorderRadius.circular(12),
@@ -426,7 +431,7 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
               child: Text(
                 'Discard Draft',
-                style: GoogleFonts.inter(
+                style: inter(
                   fontSize: 13,
                   fontWeight: FontWeight.w600,
                   color: kOrgTextPrimary,
@@ -436,7 +441,12 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
           ),
         ),
 
+        ),
+
         // Save Changes Button
+        PressableScale(
+          scale: 0.97,
+          child:
         Material(
           color: kOrgPrimary,
           borderRadius: BorderRadius.circular(12),
@@ -459,7 +469,7 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
                   const SizedBox(width: 8),
                   Text(
                     _isSaving ? 'Saving...' : 'Save Changes',
-                    style: GoogleFonts.inter(
+                    style: inter(
                       fontSize: 13,
                       fontWeight: FontWeight.w600,
                       color: Colors.white,
@@ -469,6 +479,7 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
               ),
             ),
           ),
+        ),
         ),
       ],
     );
@@ -522,7 +533,9 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
                   final isSelected = _selectedSegment == i;
                   return Padding(
                     padding: const EdgeInsets.only(right: 4),
-                    child: InkWell(
+                    child: PressableScale(
+                      scale: 0.97,
+                      child: InkWell(
                       borderRadius: BorderRadius.circular(8),
                       onTap: () => _scrollToSection(i),
                       child: Container(
@@ -542,13 +555,14 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
                         ),
                         child: Text(
                           segments[i],
-                          style: GoogleFonts.inter(
+                          style: inter(
                             fontSize: 12,
                             fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
                             color: isSelected ? kOrgTextPrimary : kOrgTextSecondary,
                           ),
                         ),
                       ),
+                    ),
                     ),
                   );
                 }),
@@ -560,7 +574,9 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
             children: List.generate(segments.length, (i) {
               final isSelected = _selectedSegment == i;
               return Expanded(
-                child: InkWell(
+                child: PressableScale(
+                  scale: 0.97,
+                  child: InkWell(
                   borderRadius: BorderRadius.circular(8),
                   onTap: () => _scrollToSection(i),
                   child: Container(
@@ -581,13 +597,14 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
                     ),
                     child: Text(
                       segments[i],
-                      style: GoogleFonts.inter(
+                      style: inter(
                         fontSize: 12,
                         fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
                         color: isSelected ? kOrgTextPrimary : kOrgTextSecondary,
                       ),
                     ),
                   ),
+                ),
                 ),
               );
             }),
@@ -679,7 +696,7 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
               children: [
                 Text(
                   initials,
-                  style: GoogleFonts.inter(
+                  style: inter(
                     fontSize: isNarrow ? 22 : 24,
                     fontWeight: FontWeight.w900,
                     color: Colors.white,
@@ -689,7 +706,7 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
                 const SizedBox(height: 2),
                 Text(
                   'NCR, PH',
-                  style: GoogleFonts.inter(
+                  style: inter(
                     fontSize: 8.5,
                     fontWeight: FontWeight.w700,
                     color: const Color(0xFFB3F1C6),
@@ -710,7 +727,7 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
                 children: [
                   Text(
                     'Organization Seal & Insignia',
-                    style: GoogleFonts.inter(
+                    style: inter(
                       fontSize: 13,
                       fontWeight: FontWeight.w600,
                       color: kOrgTextPrimary,
@@ -725,7 +742,7 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
                     ),
                     child: Text(
                       'DEMO EVALUATION SEAL',
-                      style: GoogleFonts.inter(
+                      style: inter(
                         fontSize: 9.5,
                         fontWeight: FontWeight.w700,
                         color: const Color(0xFF8F6400),
@@ -737,7 +754,7 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
               const SizedBox(height: 4),
               Text(
                 'PNG, SVG or WEBP vector format. Recommended 800x800px. Appears on formal Grant Offer Letters and Certifications.',
-                style: GoogleFonts.inter(fontSize: 11.5, color: kOrgTextSecondary, height: 1.35),
+                style: inter(fontSize: 11.5, color: kOrgTextSecondary, height: 1.35),
               ),
               const SizedBox(height: 10),
               Row(
@@ -759,7 +776,7 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
                         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                         child: Text(
                           'Upload New',
-                          style: GoogleFonts.inter(
+                          style: inter(
                             fontSize: 11.5,
                             fontWeight: FontWeight.w600,
                             color: kOrgTextPrimary,
@@ -786,7 +803,7 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
                         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                         child: Text(
                           'Remove',
-                          style: GoogleFonts.inter(
+                          style: inter(
                             fontSize: 11.5,
                             fontWeight: FontWeight.w600,
                             color: kOrgError,
@@ -832,13 +849,13 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
               const SizedBox(height: 6),
               TextFormField(
                 controller: _secRegController,
-                style: GoogleFonts.inter(fontSize: 13, color: kOrgTextPrimary),
+                style: inter(fontSize: 13, color: kOrgTextPrimary),
                 decoration: InputDecoration(
                   isDense: true,
                   filled: true,
                   fillColor: const Color(0xFFF7F6FB),
                   hintText: 'Not yet registered / Incomplete',
-                  hintStyle: GoogleFonts.inter(fontSize: 12, color: kOrgTextMuted),
+                  hintStyle: inter(fontSize: 12, color: kOrgTextMuted),
                   contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10),
@@ -856,13 +873,13 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
               const SizedBox(height: 6),
               TextFormField(
                 controller: _tinController,
-                style: GoogleFonts.inter(fontSize: 13, color: kOrgTextPrimary),
+                style: inter(fontSize: 13, color: kOrgTextPrimary),
                 decoration: InputDecoration(
                   isDense: true,
                   filled: true,
                   fillColor: const Color(0xFFF7F6FB),
                   hintText: 'Not yet provided',
-                  hintStyle: GoogleFonts.inter(fontSize: 12, color: kOrgTextMuted),
+                  hintStyle: inter(fontSize: 12, color: kOrgTextMuted),
                   contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10),
@@ -914,7 +931,7 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
                         children: [
                           Text(
                             'Institutional Profile',
-                            style: GoogleFonts.inter(
+                            style: inter(
                               fontSize: 16,
                               fontWeight: FontWeight.w700,
                               color: kOrgTextPrimary,
@@ -922,7 +939,7 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
                           ),
                           Text(
                             'Public identity visible to scholarship applicants & partner universities',
-                            style: GoogleFonts.inter(fontSize: 12, color: kOrgTextSecondary),
+                            style: inter(fontSize: 12, color: kOrgTextSecondary),
                           ),
                         ],
                       ),
@@ -936,7 +953,7 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
                     ),
                     child: Text(
                       'AY 2024–2025',
-                      style: GoogleFonts.inter(
+                      style: inter(
                         fontSize: 11,
                         fontWeight: FontWeight.w600,
                         color: kOrgTextSecondary,
@@ -954,7 +971,7 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
               const SizedBox(height: 6),
               TextFormField(
                 controller: _legalEntityNameController,
-                style: GoogleFonts.inter(fontSize: 13, fontWeight: FontWeight.w500, color: kOrgTextPrimary),
+                style: inter(fontSize: 13, fontWeight: FontWeight.w500, color: kOrgTextPrimary),
                 decoration: InputDecoration(
                   isDense: true,
                   filled: true,
@@ -984,16 +1001,16 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
                   children: [
                     Text(
                       'https://',
-                      style: GoogleFonts.inter(fontSize: 13, color: kOrgTextSecondary, fontWeight: FontWeight.w500),
+                      style: inter(fontSize: 13, color: kOrgTextSecondary, fontWeight: FontWeight.w500),
                     ),
                     Expanded(
                       child: TextField(
                         controller: _websiteController,
-                        style: GoogleFonts.inter(fontSize: 13, color: kOrgTextPrimary),
+                        style: inter(fontSize: 13, color: kOrgTextPrimary),
                         decoration: InputDecoration(
                           isDense: true,
                           hintText: 'example.org (Not yet provided)',
-                          hintStyle: GoogleFonts.inter(fontSize: 12, color: kOrgTextMuted),
+                          hintStyle: inter(fontSize: 12, color: kOrgTextMuted),
                           border: InputBorder.none,
                           contentPadding: const EdgeInsets.symmetric(vertical: 8),
                         ),
@@ -1011,13 +1028,13 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
               TextFormField(
                 controller: _addressController,
                 maxLines: 2,
-                style: GoogleFonts.inter(fontSize: 13, color: kOrgTextPrimary),
+                style: inter(fontSize: 13, color: kOrgTextPrimary),
                 decoration: InputDecoration(
                   isDense: true,
                   filled: true,
                   fillColor: const Color(0xFFF7F6FB),
                   hintText: 'Not yet provided (Corporate address unlisted)',
-                  hintStyle: GoogleFonts.inter(fontSize: 12, color: kOrgTextMuted),
+                  hintStyle: inter(fontSize: 12, color: kOrgTextMuted),
                   suffixIcon: const Padding(
                     padding: EdgeInsets.only(bottom: 18),
                     child: Icon(Icons.location_on_outlined, size: 18, color: kOrgTextMuted),
@@ -1038,7 +1055,7 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
                   _buildInputLabel('MISSION STATEMENT & GRANTING MANDATE'),
                   Text(
                     '${_missionController.text.length} / 500 characters',
-                    style: GoogleFonts.inter(fontSize: 11, color: kOrgTextMuted),
+                    style: inter(fontSize: 11, color: kOrgTextMuted),
                   ),
                 ],
               ),
@@ -1047,13 +1064,13 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
                 controller: _missionController,
                 maxLines: 4,
                 onChanged: (_) => setState(() {}),
-                style: GoogleFonts.inter(fontSize: 13, height: 1.4, color: kOrgTextPrimary),
+                style: inter(fontSize: 13, height: 1.4, color: kOrgTextPrimary),
                 decoration: InputDecoration(
                   isDense: true,
                   filled: true,
                   fillColor: const Color(0xFFF7F6FB),
                   hintText: 'Enter your organization\'s mission statement and granting mandate for Filipino scholars (up to 500 characters)...',
-                  hintStyle: GoogleFonts.inter(fontSize: 12, color: kOrgTextMuted),
+                  hintStyle: inter(fontSize: 12, color: kOrgTextMuted),
                   contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10),
@@ -1101,13 +1118,13 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
               const SizedBox(height: 6),
               TextFormField(
                 controller: _repNameController,
-                style: GoogleFonts.inter(fontSize: 13, color: kOrgTextPrimary),
+                style: inter(fontSize: 13, color: kOrgTextPrimary),
                 decoration: InputDecoration(
                   isDense: true,
                   filled: true,
                   fillColor: const Color(0xFFF7F6FB),
                   hintText: 'Lead Administrator (Not yet specified)',
-                  hintStyle: GoogleFonts.inter(fontSize: 12, color: kOrgTextMuted),
+                  hintStyle: inter(fontSize: 12, color: kOrgTextMuted),
                   contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10),
@@ -1125,13 +1142,13 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
               const SizedBox(height: 6),
               TextFormField(
                 controller: _repTitleController,
-                style: GoogleFonts.inter(fontSize: 13, color: kOrgTextPrimary),
+                style: inter(fontSize: 13, color: kOrgTextPrimary),
                 decoration: InputDecoration(
                   isDense: true,
                   filled: true,
                   fillColor: const Color(0xFFF7F6FB),
                   hintText: 'Lead Grant Administrator',
-                  hintStyle: GoogleFonts.inter(fontSize: 12, color: kOrgTextMuted),
+                  hintStyle: inter(fontSize: 12, color: kOrgTextMuted),
                   contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10),
@@ -1172,7 +1189,7 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
                       const SizedBox(width: 4),
                       Text(
                         'Verified',
-                        style: GoogleFonts.inter(
+                        style: inter(
                           fontSize: 10.5,
                           fontWeight: FontWeight.w600,
                           color: kOrgPrimary,
@@ -1186,7 +1203,7 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
               TextFormField(
                 controller: _emailController,
                 readOnly: true,
-                style: GoogleFonts.inter(fontSize: 13, color: kOrgTextPrimary),
+                style: inter(fontSize: 13, color: kOrgTextPrimary),
                 decoration: InputDecoration(
                   isDense: true,
                   filled: true,
@@ -1209,13 +1226,13 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
               const SizedBox(height: 6),
               TextFormField(
                 controller: _phoneController,
-                style: GoogleFonts.inter(fontSize: 13, color: kOrgTextPrimary),
+                style: inter(fontSize: 13, color: kOrgTextPrimary),
                 decoration: InputDecoration(
                   isDense: true,
                   filled: true,
                   fillColor: const Color(0xFFF7F6FB),
                   hintText: 'Not yet provided',
-                  hintStyle: GoogleFonts.inter(fontSize: 12, color: kOrgTextMuted),
+                  hintStyle: inter(fontSize: 12, color: kOrgTextMuted),
                   suffixIcon: const Icon(Icons.call_outlined, size: 16, color: kOrgTextMuted),
                   contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
                   border: OutlineInputBorder(
@@ -1269,7 +1286,7 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
                           Expanded(
                             child: Text(
                               'Registered Digital PKI Signature',
-                              style: GoogleFonts.inter(
+                              style: inter(
                                 fontSize: 13,
                                 fontWeight: FontWeight.w600,
                                 color: kOrgTextPrimary,
@@ -1281,7 +1298,7 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
                       const SizedBox(height: 8),
                       Text(
                         'Digital Signature: Not enrolled with PNPKI • Pending Administrative Registration',
-                        style: GoogleFonts.inter(fontSize: 11.5, color: kOrgTextSecondary),
+                        style: inter(fontSize: 11.5, color: kOrgTextSecondary),
                       ),
                       const SizedBox(height: 12),
                       Material(
@@ -1301,7 +1318,7 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
                             padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
                             child: Text(
                               'Register Key',
-                              style: GoogleFonts.inter(
+                              style: inter(
                                 fontSize: 11.5,
                                 fontWeight: FontWeight.w600,
                                 color: kOrgTextPrimary,
@@ -1330,7 +1347,7 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
                           children: [
                             Text(
                               'Registered Digital PKI Signature',
-                              style: GoogleFonts.inter(
+                              style: inter(
                                 fontSize: 13,
                                 fontWeight: FontWeight.w600,
                                 color: kOrgTextPrimary,
@@ -1338,7 +1355,7 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
                             ),
                             Text(
                               'Digital Signature: Not enrolled with PNPKI • Pending Administrative Registration',
-                              style: GoogleFonts.inter(fontSize: 11.5, color: kOrgTextSecondary),
+                              style: inter(fontSize: 11.5, color: kOrgTextSecondary),
                             ),
                           ],
                         ),
@@ -1361,7 +1378,7 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
                             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
                             child: Text(
                               'Register Key',
-                              style: GoogleFonts.inter(
+                              style: inter(
                                 fontSize: 11.5,
                                 fontWeight: FontWeight.w600,
                                 color: kOrgTextPrimary,
@@ -1398,7 +1415,7 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
                         children: [
                           Text(
                             'Authorized Representative',
-                            style: GoogleFonts.inter(
+                            style: inter(
                               fontSize: 16,
                               fontWeight: FontWeight.w700,
                               color: kOrgTextPrimary,
@@ -1406,7 +1423,7 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
                           ),
                           Text(
                             'Signatory credentials for statutory grant clearance and legal disbursements',
-                            style: GoogleFonts.inter(fontSize: 12, color: kOrgTextSecondary),
+                            style: inter(fontSize: 12, color: kOrgTextSecondary),
                           ),
                         ],
                       ),
@@ -1425,7 +1442,7 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
                         const SizedBox(width: 4),
                         Text(
                           'Primary Signatory',
-                          style: GoogleFonts.inter(
+                          style: inter(
                             fontSize: 10,
                             fontWeight: FontWeight.w700,
                             color: const Color(0xFF00351C),
@@ -1492,7 +1509,7 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
                     children: [
                       Text(
                         'Grant Notification & Intake Preferences',
-                        style: GoogleFonts.inter(
+                        style: inter(
                           fontSize: 16,
                           fontWeight: FontWeight.w700,
                           color: kOrgTextPrimary,
@@ -1500,7 +1517,7 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
                       ),
                       Text(
                         'Control real-time algorithmic triggers and automated intake reporting',
-                        style: GoogleFonts.inter(fontSize: 12, color: kOrgTextSecondary),
+                        style: inter(fontSize: 12, color: kOrgTextSecondary),
                       ),
                     ],
                   ),
@@ -1576,7 +1593,7 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
               children: [
                 Text(
                   title,
-                  style: GoogleFonts.inter(
+                  style: inter(
                     fontSize: 13.5,
                     fontWeight: FontWeight.w600,
                     color: kOrgTextPrimary,
@@ -1585,7 +1602,7 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
                 const SizedBox(height: 2),
                 Text(
                   description,
-                  style: GoogleFonts.inter(
+                  style: inter(
                     fontSize: 11.5,
                     color: kOrgTextSecondary,
                     height: 1.35,
@@ -1653,7 +1670,7 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
                 children: [
                   Text(
                     'Account Actions & Lifecycle',
-                    style: GoogleFonts.inter(
+                    style: inter(
                       fontSize: 16,
                       fontWeight: FontWeight.w700,
                       color: kOrgTextPrimary,
@@ -1661,7 +1678,7 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
                   ),
                   Text(
                     'Permanent registry archiving and active credential termination',
-                    style: GoogleFonts.inter(fontSize: 12, color: kOrgTextSecondary),
+                    style: inter(fontSize: 12, color: kOrgTextSecondary),
                   ),
                 ],
               ),
@@ -1670,7 +1687,7 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
           const SizedBox(height: 14),
           Text(
             'Archiving your grantor account pauses all active intake scholarship cycles, revokes open public application URLs, and freezes pending payment authorizations. Existing awarded scholar dossiers remain archived under regulatory retention standards.',
-            style: GoogleFonts.inter(
+            style: inter(
               fontSize: 12,
               color: kOrgTextSecondary,
               height: 1.4,
@@ -1702,7 +1719,7 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
                         const SizedBox(width: 6),
                         Text(
                           'Sign Out of All Active Consoles',
-                          style: GoogleFonts.inter(
+                          style: inter(
                             fontSize: 12,
                             fontWeight: FontWeight.w600,
                             color: kOrgTextPrimary,
@@ -1730,7 +1747,7 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
                         const SizedBox(width: 6),
                         Text(
                           'Archive Organization Account',
-                          style: GoogleFonts.inter(
+                          style: inter(
                             fontSize: 12,
                             fontWeight: FontWeight.w600,
                             color: Colors.white,
@@ -1804,7 +1821,7 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
               const SizedBox(width: 6),
               Text(
                 'ACCREDITATION STATUS',
-                style: GoogleFonts.inter(
+                style: inter(
                   fontSize: 10.5,
                   fontWeight: FontWeight.w700,
                   color: kOrgPrimary,
@@ -1816,7 +1833,7 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
           const SizedBox(height: 8),
           Text(
             'Coursework Evaluation Account',
-            style: GoogleFonts.inter(
+            style: inter(
               fontSize: 15,
               fontWeight: FontWeight.w700,
               color: kOrgTextPrimary,
@@ -1825,7 +1842,7 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
           const SizedBox(height: 2),
           Text(
             'Institutional Verification Incomplete',
-            style: GoogleFonts.inter(fontSize: 11.5, color: kOrgTextSecondary),
+            style: inter(fontSize: 11.5, color: kOrgTextSecondary),
           ),
           const SizedBox(height: 14),
 
@@ -1844,11 +1861,11 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
                   children: [
                     Text(
                       'Compliance Readiness',
-                      style: GoogleFonts.inter(fontSize: 11.5, fontWeight: FontWeight.w500, color: kOrgTextPrimary),
+                      style: inter(fontSize: 11.5, fontWeight: FontWeight.w500, color: kOrgTextPrimary),
                     ),
                     Text(
                       '25%',
-                      style: GoogleFonts.inter(fontSize: 11.5, fontWeight: FontWeight.w700, color: kOrgPrimary),
+                      style: inter(fontSize: 11.5, fontWeight: FontWeight.w700, color: kOrgPrimary),
                     ),
                   ],
                 ),
@@ -1865,7 +1882,7 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
                 const SizedBox(height: 6),
                 Text(
                   'Pending formal Philippine SEC / BIR accreditation submission',
-                  style: GoogleFonts.inter(fontSize: 10.5, color: kOrgTextMuted),
+                  style: inter(fontSize: 10.5, color: kOrgTextMuted),
                 ),
               ],
             ),
@@ -1911,12 +1928,12 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
         Expanded(
           child: Text(
             label,
-            style: GoogleFonts.inter(fontSize: 11.5, color: kOrgTextPrimary),
+            style: inter(fontSize: 11.5, color: kOrgTextPrimary),
           ),
         ),
         Text(
           status,
-          style: GoogleFonts.inter(
+          style: inter(
             fontSize: 10.5,
             fontWeight: FontWeight.w500,
             color: isComplete ? kOrgPrimary : kOrgTextMuted,
@@ -1952,7 +1969,7 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
             children: [
               Text(
                 'REGISTERED HEADQUARTERS',
-                style: GoogleFonts.inter(
+                style: inter(
                   fontSize: 10.5,
                   fontWeight: FontWeight.w700,
                   color: kOrgTextSecondary,
@@ -2002,7 +2019,7 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
                       const SizedBox(width: 4),
                       Text(
                         'Location Not Specified',
-                        style: GoogleFonts.inter(
+                        style: inter(
                           fontSize: 11,
                           fontWeight: FontWeight.w600,
                           color: kOrgTextPrimary,
@@ -2017,12 +2034,12 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
           const SizedBox(height: 12),
           Text(
             'Philippine Regional Hub',
-            style: GoogleFonts.inter(fontSize: 13, fontWeight: FontWeight.w600, color: kOrgTextPrimary),
+            style: inter(fontSize: 13, fontWeight: FontWeight.w600, color: kOrgTextPrimary),
           ),
           const SizedBox(height: 2),
           Text(
             'Address unlisted • Update in Institutional Profile',
-            style: GoogleFonts.inter(fontSize: 11.5, color: kOrgTextSecondary),
+            style: inter(fontSize: 11.5, color: kOrgTextSecondary),
           ),
         ],
       ),
@@ -2060,7 +2077,7 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
             children: [
               Text(
                 'ACTIVE FUND ENVELOPE',
-                style: GoogleFonts.inter(
+                style: inter(
                   fontSize: 10.5,
                   fontWeight: FontWeight.w700,
                   color: kOrgTextSecondary,
@@ -2075,7 +2092,7 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
                 ),
                 child: Text(
                   'AY 2024–25',
-                  style: GoogleFonts.inter(fontSize: 10, fontWeight: FontWeight.w600, color: kOrgTextSecondary),
+                  style: inter(fontSize: 10, fontWeight: FontWeight.w600, color: kOrgTextSecondary),
                 ),
               ),
             ],
@@ -2087,7 +2104,7 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
             children: [
               Text(
                 formatted,
-                style: GoogleFonts.inter(
+                style: inter(
                   fontSize: 26,
                   fontWeight: FontWeight.w800,
                   color: kOrgPrimary,
@@ -2097,7 +2114,7 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
               const SizedBox(width: 8),
               Text(
                 '1 Active Grant',
-                style: GoogleFonts.inter(
+                style: inter(
                   fontSize: 11.5,
                   fontWeight: FontWeight.w600,
                   color: const Color(0xFF306948),
@@ -2192,7 +2209,7 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
               children: [
                 Text(
                   'Institutional Desk',
-                  style: GoogleFonts.inter(
+                  style: inter(
                     fontSize: 12.5,
                     fontWeight: FontWeight.w600,
                     color: kOrgTextPrimary,
@@ -2200,7 +2217,7 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
                 ),
                 Text(
                   'support@scholaris.ph',
-                  style: GoogleFonts.inter(fontSize: 11, color: kOrgTextSecondary),
+                  style: inter(fontSize: 11, color: kOrgTextSecondary),
                 ),
               ],
             ),
@@ -2243,7 +2260,7 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
               const SizedBox(width: 6),
               Text(
                 'Provider View Mode',
-                style: GoogleFonts.inter(
+                style: inter(
                   fontSize: 12,
                   fontWeight: FontWeight.w700,
                   color: kOrgTextPrimary,
@@ -2254,7 +2271,7 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
           const SizedBox(height: 4),
           Text(
             'Switch console interface mode for testing workflows.',
-            style: GoogleFonts.inter(fontSize: 11, color: kOrgTextSecondary),
+            style: inter(fontSize: 11, color: kOrgTextSecondary),
           ),
           const SizedBox(height: 12),
           Row(
@@ -2275,7 +2292,7 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
                     child: Text(
                       'Institutional Org',
                       textAlign: TextAlign.center,
-                      style: GoogleFonts.inter(
+                      style: inter(
                         fontSize: 11,
                         fontWeight: FontWeight.w600,
                         color: activeType == 'organization' ? Colors.white : kOrgTextSecondary,
@@ -2301,7 +2318,7 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
                     child: Text(
                       'Benefactor Mode',
                       textAlign: TextAlign.center,
-                      style: GoogleFonts.inter(
+                      style: inter(
                         fontSize: 11,
                         fontWeight: FontWeight.w600,
                         color: activeType == 'individual' ? Colors.white : kOrgTextSecondary,
@@ -2320,7 +2337,7 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
   Widget _buildInputLabel(String text) {
     return Text(
       text,
-      style: GoogleFonts.inter(
+      style: inter(
         fontSize: 10.5,
         fontWeight: FontWeight.w700,
         color: kOrgTextSecondary,

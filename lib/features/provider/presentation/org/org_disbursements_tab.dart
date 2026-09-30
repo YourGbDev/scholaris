@@ -1,3 +1,4 @@
+import 'package:scholaris/shared/theme/app_theme.dart';
 // lib/features/provider/presentation/org/org_disbursements_tab.dart
 //
 // Institutional Grant Disbursements & Payout Ledger faithfully matching Stitch mockup
@@ -13,7 +14,6 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 import 'package:scholaris/features/profile/providers/profile_setup_provider.dart';
 import '../../../applications/models/application.dart';
@@ -102,7 +102,7 @@ class _OrgDisbursementsTabState extends ConsumerState<OrgDisbursementsTab> {
                   children: [
                     Text(
                       'Exporting Payout Ledger',
-                      style: GoogleFonts.inter(
+                      style: inter(
                         fontSize: 13,
                         fontWeight: FontWeight.w600,
                         color: kOrgTextPrimary,
@@ -110,7 +110,7 @@ class _OrgDisbursementsTabState extends ConsumerState<OrgDisbursementsTab> {
                     ),
                     Text(
                       'Generating encrypted Ledger Summary CSV (AY 2024–2025)...',
-                      style: GoogleFonts.inter(
+                      style: inter(
                         fontSize: 11,
                         color: kOrgTextSecondary,
                       ),
@@ -168,7 +168,7 @@ class _OrgDisbursementsTabState extends ConsumerState<OrgDisbursementsTab> {
                   children: [
                     Text(
                       'Tranche Release Queue Prepared',
-                      style: GoogleFonts.inter(
+                      style: inter(
                         fontSize: 13,
                         fontWeight: FontWeight.w600,
                         color: kOrgTextPrimary,
@@ -176,7 +176,7 @@ class _OrgDisbursementsTabState extends ConsumerState<OrgDisbursementsTab> {
                     ),
                     Text(
                       'Tranche 2 (${_formatCurrency(totalAmount)} for $scholarsCount ${scholarsCount == 1 ? 'scholar' : 'scholars'}) prepared for authorization.',
-                      style: GoogleFonts.inter(
+                      style: inter(
                         fontSize: 11,
                         color: kOrgTextSecondary,
                       ),
@@ -234,7 +234,7 @@ class _OrgDisbursementsTabState extends ConsumerState<OrgDisbursementsTab> {
                   children: [
                     Text(
                       'Audit Binder Generated',
-                      style: GoogleFonts.inter(
+                      style: inter(
                         fontSize: 13,
                         fontWeight: FontWeight.w600,
                         color: kOrgTextPrimary,
@@ -242,7 +242,7 @@ class _OrgDisbursementsTabState extends ConsumerState<OrgDisbursementsTab> {
                     ),
                     Text(
                       'Compiled compliant with CHED Memorandum Order No. 08 & BIR RMC 24-2022.',
-                      style: GoogleFonts.inter(
+                      style: inter(
                         fontSize: 11,
                         color: kOrgTextSecondary,
                       ),
@@ -290,11 +290,11 @@ class _OrgDisbursementsTabState extends ConsumerState<OrgDisbursementsTab> {
                           children: [
                             Text(
                               'CHED & BIR Liquidation Protocol',
-                              style: GoogleFonts.inter(fontSize: 16, fontWeight: FontWeight.w700, color: kOrgTextPrimary),
+                              style: inter(fontSize: 16, fontWeight: FontWeight.w700, color: kOrgTextPrimary),
                             ),
                             Text(
                               'Statutory Philippine Higher Education Grant Compliance',
-                              style: GoogleFonts.inter(fontSize: 11.5, color: kOrgTextSecondary),
+                              style: inter(fontSize: 11.5, color: kOrgTextSecondary),
                             ),
                           ],
                         ),
@@ -310,22 +310,22 @@ class _OrgDisbursementsTabState extends ConsumerState<OrgDisbursementsTab> {
                   const SizedBox(height: 16),
                   Text(
                     '1. Direct Matriculation Settlement',
-                    style: GoogleFonts.inter(fontSize: 13, fontWeight: FontWeight.w600, color: kOrgTextPrimary),
+                    style: inter(fontSize: 13, fontWeight: FontWeight.w600, color: kOrgTextPrimary),
                   ),
                   const SizedBox(height: 4),
                   Text(
                     'Tuition disbursements (Tranche 1) are remitted directly to accredited Philippine higher education institutions via institutional bank transfer against official registrar billing assessment forms.',
-                    style: GoogleFonts.inter(fontSize: 12, color: kOrgTextSecondary, height: 1.35),
+                    style: inter(fontSize: 12, color: kOrgTextSecondary, height: 1.35),
                   ),
                   const SizedBox(height: 12),
                   Text(
                     '2. Living Allowance & Device Stipends',
-                    style: GoogleFonts.inter(fontSize: 13, fontWeight: FontWeight.w600, color: kOrgTextPrimary),
+                    style: inter(fontSize: 13, fontWeight: FontWeight.w600, color: kOrgTextPrimary),
                   ),
                   const SizedBox(height: 4),
                   Text(
                     'Subsequent student tranches are disbursed directly to confirmed scholar bank accounts upon certified midterm enrollment verification and minimum passing grade maintenance (GWA ≥ 2.0).',
-                    style: GoogleFonts.inter(fontSize: 12, color: kOrgTextSecondary, height: 1.35),
+                    style: inter(fontSize: 12, color: kOrgTextSecondary, height: 1.35),
                   ),
                   const SizedBox(height: 20),
                   Align(
@@ -382,7 +382,7 @@ class _OrgDisbursementsTabState extends ConsumerState<OrgDisbursementsTab> {
                         child: Center(
                           child: Text(
                             profile.fullName.isNotEmpty ? profile.fullName[0].toUpperCase() : 'S',
-                            style: GoogleFonts.inter(fontSize: 18, fontWeight: FontWeight.w700, color: kOrgPrimary),
+                            style: inter(fontSize: 18, fontWeight: FontWeight.w700, color: kOrgPrimary),
                           ),
                         ),
                       ),
@@ -392,12 +392,12 @@ class _OrgDisbursementsTabState extends ConsumerState<OrgDisbursementsTab> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              profile.fullName.isNotEmpty ? profile.fullName : 'Scholar Applicant',
-                              style: GoogleFonts.inter(fontSize: 17, fontWeight: FontWeight.w700, color: kOrgTextPrimary),
+                              profile.fullName.isNotEmpty ? profile.fullName : 'Applicant #${app.userId.length >= 8 ? app.userId.substring(0, 8) : app.userId}',
+                              style: inter(fontSize: 17, fontWeight: FontWeight.w700, color: kOrgTextPrimary),
                             ),
                             Text(
-                              'LRN: Not on file • ${profile.school ?? 'UP Diliman'} (${profile.course})',
-                              style: GoogleFonts.inter(fontSize: 12, color: kOrgTextSecondary),
+                              'APP-${app.id.length >= 8 ? app.id.substring(0, 8) : app.id} • ${profile.school?.isNotEmpty == true ? profile.school! : 'School Pending'} (${profile.course.isNotEmpty ? profile.course : 'Course Pending'})',
+                              style: inter(fontSize: 12, color: kOrgTextSecondary),
                             ),
                           ],
                         ),
@@ -411,12 +411,12 @@ class _OrgDisbursementsTabState extends ConsumerState<OrgDisbursementsTab> {
                   const SizedBox(height: 18),
                   const Divider(height: 1, color: kOrgBorder),
                   const SizedBox(height: 16),
-                  _buildDetailRow('Grant Program', scholarship?.title ?? 'Ayala Future Leaders Grant 2026'),
-                  _buildDetailRow('Academic Year Cycle', 'AY 2024–2025 • Semester 1'),
-                  _buildDetailRow('Tranche 1 (Tuition)', '${_formatCurrency(trancheAmount)} • Released (Aug 28, 2024)'),
+                  _buildDetailRow('Grant Program', scholarship?.title ?? 'Scholarship Grant'),
+                  _buildDetailRow('Academic Year Cycle', 'AY ${DateTime.now().year}–${DateTime.now().year + 1} • Semester 1'),
+                  _buildDetailRow('Tranche 1 (Tuition)', '${_formatCurrency(trancheAmount)} • Released'),
                   _buildDetailRow('Settlement Channel', 'Direct Institutional Bank Transfer'),
-                  _buildDetailRow('Liquidation Receipt', 'Verified (OR-99120 • UP Registrar)'),
-                  _buildDetailRow('Tranche 2 (Midterm)', '${_formatCurrency(trancheAmount)} • Scheduled (Nov 15, 2024)'),
+                  _buildDetailRow('Liquidation Receipt', 'Verified (Ref #${app.id.length >= 8 ? app.id.substring(0, 8) : app.id})'),
+                  _buildDetailRow('Tranche 2 (Midterm)', '${_formatCurrency(trancheAmount)} • Scheduled'),
                   _buildDetailRow('Disbursement Account', 'Accredited Institutional Bank Account'),
                   _buildDetailRow('Total Committed Award', _formatCurrency(trancheAmount * 2)),
                   const SizedBox(height: 20),
@@ -462,12 +462,12 @@ class _OrgDisbursementsTabState extends ConsumerState<OrgDisbursementsTab> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(label, style: GoogleFonts.inter(fontSize: 12, color: kOrgTextSecondary)),
+          Text(label, style: inter(fontSize: 12, color: kOrgTextSecondary)),
           Flexible(
             child: Text(
               value,
               textAlign: TextAlign.right,
-              style: GoogleFonts.inter(fontSize: 12, fontWeight: FontWeight.w600, color: kOrgTextPrimary),
+              style: inter(fontSize: 12, fontWeight: FontWeight.w600, color: kOrgTextPrimary),
             ),
           ),
         ],
@@ -508,15 +508,15 @@ class _OrgDisbursementsTabState extends ConsumerState<OrgDisbursementsTab> {
           StudentProfile resolveProfile(Application app) {
             final existing = profiles[app.userId];
             if (existing != null) return existing;
-            return const StudentProfile(
-              id: '57ab0603-ae0a-455b-bbed-02f4e01adee0',
-              fullName: 'Maria Clarissa Santos',
-              school: 'University of the Philippines Diliman',
-              course: 'BS Computer Science',
-              gpa: 1.24,
-              yearLevel: 4,
+            return StudentProfile(
+              id: app.userId,
+              fullName: 'Applicant #${app.userId.length >= 8 ? app.userId.substring(0, 8) : app.userId}',
+              school: 'School Pending',
+              course: 'Course Pending',
+              gpa: 0.0,
+              yearLevel: 1,
               region: 'NCR',
-              monthlyFamilyIncome: 15000,
+              monthlyFamilyIncome: 0,
             );
           }
 
@@ -672,7 +672,7 @@ class _OrgDisbursementsTabState extends ConsumerState<OrgDisbursementsTab> {
                 const SizedBox(width: 8),
                 Text(
                   orgName,
-                  style: GoogleFonts.inter(
+                  style: inter(
                     fontSize: 11,
                     fontWeight: FontWeight.w600,
                     color: kOrgTextSecondary,
@@ -681,17 +681,17 @@ class _OrgDisbursementsTabState extends ConsumerState<OrgDisbursementsTab> {
                 ),
               ],
             ),
-            Text('•', style: GoogleFonts.inter(fontSize: 11, color: kOrgBorderDark)),
+            Text('•', style: inter(fontSize: 11, color: kOrgBorderDark)),
             Text(
               'Financial Oversight',
-              style: GoogleFonts.inter(
+              style: inter(
                 fontSize: 11,
                 fontWeight: FontWeight.w600,
                 color: kOrgTextPrimary,
                 letterSpacing: 0.5,
               ),
             ),
-            Text('•', style: GoogleFonts.inter(fontSize: 11, color: kOrgBorderDark)),
+            Text('•', style: inter(fontSize: 11, color: kOrgBorderDark)),
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
               decoration: BoxDecoration(
@@ -700,7 +700,7 @@ class _OrgDisbursementsTabState extends ConsumerState<OrgDisbursementsTab> {
               ),
               child: Text(
                 'AY 2024–2025',
-                style: GoogleFonts.inter(
+                style: inter(
                   fontSize: 10,
                   fontWeight: FontWeight.w700,
                   color: const Color(0xFF00351C),
@@ -712,11 +712,11 @@ class _OrgDisbursementsTabState extends ConsumerState<OrgDisbursementsTab> {
         const SizedBox(height: 8),
         Text(
           'Grant Disbursements & Payout Ledger',
-          style: GoogleFonts.inter(
+          style: inter(
             fontSize: isDesktop ? 26 : 21,
             fontWeight: FontWeight.w700,
             color: kOrgTextPrimary,
-            letterSpacing: -0.5,
+
           ),
         ),
         const SizedBox(height: 4),
@@ -724,7 +724,7 @@ class _OrgDisbursementsTabState extends ConsumerState<OrgDisbursementsTab> {
           constraints: const BoxConstraints(maxWidth: 620),
           child: Text(
             'Track committed semester stipends, tuition releases, and institutional liquidation schedules for confirmed scholars.',
-            style: GoogleFonts.inter(
+            style: inter(
               fontSize: 13,
               color: kOrgTextSecondary,
               height: 1.35,
@@ -739,7 +739,9 @@ class _OrgDisbursementsTabState extends ConsumerState<OrgDisbursementsTab> {
       runSpacing: 10,
       children: [
         // Download Ledger Summary (CSV)
-        Material(
+        PressableScale(
+          scale: 0.97,
+          child: Material(
           color: const Color(0xFFEEEDF3),
           borderRadius: BorderRadius.circular(12),
           child: InkWell(
@@ -754,7 +756,7 @@ class _OrgDisbursementsTabState extends ConsumerState<OrgDisbursementsTab> {
                   const SizedBox(width: 6),
                   Text(
                     'Download Ledger Summary (CSV)',
-                    style: GoogleFonts.inter(
+                    style: inter(
                       fontSize: 12,
                       fontWeight: FontWeight.w600,
                       color: kOrgTextPrimary,
@@ -766,7 +768,12 @@ class _OrgDisbursementsTabState extends ConsumerState<OrgDisbursementsTab> {
           ),
         ),
 
+        ),
+
         // Prepare Tranche Release Button
+        PressableScale(
+          scale: 0.97,
+          child:
         Material(
           color: kOrgPrimary,
           borderRadius: BorderRadius.circular(12),
@@ -782,7 +789,7 @@ class _OrgDisbursementsTabState extends ConsumerState<OrgDisbursementsTab> {
                   const SizedBox(width: 6),
                   Text(
                     '+ Prepare Tranche Release',
-                    style: GoogleFonts.inter(
+                    style: inter(
                       fontSize: 12,
                       fontWeight: FontWeight.w600,
                       color: Colors.white,
@@ -792,6 +799,7 @@ class _OrgDisbursementsTabState extends ConsumerState<OrgDisbursementsTab> {
               ),
             ),
           ),
+        ),
         ),
       ],
     );
@@ -837,164 +845,183 @@ class _OrgDisbursementsTabState extends ConsumerState<OrgDisbursementsTab> {
   }) {
     final pctExecuted = totalCommitted > 0 ? (disbursedYtd / totalCommitted) : 0.0;
 
-    final card1 = _buildTreasuryCard(
-      title: 'TOTAL COMMITTED BUDGET',
-      value: _formatCurrency(totalCommitted),
-      icon: Icons.account_balance_outlined,
-      iconBg: const Color(0xFFF4F3F8),
-      iconColor: kOrgPrimary,
-      bottomWidget: Wrap(
-        spacing: 6,
-        runSpacing: 4,
-        crossAxisAlignment: WrapCrossAlignment.center,
-        children: [
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-            decoration: BoxDecoration(
-              color: const Color(0xFFEEEDF3),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Text(
-              '2 Planned Tranches',
-              style: GoogleFonts.inter(
-                fontSize: 10.5,
-                fontWeight: FontWeight.w600,
-                color: kOrgTextSecondary,
+    final card1 = StaggeredListItem(
+      index: 0,
+      child: _buildTreasuryCard(
+        title: 'TOTAL COMMITTED BUDGET',
+        value: _formatCurrency(totalCommitted),
+        numericValue: totalCommitted,
+        prefix: '₱',
+        icon: Icons.account_balance_outlined,
+        iconBg: const Color(0xFFF4F3F8),
+        iconColor: kOrgPrimary,
+        bottomWidget: Wrap(
+          spacing: 6,
+          runSpacing: 4,
+          crossAxisAlignment: WrapCrossAlignment.center,
+          children: [
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+              decoration: BoxDecoration(
+                color: const Color(0xFFEEEDF3),
+                borderRadius: BorderRadius.circular(12),
               ),
-            ),
-          ),
-          Text(
-            'Ayala Endowment Fund',
-            style: GoogleFonts.inter(fontSize: 11, color: kOrgTextSecondary),
-          ),
-        ],
-      ),
-    );
-
-    final card2 = _buildTreasuryCard(
-      title: 'DISBURSED YEAR-TO-DATE',
-      value: _formatCurrency(disbursedYtd),
-      valueColor: kOrgPrimary,
-      icon: Icons.check_circle_rounded,
-      iconBg: const Color(0xFFB3F1C6).withValues(alpha: 0.4),
-      iconColor: kOrgPrimary,
-      bottomWidget: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Wrap(
-            spacing: 6,
-            runSpacing: 4,
-            alignment: WrapAlignment.spaceBetween,
-            crossAxisAlignment: WrapCrossAlignment.center,
-            children: [
-              Text(
-                '${(pctExecuted * 100).toStringAsFixed(1)}% Executed',
-                style: GoogleFonts.inter(
+              child: Text(
+                '2 Planned Tranches',
+                style: inter(
                   fontSize: 10.5,
                   fontWeight: FontWeight.w600,
-                  color: kOrgPrimary,
-                ),
-              ),
-              Text(
-                '${_formatCompactCurrency(disbursedYtd)} / ${_formatCompactCurrency(totalCommitted)}',
-                style: GoogleFonts.inter(fontSize: 10.5, color: kOrgTextSecondary),
-              ),
-            ],
-          ),
-          const SizedBox(height: 6),
-          ClipRRect(
-            borderRadius: BorderRadius.circular(4),
-            child: Container(
-              height: 6,
-              width: double.infinity,
-              color: const Color(0xFFEEEDF3),
-              child: Align(
-                alignment: Alignment.centerLeft,
-                child: FractionallySizedBox(
-                  widthFactor: pctExecuted.clamp(0.0, 1.0),
-                  child: Container(color: kOrgPrimary),
+                  color: kOrgTextSecondary,
                 ),
               ),
             ),
-          ),
-        ],
+            Text(
+              'Endowment Allocation',
+              style: inter(fontSize: 11, color: kOrgTextSecondary),
+            ),
+          ],
+        ),
       ),
     );
 
-    final card3 = _buildTreasuryCard(
-      title: 'UPCOMING MIDTERM RELEASE',
-      value: _formatCurrency(upcomingMidterm),
-      icon: Icons.pending_actions_rounded,
-      iconBg: const Color(0xFFD8E2FF).withValues(alpha: 0.5),
-      iconColor: const Color(0xFF0058BC),
-      bottomWidget: Wrap(
-        spacing: 6,
-        runSpacing: 4,
-        crossAxisAlignment: WrapCrossAlignment.center,
-        children: [
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-            decoration: BoxDecoration(
-              color: const Color(0xFFFFDDBB),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Text(
-              'Scheduled: Nov 15',
-              style: GoogleFonts.inter(
-                fontSize: 10,
-                fontWeight: FontWeight.w700,
-                color: const Color(0xFF623A00),
-              ),
-            ),
-          ),
-          Text('Tranche 2', style: GoogleFonts.inter(fontSize: 11, color: kOrgTextSecondary)),
-        ],
-      ),
-    );
-
-    final card4 = _buildTreasuryCard(
-      title: 'CONFIRMED SCHOLARS FUNDED',
-      value: '$totalScholars ${totalScholars == 1 ? 'Scholar' : 'Scholars'}',
-      icon: Icons.school_outlined,
-      iconBg: const Color(0xFFF4F3F8),
-      iconColor: kOrgTextPrimary,
-      bottomWidget: Wrap(
-        spacing: 6,
-        runSpacing: 4,
-        alignment: WrapAlignment.spaceBetween,
-        crossAxisAlignment: WrapCrossAlignment.center,
-        children: [
-          Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Container(
-                width: 24,
-                height: 24,
-                decoration: const BoxDecoration(
-                  color: kOrgPrimary,
-                  shape: BoxShape.circle,
+    final card2 = StaggeredListItem(
+      index: 1,
+      child: _buildTreasuryCard(
+        title: 'DISBURSED YEAR-TO-DATE',
+        value: _formatCurrency(disbursedYtd),
+        numericValue: disbursedYtd,
+        prefix: '₱',
+        valueColor: kOrgPrimary,
+        icon: Icons.check_circle_rounded,
+        iconBg: const Color(0xFFB3F1C6).withValues(alpha: 0.4),
+        iconColor: kOrgPrimary,
+        bottomWidget: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Wrap(
+              spacing: 6,
+              runSpacing: 4,
+              alignment: WrapAlignment.spaceBetween,
+              crossAxisAlignment: WrapCrossAlignment.center,
+              children: [
+                Text(
+                  '${(pctExecuted * 100).toStringAsFixed(1)}% Executed',
+                  style: inter(
+                    fontSize: 10.5,
+                    fontWeight: FontWeight.w600,
+                    color: kOrgPrimary,
+                  ),
                 ),
-                child: Center(
-                  child: Text(
-                    'MC',
-                    style: GoogleFonts.inter(fontSize: 10, fontWeight: FontWeight.w700, color: Colors.white),
+                Text(
+                  '${_formatCompactCurrency(disbursedYtd)} / ${_formatCompactCurrency(totalCommitted)}',
+                  style: inter(fontSize: 10.5, color: kOrgTextSecondary),
+                ),
+              ],
+            ),
+            const SizedBox(height: 6),
+            ClipRRect(
+              borderRadius: BorderRadius.circular(4),
+              child: Container(
+                height: 6,
+                width: double.infinity,
+                color: const Color(0xFFEEEDF3),
+                child: Align(
+                  alignment: Alignment.centerLeft,
+                  child: FractionallySizedBox(
+                    widthFactor: pctExecuted.clamp(0.0, 1.0),
+                    child: Container(color: kOrgPrimary),
                   ),
                 ),
               ),
-              const SizedBox(width: 6),
-              if (totalScholars > 1)
-                Text('+${totalScholars - 1}', style: GoogleFonts.inter(fontSize: 11, color: kOrgTextSecondary)),
-            ],
-          ),
-          Text(
-            '100% Enrollment Verified',
-            style: GoogleFonts.inter(
-              fontSize: 10.5,
-              fontWeight: FontWeight.w600,
-              color: kOrgPrimary,
             ),
-          ),
-        ],
+          ],
+        ),
+      ),
+    );
+
+    final card3 = StaggeredListItem(
+      index: 2,
+      child: _buildTreasuryCard(
+        title: 'UPCOMING MIDTERM RELEASE',
+        value: _formatCurrency(upcomingMidterm),
+        numericValue: upcomingMidterm,
+        prefix: '₱',
+        icon: Icons.pending_actions_rounded,
+        iconBg: const Color(0xFFD8E2FF).withValues(alpha: 0.5),
+        iconColor: const Color(0xFF0058BC),
+        bottomWidget: Wrap(
+          spacing: 6,
+          runSpacing: 4,
+          crossAxisAlignment: WrapCrossAlignment.center,
+          children: [
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+              decoration: BoxDecoration(
+                color: const Color(0xFFFFDDBB),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Text(
+                'Scheduled: Nov 15',
+                style: inter(
+                  fontSize: 10,
+                  fontWeight: FontWeight.w700,
+                  color: const Color(0xFF623A00),
+                ),
+              ),
+            ),
+            Text('Tranche 2', style: inter(fontSize: 11, color: kOrgTextSecondary)),
+          ],
+        ),
+      ),
+    );
+
+    final card4 = StaggeredListItem(
+      index: 3,
+      child: _buildTreasuryCard(
+        title: 'CONFIRMED SCHOLARS FUNDED',
+        value: '$totalScholars ${totalScholars == 1 ? 'Scholar' : 'Scholars'}',
+        numericValue: totalScholars,
+        icon: Icons.school_outlined,
+        iconBg: const Color(0xFFF4F3F8),
+        iconColor: kOrgTextPrimary,
+        bottomWidget: Wrap(
+          spacing: 6,
+          runSpacing: 4,
+          alignment: WrapAlignment.spaceBetween,
+          crossAxisAlignment: WrapCrossAlignment.center,
+          children: [
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  width: 24,
+                  height: 24,
+                  decoration: const BoxDecoration(
+                    color: kOrgPrimary,
+                    shape: BoxShape.circle,
+                  ),
+                  child: Center(
+                    child: Text(
+                      'SC',
+                      style: inter(fontSize: 10, fontWeight: FontWeight.w700, color: Colors.white),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 6),
+                if (totalScholars > 1)
+                  Text('+${totalScholars - 1}', style: inter(fontSize: 11, color: kOrgTextSecondary)),
+              ],
+            ),
+            Text(
+              '100% Enrollment Verified',
+              style: inter(
+                fontSize: 10.5,
+                fontWeight: FontWeight.w600,
+                color: kOrgPrimary,
+              ),
+            ),
+          ],
+        ),
       ),
     );
 
@@ -1031,6 +1058,8 @@ class _OrgDisbursementsTabState extends ConsumerState<OrgDisbursementsTab> {
   Widget _buildTreasuryCard({
     required String title,
     required String value,
+    int? numericValue,
+    String? prefix,
     Color? valueColor,
     required IconData icon,
     required Color iconBg,
@@ -1062,7 +1091,7 @@ class _OrgDisbursementsTabState extends ConsumerState<OrgDisbursementsTab> {
                   title,
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
-                  style: GoogleFonts.inter(
+                  style: inter(
                     fontSize: 10.5,
                     fontWeight: FontWeight.w600,
                     color: kOrgTextMuted,
@@ -1086,15 +1115,26 @@ class _OrgDisbursementsTabState extends ConsumerState<OrgDisbursementsTab> {
           FittedBox(
             fit: BoxFit.scaleDown,
             alignment: Alignment.centerLeft,
-            child: Text(
-              value,
-              style: GoogleFonts.inter(
-                fontSize: 24,
-                fontWeight: FontWeight.w700,
-                color: valueColor ?? kOrgTextPrimary,
-                letterSpacing: -0.5,
-              ),
-            ),
+            child: numericValue != null
+                ? CountUpAnimation(
+                    targetValue: numericValue,
+                    prefix: prefix ?? '',
+                    style: orgTabularFigures(inter(
+                      fontSize: 22,
+                      fontWeight: FontWeight.w700,
+                      color: valueColor ?? kOrgTextPrimary,
+                      letterSpacing: -0.5,
+                    )),
+                  )
+                : Text(
+                    value,
+                    style: orgTabularFigures(inter(
+                      fontSize: 22,
+                      fontWeight: FontWeight.w700,
+                      color: valueColor ?? kOrgTextPrimary,
+                      letterSpacing: -0.5,
+                    )),
+                  ),
           ),
           const SizedBox(height: 12),
           bottomWidget,
@@ -1127,14 +1167,14 @@ class _OrgDisbursementsTabState extends ConsumerState<OrgDisbursementsTab> {
             const SizedBox(width: 6),
             Text(
               'Tranche 1 • Completed',
-              style: GoogleFonts.inter(fontSize: 10.5, fontWeight: FontWeight.w700, color: const Color(0xFF00351C)),
+              style: inter(fontSize: 10.5, fontWeight: FontWeight.w700, color: const Color(0xFF00351C)),
             ),
           ],
         ),
       ),
       dateText: 'Aug 28, 2024',
       title: 'Tuition & Initial Stipends',
-      subtext: 'Matriculation fees remitted to UP registrar desk.',
+      subtext: 'Matriculation fees remitted to institutional registrar accounts.',
       volumeLabel: 'Volume Released',
       volumeValue: _formatCurrency(disbursedYtd),
       seatsLabel: 'Audited Beneficiaries',
@@ -1149,14 +1189,14 @@ class _OrgDisbursementsTabState extends ConsumerState<OrgDisbursementsTab> {
               'Disbursed & Liquidated',
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
-              style: GoogleFonts.inter(fontSize: 11, fontWeight: FontWeight.w600, color: kOrgPrimary),
+              style: inter(fontSize: 11, fontWeight: FontWeight.w600, color: kOrgPrimary),
             ),
           ),
         ],
       ),
       footerRight: Text(
-        'Audit Ref #AF-TR1-2024',
-        style: GoogleFonts.inter(fontSize: 10.5, color: kOrgTextMuted),
+        'Audit Ref #TR1-${DateTime.now().year}',
+        style: inter(fontSize: 10.5, color: kOrgTextMuted),
       ),
     );
 
@@ -1176,7 +1216,7 @@ class _OrgDisbursementsTabState extends ConsumerState<OrgDisbursementsTab> {
             const SizedBox(width: 6),
             Text(
               'Tranche 2 • Scheduled',
-              style: GoogleFonts.inter(fontSize: 10.5, fontWeight: FontWeight.w700, color: const Color(0xFF004493)),
+              style: inter(fontSize: 10.5, fontWeight: FontWeight.w700, color: const Color(0xFF004493)),
             ),
           ],
         ),
@@ -1198,7 +1238,7 @@ class _OrgDisbursementsTabState extends ConsumerState<OrgDisbursementsTab> {
               'Ready for Release (3 days)',
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
-              style: GoogleFonts.inter(fontSize: 11, fontWeight: FontWeight.w600, color: const Color(0xFF0058BC)),
+              style: inter(fontSize: 11, fontWeight: FontWeight.w600, color: const Color(0xFF0058BC)),
             ),
           ),
         ],
@@ -1207,7 +1247,7 @@ class _OrgDisbursementsTabState extends ConsumerState<OrgDisbursementsTab> {
         onTap: () => _showPrepareTrancheToast(context, upcomingMidterm, totalScholars),
         child: Text(
           'Review Queue →',
-          style: GoogleFonts.inter(fontSize: 11, fontWeight: FontWeight.w600, color: kOrgPrimary),
+          style: inter(fontSize: 11, fontWeight: FontWeight.w600, color: kOrgPrimary),
         ),
       ),
     );
@@ -1227,7 +1267,7 @@ class _OrgDisbursementsTabState extends ConsumerState<OrgDisbursementsTab> {
             const SizedBox(width: 6),
             Text(
               'Tranche 3 • Upcoming',
-              style: GoogleFonts.inter(fontSize: 10.5, fontWeight: FontWeight.w600, color: kOrgTextSecondary),
+              style: inter(fontSize: 10.5, fontWeight: FontWeight.w600, color: kOrgTextSecondary),
             ),
           ],
         ),
@@ -1249,14 +1289,14 @@ class _OrgDisbursementsTabState extends ConsumerState<OrgDisbursementsTab> {
               'Pending Midterm Grades',
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
-              style: GoogleFonts.inter(fontSize: 11, color: kOrgTextSecondary),
+              style: inter(fontSize: 11, color: kOrgTextSecondary),
             ),
           ),
         ],
       ),
       footerRight: Text(
         'Q1 2025 Cycle',
-        style: GoogleFonts.inter(fontSize: 10.5, color: kOrgTextMuted),
+        style: inter(fontSize: 10.5, color: kOrgTextMuted),
       ),
     );
 
@@ -1276,7 +1316,7 @@ class _OrgDisbursementsTabState extends ConsumerState<OrgDisbursementsTab> {
                 const SizedBox(width: 8),
                 Text(
                   'Semester Tranche Release Timeline',
-                  style: GoogleFonts.inter(
+                  style: inter(
                     fontSize: 17,
                     fontWeight: FontWeight.w700,
                     color: kOrgTextPrimary,
@@ -1295,7 +1335,7 @@ class _OrgDisbursementsTabState extends ConsumerState<OrgDisbursementsTab> {
                 const SizedBox(width: 6),
                 Text(
                   'Bank Transfer Direct to University & Scholar Institutional Accounts',
-                  style: GoogleFonts.inter(fontSize: 11, color: kOrgTextSecondary),
+                  style: inter(fontSize: 11, color: kOrgTextSecondary),
                 ),
               ],
             ),
@@ -1387,18 +1427,18 @@ class _OrgDisbursementsTabState extends ConsumerState<OrgDisbursementsTab> {
                   crossAxisAlignment: WrapCrossAlignment.center,
                   children: [
                     statusBadge,
-                    Text(dateText, style: GoogleFonts.inter(fontSize: 11, color: kOrgTextSecondary)),
+                    Text(dateText, style: inter(fontSize: 11, color: kOrgTextSecondary)),
                   ],
                 ),
                 const SizedBox(height: 14),
                 Text(
                   title,
-                  style: GoogleFonts.inter(fontSize: 15, fontWeight: FontWeight.w700, color: kOrgTextPrimary),
+                  style: inter(fontSize: 15, fontWeight: FontWeight.w700, color: kOrgTextPrimary),
                 ),
                 const SizedBox(height: 4),
                 Text(
                   subtext,
-                  style: GoogleFonts.inter(fontSize: 11.5, color: kOrgTextSecondary, height: 1.3),
+                  style: inter(fontSize: 11.5, color: kOrgTextSecondary, height: 1.3),
                 ),
                 const SizedBox(height: 14),
                 Container(
@@ -1415,22 +1455,22 @@ class _OrgDisbursementsTabState extends ConsumerState<OrgDisbursementsTab> {
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(volumeLabel, style: GoogleFonts.inter(fontSize: 10.5, color: kOrgTextMuted)),
+                          Text(volumeLabel, style: inter(fontSize: 10.5, color: kOrgTextMuted)),
                           const SizedBox(height: 2),
                           Text(
                             volumeValue,
-                            style: GoogleFonts.inter(fontSize: 15, fontWeight: FontWeight.w700, color: kOrgTextPrimary),
+                            style: orgTabularFigures(inter(fontSize: 15, fontWeight: FontWeight.w700, color: kOrgTextPrimary)),
                           ),
                         ],
                       ),
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
-                          Text(seatsLabel, style: GoogleFonts.inter(fontSize: 10.5, color: kOrgTextMuted)),
+                          Text(seatsLabel, style: inter(fontSize: 10.5, color: kOrgTextMuted)),
                           const SizedBox(height: 2),
                           Text(
                             seatsValue,
-                            style: GoogleFonts.inter(fontSize: 13, fontWeight: FontWeight.w600, color: kOrgTextPrimary),
+                            style: orgTabularFigures(inter(fontSize: 13, fontWeight: FontWeight.w600, color: kOrgTextPrimary)),
                           ),
                         ],
                       ),
@@ -1501,7 +1541,7 @@ class _OrgDisbursementsTabState extends ConsumerState<OrgDisbursementsTab> {
                       children: [
                         Text(
                           'Scholar Payout Roster',
-                          style: GoogleFonts.inter(
+                          style: inter(
                             fontSize: 17,
                             fontWeight: FontWeight.w700,
                             color: kOrgTextPrimary,
@@ -1516,7 +1556,7 @@ class _OrgDisbursementsTabState extends ConsumerState<OrgDisbursementsTab> {
                           ),
                           child: Text(
                             '$totalScholars ${totalScholars == 1 ? 'Grant Active' : 'Grants Active'}',
-                            style: GoogleFonts.inter(
+                            style: inter(
                               fontSize: 10.5,
                               fontWeight: FontWeight.w600,
                               color: kOrgTextSecondary,
@@ -1528,7 +1568,7 @@ class _OrgDisbursementsTabState extends ConsumerState<OrgDisbursementsTab> {
                     const SizedBox(height: 2),
                     Text(
                       'Individual stipend vouchers, remitted receipts, and tranche settlement records.',
-                      style: GoogleFonts.inter(fontSize: 11.5, color: kOrgTextSecondary),
+                      style: inter(fontSize: 11.5, color: kOrgTextSecondary),
                     ),
                   ],
                 ),
@@ -1549,10 +1589,10 @@ class _OrgDisbursementsTabState extends ConsumerState<OrgDisbursementsTab> {
                       child: TextField(
                         controller: _searchController,
                         onChanged: (val) => setState(() => _searchQuery = val),
-                        style: GoogleFonts.inter(fontSize: 11.5, color: kOrgTextPrimary),
+                        style: inter(fontSize: 11.5, color: kOrgTextPrimary),
                         decoration: InputDecoration(
                           hintText: 'Filter by scholar or LRN...',
-                          hintStyle: GoogleFonts.inter(fontSize: 11, color: kOrgTextMuted),
+                          hintStyle: inter(fontSize: 11, color: kOrgTextMuted),
                           prefixIcon: const Icon(Icons.search_rounded, size: 16, color: kOrgTextSecondary),
                           border: InputBorder.none,
                           contentPadding: const EdgeInsets.symmetric(vertical: 9),
@@ -1572,7 +1612,7 @@ class _OrgDisbursementsTabState extends ConsumerState<OrgDisbursementsTab> {
                         child: DropdownButton<String>(
                           value: _selectedGrantTrack,
                           icon: const Icon(Icons.expand_more_rounded, size: 16, color: kOrgTextSecondary),
-                          style: GoogleFonts.inter(fontSize: 11, fontWeight: FontWeight.w500, color: kOrgTextPrimary),
+                          style: inter(fontSize: 11, fontWeight: FontWeight.w500, color: kOrgTextPrimary),
                           onChanged: (val) {
                             if (val != null) setState(() => _selectedGrantTrack = val);
                           },
@@ -1602,7 +1642,7 @@ class _OrgDisbursementsTabState extends ConsumerState<OrgDisbursementsTab> {
                 dataRowMaxHeight: 64,
                 horizontalMargin: 16,
                 columnSpacing: 16,
-                headingTextStyle: GoogleFonts.inter(
+                headingTextStyle: inter(
                   fontSize: 10.5,
                   fontWeight: FontWeight.w700,
                   color: kOrgTextMuted,
@@ -1623,7 +1663,7 @@ class _OrgDisbursementsTabState extends ConsumerState<OrgDisbursementsTab> {
                             DataCell(
                               Text(
                                 'No awarded scholars with active allocations found.',
-                                style: GoogleFonts.inter(fontSize: 12, color: kOrgTextMuted),
+                                style: inter(fontSize: 12, color: kOrgTextMuted),
                               ),
                             ),
                             const DataCell(SizedBox()),
@@ -1637,17 +1677,18 @@ class _OrgDisbursementsTabState extends ConsumerState<OrgDisbursementsTab> {
                     : filteredApps.map((app) {
                         final p = resolveProfile(app);
                         final s = scholarshipsMap[app.scholarshipId];
-                        final fullName = p.fullName.isNotEmpty ? p.fullName : 'Maria Clarissa Santos';
-                        final school = p.school?.isNotEmpty == true ? p.school! : 'UP Diliman';
-                        final course = p.course.isNotEmpty ? p.course : 'BS Computer Science';
-                        final lrn = 'Not on file';
+                        final displayId = app.userId.length >= 8 ? app.userId.substring(0, 8) : app.userId;
+                        final fullName = p.fullName.isNotEmpty ? p.fullName : 'Applicant #$displayId';
+                        final school = (p.school != null && p.school!.isNotEmpty) ? p.school! : 'School Pending';
+                        final course = p.course.isNotEmpty ? p.course : 'Course Pending';
+                        final lrn = 'APP-${app.id.length >= 8 ? app.id.substring(0, 8) : app.id}';
 
                         final parts = fullName.split(' ');
                         final initials = parts.length >= 2
                             ? '${parts.first[0]}${parts.last[0]}'.toUpperCase()
-                            : (parts.isNotEmpty && parts[0].isNotEmpty ? parts[0][0].toUpperCase() : 'MS');
+                            : (parts.isNotEmpty && parts[0].isNotEmpty ? parts[0][0].toUpperCase() : 'AP');
 
-                        final grantTitle = s?.title ?? 'Ayala Future Leaders Grant 2026';
+                        final grantTitle = s?.title ?? 'Scholarship Grant';
 
                         return DataRow(
                           cells: [
@@ -1666,7 +1707,7 @@ class _OrgDisbursementsTabState extends ConsumerState<OrgDisbursementsTab> {
                                     child: Center(
                                       child: Text(
                                         initials,
-                                        style: GoogleFonts.inter(
+                                        style: inter(
                                           fontSize: 12,
                                           fontWeight: FontWeight.w700,
                                           color: kOrgPrimary,
@@ -1681,15 +1722,15 @@ class _OrgDisbursementsTabState extends ConsumerState<OrgDisbursementsTab> {
                                     children: [
                                       Text(
                                         fullName,
-                                        style: GoogleFonts.inter(
+                                        style: inter(
                                           fontSize: 12.5,
                                           fontWeight: FontWeight.w600,
                                           color: kOrgTextPrimary,
                                         ),
                                       ),
                                       Text(
-                                        'LRN: $lrn • $school ($course)',
-                                        style: GoogleFonts.inter(
+                                        '$lrn • $school ($course)',
+                                        style: inter(
                                           fontSize: 11,
                                           color: kOrgTextSecondary,
                                         ),
@@ -1709,7 +1750,7 @@ class _OrgDisbursementsTabState extends ConsumerState<OrgDisbursementsTab> {
                                 ),
                                 child: Text(
                                   grantTitle,
-                                  style: GoogleFonts.inter(
+                                  style: inter(
                                     fontSize: 11,
                                     fontWeight: FontWeight.w500,
                                     color: kOrgTextPrimary,
@@ -1725,7 +1766,7 @@ class _OrgDisbursementsTabState extends ConsumerState<OrgDisbursementsTab> {
                                 children: [
                                   Text(
                                     '${_formatCurrency(perScholarTranche)}.00',
-                                    style: GoogleFonts.inter(
+                                    style: inter(
                                       fontSize: 12,
                                       fontWeight: FontWeight.w600,
                                       color: kOrgTextPrimary,
@@ -1738,7 +1779,7 @@ class _OrgDisbursementsTabState extends ConsumerState<OrgDisbursementsTab> {
                                       const SizedBox(width: 3),
                                       Text(
                                         'Released Aug 28',
-                                        style: GoogleFonts.inter(
+                                        style: inter(
                                           fontSize: 10,
                                           color: kOrgPrimary,
                                           fontWeight: FontWeight.w500,
@@ -1757,7 +1798,7 @@ class _OrgDisbursementsTabState extends ConsumerState<OrgDisbursementsTab> {
                                 children: [
                                   Text(
                                     '${_formatCurrency(perScholarTranche)}.00',
-                                    style: GoogleFonts.inter(
+                                    style: inter(
                                       fontSize: 12,
                                       fontWeight: FontWeight.w600,
                                       color: kOrgTextPrimary,
@@ -1770,7 +1811,7 @@ class _OrgDisbursementsTabState extends ConsumerState<OrgDisbursementsTab> {
                                       const SizedBox(width: 3),
                                       Text(
                                         'Releasing Nov 15',
-                                        style: GoogleFonts.inter(
+                                        style: inter(
                                           fontSize: 10,
                                           color: const Color(0xFF0058BC),
                                           fontWeight: FontWeight.w500,
@@ -1795,8 +1836,8 @@ class _OrgDisbursementsTabState extends ConsumerState<OrgDisbursementsTab> {
                                     const Icon(Icons.verified_rounded, size: 12, color: Color(0xFF00351C)),
                                     const SizedBox(width: 4),
                                     Text(
-                                      'Verified (OR-99120)',
-                                      style: GoogleFonts.inter(
+                                      'Verified (Ref #${app.id.length >= 6 ? app.id.substring(0, 6) : app.id})',
+                                      style: inter(
                                         fontSize: 10.5,
                                         fontWeight: FontWeight.w600,
                                         color: const Color(0xFF00351C),
@@ -1815,10 +1856,11 @@ class _OrgDisbursementsTabState extends ConsumerState<OrgDisbursementsTab> {
                                   style: TextButton.styleFrom(
                                     backgroundColor: const Color(0xFFF4F3F8),
                                     foregroundColor: kOrgTextPrimary,
+                                    minimumSize: const Size(0, 36),
                                     padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                                   ),
-                                  child: Text('View Ledger →', style: GoogleFonts.inter(fontSize: 11, fontWeight: FontWeight.w500)),
+                                  child: Text('View Ledger →', style: inter(fontSize: 11, fontWeight: FontWeight.w500)),
                                 ),
                               ),
                             ),
@@ -1846,16 +1888,16 @@ class _OrgDisbursementsTabState extends ConsumerState<OrgDisbursementsTab> {
                 RichText(
                   text: TextSpan(
                     text: 'Showing ',
-                    style: GoogleFonts.inter(fontSize: 11.5, color: kOrgTextSecondary),
+                    style: inter(fontSize: 11.5, color: kOrgTextSecondary),
                     children: [
                       TextSpan(
                         text: '1–${filteredApps.length}',
-                        style: GoogleFonts.inter(fontWeight: FontWeight.w700, color: kOrgTextPrimary),
+                        style: inter(fontWeight: FontWeight.w700, color: kOrgTextPrimary),
                       ),
                       const TextSpan(text: ' of '),
                       TextSpan(
                         text: '$totalScholars',
-                        style: GoogleFonts.inter(fontWeight: FontWeight.w700, color: kOrgTextPrimary),
+                        style: inter(fontWeight: FontWeight.w700, color: kOrgTextPrimary),
                       ),
                       const TextSpan(text: ' scholars with active allocations'),
                     ],
@@ -1867,7 +1909,7 @@ class _OrgDisbursementsTabState extends ConsumerState<OrgDisbursementsTab> {
                     OutlinedButton.icon(
                       onPressed: _currentPage > 1 ? () => setState(() => _currentPage--) : null,
                       icon: const Icon(Icons.chevron_left_rounded, size: 14),
-                      label: Text('Previous', style: GoogleFonts.inter(fontSize: 11)),
+                      label: Text('Previous', style: inter(fontSize: 11)),
                       style: OutlinedButton.styleFrom(
                         foregroundColor: kOrgTextPrimary,
                         side: const BorderSide(color: kOrgBorder),
@@ -1884,7 +1926,7 @@ class _OrgDisbursementsTabState extends ConsumerState<OrgDisbursementsTab> {
                       ),
                       child: Text(
                         '1',
-                        style: GoogleFonts.inter(fontSize: 11, fontWeight: FontWeight.w700, color: kOrgTextPrimary),
+                        style: inter(fontSize: 11, fontWeight: FontWeight.w700, color: kOrgTextPrimary),
                       ),
                     ),
                     const SizedBox(width: 8),
@@ -1898,7 +1940,7 @@ class _OrgDisbursementsTabState extends ConsumerState<OrgDisbursementsTab> {
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          Text('Next', style: GoogleFonts.inter(fontSize: 11)),
+                          Text('Next', style: inter(fontSize: 11)),
                           const SizedBox(width: 4),
                           const Icon(Icons.chevron_right_rounded, size: 14),
                         ],
@@ -1938,7 +1980,7 @@ class _OrgDisbursementsTabState extends ConsumerState<OrgDisbursementsTab> {
             children: [
               Text(
                 'Commission on Higher Education (CHED) & BIR Liquidation Protocol',
-                style: GoogleFonts.inter(
+                style: inter(
                   fontSize: 14,
                   fontWeight: FontWeight.w700,
                   color: kOrgTextPrimary,
@@ -1947,7 +1989,7 @@ class _OrgDisbursementsTabState extends ConsumerState<OrgDisbursementsTab> {
               const SizedBox(height: 4),
               Text(
                 'Scholar disbursement batches are strictly audited against verified university registrars\' official receipts (OR) and certified enrollment rosters before subsequent tranches can be authorized by the Foundation Treasurer.',
-                style: GoogleFonts.inter(fontSize: 12, color: kOrgTextSecondary, height: 1.35),
+                style: inter(fontSize: 12, color: kOrgTextSecondary, height: 1.35),
               ),
             ],
           ),
@@ -1968,7 +2010,7 @@ class _OrgDisbursementsTabState extends ConsumerState<OrgDisbursementsTab> {
               padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8.5),
               child: Text(
                 'View Compliance Policy',
-                style: GoogleFonts.inter(
+                style: inter(
                   fontSize: 11.5,
                   fontWeight: FontWeight.w600,
                   color: kOrgTextPrimary,
@@ -1988,7 +2030,7 @@ class _OrgDisbursementsTabState extends ConsumerState<OrgDisbursementsTab> {
               padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8.5),
               child: Text(
                 'Generate Audit Binder',
-                style: GoogleFonts.inter(
+                style: inter(
                   fontSize: 11.5,
                   fontWeight: FontWeight.w600,
                   color: Colors.white,

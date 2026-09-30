@@ -7,6 +7,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import '../../../../shared/theme/app_motion.dart';
+
 // Brand & Institutional Colors
 const kOrgPrimary = Color(0xFF0F4D2E); // Bridge Green
 const kOrgPrimaryDark = Color(0xFF00351C);
@@ -25,7 +27,7 @@ const kOrgHairline = Color(0xFFE4E7EC);
 const kOrgBorderDark = Color(0xFFD1D5DB);
 const kOrgTextPrimary = Color(0xFF1A1C1B);
 const kOrgTextSecondary = Color(0xFF5A645C);
-const kOrgTextMuted = Color(0xFF707971);
+const kOrgTextMuted = Color(0xFF545D56);
 const kOrgError = Color(0xFFBA1A1A);
 const kOrgSuccess = Color(0xFF27C93F);
 
@@ -61,31 +63,35 @@ const List<BoxShadow> kOrgCardShadow = [
   ),
 ];
 
-// Typography Helpers
+// Typography Helpers adhering to Apple HIG Optical Typography (Section 15)
 TextStyle orgHeadline({
   double fontSize = 18,
   FontWeight fontWeight = FontWeight.w700,
   Color color = kOrgTextPrimary,
   double? letterSpacing,
+  double? height,
 }) =>
     GoogleFonts.inter(
       fontSize: fontSize,
       fontWeight: fontWeight,
       color: color,
-      letterSpacing: letterSpacing ?? -0.2,
+      letterSpacing: letterSpacing ?? opticalTracking(fontSize),
+      height: height ?? opticalLeading(fontSize, isBody: false),
     );
 
 TextStyle orgBody({
   double fontSize = 13.5,
   FontWeight fontWeight = FontWeight.w400,
   Color color = kOrgTextPrimary,
-  double height = 1.4,
+  double? letterSpacing,
+  double? height,
 }) =>
     GoogleFonts.inter(
       fontSize: fontSize,
       fontWeight: fontWeight,
       color: color,
-      height: height,
+      letterSpacing: letterSpacing ?? opticalTracking(fontSize),
+      height: height ?? (fontSize <= 16 ? 1.45 : opticalLeading(fontSize, isBody: true)),
     );
 
 TextStyle orgLabel({
@@ -93,10 +99,46 @@ TextStyle orgLabel({
   FontWeight fontWeight = FontWeight.w600,
   Color color = kOrgTextSecondary,
   double? letterSpacing,
+  double? height,
 }) =>
     GoogleFonts.inter(
       fontSize: fontSize,
       fontWeight: fontWeight,
       color: color,
-      letterSpacing: letterSpacing ?? 0.02,
+      letterSpacing: letterSpacing ?? opticalTracking(fontSize),
+      height: height ?? opticalLeading(fontSize, isBody: false),
+    );
+
+/// Monospace font reserved exclusively for counts, quantitative metrics, timestamps, and IDs.
+TextStyle orgDataMono({
+  double fontSize = 12.5,
+  FontWeight fontWeight = FontWeight.w500,
+  Color color = kOrgTextPrimary,
+}) =>
+    GoogleFonts.robotoMono(
+      fontSize: fontSize,
+      fontWeight: fontWeight,
+      color: color,
+    );
+
+/// Tabular figures helper for numeric typography (prevents digit horizontal jittering).
+TextStyle orgTabularFigures(TextStyle base) => base.copyWith(
+      fontFeatures: [
+        ...?base.fontFeatures,
+        const FontFeature.tabularFigures(),
+      ],
+    );
+
+/// Monospace pill container helper for IDs, hashes, and reference codes.
+Widget orgIdPill(String idText) => Container(
+      padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
+      decoration: BoxDecoration(
+        color: const Color(0xFFF4F3F8),
+        borderRadius: BorderRadius.circular(6),
+        border: Border.all(color: kOrgHairline),
+      ),
+      child: Text(
+        idText,
+        style: orgDataMono(fontSize: 11, color: kOrgTextSecondary),
+      ),
     );

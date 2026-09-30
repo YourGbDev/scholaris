@@ -2240,12 +2240,6 @@ class _OrgAnalyticsTabState extends ConsumerState<OrgAnalyticsTab> {
                         final Color gwaBadgeColor = gwa > 0 ? (gwa <= 1.25 ? const Color(0xFFB3F1C6) : const Color(0xFFD8E2FF)) : const Color(0xFFF4F3F8);
                         final Color gwaTextColor = gwa > 0 ? (gwa <= 1.25 ? const Color(0xFF00351C) : const Color(0xFF004493)) : kOrgTextSecondary;
                         // gwaBadgeColor and gwaTextColor set above
-                        final _unused1 = 0;
-                            // unused1
-                            // unused2;
-                        final _unused2 = 0;
-                            // unused3
-                            // unused4;
 
                         final parts = fullName.split(' ');
                         final initials = parts.length >= 2

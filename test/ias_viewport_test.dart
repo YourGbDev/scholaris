@@ -137,7 +137,7 @@ void main() {
 
     testWidgets('ProviderSignupScreen at 440x956 with password complexity', (tester) async {
       setViewport(tester, 440, 956);
-      await tester.pumpWidget(const MaterialApp(home: ProviderSignupScreen()));
+      await tester.pumpWidget(const MaterialApp(home: ProviderSignupScreen(initialType: 'individual')));
       await tester.pump(const Duration(milliseconds: 300));
 
       final pwdField = find.byType(TextFormField).at(3);

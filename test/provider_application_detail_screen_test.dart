@@ -108,6 +108,8 @@ void main() {
         gpa: 1.45,
         region: 'National Capital Region (NCR)',
         nationality: 'Filipino',
+        setupComplete: true,
+        monthlyFamilyIncome: 20000,
       );
 
       await tester.pumpWidget(buildApp(
@@ -121,26 +123,26 @@ void main() {
       expect(find.text('Application Review'), findsOneWidget);
       expect(find.text('Back to Console'), findsOneWidget);
       expect(find.text('Maya Santos Dela Cruz'), findsOneWidget);
-      expect(find.text('98% Match Score'), findsOneWidget);
+      expect(find.text('Insufficient Pool Data'), findsOneWidget);
       expect(find.text('STAGE: SUBMITTED'), findsOneWidget);
 
       // Section 1: Academic Credentials
       expect(find.text('Academic Credentials'), findsOneWidget);
-      expect(find.text('Verified SUC'), findsOneWidget);
+      expect(find.text('Profile Complete'), findsOneWidget);
       expect(find.text('1.45'), findsOneWidget);
-      expect(find.text('Exceeds 1.75 Merit Cutoff'), findsOneWidget);
+      expect(find.text('Meets 1.75 Cutoff'), findsOneWidget);
       expect(find.text('University of the Philippines Diliman'), findsOneWidget);
 
       // Section 2: Socioeconomic Assessment
       expect(find.text('Socioeconomic Assessment'), findsOneWidget);
       expect(find.textContaining('RA 10173 Compliance'), findsOneWidget);
-      expect(find.text('Verified Tier 2: Low-to-Middle Income Bracket'), findsOneWidget);
+      expect(find.text('LOW Income Tier'), findsOneWidget);
 
       // Section 3: Document Checklist
       await tester.ensureVisible(find.text('Document Audit Checklist'));
       await tester.pumpAndSettle();
       expect(find.text('Document Audit Checklist'), findsOneWidget);
-      expect(find.text('Certified True Copy of Grades (TCG)'), findsOneWidget);
+      expect(find.text('No verification documents on file'), findsOneWidget);
       expect(find.text('Applicant Statement / Note'), findsOneWidget);
       expect(find.text('Passionate about artificial intelligence and open source.'), findsOneWidget);
 

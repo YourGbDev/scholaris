@@ -30,6 +30,7 @@ import 'package:scholaris/features/home/presentation/home_screen.dart';
 import 'package:scholaris/features/scholarships/models/scholarship.dart';
 import 'package:scholaris/features/scholarships/providers/scholarships_provider.dart';
 import 'package:scholaris/features/scholarships/presentation/scholarship_detail_screen.dart';
+import 'package:scholaris/shared/theme/app_motion.dart';
 import 'package:scholaris/shared/theme/app_theme.dart';
 import 'package:scholaris/shared/widgets/mascot_pose_view.dart';
 import 'package:scholaris/shared/widgets/responsive_container.dart';
@@ -99,8 +100,10 @@ class _SavedScreenState extends ConsumerState<SavedScreen> {
                             letterSpacing: -0.3,
                           ),
                         ),
-                        Text(
-                          '($savedCount saved)',
+                        CountUpAnimation(
+                          targetValue: savedCount,
+                          prefix: '(',
+                          suffix: ' saved)',
                           style: GoogleFonts.outfit(
                             fontSize: 13,
                             fontWeight: FontWeight.w600,
@@ -110,26 +113,28 @@ class _SavedScreenState extends ConsumerState<SavedScreen> {
                       ],
                     ),
                   ),
-                  Material(
-                    color: _searchOpen
-                        ? const Color(0xFFE8EEFF)
-                        : Colors.transparent,
-                    shape: const CircleBorder(),
-                    child: IconButton(
-                      tooltip: 'Search saved scholarships',
-                      icon: Icon(
-                        _searchOpen ? Icons.close_rounded : Icons.search_rounded,
-                        size: 22,
-                        color: const Color(0xFF404942),
+                  PressableScale(
+                    child: Material(
+                      color: _searchOpen
+                          ? const Color(0xFFE8EEFF)
+                          : Colors.transparent,
+                      shape: const CircleBorder(),
+                      child: IconButton(
+                        tooltip: 'Search saved scholarships',
+                        icon: Icon(
+                          _searchOpen ? Icons.close_rounded : Icons.search_rounded,
+                          size: 22,
+                          color: const Color(0xFF404942),
+                        ),
+                        onPressed: () {
+                          setState(() {
+                            _searchOpen = !_searchOpen;
+                            if (!_searchOpen) {
+                              _searchController.clear();
+                            }
+                          });
+                        },
                       ),
-                      onPressed: () {
-                        setState(() {
-                          _searchOpen = !_searchOpen;
-                          if (!_searchOpen) {
-                            _searchController.clear();
-                          }
-                        });
-                      },
                     ),
                   ),
                 ],
@@ -198,6 +203,19 @@ class _SavedScreenState extends ConsumerState<SavedScreen> {
     );
   }
 
+  Widget _buildSavedSkeleton() {
+    return ListView.separated(
+      physics: const NeverScrollableScrollPhysics(),
+      padding: const EdgeInsets.fromLTRB(20, 8, 20, 32),
+      itemCount: 4,
+      separatorBuilder: (_, _) => const SizedBox(height: 14),
+      itemBuilder: (_, _) => const SkeletonBand(
+        height: 140,
+        borderRadius: 16,
+      ),
+    );
+  }
+
   Widget _buildBody(
     WidgetRef ref,
     AsyncValue<Set<String>> bookmarksAsync,
@@ -205,107 +223,121 @@ class _SavedScreenState extends ConsumerState<SavedScreen> {
     Set<String> appliedIds,
     String searchQuery,
   ) {
-    return bookmarksAsync.when(
-      loading: () => const LoadingView(),
-      error: (_, _) => ErrorView(
+    final isLoading = bookmarksAsync.isLoading || allAsync.isLoading;
+    if (isLoading && !bookmarksAsync.hasValue) {
+      return _buildSavedSkeleton();
+    }
+
+    if (bookmarksAsync.hasError) {
+      return ErrorView(
         message: 'Could not load your saved scholarships.',
         onRetry: () => ref.invalidate(bookmarksProvider),
-      ),
-      data: (ids) {
+      );
+    }
+
+    if (allAsync.hasError) {
+      return ErrorView(
+        message: 'Could not load scholarship details.',
+        onRetry: () => ref.invalidate(scholarshipsProvider),
+      );
+    }
+
+    final ids = bookmarksAsync.valueOrNull ?? const <String>{};
+    final all = allAsync.valueOrNull ?? const <Scholarship>[];
+
+    return CrossFadeLoading(
+      isLoading: isLoading,
+      skeleton: _buildSavedSkeleton(),
+      child: () {
         if (ids.isEmpty) {
           return const _SavedEmptyState();
         }
 
-        return allAsync.when(
-          loading: () => const LoadingView(),
-          error: (_, _) => ErrorView(
-            message: 'Could not load scholarship details.',
-            onRetry: () => ref.invalidate(scholarshipsProvider),
-          ),
-          data: (all) {
-            final saved = all.where((s) => ids.contains(s.id)).toList();
+        final saved = all.where((s) => ids.contains(s.id)).toList();
+        if (saved.isEmpty && !isLoading) {
+          return const _SavedEmptyState();
+        }
 
-            if (saved.isEmpty) {
-              return const _SavedEmptyState();
-            }
+        final filtered = searchQuery.isEmpty
+            ? saved
+            : saved.where((s) {
+                final title = s.title.toLowerCase();
+                final provider = (s.provider ?? '').toLowerCase();
+                return title.contains(searchQuery) ||
+                    provider.contains(searchQuery);
+              }).toList();
 
-            final filtered = searchQuery.isEmpty
-                ? saved
-                : saved.where((s) {
-                    final title = s.title.toLowerCase();
-                    final provider = (s.provider ?? '').toLowerCase();
-                    return title.contains(searchQuery) ||
-                        provider.contains(searchQuery);
-                  }).toList();
-
-            if (filtered.isEmpty) {
-              return Center(
-                child: Padding(
-                  padding: const EdgeInsets.all(32),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      const Icon(
-                        Icons.search_off_rounded,
-                        size: 48,
-                        color: Color(0xFF707971),
-                      ),
-                      const SizedBox(height: 12),
-                      Text(
-                        'No matching saved scholarships',
-                        style: GoogleFonts.outfit(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: const Color(0xFF161C27),
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        'Try searching with a different keyword.',
-                        style: GoogleFonts.openSans(
-                          fontSize: 13,
-                          color: const Color(0xFF404942),
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-                      TextButton(
-                        onPressed: () => _searchController.clear(),
-                        child: Text(
-                          'Clear search',
-                          style: GoogleFonts.outfit(
-                            fontSize: 13,
-                            fontWeight: FontWeight.bold,
-                            color: kPrimary,
-                          ),
-                        ),
-                      ),
-                    ],
+        if (filtered.isEmpty) {
+          return Center(
+            child: Padding(
+              padding: const EdgeInsets.all(32),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Icon(
+                    Icons.search_off_rounded,
+                    size: 48,
+                    color: Color(0xFF707971),
                   ),
-                ),
-              );
-            }
-
-            return RefreshIndicator(
-              onRefresh: () async {
-                ref.invalidate(bookmarksProvider);
-                ref.invalidate(scholarshipsProvider);
-              },
-              child: ListView.separated(
-                physics: const AlwaysScrollableScrollPhysics(),
-                padding: const EdgeInsets.fromLTRB(20, 8, 20, 32),
-                itemCount: filtered.length,
-                separatorBuilder: (_, _) => const SizedBox(height: 14),
-                itemBuilder: (_, i) => ScholarshipCard(
-                  scholarship: filtered[i],
-                  isBookmarked: true,
-                  isApplied: appliedIds.contains(filtered[i].id),
-                  onToggleBookmark: () => _toggleBookmark(ref, filtered[i].id),
-                ),
+                  const SizedBox(height: 12),
+                  Text(
+                    'No matching saved scholarships',
+                    style: GoogleFonts.outfit(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: const Color(0xFF161C27),
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    'Try searching with a different keyword.',
+                    style: GoogleFonts.openSans(
+                      fontSize: 13,
+                      color: const Color(0xFF404942),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  PressableScale(
+                    child: TextButton(
+                      onPressed: () => _searchController.clear(),
+                      child: Text(
+                        'Clear search',
+                        style: GoogleFonts.outfit(
+                          fontSize: 13,
+                          fontWeight: FontWeight.bold,
+                          color: kPrimary,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               ),
-            );
+            ),
+          );
+        }
+
+        return RefreshIndicator(
+          onRefresh: () async {
+            ref.invalidate(bookmarksProvider);
+            ref.invalidate(scholarshipsProvider);
           },
+          child: ListView.separated(
+            physics: const AppleBouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
+            padding: const EdgeInsets.fromLTRB(20, 8, 20, 32),
+            itemCount: filtered.length,
+            separatorBuilder: (_, _) => const SizedBox(height: 14),
+            itemBuilder: (_, i) => StaggeredListItem(
+              index: i,
+              child: ScholarshipCard(
+                scholarship: filtered[i],
+                isBookmarked: true,
+                isApplied: appliedIds.contains(filtered[i].id),
+                onToggleBookmark: () => _toggleBookmark(ref, filtered[i].id),
+              ),
+            ),
+          ),
         );
-      },
+      }(),
     );
   }
 
@@ -359,7 +391,7 @@ class _SavedEmptyState extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return SingleChildScrollView(
-      physics: const AlwaysScrollableScrollPhysics(),
+      physics: const AppleBouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
       padding: const EdgeInsets.fromLTRB(20, 12, 20, 32),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -424,25 +456,27 @@ class _SavedEmptyState extends ConsumerWidget {
                 SizedBox(
                   width: double.infinity,
                   height: 46,
-                  child: FilledButton.icon(
-                    onPressed: () {
-                      // Navigate to Discover tab (tab 1 in home navigation)
-                      ref.read(homeTabIndexProvider.notifier).selectTab(1);
-                    },
-                    style: FilledButton.styleFrom(
-                      backgroundColor: const Color(0xFF0F4D2E), // Stitch primary-container
-                      foregroundColor: Colors.white,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
+                  child: PressableScale(
+                    child: FilledButton.icon(
+                      onPressed: () {
+                        // Navigate to Discover tab (tab 1 in home navigation)
+                        ref.read(homeTabIndexProvider.notifier).selectTab(1);
+                      },
+                      style: FilledButton.styleFrom(
+                        backgroundColor: const Color(0xFF0F4D2E), // Stitch primary-container
+                        foregroundColor: Colors.white,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        elevation: 0,
                       ),
-                      elevation: 0,
-                    ),
-                    icon: const Icon(Icons.arrow_forward_rounded, size: 16),
-                    label: Text(
-                      'Discover Scholarships',
-                      style: GoogleFonts.outfit(
-                        fontSize: 14,
-                        fontWeight: FontWeight.bold,
+                      icon: const Icon(Icons.arrow_forward_rounded, size: 16),
+                      label: Text(
+                        'Discover Scholarships',
+                        style: GoogleFonts.outfit(
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ),
                   ),
@@ -502,32 +536,42 @@ class _SavedEmptyState extends ConsumerWidget {
           const SizedBox(height: 12),
 
           // Trending Grant Suggestion 1: DOST-SEI
-          _SuggestedGrantCard(
-            scholarshipId: 'sch-dost',
-            category: 'STEM & Tech',
-            title: 'DOST-SEI Undergraduate Merit Scholarship',
-            provider: 'Department of Science and Technology',
-            amount: '₱80,000',
-            frequency: '/yr',
-            badgeText: 'Closing in 14 days',
-            badgeIcon: Icons.schedule_rounded,
-            badgeColor: const Color(0xFFFFDAD6),
-            badgeTextColor: const Color(0xFFBA1A1A),
+          StaggeredListItem(
+            index: 0,
+            child: PressableScale(
+              child: _SuggestedGrantCard(
+                scholarshipId: 'sch-dost',
+                category: 'STEM & Tech',
+                title: 'DOST-SEI Undergraduate Merit Scholarship',
+                provider: 'Department of Science and Technology',
+                amount: '₱80,000',
+                frequency: '/yr',
+                badgeText: 'Closing in 14 days',
+                badgeIcon: Icons.schedule_rounded,
+                badgeColor: const Color(0xFFFFDAD6),
+                badgeTextColor: const Color(0xFFBA1A1A),
+              ),
+            ),
           ),
           const SizedBox(height: 10),
 
           // Trending Grant Suggestion 2: Megaworld Foundation
-          _SuggestedGrantCard(
-            scholarshipId: 'sch-megaworld',
-            category: 'Corporate Grant',
-            title: 'Megaworld Foundation Future Tech Leaders',
-            provider: 'Megaworld Foundation, Inc.',
-            amount: '₱120,000',
-            frequency: '/yr',
-            badgeText: 'SUC Accredited',
-            badgeIcon: Icons.verified_rounded,
-            badgeColor: const Color(0xFFD2E4FF),
-            badgeTextColor: const Color(0xFF001C38),
+          StaggeredListItem(
+            index: 1,
+            child: PressableScale(
+              child: _SuggestedGrantCard(
+                scholarshipId: 'sch-megaworld',
+                category: 'Corporate Grant',
+                title: 'Megaworld Foundation Future Tech Leaders',
+                provider: 'Megaworld Foundation, Inc.',
+                amount: '₱120,000',
+                frequency: '/yr',
+                badgeText: 'SUC Accredited',
+                badgeIcon: Icons.verified_rounded,
+                badgeColor: const Color(0xFFD2E4FF),
+                badgeTextColor: const Color(0xFF001C38),
+              ),
+            ),
           ),
         ],
       ),
@@ -650,57 +694,58 @@ class _SuggestedGrantCard extends ConsumerWidget {
                     ),
                   ),
                   const SizedBox(width: 8),
-                  // Interactive Bookmark toggle button (Stitch lines 49-51)
-                  Material(
-                    color: isSaved
-                        ? const Color(0xFF0F4D2E)
-                        : const Color(0xFFF1F3FF),
-                    shape: const CircleBorder(),
-                    child: InkWell(
-                      customBorder: const CircleBorder(),
-                      onTap: () async {
-                        try {
-                          final added = await ref.read(bookmarksProvider.notifier).toggle(scholarshipId);
-                          if (context.mounted) {
-                            ScaffoldMessenger.of(context).hideCurrentSnackBar();
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                behavior: SnackBarBehavior.floating,
-                                backgroundColor: const Color(0xFF2A303D),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                                content: Row(
-                                  children: [
-                                    Icon(
-                                      added ? Icons.check_circle_rounded : Icons.info_outline_rounded,
-                                      color: const Color(0xFFB3F1C6),
-                                      size: 18,
-                                    ),
-                                    const SizedBox(width: 8),
-                                    Text(
-                                      added
-                                          ? 'Scholarship saved to your list!'
-                                          : 'Scholarship removed from bookmarks',
-                                      style: GoogleFonts.openSans(
-                                        fontSize: 13,
-                                        fontWeight: FontWeight.w600,
-                                        color: Colors.white,
+                  PressableScale(
+                    child: Material(
+                      color: isSaved
+                          ? const Color(0xFF0F4D2E)
+                          : const Color(0xFFF1F3FF),
+                      shape: const CircleBorder(),
+                      child: InkWell(
+                        customBorder: const CircleBorder(),
+                        onTap: () async {
+                          try {
+                            final added = await ref.read(bookmarksProvider.notifier).toggle(scholarshipId);
+                            if (context.mounted) {
+                              ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  behavior: SnackBarBehavior.floating,
+                                  backgroundColor: const Color(0xFF2A303D),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                  content: Row(
+                                    children: [
+                                      Icon(
+                                        added ? Icons.check_circle_rounded : Icons.info_outline_rounded,
+                                        color: const Color(0xFFB3F1C6),
+                                        size: 18,
                                       ),
-                                    ),
-                                  ],
+                                      const SizedBox(width: 8),
+                                      Text(
+                                        added
+                                            ? 'Scholarship saved to your list!'
+                                            : 'Scholarship removed from bookmarks',
+                                        style: GoogleFonts.openSans(
+                                          fontSize: 13,
+                                          fontWeight: FontWeight.w600,
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
                                 ),
-                              ),
-                            );
-                          }
-                        } catch (_) {}
-                      },
-                      child: Padding(
-                        padding: const EdgeInsets.all(8),
-                        child: Icon(
-                          isSaved ? Icons.bookmark_rounded : Icons.bookmark_outline_rounded,
-                          size: 18,
-                          color: isSaved ? Colors.white : const Color(0xFF436084),
+                              );
+                            }
+                          } catch (_) {}
+                        },
+                        child: Padding(
+                          padding: const EdgeInsets.all(8),
+                          child: Icon(
+                            isSaved ? Icons.bookmark_rounded : Icons.bookmark_outline_rounded,
+                            size: 18,
+                            color: isSaved ? Colors.white : const Color(0xFF436084),
+                          ),
                         ),
                       ),
                     ),

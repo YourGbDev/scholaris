@@ -4,9 +4,10 @@
 // upload a verified real photo from camera or gallery.
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:google_fonts/google_fonts.dart';
 
+import '../../../../shared/theme/app_motion.dart';
 import '../../../../shared/theme/app_theme.dart';
 import '../../models/avatar_item.dart';
 import '../../providers/avatar_provider.dart';
@@ -63,7 +64,7 @@ class AvatarSelectorSheet extends ConsumerWidget {
                     children: [
                       Text(
                         'Profile Avatar',
-                        style: GoogleFonts.poppins(
+                        style: poppins(
                           fontSize: 18,
                           fontWeight: FontWeight.w700,
                           color: kNavyTrust,
@@ -71,7 +72,7 @@ class AvatarSelectorSheet extends ConsumerWidget {
                       ),
                       Text(
                         'Choose a cartoon doodle or upload a real photo.',
-                        style: GoogleFonts.openSans(
+                        style: openSans(
                           fontSize: 12,
                           color: const Color(0xFF707971),
                         ),
@@ -102,7 +103,7 @@ class AvatarSelectorSheet extends ConsumerWidget {
                     avatarState.isRealPhoto
                         ? 'Verified Real Photo'
                         : AvatarItem.findById(avatarState.avatarId).name,
-                    style: GoogleFonts.poppins(
+                    style: poppins(
                       fontSize: 13,
                       fontWeight: FontWeight.w600,
                       color: kNavyTrust,
@@ -112,7 +113,7 @@ class AvatarSelectorSheet extends ConsumerWidget {
                     avatarState.isRealPhoto
                         ? 'Eligible for scholarship deliberation'
                         : 'Placeholder Avatar',
-                    style: GoogleFonts.openSans(
+                    style: openSans(
                       fontSize: 11,
                       color: avatarState.isRealPhoto
                           ? kPrimary
@@ -126,7 +127,7 @@ class AvatarSelectorSheet extends ConsumerWidget {
 
             Text(
               'Cartoon Doodle Avatars',
-              style: GoogleFonts.poppins(
+              style: poppins(
                 fontSize: 13,
                 fontWeight: FontWeight.w600,
                 color: kNavyTrust,
@@ -146,47 +147,50 @@ class AvatarSelectorSheet extends ConsumerWidget {
                   final isSelected =
                       !avatarState.isRealPhoto && avatarState.avatarId == preset.id;
 
-                  return GestureDetector(
-                    key: ValueKey('avatar-option-${preset.id}'),
-                    onTap: () {
-                      notifier.selectDoodle(preset.id);
-                    },
-                    child: Container(
-                      width: 72,
-                      padding: const EdgeInsets.symmetric(vertical: 6),
-                      decoration: BoxDecoration(
-                        color: isSelected
-                            ? kPrimary.withValues(alpha: 0.08)
-                            : Colors.transparent,
-                        borderRadius: BorderRadius.circular(12),
-                        border: Border.all(
-                          color: isSelected ? kPrimary : Colors.transparent,
-                          width: 2,
+                  return PressableScale(
+                    child: GestureDetector(
+                      key: ValueKey('avatar-option-${preset.id}'),
+                      onTap: () {
+                        HapticFeedback.selectionClick();
+                        notifier.selectDoodle(preset.id);
+                      },
+                      child: Container(
+                        width: 72,
+                        padding: const EdgeInsets.symmetric(vertical: 6),
+                        decoration: BoxDecoration(
+                          color: isSelected
+                              ? kPrimary.withValues(alpha: 0.08)
+                              : Colors.transparent,
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(
+                            color: isSelected ? kPrimary : Colors.transparent,
+                            width: 2,
+                          ),
                         ),
-                      ),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          AvatarDisplay(
-                            avatarId: preset.id,
-                            isRealPhoto: false,
-                            size: 46,
-                            showVerifiedBadge: false,
-                          ),
-                          const SizedBox(height: 4),
-                          Text(
-                            preset.name.split(' ').first,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: GoogleFonts.openSans(
-                              fontSize: 10,
-                              fontWeight: isSelected
-                                  ? FontWeight.w700
-                                  : FontWeight.w500,
-                              color: isSelected ? kPrimary : const Color(0xFF404942),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            AvatarDisplay(
+                              avatarId: preset.id,
+                              isRealPhoto: false,
+                              size: 46,
+                              showVerifiedBadge: false,
                             ),
-                          ),
-                        ],
+                            const SizedBox(height: 4),
+                            Text(
+                              preset.name.split(' ').first,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: openSans(
+                                fontSize: 10,
+                                fontWeight: isSelected
+                                    ? FontWeight.w700
+                                    : FontWeight.w500,
+                                color: isSelected ? kPrimary : const Color(0xFF404942),
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   );
@@ -197,7 +201,7 @@ class AvatarSelectorSheet extends ConsumerWidget {
 
             Text(
               'Identity Verification Photo',
-              style: GoogleFonts.poppins(
+              style: poppins(
                 fontSize: 13,
                 fontWeight: FontWeight.w600,
                 color: kNavyTrust,
@@ -206,83 +210,49 @@ class AvatarSelectorSheet extends ConsumerWidget {
             const SizedBox(height: 4),
             Text(
               'Scholarship providers require a real photograph for official verification.',
-              style: GoogleFonts.openSans(
+              style: openSans(
                 fontSize: 11,
                 color: const Color(0xFF707971),
               ),
             ),
             const SizedBox(height: 10),
 
-            Row(
-              children: [
-                Expanded(
-                  child: OutlinedButton.icon(
-                    key: const ValueKey('avatar-camera-btn'),
-                    style: OutlinedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(vertical: 12),
-                      side: const BorderSide(color: kPrimary),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
-                      ),
+            SizedBox(
+              width: double.infinity,
+              child: PressableScale(
+                child: ElevatedButton.icon(
+                  key: const ValueKey('avatar-gallery-btn'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: kPrimary,
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
                     ),
-                    icon: const Icon(Icons.camera_alt_rounded, size: 18, color: kPrimary),
-                    label: Text(
-                      'Take Photo',
-                      style: GoogleFonts.poppins(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w600,
-                        color: kPrimary,
-                      ),
-                    ),
-                    onPressed: () async {
-                      await notifier.uploadRealPhoto(path: 'camera_photo_$userId.jpg');
-                      if (context.mounted) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text('Verified real photo set successfully!'),
-                            backgroundColor: Color(0xFF145131),
-                          ),
-                        );
-                        Navigator.of(context).pop();
-                      }
-                    },
                   ),
-                ),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: ElevatedButton.icon(
-                    key: const ValueKey('avatar-gallery-btn'),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: kPrimary,
-                      foregroundColor: Colors.white,
-                      padding: const EdgeInsets.symmetric(vertical: 12),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
-                      ),
+                  icon: const Icon(Icons.photo_library_rounded, size: 18),
+                  label: Text(
+                    'From Gallery',
+                    style: poppins(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w600,
                     ),
-                    icon: const Icon(Icons.photo_library_rounded, size: 18),
-                    label: Text(
-                      'From Gallery',
-                      style: GoogleFonts.poppins(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    onPressed: () async {
-                      await notifier.uploadRealPhoto(path: 'gallery_photo_$userId.jpg');
-                      if (context.mounted) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text('Verified real photo uploaded successfully!'),
-                            backgroundColor: Color(0xFF145131),
-                          ),
-                        );
-                        Navigator.of(context).pop();
-                      }
-                    },
                   ),
+                  onPressed: () async {
+                    HapticFeedback.lightImpact();
+                    await notifier.uploadRealPhoto(path: 'gallery_photo_$userId.jpg');
+                    if (context.mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('Verified real photo uploaded successfully!'),
+                          backgroundColor: Color(0xFF145131),
+                        ),
+                      );
+                      Navigator.of(context).pop();
+                    }
+                  },
                 ),
-              ],
+              ),
             ),
           ],
         ),

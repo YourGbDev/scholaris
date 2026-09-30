@@ -22,6 +22,7 @@ import 'package:scholaris/features/profile/models/student_profile.dart';
 import 'package:scholaris/features/profile/presentation/widgets/avatar_display.dart';
 import 'package:scholaris/features/profile/providers/avatar_provider.dart';
 import 'package:scholaris/features/profile/providers/profile_setup_provider.dart';
+import 'package:scholaris/shared/theme/app_motion.dart';
 import 'package:scholaris/shared/theme/app_theme.dart';
 import 'package:scholaris/shared/widgets/scholaris_logo.dart';
 import 'package:scholaris/shared/widgets/success_overlay.dart';
@@ -155,20 +156,23 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
                 },
               )
             : null,
-        title: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const ScholarisLogo(compact: true),
-            const SizedBox(width: 8),
-            Text(
-              'Profile Setup',
-              style: poppins(
-                color: kPrimary,
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
+        title: FittedBox(
+          fit: BoxFit.scaleDown,
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const ScholarisLogo(compact: true),
+              const SizedBox(width: 8),
+              Text(
+                'Profile Setup',
+                style: poppins(
+                  color: kPrimary,
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
         actions: [
           IconButton(
@@ -195,6 +199,7 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
       ),
       body: SafeArea(
         child: SingleChildScrollView(
+          physics: const AppleBouncingScrollPhysics(),
           padding: const EdgeInsets.fromLTRB(20, 16, 20, 32),
           child: Center(
             child: ConstrainedBox(
@@ -829,25 +834,27 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
                     itemBuilder: (context, index) {
                       final preset = AvatarItem.presets[index];
                       final isSelected = !avatarState.isRealPhoto && avatarState.avatarId == preset.id;
-                      return GestureDetector(
-                        key: ValueKey('avatar-setup-option-${preset.id}'),
-                        onTap: () => notifier.selectDoodle(preset.id),
-                        child: Container(
-                          width: 52,
-                          height: 52,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            border: Border.all(
-                              color: isSelected ? kPrimary : Colors.transparent,
-                              width: 2.5,
+                      return PressableScale(
+                        child: GestureDetector(
+                          key: ValueKey('avatar-setup-option-${preset.id}'),
+                          onTap: () => notifier.selectDoodle(preset.id),
+                          child: Container(
+                            width: 52,
+                            height: 52,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              border: Border.all(
+                                color: isSelected ? kPrimary : Colors.transparent,
+                                width: 2.5,
+                              ),
                             ),
-                          ),
-                          child: Center(
-                            child: AvatarDisplay(
-                              avatarId: preset.id,
-                              isRealPhoto: false,
-                              size: 44,
-                              showVerifiedBadge: false,
+                            child: Center(
+                              child: AvatarDisplay(
+                                avatarId: preset.id,
+                                isRealPhoto: false,
+                                size: 44,
+                                showVerifiedBadge: false,
+                              ),
                             ),
                           ),
                         ),
@@ -924,66 +931,70 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
         Row(
           children: [
             Expanded(
-              child: InkWell(
-                onTap: () => notifier.setGender('male'),
-                borderRadius: BorderRadius.circular(12),
-                child: Container(
-                  padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 12),
-                  decoration: BoxDecoration(
-                    color: selectedGender == 'male' ? kPrimaryLight : Colors.white,
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(
-                      color: selectedGender == 'male' ? kPrimary : const Color(0xFFDDE2F3),
-                      width: selectedGender == 'male' ? 2 : 1,
-                    ),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Text('👨', style: TextStyle(fontSize: 16)),
-                      const SizedBox(width: 8),
-                      Text(
-                        'Male',
-                        style: outfit(
-                          fontSize: 13,
-                          fontWeight: FontWeight.w600,
-                          color: selectedGender == 'male' ? kPrimary : kTextPrimary,
-                        ),
+              child: PressableScale(
+                child: InkWell(
+                  onTap: () => notifier.setGender('male'),
+                  borderRadius: BorderRadius.circular(12),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 12),
+                    decoration: BoxDecoration(
+                      color: selectedGender == 'male' ? kPrimaryLight : Colors.white,
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(
+                        color: selectedGender == 'male' ? kPrimary : const Color(0xFFDDE2F3),
+                        width: selectedGender == 'male' ? 2 : 1,
                       ),
-                    ],
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Text('👨', style: TextStyle(fontSize: 16)),
+                        const SizedBox(width: 8),
+                        Text(
+                          'Male',
+                          style: outfit(
+                            fontSize: 13,
+                            fontWeight: FontWeight.w600,
+                            color: selectedGender == 'male' ? kPrimary : kTextPrimary,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
             ),
             const SizedBox(width: 12),
             Expanded(
-              child: InkWell(
-                onTap: () => notifier.setGender('female'),
-                borderRadius: BorderRadius.circular(12),
-                child: Container(
-                  padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 12),
-                  decoration: BoxDecoration(
-                    color: selectedGender == 'female' ? kPrimaryLight : Colors.white,
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(
-                      color: selectedGender == 'female' ? kPrimary : const Color(0xFFDDE2F3),
-                      width: selectedGender == 'female' ? 2 : 1,
-                    ),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Text('👩', style: TextStyle(fontSize: 16)),
-                      const SizedBox(width: 8),
-                      Text(
-                        'Female',
-                        style: outfit(
-                          fontSize: 13,
-                          fontWeight: FontWeight.w600,
-                          color: selectedGender == 'female' ? kPrimary : kTextPrimary,
-                        ),
+              child: PressableScale(
+                child: InkWell(
+                  onTap: () => notifier.setGender('female'),
+                  borderRadius: BorderRadius.circular(12),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 12),
+                    decoration: BoxDecoration(
+                      color: selectedGender == 'female' ? kPrimaryLight : Colors.white,
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(
+                        color: selectedGender == 'female' ? kPrimary : const Color(0xFFDDE2F3),
+                        width: selectedGender == 'female' ? 2 : 1,
                       ),
-                    ],
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Text('👩', style: TextStyle(fontSize: 16)),
+                        const SizedBox(width: 8),
+                        Text(
+                          'Female',
+                          style: outfit(
+                            fontSize: 13,
+                            fontWeight: FontWeight.w600,
+                            color: selectedGender == 'female' ? kPrimary : kTextPrimary,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
@@ -1258,34 +1269,36 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
   Widget _scaleTab(String scale) {
     final isSelected = _selectedGpaScale == scale;
     return Expanded(
-      child: GestureDetector(
-        onTap: () {
-          setState(() {
-            _selectedGpaScale = scale;
-          });
-        },
-        child: Container(
-          padding: const EdgeInsets.symmetric(vertical: 6),
-          decoration: BoxDecoration(
-            color: isSelected ? Colors.white : Colors.transparent,
-            borderRadius: BorderRadius.circular(8),
-            boxShadow: isSelected
-                ? const [
-                    BoxShadow(
-                      color: Color(0x0A000000),
-                      blurRadius: 3,
-                      offset: Offset(0, 1),
-                    ),
-                  ]
-                : null,
-          ),
-          child: Text(
-            scale,
-            textAlign: TextAlign.center,
-            style: outfit(
-              fontSize: 11,
-              fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
-              color: isSelected ? kPrimary : kTextSecondary,
+      child: PressableScale(
+        child: GestureDetector(
+          onTap: () {
+            setState(() {
+              _selectedGpaScale = scale;
+            });
+          },
+          child: Container(
+            padding: const EdgeInsets.symmetric(vertical: 6),
+            decoration: BoxDecoration(
+              color: isSelected ? Colors.white : Colors.transparent,
+              borderRadius: BorderRadius.circular(8),
+              boxShadow: isSelected
+                  ? const [
+                      BoxShadow(
+                        color: Color(0x0A000000),
+                        blurRadius: 3,
+                        offset: Offset(0, 1),
+                      ),
+                    ]
+                  : null,
+            ),
+            child: Text(
+              scale,
+              textAlign: TextAlign.center,
+              style: outfit(
+                fontSize: 11,
+                fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
+                color: isSelected ? kPrimary : kTextSecondary,
+              ),
             ),
           ),
         ),
@@ -1460,28 +1473,30 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
 
   Widget _bracketPill(String label, String amount, ProfileSetupNotifier notifier, ProfileSetupState state) {
     final isSelected = _incomeController.text == amount;
-    return GestureDetector(
-      onTap: state.incomeUndisclosed
-          ? null
-          : () {
-              _incomeController.text = amount;
-              notifier.setMonthlyFamilyIncome(amount);
-            },
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-        decoration: BoxDecoration(
-          color: isSelected ? kPrimary : Colors.white,
-          borderRadius: BorderRadius.circular(8),
-          border: Border.all(
-            color: isSelected ? kPrimary : const Color(0xFFDDE2F3),
+    return PressableScale(
+      child: GestureDetector(
+        onTap: state.incomeUndisclosed
+            ? null
+            : () {
+                _incomeController.text = amount;
+                notifier.setMonthlyFamilyIncome(amount);
+              },
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+          decoration: BoxDecoration(
+            color: isSelected ? kPrimary : Colors.white,
+            borderRadius: BorderRadius.circular(8),
+            border: Border.all(
+              color: isSelected ? kPrimary : const Color(0xFFDDE2F3),
+            ),
           ),
-        ),
-        child: Text(
-          label,
-          style: outfit(
-            fontSize: 11,
-            fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
-            color: isSelected ? Colors.white : kTextPrimary,
+          child: Text(
+            label,
+            style: outfit(
+              fontSize: 11,
+              fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
+              color: isSelected ? Colors.white : kTextPrimary,
+            ),
           ),
         ),
       ),
@@ -1792,9 +1807,10 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
     String? helperText,
     IconData? prefixIcon,
   }) {
+    final effectiveValue = items.any((item) => item.value == value) ? value : null;
     return DropdownButtonFormField<T>(
-      key: ValueKey(value),
-      initialValue: value,
+      key: ValueKey(effectiveValue),
+      initialValue: effectiveValue,
       hint: hint == null
           ? null
           : Text(hint, style: openSans(color: Colors.black38, fontSize: 13)),
@@ -1896,27 +1912,29 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
       children: [
         if (widget.step != 'personal') ...[
           Expanded(
-            child: OutlinedButton(
-              onPressed: () => context.go(backRoute),
-              style: OutlinedButton.styleFrom(
-                foregroundColor: kSecondary,
-                side: const BorderSide(color: Color(0xFFDDE2F3), width: 1.5),
-                backgroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(vertical: 14),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Icon(Icons.arrow_back_rounded, size: 16),
-                  const SizedBox(width: 6),
-                  Text(
-                    'Back',
-                    style: outfit(fontSize: 14, fontWeight: FontWeight.w600),
+            child: PressableScale(
+              child: OutlinedButton(
+                onPressed: () => context.go(backRoute),
+                style: OutlinedButton.styleFrom(
+                  foregroundColor: kSecondary,
+                  side: const BorderSide(color: Color(0xFFDDE2F3), width: 1.5),
+                  backgroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(vertical: 14),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
                   ),
-                ],
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Icon(Icons.arrow_back_rounded, size: 16),
+                    const SizedBox(width: 6),
+                    Text(
+                      'Back',
+                      style: outfit(fontSize: 14, fontWeight: FontWeight.w600),
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
@@ -1924,46 +1942,48 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
         ],
         Expanded(
           flex: widget.step == 'personal' ? 1 : 2,
-          child: ElevatedButton(
-            onPressed: state.isSubmitting
-                ? null
-                : () => _handleNextOrSubmit(isLastStep),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: kPrimary,
-              foregroundColor: Colors.white,
-              elevation: 2,
-              padding: const EdgeInsets.symmetric(vertical: 14),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
+          child: PressableScale(
+            child: ElevatedButton(
+              onPressed: state.isSubmitting
+                  ? null
+                  : () => _handleNextOrSubmit(isLastStep),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: kPrimary,
+                foregroundColor: Colors.white,
+                elevation: 2,
+                padding: const EdgeInsets.symmetric(vertical: 14),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
               ),
-            ),
-            child: state.isSubmitting
-                ? const SizedBox(
-                    width: 20,
-                    height: 20,
-                    child: CircularProgressIndicator(
-                      strokeWidth: 2,
-                      color: Colors.white,
-                    ),
-                  )
-                : Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        isLastStep ? 'Complete Profile' : 'Continue',
-                        style: outfit(
-                          fontSize: 15,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.white,
+              child: state.isSubmitting
+                  ? const SizedBox(
+                      width: 20,
+                      height: 20,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        color: Colors.white,
+                      ),
+                    )
+                  : Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          isLastStep ? 'Complete Profile' : 'Continue',
+                          style: outfit(
+                            fontSize: 15,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.white,
+                          ),
                         ),
-                      ),
-                      const SizedBox(width: 6),
-                      Icon(
-                        isLastStep ? Icons.check_circle_rounded : Icons.arrow_forward_rounded,
-                        size: 18,
-                      ),
-                    ],
-                  ),
+                        const SizedBox(width: 6),
+                        Icon(
+                          isLastStep ? Icons.check_circle_rounded : Icons.arrow_forward_rounded,
+                          size: 18,
+                        ),
+                      ],
+                    ),
+            ),
           ),
         ),
       ],

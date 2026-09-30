@@ -156,7 +156,7 @@ void main() {
       );
       expect(
         onboardingRedirectDecision(
-          authDecision: null,
+          authDecision: '/login',
           location: '/login',
           onboardingLoading: false,
           onboardingSeen: false,

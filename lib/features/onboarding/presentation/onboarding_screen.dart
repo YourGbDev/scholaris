@@ -14,11 +14,13 @@
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import 'package:scholaris/features/onboarding/controllers/onboarding_controller.dart';
+import 'package:scholaris/shared/theme/app_motion.dart';
 import 'package:scholaris/shared/theme/app_theme.dart';
 import 'package:scholaris/shared/widgets/entrance.dart';
 import 'package:scholaris/shared/widgets/responsive_container.dart';
@@ -131,6 +133,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                           onPressed: _finish,
                           style: TextButton.styleFrom(
                             foregroundColor: const Color(0xFF436084),
+                            minimumSize: const Size(44, 44),
                             padding: const EdgeInsets.symmetric(
                               horizontal: 10,
                               vertical: 6,
@@ -186,8 +189,12 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
               // Page View
               Expanded(
                 child: PageView(
+                  physics: const AppleBouncingScrollPhysics(),
                   controller: _pageController,
-                  onPageChanged: (index) => setState(() => _page = index),
+                  onPageChanged: (index) {
+                    HapticFeedback.selectionClick();
+                    setState(() => _page = index);
+                  },
                   children: [
                     _SlideFadeRise(
                       child: _Slide1Ecosystem(

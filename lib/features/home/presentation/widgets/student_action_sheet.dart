@@ -6,9 +6,10 @@
 //   B. Upload Document (file_picker & Supabase Storage)
 
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:flutter/services.dart';
 
 import '../../../../shared/theme/app_motion.dart';
+import '../../../../shared/theme/app_theme.dart';
 import '../../../applications/presentation/widgets/document_upload_sheet.dart';
 import '../../../scholarships/presentation/scholarship_qr_scanner_screen.dart';
 
@@ -43,7 +44,7 @@ class StudentActionSheet extends StatelessWidget {
                   children: [
                     Text(
                       'Quick Actions',
-                      style: GoogleFonts.outfit(
+                      style: outfit(
                         fontSize: 18,
                         fontWeight: FontWeight.w700,
                         color: const Color(0xFF161C27),
@@ -52,7 +53,7 @@ class StudentActionSheet extends StatelessWidget {
                     const SizedBox(height: 2),
                     Text(
                       'Scan a scholarship QR or attach application documents',
-                      style: GoogleFonts.openSans(
+                      style: openSans(
                         fontSize: 12.5,
                         color: const Color(0xFF707971),
                       ),
@@ -78,6 +79,7 @@ class StudentActionSheet extends StatelessWidget {
                 child: InkWell(
                   borderRadius: BorderRadius.circular(16),
                   onTap: () {
+                    HapticFeedback.lightImpact();
                     Navigator.of(context).pop();
                     ScholarshipQrScannerScreen.show(context);
                   },
@@ -130,7 +132,7 @@ class StudentActionSheet extends StatelessWidget {
                             children: [
                               Text(
                                 'Scan Scholarship QR',
-                                style: GoogleFonts.outfit(
+                                style: outfit(
                                   fontSize: 15,
                                   fontWeight: FontWeight.w700,
                                   color: const Color(0xFF161C27),
@@ -139,7 +141,7 @@ class StudentActionSheet extends StatelessWidget {
                               const SizedBox(height: 2),
                               Text(
                                 'Scan an institutional or partner grant QR to view criteria and apply',
-                                style: GoogleFonts.openSans(
+                                style: openSans(
                                   fontSize: 12,
                                   color: const Color(0xFF404942),
                                 ),
@@ -172,6 +174,7 @@ class StudentActionSheet extends StatelessWidget {
                 child: InkWell(
                   borderRadius: BorderRadius.circular(16),
                   onTap: () {
+                    HapticFeedback.lightImpact();
                     Navigator.of(context).pop();
                     showDocumentUploadSheet(context);
                   },
@@ -224,7 +227,7 @@ class StudentActionSheet extends StatelessWidget {
                             children: [
                               Text(
                                 'Upload Document',
-                                style: GoogleFonts.outfit(
+                                style: outfit(
                                   fontSize: 15,
                                   fontWeight: FontWeight.w700,
                                   color: const Color(0xFF161C27),
@@ -233,7 +236,7 @@ class StudentActionSheet extends StatelessWidget {
                               const SizedBox(height: 2),
                               Text(
                                 'Attach official transcripts, indigency certs, or credentials to an application',
-                                style: GoogleFonts.openSans(
+                                style: openSans(
                                   fontSize: 12,
                                   color: const Color(0xFF404942),
                                 ),

@@ -26,6 +26,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'package:scholaris/features/account/presentation/account_settings_screen.dart';
 import 'package:scholaris/features/applications/presentation/applications_screen.dart';
+import 'package:scholaris/features/dashboard/presentation/widgets/student_notifications_sheet.dart';
 import 'package:scholaris/shared/theme/app_motion.dart';
 import 'package:scholaris/shared/theme/app_theme.dart';
 import 'package:scholaris/shared/widgets/logout_confirmation_dialog.dart';
@@ -193,17 +194,7 @@ class ProfileTabScreen extends ConsumerWidget {
               padding: EdgeInsets.zero,
               constraints: const BoxConstraints(minWidth: 36, minHeight: 36),
               onPressed: () {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text(
-                      'No new notifications.',
-                      style: openSans(fontSize: 13, color: Colors.white),
-                    ),
-                    behavior: SnackBarBehavior.floating,
-                    backgroundColor: kPrimary,
-                    duration: const Duration(seconds: 2),
-                  ),
-                );
+                showStudentNotificationsSheet(context);
               },
             ),
             const SizedBox(width: 4),

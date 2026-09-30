@@ -423,18 +423,10 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/submission-receipt',
         name: 'submission-receipt',
+        redirect: (context, state) =>
+            state.extra is Scholarship ? null : '/home',
         pageBuilder: (context, state) {
-          final scholarship = state.extra as Scholarship? ??
-              Scholarship(
-                id: '88043f6a-e9d9-4e64-9a17-4b6a49433fc7',
-                title: 'DOST-SEI Merit Scholarship Program',
-                provider: 'DOST-SEI',
-                amount: 40000,
-                frequency: 'per semester',
-                minGpa: 1.75,
-                deadline: DateTime(2025, 6, 30),
-                description: 'Undergraduate scholarship program for STEM students.',
-              );
+          final scholarship = state.extra as Scholarship;
           return _scholarisSlidePage(
             state,
             child: SubmissionConfirmationReceiptScreen(

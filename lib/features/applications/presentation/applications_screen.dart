@@ -155,6 +155,7 @@ class ApplicationsScreen extends ConsumerWidget {
 
     return applicationsAsync.when(
       loading: () => CrossFadeLoading(
+        key: const Key('loading-indicator'),
         isLoading: true,
         skeleton: _buildTrackerSkeleton(),
         child: const SizedBox.shrink(),

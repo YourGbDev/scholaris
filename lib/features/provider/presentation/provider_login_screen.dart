@@ -4,14 +4,6 @@
 // Designed with 100% fidelity to the Stitch Apple Sequoia Provider Console mockups:
 // - scholaris_institutional_provider_portal_apple_design
 // - scholaris_individual_provider_portal_apple_design
-//
-// TODO(LGU-pitch): Replace placeholder content before final LGU presentation:
-// - Trust & personal impact stats bar ("₱185M+ Disbursed", "1,240+ Active Providers", "14,200+ Screened", "₱0 platform fee")
-// - Testimonials (Engr. Jerome P., A Partner Foundation Inc.)
-// - SEC registration number (SEC CS202109844)
-// - Security and encryption claims ("Tier-3 Hardware Encrypted", "256-bit Bank-Grade Encryption", "Smart Escrow Vault")
-// - "2FA Hardware & Passkey Supported"
-// - Placeholder email domains (@ayalafoundation.org.ph, @privatefamilytrust.ph)
 
 import 'dart:async';
 import 'package:flutter/material.dart';
@@ -396,19 +388,9 @@ class _ProviderLoginScreenState extends ConsumerState<ProviderLoginScreen> {
                       ),
                       const SizedBox(height: 20),
 
-                      // 9. Trust & Metrics Bar
-                      _buildMetricsBar(isOrg),
-                      const SizedBox(height: 16),
-
-                      // 10. Testimonial Card
-                      _buildTestimonialCard(isOrg),
-                      const SizedBox(height: 16),
-
-                      // 11. Individual Extra: Remittance Rails & Escrow Vault
+                      // Supported Remittance Rails (Individual)
                       if (!isOrg) ...[
                         _buildRemittanceRails(),
-                        const SizedBox(height: 16),
-                        _buildSmartEscrowVaultCard(),
                         const SizedBox(height: 20),
                       ],
 
@@ -910,9 +892,7 @@ class _ProviderLoginScreenState extends ConsumerState<ProviderLoginScreen> {
               const SizedBox(width: 4),
               Flexible(
                 child: Text(
-                  isOrg
-                      ? '2FA Hardware Supported'
-                      : 'Bank-Grade Encryption',
+                  'Encrypted Session',
                   overflow: TextOverflow.ellipsis,
                   style: GoogleFonts.inter(
                     fontSize: 10.5,
@@ -1233,203 +1213,6 @@ class _ProviderLoginScreenState extends ConsumerState<ProviderLoginScreen> {
     );
   }
 
-  Widget _buildMetricsBar(bool isOrg) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: const Color(0xFF1A1B1F).withValues(alpha: 0.05),
-        ),
-      ),
-      child: Row(
-        children: [
-          Expanded(
-            child: _metricCol(
-              value: isOrg ? '₱185M+' : '1,240+',
-              label: isOrg ? 'Disbursed • 82 Provinces' : 'Active Providers',
-              isGreen: false,
-            ),
-          ),
-          Container(width: 1, height: 32, color: const Color(0xFFEEEDF3)),
-          Expanded(
-            child: _metricCol(
-              value: isOrg ? '14,200+' : '100%',
-              label: isOrg ? 'Scholars Screened' : 'Traceable Tranches',
-              isGreen: !isOrg,
-            ),
-          ),
-          Container(width: 1, height: 32, color: const Color(0xFFEEEDF3)),
-          Expanded(
-            child: _metricCol(
-              value: isOrg ? '99.4%' : '₱0',
-              label: isOrg ? 'Stipend Reliability' : 'Platform Fee',
-              isGreen: isOrg,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _metricCol({
-    required String value,
-    required String label,
-    required bool isGreen,
-  }) {
-    return Column(
-      children: [
-        Text(
-          value,
-          style: GoogleFonts.inter(
-            fontSize: 20,
-            fontWeight: FontWeight.w700,
-            color: isGreen ? const Color(0xFF0F4D2E) : const Color(0xFF1A1B1F),
-            letterSpacing: -0.5,
-          ),
-        ),
-        const SizedBox(height: 2),
-        Text(
-          label.toUpperCase(),
-          textAlign: TextAlign.center,
-          style: GoogleFonts.inter(
-            fontSize: 9,
-            fontWeight: FontWeight.w600,
-            color: const Color(0xFF707971),
-            letterSpacing: 0.4,
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildTestimonialCard(bool isOrg) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.95),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: const Color(0xFF1A1B1F).withValues(alpha: 0.05),
-        ),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Row(
-                children: List.generate(
-                  5,
-                  (index) => const Icon(
-                    Icons.star_rounded,
-                    size: 16,
-                    color: Color(0xFFF99A00),
-                  ),
-                ),
-              ),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                decoration: BoxDecoration(
-                  color: isOrg
-                      ? const Color(0xFFEEEDF3)
-                      : const Color(0xFFB3F1C6).withValues(alpha: 0.4),
-                  borderRadius: BorderRadius.circular(100),
-                ),
-                child: Text(
-                  isOrg
-                      ? 'Institutional Reviewer Feedback'
-                      : 'Verified Provider Story',
-                  style: GoogleFonts.inter(
-                    fontSize: 9.5,
-                    fontWeight: FontWeight.w600,
-                    color: isOrg
-                        ? const Color(0xFF404942)
-                        : const Color(0xFF0F4D2E),
-                  ),
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 10),
-          Text(
-            isOrg
-                ? '“Scholaris replaced manual endorsements with automated LRN deduplication and verifiable BIR tranche schedules. Our cycle went from 14 weeks to 8 days.”'
-                : '“I wanted to sponsor an engineering student at a State University without going through a complex foundation process. Scholaris verified enrollment and lets me disburse directly with real-time tuition clearance.”',
-            style: GoogleFonts.inter(
-              fontSize: 12.5,
-              fontStyle: FontStyle.italic,
-              color: const Color(0xFF1A1B1F),
-              height: 1.45,
-            ),
-          ),
-          const SizedBox(height: 12),
-          Row(
-            children: [
-              if (isOrg)
-                Container(
-                  width: 32,
-                  height: 32,
-                  decoration: const BoxDecoration(
-                    color: Color(0xFFD8E2FF),
-                    shape: BoxShape.circle,
-                  ),
-                  alignment: Alignment.center,
-                  child: Text(
-                    'AF',
-                    style: GoogleFonts.inter(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w700,
-                      color: const Color(0xFF004493),
-                    ),
-                  ),
-                )
-              else
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(100),
-                  child: Container(
-                    width: 34,
-                    height: 34,
-                    color: const Color(0xFFEEEDF3),
-                    child: const Icon(
-                      Icons.person_outline_rounded,
-                      color: Color(0xFF0F4D2E),
-                      size: 20,
-                    ),
-                  ),
-                ),
-              const SizedBox(width: 10),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    isOrg ? 'A Partner Foundation Inc.' : 'Engr. J. P.',
-                    style: GoogleFonts.inter(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w700,
-                      color: const Color(0xFF1A1B1F),
-                    ),
-                  ),
-                  Text(
-                    isOrg
-                        ? 'Higher Education Grant Committee • Metro Manila'
-                        : 'A Private Donor · Independent University Alumni Sponsor',
-                    style: GoogleFonts.inter(
-                      fontSize: 10.5,
-                      color: const Color(0xFF707971),
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-
   Widget _buildRemittanceRails() {
     return Column(
       children: [
@@ -1493,75 +1276,6 @@ class _ProviderLoginScreenState extends ConsumerState<ProviderLoginScreen> {
     );
   }
 
-  Widget _buildSmartEscrowVaultCard() {
-    return Container(
-      padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(14),
-        border: Border.all(
-          color: const Color(0xFF1A1B1F).withValues(alpha: 0.05),
-        ),
-      ),
-      child: Row(
-        children: [
-          Container(
-            padding: const EdgeInsets.all(8),
-            decoration: BoxDecoration(
-              color: const Color(0xFFB3F1C6).withValues(alpha: 0.35),
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: const Icon(
-              Icons.account_balance_wallet_rounded,
-              color: Color(0xFF0F4D2E),
-              size: 22,
-            ),
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Smart Escrow Vault',
-                  style: GoogleFonts.inter(
-                    fontSize: 12.5,
-                    fontWeight: FontWeight.w700,
-                    color: const Color(0xFF1A1B1F),
-                  ),
-                ),
-                Text(
-                  'Funds release automatically upon verified university grade submission.',
-                  style: GoogleFonts.inter(
-                    fontSize: 11,
-                    color: const Color(0xFF707971),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Container(
-            width: 36,
-            height: 36,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              border: Border.all(color: const Color(0xFF0F4D2E), width: 2),
-            ),
-            alignment: Alignment.center,
-            child: Text(
-              '100%',
-              style: GoogleFonts.inter(
-                fontSize: 9,
-                fontWeight: FontWeight.w700,
-                color: const Color(0xFF0F4D2E),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
   Widget _buildFooter(bool isOrg) {
     return Column(
       children: [
@@ -1617,7 +1331,7 @@ class _ProviderLoginScreenState extends ConsumerState<ProviderLoginScreen> {
             const Text('•',
                 style: TextStyle(fontSize: 10, color: Color(0xFF707971))),
             Text(
-              isOrg ? 'Security Disclosure' : 'Escrow Terms',
+              isOrg ? 'Security Disclosure' : 'Program Terms',
               style: GoogleFonts.inter(
                 fontSize: 10.5,
                 color: const Color(0xFF707971),
@@ -1630,7 +1344,7 @@ class _ProviderLoginScreenState extends ConsumerState<ProviderLoginScreen> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              'Compliance Rails: RA 10173 • SEC CS202109844',
+              'Compliance Rails: RA 10173 Philippine Data Privacy Act',
               style: GoogleFonts.inter(
                 fontSize: 9.5,
                 color: const Color(0xFF707971),

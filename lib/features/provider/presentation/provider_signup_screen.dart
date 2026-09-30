@@ -8,7 +8,6 @@
 // - Masked ID display and RA 10173 data privacy consent
 //
 // TODO(SMS-OTP): Integrate Telco SMS Gateway (e.g. Semaphore/Twilio) for live OTP verification.
-// TODO(LGU-pitch): Replace placeholder partner accreditation claims before the formal presentation.
 
 import 'dart:typed_data';
 import 'package:file_picker/file_picker.dart';

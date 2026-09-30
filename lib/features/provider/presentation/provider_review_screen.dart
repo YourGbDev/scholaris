@@ -8,6 +8,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import 'package:scholaris/shared/theme/app_motion.dart';
 import 'package:scholaris/shared/theme/app_theme.dart';
 
 class ProviderReviewScreen extends StatelessWidget {
@@ -55,19 +56,22 @@ class ProviderReviewScreen extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 32),
-                  ElevatedButton(
-                    onPressed: () => context.go('/login'),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: kPrimary,
-                      foregroundColor: Colors.white,
-                      padding: const EdgeInsets.symmetric(vertical: 16),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
+                  PressableScale(
+                    scale: 0.98,
+                    child: ElevatedButton(
+                      onPressed: () => context.go('/provider/login'),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: kPrimary,
+                        foregroundColor: Colors.white,
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
                       ),
-                    ),
-                    child: Text(
-                      'Back to login',
-                      style: poppins(fontWeight: FontWeight.w600),
+                      child: Text(
+                        'Back to Provider Sign In',
+                        style: poppins(fontWeight: FontWeight.w600),
+                      ),
                     ),
                   ),
                 ],

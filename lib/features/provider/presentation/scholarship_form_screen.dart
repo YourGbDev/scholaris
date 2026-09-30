@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../shared/theme/app_motion.dart';
 import '../../../shared/theme/app_theme.dart';
 import '../../../shared/widgets/primary_button.dart';
 import '../../../shared/widgets/responsive_container.dart';
@@ -242,6 +243,7 @@ class _ScholarshipFormScreenState extends ConsumerState<ScholarshipFormScreen> {
         child: Form(
           key: _formKey,
           child: ListView(
+            physics: const AppleBouncingScrollPhysics(),
             padding: const EdgeInsets.fromLTRB(20, 12, 20, 36),
             children: [
               // Basic Information Section

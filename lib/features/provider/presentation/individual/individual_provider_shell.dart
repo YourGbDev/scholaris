@@ -15,6 +15,7 @@ import 'individual_applications_tab.dart';
 import 'individual_grant_tab.dart';
 import 'individual_settings_tab.dart';
 import '../../../../core/auth/landing_redirect.dart';
+import '../../../../shared/theme/app_motion.dart';
 
 class IndividualProviderShell extends ConsumerStatefulWidget {
   const IndividualProviderShell({super.key, this.initialIndex = 0});
@@ -62,7 +63,7 @@ class _IndividualProviderShellState
             ),
             const SizedBox(width: 8),
             Container(
-              padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
               decoration: BoxDecoration(
                 color: const Color(0xFFE3E2E7),
                 borderRadius: BorderRadius.circular(6),
@@ -95,9 +96,9 @@ class _IndividualProviderShellState
         children: [
           const ProviderVerificationBanner(),
           Expanded(
-            child: IndexedStack(
-              index: _currentIndex,
-              children: _tabs,
+            child: TabContentCrossFade(
+              activeKey: ValueKey<int>(_currentIndex),
+              child: _tabs[_currentIndex],
             ),
           ),
         ],

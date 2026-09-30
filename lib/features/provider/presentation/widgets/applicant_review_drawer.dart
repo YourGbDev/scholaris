@@ -104,11 +104,11 @@ class ApplicantReviewDrawer extends ConsumerStatefulWidget {
 class _ReviewerDrawerAnimationController extends AnimationController {
   _ReviewerDrawerAnimationController({
     required super.vsync,
-    this.spring = kDefaultSpring,
+    this.spring = AppleSpringDescription.sheet,
     super.duration = kDurationSlow,
     super.reverseDuration = kDurationStandard,
     super.debugLabel,
-  });
+  }) : super(lowerBound: 0.0, upperBound: 2.0);
 
   final SpringDescription spring;
 
@@ -143,6 +143,12 @@ class _ReviewerDrawerRoute<T> extends PopupRoute<T> {
   final WidgetBuilder builder;
   final bool isDesktop;
 
+  /// Public accessor for the route's animation controller, avoiding invalid use of @protected controller.
+  _ReviewerDrawerAnimationController? get drawerController {
+    final c = controller;
+    return c is _ReviewerDrawerAnimationController ? c : null;
+  }
+
   @override
   Color? get barrierColor => Colors.black.withValues(alpha: 0.4);
 
@@ -162,7 +168,7 @@ class _ReviewerDrawerRoute<T> extends PopupRoute<T> {
   AnimationController createAnimationController() {
     return _ReviewerDrawerAnimationController(
       vsync: navigator!,
-      spring: kDefaultSpring,
+      spring: AppleSpringDescription.sheet,
       duration: transitionDuration,
       reverseDuration: reverseTransitionDuration,
       debugLabel: debugLabel,
@@ -205,8 +211,15 @@ class _ReviewerDrawerRoute<T> extends PopupRoute<T> {
 
 class _ApplicantReviewDrawerState extends ConsumerState<ApplicantReviewDrawer> {
   late final TextEditingController _notesController;
+  late final ScrollController _scrollController;
+  _ReviewerDrawerAnimationController? _routeController;
+  bool _isDragActive = false;
+  double _rawOvershootPx = 0.0;
   bool _isProcessing = false;
   bool _isRubricExpanded = true;
+
+  bool get _isScrolledToTop =>
+      !_scrollController.hasClients || _scrollController.offset <= 0;
 
   // 4 Rubric Criteria Sliders
   double _score1 = 9.5; // Academic Excellence (40%)
@@ -220,6 +233,7 @@ class _ApplicantReviewDrawerState extends ConsumerState<ApplicantReviewDrawer> {
   @override
   void initState() {
     super.initState();
+    _scrollController = ScrollController();
     final rawNotes = widget.application.notes ?? '';
     String initialNotes = rawNotes;
     if (rawNotes.trim().startsWith('{')) {
@@ -232,7 +246,17 @@ class _ApplicantReviewDrawerState extends ConsumerState<ApplicantReviewDrawer> {
   }
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final route = ModalRoute.of(context);
+    if (route is _ReviewerDrawerRoute) {
+      _routeController = route.drawerController;
+    }
+  }
+
+  @override
   void dispose() {
+    _scrollController.dispose();
     _notesController.dispose();
     super.dispose();
   }
@@ -248,7 +272,7 @@ class _ApplicantReviewDrawerState extends ConsumerState<ApplicantReviewDrawer> {
 
     final candidateName = widget.applicantProfile?.fullName.isNotEmpty == true
         ? widget.applicantProfile!.fullName
-        : "Maria Clarissa Santos";
+        : "Applicant #${widget.application.userId.length >= 8 ? widget.application.userId.substring(0, 8) : widget.application.userId}";
 
     final confirmed = await showDialog<bool>(
       context: context,
@@ -335,65 +359,43 @@ class _ApplicantReviewDrawerState extends ConsumerState<ApplicantReviewDrawer> {
 
   @override
   Widget build(BuildContext context) {
-    final isNarrow = MediaQuery.sizeOf(context).width < 640;
+    final screenWidth = MediaQuery.sizeOf(context).width;
+    final isDesktop = screenWidth >= 768;
+    final isNarrow = screenWidth < 640;
     final app = widget.application;
 
-    // Resolve profile faithfully: use provided profile or fallback to real applicant row
-    StudentProfile profile = widget.applicantProfile ??
-        const StudentProfile(
-          id: '57ab0603-ae0a-455b-bbed-02f4e01adee0',
-          fullName: 'Maria Clarissa Santos',
-          school: 'University of the Philippines Diliman',
-          course: 'BS Computer Science',
-          gpa: 1.24,
-          yearLevel: 4,
-          region: 'NCR',
-          monthlyFamilyIncome: 15000,
-          setupComplete: true,
-        );
-
-    if (profile.fullName.trim().isEmpty) {
-      profile = const StudentProfile(
-        id: '57ab0603-ae0a-455b-bbed-02f4e01adee0',
-        fullName: 'Maria Clarissa Santos',
-        school: 'University of the Philippines Diliman',
-        course: 'BS Computer Science',
-        gpa: 1.24,
-        yearLevel: 4,
-        region: 'NCR',
-        monthlyFamilyIncome: 15000,
-        setupComplete: true,
-      );
-    }
-
+    final profile = widget.applicantProfile;
+    final hasProfile = profile != null && profile.fullName.trim().isNotEmpty;
     final scholarship = widget.scholarship;
-    final studentName = profile.fullName.trim();
-    final studentSchool = profile.school?.trim().isNotEmpty == true
-        ? profile.school!.trim()
-        : 'University of the Philippines Diliman';
-    final studentCourse = profile.course.trim().isNotEmpty == true
-        ? profile.course.trim()
-        : 'BS Computer Science';
-    final gwaString = profile.gpa > 0 ? profile.gpa.toStringAsFixed(2) : '1.24';
+    final studentName = hasProfile ? profile.fullName.trim() : 'Applicant Profile Unavailable';
+    final studentSchool = profile?.school?.trim().isNotEmpty == true
+        ? profile!.school!.trim()
+        : 'School not recorded';
+    final studentCourse = profile?.course.trim().isNotEmpty == true
+        ? profile!.course.trim()
+        : 'Course not recorded';
+    final gwaString = (profile?.gpa ?? 0) > 0 ? profile!.gpa.toStringAsFixed(2) : 'N/A';
 
     // Household income from real monthly_family_income
-    final annualIncome = profile.monthlyFamilyIncome != null
-        ? '₱${((profile.monthlyFamilyIncome! * 12) / 1000).toStringAsFixed(0)}k'
+    final annualIncome = profile?.monthlyFamilyIncome != null
+        ? '₱${((profile!.monthlyFamilyIncome! * 12) / 1000).toStringAsFixed(0)}k'
         : 'Not disclosed';
 
     // Grant title from real scholarship record
-    final scholarshipTitle = scholarship?.title ?? 'Ayala Future Leaders Grant 2026';
-    final allocationAmount = scholarship?.formattedAmount ?? '₱50,000';
+    final scholarshipTitle = scholarship?.title ?? 'Scholarship Grant';
+    final allocationAmount = scholarship?.formattedAmount ?? 'Grant allocation pending';
 
     final nameParts = studentName.split(' ');
-    final initials = nameParts.length >= 2
-        ? '${nameParts.first[0]}${nameParts.last[0]}'.toUpperCase()
-        : (nameParts.isNotEmpty && nameParts[0].isNotEmpty ? nameParts[0][0].toUpperCase() : 'MS');
+    final initials = hasProfile
+        ? (nameParts.length >= 2
+            ? '${nameParts.first[0]}${nameParts.last[0]}'.toUpperCase()
+            : (nameParts.isNotEmpty && nameParts[0].isNotEmpty ? nameParts[0][0].toUpperCase() : 'AU'))
+        : '—';
 
     // Total applicants in pool for honest cohort standing
     final totalCohortCount = ref.watch(incomingApplicationsProvider).valueOrNull?.length ?? 1;
 
-    return Container(
+    final drawerBody = Container(
       color: Colors.white,
       child: Column(
         children: [
@@ -403,28 +405,32 @@ class _ApplicantReviewDrawerState extends ConsumerState<ApplicantReviewDrawer> {
             initials: initials,
             studentName: studentName,
             scholarshipTitle: scholarshipTitle,
-            setupComplete: profile.setupComplete,
+            setupComplete: profile?.setupComplete ?? false,
             isNarrow: isNarrow,
           ),
 
           // SCROLLABLE DOSSIER VIEWPORT
           Expanded(
             child: SingleChildScrollView(
+              physics: const AppleBouncingScrollPhysics(),
+              controller: _scrollController,
               padding: EdgeInsets.all(isNarrow ? 16 : 24),
               child: StaggeredContentReveal(
                 children: [
                   // 2. APPLICANT HERO HIGHLIGHT CARD (Profile)
                   Padding(
                     padding: const EdgeInsets.only(bottom: 24),
-                    child: _buildHeroHighlightCard(
-                      profile: profile,
-                      studentCourse: studentCourse,
-                      studentSchool: studentSchool,
-                      gwaString: gwaString,
-                      annualIncome: annualIncome,
-                      totalCohortCount: totalCohortCount,
-                      isNarrow: isNarrow,
-                    ),
+                    child: hasProfile
+                        ? _buildHeroHighlightCard(
+                            profile: profile,
+                            studentCourse: studentCourse,
+                            studentSchool: studentSchool,
+                            gwaString: gwaString,
+                            annualIncome: annualIncome,
+                            totalCohortCount: totalCohortCount,
+                            isNarrow: isNarrow,
+                          )
+                        : _buildProfileUnavailableCard(),
                   ),
 
                   // 3. ATTACHED VERIFICATION DOCUMENTS (Evidence)
@@ -462,6 +468,109 @@ class _ApplicantReviewDrawerState extends ConsumerState<ApplicantReviewDrawer> {
           ),
         ],
       ),
+    );
+
+    if (isDesktop || isReducedMotion(context)) {
+      return drawerBody;
+    }
+
+    return GestureDetector(
+      behavior: HitTestBehavior.translucent,
+      onVerticalDragStart: (details) {
+        if (_isScrolledToTop) {
+          _isDragActive = true;
+          _rawOvershootPx = 0.0;
+        } else {
+          _isDragActive = false;
+        }
+      },
+      onVerticalDragUpdate: (details) {
+        if (!_isDragActive) return;
+        final controller = _routeController;
+        if (controller == null) return;
+
+        final screenHeight = MediaQuery.sizeOf(context).height;
+        if (screenHeight <= 0) return;
+
+        final dy = details.delta.dy;
+
+        if (_rawOvershootPx > 0) {
+          // Already in upward overshoot territory
+          _rawOvershootPx -= dy;
+          if (_rawOvershootPx > 0) {
+            final resistedPx = appleRubberBand(overshoot: _rawOvershootPx, dimension: screenHeight);
+            controller.value = 1.0 + (resistedPx / screenHeight);
+          } else {
+            final remainingDownPx = -_rawOvershootPx;
+            _rawOvershootPx = 0.0;
+            controller.value =
+                (1.0 - remainingDownPx / screenHeight).clamp(0.0, 1.0);
+          }
+        } else {
+          final dragFraction = dy / screenHeight;
+          final nextValue = controller.value - dragFraction;
+
+          if (nextValue > 1.0) {
+            // Dragging upward past 1.0: enter rubber-band mode
+            final excessValue = nextValue - 1.0;
+            _rawOvershootPx += excessValue * screenHeight;
+            final resistedPx = appleRubberBand(overshoot: _rawOvershootPx, dimension: screenHeight);
+            controller.value = 1.0 + (resistedPx / screenHeight);
+          } else {
+            // Normal downward drag: 1:1 tracking
+            controller.value = nextValue.clamp(0.0, 1.0);
+          }
+        }
+      },
+      onVerticalDragEnd: (details) {
+        if (!_isDragActive) return;
+        _isDragActive = false;
+        _rawOvershootPx = 0.0;
+
+        final controller = _routeController;
+        if (controller == null) return;
+
+        final screenHeight = MediaQuery.sizeOf(context).height;
+        if (screenHeight <= 0) return;
+
+        final velocityPx = details.velocity.pixelsPerSecond.dy;
+        final animVelocity = -velocityPx / screenHeight;
+
+        final isOvershot = controller.value > 1.0;
+        final shouldDismiss =
+            !isOvershot && (velocityPx > 800 || controller.value < 0.5);
+
+        if (shouldDismiss) {
+          final relativeVel = calculateRelativeVelocity(
+            gestureVelocity: animVelocity,
+            currentValue: controller.value,
+            targetValue: 0.0,
+          );
+          final sim = SpringSimulation(
+              AppleSpringDescription.sheet, controller.value, 0.0, relativeVel);
+          controller.animateWith(sim).whenCompleteOrCancel(() {
+            if (mounted) {
+              Navigator.of(context).pop();
+            }
+          });
+        } else {
+          final relativeVel = calculateRelativeVelocity(
+            gestureVelocity: animVelocity,
+            currentValue: controller.value,
+            targetValue: 1.0,
+          );
+          final sim = SpringSimulation(
+              AppleSpringDescription.sheet, controller.value, 1.0, relativeVel);
+          controller.animateWith(sim);
+        }
+      },
+      onVerticalDragCancel: () {
+        if (_isDragActive) {
+          _isDragActive = false;
+          _rawOvershootPx = 0.0;
+        }
+      },
+      child: drawerBody,
     );
   }
 
@@ -627,6 +736,63 @@ class _ApplicantReviewDrawerState extends ConsumerState<ApplicantReviewDrawer> {
     );
   }
 
+  Widget _buildProfileUnavailableCard() {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: const Color(0xFFF4F3F8),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: const Color(0xFFE5E7EB)),
+        boxShadow: const [
+          BoxShadow(
+            color: Color(0x06000000),
+            blurRadius: 4,
+            offset: Offset(0, 1),
+          ),
+        ],
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            width: 44,
+            height: 44,
+            decoration: BoxDecoration(
+              color: const Color(0xFFEEEDF3),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            alignment: Alignment.center,
+            child: const Icon(
+              Icons.person_off_outlined,
+              color: Color(0xFF707971),
+              size: 24,
+            ),
+          ),
+          const SizedBox(height: 10),
+          Text(
+            'Applicant profile unavailable',
+            style: orgHeadline(
+              fontSize: 14,
+              fontWeight: FontWeight.w600,
+              color: const Color(0xFF1A1B1F),
+            ),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            'The candidate profile record could not be loaded or is not associated with this application submission.',
+            textAlign: TextAlign.center,
+            style: orgBody(
+              fontSize: 12,
+              color: const Color(0xFF707971),
+              height: 1.4,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   // ---------------------------------------------------------------------------
   // 2. APPLICANT HERO HIGHLIGHT CARD
   // ---------------------------------------------------------------------------
@@ -761,9 +927,11 @@ class _ApplicantReviewDrawerState extends ConsumerState<ApplicantReviewDrawer> {
                             ),
                             const SizedBox(height: 2),
                             Text(
-                              profile.gpa <= 1.45
-                                  ? "Dean's Honor List Eligible"
-                                  : "Good Academic Standing",
+                              profile.gpa > 0
+                                  ? (profile.gpa <= 1.45
+                                      ? "Dean's Honor List Eligible"
+                                      : "Good Academic Standing")
+                                  : "GWA Not Recorded",
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                               style: orgLabel(
@@ -888,7 +1056,9 @@ class _ApplicantReviewDrawerState extends ConsumerState<ApplicantReviewDrawer> {
               ),
               _buildTrustPill(
                 icon: Icons.receipt_long_outlined,
-                text: 'Income: Self-Declared (₱15k/mo)',
+                text: profile.monthlyFamilyIncome != null
+                    ? 'Income: Self-Declared (₱${((profile.monthlyFamilyIncome!) / 1000).toStringAsFixed(0)}k/mo)'
+                    : 'Income: Not Disclosed',
                 iconColor: const Color(0xFF623A00),
                 bgColor: const Color(0xFFFEF7E6),
               ),
@@ -1627,7 +1797,7 @@ class _ApplicantReviewDrawerState extends ConsumerState<ApplicantReviewDrawer> {
               Expanded(
                 flex: 3,
                 child: SizedBox(
-                  height: 42,
+                  height: 46,
                   child: PressableScale(
                     child: FilledButton.icon(
                       style: FilledButton.styleFrom(
@@ -1660,7 +1830,7 @@ class _ApplicantReviewDrawerState extends ConsumerState<ApplicantReviewDrawer> {
               Expanded(
                 flex: 4,
                 child: SizedBox(
-                  height: 42,
+                  height: 46,
                   child: PressableScale(
                     child: FilledButton.icon(
                       style: FilledButton.styleFrom(
@@ -1693,7 +1863,7 @@ class _ApplicantReviewDrawerState extends ConsumerState<ApplicantReviewDrawer> {
               Expanded(
                 flex: 5,
                 child: SizedBox(
-                  height: 42,
+                  height: 46,
                   child: PressableScale(
                     child: FilledButton.icon(
                       style: FilledButton.styleFrom(

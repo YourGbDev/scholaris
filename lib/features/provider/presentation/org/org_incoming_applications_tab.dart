@@ -1946,190 +1946,199 @@ class _OrgIncomingApplicationsTabState
   // Loading Skeleton Placeholder (Section 5.6)
   // ===========================================================================
   Widget _buildSkeleton({required bool isDesktop}) {
-    return SingleChildScrollView(
-      physics: const NeverScrollableScrollPhysics(),
-      padding: EdgeInsets.symmetric(
-        horizontal: isDesktop ? 32 : 16,
-        vertical: isDesktop ? 28 : 20,
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Header Skeleton
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: const [
-                  SkeletonBand(width: 140, height: 20, borderRadius: 10),
-                  SizedBox(height: 8),
-                  SkeletonBand(width: 260, height: 26, borderRadius: 6),
-                  SizedBox(height: 8),
-                  SkeletonBand(width: 380, height: 14, borderRadius: 6),
-                ],
-              ),
-              if (isDesktop)
-                Row(
-                  children: const [
-                    SkeletonBand(width: 150, height: 40, borderRadius: 12),
-                    SizedBox(width: 10),
-                    SkeletonBand(width: 140, height: 40, borderRadius: 12),
-                  ],
-                ),
-            ],
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final isWide = constraints.maxWidth >= 900;
+        return SingleChildScrollView(
+          physics: const NeverScrollableScrollPhysics(),
+          padding: EdgeInsets.symmetric(
+            horizontal: isWide ? 32 : 16,
+            vertical: isWide ? 28 : 20,
           ),
-          const SizedBox(height: 24),
-          // 4-KPI Bento Strip Skeleton
-          if (isDesktop)
-            Row(
-              children: List.generate(
-                4,
-                (i) => Expanded(
-                  child: Container(
-                    margin: EdgeInsets.only(right: i < 3 ? 14 : 0),
-                    padding: const EdgeInsets.all(18),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(16),
-                      border: Border.all(color: const Color(0xFFE5E7EB)),
-                    ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Header Skeleton
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: const [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            SkeletonBand(width: 80, height: 12),
-                            SkeletonBand(width: 28, height: 28, borderRadius: 14),
-                          ],
-                        ),
-                        SizedBox(height: 12),
-                        SkeletonBand(width: 60, height: 28),
-                        SizedBox(height: 12),
-                        SkeletonBand(width: double.infinity, height: 6, borderRadius: 3),
+                        SkeletonBand(width: 140, height: 20, borderRadius: 10),
+                        SizedBox(height: 8),
+                        SkeletonBand(width: 260, height: 26, borderRadius: 6),
+                        SizedBox(height: 8),
+                        SkeletonBand(width: 380, height: 14, borderRadius: 6),
                       ],
                     ),
                   ),
-                ),
+                  if (isWide)
+                    Row(
+                      children: const [
+                        SkeletonBand(width: 150, height: 40, borderRadius: 12),
+                        SizedBox(width: 10),
+                        SkeletonBand(width: 140, height: 40, borderRadius: 12),
+                      ],
+                    ),
+                ],
               ),
-            )
-          else
-            Column(
-              children: List.generate(
-                4,
-                (i) => Container(
+              const SizedBox(height: 24),
+              // 4-KPI Bento Strip Skeleton
+              if (isWide)
+                Row(
+                  children: List.generate(
+                    4,
+                    (i) => Expanded(
+                      child: Container(
+                        margin: EdgeInsets.only(right: i < 3 ? 14 : 0),
+                        padding: const EdgeInsets.all(18),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(16),
+                          border: Border.all(color: const Color(0xFFE5E7EB)),
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: const [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Flexible(child: SkeletonBand(width: 80, height: 12)),
+                                SizedBox(width: 4),
+                                SkeletonBand(width: 28, height: 28, borderRadius: 14),
+                              ],
+                            ),
+                            SizedBox(height: 12),
+                            SkeletonBand(width: 60, height: 28),
+                            SizedBox(height: 12),
+                            SkeletonBand(width: double.infinity, height: 6, borderRadius: 3),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                )
+              else
+                Column(
+                  children: List.generate(
+                    4,
+                    (i) => Container(
+                      margin: const EdgeInsets.only(bottom: 12),
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(16),
+                        border: Border.all(color: const Color(0xFFE5E7EB)),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: const [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Flexible(child: SkeletonBand(width: 80, height: 12)),
+                              SizedBox(width: 4),
+                              SkeletonBand(width: 28, height: 28, borderRadius: 14),
+                            ],
+                          ),
+                          SizedBox(height: 12),
+                          SkeletonBand(width: 60, height: 28),
+                          SizedBox(height: 12),
+                          SkeletonBand(width: double.infinity, height: 6, borderRadius: 3),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              const SizedBox(height: 24),
+              // Toolbar Skeleton
+              if (isWide)
+                Row(
+                  children: const [
+                    Flexible(child: SkeletonBand(width: 320, height: 36, borderRadius: 12)),
+                    SizedBox(width: 12),
+                    SkeletonBand(width: 220, height: 36, borderRadius: 10),
+                  ],
+                )
+              else
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: const [
+                    SkeletonBand(width: double.infinity, height: 36, borderRadius: 12),
+                    SizedBox(height: 8),
+                    SkeletonBand(width: 200, height: 36, borderRadius: 10),
+                  ],
+                ),
+              const SizedBox(height: 18),
+              // Dossier Cards Skeletons
+              ...List.generate(
+                3,
+                (index) => Container(
                   margin: const EdgeInsets.only(bottom: 12),
-                  padding: const EdgeInsets.all(16),
+                  padding: const EdgeInsets.all(18),
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(16),
                     border: Border.all(color: const Color(0xFFE5E7EB)),
                   ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: const [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          SkeletonBand(width: 80, height: 12),
-                          SkeletonBand(width: 28, height: 28, borderRadius: 14),
-                        ],
-                      ),
-                      SizedBox(height: 12),
-                      SkeletonBand(width: 60, height: 28),
-                      SizedBox(height: 12),
-                      SkeletonBand(width: double.infinity, height: 6, borderRadius: 3),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-          const SizedBox(height: 24),
-          // Toolbar Skeleton
-          if (isDesktop)
-            Row(
-              children: const [
-                SkeletonBand(width: 320, height: 36, borderRadius: 12),
-                Spacer(),
-                SkeletonBand(width: 220, height: 36, borderRadius: 10),
-              ],
-            )
-          else
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: const [
-                SkeletonBand(width: double.infinity, height: 36, borderRadius: 12),
-                SizedBox(height: 8),
-                SkeletonBand(width: 200, height: 36, borderRadius: 10),
-              ],
-            ),
-          const SizedBox(height: 18),
-          // Dossier Cards Skeletons
-          ...List.generate(
-            3,
-            (index) => Container(
-              margin: const EdgeInsets.only(bottom: 12),
-              padding: const EdgeInsets.all(18),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: const Color(0xFFE5E7EB)),
-              ),
-              child: isDesktop
-                  ? Row(
-                      children: [
-                        const SkeletonBand(width: 48, height: 48, borderRadius: 16),
-                        const SizedBox(width: 14),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: const [
-                              SkeletonBand(width: 180, height: 18),
-                              SizedBox(height: 8),
-                              SkeletonBand(width: 280, height: 14),
-                            ],
-                          ),
-                        ),
-                        const SizedBox(width: 16),
-                        const SkeletonBand(width: 120, height: 32, borderRadius: 12),
-                        const SizedBox(width: 12),
-                        const SkeletonBand(width: 110, height: 36, borderRadius: 12),
-                      ],
-                    )
-                  : Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
+                  child: isWide
+                      ? Row(
                           children: [
-                            const SkeletonBand(width: 44, height: 44, borderRadius: 14),
-                            const SizedBox(width: 12),
+                            const SkeletonBand(width: 48, height: 48, borderRadius: 16),
+                            const SizedBox(width: 14),
                             Expanded(
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: const [
-                                  SkeletonBand(width: 140, height: 16),
-                                  SizedBox(height: 6),
-                                  SkeletonBand(width: 180, height: 12),
+                                  SkeletonBand(width: 180, height: 18),
+                                  SizedBox(height: 8),
+                                  SkeletonBand(width: 280, height: 14),
                                 ],
                               ),
                             ),
+                            const SizedBox(width: 16),
+                            const SkeletonBand(width: 120, height: 32, borderRadius: 12),
+                            const SizedBox(width: 12),
+                            const SkeletonBand(width: 110, height: 36, borderRadius: 12),
+                          ],
+                        )
+                      : Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                const SkeletonBand(width: 44, height: 44, borderRadius: 14),
+                                const SizedBox(width: 12),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: const [
+                                      SkeletonBand(width: 140, height: 16),
+                                      SizedBox(height: 6),
+                                      SkeletonBand(width: 180, height: 12),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 12),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: const [
+                                SkeletonBand(width: 100, height: 24, borderRadius: 12),
+                                SkeletonBand(width: 90, height: 32, borderRadius: 10),
+                              ],
+                            ),
                           ],
                         ),
-                        const SizedBox(height: 12),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: const [
-                            SkeletonBand(width: 100, height: 24, borderRadius: 12),
-                            SkeletonBand(width: 90, height: 32, borderRadius: 10),
-                          ],
-                        ),
-                      ],
-                    ),
-            ),
+                ),
+              ),
+            ],
           ),
-        ],
-      ),
+        );
+      },
     );
   }
 }

@@ -217,42 +217,82 @@ class AvatarSelectorSheet extends ConsumerWidget {
             ),
             const SizedBox(height: 10),
 
-            SizedBox(
-              width: double.infinity,
-              child: PressableScale(
-                child: ElevatedButton.icon(
-                  key: const ValueKey('avatar-gallery-btn'),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: kPrimary,
-                    foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(vertical: 12),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                  ),
-                  icon: const Icon(Icons.photo_library_rounded, size: 18),
-                  label: Text(
-                    'From Gallery',
-                    style: poppins(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                  onPressed: () async {
-                    HapticFeedback.lightImpact();
-                    await notifier.uploadRealPhoto(path: 'gallery_photo_$userId.jpg');
-                    if (context.mounted) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('Verified real photo uploaded successfully!'),
-                          backgroundColor: Color(0xFF145131),
+            Row(
+              children: [
+                Expanded(
+                  child: PressableScale(
+                    child: OutlinedButton.icon(
+                      key: const ValueKey('avatar-camera-btn'),
+                      style: OutlinedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(vertical: 12),
+                        side: const BorderSide(color: kPrimary),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
                         ),
-                      );
-                      Navigator.of(context).pop();
-                    }
-                  },
+                      ),
+                      icon: const Icon(Icons.camera_alt_rounded, size: 18, color: kPrimary),
+                      label: Text(
+                        'Take Photo',
+                        style: poppins(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
+                          color: kPrimary,
+                        ),
+                      ),
+                      onPressed: () async {
+                        HapticFeedback.lightImpact();
+                        await notifier.uploadRealPhoto(path: 'camera_photo_$userId.jpg');
+                        if (context.mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('Verified real photo set successfully!'),
+                              backgroundColor: Color(0xFF145131),
+                            ),
+                          );
+                          Navigator.of(context).pop();
+                        }
+                      },
+                    ),
+                  ),
                 ),
-              ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: PressableScale(
+                    child: ElevatedButton.icon(
+                      key: const ValueKey('avatar-gallery-btn'),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: kPrimary,
+                        foregroundColor: Colors.white,
+                        padding: const EdgeInsets.symmetric(vertical: 12),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                      ),
+                      icon: const Icon(Icons.photo_library_rounded, size: 18),
+                      label: Text(
+                        'From Gallery',
+                        style: poppins(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      onPressed: () async {
+                        HapticFeedback.lightImpact();
+                        await notifier.uploadRealPhoto(path: 'gallery_photo_$userId.jpg');
+                        if (context.mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('Verified real photo uploaded successfully!'),
+                              backgroundColor: Color(0xFF145131),
+                            ),
+                          );
+                          Navigator.of(context).pop();
+                        }
+                      },
+                    ),
+                  ),
+                ),
+              ],
             ),
           ],
         ),

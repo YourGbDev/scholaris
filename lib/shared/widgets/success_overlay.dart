@@ -7,7 +7,9 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/physics.dart';
 
+import 'package:scholaris/shared/theme/app_motion.dart';
 import 'package:scholaris/shared/theme/app_theme.dart';
 import 'package:scholaris/shared/widgets/mascot_pose_view.dart';
 
@@ -55,21 +57,20 @@ class _SuccessPageState extends State<_SuccessPage>
     with SingleTickerProviderStateMixin {
   Timer? _timer;
   late final AnimationController _scaleController;
-  late final Animation<double> _scaleAnimation;
 
   @override
   void initState() {
     super.initState();
-    _scaleController = AnimationController(
+    _scaleController = AnimationController.unbounded(
+      value: 0.0,
       vsync: this,
-      duration: const Duration(milliseconds: 400),
-    );
-    _scaleAnimation = CurvedAnimation(
-      parent: _scaleController,
-      curve: Curves.easeOutBack,
     );
     if (!widget.reduceMotion) {
-      _scaleController.forward();
+      _scaleController.animateWith(
+        SpringSimulation(AppleSpringDescription.sheet, 0.0, 1.0, 0.0),
+      );
+    } else {
+      _scaleController.value = 1.0;
     }
     _scheduleDismiss();
   }
@@ -155,7 +156,7 @@ class _SuccessPageState extends State<_SuccessPage>
           child: widget.reduceMotion
               ? cardWidget
               : ScaleTransition(
-                  scale: _scaleAnimation,
+                  scale: _scaleController,
                   child: cardWidget,
                 ),
         ),

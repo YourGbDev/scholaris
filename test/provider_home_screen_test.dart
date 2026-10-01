@@ -69,17 +69,17 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.text('Applications'), findsWidgets);
-      expect(find.text('Scholarships'), findsOneWidget);
+      expect(find.text('My Scholarships'), findsOneWidget);
 
       // Initially shows Incoming Applications
       expect(find.text('Incoming Applications'), findsOneWidget);
 
       // Tap on Scholarships tab
-      await tester.tap(find.text('Scholarships'));
+      await tester.tap(find.text('My Scholarships'));
       await tester.pumpAndSettle();
 
-      // Now shows My Scholarships
-      expect(find.text('My Scholarships'), findsOneWidget);
+      // Now shows My Scholarships & Grant Programs
+      expect(find.text('My Scholarships & Grant Programs'), findsOneWidget);
     });
   });
 }

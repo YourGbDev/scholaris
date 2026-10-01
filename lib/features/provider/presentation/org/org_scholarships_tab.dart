@@ -526,9 +526,13 @@ class _OrgScholarshipsTabState extends ConsumerState<OrgScholarshipsTab> {
             ),
           ),
           const SizedBox(width: 6),
-          Text(
-            '${activeCount > 0 ? 100 : 0}% Operational In-Window',
-            style: orgLabel(fontSize: 11, color: kOrgTextSecondary),
+          Expanded(
+            child: Text(
+              '${activeCount > 0 ? 100 : 0}% Operational In-Window',
+              style: orgLabel(fontSize: 11, color: kOrgTextSecondary),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
           ),
         ],
       ),
@@ -624,19 +628,27 @@ class _OrgScholarshipsTabState extends ConsumerState<OrgScholarshipsTab> {
       bottomWidget: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(
-            'Target AY 2024–2025',
-            style: orgLabel(fontSize: 11, color: kOrgTextSecondary),
-          ),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-            decoration: BoxDecoration(
-              color: const Color(0xFFEEEDF3),
-              borderRadius: BorderRadius.circular(10),
-            ),
+          Expanded(
             child: Text(
-              awardedCount > 0 ? 'Tranche 1 Disbursed' : 'Awaiting Awards',
-              style: orgHeadline(fontSize: 9.5, color: kOrgTextPrimary),
+              'Target AY 2024–2025',
+              style: orgLabel(fontSize: 11, color: kOrgTextSecondary),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+          const SizedBox(width: 4),
+          FittedBox(
+            fit: BoxFit.scaleDown,
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+              decoration: BoxDecoration(
+                color: const Color(0xFFEEEDF3),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Text(
+                awardedCount > 0 ? 'Tranche 1 Disbursed' : 'Awaiting Awards',
+                style: orgHeadline(fontSize: 9.5, color: kOrgTextPrimary),
+              ),
             ),
           ),
         ],
@@ -729,15 +741,20 @@ class _OrgScholarshipsTabState extends ConsumerState<OrgScholarshipsTab> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
-                title,
-                style: orgLabel(
-                  fontSize: 10.5,
-                  fontWeight: FontWeight.w600,
-                  color: isSelected ? kOrgPrimary : kOrgTextSecondary,
-                  letterSpacing: 0.5,
+              Expanded(
+                child: Text(
+                  title,
+                  style: orgLabel(
+                    fontSize: 10.5,
+                    fontWeight: FontWeight.w600,
+                    color: isSelected ? kOrgPrimary : kOrgTextSecondary,
+                    letterSpacing: 0.5,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                 ),
               ),
+              const SizedBox(width: 6),
               Container(
                 width: 32,
                 height: 32,
@@ -775,9 +792,13 @@ class _OrgScholarshipsTabState extends ConsumerState<OrgScholarshipsTab> {
                 ),
               if (secondarySuffix != null) ...[
                 const SizedBox(width: 6),
-                Text(
-                  secondarySuffix,
-                  style: orgBody(fontSize: 12.5, color: kOrgTextSecondary),
+                Flexible(
+                  child: Text(
+                    secondarySuffix,
+                    style: orgBody(fontSize: 12.5, color: kOrgTextSecondary),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
                 ),
               ],
             ],

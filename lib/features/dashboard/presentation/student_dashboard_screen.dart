@@ -314,17 +314,23 @@ class _StudentDashboardScreenState
               onTap: () {
                 ref.read(homeTabIndexProvider.notifier).selectTab(3);
               },
-              child: Container(
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  border: Border.all(color: const Color(0xFFE2E8F9), width: 1.5),
-                ),
-                child: AvatarDisplay(
-                  avatarId: avatarState.avatarId,
-                  isRealPhoto: avatarState.isRealPhoto,
-                  photoPath: avatarState.photoPath,
-                  size: 32,
-                  showVerifiedBadge: false,
+              child: SizedBox(
+                width: 44,
+                height: 44,
+                child: Center(
+                  child: Container(
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      border: Border.all(color: const Color(0xFFE2E8F9), width: 1.5),
+                    ),
+                    child: AvatarDisplay(
+                      avatarId: avatarState.avatarId,
+                      isRealPhoto: avatarState.isRealPhoto,
+                      photoPath: avatarState.photoPath,
+                      size: 32,
+                      showVerifiedBadge: false,
+                    ),
+                  ),
                 ),
               ),
             ),

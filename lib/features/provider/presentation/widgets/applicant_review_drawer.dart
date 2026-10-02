@@ -19,7 +19,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../applications/models/application.dart';
 import '../../../applications/providers/applications_provider.dart';
-import '../../../profile/models/student_profile.dart';
+import '../../../profile/models/applicant_profile.dart';
 import '../../../scholarships/models/scholarship.dart';
 import '../../../../shared/theme/app_motion.dart';
 import '../org/org_provider_theme.dart';
@@ -35,14 +35,14 @@ class ApplicantReviewDrawer extends ConsumerStatefulWidget {
 
   final Application application;
   final Scholarship? scholarship;
-  final StudentProfile? applicantProfile;
+  final ApplicantProfile? applicantProfile;
   final VoidCallback? onStatusChanged;
 
   static void show(
     BuildContext context, {
     required Application application,
     Scholarship? scholarship,
-    StudentProfile? applicantProfile,
+    ApplicantProfile? applicantProfile,
     VoidCallback? onStatusChanged,
   }) {
     final screenWidth = MediaQuery.sizeOf(context).width;
@@ -797,7 +797,7 @@ class _ApplicantReviewDrawerState extends ConsumerState<ApplicantReviewDrawer> {
   // 2. APPLICANT HERO HIGHLIGHT CARD
   // ---------------------------------------------------------------------------
   Widget _buildHeroHighlightCard({
-    required StudentProfile profile,
+    required ApplicantProfile profile,
     required String studentCourse,
     required String studentSchool,
     required String gwaString,

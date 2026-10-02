@@ -14,7 +14,15 @@ class FakeProfileDataSource implements ProfileDataSource {
     }
     return null;
   }
-
+  @override
+  Future<Map<String, dynamic>?> fetchApplicantProfile(String userId) async {
+    for (final entry in rows.entries) {
+      if (entry.key == userId || entry.value['id'] == userId) {
+        return Map<String, dynamic>.of(entry.value);
+      }
+    }
+    return null;
+  }
   @override
   Future<List<Map<String, dynamic>>> fetchAllProfiles() async {
     return rows.entries

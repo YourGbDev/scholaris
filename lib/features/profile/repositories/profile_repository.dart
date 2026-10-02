@@ -12,6 +12,7 @@
 
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../models/applicant_profile.dart';
 import '../models/student_profile.dart';
 
 /// Thrown when an operation requires a signed-in user.
@@ -34,6 +35,7 @@ class ProfileOwnershipException implements Exception {
 /// Low-level row access for the `profiles` table.
 abstract class ProfileDataSource {
   Future<Map<String, dynamic>?> fetchProfile(String userId);
+  Future<Map<String, dynamic>?> fetchApplicantProfile(String userId);
   Future<List<Map<String, dynamic>>> fetchAllProfiles();
   Future<void> upsertProfile(String userId, Map<String, dynamic> row);
   Future<void> updateProfile(String userId, Map<String, dynamic> row) async {}
@@ -47,6 +49,11 @@ class SupabaseProfileDataSource implements ProfileDataSource {
   @override
   Future<Map<String, dynamic>?> fetchProfile(String userId) async {
     return _client.from('profiles').select().eq('id', userId).maybeSingle();
+  }
+
+  @override
+  Future<Map<String, dynamic>?> fetchApplicantProfile(String userId) async {
+    return _client.from('provider_applicant_profiles').select().eq('id', userId).maybeSingle();
   }
 
   @override
@@ -118,6 +125,13 @@ class ProfileRepository {
     final row = await _dataSource.fetchProfile(userId);
     if (row == null) return null;
     return StudentProfile.fromJson({...row, 'id': userId});
+  }
+
+  /// Fetches an applicant's profile for providers via the secure view.
+  Future<ApplicantProfile?> fetchApplicantProfile(String userId) async {
+    final row = await _dataSource.fetchApplicantProfile(userId);
+    if (row == null) return null;
+    return ApplicantProfile.fromJson({...row, 'id': userId});
   }
 
   /// Fetches all profiles across the platform. Intended for administrative directories

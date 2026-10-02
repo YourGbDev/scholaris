@@ -16,7 +16,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:scholaris/features/profile/providers/profile_setup_provider.dart';
 import '../../../applications/models/application.dart';
 import '../../../applications/providers/applications_provider.dart';
-import '../../../profile/models/student_profile.dart';
+import '../../../profile/models/applicant_profile.dart';
 import '../../providers/provider_scholarships_provider.dart';
 import 'package:scholaris/shared/theme/app_motion.dart';
 import 'org_provider_theme.dart';
@@ -99,7 +99,7 @@ class _OrgAnalyticsTabState extends ConsumerState<OrgAnalyticsTab> {
     );
   }
 
-  void _showScholarDossierDialog(BuildContext context, StudentProfile profile, Application app) {
+  void _showScholarDossierDialog(BuildContext context, ApplicantProfile profile, Application app) {
     showDialog(
       context: context,
       builder: (ctx) {
@@ -223,7 +223,7 @@ class _OrgAnalyticsTabState extends ConsumerState<OrgAnalyticsTab> {
         ),
         data: (apps) {
           final profiles = ref.watch(providerApplicantProfilesProvider).valueOrNull ??
-              <String, StudentProfile>{};
+              <String, ApplicantProfile>{};
 
           // 1. Live Cohort Filtering
           // We consider approved or awarded applicants as active cohort scholars;
@@ -236,10 +236,10 @@ class _OrgAnalyticsTabState extends ConsumerState<OrgAnalyticsTab> {
           final cohortApps = approvedApps.isNotEmpty ? approvedApps : apps;
           final totalScholars = cohortApps.length;
 
-          StudentProfile resolveProfile(Application app) {
+          ApplicantProfile resolveProfile(Application app) {
             final existing = profiles[app.userId];
             if (existing != null) return existing;
-            return StudentProfile(
+            return ApplicantProfile(
               id: app.userId,
               fullName: 'Applicant #${app.userId.length >= 8 ? app.userId.substring(0, 8) : app.userId}',
               school: 'School Pending',
@@ -247,7 +247,7 @@ class _OrgAnalyticsTabState extends ConsumerState<OrgAnalyticsTab> {
               gpa: 0.0,
               yearLevel: 1,
               region: 'NCR',
-              monthlyFamilyIncome: 0,
+              monthlyFamilyIncome: 0, setupComplete: false,
             );
           }
 
@@ -2066,7 +2066,7 @@ class _OrgAnalyticsTabState extends ConsumerState<OrgAnalyticsTab> {
   // ---------------------------------------------------------------------------
   Widget _buildScholarsSpotlightSection({
     required List<Application> cohortApps,
-    required Map<String, StudentProfile> profiles,
+    required Map<String, ApplicantProfile> profiles,
     required int totalScholars,
     required bool isDesktop,
   }) {
@@ -2196,7 +2196,7 @@ class _OrgAnalyticsTabState extends ConsumerState<OrgAnalyticsTab> {
                   DataColumn(label: Text('PARTNER HEI')),
                   DataColumn(label: Text('CUMULATIVE GWA')),
                   DataColumn(label: Text('CAPSTONES & COMMUNITY IMPACT')),
-                  DataColumn(label: Text('DEMOGRAPHIC STATUS')),
+
                   DataColumn(label: Text('DOSSIER', textAlign: TextAlign.right)),
                 ],
                 rows: cohortApps.isEmpty
@@ -2248,14 +2248,7 @@ class _OrgAnalyticsTabState extends ConsumerState<OrgAnalyticsTab> {
                                 ? parts[0][0].toUpperCase()
                                 : 'AP');
 
-                        final demographic = (p?.monthlyFamilyIncome != null &&
-                                p!.monthlyFamilyIncome! < 25000)
-                            ? '4Ps / Low-Income Tier'
-                            : (p?.isIndigenous == true
-                                ? 'IP Beneficiary'
-                                : (p?.hasDisability == true
-                                    ? 'PWD Beneficiary'
-                                    : 'Undergraduate Beneficiary'));
+                        // Removed demographic calculation.
 
                         return DataRow(
                           cells: [
@@ -2367,38 +2360,7 @@ class _OrgAnalyticsTabState extends ConsumerState<OrgAnalyticsTab> {
                                 ],
                               ),
                             ),
-                            // Demographic
-                            DataCell(
-                              Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                                decoration: BoxDecoration(
-                                  color: const Color(0xFFF4F3F8),
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Container(
-                                      width: 5,
-                                      height: 5,
-                                      decoration: const BoxDecoration(
-                                        color: kOrgPrimary,
-                                        shape: BoxShape.circle,
-                                      ),
-                                    ),
-                                    const SizedBox(width: 6),
-                                    Text(
-                                      demographic,
-                                      style: inter(
-                                        fontSize: 10.5,
-                                        fontWeight: FontWeight.w500,
-                                        color: kOrgTextSecondary,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
+
                             // Dossier action
                             DataCell(
                               IconButton(

@@ -11,7 +11,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:scholaris/features/profile/providers/profile_setup_provider.dart';
 import '../../../applications/models/application.dart';
 import '../../../applications/providers/applications_provider.dart';
-import '../../../profile/models/student_profile.dart';
+import '../../../profile/models/applicant_profile.dart';
 import '../../../scholarships/models/scholarship.dart';
 import '../../../scholarships/providers/scholarships_provider.dart';
 import '../../providers/provider_scholarships_provider.dart';
@@ -129,7 +129,7 @@ class _OrgIncomingApplicationsTabState
     final isLoading = incomingAppsAsync.isLoading && incomingAppsAsync.valueOrNull == null;
     final profiles =
         ref.watch(providerApplicantProfilesProvider).valueOrNull ??
-            <String, StudentProfile>{};
+            <String, ApplicantProfile>{};
 
           final scholarships = scholarshipsAsync.valueOrNull ?? <Scholarship>[];
           final scholarshipsMap = <String, Scholarship>{
@@ -844,7 +844,7 @@ class _OrgIncomingApplicationsTabState
     required int approvedCount,
     required int rejectedCount,
     required List<Scholarship> scholarships,
-    required Map<String, StudentProfile> profiles,
+    required Map<String, ApplicantProfile> profiles,
     required bool isDesktop,
   }) {
     final segmentTabs = [
@@ -1212,7 +1212,7 @@ class _OrgIncomingApplicationsTabState
   // ===========================================================================
   Widget _buildDossierList({
     required List<Application> apps,
-    required Map<String, StudentProfile> profiles,
+    required Map<String, ApplicantProfile> profiles,
     required Map<String, Scholarship> scholarshipsMap,
     required bool isDesktop,
   }) {
@@ -1242,7 +1242,7 @@ class _OrgIncomingApplicationsTabState
   Widget _buildDossierCard({
     required int index,
     required Application app,
-    required StudentProfile? profile,
+    required ApplicantProfile? profile,
     required Scholarship? scholarship,
     required bool isDesktop,
   }) {

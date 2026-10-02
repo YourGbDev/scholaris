@@ -35,7 +35,25 @@ class RlsEnforcingProfileDataSource implements ProfileDataSource {
 
   @override
   Future<Map<String, dynamic>?> fetchApplicantProfile(String userId) async {
-    return fetchProfile(userId);
+    // Mirrors migration 0020: submitted-or-later application to a scholarship
+    // owned by the caller, and only the column-minimized fields.
+    final callerId = currentUserId();
+    if (callerId == null) return null;
+    final row = rawProfiles[userId];
+    if (row == null) return null;
+    final visible = applicationDataSource.hasVisibleApplicationForProvider(
+      applicantUserId: userId,
+      providerId: callerId,
+    );
+    if (!visible) return null;
+    const allowed = <String>{
+      'id', 'full_name', 'school', 'course', 'year_level', 'gpa', 'region',
+      'province', 'city_municipality', 'setup_complete', 'monthly_family_income',
+    };
+    return {
+      for (final e in row.entries)
+        if (allowed.contains(e.key)) e.key: e.value,
+    };
   }
 
   @override
@@ -114,6 +132,21 @@ class RlsEnforcingApplicationDataSource implements ApplicationDataSource {
   final Map<String, Map<String, dynamic>> rawScholarships = {};
   final List<Map<String, dynamic>> rawApplications = [];
 
+  bool hasVisibleApplicationForProvider({
+    required String applicantUserId,
+    required String providerId,
+  }) {
+    for (final app in rawApplications) {
+      if (app['user_id'] != applicantUserId) continue;
+      final status = app['status'];
+      if (status == 'draft' || status == 'withdrawn') continue;
+      final scholarship = rawScholarships[app['scholarship_id']];
+      if (scholarship != null && scholarship['created_by'] == providerId) {
+        return true;
+      }
+    }
+    return false;
+  }
   bool hasApplicationForProvider({
     required String applicantUserId,
     required String providerId,
@@ -366,6 +399,57 @@ void main() {
   });
 
   group('RLS Scoping Proof: Cross-Provider Applicant Data Isolation', () {
+    test('Provider A CANNOT read the applicant view row for a draft or withdrawn application', () async {
+      activeAuthUserId = providerAId;
+      profileDataSource.rawProfiles['applicant-draft'] = {
+        'id': 'applicant-draft',
+        'full_name': 'Draft Applicant',
+      };
+      profileDataSource.rawProfiles['applicant-withdrawn'] = {
+        'id': 'applicant-withdrawn',
+        'full_name': 'Withdrawn Applicant',
+      };
+      appDataSource.rawApplications.add({
+        'id': 'app-draft',
+        'user_id': 'applicant-draft',
+        'scholarship_id': scholarshipAId,
+        'status': 'draft',
+      });
+      appDataSource.rawApplications.add({
+        'id': 'app-withdrawn',
+        'user_id': 'applicant-withdrawn',
+        'scholarship_id': scholarshipAId,
+        'status': 'withdrawn',
+      });
+
+      expect(await profileDataSource.fetchApplicantProfile('applicant-draft'), isNull,
+          reason: 'Draft applicants must not be visible to providers');
+      expect(await profileDataSource.fetchApplicantProfile('applicant-withdrawn'), isNull,
+          reason: 'Withdrawn applicants must not be visible to providers');
+      expect(await profileDataSource.fetchApplicantProfile(applicantYId), isNotNull,
+          reason: 'Submitted applicants stay visible');
+    });
+
+    test('Applicant view row never contains birth_date, phone, or has_disability', () async {
+      activeAuthUserId = providerAId;
+      profileDataSource.rawProfiles[applicantYId] = {
+        ...profileDataSource.rawProfiles[applicantYId]!,
+        'birth_date': '2001-01-01',
+        'phone': '09170000000',
+        'has_disability': true,
+        'is_indigenous': false,
+        'email': 'y@example.com',
+        'gender': 'female',
+        'monthly_family_income': 15000,
+      };
+
+      final row = await profileDataSource.fetchApplicantProfile(applicantYId);
+      expect(row, isNotNull);
+      for (final key in ['birth_date', 'phone', 'has_disability', 'is_indigenous', 'email', 'gender', 'nationality']) {
+        expect(row!.containsKey(key), isFalse, reason: '$key must not be exposed to providers');
+      }
+      expect(row!['monthly_family_income'], 15000);
+    });
     test('Provider A CANNOT fetch applications or confidential notes for an applicant who only applied to Provider B', () async {
       activeAuthUserId = providerAId;
 

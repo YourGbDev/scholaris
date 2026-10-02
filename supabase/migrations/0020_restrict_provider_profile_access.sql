@@ -27,7 +27,7 @@
 --    `public.provider_applicant_profiles`
 --    and an RPC helper `public.get_applicant_profile(uuid)`.
 --    - Exposes ONLY non-sensitive academic & demographic attributes used by provider UI.
---    - Enforces that the application has left 'draft' status (a.status <> 'draft').
+--    - Enforces that the application is neither 'draft' nor 'withdrawn' (a.status NOT IN ('draft', 'withdrawn')).
 --    - Excludes has_disability, is_indigenous, birth_date, phone, email, and gender.
 --    - FLAGGED: monthly_family_income is included strictly because provider
 --      intake reviews display household income tiers for means-tested grants.
@@ -83,11 +83,11 @@ WHERE
     JOIN public.scholarships s ON s.id = a.scholarship_id
     WHERE a.user_id = p.id
       AND s.created_by = auth.uid()
-      AND a.status <> 'draft'
+      AND a.status NOT IN ('draft', 'withdrawn')
   );
 
 COMMENT ON VIEW public.provider_applicant_profiles IS
-'Sanitized, column-minimized view of applicant profiles for scholarship providers. Strictly excludes disability, indigenous affiliation, birth date, phone, and unsubmitted draft applications.';
+'Sanitized, column-minimized view of applicant profiles for scholarship providers. Strictly excludes disability, indigenous affiliation, birth date, phone, and draft or withdrawn applications.';
 
 GRANT SELECT ON public.provider_applicant_profiles TO authenticated;
 REVOKE ALL ON public.provider_applicant_profiles FROM PUBLIC, anon;
@@ -116,7 +116,7 @@ STABLE
 AS $$
 BEGIN
   -- Strict guard: caller must be administrator OR the provider who owns a scholarship
-  -- to which the user has a submitted (non-draft) application.
+  -- to which the user has a submitted (non-draft, non-withdrawn) application.
   IF NOT (
     public.is_admin()
     OR EXISTS (
@@ -125,7 +125,7 @@ BEGIN
       JOIN public.scholarships s ON s.id = a.scholarship_id
       WHERE a.user_id = p_user_id
         AND s.created_by = auth.uid()
-        AND a.status <> 'draft'
+        AND a.status NOT IN ('draft', 'withdrawn')
     )
   ) THEN
     RETURN;

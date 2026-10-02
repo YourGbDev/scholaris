@@ -609,9 +609,9 @@ class _LoginScreenState extends State<LoginScreen>
                                         onPressed: _onForgotPassword,
                                         style: TextButton.styleFrom(
                                           foregroundColor: kNavyTrust,
-                                          padding: EdgeInsets.zero,
-                                          minimumSize: Size.zero,
-                                          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 0),
+                                          minimumSize: const Size(44, 44),
+                                          tapTargetSize: MaterialTapTargetSize.padded,
                                         ),
                                         child: Text(
                                           'Forgot password?',

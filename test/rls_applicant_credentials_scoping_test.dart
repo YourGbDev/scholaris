@@ -34,6 +34,11 @@ class RlsEnforcingProfileDataSource implements ProfileDataSource {
   final Map<String, Map<String, dynamic>> rawProfiles = {};
 
   @override
+  Future<Map<String, dynamic>?> fetchApplicantProfile(String userId) async {
+    return fetchProfile(userId);
+  }
+
+  @override
   Future<Map<String, dynamic>?> fetchProfile(String userId) async {
     final callerId = currentUserId();
     if (callerId == null) return null;

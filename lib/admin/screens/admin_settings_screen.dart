@@ -6,8 +6,8 @@
 // Zero fake values, zero hardcoded active toggles, zero fabricated compliance stamps.
 
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:scholaris/features/admin/presentation/admin_theme.dart';
+import 'package:scholaris/shared/theme/app_motion.dart';
 
 class AdminSettingsScreen extends StatelessWidget {
   const AdminSettingsScreen({super.key});
@@ -17,6 +17,7 @@ class AdminSettingsScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: kSeqSurface,
       body: SingleChildScrollView(
+        physics: const AppleBouncingScrollPhysics(),
         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -24,11 +25,9 @@ class AdminSettingsScreen extends StatelessWidget {
             // --- Header (No Live data tag per instructions) ---
             Text(
               'Admin Settings',
-              style: GoogleFonts.newsreader(
-                fontSize: 32,
+              style: seqHeadlineLg(
                 fontWeight: FontWeight.w700,
                 color: kSeqOnSurface,
-                letterSpacing: -0.5,
               ),
             ),
             const SizedBox(height: 4),

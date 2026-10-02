@@ -5,8 +5,10 @@
 // Discover screen stays reactive while the sheet is open.
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../shared/theme/app_motion.dart';
 import '../../../shared/theme/app_theme.dart';
 import '../../profile/models/student_profile.dart';
 import '../providers/discovery_provider.dart';
@@ -53,9 +55,12 @@ class _DiscoveryFilterSheetState extends ConsumerState<DiscoveryFilterSheet> {
     final state = ref.watch(discoveryFilterProvider);
     final notifier = ref.read(discoveryFilterProvider.notifier);
 
-    return SizedBox(
-      height: MediaQuery.of(context).size.height * 0.85,
-      child: Column(
+    return Material(
+      color: Colors.white,
+      borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+      child: SizedBox(
+        height: MediaQuery.of(context).size.height * 0.85,
+        child: Column(
         children: [
           Padding(
             padding: const EdgeInsets.fromLTRB(20, 6, 12, 10),
@@ -70,18 +75,23 @@ class _DiscoveryFilterSheetState extends ConsumerState<DiscoveryFilterSheet> {
                   ),
                 ),
                 const Spacer(),
-                TextButton(
-                  onPressed: notifier.reset,
-                  style: TextButton.styleFrom(
-                    foregroundColor: const Color(0xFF0F4D2E),
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                  ),
-                  child: Text(
-                    'Reset',
-                    style: outfit(
-                      fontSize: 13,
-                      fontWeight: FontWeight.w600,
-                      color: const Color(0xFF0F4D2E),
+                PressableScale(
+                  child: TextButton(
+                    onPressed: () {
+                      HapticFeedback.lightImpact();
+                      notifier.reset();
+                    },
+                    style: TextButton.styleFrom(
+                      foregroundColor: const Color(0xFF0F4D2E),
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                    ),
+                    child: Text(
+                      'Reset',
+                      style: outfit(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w600,
+                        color: const Color(0xFF0F4D2E),
+                      ),
                     ),
                   ),
                 ),
@@ -130,8 +140,10 @@ class _DiscoveryFilterSheetState extends ConsumerState<DiscoveryFilterSheet> {
                     ),
                   ],
                   selected: {state.sort},
-                  onSelectionChanged: (selection) =>
-                      notifier.setSort(selection.first),
+                  onSelectionChanged: (selection) {
+                    HapticFeedback.selectionClick();
+                    notifier.setSort(selection.first);
+                  },
                 ),
                 const SizedBox(height: 24),
                 _sectionTitle('Income'),
@@ -142,26 +154,31 @@ class _DiscoveryFilterSheetState extends ConsumerState<DiscoveryFilterSheet> {
                     final selected = bracket == 'any'
                         ? state.incomeBracket == null
                         : state.incomeBracket == bracket;
-                    return ChoiceChip(
-                      label: Text(
-                        incomeLabel(bracket == 'any' ? null : bracket),
-                        style: outfit(
-                          fontSize: 12.5,
-                          fontWeight: selected ? FontWeight.bold : FontWeight.w500,
-                          color: selected ? Colors.white : const Color(0xFF161C27),
+                    return PressableScale(
+                      child: ChoiceChip(
+                        label: Text(
+                          incomeLabel(bracket == 'any' ? null : bracket),
+                          style: outfit(
+                            fontSize: 12.5,
+                            fontWeight: selected ? FontWeight.bold : FontWeight.w500,
+                            color: selected ? Colors.white : const Color(0xFF161C27),
+                          ),
                         ),
-                      ),
-                      selected: selected,
-                      selectedColor: const Color(0xFF0F4D2E),
-                      backgroundColor: const Color(0xFFF1F3FF),
-                      side: BorderSide(
-                        color: selected ? const Color(0xFF0F4D2E) : const Color(0xFFDDE2F3),
-                      ),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      onSelected: (_) => notifier.setIncomeBracket(
-                        bracket == 'any' ? null : bracket,
+                        selected: selected,
+                        selectedColor: const Color(0xFF0F4D2E),
+                        backgroundColor: const Color(0xFFF1F3FF),
+                        side: BorderSide(
+                          color: selected ? const Color(0xFF0F4D2E) : const Color(0xFFDDE2F3),
+                        ),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        onSelected: (_) {
+                          HapticFeedback.selectionClick();
+                          notifier.setIncomeBracket(
+                            bracket == 'any' ? null : bracket,
+                          );
+                        },
                       ),
                     );
                   }).toList(),
@@ -181,7 +198,10 @@ class _DiscoveryFilterSheetState extends ConsumerState<DiscoveryFilterSheet> {
                   value: state.closingSoonOnly,
                   activeThumbColor: const Color(0xFF0F4D2E),
                   activeTrackColor: const Color(0xFFB3F1C6),
-                  onChanged: notifier.setClosingSoonOnly,
+                  onChanged: (value) {
+                    HapticFeedback.selectionClick();
+                    notifier.setClosingSoonOnly(value);
+                  },
                 ),
                 const SizedBox(height: 24),
                 _sectionTitle('Region'),
@@ -191,26 +211,31 @@ class _DiscoveryFilterSheetState extends ConsumerState<DiscoveryFilterSheet> {
                   runSpacing: 8,
                   children: kPhilippineRegions.map((region) {
                     final isSelected = state.regions.contains(region);
-                    return FilterChip(
-                      label: Text(
-                        region,
-                        style: outfit(
-                          fontSize: 12,
-                          fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
-                          color: isSelected ? Colors.white : const Color(0xFF161C27),
+                    return PressableScale(
+                      child: FilterChip(
+                        label: Text(
+                          region,
+                          style: outfit(
+                            fontSize: 12,
+                            fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
+                            color: isSelected ? Colors.white : const Color(0xFF161C27),
+                          ),
                         ),
+                        selected: isSelected,
+                        selectedColor: const Color(0xFF0F4D2E),
+                        backgroundColor: const Color(0xFFF1F3FF),
+                        side: BorderSide(
+                          color: isSelected ? const Color(0xFF0F4D2E) : const Color(0xFFDDE2F3),
+                        ),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        showCheckmark: false,
+                        onSelected: (_) {
+                          HapticFeedback.selectionClick();
+                          notifier.toggleRegion(region);
+                        },
                       ),
-                      selected: isSelected,
-                      selectedColor: const Color(0xFF0F4D2E),
-                      backgroundColor: const Color(0xFFF1F3FF),
-                      side: BorderSide(
-                        color: isSelected ? const Color(0xFF0F4D2E) : const Color(0xFFDDE2F3),
-                      ),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      showCheckmark: false,
-                      onSelected: (_) => notifier.toggleRegion(region),
                     );
                   }).toList(),
                 ),
@@ -218,26 +243,36 @@ class _DiscoveryFilterSheetState extends ConsumerState<DiscoveryFilterSheet> {
             ),
           ),
           Padding(
-            padding: const EdgeInsets.fromLTRB(20, 10, 20, 24),
+            padding: EdgeInsets.fromLTRB(
+              20,
+              10,
+              20,
+              MediaQuery.paddingOf(context).bottom + 16,
+            ),
             child: SizedBox(
               width: double.infinity,
               height: 48,
-              child: ElevatedButton(
-                onPressed: () => Navigator.of(context).pop(),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF0F4D2E), // primary-container
-                  foregroundColor: Colors.white,
-                  elevation: 0,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
+              child: PressableScale(
+                child: ElevatedButton(
+                  onPressed: () {
+                    HapticFeedback.lightImpact();
+                    Navigator.of(context).pop();
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF0F4D2E), // primary-container
+                    foregroundColor: Colors.white,
+                    elevation: 0,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
                   ),
-                ),
-                child: Text(
-                  'Done',
-                  style: outfit(
-                    fontSize: 14.5,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
+                  child: Text(
+                    'Done',
+                    style: outfit(
+                      fontSize: 14.5,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
                   ),
                 ),
               ),
@@ -245,7 +280,8 @@ class _DiscoveryFilterSheetState extends ConsumerState<DiscoveryFilterSheet> {
           ),
         ],
       ),
-    );
+    ),
+  );
   }
 
   Widget _sectionTitle(String title) => Row(

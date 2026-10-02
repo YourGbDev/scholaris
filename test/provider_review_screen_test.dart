@@ -18,11 +18,11 @@ void main() {
                 const ProviderReviewScreen(),
           ),
           GoRoute(
-            path: '/login',
+            path: '/provider/login',
             builder: (context, state) =>
                 const Scaffold(
                   body: Center(
-                    child: Text('Login'),
+                    child: Text('Provider Login'),
                   ),
                 ),
           ),
@@ -42,7 +42,7 @@ void main() {
         ),
         findsOneWidget,
       );
-      expect(find.text('Back to login'), findsOneWidget);
+      expect(find.text('Back to Provider Sign In'), findsOneWidget);
     });
 
     testWidgets('back-to-login button navigates to /login', (tester) async {
@@ -55,11 +55,11 @@ void main() {
                 const ProviderReviewScreen(),
           ),
           GoRoute(
-            path: '/login',
+            path: '/provider/login',
             builder: (context, state) =>
                 const Scaffold(
                   body: Center(
-                    child: Text('Login'),
+                    child: Text('Provider Login'),
                   ),
                 ),
           ),
@@ -70,10 +70,10 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      await tester.tap(find.widgetWithText(ElevatedButton, 'Back to login'));
+      await tester.tap(find.widgetWithText(ElevatedButton, 'Back to Provider Sign In'));
       await tester.pumpAndSettle();
 
-      expect(find.text('Login'), findsOneWidget);
+      expect(find.text('Provider Login'), findsOneWidget);
     });
   });
 }

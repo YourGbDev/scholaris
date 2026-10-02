@@ -277,8 +277,11 @@ class _ApplicationsOversightScreenState
 
     return Scaffold(
       backgroundColor: kSeqSurface,
-      body: appsAsync.when(
-        loading: () => _buildSkeleton(context),
+      body: CrossFadeLoading(
+        isLoading: appsAsync.isLoading,
+        skeleton: _buildSkeleton(context),
+        child: appsAsync.when(
+          loading: () => _buildSkeleton(context),
         error: (err, stack) => Center(
           child: Padding(
             padding: const EdgeInsets.all(24),
@@ -341,6 +344,7 @@ class _ApplicationsOversightScreenState
           }
 
           return SingleChildScrollView(
+            physics: const AppleBouncingScrollPhysics(),
             padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -382,6 +386,7 @@ class _ApplicationsOversightScreenState
             ),
           );
         },
+        ),
       ),
     );
   }
@@ -451,37 +456,53 @@ class _ApplicationsOversightScreenState
     final width = MediaQuery.sizeOf(context).width;
 
     final cards = [
-      _buildKpiCard(
-        title: 'TOTAL INTAKE REGISTRY',
-        value: '$totalCount',
-        subtitle: 'All live applications',
-        icon: Icons.assignment_outlined,
-        color: kSeqOnSurface,
-        containerBg: kSeqSurfaceContainerLow,
+      StaggeredListItem(
+        index: 0,
+        child: _buildKpiCard(
+          title: 'TOTAL INTAKE REGISTRY',
+          value: '$totalCount',
+          numericValue: totalCount,
+          subtitle: 'All live applications',
+          icon: Icons.assignment_outlined,
+          color: kSeqOnSurface,
+          containerBg: kSeqSurfaceContainerLow,
+        ),
       ),
-      _buildKpiCard(
-        title: 'SUBMITTED INTAKE',
-        value: '$submittedCount',
-        subtitle: 'Awaiting evaluation',
-        icon: Icons.send_rounded,
-        color: kSeqSecondary,
-        containerBg: kSeqSecondaryFixed.withValues(alpha: 0.4),
+      StaggeredListItem(
+        index: 1,
+        child: _buildKpiCard(
+          title: 'SUBMITTED INTAKE',
+          value: '$submittedCount',
+          numericValue: submittedCount,
+          subtitle: 'Awaiting evaluation',
+          icon: Icons.send_rounded,
+          color: kSeqSecondary,
+          containerBg: kSeqSecondaryFixed.withValues(alpha: 0.4),
+        ),
       ),
-      _buildKpiCard(
-        title: 'UNDER COMMITTEE REVIEW',
-        value: '$underReviewCount',
-        subtitle: 'In-flight assessment',
-        icon: Icons.schedule_rounded,
-        color: kSeqTertiaryContainer,
-        containerBg: kSeqTertiaryFixed.withValues(alpha: 0.4),
+      StaggeredListItem(
+        index: 2,
+        child: _buildKpiCard(
+          title: 'UNDER COMMITTEE REVIEW',
+          value: '$underReviewCount',
+          numericValue: underReviewCount,
+          subtitle: 'In-flight assessment',
+          icon: Icons.schedule_rounded,
+          color: kSeqTertiaryContainer,
+          containerBg: kSeqTertiaryFixed.withValues(alpha: 0.4),
+        ),
       ),
-      _buildKpiCard(
-        title: 'APPROVED & AWARDED',
-        value: '$approvedCount',
-        subtitle: 'Approved applications',
-        icon: Icons.check_circle_rounded,
-        color: kSeqPrimaryContainer,
-        containerBg: kSeqPrimaryFixed.withValues(alpha: 0.4),
+      StaggeredListItem(
+        index: 3,
+        child: _buildKpiCard(
+          title: 'APPROVED & AWARDED',
+          value: '$approvedCount',
+          numericValue: approvedCount,
+          subtitle: 'Approved applications',
+          icon: Icons.check_circle_rounded,
+          color: kSeqPrimaryContainer,
+          containerBg: kSeqPrimaryFixed.withValues(alpha: 0.4),
+        ),
       ),
     ];
 
@@ -531,6 +552,7 @@ class _ApplicationsOversightScreenState
   Widget _buildKpiCard({
     required String title,
     required String value,
+    int? numericValue,
     required String subtitle,
     required IconData icon,
     required Color color,
@@ -579,10 +601,15 @@ class _ApplicationsOversightScreenState
             ],
           ),
           const SizedBox(height: 8),
-          Text(
-            value,
-            style: seqHeadlineLg(fontWeight: FontWeight.w700),
-          ),
+          numericValue != null
+              ? CountUpAnimation(
+                  targetValue: numericValue,
+                  style: seqTabularFigures(seqHeadlineLg(fontWeight: FontWeight.w700)),
+                )
+              : Text(
+                  value,
+                  style: seqTabularFigures(seqHeadlineLg(fontWeight: FontWeight.w700)),
+                ),
           const SizedBox(height: 2),
           Text(
             subtitle,
@@ -964,10 +991,10 @@ class _ApplicationsOversightScreenState
                       const SizedBox(height: 2),
                       Text(
                         scholarshipAmountText,
-                        style: seqHeadlineSm(
+                        style: seqTabularFigures(seqHeadlineSm(
                           color: kSeqPrimaryContainer,
                           fontWeight: FontWeight.w700,
-                        ),
+                        )),
                       ),
                     ],
                   ),
@@ -993,7 +1020,7 @@ class _ApplicationsOversightScreenState
                           Flexible(
                             child: Text(
                               'Applied: $appliedAtText',
-                              style: seqLabelSm(color: kSeqOnSurfaceVariant),
+                              style: seqTabularFigures(seqLabelSm(color: kSeqOnSurfaceVariant)),
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                             ),
@@ -1005,7 +1032,7 @@ class _ApplicationsOversightScreenState
                           Flexible(
                             child: Text(
                               'Updated: $updatedAtText',
-                              style: seqLabelSm(color: kSeqOutline),
+                              style: seqTabularFigures(seqLabelSm(color: kSeqOutline)),
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                             ),
@@ -1369,6 +1396,8 @@ class _ApplicationsOversightScreenState
   }
 
   Widget _dossierRow(String label, String value) {
+    final lower = label.toLowerCase();
+    final isMono = lower.contains('id') || lower.contains('timestamp') || lower.contains('date');
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4),
       child: Row(
@@ -1387,10 +1416,16 @@ class _ApplicationsOversightScreenState
           Expanded(
             child: Text(
               value,
-              style: seqBodySm(
-                color: kSeqOnSurface,
-                fontWeight: FontWeight.w600,
-              ),
+              style: isMono
+                  ? adminDataMono(
+                      fontSize: 11.5,
+                      fontWeight: FontWeight.w500,
+                      color: kSeqOnSurface,
+                    )
+                  : seqBodySm(
+                      color: kSeqOnSurface,
+                      fontWeight: FontWeight.w600,
+                    ),
             ),
           ),
         ],

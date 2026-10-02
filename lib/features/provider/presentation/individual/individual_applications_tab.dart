@@ -13,6 +13,7 @@ import '../../../profile/models/student_profile.dart';
 import '../../../scholarships/models/scholarship.dart';
 import '../../../scholarships/providers/scholarships_provider.dart';
 import '../../providers/provider_scholarships_provider.dart';
+import 'package:scholaris/shared/theme/app_motion.dart';
 import '../org/org_provider_theme.dart';
 import '../widgets/applicant_review_drawer.dart';
 
@@ -46,10 +47,11 @@ class _IndividualApplicationsTabState
 
     return Container(
       color: kOrgCanvas,
-      child: incomingAppsAsync.when(
-        loading: () => const Center(
-          child: CircularProgressIndicator(color: kOrgPrimary),
-        ),
+      child: CrossFadeLoading(
+        isLoading: incomingAppsAsync.isLoading,
+        skeleton: _buildSkeletonLoader(),
+        child: incomingAppsAsync.when(
+          loading: () => _buildSkeletonLoader(),
         error: (err, _) => Center(
           child: Padding(
             padding: const EdgeInsets.all(24),
@@ -89,7 +91,7 @@ class _IndividualApplicationsTabState
 
           final totalGrantAmount = approvedApps.fold<int>(
             0,
-            (sum, a) => sum + (scholarshipsMap[a.scholarshipId]?.awardAmount ?? 50000),
+            (sum, a) => sum + (scholarshipsMap[a.scholarshipId]?.awardAmount ?? 0),
           );
 
           final filteredApps = _selectedStatus == null
@@ -102,6 +104,7 @@ class _IndividualApplicationsTabState
               ref.invalidate(incomingApplicationsProvider);
             },
             child: ListView(
+              physics: const AppleBouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
               padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
               children: [
                 // Compact "My Impact" Summary Card (collapsed from full Analytics)
@@ -164,10 +167,10 @@ class _IndividualApplicationsTabState
                                     style: orgLabel(
                                         color: Colors.white70, fontSize: 10)),
                                 const SizedBox(height: 2),
-                                Text(
-                                  totalGrantAmount > 0
-                                      ? _formatCurrency(totalGrantAmount)
-                                      : '₱50,000',
+                                CountUpAnimation(
+                                  targetValue: totalGrantAmount,
+                                  prefix: '₱',
+                                  formatWithCommas: true,
                                   style: orgHeadline(
                                       fontSize: 18, color: Colors.white),
                                 ),
@@ -188,10 +191,20 @@ class _IndividualApplicationsTabState
                                     style: orgLabel(
                                         color: Colors.white70, fontSize: 10)),
                                 const SizedBox(height: 2),
-                                Text(
-                                  '${approvedApps.length} Student${approvedApps.length == 1 ? '' : 's'}',
-                                  style: orgHeadline(
-                                      fontSize: 18, color: kOrgAccentGold),
+                                Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    CountUpAnimation(
+                                      targetValue: approvedApps.length,
+                                      style: orgHeadline(
+                                          fontSize: 18, color: kOrgAccentGold),
+                                    ),
+                                    Text(
+                                      ' Student${approvedApps.length == 1 ? '' : 's'}',
+                                      style: orgHeadline(
+                                          fontSize: 18, color: kOrgAccentGold),
+                                    ),
+                                  ],
                                 ),
                               ],
                             ),
@@ -216,6 +229,7 @@ class _IndividualApplicationsTabState
                 const SizedBox(height: 10),
 
                 SingleChildScrollView(
+                  physics: const AppleBouncingScrollPhysics(),
                   scrollDirection: Axis.horizontal,
                   child: Row(
                     children: [
@@ -284,7 +298,9 @@ class _IndividualApplicationsTabState
                     ),
                   )
                 else
-                  ...filteredApps.map((app) {
+                  ...filteredApps.asMap().entries.map((entry) {
+                    final index = entry.key;
+                    final app = entry.value;
                     final profile = profiles[app.userId];
                     final scholarship = scholarshipsMap[app.scholarshipId];
 
@@ -300,17 +316,20 @@ class _IndividualApplicationsTabState
                         ? profile!.course
                         : 'Degree Program';
 
-                    final gwa = profile != null && profile.gpa > 0
+                    final hasGwa = profile != null && profile.gpa > 0;
+                    final gwa = hasGwa
                         ? profile.gpa.toStringAsFixed(2)
-                        : '1.50';
+                        : 'N/A';
 
                     final isApproved = app.status == ApplicationStatus.approved ||
                         app.status == ApplicationStatus.awarded;
 
-                    return Container(
-                      margin: const EdgeInsets.only(bottom: 12),
-                      padding: const EdgeInsets.all(14),
-                      decoration: BoxDecoration(
+                    return StaggeredListItem(
+                      index: index,
+                      child: Container(
+                        margin: const EdgeInsets.only(bottom: 12),
+                        padding: const EdgeInsets.all(14),
+                        decoration: BoxDecoration(
                         color: kOrgSurfaceWhite,
                         borderRadius: BorderRadius.circular(12),
                         border: Border.all(color: kOrgBorder),
@@ -374,13 +393,20 @@ class _IndividualApplicationsTabState
                                 padding: const EdgeInsets.symmetric(
                                     horizontal: 6, vertical: 2),
                                 decoration: BoxDecoration(
-                                  color: kOrgBadgeApprovedBg,
+                                  color: hasGwa
+                                      ? kOrgBadgeApprovedBg
+                                      : kOrgBadgePendingBg,
                                   borderRadius: BorderRadius.circular(4),
                                 ),
-                                child: Text('GWA $gwa',
-                                    style: orgLabel(
-                                        fontSize: 10,
-                                        color: kOrgBadgeApprovedText)),
+                                child: Text(
+                                  hasGwa ? 'GWA $gwa' : 'GWA Pending',
+                                  style: orgLabel(
+                                    fontSize: 10,
+                                    color: hasGwa
+                                        ? kOrgBadgeApprovedText
+                                        : kOrgBadgePendingText,
+                                  ),
+                                ),
                               ),
                               const SizedBox(width: 6),
                               if (profile?.incomeBracket != null)
@@ -402,7 +428,7 @@ class _IndividualApplicationsTabState
                               Text(
                                 scholarship != null
                                     ? _formatCurrency(_getAwardAmount(scholarship))
-                                    : '₱35,000 / sem',
+                                    : 'Grant pending',
                                 style: orgHeadline(
                                     fontSize: 13, color: kOrgPrimary),
                               ),
@@ -431,78 +457,116 @@ class _IndividualApplicationsTabState
                             ),
                           SizedBox(
                             width: double.infinity,
-                            child: FilledButton.icon(
-                              style: FilledButton.styleFrom(
-                                backgroundColor: kOrgPrimary,
-                                foregroundColor: Colors.white,
-                                shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(8)),
-                                padding:
-                                    const EdgeInsets.symmetric(vertical: 10),
+                            child: PressableScale(
+                              scale: 0.97,
+                              child: FilledButton.icon(
+                                style: FilledButton.styleFrom(
+                                  backgroundColor: kOrgPrimary,
+                                  foregroundColor: Colors.white,
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(8)),
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 12),
+                                ),
+                                onPressed: () {
+                                  ApplicantReviewDrawer.show(
+                                    context,
+                                    application: app,
+                                    scholarship: scholarship,
+                                    applicantProfile: profile,
+                                    onStatusChanged: () {
+                                      ref
+                                          .read(
+                                              incomingApplicationsProvider.notifier)
+                                          .refresh();
+                                    },
+                                  );
+                                },
+                                icon: const Icon(Icons.rate_review_outlined,
+                                    size: 15),
+                                label: const Text('Review Application & Decide'),
                               ),
-                              onPressed: () {
-                                ApplicantReviewDrawer.show(
-                                  context,
-                                  application: app,
-                                  scholarship: scholarship,
-                                  applicantProfile: profile,
-                                  onStatusChanged: () {
-                                    ref
-                                        .read(
-                                            incomingApplicationsProvider.notifier)
-                                        .refresh();
-                                  },
-                                );
-                              },
-                              icon: const Icon(Icons.rate_review_outlined,
-                                  size: 15),
-                              label: const Text('Review Application & Decide'),
                             ),
                           ),
                         ],
                       ),
-                    );
-                  }),
+                    ),
+                  );
+                }),
               ],
             ),
           );
         },
+      ),
+      ),
+    );
+  }
+
+  Widget _buildSkeletonLoader() {
+    return Padding(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        children: [
+          const SkeletonBand(height: 120, borderRadius: 16),
+          const SizedBox(height: 16),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: const [
+              SkeletonBand(width: 140, height: 20, borderRadius: 6),
+              SkeletonBand(width: 90, height: 16, borderRadius: 6),
+            ],
+          ),
+          const SizedBox(height: 14),
+          ...List.generate(
+            3,
+            (_) => const Padding(
+              padding: EdgeInsets.only(bottom: 12),
+              child: SkeletonBand(height: 130, borderRadius: 12),
+            ),
+          ),
+        ],
       ),
     );
   }
 
   Widget _buildChip(
       String label, int count, bool isSelected, VoidCallback onTap) {
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(6),
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-        decoration: BoxDecoration(
-          color: isSelected ? kOrgSidebarDark : kOrgSurfaceWhite,
-          borderRadius: BorderRadius.circular(6),
-          border: Border.all(
-            color: isSelected ? kOrgSidebarDark : kOrgBorder,
+    return PressableScale(
+      scale: 0.97,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(6),
+        child: Container(
+          constraints: const BoxConstraints(minHeight: 44, minWidth: 44),
+          alignment: Alignment.center,
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+          decoration: BoxDecoration(
+            color: isSelected ? kOrgSidebarDark : kOrgSurfaceWhite,
+            borderRadius: BorderRadius.circular(6),
+            border: Border.all(
+              color: isSelected ? kOrgSidebarDark : kOrgBorder,
+            ),
           ),
-        ),
-        child: Row(
-          children: [
-            Text(
-              label,
-              style: orgLabel(
-                fontSize: 11,
-                color: isSelected ? Colors.white : kOrgTextSecondary,
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                label,
+                style: orgLabel(
+                  fontSize: 11,
+                  color: isSelected ? Colors.white : kOrgTextSecondary,
+                ),
               ),
-            ),
-            const SizedBox(width: 4),
-            Text(
-              '($count)',
-              style: orgLabel(
-                fontSize: 10,
-                color: isSelected ? kOrgAccentGold : kOrgTextMuted,
+              const SizedBox(width: 4),
+              Text(
+                '($count)',
+                style: orgLabel(
+                  fontSize: 10,
+                  color: isSelected ? kOrgAccentGold : kOrgTextMuted,
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

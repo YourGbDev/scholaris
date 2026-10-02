@@ -14,9 +14,9 @@
 
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 import 'package:scholaris/features/applications/models/application.dart';
 import 'package:scholaris/features/applications/presentation/submit_application_review_dialog.dart';
@@ -27,11 +27,13 @@ import 'package:scholaris/features/auth/controllers/auth_controller.dart';
 import 'package:scholaris/features/bookmarks/providers/bookmarks_provider.dart';
 import 'package:scholaris/features/profile/providers/avatar_provider.dart';
 import 'package:scholaris/features/profile/providers/profile_setup_provider.dart';
+import 'package:scholaris/features/provider/presentation/widgets/scholarship_qr_dialog.dart';
 import 'package:scholaris/features/scholarships/models/scholarship.dart';
 import 'package:scholaris/features/scholarships/presentation/widgets/identity_photo_dialog.dart';
 import 'package:scholaris/features/scholarships/providers/scholarships_provider.dart';
 import 'package:scholaris/features/scholarships/services/application_readiness.dart';
 import 'package:scholaris/features/scholarships/services/match_reasons.dart';
+import 'package:scholaris/shared/theme/app_motion.dart';
 import 'package:scholaris/shared/theme/app_theme.dart';
 import 'package:scholaris/shared/utils/constants.dart';
 import 'package:scholaris/shared/widgets/responsive_container.dart';
@@ -61,8 +63,8 @@ class _ScholarshipDetailScreenState
     if (context != null) {
       Scrollable.ensureVisible(
         context,
-        duration: const Duration(milliseconds: 500),
-        curve: Curves.easeInOut,
+        duration: kDurationSlow,
+        curve: kAppleSpringCurve,
       );
     }
   }
@@ -112,7 +114,7 @@ class _ScholarshipDetailScreenState
               const SizedBox(width: 8),
               Text(
                 'Scholaris',
-                style: GoogleFonts.poppins(
+                style: poppins(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
                   letterSpacing: -0.5,
@@ -123,6 +125,21 @@ class _ScholarshipDetailScreenState
           ),
         ),
         actions: [
+          IconButton(
+            tooltip: 'View QR Code',
+            onPressed: () {
+              final s = widget.initial ??
+                  ref.read(scholarshipByIdProvider(widget.scholarshipId)).valueOrNull;
+              if (s != null) {
+                showScholarshipQrDialog(context, s);
+              }
+            },
+            icon: const Icon(
+              Icons.qr_code_rounded,
+              size: 22,
+              color: kOnSurface,
+            ),
+          ),
           IconButton(
             tooltip: 'Share scholarship',
             onPressed: () {
@@ -186,6 +203,7 @@ class _ScholarshipDetailScreenState
   }
 
   Future<void> _bookmark() async {
+    HapticFeedback.lightImpact();
     final notifier = ref.read(bookmarksProvider.notifier);
     try {
       await notifier.toggle(widget.scholarshipId);
@@ -204,6 +222,7 @@ class _ScholarshipDetailScreenState
   }
 
   Future<void> _unbookmark() async {
+    HapticFeedback.lightImpact();
     final notifier = ref.read(bookmarksProvider.notifier);
     try {
       await notifier.toggle(widget.scholarshipId);
@@ -241,6 +260,7 @@ class _DetailContent extends ConsumerWidget {
     final reasons = _matchReasons(ref);
 
     return ListView(
+      physics: const AppleBouncingScrollPhysics(),
       padding: const EdgeInsets.fromLTRB(20, 4, 20, 48),
       children: [
         // Internal Navigation Breadcrumb (Stitch scholaris_scholarship_detail_eligibility)
@@ -248,47 +268,68 @@ class _DetailContent extends ConsumerWidget {
         const SizedBox(height: 6),
 
         // 1. Hero Card
-        _HeroCard(
-          scholarship: scholarship,
-          closing: closing,
-          expired: expired,
-          daysLeft: daysLeft,
+        StaggeredListItem(
+          index: 0,
+          child: _HeroCard(
+            scholarship: scholarship,
+            closing: closing,
+            expired: expired,
+            daysLeft: daysLeft,
+          ),
         ),
         const SizedBox(height: 12),
 
         // 2. Application Readiness & CTA / Banner
-        _ApplySection(
-          scholarship: scholarship,
-          onScrollToChecklist: onScrollToChecklist,
+        StaggeredListItem(
+          index: 1,
+          child: _ApplySection(
+            scholarship: scholarship,
+            onScrollToChecklist: onScrollToChecklist,
+          ),
         ),
         const SizedBox(height: 14),
 
         // 3. Algorithmic Fit & Criteria Checklist
         if (reasons.isNotEmpty) ...[
-          Container(
-            key: checklistKey,
-            child: _AlgorithmicFitCard(
-              reasons: reasons,
-              scholarship: scholarship,
+          StaggeredListItem(
+            index: 2,
+            child: Container(
+              key: checklistKey,
+              child: _AlgorithmicFitCard(
+                reasons: reasons,
+                scholarship: scholarship,
+              ),
             ),
           ),
           const SizedBox(height: 20),
         ],
 
         // 4. Award Overview & Impact
-        _AwardOverviewCard(scholarship: scholarship),
+        StaggeredListItem(
+          index: 3,
+          child: _AwardOverviewCard(scholarship: scholarship),
+        ),
         const SizedBox(height: 20),
 
         // 5. Eligibility Section
-        _EligibilityCard(scholarship: scholarship),
+        StaggeredListItem(
+          index: 4,
+          child: _EligibilityCard(scholarship: scholarship),
+        ),
         const SizedBox(height: 20),
 
         // 6. Application Materials & Requirements
-        const _ApplicationMaterialsCard(),
+        const StaggeredListItem(
+          index: 5,
+          child: _ApplicationMaterialsCard(),
+        ),
         const SizedBox(height: 20),
 
         // 7. Verified Institutional Provider Trust Card
-        _ProviderTrustCard(scholarship: scholarship),
+        StaggeredListItem(
+          index: 6,
+          child: _ProviderTrustCard(scholarship: scholarship),
+        ),
       ],
     );
   }
@@ -316,31 +357,33 @@ class _BreadcrumbRow extends StatelessWidget {
   Widget build(BuildContext context) {
     return Align(
       alignment: Alignment.centerLeft,
-      child: InkWell(
-        borderRadius: BorderRadius.circular(6),
-        onTap: () {
-          if (context.canPop()) {
-            context.pop();
-          } else {
-            context.go('/discover');
-          }
-        },
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 2),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Icon(Icons.arrow_back_rounded, size: 18, color: kSecondary),
-              const SizedBox(width: 4),
-              Text(
-                'Back to Discover',
-                style: GoogleFonts.outfit(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w600,
-                  color: kSecondary,
+      child: PressableScale(
+        child: InkWell(
+          borderRadius: BorderRadius.circular(6),
+          onTap: () {
+            if (context.canPop()) {
+              context.pop();
+            } else {
+              context.go('/discover');
+            }
+          },
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 2),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Icon(Icons.arrow_back_rounded, size: 18, color: kSecondary),
+                const SizedBox(width: 4),
+                Text(
+                  'Back to Discover',
+                  style: outfit(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
+                    color: kSecondary,
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
@@ -411,7 +454,7 @@ class _HeroCard extends StatelessWidget {
                         providerName,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: GoogleFonts.outfit(
+                        style: outfit(
                           fontSize: 13,
                           fontWeight: FontWeight.w600,
                           color: kSecondary,
@@ -428,19 +471,23 @@ class _HeroCard extends StatelessWidget {
                 ),
               ),
               const SizedBox(width: 6),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
-                decoration: BoxDecoration(
-                  color: kSurfaceContainer,
-                  borderRadius: BorderRadius.circular(4),
-                ),
-                child: Text(
-                  codeTag,
-                  style: GoogleFonts.outfit(
-                    fontSize: 10,
-                    fontWeight: FontWeight.w700,
-                    letterSpacing: 0.5,
-                    color: kOnSurfaceVariant,
+              Flexible(
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
+                  decoration: BoxDecoration(
+                    color: kSurfaceContainer,
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                  child: Text(
+                    codeTag,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: outfit(
+                      fontSize: 10,
+                      fontWeight: FontWeight.w700,
+                      letterSpacing: 0.5,
+                      color: kOnSurfaceVariant,
+                    ),
                   ),
                 ),
               ),
@@ -451,7 +498,7 @@ class _HeroCard extends StatelessWidget {
           // Scholarship Title
           Text(
             scholarship.title,
-            style: GoogleFonts.outfit(
+            style: outfit(
               fontSize: 22,
               fontWeight: FontWeight.w700,
               color: kOnSurface,
@@ -468,7 +515,7 @@ class _HeroCard extends StatelessWidget {
             children: [
               Text(
                 _grantValue(scholarship),
-                style: GoogleFonts.outfit(
+                style: outfit(
                   fontSize: 26,
                   fontWeight: FontWeight.bold,
                   color: kPrimaryContainer,
@@ -476,7 +523,7 @@ class _HeroCard extends StatelessWidget {
               ),
               Text(
                 _grantSubtext(scholarship),
-                style: GoogleFonts.openSans(
+                style: openSans(
                   fontSize: 13,
                   fontWeight: FontWeight.w500,
                   color: kOnSurface,
@@ -529,7 +576,7 @@ class _HeroCard extends StatelessWidget {
             const SizedBox(width: 8),
             Text(
               'Deadline Passed • Closed',
-              style: GoogleFonts.outfit(
+              style: outfit(
                 fontSize: 12,
                 fontWeight: FontWeight.w600,
                 color: const Color(0xFF93000A),
@@ -556,7 +603,7 @@ class _HeroCard extends StatelessWidget {
                 'Due in $daysLeft Days • Closing soon — ${deadlineLabel(scholarship.deadline)}',
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
-                style: GoogleFonts.outfit(
+                style: outfit(
                   fontSize: 12,
                   fontWeight: FontWeight.w600,
                   color: const Color(0xFF93000A),
@@ -580,10 +627,10 @@ class _HeroCard extends StatelessWidget {
           const SizedBox(width: 8),
           Expanded(
             child: Text(
-              'Due on ${deadlineLabel(scholarship.deadline)}${scholarship.slots != null ? " • ${scholarship.slots} slots available" : ""}',
+              '${deadlineLabel(scholarship.deadline)}${scholarship.slots != null ? " · ${scholarship.slots.toString().replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]},')} slots available" : ""}',
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
-              style: GoogleFonts.outfit(
+              style: outfit(
                 fontSize: 12,
                 fontWeight: FontWeight.w600,
                 color: kSecondary,
@@ -605,7 +652,9 @@ class _HeroCard extends StatelessWidget {
     } else if (provider.contains('GOKONGWEI')) {
       return 'GBF-STEM';
     }
-    return '${scholarship.id.toUpperCase().replaceAll('_', '-')}-25';
+    final rawId = scholarship.id.toUpperCase().replaceAll('_', '-');
+    final idSnippet = rawId.length > 8 ? rawId.substring(0, 8) : rawId;
+    return '$idSnippet-25';
   }
 }
 
@@ -624,7 +673,7 @@ class _HeroPill extends StatelessWidget {
       ),
       child: Text(
         label,
-        style: GoogleFonts.outfit(
+        style: outfit(
           fontSize: 11,
           fontWeight: FontWeight.w600,
           color: kSecondary,
@@ -652,62 +701,64 @@ class _AlgorithmicFitCard extends ConsumerWidget {
         ? profile.fullName.trim().split(' ').first
         : 'your';
 
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: const Color(0xFFE2E8F3)),
-        boxShadow: const [
-          BoxShadow(
-            color: kCardShadow,
-            blurRadius: 16,
-            offset: Offset(0, 6),
-          ),
-        ],
-      ),
-      padding: const EdgeInsets.all(18),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Algorithmic Fit banner with circular meter
-          Container(
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              gradient: const LinearGradient(
-                colors: [Color(0xFFB3F1C6), Color(0xFFE8EEFF)],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              ),
-              borderRadius: BorderRadius.circular(12),
+    return PressableScale(
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: const Color(0xFFE2E8F3)),
+          boxShadow: const [
+            BoxShadow(
+              color: kCardShadow,
+              blurRadius: 16,
+              offset: Offset(0, 6),
             ),
-            child: Row(
-              children: [
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'ALGORITHMIC FIT',
-                        style: GoogleFonts.outfit(
-                          fontSize: 10,
-                          fontWeight: FontWeight.w700,
-                          color: const Color(0xFF145131),
-                          letterSpacing: 0.8,
+          ],
+        ),
+        padding: const EdgeInsets.all(18),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Algorithmic Fit banner with circular meter
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                gradient: const LinearGradient(
+                  colors: [Color(0xFFB3F1C6), Color(0xFFE8EEFF)],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'ALGORITHMIC FIT',
+                          style: outfit(
+                            fontSize: 10,
+                            fontWeight: FontWeight.w700,
+                            color: const Color(0xFF145131),
+                            letterSpacing: 0.8,
+                          ),
                         ),
-                      ),
-                      const SizedBox(height: 2),
-                      Text(
-                        '98% Match',
-                        style: GoogleFonts.outfit(
-                          fontSize: 22,
-                          fontWeight: FontWeight.bold,
-                          color: const Color(0xFF00351C),
+                        const SizedBox(height: 2),
+                        CountUpAnimation(
+                          targetValue: 98,
+                          suffix: '% Match',
+                          style: outfit(
+                            fontSize: 22,
+                            fontWeight: FontWeight.bold,
+                            color: const Color(0xFF00351C),
+                          ),
                         ),
-                      ),
                       const SizedBox(height: 2),
                       Text(
                         'Calibrated against $userName\'s verified profile',
-                        style: GoogleFonts.openSans(
+                        style: openSans(
                           fontSize: 11,
                           fontWeight: FontWeight.w500,
                           color: kOnSurface,
@@ -748,7 +799,7 @@ class _AlgorithmicFitCard extends ConsumerWidget {
                   'Criteria Checklist',
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: GoogleFonts.outfit(
+                  style: outfit(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
                     color: kOnSurface,
@@ -760,7 +811,7 @@ class _AlgorithmicFitCard extends ConsumerWidget {
                 fit: BoxFit.scaleDown,
                 child: Text(
                   '${reasons.length} of ${reasons.length} Met',
-                  style: GoogleFonts.outfit(
+                  style: outfit(
                     fontSize: 12,
                     fontWeight: FontWeight.w600,
                     color: kPrimaryContainer,
@@ -772,7 +823,7 @@ class _AlgorithmicFitCard extends ConsumerWidget {
           const SizedBox(height: 2),
           Text(
             'Why this matches you',
-            style: GoogleFonts.openSans(
+            style: openSans(
               fontSize: 12,
               fontWeight: FontWeight.w500,
               color: kOnSurfaceVariant,
@@ -807,7 +858,7 @@ class _AlgorithmicFitCard extends ConsumerWidget {
                     children: [
                       Text(
                         'High Probability Tier',
-                        style: GoogleFonts.outfit(
+                        style: outfit(
                           fontSize: 12,
                           fontWeight: FontWeight.w700,
                           color: const Color(0xFF5D4200),
@@ -816,7 +867,7 @@ class _AlgorithmicFitCard extends ConsumerWidget {
                       const SizedBox(height: 2),
                       Text(
                         'Your academic profile ranks in the top 5% of historical applicants for this endowment. Early submissions have an 18% higher acceptance yield.',
-                        style: GoogleFonts.openSans(
+                        style: openSans(
                           fontSize: 11,
                           color: kOnSurface,
                           height: 1.4,
@@ -829,6 +880,7 @@ class _AlgorithmicFitCard extends ConsumerWidget {
             ),
           ),
         ],
+      ),
       ),
     );
   }
@@ -866,7 +918,7 @@ class _AlgorithmicFitCard extends ConsumerWidget {
                 children: [
                   Text(
                     title,
-                    style: GoogleFonts.outfit(
+                    style: outfit(
                       fontSize: 12,
                       fontWeight: FontWeight.w600,
                       color: kOnSurface,
@@ -876,7 +928,7 @@ class _AlgorithmicFitCard extends ConsumerWidget {
                     const SizedBox(height: 1),
                     Text(
                       subtitle,
-                      style: GoogleFonts.openSans(
+                      style: openSans(
                         fontSize: 11,
                         fontWeight: FontWeight.w500,
                         color: kPrimaryContainer,
@@ -985,7 +1037,7 @@ class _AwardOverviewCard extends StatelessWidget {
         children: [
           Text(
             'Award Overview & Impact',
-            style: GoogleFonts.outfit(
+            style: outfit(
               fontSize: 16,
               fontWeight: FontWeight.bold,
               color: kOnSurface,
@@ -1028,7 +1080,7 @@ class _AwardOverviewCard extends StatelessWidget {
           // About Section
           Text(
             'About',
-            style: GoogleFonts.outfit(
+            style: outfit(
               fontSize: 14,
               fontWeight: FontWeight.bold,
               color: kOnSurface,
@@ -1038,7 +1090,7 @@ class _AwardOverviewCard extends StatelessWidget {
           Text(
             scholarship.description ??
                 'Established to empower next-generation technology pioneers from diverse socioeconomic backgrounds. Funds cover tuition, laboratory equipment supplies, and authorized academic conference research stipends throughout the degree program.',
-            style: GoogleFonts.openSans(
+            style: openSans(
               fontSize: 13,
               height: 1.5,
               color: kOnSurfaceVariant,
@@ -1071,7 +1123,7 @@ class _AwardOverviewCard extends StatelessWidget {
                     children: [
                       Text(
                         '"This grant funded my senior neural compute capstone."',
-                        style: GoogleFonts.openSans(
+                        style: openSans(
                           fontSize: 11,
                           fontWeight: FontWeight.w600,
                           fontStyle: FontStyle.italic,
@@ -1081,7 +1133,7 @@ class _AwardOverviewCard extends StatelessWidget {
                       const SizedBox(height: 2),
                       Text(
                         'Elena R. • 2024 Scholar, UP Diliman CS',
-                        style: GoogleFonts.openSans(
+                        style: openSans(
                           fontSize: 10,
                           color: kOnSurfaceVariant,
                         ),
@@ -1123,7 +1175,7 @@ class _MetricTile extends StatelessWidget {
             label,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
-            style: GoogleFonts.outfit(
+            style: outfit(
               fontSize: 10,
               fontWeight: FontWeight.w600,
               color: kOnSurfaceVariant,
@@ -1134,7 +1186,7 @@ class _MetricTile extends StatelessWidget {
             fit: BoxFit.scaleDown,
             child: Text(
               value,
-              style: GoogleFonts.outfit(
+              style: outfit(
                 fontSize: 15,
                 fontWeight: FontWeight.bold,
                 color: kSecondary,
@@ -1146,7 +1198,7 @@ class _MetricTile extends StatelessWidget {
             caption,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
-            style: GoogleFonts.openSans(
+            style: openSans(
               fontSize: 9,
               color: kOnSurfaceVariant,
             ),
@@ -1184,7 +1236,7 @@ class _EligibilityCard extends StatelessWidget {
         children: [
           Text(
             'Eligibility',
-            style: GoogleFonts.outfit(
+            style: outfit(
               fontSize: 16,
               fontWeight: FontWeight.bold,
               color: kOnSurface,
@@ -1298,7 +1350,7 @@ class _ApplicationMaterialsCardState
                   'Application Requirements',
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: GoogleFonts.outfit(
+                  style: outfit(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
                     color: kOnSurface,
@@ -1318,7 +1370,7 @@ class _ApplicationMaterialsCardState
                   ),
                   child: Text(
                     '$readyCount of 3 Ready',
-                    style: GoogleFonts.outfit(
+                    style: outfit(
                       fontSize: 12,
                       fontWeight: FontWeight.w600,
                       color: readyCount == 3
@@ -1355,7 +1407,7 @@ class _ApplicationMaterialsCardState
                               '1. Personal Narrative Statement',
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
-                              style: GoogleFonts.outfit(
+                              style: outfit(
                                 fontSize: 13,
                                 fontWeight: FontWeight.w600,
                                 color: kOnSurface,
@@ -1375,7 +1427,7 @@ class _ApplicationMaterialsCardState
                       ),
                       child: Text(
                         hasEssay ? 'Draft Ready' : 'Incomplete',
-                        style: GoogleFonts.outfit(
+                        style: outfit(
                           fontSize: 10,
                           fontWeight: FontWeight.w600,
                           color: hasEssay
@@ -1391,63 +1443,72 @@ class _ApplicationMaterialsCardState
                   padding: const EdgeInsets.only(left: 26),
                   child: Text(
                     'Prompt: Solving a community challenge in the Philippines with STEM innovation (750 words max).',
-                    style: GoogleFonts.openSans(
+                    style: openSans(
                       fontSize: 11,
                       color: kOnSurface,
                       height: 1.35,
                     ),
                   ),
                 ),
-                if (_isEditingEssay) ...[
-                  const SizedBox(height: 10),
-                  TextField(
-                    controller: _essayController,
-                    maxLines: 4,
-                    style: GoogleFonts.openSans(fontSize: 12, color: kOnSurface),
-                    decoration: InputDecoration(
-                      hintText: 'Type your essay / personal statement here...',
-                      hintStyle: GoogleFonts.openSans(fontSize: 12, color: const Color(0xFF707971)),
-                      fillColor: Colors.white,
-                      filled: true,
-                      contentPadding: const EdgeInsets.all(10),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8),
-                        borderSide: const BorderSide(color: Color(0xFFE2E8E5)),
-                      ),
-                    ),
-                    onChanged: (_) => setState(() {}),
-                  ),
-                  const SizedBox(height: 6),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                ExpandableSection(
+                  isExpanded: _isEditingEssay,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        '$wordCount / 750 words',
-                        style: GoogleFonts.outfit(
-                          fontSize: 11,
-                          fontWeight: FontWeight.w600,
-                          color: wordCount > 750 ? kError : kPrimaryContainer,
+                      const SizedBox(height: 10),
+                      TextField(
+                        controller: _essayController,
+                        maxLines: 4,
+                        style: openSans(fontSize: 12, color: kOnSurface),
+                        decoration: InputDecoration(
+                          hintText: 'Type your essay / personal statement here...',
+                          hintStyle: openSans(fontSize: 12, color: const Color(0xFF707971)),
+                          fillColor: Colors.white,
+                          filled: true,
+                          contentPadding: const EdgeInsets.all(10),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
+                            borderSide: const BorderSide(color: Color(0xFFE2E8E5)),
+                          ),
                         ),
+                        onChanged: (_) => setState(() {}),
                       ),
-                      FilledButton.tonal(
-                        style: FilledButton.styleFrom(
-                          backgroundColor: kPrimaryContainer,
-                          foregroundColor: Colors.white,
-                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-                          minimumSize: const Size(60, 30),
-                        ),
-                        onPressed: () => setState(() => _isEditingEssay = false),
-                        child: Text(
-                          'Save Statement',
-                          style: GoogleFonts.outfit(fontSize: 11, fontWeight: FontWeight.w600),
-                        ),
+                      const SizedBox(height: 6),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            '$wordCount / 750 words',
+                            style: outfit(
+                              fontSize: 11,
+                              fontWeight: FontWeight.w600,
+                              color: wordCount > 750 ? kError : kPrimaryContainer,
+                            ),
+                          ),
+                          PressableScale(
+                            child: FilledButton.tonal(
+                              style: FilledButton.styleFrom(
+                                backgroundColor: kPrimaryContainer,
+                                foregroundColor: Colors.white,
+                                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                                minimumSize: const Size(60, 30),
+                              ),
+                              onPressed: () => setState(() => _isEditingEssay = false),
+                              child: Text(
+                                'Save Statement',
+                                style: outfit(fontSize: 11, fontWeight: FontWeight.w600),
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                     ],
                   ),
-                ] else ...[
-                  const SizedBox(height: 8),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 26),
+                ),
+                ExpandableSection(
+                  isExpanded: !_isEditingEssay,
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: 26, top: 8),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -1456,7 +1517,7 @@ class _ApplicationMaterialsCardState
                             hasEssay ? '$wordCount words composed' : 'No statement composed yet',
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
-                            style: GoogleFonts.outfit(
+                            style: outfit(
                               fontSize: 11,
                               fontWeight: FontWeight.w600,
                               color: hasEssay ? kPrimaryContainer : const Color(0xFF707971),
@@ -1464,28 +1525,30 @@ class _ApplicationMaterialsCardState
                           ),
                         ),
                         const SizedBox(width: 8),
-                        InkWell(
-                          onTap: () => setState(() => _isEditingEssay = true),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Text(
-                                hasEssay ? 'Edit Statement' : 'Write Statement',
-                                style: GoogleFonts.outfit(
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w600,
-                                  color: kSecondary,
+                        PressableScale(
+                          child: InkWell(
+                            onTap: () => setState(() => _isEditingEssay = true),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Text(
+                                  hasEssay ? 'Edit Statement' : 'Write Statement',
+                                  style: outfit(
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w600,
+                                    color: kSecondary,
+                                  ),
                                 ),
-                              ),
-                              const SizedBox(width: 2),
-                              const Icon(Icons.edit_note_rounded, size: 16, color: kSecondary),
-                            ],
+                                const SizedBox(width: 2),
+                                const Icon(Icons.edit_note_rounded, size: 16, color: kSecondary),
+                              ],
+                            ),
                           ),
                         ),
                       ],
                     ),
                   ),
-                ],
+                ),
               ],
             ),
           ),
@@ -1508,7 +1571,7 @@ class _ApplicationMaterialsCardState
                     children: [
                       Text(
                         '2. Official Transcript of Records (TCG)',
-                        style: GoogleFonts.outfit(
+                        style: outfit(
                           fontSize: 13,
                           fontWeight: FontWeight.w600,
                           color: kOnSurface,
@@ -1519,7 +1582,7 @@ class _ApplicationMaterialsCardState
                         hasTranscript
                             ? 'GPA ${profile.gpa.toStringAsFixed(2)} • ${profile.school ?? ""}'
                             : 'No academic transcript on file in profile',
-                        style: GoogleFonts.openSans(
+                        style: openSans(
                           fontSize: 11,
                           fontWeight: FontWeight.w500,
                           color: hasTranscript ? kPrimaryContainer : const Color(0xFF707971),
@@ -1536,7 +1599,7 @@ class _ApplicationMaterialsCardState
                   ),
                   child: Text(
                     hasTranscript ? 'Verified' : 'Incomplete',
-                    style: GoogleFonts.outfit(
+                    style: outfit(
                       fontSize: 10,
                       fontWeight: FontWeight.w600,
                       color: hasTranscript ? const Color(0xFF145131) : const Color(0xFF93000A),
@@ -1571,7 +1634,7 @@ class _ApplicationMaterialsCardState
                               '3. Faculty Recommendation',
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
-                              style: GoogleFonts.outfit(
+                              style: outfit(
                                 fontSize: 13,
                                 fontWeight: FontWeight.w600,
                                 color: kOnSurface,
@@ -1591,7 +1654,7 @@ class _ApplicationMaterialsCardState
                       ),
                       child: Text(
                         hasRec ? '${_recommenders.length} Linked' : '0 of 2 Linked',
-                        style: GoogleFonts.outfit(
+                        style: outfit(
                           fontSize: 10,
                           fontWeight: FontWeight.w600,
                           color: hasRec
@@ -1618,73 +1681,91 @@ class _ApplicationMaterialsCardState
                               Expanded(
                                 child: Text(
                                   rec,
-                                  style: GoogleFonts.openSans(fontSize: 11, color: kOnSurface),
+                                  style: openSans(fontSize: 11, color: kOnSurface),
                                 ),
                               ),
                             ],
                           ),
                         ),
-                      if (_isAddingRec) ...[
-                        Row(
-                          children: [
-                            Expanded(
-                              child: SizedBox(
-                                height: 32,
-                                child: TextField(
-                                  controller: _recEmailController,
-                                  style: GoogleFonts.openSans(fontSize: 12),
-                                  decoration: InputDecoration(
-                                    hintText: 'Faculty email (e.g. prof@univ.edu)',
-                                    hintStyle: GoogleFonts.openSans(fontSize: 11),
-                                    contentPadding: const EdgeInsets.symmetric(horizontal: 8),
-                                    filled: true,
-                                    fillColor: Colors.white,
-                                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(6)),
+                      ExpandableSection(
+                        isExpanded: _isAddingRec,
+                        child: Padding(
+                          padding: const EdgeInsets.only(top: 6),
+                          child: Row(
+                            children: [
+                              Expanded(
+                                child: SizedBox(
+                                  height: 32,
+                                  child: TextField(
+                                    controller: _recEmailController,
+                                    style: openSans(fontSize: 12),
+                                    decoration: InputDecoration(
+                                      hintText: 'Faculty email (e.g. prof@univ.edu)',
+                                      hintStyle: openSans(fontSize: 11),
+                                      contentPadding: const EdgeInsets.symmetric(horizontal: 8),
+                                      filled: true,
+                                      fillColor: Colors.white,
+                                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(6)),
+                                    ),
                                   ),
                                 ),
                               ),
-                            ),
-                            const SizedBox(width: 6),
-                            FilledButton(
-                              style: FilledButton.styleFrom(
-                                backgroundColor: kPrimaryContainer,
-                                padding: const EdgeInsets.symmetric(horizontal: 10),
-                                minimumSize: const Size(50, 32),
-                              ),
-                              onPressed: () {
-                                final email = _recEmailController.text.trim();
-                                if (email.isNotEmpty) {
-                                  setState(() {
-                                    _recommenders.add(email);
-                                    _recEmailController.clear();
-                                    _isAddingRec = false;
-                                  });
-                                }
-                              },
-                              child: const Text('Add', style: TextStyle(fontSize: 11)),
-                            ),
-                          ],
-                        ),
-                      ] else ...[
-                        InkWell(
-                          onTap: () => setState(() => _isAddingRec = true),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              const Icon(Icons.add_circle_outline_rounded, size: 14, color: kSecondary),
-                              const SizedBox(width: 4),
-                              Text(
-                                'Add Recommender Email',
-                                style: GoogleFonts.outfit(
-                                  fontSize: 11.5,
-                                  fontWeight: FontWeight.w600,
-                                  color: kSecondary,
+                              const SizedBox(width: 6),
+                              PressableScale(
+                                child: FilledButton(
+                                  style: FilledButton.styleFrom(
+                                    backgroundColor: kPrimaryContainer,
+                                    padding: const EdgeInsets.symmetric(horizontal: 10),
+                                    minimumSize: const Size(50, 44),
+                                  ),
+                                  onPressed: () {
+                                    final email = _recEmailController.text.trim();
+                                    if (email.isNotEmpty) {
+                                      setState(() {
+                                        _recommenders.add(email);
+                                        _recEmailController.clear();
+                                        _isAddingRec = false;
+                                      });
+                                    }
+                                  },
+                                  child: const Text('Add', style: TextStyle(fontSize: 11)),
                                 ),
                               ),
                             ],
                           ),
                         ),
-                      ],
+                      ),
+                      ExpandableSection(
+                        isExpanded: !_isAddingRec,
+                        child: Padding(
+                          padding: const EdgeInsets.only(top: 6),
+                          child: PressableScale(
+                            child: InkWell(
+                              onTap: () => setState(() => _isAddingRec = true),
+                              borderRadius: BorderRadius.circular(8),
+                              child: Container(
+                                constraints: const BoxConstraints(minHeight: 44),
+                                alignment: Alignment.centerLeft,
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    const Icon(Icons.add_circle_outline_rounded, size: 14, color: kSecondary),
+                                    const SizedBox(width: 4),
+                                    Text(
+                                      'Add Recommender Email',
+                                      style: outfit(
+                                        fontSize: 11.5,
+                                        fontWeight: FontWeight.w600,
+                                        color: kSecondary,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
                     ],
                   ),
                 ),
@@ -1744,7 +1825,7 @@ class _ProviderTrustCard extends StatelessWidget {
                   children: [
                     Text(
                       'Verified Endowment',
-                      style: GoogleFonts.outfit(
+                      style: outfit(
                         fontSize: 15,
                         fontWeight: FontWeight.bold,
                         color: kSecondary,
@@ -1752,7 +1833,7 @@ class _ProviderTrustCard extends StatelessWidget {
                     ),
                     Text(
                       'SEC / CHED Institutional Registry ID: #84-1920841',
-                      style: GoogleFonts.openSans(
+                      style: openSans(
                         fontSize: 11,
                         color: kOnSurfaceVariant,
                       ),
@@ -1787,7 +1868,7 @@ class _ProviderTrustCard extends StatelessWidget {
                     children: [
                       Text(
                         'Dr. Aris Thorne',
-                        style: GoogleFonts.outfit(
+                        style: outfit(
                           fontSize: 13,
                           fontWeight: FontWeight.w600,
                           color: kOnSurface,
@@ -1795,7 +1876,7 @@ class _ProviderTrustCard extends StatelessWidget {
                       ),
                       Text(
                         'Grant Officer • Avg reply: < 24 hrs',
-                        style: GoogleFonts.openSans(
+                        style: openSans(
                           fontSize: 10,
                           color: kOnSurfaceVariant,
                         ),
@@ -1823,7 +1904,7 @@ class _ProviderTrustCard extends StatelessWidget {
                         const SizedBox(width: 4),
                         Text(
                           'Message',
-                          style: GoogleFonts.outfit(
+                          style: outfit(
                             fontSize: 11,
                             fontWeight: FontWeight.w600,
                             color: kSecondary,
@@ -1941,6 +2022,7 @@ class _ApplySectionState extends ConsumerState<_ApplySection> {
     setState(() => _isApplying = true);
     try {
       await ref.read(applicationsProvider.notifier).apply(widget.scholarship.id);
+      HapticFeedback.mediumImpact();
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Application submitted!')),
@@ -2059,25 +2141,27 @@ class _ApplySectionState extends ConsumerState<_ApplySection> {
           Expanded(
             child: SizedBox(
               height: 48,
-              child: FilledButton.tonal(
-                style: FilledButton.styleFrom(
-                  backgroundColor: kSurfaceContainer,
-                  foregroundColor: kOnSurface,
-                  elevation: 0,
-                  padding: const EdgeInsets.symmetric(horizontal: 10),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
+              child: PressableScale(
+                child: FilledButton.tonal(
+                  style: FilledButton.styleFrom(
+                    backgroundColor: kSurfaceContainer,
+                    foregroundColor: kOnSurface,
+                    elevation: 0,
+                    padding: const EdgeInsets.symmetric(horizontal: 10),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
                   ),
-                ),
-                onPressed: widget.onScrollToChecklist,
-                child: FittedBox(
-                  fit: BoxFit.scaleDown,
-                  child: Text(
-                    'Eligibility Breakdown',
-                    style: GoogleFonts.outfit(
-                      fontSize: 13,
-                      fontWeight: FontWeight.bold,
-                      color: kOnSurface,
+                  onPressed: widget.onScrollToChecklist,
+                  child: FittedBox(
+                    fit: BoxFit.scaleDown,
+                    child: Text(
+                      'Eligibility Breakdown',
+                      style: outfit(
+                        fontSize: 13,
+                        fontWeight: FontWeight.bold,
+                        color: kOnSurface,
+                      ),
                     ),
                   ),
                 ),
@@ -2093,55 +2177,57 @@ class _ApplySectionState extends ConsumerState<_ApplySection> {
               child: Semantics(
                 button: true,
                 label: 'Apply to this scholarship',
-                child: ElevatedButton(
-                  key: const ValueKey('apply-now'),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: kPrimaryContainer,
-                    foregroundColor: Colors.white,
-                    elevation: 2,
-                    padding: const EdgeInsets.symmetric(horizontal: 10),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
+                child: PressableScale(
+                  child: ElevatedButton(
+                    key: const ValueKey('apply-now'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: kPrimaryContainer,
+                      foregroundColor: Colors.white,
+                      elevation: 2,
+                      padding: const EdgeInsets.symmetric(horizontal: 10),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
                     ),
-                  ),
-                  onPressed: _isApplying ? null : onPressed,
-                  child: FittedBox(
-                    fit: BoxFit.scaleDown,
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        if (_isApplying) ...[
-                          const SizedBox(
-                            width: 16,
-                            height: 16,
-                            child: CircularProgressIndicator(
-                              strokeWidth: 2,
-                              color: Colors.white,
+                    onPressed: _isApplying ? null : onPressed,
+                    child: FittedBox(
+                      fit: BoxFit.scaleDown,
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          if (_isApplying) ...[
+                            const SizedBox(
+                              width: 16,
+                              height: 16,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                                color: Colors.white,
+                              ),
                             ),
-                          ),
-                          const SizedBox(width: 8),
-                          Text(
-                            'Applying...',
-                            style: GoogleFonts.outfit(
-                              fontSize: 13,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white,
+                            const SizedBox(width: 8),
+                            Text(
+                              'Applying...',
+                              style: outfit(
+                                fontSize: 13,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                              ),
                             ),
-                          ),
-                        ] else ...[
-                          Text(
-                            'Start Application',
-                            style: GoogleFonts.outfit(
-                              fontSize: 13,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white,
+                          ] else ...[
+                            Text(
+                              'Start Application',
+                              style: outfit(
+                                fontSize: 13,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                              ),
                             ),
-                          ),
-                          const SizedBox(width: 4),
-                          const Icon(Icons.arrow_forward_rounded, size: 16, color: Colors.white),
+                            const SizedBox(width: 4),
+                            const Icon(Icons.arrow_forward_rounded, size: 16, color: Colors.white),
+                          ],
                         ],
-                      ],
+                      ),
                     ),
                   ),
                 ),
@@ -2202,7 +2288,7 @@ class _DraftBanner extends StatelessWidget {
                     const SizedBox(width: 4),
                     Text(
                       'DRAFT IN PROGRESS',
-                      style: GoogleFonts.outfit(
+                      style: outfit(
                         fontSize: 10,
                         fontWeight: FontWeight.w700,
                         color: kSecondary,
@@ -2215,7 +2301,7 @@ class _DraftBanner extends StatelessWidget {
               const Spacer(),
               Text(
                 'Not submitted',
-                style: GoogleFonts.openSans(
+                style: openSans(
                   fontSize: 11,
                   fontWeight: FontWeight.w600,
                   color: const Color(0xFF92400E),
@@ -2226,7 +2312,7 @@ class _DraftBanner extends StatelessWidget {
           const SizedBox(height: 10),
           Text(
             'You have a saved draft',
-            style: GoogleFonts.outfit(
+            style: outfit(
               fontSize: 16,
               fontWeight: FontWeight.w700,
               color: const Color(0xFF161C27),
@@ -2235,7 +2321,7 @@ class _DraftBanner extends StatelessWidget {
           const SizedBox(height: 4),
           Text(
             'Complete your 4-part application packet and submit before the deadline.',
-            style: GoogleFonts.openSans(
+            style: openSans(
               fontSize: 12,
               color: const Color(0xFF404942),
               height: 1.4,
@@ -2259,7 +2345,7 @@ class _DraftBanner extends StatelessWidget {
               icon: const Icon(Icons.arrow_forward_rounded, size: 18),
               label: Text(
                 'Continue Application',
-                style: GoogleFonts.outfit(
+                style: outfit(
                   fontSize: 14,
                   fontWeight: FontWeight.w600,
                 ),
@@ -2329,7 +2415,7 @@ class _AppliedBanner extends StatelessWidget {
                   ),
                   child: Text(
                     'PACKET SECURED & SEALED',
-                    style: GoogleFonts.outfit(
+                    style: outfit(
                       fontSize: 10,
                       fontWeight: FontWeight.w700,
                       color: const Color(0xFFB3F1C6),
@@ -2340,7 +2426,7 @@ class _AppliedBanner extends StatelessWidget {
                 const SizedBox(height: 8),
                 Text(
                   'Application submitted',
-                  style: GoogleFonts.outfit(
+                  style: outfit(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
                     color: Colors.white,
@@ -2350,7 +2436,7 @@ class _AppliedBanner extends StatelessWidget {
                 Text(
                   'Your packet is officially logged and queued for review.',
                   textAlign: TextAlign.center,
-                  style: GoogleFonts.openSans(
+                  style: openSans(
                     fontSize: 13,
                     color: const Color(0xFFB3F1C6),
                   ),
@@ -2402,7 +2488,7 @@ class _AppliedBanner extends StatelessWidget {
                                   'INSTITUTIONAL DOSSIER',
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
-                                  style: GoogleFonts.outfit(
+                                  style: outfit(
                                     fontSize: 9,
                                     fontWeight: FontWeight.w700,
                                     color: const Color(0xFF404942),
@@ -2413,7 +2499,7 @@ class _AppliedBanner extends StatelessWidget {
                                   'Digital Submission Token',
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
-                                  style: GoogleFonts.outfit(
+                                  style: outfit(
                                     fontSize: 13,
                                     fontWeight: FontWeight.w600,
                                     color: const Color(0xFF161C27),
@@ -2434,7 +2520,7 @@ class _AppliedBanner extends StatelessWidget {
                       ),
                       child: Text(
                         'VALID',
-                        style: GoogleFonts.outfit(
+                        style: outfit(
                           fontSize: 10,
                           fontWeight: FontWeight.bold,
                           color: kPrimaryContainer,
@@ -2459,13 +2545,13 @@ class _AppliedBanner extends StatelessWidget {
                           children: [
                             Text(
                               'Reference Identifier',
-                              style: GoogleFonts.openSans(fontSize: 10, color: const Color(0xFF404942)),
+                              style: openSans(fontSize: 10, color: const Color(0xFF404942)),
                             ),
                             Text(
                               'REC-2025-${scholarship.id.toUpperCase().replaceAll('_', '-')}-PH',
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
-                              style: GoogleFonts.outfit(
+                              style: outfit(
                                 fontSize: 12,
                                 fontWeight: FontWeight.w700,
                                 color: const Color(0xFF161C27),
@@ -2504,7 +2590,7 @@ class _AppliedBanner extends StatelessWidget {
                         children: [
                           Text(
                             'VERIFIED ATTACHMENTS (4 OF 4)',
-                            style: GoogleFonts.outfit(
+                            style: outfit(
                               fontSize: 10,
                               fontWeight: FontWeight.w700,
                               color: const Color(0xFF404942),
@@ -2543,7 +2629,7 @@ class _AppliedBanner extends StatelessWidget {
                               'SHA-256: e3b0c442...8b456',
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
-                              style: GoogleFonts.outfit(fontSize: 10, color: const Color(0xFF404942)),
+                              style: outfit(fontSize: 10, color: const Color(0xFF404942)),
                             ),
                           ),
                         ],
@@ -2552,7 +2638,7 @@ class _AppliedBanner extends StatelessWidget {
                     const SizedBox(width: 6),
                     Text(
                       'Scholaris Vault Sealed',
-                      style: GoogleFonts.outfit(fontSize: 10, fontWeight: FontWeight.w600, color: kPrimaryContainer),
+                      style: outfit(fontSize: 10, fontWeight: FontWeight.w600, color: kPrimaryContainer),
                     ),
                   ],
                 ),
@@ -2571,7 +2657,7 @@ class _AppliedBanner extends StatelessWidget {
                     icon: const Icon(Icons.track_changes_rounded, size: 18),
                     label: Text(
                       'Monitor in Application Tracker',
-                      style: GoogleFonts.outfit(fontWeight: FontWeight.w600, fontSize: 13),
+                      style: outfit(fontWeight: FontWeight.w600, fontSize: 13),
                     ),
                   ),
                 ),
@@ -2590,7 +2676,7 @@ class _AppliedBanner extends StatelessWidget {
                     icon: const Icon(Icons.receipt_long_rounded, size: 16, color: kPrimaryContainer),
                     label: Text(
                       'View Full Receipt & Roadmap',
-                      style: GoogleFonts.outfit(
+                      style: outfit(
                         fontSize: 12,
                         fontWeight: FontWeight.w600,
                         color: kPrimaryContainer,
@@ -2615,7 +2701,7 @@ class _AppliedBanner extends StatelessWidget {
       ),
       child: Text(
         label,
-        style: GoogleFonts.openSans(
+        style: openSans(
           fontSize: 10,
           fontWeight: FontWeight.w600,
           color: kSecondary,
@@ -2669,7 +2755,7 @@ class _ReadinessNotice extends StatelessWidget {
               Expanded(
                 child: Text(
                   title,
-                  style: GoogleFonts.outfit(
+                  style: outfit(
                     fontSize: 15,
                     fontWeight: FontWeight.w600,
                     color: kPrimaryContainer,
@@ -2681,7 +2767,7 @@ class _ReadinessNotice extends StatelessWidget {
           const SizedBox(height: 6),
           Text(
             message,
-            style: GoogleFonts.openSans(fontSize: 13, color: const Color(0xFF404942)),
+            style: openSans(fontSize: 13, color: const Color(0xFF404942)),
           ),
           if (reasons.isNotEmpty) ...[
             const SizedBox(height: 10),
@@ -2712,32 +2798,35 @@ class _ReadinessReason extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final maxWidth = (MediaQuery.sizeOf(context).width - 90).clamp(180.0, 480.0);
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(20),
         border: Border.all(color: const Color(0xFF5F6368).withValues(alpha: 0.25)),
       ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          const Icon(Icons.remove_circle_outline, size: 15, color: Color(0xFF5F6368)),
-          const SizedBox(width: 5),
-          ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 260),
-            child: Text(
-              label,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: GoogleFonts.openSans(
-                fontSize: 12,
-                fontWeight: FontWeight.w600,
-                color: const Color(0xFF5F6368),
+      child: ConstrainedBox(
+        constraints: BoxConstraints(maxWidth: maxWidth),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Icon(Icons.remove_circle_outline, size: 14, color: Color(0xFF5F6368)),
+            const SizedBox(width: 5),
+            Flexible(
+              child: Text(
+                label,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                style: openSans(
+                  fontSize: 11.5,
+                  fontWeight: FontWeight.w600,
+                  color: const Color(0xFF5F6368),
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -2767,7 +2856,7 @@ class _EligibilityChip extends StatelessWidget {
               label,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
-              style: GoogleFonts.openSans(
+              style: openSans(
                 fontSize: 13,
                 fontWeight: FontWeight.w600,
                 color: kOnSurface,

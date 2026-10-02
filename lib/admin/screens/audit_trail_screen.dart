@@ -168,46 +168,44 @@ class _AuditTrailScreenState extends ConsumerState<AuditTrailScreen> {
 
     return Scaffold(
       backgroundColor: kSeqSurface,
-      body: logsAsync.when(
-        loading: () => const Center(
-          child: CircularProgressIndicator(
-            color: kSeqPrimaryContainer,
-            strokeWidth: 2.5,
-          ),
-        ),
-        error: (err, _) => Center(
-          child: Padding(
-            padding: const EdgeInsets.all(24),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const Icon(Icons.error_outline, size: 48, color: kSeqError),
-                const SizedBox(height: 12),
-                Text(
-                  'Failed to load audit logs',
-                  style: seqHeadlineSm(color: kSeqOnSurface),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  err.toString(),
-                  style: seqBodyMd(color: kSeqOnSurfaceVariant),
-                  textAlign: TextAlign.center,
-                ),
-                const SizedBox(height: 16),
-                ElevatedButton.icon(
-                  onPressed: () => ref.invalidate(auditTrailLogsProvider),
-                  icon: const Icon(Icons.refresh),
-                  label: const Text('Retry'),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: kSeqPrimary,
-                    foregroundColor: kSeqOnPrimary,
+      body: CrossFadeLoading(
+        isLoading: logsAsync.isLoading,
+        skeleton: _buildSkeletonLoader(context),
+        child: logsAsync.when(
+          loading: () => _buildSkeletonLoader(context),
+          error: (err, _) => Center(
+            child: Padding(
+              padding: const EdgeInsets.all(24),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Icon(Icons.error_outline, size: 48, color: kSeqError),
+                  const SizedBox(height: 12),
+                  Text(
+                    'Failed to load audit logs',
+                    style: seqHeadlineSm(color: kSeqOnSurface),
                   ),
-                ),
-              ],
+                  const SizedBox(height: 4),
+                  Text(
+                    err.toString(),
+                    style: seqBodyMd(color: kSeqOnSurfaceVariant),
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 16),
+                  ElevatedButton.icon(
+                    onPressed: () => ref.invalidate(auditTrailLogsProvider),
+                    icon: const Icon(Icons.refresh),
+                    label: const Text('Retry'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: kSeqPrimary,
+                      foregroundColor: kSeqOnPrimary,
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
-        ),
-        data: (allLogs) {
+          data: (allLogs) {
           // Dynamic roles and actions present in real data
           final dynamicRoles = <String>{
             for (final l in allLogs) l.actorRole
@@ -275,6 +273,7 @@ class _AuditTrailScreenState extends ConsumerState<AuditTrailScreen> {
               await ref.read(auditTrailLogsProvider.future);
             },
             child: ListView(
+              physics: const AppleBouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
               padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
               children: [
                 _buildHeaderBar(
@@ -305,8 +304,35 @@ class _AuditTrailScreenState extends ConsumerState<AuditTrailScreen> {
           );
         },
       ),
-    );
-  }
+    ),
+  );
+}
+
+Widget _buildSkeletonLoader(BuildContext context) {
+  return ListView(
+    physics: const NeverScrollableScrollPhysics(),
+    padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
+    children: [
+      Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: const [
+          SkeletonBand(width: 180, height: 28),
+          SkeletonBand(width: 90, height: 28, borderRadius: 14),
+        ],
+      ),
+      const SizedBox(height: 16),
+      const SkeletonBand(height: 48, borderRadius: 12),
+      const SizedBox(height: 16),
+      ...List.generate(
+        6,
+        (i) => const Padding(
+          padding: EdgeInsets.only(bottom: 10),
+          child: SkeletonBand(height: 56, borderRadius: 12),
+        ),
+      ),
+    ],
+  );
+}
 
   // --- Header Bar -----------------------------------------------------------
 
@@ -355,11 +381,9 @@ class _AuditTrailScreenState extends ConsumerState<AuditTrailScreen> {
         // Title
         Text(
           'System Audit Trail',
-          style: GoogleFonts.inter(
-            fontSize: 28,
+          style: seqHeadlineLg(
             fontWeight: FontWeight.w700,
             color: kSeqOnSurface,
-            letterSpacing: -0.5,
           ),
         ),
         const SizedBox(height: 4),
@@ -367,7 +391,7 @@ class _AuditTrailScreenState extends ConsumerState<AuditTrailScreen> {
         // Subtitle: strictly live database count
         Text(
           '$totalCount audit events recorded',
-          style: seqBodyMd(color: kSeqOnSurfaceVariant),
+          style: seqTabularFigures(seqBodyMd(color: kSeqOnSurfaceVariant)),
         ),
       ],
     );
@@ -384,7 +408,7 @@ class _AuditTrailScreenState extends ConsumerState<AuditTrailScreen> {
         icon: const Icon(Icons.picture_as_pdf_rounded, size: 18),
         label: Text(
           'Export PDF Report (${filteredLogs.length})',
-          style: seqLabelMd(fontWeight: FontWeight.w600),
+          style: seqLabelMd(fontWeight: FontWeight.w600, color: Colors.white),
         ),
       ),
     );
@@ -797,7 +821,7 @@ class _AuditTrailScreenState extends ConsumerState<AuditTrailScreen> {
                                   const SizedBox(height: 4),
                                   Text(
                                     '${entry.targetType} · ${_truncateId(entry.targetId)}',
-                                    style: GoogleFonts.robotoMono(
+                                    style: adminDataMono(
                                       fontSize: 12,
                                       color: kSeqOnSurfaceVariant,
                                     ),
@@ -835,7 +859,7 @@ class _AuditTrailScreenState extends ConsumerState<AuditTrailScreen> {
                               width: 120,
                               child: Text(
                                 entry.ipAddress ?? '—',
-                                style: GoogleFonts.robotoMono(
+                                style: adminDataMono(
                                   fontSize: 12,
                                   color: kSeqOutline,
                                 ),
@@ -848,7 +872,7 @@ class _AuditTrailScreenState extends ConsumerState<AuditTrailScreen> {
                               width: 170,
                               child: Text(
                                 _formatDateTime(entry.createdAt),
-                                style: seqBodySm(color: kSeqOnSurfaceVariant),
+                                style: seqTabularFigures(seqBodySm(color: kSeqOnSurfaceVariant)),
                                 textAlign: TextAlign.end,
                               ),
                             ),
@@ -883,7 +907,7 @@ class _AuditTrailScreenState extends ConsumerState<AuditTrailScreen> {
                             const SizedBox(height: 6),
                             Text(
                               '${entry.targetType} · ${_truncateId(entry.targetId)}',
-                              style: GoogleFonts.robotoMono(
+                              style: adminDataMono(
                                 fontSize: 12,
                                 color: kSeqOnSurfaceVariant,
                               ),
@@ -906,7 +930,7 @@ class _AuditTrailScreenState extends ConsumerState<AuditTrailScreen> {
                                 const SizedBox(width: 8),
                                 Text(
                                   _formatDateTime(entry.createdAt),
-                                  style: seqLabelSm(color: kSeqOutline),
+                                  style: seqTabularFigures(seqLabelSm(color: kSeqOutline)),
                                 ),
                               ],
                             ),
@@ -1145,10 +1169,10 @@ class _AuditTrailScreenState extends ConsumerState<AuditTrailScreen> {
             child: Text(
               value,
               style: isMonospace
-                  ? GoogleFonts.robotoMono(
+                  ? seqTabularFigures(adminDataMono(
                       fontSize: 13,
                       color: kSeqOnSurface,
-                    )
+                    ))
                   : seqBodySm(
                       color: kSeqOnSurface,
                       fontWeight: isBold ? FontWeight.w700 : FontWeight.w500,

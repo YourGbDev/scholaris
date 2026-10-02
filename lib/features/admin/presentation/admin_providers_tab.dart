@@ -15,6 +15,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 import 'package:scholaris/features/provider/models/provider_verification.dart';
 import 'package:scholaris/features/provider/providers/provider_verification_provider.dart';
+import 'package:scholaris/shared/theme/app_motion.dart';
 import 'package:scholaris/shared/widgets/responsive_container.dart';
 import 'package:scholaris/shared/widgets/state_views.dart';
 import 'admin_theme.dart';
@@ -84,14 +85,17 @@ class _AdminProvidersTabState extends ConsumerState<AdminProvidersTab> {
 
           // Content surface
           Expanded(
-            child: verificationsAsync.when(
-              loading: () => const LoadingView(),
-              error: (err, _) => ErrorView(
-                message: 'Failed to load provider verifications: $err',
-                onRetry: () =>
-                    ref.invalidate(adminProviderVerificationsProvider),
-              ),
-              data: (verifications) {
+            child: CrossFadeLoading(
+              isLoading: verificationsAsync.isLoading,
+              skeleton: _buildSkeletonLoader(),
+              child: verificationsAsync.when(
+                loading: () => _buildSkeletonLoader(),
+                error: (err, _) => ErrorView(
+                  message: 'Failed to load provider verifications: $err',
+                  onRetry: () =>
+                      ref.invalidate(adminProviderVerificationsProvider),
+                ),
+                data: (verifications) {
                 // Apply search and filter
                 final filtered = verifications.where((v) {
                   if (_statusFilter != 'all' && v.status != _statusFilter) {
@@ -155,7 +159,8 @@ class _AdminProvidersTabState extends ConsumerState<AdminProvidersTab> {
               },
             ),
           ),
-        ],
+        ),
+      ],
       ),
     );
   }
@@ -236,6 +241,7 @@ class _AdminProvidersTabState extends ConsumerState<AdminProvidersTab> {
     return GestureDetector(
       onTap: () => onSelected(value),
       child: Container(
+        constraints: const BoxConstraints(minHeight: 36),
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
         decoration: BoxDecoration(
           color: isSelected ? const Color(0xFF0F4D2E) : Colors.white,
@@ -352,15 +358,18 @@ class _AdminProvidersTabState extends ConsumerState<AdminProvidersTab> {
           // Table Rows
           Expanded(
             child: ListView.separated(
+              physics: const AppleBouncingScrollPhysics(),
               itemCount: items.length,
               separatorBuilder: (_, _) =>
                   const Divider(height: 1, color: kAdminHairline),
               itemBuilder: (context, index) {
                 final v = items[index];
-                return Padding(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                  child: Row(
+                return StaggeredListItem(
+                  index: index,
+                  child: Padding(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                    child: Row(
                     children: [
                       // Provider Name & Subtitle
                       Expanded(
@@ -438,10 +447,10 @@ class _AdminProvidersTabState extends ConsumerState<AdminProvidersTab> {
                         flex: 3,
                         child: Text(
                           _formatDate(v.submittedAt),
-                          style: GoogleFonts.inter(
+                          style: seqTabularFigures(GoogleFonts.inter(
                             fontSize: 12,
                             color: kAdminTextSecondary,
-                          ),
+                          )),
                         ),
                       ),
 
@@ -463,6 +472,7 @@ class _AdminProvidersTabState extends ConsumerState<AdminProvidersTab> {
                               foregroundColor: const Color(0xFF0F4D2E),
                               padding: const EdgeInsets.symmetric(
                                   horizontal: 10, vertical: 6),
+                              minimumSize: const Size(0, 36),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(6),
                               ),
@@ -479,8 +489,9 @@ class _AdminProvidersTabState extends ConsumerState<AdminProvidersTab> {
                       ),
                     ],
                   ),
-                );
-              },
+                ),
+              );
+            },
             ),
           ),
         ],
@@ -490,12 +501,15 @@ class _AdminProvidersTabState extends ConsumerState<AdminProvidersTab> {
 
   Widget _buildMobileCards(List<ProviderVerification> items) {
     return ListView.separated(
+      physics: const AppleBouncingScrollPhysics(),
       itemCount: items.length,
       separatorBuilder: (_, _) => const SizedBox(height: 12),
       itemBuilder: (context, index) {
         final v = items[index];
-        return Container(
-          decoration: BoxDecoration(
+        return StaggeredListItem(
+          index: index,
+          child: Container(
+            decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(12),
             border: Border.all(color: kAdminHairline),
@@ -572,8 +586,34 @@ class _AdminProvidersTabState extends ConsumerState<AdminProvidersTab> {
               ),
             ],
           ),
-        );
-      },
+        ),
+      );
+    },
+  );
+}
+
+  Widget _buildSkeletonLoader() {
+    return Padding(
+      padding: const EdgeInsets.all(24),
+      child: Column(
+        children: List.generate(
+          6,
+          (i) => const Padding(
+            padding: EdgeInsets.only(bottom: 12),
+            child: Row(
+              children: [
+                SkeletonBand(width: 32, height: 32, borderRadius: 8),
+                SizedBox(width: 12),
+                Expanded(child: SkeletonBand(height: 18, borderRadius: 6)),
+                SizedBox(width: 20),
+                SkeletonBand(width: 80, height: 18, borderRadius: 6),
+                SizedBox(width: 20),
+                SkeletonBand(width: 60, height: 18, borderRadius: 6),
+              ],
+            ),
+          ),
+        ),
+      ),
     );
   }
 
@@ -902,6 +942,11 @@ class _ProviderReviewDialogState extends ConsumerState<_ProviderReviewDialog> {
   }
 
   Widget _infoRow(String label, String value) {
+    final isMono = label.contains('Registration') ||
+        label.contains('ID Number') ||
+        label.contains('TIN') ||
+        label.contains('Budget') ||
+        label.contains('Phone');
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 3),
       child: Row(
@@ -916,11 +961,17 @@ class _ProviderReviewDialogState extends ConsumerState<_ProviderReviewDialog> {
               value,
               textAlign: TextAlign.right,
               overflow: TextOverflow.ellipsis,
-              style: GoogleFonts.inter(
-                fontSize: 12.5,
-                fontWeight: FontWeight.w600,
-                color: kAdminTextPrimary,
-              ),
+              style: isMono
+                  ? seqTabularFigures(adminDataMono(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w600,
+                      color: kAdminTextPrimary,
+                    ))
+                  : GoogleFonts.inter(
+                      fontSize: 12.5,
+                      fontWeight: FontWeight.w600,
+                      color: kAdminTextPrimary,
+                    ),
             ),
           ),
         ],

@@ -102,28 +102,69 @@ class _GraduationCeremonyState extends State<GraduationCeremony>
   Widget build(BuildContext context) {
     return ColoredBox(
       color: kBackground,
-      child: Lottie.asset(
-        widget.assetPath,
-        controller: _controller,
-        animate: false,
-        repeat: false,
-        // The asset is a portrait composition (~400×800); contain keeps the
-        // shapes from being distorted on unusual aspect ratios while still
-        // filling the portrait viewport the ceremony is designed for.
-        fit: BoxFit.contain,
-        width: double.infinity,
-        height: double.infinity,
-        onLoaded: (composition) {
-          if (!mounted) return;
-          _controller.duration = composition.duration;
-          if (!_reduced && !_completed) _controller.forward();
-        },
-        errorBuilder: (context, error, stackTrace) {
-          // The asset is missing or corrupt: never block the flow, never show
-          // a substitute. Report completion so the host route moves on.
-          _complete();
-          return const SizedBox.shrink();
-        },
+      child: Stack(
+        children: [
+          GestureDetector(
+            behavior: HitTestBehavior.opaque,
+            onTap: _complete,
+            child: SizedBox.expand(
+              child: Lottie.asset(
+                widget.assetPath,
+                controller: _controller,
+                animate: false,
+                repeat: false,
+                // The asset is a portrait composition (~400×800); contain keeps the
+                // shapes from being distorted on unusual aspect ratios while still
+                // filling the portrait viewport the ceremony is designed for.
+                fit: BoxFit.contain,
+                width: double.infinity,
+                height: double.infinity,
+                onLoaded: (composition) {
+                  if (!mounted) return;
+                  _controller.duration = composition.duration;
+                  if (!_reduced && !_completed) _controller.forward();
+                },
+                errorBuilder: (context, error, stackTrace) {
+                  // The asset is missing or corrupt: never block the flow, never show
+                  // a substitute. Report completion so the host route moves on.
+                  _complete();
+                  return const SizedBox.shrink();
+                },
+              ),
+            ),
+          ),
+          Positioned(
+            top: 0,
+            right: 0,
+            child: SafeArea(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                child: TextButton(
+                  key: const ValueKey('ceremony-skip-btn'),
+                  onPressed: _complete,
+                  style: TextButton.styleFrom(
+                    minimumSize: const Size(44, 44),
+                    foregroundColor: const Color(0xFF0F4D2E),
+                    backgroundColor: Colors.white.withValues(alpha: 0.85),
+                    elevation: 1,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                  ),
+                  child: Text(
+                    'Skip',
+                    style: outfit(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w600,
+                      color: const Color(0xFF0F4D2E),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

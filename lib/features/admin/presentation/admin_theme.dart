@@ -119,3 +119,190 @@ TextStyle adminDataMono({
       fontWeight: fontWeight,
       color: color,
     );
+
+/// Tabular figures helper for numeric typography (prevents digit horizontal jittering).
+TextStyle seqTabularFigures(TextStyle base) => base.copyWith(
+      fontFeatures: [
+        ...?base.fontFeatures,
+        const FontFeature.tabularFigures(),
+      ],
+    );
+
+/// Monospace pill container helper for IDs, hashes, and IP addresses.
+Widget adminIdPill(String idText) => Container(
+      padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
+      decoration: BoxDecoration(
+        color: const Color(0xFFF4F3F8),
+        borderRadius: BorderRadius.circular(6),
+        border: Border.all(color: kSeqOutlineVariant.withValues(alpha: 0.4)),
+      ),
+      child: Text(
+        idText,
+        style: adminDataMono(fontSize: 11, color: kSeqOnSurfaceVariant),
+      ),
+    );
+
+// =============================================================================
+// Sequoia Apple Design System Tokens (from scholaris_sequoia/DESIGN.md)
+// =============================================================================
+
+const Color kSeqSurface = Color(0xFFFAF9FE);
+const Color kSeqSurfaceDim = Color(0xFFDAD9DF);
+const Color kSeqSurfaceBright = Color(0xFFFAF9FE);
+const Color kSeqSurfaceContainerLowest = Color(0xFFFFFFFF);
+const Color kSeqSurfaceContainerLow = Color(0xFFF4F3F8);
+const Color kSeqSurfaceContainer = Color(0xFFEEEDF3);
+const Color kSeqSurfaceContainerHigh = Color(0xFFE9E7ED);
+const Color kSeqSurfaceContainerHighest = Color(0xFFE3E2E7);
+const Color kSeqOnSurface = Color(0xFF1A1B1F);
+const Color kSeqOnSurfaceVariant = Color(0xFF404942);
+const Color kSeqOutline = Color(0xFF5A625B);
+const Color kSeqOutlineVariant = Color(0xFFC0C9C0);
+const Color kSeqPrimary = Color(0xFF00351C);
+const Color kSeqPrimaryContainer = Color(0xFF0F4D2E);
+const Color kSeqOnPrimary = Color(0xFFFFFFFF);
+const Color kSeqOnPrimaryContainer = Color(0xFF82BD95);
+const Color kSeqPrimaryFixed = Color(0xFFB3F1C6);
+const Color kSeqPrimaryFixedDim = Color(0xFF98D4AB);
+const Color kSeqOnPrimaryFixed = Color(0xFF002110);
+const Color kSeqOnPrimaryFixedVariant = Color(0xFF145131);
+const Color kSeqSecondary = Color(0xFF0058BC);
+const Color kSeqSecondaryContainer = Color(0xFF0070EB);
+const Color kSeqOnSecondary = Color(0xFFFFFFFF);
+const Color kSeqSecondaryFixed = Color(0xFFD8E2FF);
+const Color kSeqSecondaryFixedDim = Color(0xFFADC6FF);
+const Color kSeqOnSecondaryFixed = Color(0xFF001A41);
+const Color kSeqOnSecondaryFixedVariant = Color(0xFF004493);
+const Color kSeqTertiary = Color(0xFF442600);
+const Color kSeqTertiaryFixed = Color(0xFFFFDDBB);
+const Color kSeqTertiaryFixedDim = Color(0xFFFFB868);
+const Color kSeqOnTertiaryFixed = Color(0xFF2B1700);
+const Color kSeqOnTertiaryFixedVariant = Color(0xFF673D00);
+const Color kSeqTertiaryContainer = Color(0xFF623A00);
+const Color kSeqOnTertiaryContainer = Color(0xFFF99A00);
+const Color kSeqError = Color(0xFFBA1A1A);
+const Color kSeqOnError = Color(0xFFFFFFFF);
+const Color kSeqErrorContainer = Color(0xFFFFDAD6);
+const Color kSeqOnErrorContainer = Color(0xFF93000A);
+
+// Sequoia Typography (Inter)
+TextStyle seqDisplay({
+  FontWeight fontWeight = FontWeight.w700,
+  Color color = kSeqOnSurface,
+}) =>
+    GoogleFonts.inter(
+      fontSize: 40,
+      height: 48 / 40,
+      letterSpacing: -0.022 * 40,
+      fontWeight: fontWeight,
+      color: color,
+    );
+
+TextStyle seqHeadlineLg({
+  FontWeight fontWeight = FontWeight.w600,
+  Color color = kSeqOnSurface,
+}) =>
+    GoogleFonts.inter(
+      fontSize: 32,
+      height: 38 / 32,
+      letterSpacing: -0.021 * 32,
+      fontWeight: fontWeight,
+      color: color,
+    );
+
+TextStyle seqHeadlineMd({
+  FontWeight fontWeight = FontWeight.w600,
+  Color color = kSeqOnSurface,
+}) =>
+    GoogleFonts.inter(
+      fontSize: 24,
+      height: 30 / 24,
+      letterSpacing: -0.019 * 24,
+      fontWeight: fontWeight,
+      color: color,
+    );
+
+TextStyle seqHeadlineSm({
+  FontWeight fontWeight = FontWeight.w600,
+  Color color = kSeqOnSurface,
+}) =>
+    GoogleFonts.inter(
+      fontSize: 19,
+      height: 24 / 19,
+      letterSpacing: -0.015 * 19,
+      fontWeight: fontWeight,
+      color: color,
+    );
+
+TextStyle seqBodyLg({
+  FontWeight fontWeight = FontWeight.w400,
+  Color color = kSeqOnSurface,
+}) =>
+    GoogleFonts.inter(
+      fontSize: 16,
+      height: 24 / 16,
+      letterSpacing: -0.011 * 16,
+      fontWeight: fontWeight,
+      color: color,
+    );
+
+TextStyle seqBodyMd({
+  FontWeight fontWeight = FontWeight.w400,
+  Color color = kSeqOnSurface,
+}) =>
+    GoogleFonts.inter(
+      fontSize: 14,
+      height: 20 / 14,
+      letterSpacing: -0.006 * 14,
+      fontWeight: fontWeight,
+      color: color,
+    );
+
+TextStyle seqBodySm({
+  FontWeight fontWeight = FontWeight.w400,
+  Color color = kSeqOnSurface,
+}) =>
+    GoogleFonts.inter(
+      fontSize: 12,
+      height: 16 / 12,
+      letterSpacing: 0,
+      fontWeight: fontWeight,
+      color: color,
+    );
+
+TextStyle seqLabelLg({
+  FontWeight fontWeight = FontWeight.w500,
+  Color color = kSeqOnSurface,
+}) =>
+    GoogleFonts.inter(
+      fontSize: 14,
+      height: 18 / 14,
+      letterSpacing: -0.008 * 14,
+      fontWeight: fontWeight,
+      color: color,
+    );
+
+TextStyle seqLabelMd({
+  FontWeight fontWeight = FontWeight.w500,
+  Color color = kSeqOnSurface,
+}) =>
+    GoogleFonts.inter(
+      fontSize: 12,
+      height: 16 / 12,
+      letterSpacing: -0.002 * 12,
+      fontWeight: fontWeight,
+      color: color,
+    );
+
+TextStyle seqLabelSm({
+  FontWeight fontWeight = FontWeight.w600,
+  Color color = kSeqOnSurface,
+}) =>
+    GoogleFonts.inter(
+      fontSize: 10,
+      height: 12 / 10,
+      letterSpacing: 0.03 * 10,
+      fontWeight: fontWeight,
+      color: color,
+    );
+

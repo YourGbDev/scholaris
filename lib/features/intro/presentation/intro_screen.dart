@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:scholaris/features/onboarding/controllers/onboarding_controller.dart';
+import 'package:scholaris/shared/theme/app_motion.dart';
 import 'package:scholaris/shared/theme/app_theme.dart';
 import 'package:scholaris/shared/widgets/responsive_container.dart';
 
@@ -22,7 +24,7 @@ class IntroScreen extends ConsumerWidget {
           child: LayoutBuilder(
             builder: (context, constraints) {
               return SingleChildScrollView(
-                physics: const ClampingScrollPhysics(),
+                physics: const AppleBouncingScrollPhysics(),
                 child: ConstrainedBox(
                   constraints: BoxConstraints(
                     minHeight: constraints.maxHeight,
@@ -104,45 +106,48 @@ class IntroScreen extends ConsumerWidget {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           // Large dark green full width rounded "Get Started →" button
-                          SizedBox(
-                            width: double.infinity,
-                            height: 54,
-                            child: ElevatedButton(
-                              key: const ValueKey('intro-get-started-button'),
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: const Color(0xFF0F4D2E),
-                                foregroundColor: Colors.white,
-                                elevation: 0,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(16),
+                          PressableScale(
+                            child: SizedBox(
+                              width: double.infinity,
+                              height: 54,
+                              child: ElevatedButton(
+                                key: const ValueKey('intro-get-started-button'),
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: const Color(0xFF0F4D2E),
+                                  foregroundColor: Colors.white,
+                                  elevation: 0,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(16),
+                                  ),
                                 ),
-                              ),
-                              onPressed: () async {
-                                await ref.read(introSeenProvider.notifier).markSeen();
-                                if (context.mounted) {
-                                  context.go('/onboarding');
-                                }
-                              },
-                              child: FittedBox(
-                                fit: BoxFit.scaleDown,
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Text(
-                                      'Get Started',
-                                      style: outfit(
-                                        fontSize: 16.5,
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.white,
+                                onPressed: () async {
+                                  HapticFeedback.lightImpact();
+                                  await ref.read(introSeenProvider.notifier).markSeen();
+                                  if (context.mounted) {
+                                    context.go('/onboarding');
+                                  }
+                                },
+                                child: FittedBox(
+                                  fit: BoxFit.scaleDown,
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Text(
+                                        'Get Started',
+                                        style: outfit(
+                                          fontSize: 16.5,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.white,
+                                        ),
                                       ),
-                                    ),
-                                    const SizedBox(width: 8),
-                                    const Icon(
-                                      Icons.arrow_forward_rounded,
-                                      color: Colors.white,
-                                      size: 20,
-                                    ),
-                                  ],
+                                      const SizedBox(width: 8),
+                                      const Icon(
+                                        Icons.arrow_forward_rounded,
+                                        color: Colors.white,
+                                        size: 20,
+                                      ),
+                                    ],
+                                  ),
                                 ),
                               ),
                             ),
@@ -150,24 +155,27 @@ class IntroScreen extends ConsumerWidget {
                           const SizedBox(height: 14),
 
                           // Small dark green underlined "Already have an account? Sign In."
-                          GestureDetector(
-                            key: const ValueKey('intro-sign-in-button'),
-                            onTap: () async {
-                              await ref.read(introSeenProvider.notifier).markSeen();
-                              await ref.read(onboardingSeenProvider.notifier).markSeen();
-                              if (context.mounted) {
-                                context.go('/login');
-                              }
-                            },
-                            child: Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 6.0),
-                              child: Text(
-                                'Already have an account? Sign In.',
-                                style: openSans(
-                                  fontSize: 13.5,
-                                  fontWeight: FontWeight.w600,
-                                  color: const Color(0xFF0F4D2E),
-                                  decoration: TextDecoration.underline,
+                          PressableScale(
+                            child: GestureDetector(
+                              key: const ValueKey('intro-sign-in-button'),
+                              onTap: () async {
+                                HapticFeedback.lightImpact();
+                                await ref.read(introSeenProvider.notifier).markSeen();
+                                await ref.read(onboardingSeenProvider.notifier).markSeen();
+                                if (context.mounted) {
+                                  context.go('/login');
+                                }
+                              },
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(vertical: 6.0),
+                                child: Text(
+                                  'Already have an account? Sign In.',
+                                  style: openSans(
+                                    fontSize: 13.5,
+                                    fontWeight: FontWeight.w600,
+                                    color: const Color(0xFF0F4D2E),
+                                    decoration: TextDecoration.underline,
+                                  ),
                                 ),
                               ),
                             ),

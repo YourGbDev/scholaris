@@ -156,8 +156,11 @@ void main() {
 
     // ---- Step 2: Home → Applications shows pending -----------------------
     await _pump(tester, h.container, const HomeScreen());
+    await tester.pump(const Duration(seconds: 4));
+    await tester.pump(const Duration(milliseconds: 500));
 
     await tester.tap(find.text('Tracker'));
+    await tester.pump(const Duration(milliseconds: 500));
     await tester.pump(const Duration(milliseconds: 500));
 
     expect(find.text('My Applications'), findsOneWidget);
@@ -216,10 +219,12 @@ void main() {
     // Back to All.
     await tester.ensureVisible(find.text('All (1)'));
     await tester.tap(find.text('All (1)'));
+    await tester.pump(const Duration(seconds: 4));
     await tester.pump(const Duration(milliseconds: 500));
 
     // ---- Step 6: Discover/Saved applied-state updates --------------------
     await tester.tap(find.text('Dashboard'));
+    await tester.pump(const Duration(milliseconds: 500));
     await tester.pump(const Duration(milliseconds: 500));
 
     // The withdrawn application no longer reads as "Applied" on the card.

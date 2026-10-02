@@ -27,6 +27,7 @@ import 'package:scholaris/features/profile/repositories/profile_repository.dart'
 import 'package:scholaris/features/scholarships/providers/scholarships_provider.dart';
 import 'package:scholaris/features/scholarships/repositories/scholarship_repository.dart';
 
+import 'package:scholaris/shared/theme/app_motion.dart';
 import 'helpers/fake_application_data_source.dart';
 import 'helpers/fake_bookmark_data_source.dart';
 import 'helpers/fake_profile_data_source.dart';
@@ -272,24 +273,24 @@ void main() {
       await tester.pump(const Duration(milliseconds: 500));
 
       expect(
-        find.descendant(of: find.byType(NavigationBar), matching: find.text('Dashboard')),
+        find.descendant(of: find.byType(LiquidGlass), matching: find.text('Dashboard')),
         findsOneWidget,
       );
       expect(
-        find.descendant(of: find.byType(NavigationBar), matching: find.text('Discover')),
+        find.descendant(of: find.byType(LiquidGlass), matching: find.text('Discover')),
         findsOneWidget,
       );
       expect(
-        find.descendant(of: find.byType(NavigationBar), matching: find.text('Tracker')),
+        find.descendant(of: find.byType(LiquidGlass), matching: find.text('Tracker')),
         findsOneWidget,
       );
       expect(
-        find.descendant(of: find.byType(NavigationBar), matching: find.text('Profile')),
+        find.descendant(of: find.byType(LiquidGlass), matching: find.text('Profile')),
         findsOneWidget,
       );
 
       await tester.tap(
-        find.descendant(of: find.byType(NavigationBar), matching: find.text('Tracker')),
+        find.descendant(of: find.byType(LiquidGlass), matching: find.text('Tracker')),
       );
       await tester.pump(const Duration(milliseconds: 500));
       expect(find.text('My Applications'), findsOneWidget);
@@ -469,6 +470,8 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.text('Under review'), findsOneWidget);
+      await tester.drag(find.byType(ListView), const Offset(0, -300));
+      await tester.pumpAndSettle();
       expect(find.text('Approved'), findsOneWidget);
       expect(tester.takeException(), isNull);
     });

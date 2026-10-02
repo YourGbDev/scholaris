@@ -14,6 +14,7 @@ import '../../applications/providers/applications_provider.dart';
 import '../../scholarships/models/scholarship.dart';
 import '../providers/provider_scholarships_provider.dart';
 import 'scholarship_form_screen.dart';
+import 'widgets/scholarship_qr_dialog.dart';
 
 class ProviderScholarshipsTab extends ConsumerStatefulWidget {
   const ProviderScholarshipsTab({super.key});
@@ -767,7 +768,14 @@ class _ScholarshipCard extends StatelessWidget {
                     ),
                   ),
                 ),
-                const SizedBox(width: 8),
+                const SizedBox(width: 4),
+                IconButton(
+                  icon: const Icon(Icons.qr_code_rounded, size: 18),
+                  tooltip: 'Show QR Code',
+                  color: kPrimary,
+                  onPressed: () => showScholarshipQrDialog(context, scholarship),
+                  visualDensity: VisualDensity.compact,
+                ),
                 IconButton(
                   icon: const Icon(Icons.delete_outline_rounded, size: 18),
                   tooltip: 'Delete Scholarship',

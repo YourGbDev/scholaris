@@ -8,7 +8,6 @@
 // - Masked ID display and RA 10173 data privacy consent
 //
 // TODO(SMS-OTP): Integrate Telco SMS Gateway (e.g. Semaphore/Twilio) for live OTP verification.
-// TODO(LGU-pitch): Replace placeholder partner accreditation claims before the formal presentation.
 
 import 'dart:typed_data';
 import 'package:file_picker/file_picker.dart';
@@ -1998,13 +1997,16 @@ class _ProviderSignupScreenState extends ConsumerState<ProviderSignupScreen> {
 
   Widget _buildFieldLabel(String label, {required bool isRequired}) {
     return Row(
+      mainAxisSize: MainAxisSize.min,
       children: [
-        Text(
-          label,
-          style: GoogleFonts.inter(
-            fontSize: 12,
-            fontWeight: FontWeight.w600,
-            color: const Color(0xFF1A1B1F),
+        Flexible(
+          child: Text(
+            label,
+            style: GoogleFonts.inter(
+              fontSize: 12,
+              fontWeight: FontWeight.w600,
+              color: const Color(0xFF1A1B1F),
+            ),
           ),
         ),
         if (isRequired)
@@ -2204,13 +2206,15 @@ class _ProviderSignupScreenState extends ConsumerState<ProviderSignupScreen> {
             color: met ? const Color(0xFF0F4D2E) : const Color(0xFF707971),
           ),
           const SizedBox(width: 6),
-          Text(
-            text,
-            style: GoogleFonts.inter(
-              fontSize: 11,
-              color: met
-                  ? const Color(0xFF1A1B1F)
-                  : const Color(0xFF707971),
+          Expanded(
+            child: Text(
+              text,
+              style: GoogleFonts.inter(
+                fontSize: 11,
+                color: met
+                    ? const Color(0xFF1A1B1F)
+                    : const Color(0xFF707971),
+              ),
             ),
           ),
         ],

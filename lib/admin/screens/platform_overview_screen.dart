@@ -98,46 +98,44 @@ class PlatformOverviewScreen extends ConsumerWidget {
 
     return Scaffold(
       backgroundColor: kSeqSurface,
-      body: overviewAsync.when(
-        loading: () => const Center(
-          child: CircularProgressIndicator(
-            color: kSeqPrimaryContainer,
-            strokeWidth: 2.5,
-          ),
-        ),
-        error: (err, _) => Center(
-          child: Padding(
-            padding: const EdgeInsets.all(24),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const Icon(Icons.error_outline, size: 48, color: kSeqError),
-                const SizedBox(height: 12),
-                Text(
-                  'Failed to load platform statistics',
-                  style: seqHeadlineSm(color: kSeqOnSurface),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  err.toString(),
-                  style: seqBodyMd(color: kSeqOnSurfaceVariant),
-                  textAlign: TextAlign.center,
-                ),
-                const SizedBox(height: 16),
-                ElevatedButton.icon(
-                  onPressed: () => ref.invalidate(platformOverviewDataProvider),
-                  icon: const Icon(Icons.refresh),
-                  label: const Text('Retry'),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: kSeqPrimary,
-                    foregroundColor: kSeqOnPrimary,
+      body: CrossFadeLoading(
+        isLoading: overviewAsync.isLoading,
+        skeleton: _buildSkeletonLoader(context),
+        child: overviewAsync.when(
+          loading: () => _buildSkeletonLoader(context),
+          error: (err, _) => Center(
+            child: Padding(
+              padding: const EdgeInsets.all(24),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Icon(Icons.error_outline, size: 48, color: kSeqError),
+                  const SizedBox(height: 12),
+                  Text(
+                    'Failed to load platform statistics',
+                    style: seqHeadlineSm(color: kSeqOnSurface),
                   ),
-                ),
-              ],
+                  const SizedBox(height: 4),
+                  Text(
+                    err.toString(),
+                    style: seqBodyMd(color: kSeqOnSurfaceVariant),
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 16),
+                  ElevatedButton.icon(
+                    onPressed: () => ref.invalidate(platformOverviewDataProvider),
+                    icon: const Icon(Icons.refresh),
+                    label: const Text('Retry'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: kSeqPrimary,
+                      foregroundColor: kSeqOnPrimary,
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
-        ),
-        data: (data) {
+          data: (data) {
           final width = MediaQuery.sizeOf(context).width;
 
           return RefreshIndicator(
@@ -147,6 +145,7 @@ class PlatformOverviewScreen extends ConsumerWidget {
               await ref.read(platformOverviewDataProvider.future);
             },
             child: ListView(
+              physics: const AppleBouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
               padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
               children: [
                 _buildHeaderBar(context),
@@ -177,7 +176,46 @@ class PlatformOverviewScreen extends ConsumerWidget {
             ),
           );
         },
+        ),
       ),
+    );
+  }
+
+  Widget _buildSkeletonLoader(BuildContext context) {
+    return ListView(
+      physics: const NeverScrollableScrollPhysics(),
+      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: const [
+            SkeletonBand(width: 220, height: 28),
+            SkeletonBand(width: 100, height: 28, borderRadius: 14),
+          ],
+        ),
+        const SizedBox(height: 24),
+        const SkeletonBand(width: 160, height: 16),
+        const SizedBox(height: 12),
+        Row(
+          children: const [
+            Expanded(child: SkeletonBand(height: 140, borderRadius: 16)),
+            SizedBox(width: 16),
+            Expanded(child: SkeletonBand(height: 140, borderRadius: 16)),
+            SizedBox(width: 16),
+            Expanded(child: SkeletonBand(height: 140, borderRadius: 16)),
+          ],
+        ),
+        const SizedBox(height: 32),
+        const SkeletonBand(width: 200, height: 16),
+        const SizedBox(height: 12),
+        Row(
+          children: const [
+            Expanded(child: SkeletonBand(height: 120, borderRadius: 16)),
+            SizedBox(width: 16),
+            Expanded(child: SkeletonBand(height: 120, borderRadius: 16)),
+          ],
+        ),
+      ],
     );
   }
 
@@ -233,11 +271,9 @@ class PlatformOverviewScreen extends ConsumerWidget {
         // Title
         Text(
           'Platform Overview',
-          style: GoogleFonts.inter(
-            fontSize: 28,
+          style: seqHeadlineLg(
             fontWeight: FontWeight.w700,
             color: kSeqOnSurface,
-            letterSpacing: -0.5,
           ),
         ),
         const SizedBox(height: 4),
@@ -377,24 +413,24 @@ class PlatformOverviewScreen extends ConsumerWidget {
                   children: [
                     Text(
                       '₱',
-                      style: GoogleFonts.inter(
+                      style: seqTabularFigures(GoogleFonts.inter(
                         fontSize: 26,
                         fontWeight: FontWeight.w700,
                         color: kSeqOnSurface,
-                      ),
+                      )),
                     ),
                     const SizedBox(width: 2),
                     Expanded(
                       child: CountUpAnimation(
                         targetValue: item.targetValue,
                         duration: const Duration(milliseconds: 800),
-                        style: GoogleFonts.inter(
+                        style: seqTabularFigures(GoogleFonts.inter(
                           fontSize: 36,
                           fontWeight: FontWeight.w800,
                           height: 1.0,
                           color: kSeqOnSurface,
                           letterSpacing: -0.5,
-                        ),
+                        )),
                       ),
                     ),
                   ],
@@ -402,13 +438,13 @@ class PlatformOverviewScreen extends ConsumerWidget {
               : CountUpAnimation(
                   targetValue: item.targetValue,
                   duration: const Duration(milliseconds: 800),
-                  style: GoogleFonts.inter(
+                  style: seqTabularFigures(GoogleFonts.inter(
                     fontSize: 38,
                     fontWeight: FontWeight.w800,
                     height: 1.0,
                     color: kSeqOnSurface,
                     letterSpacing: -0.5,
-                  ),
+                  )),
                 ),
           const SizedBox(height: 10),
           Text(
@@ -530,12 +566,12 @@ class PlatformOverviewScreen extends ConsumerWidget {
                 CountUpAnimation(
                   targetValue: item.count,
                   duration: const Duration(milliseconds: 800),
-                  style: GoogleFonts.inter(
+                  style: seqTabularFigures(GoogleFonts.inter(
                     fontSize: 28,
                     fontWeight: FontWeight.w700,
                     height: 1.1,
                     color: kSeqOnSurface,
-                  ),
+                  )),
                 ),
                 const SizedBox(height: 4),
                 Text(
@@ -656,11 +692,11 @@ class PlatformOverviewScreen extends ConsumerWidget {
           CountUpAnimation(
             targetValue: item.count,
             duration: const Duration(milliseconds: 800),
-            style: GoogleFonts.inter(
+            style: seqTabularFigures(GoogleFonts.inter(
               fontSize: 20,
               fontWeight: FontWeight.w700,
               color: kSeqOnSurface,
-            ),
+            )),
           ),
         ],
       ),

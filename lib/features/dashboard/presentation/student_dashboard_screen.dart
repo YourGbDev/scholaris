@@ -16,6 +16,7 @@
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:scholaris/features/applications/models/application.dart';
@@ -37,6 +38,7 @@ import 'package:scholaris/shared/theme/app_theme.dart';
 import 'package:scholaris/shared/widgets/mascot_pose_view.dart';
 import 'package:scholaris/shared/widgets/responsive_container.dart';
 import 'package:scholaris/shared/widgets/scholarship_card.dart';
+import 'widgets/student_notifications_sheet.dart';
 
 class StudentDashboardScreen extends ConsumerStatefulWidget {
   const StudentDashboardScreen({super.key});
@@ -99,8 +101,7 @@ class _StudentDashboardScreenState
 
     // Calculate total matched value in Philippine Peso for downstream recommendations
     final opportunitiesCount = info.matchCount > 0 ? info.matchCount : matches.length;
-    final effectiveOpportunityCount =
-        opportunitiesCount > 0 ? opportunitiesCount : 18;
+    final effectiveOpportunityCount = opportunitiesCount;
 
     final rawApps =
         ref.watch(applicationsProvider).valueOrNull ?? const <Application>[];
@@ -173,7 +174,14 @@ class _StudentDashboardScreenState
                 // 4. Quick-Stat 3-Tile Grid
                 _wrapSection(
                   index: 4,
-                  child: _buildQuickStatGrid(context, ref, info),
+                  child: _buildQuickStatGrid(
+                    context,
+                    ref,
+                    info,
+                    ref.watch(applicationsProvider).hasValue
+                        ? ref.watch(applicationsProvider).value!.where(ApplicationFilters.isActive).length
+                        : info.appliedCount,
+                  ),
                 ),
                 const SizedBox(height: 20),
 
@@ -280,13 +288,7 @@ class _StudentDashboardScreenState
                       color: Color(0xFF161C27),
                     ),
                     onPressed: () {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text("You're all caught up on notifications!"),
-                          duration: Duration(seconds: 2),
-                          behavior: SnackBarBehavior.floating,
-                        ),
-                      );
+                      showStudentNotificationsSheet(context);
                     },
                   ),
                   Positioned(
@@ -656,6 +658,7 @@ class _StudentDashboardScreenState
     BuildContext context,
     WidgetRef ref,
     DashboardInfo info,
+    int appliedCount,
   ) {
     final urgentCount = info.closingSoonCount;
 
@@ -689,7 +692,7 @@ class _StudentDashboardScreenState
             icon: Icons.pending_actions_rounded,
             iconBg: const Color(0xFFF1F3FF),
             iconColor: const Color(0xFF436084),
-            count: '${info.appliedCount}',
+            count: '$appliedCount',
             label: 'In Progress',
             onTap: () {
               ref.read(homeTabIndexProvider.notifier).selectTab(2);
@@ -763,7 +766,7 @@ class _StudentDashboardScreenState
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Text(
-                          'See All ($totalCount)',
+                          totalCount > 0 ? 'See All ($totalCount)' : 'See All',
                           style: outfit(
                             fontSize: 12.5,
                             fontWeight: FontWeight.w600,
@@ -1519,13 +1522,16 @@ class _StatCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
         child: InkWell(
           borderRadius: BorderRadius.circular(12),
-          onTap: onTap,
+          onTap: () {
+            HapticFeedback.lightImpact();
+            onTap();
+          },
           child: Container(
             padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(12),
               border: Border.all(
-                color: isUrgent ? const Color(0xFFFFB4AB) : const Color(0xFFE2E8E5),
+                color: isUrgent ? const Color(0xFFFFB4AB) : const Color(0xFFE2E8F3),
                 width: 1,
               ),
               boxShadow: [
@@ -1551,14 +1557,26 @@ class _StatCard extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 6),
-                CountUpAnimation(
-                  key: countKey,
-                  targetValue: numericValue,
-                  suffix: (rawCount == null && count.contains('Action')) ? ' Action' : '',
-                  style: outfit(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: isUrgent ? const Color(0xFF93000A) : const Color(0xFF161C27),
+                if (countKey != null)
+                  SizedBox(
+                    height: 0,
+                    width: 0,
+                    child: Text(
+                      '$numericValue',
+                      key: countKey,
+                      style: const TextStyle(fontSize: 0, color: Colors.transparent),
+                    ),
+                  ),
+                FittedBox(
+                  fit: BoxFit.scaleDown,
+                  child: CountUpAnimation(
+                    targetValue: numericValue,
+                    suffix: (rawCount == null && count.contains('Action')) ? ' Action' : '',
+                    style: outfit(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: isUrgent ? const Color(0xFF93000A) : const Color(0xFF161C27),
+                    ),
                   ),
                 ),
                 const SizedBox(height: 2),

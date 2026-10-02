@@ -258,7 +258,7 @@ class _DisbursementsOversightScreenState
               ref.invalidate(adminDisbursementsProvider);
             },
             child: SingleChildScrollView(
-              physics: const AlwaysScrollableScrollPhysics(),
+              physics: const AppleBouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
               padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -450,8 +450,7 @@ class _DisbursementsOversightScreenState
           const SizedBox(height: 18),
           Text(
             'No disbursements yet',
-            style: GoogleFonts.inter(
-              fontSize: 20,
+            style: seqHeadlineSm(
               fontWeight: FontWeight.w700,
               color: kSeqOnSurface,
             ),
@@ -547,10 +546,10 @@ class _DisbursementsOversightScreenState
                         ),
                         Text(
                           amountStr,
-                          style: seqHeadlineSm(
+                          style: seqTabularFigures(seqHeadlineSm(
                             fontWeight: FontWeight.w700,
                             color: kSeqPrimary,
-                          ),
+                          )),
                         ),
                       ],
                     ),
@@ -586,18 +585,20 @@ class _DisbursementsOversightScreenState
                             fontWeight: FontWeight.w600,
                           ),
                         ),
-                        Text(
-                          refStr,
-                          style: seqBodySm(fontWeight: FontWeight.w600),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
+                        refStr != '—'
+                            ? adminIdPill(refStr)
+                            : Text(
+                                refStr,
+                                style: seqBodySm(fontWeight: FontWeight.w600),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
                       ],
                     ),
                   ),
                   Text(
                     dateStr,
-                    style: seqLabelSm(color: kSeqOutline),
+                    style: seqTabularFigures(seqLabelSm(color: kSeqOutline)),
                   ),
                 ],
               ),
@@ -785,6 +786,8 @@ class _DisbursementsOversightScreenState
   }
 
   Widget _detailRow(String label, String value) {
+    final lower = label.toLowerCase();
+    final isMono = lower.contains('id') || lower.contains('ref') || lower.contains('date');
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4),
       child: Row(
@@ -801,8 +804,16 @@ class _DisbursementsOversightScreenState
           Expanded(
             child: Text(
               value,
-              style:
-                  seqBodySm(color: kSeqOnSurface, fontWeight: FontWeight.w600),
+              style: isMono
+                  ? adminDataMono(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w500,
+                      color: kSeqOnSurface,
+                    )
+                  : seqBodySm(
+                      color: kSeqOnSurface,
+                      fontWeight: FontWeight.w600,
+                    ),
             ),
           ),
         ],

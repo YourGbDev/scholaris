@@ -13,6 +13,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 import 'package:scholaris/core/security/login_lockout_service.dart';
 import 'package:scholaris/features/auth/presentation/empty_stage.dart';
+import 'package:scholaris/shared/theme/app_motion.dart';
 import 'package:scholaris/shared/theme/app_theme.dart';
 import 'package:scholaris/shared/widgets/entrance.dart';
 import 'package:scholaris/shared/widgets/scholaris_logo.dart';
@@ -351,7 +352,14 @@ class _LoginScreenState extends State<LoginScreen>
 
     return Scaffold(
       backgroundColor: const Color(0xFFFAFAF8),
-      body: Stack(
+      body: Listener(
+        behavior: HitTestBehavior.translucent,
+        onPointerDown: (_) {
+          if (entranceController.isAnimating) {
+            entranceController.value = 1.0;
+          }
+        },
+        child: Stack(
         children: [
           // EmptyStage mounted beneath the surface for composition test compatibility
           const Positioned.fill(child: EmptyStage()),
@@ -401,27 +409,32 @@ class _LoginScreenState extends State<LoginScreen>
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(20),
-                                border: Border.all(color: const Color(0xFFE2E8E5)),
-                              ),
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  const Icon(Icons.help_outline_rounded, size: 14, color: Color(0xFF707971)),
-                                  const SizedBox(width: 4),
-                                  Text(
-                                    'Help',
-                                    style: openSans(
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.w600,
-                                      color: const Color(0xFF161C27),
-                                    ),
+                            ConstrainedBox(
+                              constraints: const BoxConstraints(minHeight: 44, minWidth: 44),
+                              child: Center(
+                                child: Container(
+                                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(20),
+                                    border: Border.all(color: const Color(0xFFE2E8E5)),
                                   ),
-                                ],
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      const Icon(Icons.help_outline_rounded, size: 14, color: Color(0xFF707971)),
+                                      const SizedBox(width: 4),
+                                      Text(
+                                        'Help',
+                                        style: openSans(
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.w600,
+                                          color: const Color(0xFF161C27),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
                               ),
                             ),
                             const SizedBox(width: 8),
@@ -445,6 +458,7 @@ class _LoginScreenState extends State<LoginScreen>
                   child: FadeTransition(
                     opacity: animation,
                     child: SingleChildScrollView(
+                      physics: const AppleBouncingScrollPhysics(),
                       padding: const EdgeInsets.fromLTRB(20, 0, 20, 8),
                       child: Center(
                         child: ConstrainedBox(
@@ -973,6 +987,7 @@ class _LoginScreenState extends State<LoginScreen>
           ),
         ],
       ),
-    );
+    ),
+  );
   }
 }

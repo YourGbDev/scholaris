@@ -19,6 +19,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:scholaris/features/home/presentation/home_screen.dart';
 import 'package:scholaris/features/profile/providers/profile_setup_provider.dart';
 import 'package:scholaris/features/scholarships/models/scholarship.dart';
+import 'package:scholaris/shared/theme/app_motion.dart';
 import 'package:scholaris/shared/theme/app_theme.dart';
 import 'package:scholaris/shared/widgets/mascot_pose_view.dart';
 import 'package:scholaris/shared/widgets/responsive_container.dart';
@@ -27,11 +28,11 @@ class SubmissionConfirmationReceiptScreen extends ConsumerStatefulWidget {
   const SubmissionConfirmationReceiptScreen({
     super.key,
     required this.scholarship,
-    this.receiptId = 'REC-2025-DOST-98214-PH',
+    this.receiptId,
   });
 
   final Scholarship scholarship;
-  final String receiptId;
+  final String? receiptId;
 
   @override
   ConsumerState<SubmissionConfirmationReceiptScreen> createState() =>
@@ -43,7 +44,9 @@ class _SubmissionConfirmationReceiptScreenState
   bool _copied = false;
 
   void _copyReceiptId() {
-    Clipboard.setData(ClipboardData(text: widget.receiptId));
+    final rid = widget.receiptId;
+    if (rid == null || rid.trim().isEmpty) return;
+    Clipboard.setData(ClipboardData(text: rid));
     setState(() => _copied = true);
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
@@ -77,7 +80,10 @@ class _SubmissionConfirmationReceiptScreenState
     final profile = ref.watch(currentProfileProvider).valueOrNull;
     final userName = (profile?.fullName != null && profile!.fullName.trim().isNotEmpty)
         ? profile.fullName.trim()
-        : 'Maya Santos';
+        : null;
+    final userSchool = (profile?.school != null && profile!.school!.trim().isNotEmpty)
+        ? profile.school!.trim()
+        : null;
 
     return Scaffold(
       backgroundColor: kBackground,
@@ -112,7 +118,7 @@ class _SubmissionConfirmationReceiptScreenState
                 children: [
                   Text(
                     'Scholaris',
-                    style: GoogleFonts.outfit(
+                    style: outfit(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
                       color: kPrimaryDark,
@@ -120,7 +126,7 @@ class _SubmissionConfirmationReceiptScreenState
                   ),
                   Text(
                     'SCHOLARSHIP DETAIL & ELIGIBILITY',
-                    style: GoogleFonts.outfit(
+                    style: outfit(
                       fontSize: 9,
                       fontWeight: FontWeight.w600,
                       color: kOnSurfaceVariant,
@@ -149,26 +155,35 @@ class _SubmissionConfirmationReceiptScreenState
       ),
       body: ResponsiveContainer(
         child: ListView(
+          physics: const AppleBouncingScrollPhysics(),
           padding: const EdgeInsets.fromLTRB(16, 12, 16, 40),
           children: [
             // SECTION 1: Celebratory Hero Banner
-            _buildCelebratoryHeroBanner(),
+            StaggeredListItem(
+              index: 0,
+              child: _buildCelebratoryHeroBanner(),
+            ),
             const SizedBox(height: 16),
 
             // SECTION 2: Official Digital Tracking Receipt Card
-            _buildDigitalReceiptCard(userName: userName),
+            StaggeredListItem(
+              index: 1,
+              child: _buildDigitalReceiptCard(userName: userName, userSchool: userSchool),
+            ),
             const SizedBox(height: 16),
 
             // SECTION 3: Review Timeline Milestones (Evaluation Roadmap)
-            _buildEvaluationRoadmapCard(),
-            const SizedBox(height: 16),
-
-            // SECTION 4: Keep the Momentum
-            _buildMomentumCard(),
+            StaggeredListItem(
+              index: 2,
+              child: _buildEvaluationRoadmapCard(),
+            ),
             const SizedBox(height: 20),
 
-            // SECTION 5: Action Navigation Controls
-            _buildActionControls(),
+            // SECTION 4: Action Navigation Controls
+            StaggeredListItem(
+              index: 3,
+              child: _buildActionControls(),
+            ),
           ],
         ),
       ),
@@ -239,7 +254,7 @@ class _SubmissionConfirmationReceiptScreenState
                 const SizedBox(width: 6),
                 Text(
                   'PACKET SECURED & SEALED',
-                  style: GoogleFonts.outfit(
+                  style: outfit(
                     fontSize: 11,
                     fontWeight: FontWeight.bold,
                     color: const Color(0xFFB3F1C6),
@@ -260,7 +275,7 @@ class _SubmissionConfirmationReceiptScreenState
           Text(
             'Application Successfully Submitted!',
             textAlign: TextAlign.center,
-            style: GoogleFonts.outfit(
+            style: outfit(
               fontSize: 22,
               fontWeight: FontWeight.bold,
               color: Colors.white,
@@ -273,7 +288,7 @@ class _SubmissionConfirmationReceiptScreenState
           Text(
             'Your packet is officially logged and queued for the ${widget.scholarship.provider ?? "DOST-SEI (Department of Science and Technology)"} review panel.',
             textAlign: TextAlign.center,
-            style: GoogleFonts.openSans(
+            style: openSans(
               fontSize: 13,
               color: const Color(0xFF82BD95),
               height: 1.4,
@@ -299,7 +314,7 @@ class _SubmissionConfirmationReceiptScreenState
                 const SizedBox(width: 6),
                 Text(
                   'Oct 10, 2025 • 4:19 PM PHT ',
-                  style: GoogleFonts.outfit(
+                  style: outfit(
                     fontSize: 12,
                     fontWeight: FontWeight.w600,
                     color: Colors.white,
@@ -307,7 +322,7 @@ class _SubmissionConfirmationReceiptScreenState
                 ),
                 Text(
                   '(5 days ahead)',
-                  style: GoogleFonts.outfit(
+                  style: outfit(
                     fontSize: 12,
                     fontWeight: FontWeight.bold,
                     color: const Color(0xFFFFDEA3),
@@ -327,7 +342,7 @@ class _SubmissionConfirmationReceiptScreenState
             ),
             child: Text(
               'Application submitted',
-              style: GoogleFonts.openSans(
+              style: openSans(
                 fontSize: 11,
                 fontWeight: FontWeight.w600,
                 color: const Color(0xFFB3F1C6),
@@ -340,7 +355,10 @@ class _SubmissionConfirmationReceiptScreenState
   }
 
   // --- SECTION 2: Official Digital Tracking Receipt Card -------------------
-  Widget _buildDigitalReceiptCard({required String userName}) {
+  Widget _buildDigitalReceiptCard({
+    required String? userName,
+    required String? userSchool,
+  }) {
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
@@ -383,7 +401,7 @@ class _SubmissionConfirmationReceiptScreenState
                     children: [
                       Text(
                         'INSTITUTIONAL DOSSIER',
-                        style: GoogleFonts.outfit(
+                        style: outfit(
                           fontSize: 9,
                           fontWeight: FontWeight.w700,
                           color: kOnSurfaceVariant,
@@ -392,7 +410,7 @@ class _SubmissionConfirmationReceiptScreenState
                       ),
                       Text(
                         'Digital Submission Token',
-                        style: GoogleFonts.outfit(
+                        style: outfit(
                           fontSize: 15,
                           fontWeight: FontWeight.bold,
                           color: kOnSurface,
@@ -410,7 +428,7 @@ class _SubmissionConfirmationReceiptScreenState
                 ),
                 child: Text(
                   'VALID',
-                  style: GoogleFonts.outfit(
+                  style: outfit(
                     fontSize: 10,
                     fontWeight: FontWeight.bold,
                     color: kOnPrimaryFixedVariant,
@@ -436,32 +454,39 @@ class _SubmissionConfirmationReceiptScreenState
                     children: [
                       Text(
                         'Reference Identifier',
-                        style: GoogleFonts.openSans(
+                        style: openSans(
                           fontSize: 10,
                           color: kOnSurfaceVariant,
                         ),
                       ),
                       const SizedBox(height: 2),
                       Text(
-                        widget.receiptId,
+                        (widget.receiptId != null && widget.receiptId!.trim().isNotEmpty)
+                            ? widget.receiptId!
+                            : 'Receipt ID unavailable',
                         style: GoogleFonts.robotoMono(
                           fontSize: 13,
                           fontWeight: FontWeight.bold,
-                          color: kOnSurface,
+                          color: (widget.receiptId != null && widget.receiptId!.trim().isNotEmpty)
+                              ? kOnSurface
+                              : kOnSurfaceVariant,
                         ),
                       ),
                     ],
                   ),
                 ),
-                IconButton(
-                  tooltip: 'Copy Tracking ID',
-                  icon: Icon(
-                    _copied ? Icons.done_rounded : Icons.content_copy_rounded,
-                    size: 18,
-                    color: _copied ? kPrimaryContainer : kSecondary,
+                if (widget.receiptId != null && widget.receiptId!.trim().isNotEmpty)
+                  PressableScale(
+                    child: IconButton(
+                      tooltip: 'Copy Tracking ID',
+                      icon: Icon(
+                        _copied ? Icons.done_rounded : Icons.content_copy_rounded,
+                        size: 18,
+                        color: _copied ? kPrimaryContainer : kSecondary,
+                      ),
+                      onPressed: _copyReceiptId,
+                    ),
                   ),
-                  onPressed: _copyReceiptId,
-                ),
               ],
             ),
           ),
@@ -490,8 +515,8 @@ class _SubmissionConfirmationReceiptScreenState
           const Divider(height: 14),
           _receiptRow(
             label: 'Applicant',
-            value: userName,
-            subvalue: '(UP Diliman #2022-88219)',
+            value: (userName != null && userName.isNotEmpty) ? userName : 'Profile unavailable',
+            subvalue: userSchool,
           ),
           const SizedBox(height: 14),
 
@@ -510,7 +535,7 @@ class _SubmissionConfirmationReceiptScreenState
                   children: [
                     Text(
                       'VERIFIED ATTACHMENTS (4 OF 4)',
-                      style: GoogleFonts.outfit(
+                      style: outfit(
                         fontSize: 10,
                         fontWeight: FontWeight.w700,
                         color: kOnSurfaceVariant,
@@ -572,7 +597,7 @@ class _SubmissionConfirmationReceiptScreenState
                 fit: BoxFit.scaleDown,
                 child: Text(
                   'Scholaris Vault Sealed',
-                  style: GoogleFonts.outfit(
+                  style: outfit(
                     fontSize: 11,
                     fontWeight: FontWeight.bold,
                     color: kPrimaryContainer,
@@ -587,52 +612,56 @@ class _SubmissionConfirmationReceiptScreenState
           Row(
             children: [
               Expanded(
-                child: OutlinedButton.icon(
-                  style: OutlinedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(vertical: 10),
-                    side: const BorderSide(color: Color(0xFFE2E8F3)),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
+                child: PressableScale(
+                  child: OutlinedButton.icon(
+                    style: OutlinedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(vertical: 10),
+                      side: const BorderSide(color: Color(0xFFE2E8F3)),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
                     ),
-                  ),
-                  onPressed: () {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Exporting official receipt PDF...')),
-                    );
-                  },
-                  icon: const Icon(Icons.download_rounded, size: 16, color: kPrimaryContainer),
-                  label: Text(
-                    'Export PDF',
-                    style: GoogleFonts.outfit(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w600,
-                      color: kOnSurface,
+                    onPressed: () {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('Exporting official receipt PDF...')),
+                      );
+                    },
+                    icon: const Icon(Icons.download_rounded, size: 16, color: kPrimaryContainer),
+                    label: Text(
+                      'Export PDF',
+                      style: outfit(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
+                        color: kOnSurface,
+                      ),
                     ),
                   ),
                 ),
               ),
               const SizedBox(width: 8),
               Expanded(
-                child: OutlinedButton.icon(
-                  style: OutlinedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(vertical: 10),
-                    side: const BorderSide(color: Color(0xFFE2E8F3)),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
+                child: PressableScale(
+                  child: OutlinedButton.icon(
+                    style: OutlinedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(vertical: 10),
+                      side: const BorderSide(color: Color(0xFFE2E8F3)),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
                     ),
-                  ),
-                  onPressed: () {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Application dates synced with calendar.')),
-                    );
-                  },
-                  icon: const Icon(Icons.calendar_month_outlined, size: 16, color: kSecondary),
-                  label: Text(
-                    'Sync Calendar',
-                    style: GoogleFonts.outfit(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w600,
-                      color: kOnSurface,
+                    onPressed: () {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('Application dates synced with calendar.')),
+                      );
+                    },
+                    icon: const Icon(Icons.calendar_month_outlined, size: 16, color: kSecondary),
+                    label: Text(
+                      'Sync Calendar',
+                      style: outfit(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
+                        color: kOnSurface,
+                      ),
                     ),
                   ),
                 ),
@@ -657,7 +686,7 @@ class _SubmissionConfirmationReceiptScreenState
       children: [
         Text(
           label,
-          style: GoogleFonts.openSans(
+          style: openSans(
             fontSize: 12,
             color: kOnSurfaceVariant,
           ),
@@ -670,7 +699,7 @@ class _SubmissionConfirmationReceiptScreenState
               Text(
                 value,
                 textAlign: TextAlign.end,
-                style: GoogleFonts.outfit(
+                style: outfit(
                   fontSize: 13,
                   fontWeight: bold ? FontWeight.bold : FontWeight.w600,
                   color: valueColor ?? kOnSurface,
@@ -680,7 +709,7 @@ class _SubmissionConfirmationReceiptScreenState
                 Text(
                   subvalue,
                   textAlign: TextAlign.end,
-                  style: GoogleFonts.openSans(
+                  style: openSans(
                     fontSize: 10,
                     color: kOnSurfaceVariant,
                   ),
@@ -710,7 +739,7 @@ class _SubmissionConfirmationReceiptScreenState
             label,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
-            style: GoogleFonts.openSans(
+            style: openSans(
               fontSize: 11,
               color: kOnSurface,
             ),
@@ -752,7 +781,7 @@ class _SubmissionConfirmationReceiptScreenState
                   const SizedBox(width: 8),
                   Text(
                     'Evaluation Roadmap',
-                    style: GoogleFonts.outfit(
+                    style: outfit(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
                       color: kOnSurface,
@@ -768,7 +797,7 @@ class _SubmissionConfirmationReceiptScreenState
                 ),
                 child: Text(
                   'Stage 1 of 4',
-                  style: GoogleFonts.outfit(
+                  style: outfit(
                     fontSize: 10,
                     fontWeight: FontWeight.w600,
                     color: kOnSurfaceVariant,
@@ -853,7 +882,7 @@ class _SubmissionConfirmationReceiptScreenState
                     children: [
                       Text(
                         'Dispatch Guarantees',
-                        style: GoogleFonts.outfit(
+                        style: outfit(
                           fontSize: 10,
                           fontWeight: FontWeight.bold,
                           color: kOnSurfaceVariant,
@@ -861,7 +890,7 @@ class _SubmissionConfirmationReceiptScreenState
                       ),
                       Text(
                         'Copy emailed to applicant & SMS notice to +63 917 **** 421',
-                        style: GoogleFonts.openSans(
+                        style: openSans(
                           fontSize: 11,
                           color: kOnSurface,
                         ),
@@ -930,7 +959,7 @@ class _SubmissionConfirmationReceiptScreenState
                         Expanded(
                           child: Text(
                             title,
-                            style: GoogleFonts.outfit(
+                            style: outfit(
                               fontSize: 13,
                               fontWeight: FontWeight.bold,
                               color: kOnSurface,
@@ -946,7 +975,7 @@ class _SubmissionConfirmationReceiptScreenState
                             ),
                             child: Text(
                               tag,
-                              style: GoogleFonts.outfit(
+                              style: outfit(
                                 fontSize: 9,
                                 fontWeight: FontWeight.bold,
                                 color: tagColor ?? kOnSurfaceVariant,
@@ -958,7 +987,7 @@ class _SubmissionConfirmationReceiptScreenState
                     const SizedBox(height: 2),
                     Text(
                       caption,
-                      style: GoogleFonts.openSans(
+                      style: openSans(
                         fontSize: 11,
                         color: kOnSurfaceVariant,
                         height: 1.35,
@@ -974,183 +1003,31 @@ class _SubmissionConfirmationReceiptScreenState
     );
   }
 
-  // --- SECTION 4: Keep the Momentum -----------------------------------------
-  Widget _buildMomentumCard() {
-    return Container(
-      decoration: BoxDecoration(
-        color: kSurfaceContainerLow,
-        borderRadius: BorderRadius.circular(16),
-      ),
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Container(
-                width: 36,
-                height: 36,
-                decoration: BoxDecoration(
-                  color: kTertiaryFixed,
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: const Icon(
-                  Icons.trending_up_rounded,
-                  size: 22,
-                  color: kOnTertiaryFixed,
-                ),
-              ),
-              const SizedBox(width: 10),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'KEEP THE MOMENTUM',
-                      style: GoogleFonts.outfit(
-                        fontSize: 10,
-                        fontWeight: FontWeight.bold,
-                        color: kOnTertiaryContainer,
-                        letterSpacing: 0.5,
-                      ),
-                    ),
-                    Text(
-                      'Multiple submissions triple your grant odds.',
-                      style: GoogleFonts.outfit(
-                        fontSize: 14,
-                        fontWeight: FontWeight.bold,
-                        color: kOnSurface,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 8),
-          Text(
-            'Scholars applying to 3 or more matched Philippine programs secure an average of ₱180,000 in non-repayable education grants.',
-            style: GoogleFonts.openSans(
-              fontSize: 12,
-              color: kOnSurfaceVariant,
-              height: 1.4,
-            ),
-          ),
-          const SizedBox(height: 10),
-
-          // Recommended Opportunity Micro-Card
-          Container(
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(10),
-              boxShadow: const [
-                BoxShadow(
-                  color: Color(0x08161C27),
-                  blurRadius: 8,
-                  offset: Offset(0, 2),
-                ),
-              ],
-            ),
-            child: Row(
-              children: [
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                            decoration: BoxDecoration(
-                              color: kPrimaryFixed,
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            child: Text(
-                              '96% Match',
-                              style: GoogleFonts.outfit(
-                                fontSize: 10,
-                                fontWeight: FontWeight.bold,
-                                color: kOnPrimaryFixedVariant,
-                              ),
-                            ),
-                          ),
-                          const SizedBox(width: 6),
-                          Text(
-                            'Due in 18d',
-                            style: GoogleFonts.openSans(
-                              fontSize: 10,
-                              color: kOnSurfaceVariant,
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        'Gokongwei Brothers STEM Excellence Grant',
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: GoogleFonts.outfit(
-                          fontSize: 13,
-                          fontWeight: FontWeight.bold,
-                          color: kOnSurface,
-                        ),
-                      ),
-                      Text(
-                        '₱100,000 Award',
-                        style: GoogleFonts.outfit(
-                          fontSize: 12,
-                          fontWeight: FontWeight.bold,
-                          color: kPrimaryDark,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                Container(
-                  width: 32,
-                  height: 32,
-                  decoration: BoxDecoration(
-                    color: kSurfaceContainer,
-                    shape: BoxShape.circle,
-                  ),
-                  child: const Icon(
-                    Icons.chevron_right_rounded,
-                    size: 20,
-                    color: kOnSurface,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  // --- SECTION 5: Action Navigation Controls --------------------------------
+  // --- SECTION 4: Action Navigation Controls --------------------------------
   Widget _buildActionControls() {
     return Column(
       children: [
         SizedBox(
           width: double.infinity,
           height: 48,
-          child: ElevatedButton.icon(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: kPrimaryContainer,
-              foregroundColor: Colors.white,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
+          child: PressableScale(
+            child: ElevatedButton.icon(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: kPrimaryContainer,
+                foregroundColor: Colors.white,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                elevation: 2,
               ),
-              elevation: 2,
-            ),
-            onPressed: _navigateToTracker,
-            icon: const Icon(Icons.track_changes_rounded, size: 18),
-            label: Text(
-              'Monitor in Application Tracker',
-              style: GoogleFonts.outfit(
-                fontSize: 14,
-                fontWeight: FontWeight.bold,
+              onPressed: _navigateToTracker,
+              icon: const Icon(Icons.track_changes_rounded, size: 18),
+              label: Text(
+                'Monitor in Application Tracker',
+                style: outfit(
+                  fontSize: 14,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
           ),
@@ -1159,20 +1036,22 @@ class _SubmissionConfirmationReceiptScreenState
         SizedBox(
           width: double.infinity,
           height: 48,
-          child: FilledButton.tonal(
-            style: FilledButton.styleFrom(
-              backgroundColor: kSurfaceContainer,
-              foregroundColor: kSecondary,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
+          child: PressableScale(
+            child: FilledButton.tonal(
+              style: FilledButton.styleFrom(
+                backgroundColor: kSurfaceContainer,
+                foregroundColor: kSecondary,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
               ),
-            ),
-            onPressed: _navigateToDashboard,
-            child: Text(
-              'Return to Student Dashboard',
-              style: GoogleFonts.outfit(
-                fontSize: 14,
-                fontWeight: FontWeight.bold,
+              onPressed: _navigateToDashboard,
+              child: Text(
+                'Return to Student Dashboard',
+                style: outfit(
+                  fontSize: 14,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
           ),

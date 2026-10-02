@@ -11,6 +11,7 @@
 // Uses TabContentCrossFade so tab switches are smooth and responsive.
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:scholaris/shared/theme/app_motion.dart';
@@ -28,7 +29,12 @@ class HomeTabIndexNotifier extends Notifier<int> {
   @override
   int build() => 0;
 
-  void selectTab(int index) => state = index;
+  void selectTab(int index) {
+    if (state != index) {
+      HapticFeedback.selectionClick();
+      state = index;
+    }
+  }
 }
 
 final homeTabIndexProvider = NotifierProvider<HomeTabIndexNotifier, int>(
@@ -167,7 +173,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                   shape: const CircleBorder(),
                                   child: InkWell(
                                     customBorder: const CircleBorder(),
-                                    onTap: () => showStudentActionSheet(context),
+                                    onTap: () {
+                                      HapticFeedback.lightImpact();
+                                      showStudentActionSheet(context);
+                                    },
                                     child: const Center(
                                       child: Icon(
                                         Icons.add_rounded,
@@ -230,7 +239,7 @@ class _StudentNavItem extends StatelessWidget {
                 size: 20,
                 color: selected
                     ? const Color(0xFF0F4D2E)
-                    : const Color(0xFF8E9590),
+                    : const Color(0xFF5A625C),
               ),
             ),
             const SizedBox(height: 2),
@@ -243,7 +252,7 @@ class _StudentNavItem extends StatelessWidget {
                 fontWeight: selected ? FontWeight.bold : FontWeight.w500,
                 color: selected
                     ? const Color(0xFF0F4D2E)
-                    : const Color(0xFF8E9590),
+                    : const Color(0xFF5A625C),
               ),
             ),
           ],

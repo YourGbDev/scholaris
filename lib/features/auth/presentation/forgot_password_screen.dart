@@ -11,6 +11,7 @@ import 'package:go_router/go_router.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'package:scholaris/app/recovery_redirect.dart';
+import 'package:scholaris/shared/theme/app_motion.dart';
 import 'package:scholaris/shared/theme/app_theme.dart';
 import 'package:scholaris/shared/widgets/scholaris_logo.dart';
 
@@ -144,6 +145,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
             // Scrollable Content
             Expanded(
               child: SingleChildScrollView(
+                physics: const AppleBouncingScrollPhysics(),
                 padding: const EdgeInsets.fromLTRB(20, 8, 20, 24),
                 child: Center(
                   child: ConstrainedBox(

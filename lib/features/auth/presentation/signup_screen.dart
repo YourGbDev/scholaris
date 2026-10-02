@@ -13,6 +13,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 import 'package:scholaris/app/confirmation_redirect.dart';
 import 'package:scholaris/core/security/password_validator.dart';
+import 'package:scholaris/shared/theme/app_motion.dart';
 import 'package:scholaris/shared/theme/app_theme.dart';
 import 'package:scholaris/shared/widgets/scholaris_logo.dart';
 import 'package:scholaris/shared/widgets/success_overlay.dart';
@@ -237,6 +238,7 @@ class _SignupScreenState extends State<SignupScreen> {
             // Scrollable Content
             Expanded(
               child: SingleChildScrollView(
+                physics: const AppleBouncingScrollPhysics(),
                 padding: const EdgeInsets.fromLTRB(20, 8, 20, 16),
                 child: Center(
                   child: ConstrainedBox(

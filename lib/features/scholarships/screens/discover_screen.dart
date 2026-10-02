@@ -22,6 +22,7 @@ import 'package:scholaris/features/home/presentation/home_screen.dart';
 import 'package:scholaris/features/profile/models/student_profile.dart';
 import 'package:scholaris/features/profile/presentation/widgets/avatar_display.dart';
 import 'package:scholaris/features/profile/providers/avatar_provider.dart';
+import 'package:scholaris/features/dashboard/presentation/widgets/student_notifications_sheet.dart';
 import 'package:scholaris/features/profile/providers/profile_setup_provider.dart';
 import 'package:scholaris/features/scholarships/models/scholarship.dart';
 import 'package:scholaris/features/scholarships/presentation/discovery_filter_sheet.dart';
@@ -226,13 +227,7 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
                     color: Color(0xFF161C27),
                   ),
                   onPressed: () {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text("You're all caught up on notifications!"),
-                        duration: Duration(seconds: 2),
-                        behavior: SnackBarBehavior.floating,
-                      ),
-                    );
+                    showStudentNotificationsSheet(context);
                   },
                 ),
                 Positioned(
@@ -303,6 +298,7 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
     final highFitActive = state.query.isEmpty && !state.closingSoonOnly && state.incomeBracket == null;
 
     return SingleChildScrollView(
+      physics: const AppleBouncingScrollPhysics(),
       scrollDirection: Axis.horizontal,
       clipBehavior: Clip.none,
       child: Row(

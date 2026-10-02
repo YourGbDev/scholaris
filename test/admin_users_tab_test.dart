@@ -75,14 +75,14 @@ void main() {
     await tester.pumpAndSettle();
 
     // Verify header and all users rendered
-    expect(find.text('User Management'), findsOneWidget);
+    expect(find.text('User Directory & Access Control'), findsOneWidget);
     expect(find.text('Admin User'), findsOneWidget);
     expect(find.text('Provider Org'), findsOneWidget);
     expect(find.text('Student Applicant'), findsOneWidget);
-    expect(find.text('Setup pending'), findsOneWidget);
+    expect(find.text('Pending Setup'), findsOneWidget);
 
     // Filter by Providers
-    await tester.tap(find.text('Providers'));
+    await tester.tap(find.textContaining('Grant Providers ('));
     await tester.pumpAndSettle();
 
     expect(find.text('Provider Org'), findsOneWidget);
@@ -90,7 +90,7 @@ void main() {
     expect(find.text('Student Applicant'), findsNothing);
 
     // Filter by Admins
-    await tester.tap(find.text('Admins'));
+    await tester.tap(find.textContaining('Platform Admins ('));
     await tester.pumpAndSettle();
 
     expect(find.text('Admin User'), findsOneWidget);
@@ -135,11 +135,11 @@ void main() {
     await tester.pumpWidget(buildApp(fakeProfileDs));
     await tester.pumpAndSettle();
 
-    // Tap Create User button
-    await tester.tap(find.text('Create User'));
+    // Tap Provision Identity button
+    await tester.tap(find.text('Provision Identity'));
     await tester.pumpAndSettle();
 
-    expect(find.text('Create User Account'), findsOneWidget);
+    expect(find.text('Provision Platform Identity'), findsOneWidget);
 
     // Fill form
     await tester.enterText(find.widgetWithText(TextFormField, 'Full Name *'), 'Elena Santos');
@@ -264,7 +264,7 @@ void main() {
     await tester.pumpWidget(buildApp(fakeProfileDs));
     await tester.pumpAndSettle();
 
-    expect(find.text('User Management'), findsOneWidget);
+    expect(find.text('User Directory & Access Control'), findsOneWidget);
     expect(find.byType(Card), findsNWidgets(3));
     expect(find.text('Admin User'), findsOneWidget);
     expect(find.text('Provider Org'), findsOneWidget);

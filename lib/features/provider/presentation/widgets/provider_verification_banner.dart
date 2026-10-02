@@ -9,6 +9,7 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../providers/provider_verification_provider.dart';
+import '../../../../shared/theme/app_motion.dart';
 
 class ProviderVerificationBanner extends ConsumerWidget {
   const ProviderVerificationBanner({super.key});
@@ -135,18 +136,21 @@ class ProviderVerificationBanner extends ConsumerWidget {
                 ),
                 if (isRejected && onUpdateDocuments != null) ...[
                   const SizedBox(height: 8),
-                  OutlinedButton.icon(
-                    onPressed: onUpdateDocuments,
-                    icon: const Icon(Icons.upload_file_rounded, size: 14),
-                    label: const Text('Update Documents & Resubmit'),
-                    style: OutlinedButton.styleFrom(
-                      foregroundColor: const Color(0xFF991B1B),
-                      side: const BorderSide(color: Color(0xFFFECACA)),
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 12, vertical: 6),
-                      textStyle: GoogleFonts.inter(
-                        fontSize: 11.5,
-                        fontWeight: FontWeight.w600,
+                  PressableScale(
+                    scale: 0.98,
+                    child: OutlinedButton.icon(
+                      onPressed: onUpdateDocuments,
+                      icon: const Icon(Icons.upload_file_rounded, size: 14),
+                      label: const Text('Update Documents & Resubmit'),
+                      style: OutlinedButton.styleFrom(
+                        foregroundColor: const Color(0xFF991B1B),
+                        side: const BorderSide(color: Color(0xFFFECACA)),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 12, vertical: 12),
+                        textStyle: GoogleFonts.inter(
+                          fontSize: 11.5,
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
                     ),
                   ),
@@ -158,7 +162,7 @@ class ProviderVerificationBanner extends ConsumerWidget {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
               decoration: BoxDecoration(
-                color: iconColor.withValues(alpha: 0.12),
+                color: const Color(0xFF92400E).withValues(alpha: 0.12),
                 borderRadius: BorderRadius.circular(100),
               ),
               child: Text(
@@ -166,7 +170,7 @@ class ProviderVerificationBanner extends ConsumerWidget {
                 style: GoogleFonts.inter(
                   fontSize: 10,
                   fontWeight: FontWeight.w700,
-                  color: iconColor,
+                  color: const Color(0xFF92400E),
                   letterSpacing: 0.5,
                 ),
               ),

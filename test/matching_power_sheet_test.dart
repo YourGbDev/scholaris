@@ -40,6 +40,7 @@ void main() {
         ),
       ),
     );
+    await tester.pumpAndSettle();
 
     expect(find.byKey(const ValueKey('matching-power-sheet')), findsOneWidget);
     expect(find.text('Matching Power Diagnostics'), findsOneWidget);

@@ -13,6 +13,7 @@ import 'package:scholaris/features/profile/models/student_profile.dart';
 import 'package:scholaris/features/profile/providers/profile_setup_provider.dart';
 import 'package:scholaris/features/scholarships/models/scholarship.dart';
 import 'package:scholaris/features/scholarships/providers/scholarships_provider.dart';
+import 'package:scholaris/shared/theme/app_motion.dart';
 import 'package:scholaris/shared/theme/app_theme.dart';
 import 'package:scholaris/shared/widgets/responsive_container.dart';
 import 'package:scholaris/shared/widgets/state_views.dart';
@@ -223,12 +224,12 @@ class _ProviderApplicationDetailScreenState
                 final profile = snapshot.data ??
                     StudentProfile(
                       id: app.userId,
-                      fullName: 'Juan Dela Cruz',
-                      course: 'BS Computer Science',
-                      school: 'University of the Philippines Diliman',
-                      yearLevel: 2,
-                      gpa: 1.45,
-                      region: 'National Capital Region (NCR)',
+                      fullName: 'Applicant #${app.id.length >= 5 ? app.id.substring(0, 5).toUpperCase() : app.id}',
+                      course: 'Degree Program Pending',
+                      school: 'Institution Pending',
+                      yearLevel: 1,
+                      gpa: 0.0,
+                      region: 'Philippines',
                       nationality: 'Filipino',
                     );
                 return _buildReviewContent(context, app, scholarship, profile);
@@ -247,12 +248,13 @@ class _ProviderApplicationDetailScreenState
     final refCode =
         '#SCH-2024-${app.id.hashCode.abs().toString().padLeft(4, '0').substring(0, 4)}';
     final programTitle =
-        scholarship?.title ?? 'DOST-SEI Undergraduate Merit Scholarship';
+        scholarship?.title ?? 'Scholarship Grant';
     final gpa = profile.gpa;
-    final cutoffGpa = scholarship?.minGpa ?? 1.75;
+    final cutoffGpa = scholarship?.minGpa;
 
     return ResponsiveContainer(
       child: ListView(
+        physics: const AppleBouncingScrollPhysics(),
         padding: const EdgeInsets.fromLTRB(20, 16, 20, 100),
         children: [
           // Sub-Header Context
@@ -348,7 +350,7 @@ class _ProviderApplicationDetailScreenState
                     ),
                     const SizedBox(width: 5),
                     Text(
-                      '98% Match Score',
+                      'Insufficient Pool Data',
                       style: poppins(
                         fontSize: 12,
                         fontWeight: FontWeight.w700,
@@ -408,11 +410,13 @@ class _ProviderApplicationDetailScreenState
                   const Icon(Icons.verified_rounded, size: 13, color: kPrimary),
                   const SizedBox(width: 4),
                   Text(
-                    'Verified SUC',
+                    profile.setupComplete
+                        ? 'Profile Complete'
+                        : 'Pending Setup',
                     style: poppins(
                       fontSize: 10,
                       fontWeight: FontWeight.w700,
-                      color: kPrimary,
+                      color: profile.setupComplete ? kPrimary : Colors.black54,
                     ),
                   ),
                 ],
@@ -450,11 +454,11 @@ class _ProviderApplicationDetailScreenState
                               textBaseline: TextBaseline.alphabetic,
                               children: [
                                 Text(
-                                  gpa.toStringAsFixed(2),
+                                  gpa > 0 ? gpa.toStringAsFixed(2) : 'N/A',
                                   style: poppins(
                                     fontSize: 26,
                                     fontWeight: FontWeight.w800,
-                                    color: kPrimary,
+                                    color: gpa > 0 ? kPrimary : Colors.black45,
                                   ),
                                 ),
                                 const SizedBox(width: 4),
@@ -477,11 +481,19 @@ class _ProviderApplicationDetailScreenState
                                 ),
                                 const SizedBox(width: 4),
                                 Text(
-                                  'Exceeds ${cutoffGpa.toStringAsFixed(2)} Merit Cutoff',
+                                  gpa > 0 && cutoffGpa != null
+                                      ? (gpa <= cutoffGpa
+                                          ? 'Meets ${cutoffGpa.toStringAsFixed(2)} Cutoff'
+                                          : 'Below ${cutoffGpa.toStringAsFixed(2)} Cutoff')
+                                      : (gpa > 0
+                                          ? 'GWA on File'
+                                          : 'GWA Record Pending'),
                                   style: poppins(
                                     fontSize: 11,
                                     fontWeight: FontWeight.w600,
-                                    color: kPrimary,
+                                    color: gpa > 0 && (cutoffGpa == null || gpa <= cutoffGpa)
+                                        ? kPrimary
+                                        : Colors.black54,
                                   ),
                                 ),
                               ],
@@ -512,17 +524,21 @@ class _ProviderApplicationDetailScreenState
                 // Detail Rows
                 _infoRow(
                   'Enrolled Institution',
-                  profile.school ?? 'University of the Philippines Diliman',
+                  profile.school?.trim().isNotEmpty == true
+                      ? profile.school!.trim()
+                      : 'Institution Pending',
                 ),
                 const SizedBox(height: 8),
                 _infoRow(
                   'Degree & Academic Major',
-                  '${profile.course} • DOST Priority S&T Category A',
+                  profile.course.trim().isNotEmpty == true
+                      ? profile.course.trim()
+                      : 'Degree Program Pending',
                 ),
                 const SizedBox(height: 8),
                 _infoRow(
                   'Academic Standing',
-                  'Year ${profile.yearLevel} (Regular) • AY 2024–2025',
+                  'Year ${profile.yearLevel} • AY 2024–2025',
                 ),
                 const SizedBox(height: 8),
                 Container(
@@ -533,12 +549,19 @@ class _ProviderApplicationDetailScreenState
                   ),
                   child: Row(
                     children: [
-                      const Icon(Icons.verified_user_rounded,
-                          size: 16, color: kPrimary),
+                      Icon(
+                        profile.setupComplete
+                            ? Icons.verified_user_rounded
+                            : Icons.info_outline_rounded,
+                        size: 16,
+                        color: profile.setupComplete ? kPrimary : Colors.black45,
+                      ),
                       const SizedBox(width: 8),
                       Expanded(
                         child: Text(
-                          'Verified via UP CRS/OUR Institutional SSO',
+                          profile.setupComplete
+                              ? 'Profile Setup Completed by Candidate'
+                              : 'Self-Reported Student Academic Record',
                           style: openSans(
                             fontSize: 12,
                             color: Colors.black87,
@@ -628,7 +651,11 @@ class _ProviderApplicationDetailScreenState
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        'Verified Tier 2: Low-to-Middle Income Bracket',
+                        profile.incomeBracket != null
+                            ? '${profile.incomeBracket!.toUpperCase()} Income Tier'
+                            : (profile.monthlyFamilyIncome != null
+                                ? '₱${((profile.monthlyFamilyIncome!) / 1000).toStringAsFixed(0)}k Monthly Family Income'
+                                : 'Income Record Pending'),
                         style: poppins(
                           fontSize: 14,
                           fontWeight: FontWeight.w700,
@@ -637,7 +664,9 @@ class _ProviderApplicationDetailScreenState
                       ),
                       const SizedBox(height: 2),
                       Text(
-                        'Cross-referenced against DSWD Listahanan & BIR 2316 filings.',
+                        profile.monthlyFamilyIncome != null
+                            ? 'Self-declared household earnings.'
+                            : 'Applicant has not declared household earnings for this cycle.',
                         style: openSans(fontSize: 11, color: Colors.black54),
                       ),
                     ],
@@ -646,14 +675,15 @@ class _ProviderApplicationDetailScreenState
                 const SizedBox(height: 10),
 
                 // Indicators
-                _indicatorTile('First-Generation College Student (Confirmed)', true),
+                _indicatorTile(
+                  'Declared Regional Residency: ${profile.region.isNotEmpty ? profile.region : 'Philippines'}',
+                  profile.region.isNotEmpty,
+                ),
                 const SizedBox(height: 6),
                 _indicatorTile(
-                    'Permanent Resident of ${profile.region} (>3 Years)', true),
-                const SizedBox(height: 6),
-                _indicatorTile(
-                    'Not a current beneficiary of duplicate subsidies (UniFAST/CHED checked)',
-                    true),
+                  'Academic Registration: ${profile.setupComplete ? 'Profile Complete' : 'Self-Declared'}',
+                  profile.setupComplete,
+                ),
               ],
             ),
           ),
@@ -663,38 +693,69 @@ class _ProviderApplicationDetailScreenState
           _buildCard(
             title: 'Document Audit Checklist',
             icon: Icons.folder_shared_rounded,
-            badge: Text(
-              '4 of 4 Validated',
-              style: poppins(
-                fontSize: 12,
-                fontWeight: FontWeight.w700,
-                color: kPrimary,
+            badge: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+              decoration: BoxDecoration(
+                color: Colors.black.withValues(alpha: 0.05),
+                borderRadius: BorderRadius.circular(6),
+              ),
+              child: Text(
+                'Awaiting Uploads',
+                style: poppins(
+                  fontSize: 11,
+                  fontWeight: FontWeight.w500,
+                  color: Colors.black54,
+                ),
               ),
             ),
             child: Column(
               children: [
-                _documentItem(
-                  title: 'Certified True Copy of Grades (TCG)',
-                  subtitle: '1st & 2nd Sem • Verified by UP Registrar',
-                  icon: Icons.picture_as_pdf_rounded,
-                ),
-                const SizedBox(height: 8),
-                _documentItem(
-                  title: 'BIR Form 2316 / Certificate of Indigency',
-                  subtitle: 'Barangay UP Campus issued',
-                  icon: Icons.receipt_long_rounded,
-                ),
-                const SizedBox(height: 8),
-                _documentItem(
-                  title: 'PSA Birth Certificate',
-                  subtitle: 'National ID / PSA Verified',
-                  icon: Icons.badge_rounded,
-                ),
-                const SizedBox(height: 8),
-                _documentItem(
-                  title: 'Statement of Purpose & S&T Essay',
-                  subtitle: '2 pages • Evaluated 9.4/10',
-                  icon: Icons.description_rounded,
+                Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.all(20),
+                  decoration: BoxDecoration(
+                    color: Colors.black.withValues(alpha: 0.02),
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: Colors.black.withValues(alpha: 0.06)),
+                  ),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Container(
+                        width: 44,
+                        height: 44,
+                        decoration: BoxDecoration(
+                          color: Colors.black.withValues(alpha: 0.04),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        alignment: Alignment.center,
+                        child: const Icon(
+                          Icons.folder_open_rounded,
+                          color: Colors.black45,
+                          size: 24,
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                      Text(
+                        'No verification documents on file',
+                        style: poppins(
+                          fontSize: 13,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.black87,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        'The applicant has not uploaded digital attachments (such as certified Form 5, BIR 2316, or personal statement PDF) for this application cycle.',
+                        textAlign: TextAlign.center,
+                        style: openSans(
+                          fontSize: 11.5,
+                          color: Colors.black54,
+                          height: 1.4,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
                 if (app.notes != null && app.notes!.trim().isNotEmpty) ...[
                   const SizedBox(height: 12),
@@ -739,68 +800,48 @@ class _ProviderApplicationDetailScreenState
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Seed note
-                Container(
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    color: Colors.black.withValues(alpha: 0.03),
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          Container(
-                            width: 24,
-                            height: 24,
-                            decoration: BoxDecoration(
-                              color: kNavyTrust,
-                              shape: BoxShape.circle,
-                            ),
-                            alignment: Alignment.center,
-                            child: Text(
-                              'EG',
-                              style: poppins(
-                                fontSize: 10,
-                                fontWeight: FontWeight.w700,
-                                color: Colors.white,
+                if (_localRemarks.isEmpty)
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: Colors.black.withValues(alpha: 0.02),
+                      borderRadius: BorderRadius.circular(10),
+                      border: Border.all(
+                          color: Colors.black.withValues(alpha: 0.06)),
+                    ),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Icon(Icons.rate_review_outlined,
+                            color: Colors.black45, size: 18),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'No committee remarks recorded yet',
+                                style: poppins(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w600,
+                                  color: Colors.black87,
+                                ),
                               ),
-                            ),
+                              const SizedBox(height: 2),
+                              Text(
+                                'Remarks entered below will be recorded with your application review decisions.',
+                                style: openSans(
+                                  fontSize: 11,
+                                  color: Colors.black54,
+                                ),
+                              ),
+                            ],
                           ),
-                          const SizedBox(width: 8),
-                          Text(
-                            'Dr. E. Gomez',
-                            style: poppins(
-                              fontSize: 12,
-                              fontWeight: FontWeight.w700,
-                              color: Colors.black87,
-                            ),
-                          ),
-                          const Spacer(),
-                          Text(
-                            'AY Intake Deliberation',
-                            style: openSans(fontSize: 11, color: Colors.black45),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 6),
-                      Text(
-                        'Outstanding academic record in algorithms and discrete mathematics. Socioeconomic criteria fully verified. Recommended for endorsement.',
-                        style: openSans(fontSize: 12, color: Colors.black87),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        'Status Recommendation: Endorsement Priority',
-                        style: poppins(
-                          fontSize: 10,
-                          fontWeight: FontWeight.w700,
-                          color: kPrimary,
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
-                ),
 
                 // Dynamically added local remarks
                 for (final remark in _localRemarks) ...[
@@ -1068,58 +1109,6 @@ class _ProviderApplicationDetailScreenState
     );
   }
 
-  Widget _documentItem({
-    required String title,
-    required String subtitle,
-    required IconData icon,
-  }) {
-    return Container(
-      padding: const EdgeInsets.all(10),
-      decoration: BoxDecoration(
-        color: Colors.black.withValues(alpha: 0.02),
-        borderRadius: BorderRadius.circular(10),
-      ),
-      child: Row(
-        children: [
-          Container(
-            width: 36,
-            height: 36,
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(8),
-              border: Border.all(color: Colors.black.withValues(alpha: 0.06)),
-            ),
-            child: Icon(icon, size: 18, color: kNavyTrust),
-          ),
-          const SizedBox(width: 10),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: poppins(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.black87,
-                  ),
-                ),
-                Text(
-                  subtitle,
-                  style: openSans(fontSize: 11, color: Colors.black54),
-                ),
-              ],
-            ),
-          ),
-          const Icon(
-            Icons.check_circle_rounded,
-            size: 18,
-            color: kPrimary,
-          ),
-        ],
-      ),
-    );
-  }
 
   Widget _buildStickyActionBar(BuildContext context, Application app) {
     final isTerminal = app.status == ApplicationStatus.approved ||

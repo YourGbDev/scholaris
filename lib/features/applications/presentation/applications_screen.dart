@@ -17,6 +17,7 @@
 //   and matched opportunity preview card.
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:scholaris/features/applications/models/application.dart';
@@ -154,6 +155,7 @@ class ApplicationsScreen extends ConsumerWidget {
 
     return applicationsAsync.when(
       loading: () => CrossFadeLoading(
+        key: const Key('loading-indicator'),
         isLoading: true,
         skeleton: _buildTrackerSkeleton(),
         child: const SizedBox.shrink(),
@@ -239,8 +241,7 @@ class ApplicationsScreen extends ConsumerWidget {
                               bottom: MediaQuery.of(context).padding.bottom + 64 + 16,
                             ),
                             itemCount: filtered.length +
-                                (urgentApp != null ? 1 : 0) +
-                                1, // +1 for Admissions Momentum
+                                (urgentApp != null ? 1 : 0),
                             itemBuilder: (context, index) {
                               // If urgent banner exists, render it at index 0
                               if (urgentApp != null && urgentScholarship != null) {
@@ -254,14 +255,6 @@ class ApplicationsScreen extends ConsumerWidget {
                                   );
                                 }
                                 index--;
-                              }
-
-                              // If reached the end of applications, render Admissions Momentum card
-                              if (index == filtered.length) {
-                                return const Padding(
-                                  padding: EdgeInsets.only(top: 8, bottom: 16),
-                                  child: _AdmissionsMomentumCard(),
-                                );
                               }
 
                               final app = filtered[index];
@@ -656,10 +649,13 @@ class _StatusFilterChip extends StatelessWidget {
           color: background,
           borderRadius: BorderRadius.circular(20),
           child: InkWell(
-            onTap: onTap,
+            onTap: () {
+              HapticFeedback.selectionClick();
+              onTap();
+            },
             borderRadius: BorderRadius.circular(20),
             child: Container(
-              constraints: const BoxConstraints(minHeight: 32),
+              constraints: const BoxConstraints(minHeight: 44),
               alignment: Alignment.center,
               padding: const EdgeInsets.symmetric(horizontal: 11, vertical: 5),
               decoration: BoxDecoration(
@@ -1545,108 +1541,6 @@ class _MetaChip extends StatelessWidget {
               fontSize: 11,
               fontWeight: FontWeight.w600,
               color: kPrimary,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-/// Bottom Encouragement Callout (Stitch lines 270-287)
-class _AdmissionsMomentumCard extends ConsumerWidget {
-  const _AdmissionsMomentumCard();
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: const Color(0xFFE8EEFF),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: const Color(0xFFD2E4FF)),
-        boxShadow: const [
-          BoxShadow(
-            color: Color(0x0A161C27),
-            blurRadius: 8,
-            offset: Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            width: 40,
-            height: 40,
-            decoration: const BoxDecoration(
-              color: Color(0xFF0F4D2E),
-              shape: BoxShape.circle,
-            ),
-            child: const Icon(Icons.trending_up_rounded, size: 22, color: Colors.white),
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'ADMISSIONS MOMENTUM',
-                  style: outfit(
-                    fontSize: 10.5,
-                    fontWeight: FontWeight.w700,
-                    letterSpacing: 0.6,
-                    color: const Color(0xFF00351C),
-                  ),
-                ),
-                const SizedBox(height: 4),
-                Text.rich(
-                  TextSpan(
-                    text: 'Students who apply to ',
-                    style: openSans(
-                      fontSize: 12.5,
-                      color: const Color(0xFF161C27),
-                      height: 1.4,
-                    ),
-                    children: const [
-                      TextSpan(
-                        text: '6+ matched scholarships',
-                        style: TextStyle(fontWeight: FontWeight.bold, color: Color(0xFF00351C)),
-                      ),
-                      TextSpan(text: ' have an '),
-                      TextSpan(
-                        text: '84% success rate',
-                        style: TextStyle(fontWeight: FontWeight.bold, color: Color(0xFF00351C)),
-                      ),
-                      TextSpan(text: ' receiving at least one funding award.'),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 10),
-                PressableScale(
-                  child: FilledButton.icon(
-                    style: FilledButton.styleFrom(
-                      backgroundColor: const Color(0xFF0F4D2E),
-                      foregroundColor: Colors.white,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-                    ),
-                    onPressed: () {
-                      ref.read(homeTabIndexProvider.notifier).selectTab(1);
-                    },
-                    icon: const Icon(Icons.search_rounded, size: 16),
-                    label: Text(
-                      'Find More Matches',
-                      style: outfit(
-                        fontSize: 12.5,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                ),
-              ],
             ),
           ),
         ],

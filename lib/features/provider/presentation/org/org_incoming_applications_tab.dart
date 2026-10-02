@@ -7,7 +7,6 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 import 'package:scholaris/features/profile/providers/profile_setup_provider.dart';
 import '../../../applications/models/application.dart';
@@ -141,13 +140,11 @@ class _OrgIncomingApplicationsTabState
           final totalIntake = apps.length;
 
           final underReviewApps = apps.where((a) =>
-              a.status == ApplicationStatus.underReview ||
+              a.status == ApplicationStatus.underReview).toList();
+
+          final pendingCategorizationApps = apps.where((a) =>
               a.status == ApplicationStatus.submitted ||
               a.status == ApplicationStatus.draft).toList();
-
-          final shortlistedApps = apps.where((a) =>
-              a.notes?.toLowerCase().contains('shortlist') == true ||
-              (a.status == ApplicationStatus.underReview && (profiles[a.userId]?.gpa ?? 2.0) <= 1.40)).toList();
 
           final approvedApps = apps.where((a) =>
               a.status == ApplicationStatus.approved ||
@@ -160,7 +157,7 @@ class _OrgIncomingApplicationsTabState
           // Financial metrics for KPI 4
           final totalCommitted = scholarships.fold<int>(
             0,
-            (sum, s) => sum + ((s.slots ?? 50) * s.awardAmount),
+            (sum, s) => sum + ((s.slots ?? 0) * s.awardAmount),
           );
           final allocatedCapital = approvedApps.fold<int>(
             0,
@@ -177,7 +174,7 @@ class _OrgIncomingApplicationsTabState
               segmentApps = underReviewApps;
               break;
             case 2:
-              segmentApps = shortlistedApps;
+              segmentApps = pendingCategorizationApps;
               break;
             case 3:
               segmentApps = approvedApps;
@@ -269,7 +266,7 @@ class _OrgIncomingApplicationsTabState
                             constraints: constraints,
                             totalIntake: totalIntake,
                             underReviewCount: underReviewApps.length,
-                            shortlistedCount: shortlistedApps.length,
+                            pendingCategorizationCount: pendingCategorizationApps.length,
                             confirmedCount: approvedApps.length,
                             budgetPercent: budgetPercent,
                             allocatedCapital: allocatedCapital,
@@ -282,7 +279,7 @@ class _OrgIncomingApplicationsTabState
                           _buildFilterAndToolbar(
                             allCount: totalIntake,
                             pendingCount: underReviewApps.length,
-                            interviewCount: shortlistedApps.length,
+                            interviewCount: pendingCategorizationApps.length,
                             approvedCount: approvedApps.length,
                             rejectedCount: rejectedApps.length,
                             scholarships: scholarships,
@@ -385,11 +382,10 @@ class _OrgIncomingApplicationsTabState
           widget.isDecisioningMode
               ? 'Grant Intake & Decisioning'
               : 'Incoming Applications',
-          style: GoogleFonts.inter(
+          style: orgHeadline(
             fontSize: isDesktop ? 26 : 21,
             fontWeight: FontWeight.w700,
             color: kOrgTextPrimary,
-            letterSpacing: -0.5,
           ),
         ),
         const SizedBox(height: 4),
@@ -549,7 +545,7 @@ class _OrgIncomingApplicationsTabState
     required BoxConstraints constraints,
     required int totalIntake,
     required int underReviewCount,
-    required int shortlistedCount,
+    required int pendingCategorizationCount,
     required int confirmedCount,
     required int budgetPercent,
     required int allocatedCapital,
@@ -559,78 +555,93 @@ class _OrgIncomingApplicationsTabState
         ? (underReviewCount / totalIntake).clamp(0.0, 1.0)
         : 0.0;
     final underReviewPercent = underReviewRatio * 100;
+    final pendingRatio = totalIntake > 0
+        ? (pendingCategorizationCount / totalIntake).clamp(0.0, 1.0)
+        : 0.0;
 
-    final card1 = _buildKpiCard(
-      title: 'Total Intake',
-      icon: Icons.mark_email_unread_outlined,
-      value: '$totalIntake',
-      badgeWidget: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-        decoration: BoxDecoration(
-          color: kOrgBadgeApprovedBg,
-          borderRadius: BorderRadius.circular(10),
-        ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Icon(Icons.arrow_upward_rounded, size: 12, color: kOrgPrimary),
-            const SizedBox(width: 2),
-            Text('12.4%',
-                style: orgHeadline(fontSize: 10.5, color: kOrgPrimary)),
-          ],
-        ),
+    final card1 = StaggeredListItem(
+      index: 0,
+      child: _buildKpiCard(
+        title: 'Total Intake',
+        icon: Icons.mark_email_unread_outlined,
+        value: '$totalIntake',
+        numericValue: totalIntake,
+        subtitle: 'Total applications received',
+        progressValue: 1.0,
+        progressColor: kOrgPrimary,
+        isSelected: _selectedSegment == 0,
+        tooltip: 'Show all $totalIntake applications',
+        onTap: () => setState(() => _selectedSegment = 0),
       ),
-      subtitle: 'vs. AY 2023–2024 first semester',
-      progressValue: 1.0,
-      progressColor: kOrgPrimary,
     );
 
-    final card2 = _buildKpiCard(
-      title: 'Under Review',
-      icon: Icons.hourglass_top_outlined,
-      value: '$underReviewCount',
-      badgeWidget: Text(
-        '${underReviewPercent.toStringAsFixed(1)}% of pool',
-        style: orgLabel(fontSize: 11, color: kOrgPrimary),
+    final card2 = StaggeredListItem(
+      index: 1,
+      child: _buildKpiCard(
+        title: 'Under Review',
+        icon: Icons.hourglass_top_outlined,
+        value: '$underReviewCount',
+        numericValue: underReviewCount,
+        badgeWidget: Text(
+          '${underReviewPercent.toStringAsFixed(1)}% of pool',
+          style: orgLabel(fontSize: 11, color: kOrgPrimary),
+        ),
+        subtitle: '$underReviewCount awaiting evaluator consensus',
+        progressValue: underReviewRatio,
+        progressColor: kOrgPrimary,
+        isSelected: _selectedSegment == 1,
+        tooltip: 'Filter to under review ($underReviewCount)',
+        onTap: () => setState(() => _selectedSegment = 1),
       ),
-      subtitle: '$underReviewCount awaiting evaluator consensus',
-      progressValue: underReviewRatio,
-      progressColor: kOrgPrimary,
     );
 
-    final card3 = _buildKpiCard(
-      title: 'Shortlisted Stage',
-      icon: Icons.psychology_outlined,
-      value: '$shortlistedCount',
-      badgeWidget: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-        decoration: BoxDecoration(
-          color: const Color(0xFFEEEDF3),
-          borderRadius: BorderRadius.circular(10),
+    final card3 = StaggeredListItem(
+      index: 2,
+      child: _buildKpiCard(
+        title: 'Pending Categorization',
+        icon: Icons.pending_actions_outlined,
+        value: '$pendingCategorizationCount',
+        numericValue: pendingCategorizationCount,
+        badgeWidget: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+          decoration: BoxDecoration(
+            color: const Color(0xFFEEEDF3),
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: Text(
+            'Intake Queue',
+            style: orgLabel(fontSize: 10.5, color: kOrgTextPrimary),
+          ),
         ),
-        child: Text(
-          'Active Pipeline',
-          style: orgLabel(fontSize: 10.5, color: kOrgTextPrimary),
-        ),
+        subtitle: 'Applications awaiting stage assignment',
+        progressValue: pendingRatio,
+        progressColor: const Color(0xFF0070EB),
+        isSelected: _selectedSegment == 2,
+        tooltip: 'Filter to pending categorization ($pendingCategorizationCount)',
+        onTap: () => setState(() => _selectedSegment = 2),
       ),
-      subtitle: 'Candidates queued for review & interview',
-      progressValue: shortlistedCount > 0 ? 0.75 : 0.0,
-      progressColor: const Color(0xFF0070EB),
     );
 
-    final card4 = _buildKpiCard(
-      title: 'Confirmed Awardees',
-      icon: Icons.verified_outlined,
-      value: '$confirmedCount',
-      badgeWidget: Text(
-        '$budgetPercent% grant budget',
-        style: orgLabel(fontSize: 11, color: kOrgPrimary),
+    final card4 = StaggeredListItem(
+      index: 3,
+      child: _buildKpiCard(
+        title: 'Confirmed Awardees',
+        icon: Icons.verified_outlined,
+        value: '$confirmedCount',
+        numericValue: confirmedCount,
+        badgeWidget: Text(
+          '$budgetPercent% grant budget',
+          style: orgLabel(fontSize: 11, color: kOrgPrimary),
+        ),
+        subtitle:
+            '${_formatCurrency(allocatedCapital)} allocated of ${_formatCurrency(totalCommitted)} pool',
+        progressValue:
+            totalCommitted > 0 ? (allocatedCapital / totalCommitted).clamp(0.0, 1.0) : 0.0,
+        progressColor: kOrgPrimary,
+        isSelected: _selectedSegment == 3,
+        tooltip: 'Filter to approved / awarded ($confirmedCount)',
+        onTap: () => setState(() => _selectedSegment = 3),
       ),
-      subtitle:
-          '${_formatCurrency(allocatedCapital)} allocated of ${_formatCurrency(totalCommitted)} pool',
-      progressValue:
-          totalCommitted > 0 ? (allocatedCapital / totalCommitted).clamp(0.0, 1.0) : 0.0,
-      progressColor: kOrgPrimary,
     );
 
     if (constraints.maxWidth >= 960) {
@@ -684,22 +695,33 @@ class _OrgIncomingApplicationsTabState
     required String title,
     required IconData icon,
     required String value,
-    required Widget badgeWidget,
+    int? numericValue,
+    Widget? badgeWidget,
     required String subtitle,
     required double progressValue,
     required Color progressColor,
+    VoidCallback? onTap,
+    bool isSelected = false,
+    String? tooltip,
   }) {
-    return Container(
+    final cardContent = AnimatedContainer(
+      duration: kDurationFast,
+      curve: kEaseOut,
       padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
         color: kOrgSurfaceWhite,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: const Color(0xFFEEEDF3)),
-        boxShadow: const [
+        border: Border.all(
+          color: isSelected ? kOrgPrimary : const Color(0xFFEEEDF3),
+          width: isSelected ? 1.5 : 1.0,
+        ),
+        boxShadow: [
           BoxShadow(
-            color: Color(0x06000000),
-            blurRadius: 6,
-            offset: Offset(0, 1),
+            color: isSelected
+                ? kOrgPrimary.withValues(alpha: 0.12)
+                : const Color(0x06000000),
+            blurRadius: isSelected ? 10 : 6,
+            offset: isSelected ? const Offset(0, 3) : const Offset(0, 1),
           ),
         ],
       ),
@@ -715,7 +737,7 @@ class _OrgIncomingApplicationsTabState
                   style: orgLabel(
                     fontSize: 11.5,
                     fontWeight: FontWeight.w600,
-                    color: kOrgTextSecondary,
+                    color: isSelected ? kOrgPrimary : kOrgTextSecondary,
                   ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
@@ -726,11 +748,17 @@ class _OrgIncomingApplicationsTabState
                 width: 32,
                 height: 32,
                 decoration: BoxDecoration(
-                  color: const Color(0xFFF4F3F8),
+                  color: isSelected
+                      ? kOrgPrimary.withValues(alpha: 0.10)
+                      : const Color(0xFFF4F3F8),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Center(
-                  child: Icon(icon, size: 18, color: kOrgTextSecondary),
+                  child: Icon(
+                    icon,
+                    size: 18,
+                    color: isSelected ? kOrgPrimary : kOrgTextSecondary,
+                  ),
                 ),
               ),
             ],
@@ -740,17 +768,27 @@ class _OrgIncomingApplicationsTabState
             crossAxisAlignment: CrossAxisAlignment.baseline,
             textBaseline: TextBaseline.alphabetic,
             children: [
-              Text(
-                value,
-                style: GoogleFonts.inter(
-                  fontSize: 24,
-                  fontWeight: FontWeight.w700,
-                  color: kOrgTextPrimary,
-                  letterSpacing: -0.5,
-                ),
-              ),
-              const SizedBox(width: 8),
-              badgeWidget,
+              numericValue != null
+                  ? CountUpAnimation(
+                      targetValue: numericValue,
+                      style: orgTabularFigures(orgHeadline(
+                        fontSize: 24,
+                        fontWeight: FontWeight.w700,
+                        color: kOrgTextPrimary,
+                      )),
+                    )
+                  : Text(
+                      value,
+                      style: orgTabularFigures(orgHeadline(
+                        fontSize: 24,
+                        fontWeight: FontWeight.w700,
+                        color: kOrgTextPrimary,
+                      )),
+                    ),
+              if (badgeWidget != null) ...[
+                const SizedBox(width: 8),
+                badgeWidget,
+              ],
             ],
           ),
           const SizedBox(height: 4),
@@ -773,6 +811,27 @@ class _OrgIncomingApplicationsTabState
         ],
       ),
     );
+
+    if (onTap != null) {
+      Widget interactive = PressableScale(
+        scale: 0.985,
+        child: Material(
+          color: Colors.transparent,
+          borderRadius: BorderRadius.circular(16),
+          child: InkWell(
+            borderRadius: BorderRadius.circular(16),
+            onTap: onTap,
+            hoverColor: const Color(0xFFFAF9FD),
+            child: cardContent,
+          ),
+        ),
+      );
+      if (tooltip != null) {
+        interactive = Tooltip(message: tooltip, child: interactive);
+      }
+      return interactive;
+    }
+    return cardContent;
   }
 
   // ===========================================================================
@@ -790,8 +849,8 @@ class _OrgIncomingApplicationsTabState
   }) {
     final segmentTabs = [
       {'label': 'All Applications', 'count': allCount},
-      {'label': 'Pending Screening', 'count': pendingCount},
-      {'label': 'Interview Stage', 'count': interviewCount},
+      {'label': 'Under Review', 'count': pendingCount},
+      {'label': 'Pending Categorization', 'count': interviewCount},
       {'label': 'Approved / Awarded', 'count': approvedCount},
       {'label': 'Not Qualified', 'count': rejectedCount},
     ];
@@ -810,57 +869,60 @@ class _OrgIncomingApplicationsTabState
           children: List.generate(segmentTabs.length, (idx) {
             final isSelected = _selectedSegment == idx;
             final item = segmentTabs[idx];
-            return GestureDetector(
-              onTap: () => setState(() => _selectedSegment = idx),
-              child: AnimatedContainer(
-                duration: kDurationStandard,
-                curve: kEaseInOut,
-                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-                margin: const EdgeInsets.symmetric(horizontal: 2),
-                decoration: BoxDecoration(
-                  color: isSelected ? kOrgSurfaceWhite : Colors.transparent,
-                  borderRadius: BorderRadius.circular(12),
-                  boxShadow: isSelected
-                      ? const [
-                          BoxShadow(
-                            color: Color(0x0A000000),
-                            blurRadius: 4,
-                            offset: Offset(0, 1),
-                          ),
-                        ]
-                      : null,
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      item['label'] as String,
-                      style: orgLabel(
-                        fontSize: 12,
-                        fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
-                        color: isSelected ? kOrgTextPrimary : kOrgTextSecondary,
-                      ),
-                    ),
-                    const SizedBox(width: 6),
-                    Container(
-                      padding:
-                          const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                      decoration: BoxDecoration(
-                        color: isSelected
-                            ? const Color(0xFFEEEDF3)
-                            : const Color(0xFFE9E7ED).withValues(alpha: 0.6),
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: Text(
-                        '${item['count']}',
+            return PressableScale(
+              scale: 0.97,
+              child: GestureDetector(
+                onTap: () => setState(() => _selectedSegment = idx),
+                child: AnimatedContainer(
+                  duration: kDurationStandard,
+                  curve: kEaseInOut,
+                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                  margin: const EdgeInsets.symmetric(horizontal: 2),
+                  decoration: BoxDecoration(
+                    color: isSelected ? kOrgSurfaceWhite : Colors.transparent,
+                    borderRadius: BorderRadius.circular(12),
+                    boxShadow: isSelected
+                        ? const [
+                            BoxShadow(
+                              color: Color(0x0A000000),
+                              blurRadius: 4,
+                              offset: Offset(0, 1),
+                            ),
+                          ]
+                        : null,
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        item['label'] as String,
                         style: orgLabel(
-                          fontSize: 10.5,
-                          fontWeight: FontWeight.w600,
-                          color: kOrgTextSecondary,
+                          fontSize: 12,
+                          fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+                          color: isSelected ? kOrgTextPrimary : kOrgTextSecondary,
                         ),
                       ),
-                    ),
-                  ],
+                      const SizedBox(width: 6),
+                      Container(
+                        padding:
+                            const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                        decoration: BoxDecoration(
+                          color: isSelected
+                              ? const Color(0xFFEEEDF3)
+                              : const Color(0xFFE9E7ED).withValues(alpha: 0.6),
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: Text(
+                          '${item['count']}',
+                          style: orgLabel(
+                            fontSize: 10.5,
+                            fontWeight: FontWeight.w600,
+                            color: kOrgTextSecondary,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             );
@@ -1162,12 +1224,15 @@ class _OrgIncomingApplicationsTabState
 
         return Padding(
           padding: const EdgeInsets.only(bottom: 12),
-          child: _buildDossierCard(
+          child: StaggeredListItem(
             index: index,
-            app: app,
-            profile: studentProfile,
-            scholarship: scholarship,
-            isDesktop: isDesktop,
+            child: _buildDossierCard(
+              index: index,
+              app: app,
+              profile: studentProfile,
+              scholarship: scholarship,
+              isDesktop: isDesktop,
+            ),
           ),
         );
       }),
@@ -1183,7 +1248,7 @@ class _OrgIncomingApplicationsTabState
   }) {
     final fullName = (profile != null && profile.fullName.trim().isNotEmpty)
         ? profile.fullName.trim()
-        : 'Maria Clarissa Santos';
+        : 'Applicant #${app.userId.length >= 8 ? app.userId.substring(0, 8) : app.userId}';
 
     final initials = fullName.length >= 2
         ? fullName
@@ -1192,18 +1257,17 @@ class _OrgIncomingApplicationsTabState
             .take(2)
             .map((w) => w[0].toUpperCase())
             .join()
-        : 'MS';
+        : 'AP';
 
-    const lrn = 'Not on file';
-    final gwa = (profile != null && profile.gpa > 0) ? profile.gpa : 1.24;
-    final honorStanding = _getHonorStanding(gwa);
-    final course = profile?.course.isNotEmpty == true ? profile!.course : 'BS Computer Science';
-    final school = profile?.school?.isNotEmpty == true ? profile!.school! : 'University of the Philippines Diliman';
-    final location = profile?.cityMunicipality ?? profile?.province ?? profile?.region ?? 'Quezon City, NCR';
-    final monthlyIncome = (profile?.monthlyFamilyIncome != null && profile!.monthlyFamilyIncome! > 0)
+    final double? gwa = (profile != null && profile.gpa > 0) ? profile.gpa : null;
+    final String honorStanding = gwa != null ? _getHonorStanding(gwa) : 'GWA Pending';
+    final course = profile?.course.isNotEmpty == true ? profile!.course : 'Academic Track Pending';
+    final school = profile?.school?.isNotEmpty == true ? profile!.school! : 'Institution Unspecified';
+    final location = profile?.cityMunicipality ?? profile?.province ?? profile?.region ?? 'Location Unlisted';
+    final int? monthlyIncome = (profile?.monthlyFamilyIncome != null && profile!.monthlyFamilyIncome! > 0)
         ? profile.monthlyFamilyIncome!.toInt()
-        : 15000;
-    final annualIncome = monthlyIncome * 12;
+        : null;
+    final int? annualIncome = monthlyIncome != null ? monthlyIncome * 12 : null;
 
     // Status mapping matching Stitch
     String statusTitle;
@@ -1254,7 +1318,7 @@ class _OrgIncomingApplicationsTabState
           child: Center(
             child: Text(
               initials,
-              style: GoogleFonts.inter(
+              style: orgHeadline(
                 fontSize: 16,
                 fontWeight: FontWeight.w700,
                 color: Colors.white,
@@ -1293,57 +1357,43 @@ class _OrgIncomingApplicationsTabState
           children: [
             Text(
               fullName,
-              style: GoogleFonts.inter(
+              style: orgHeadline(
                 fontSize: 16.5,
                 fontWeight: FontWeight.w700,
                 color: kOrgTextPrimary,
-                letterSpacing: -0.2,
               ),
             ),
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
-              decoration: BoxDecoration(
-                color: const Color(0xFFEEEDF3),
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Text(
-                'LRN $lrn',
-                style: GoogleFonts.robotoMono(
-                  fontSize: 10.5,
-                  fontWeight: FontWeight.w500,
-                  color: kOrgTextSecondary,
+            orgIdPill(app.id.length >= 8 ? 'APP-${app.id.substring(0, 8).toUpperCase()}' : 'APP-${app.id}'),
+            if (gwa != null)
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFB3F1C6).withValues(alpha: 0.6),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Container(
+                      width: 5,
+                      height: 5,
+                      decoration: const BoxDecoration(
+                        color: kOrgPrimary,
+                        shape: BoxShape.circle,
+                      ),
+                    ),
+                    const SizedBox(width: 4),
+                    Text(
+                      honorStanding,
+                      style: orgLabel(
+                        fontSize: 10.5,
+                        fontWeight: FontWeight.w600,
+                        color: kOrgPrimary,
+                      ),
+                    ),
+                  ],
                 ),
               ),
-            ),
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
-              decoration: BoxDecoration(
-                color: const Color(0xFFB3F1C6).withValues(alpha: 0.6),
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Container(
-                    width: 5,
-                    height: 5,
-                    decoration: const BoxDecoration(
-                      color: kOrgPrimary,
-                      shape: BoxShape.circle,
-                    ),
-                  ),
-                  const SizedBox(width: 4),
-                  Text(
-                    honorStanding,
-                    style: orgLabel(
-                      fontSize: 10.5,
-                      fontWeight: FontWeight.w600,
-                      color: kOrgPrimary,
-                    ),
-                  ),
-                ],
-              ),
-            ),
           ],
         ),
         const SizedBox(height: 5),
@@ -1372,42 +1422,45 @@ class _OrgIncomingApplicationsTabState
     final actionCta = Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Material(
-          color: kOrgPrimary,
-          borderRadius: BorderRadius.circular(12),
-          elevation: 1,
-          child: InkWell(
+        PressableScale(
+          scale: 0.97,
+          child: Material(
+            color: kOrgPrimary,
             borderRadius: BorderRadius.circular(12),
-            onTap: () {
-              ApplicantReviewDrawer.show(
-                context,
-                application: app,
-                scholarship: scholarship,
-                applicantProfile: profile,
-                onStatusChanged: () {
-                  ref
-                      .read(incomingApplicationsProvider.notifier)
-                      .refresh();
-                },
-              );
-            },
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8.5),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    'Review Dossier',
-                    style: orgLabel(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.white,
+            elevation: 1,
+            child: InkWell(
+              borderRadius: BorderRadius.circular(12),
+              onTap: () {
+                ApplicantReviewDrawer.show(
+                  context,
+                  application: app,
+                  scholarship: scholarship,
+                  applicantProfile: profile,
+                  onStatusChanged: () {
+                    ref
+                        .read(incomingApplicationsProvider.notifier)
+                        .refresh();
+                  },
+                );
+              },
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8.5),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      'Review Dossier',
+                      style: orgLabel(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.white,
+                      ),
                     ),
-                  ),
-                  const SizedBox(width: 6),
-                  const Icon(Icons.arrow_forward_rounded,
-                      size: 15, color: Colors.white),
-                ],
+                    const SizedBox(width: 6),
+                    const Icon(Icons.arrow_forward_rounded,
+                        size: 15, color: Colors.white),
+                  ],
+                ),
               ),
             ),
           ),
@@ -1464,7 +1517,7 @@ class _OrgIncomingApplicationsTabState
                       letterSpacing: 0.5)),
               const SizedBox(height: 3),
               Text(
-                scholarship?.title ?? 'Ayala Future Leaders Grant 2026',
+                scholarship?.title ?? 'Grant Intake Track',
                 style: orgHeadline(
                     fontSize: 13,
                     fontWeight: FontWeight.w600,
@@ -1473,8 +1526,10 @@ class _OrgIncomingApplicationsTabState
                 overflow: TextOverflow.ellipsis,
               ),
               Text(
-                '${_formatCurrency(scholarship?.awardAmount ?? 50000)} / yr Grant',
-                style: orgBody(fontSize: 11, color: kOrgPrimary),
+                scholarship?.awardAmount != null
+                    ? '${_formatCurrency(scholarship!.awardAmount)} / yr Grant'
+                    : 'Grant Value Declared',
+                style: orgTabularFigures(orgBody(fontSize: 11, color: kOrgPrimary)),
               ),
             ],
           ),
@@ -1499,16 +1554,17 @@ class _OrgIncomingApplicationsTabState
                 textBaseline: TextBaseline.alphabetic,
                 children: [
                   Text(
-                    gwa.toStringAsFixed(2),
-                    style: orgHeadline(fontSize: 16, fontWeight: FontWeight.w700),
+                    gwa != null ? gwa.toStringAsFixed(2) : '—',
+                    style: orgTabularFigures(orgHeadline(fontSize: 16, fontWeight: FontWeight.w700)),
                   ),
-                  Text(' / 1.00 Max',
-                      style: orgBody(fontSize: 11, color: kOrgTextSecondary)),
+                  if (gwa != null)
+                    Text(' / 1.00 Max',
+                        style: orgBody(fontSize: 11, color: kOrgTextSecondary)),
                 ],
               ),
               Text(
-                'Top 5% Cohort',
-                style: orgLabel(fontSize: 11, color: kOrgPrimary),
+                gwa != null ? honorStanding : 'Pending Verification',
+                style: orgLabel(fontSize: 11, color: gwa != null ? kOrgPrimary : kOrgTextSecondary),
               ),
             ],
           ),
@@ -1528,11 +1584,11 @@ class _OrgIncomingApplicationsTabState
                       letterSpacing: 0.5)),
               const SizedBox(height: 3),
               Text(
-                '${_formatCurrency(annualIncome)} / yr',
-                style: orgHeadline(
+                annualIncome != null ? '${_formatCurrency(annualIncome)} / yr' : '—',
+                style: orgTabularFigures(orgHeadline(
                     fontSize: 13,
                     fontWeight: FontWeight.w600,
-                    color: kOrgTextPrimary),
+                    color: kOrgTextPrimary)),
               ),
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 1.5),
@@ -1541,7 +1597,7 @@ class _OrgIncomingApplicationsTabState
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Text(
-                  '4Ps Tier 1 Validated',
+                  annualIncome != null ? 'Self-Declared Income' : 'Income Not Declared',
                   style: orgLabel(fontSize: 10, color: kOrgTextSecondary),
                 ),
               ),
@@ -1715,7 +1771,11 @@ class _OrgIncomingApplicationsTabState
                               style: orgLabel(fontSize: 9.5, color: kOrgTextSecondary)),
                           const SizedBox(height: 2),
                           Text(
-                              'Declared ₱$monthlyIncome/mo (₱${(annualIncome / 1000).toStringAsFixed(0)}k/yr)',
+                              annualIncome != null
+                                  ? 'Declared ₱$monthlyIncome/mo (₱${(annualIncome / 1000).toStringAsFixed(0)}k/yr)'
+                                  : (monthlyIncome != null
+                                      ? 'Declared ₱$monthlyIncome/mo'
+                                      : 'Family income not declared'),
                               style: orgBody(fontSize: 11.5)),
                         ],
                       ),
@@ -1886,190 +1946,199 @@ class _OrgIncomingApplicationsTabState
   // Loading Skeleton Placeholder (Section 5.6)
   // ===========================================================================
   Widget _buildSkeleton({required bool isDesktop}) {
-    return SingleChildScrollView(
-      physics: const NeverScrollableScrollPhysics(),
-      padding: EdgeInsets.symmetric(
-        horizontal: isDesktop ? 32 : 16,
-        vertical: isDesktop ? 28 : 20,
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Header Skeleton
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: const [
-                  SkeletonBand(width: 140, height: 20, borderRadius: 10),
-                  SizedBox(height: 8),
-                  SkeletonBand(width: 260, height: 26, borderRadius: 6),
-                  SizedBox(height: 8),
-                  SkeletonBand(width: 380, height: 14, borderRadius: 6),
-                ],
-              ),
-              if (isDesktop)
-                Row(
-                  children: const [
-                    SkeletonBand(width: 150, height: 40, borderRadius: 12),
-                    SizedBox(width: 10),
-                    SkeletonBand(width: 140, height: 40, borderRadius: 12),
-                  ],
-                ),
-            ],
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final isWide = constraints.maxWidth >= 900;
+        return SingleChildScrollView(
+          physics: const NeverScrollableScrollPhysics(),
+          padding: EdgeInsets.symmetric(
+            horizontal: isWide ? 32 : 16,
+            vertical: isWide ? 28 : 20,
           ),
-          const SizedBox(height: 24),
-          // 4-KPI Bento Strip Skeleton
-          if (isDesktop)
-            Row(
-              children: List.generate(
-                4,
-                (i) => Expanded(
-                  child: Container(
-                    margin: EdgeInsets.only(right: i < 3 ? 14 : 0),
-                    padding: const EdgeInsets.all(18),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(16),
-                      border: Border.all(color: const Color(0xFFE5E7EB)),
-                    ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Header Skeleton
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: const [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            SkeletonBand(width: 80, height: 12),
-                            SkeletonBand(width: 28, height: 28, borderRadius: 14),
-                          ],
-                        ),
-                        SizedBox(height: 12),
-                        SkeletonBand(width: 60, height: 28),
-                        SizedBox(height: 12),
-                        SkeletonBand(width: double.infinity, height: 6, borderRadius: 3),
+                        SkeletonBand(width: 140, height: 20, borderRadius: 10),
+                        SizedBox(height: 8),
+                        SkeletonBand(width: 260, height: 26, borderRadius: 6),
+                        SizedBox(height: 8),
+                        SkeletonBand(width: 380, height: 14, borderRadius: 6),
                       ],
                     ),
                   ),
-                ),
+                  if (isWide)
+                    Row(
+                      children: const [
+                        SkeletonBand(width: 150, height: 40, borderRadius: 12),
+                        SizedBox(width: 10),
+                        SkeletonBand(width: 140, height: 40, borderRadius: 12),
+                      ],
+                    ),
+                ],
               ),
-            )
-          else
-            Column(
-              children: List.generate(
-                4,
-                (i) => Container(
+              const SizedBox(height: 24),
+              // 4-KPI Bento Strip Skeleton
+              if (isWide)
+                Row(
+                  children: List.generate(
+                    4,
+                    (i) => Expanded(
+                      child: Container(
+                        margin: EdgeInsets.only(right: i < 3 ? 14 : 0),
+                        padding: const EdgeInsets.all(18),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(16),
+                          border: Border.all(color: const Color(0xFFE5E7EB)),
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: const [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Flexible(child: SkeletonBand(width: 80, height: 12)),
+                                SizedBox(width: 4),
+                                SkeletonBand(width: 28, height: 28, borderRadius: 14),
+                              ],
+                            ),
+                            SizedBox(height: 12),
+                            SkeletonBand(width: 60, height: 28),
+                            SizedBox(height: 12),
+                            SkeletonBand(width: double.infinity, height: 6, borderRadius: 3),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                )
+              else
+                Column(
+                  children: List.generate(
+                    4,
+                    (i) => Container(
+                      margin: const EdgeInsets.only(bottom: 12),
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(16),
+                        border: Border.all(color: const Color(0xFFE5E7EB)),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: const [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Flexible(child: SkeletonBand(width: 80, height: 12)),
+                              SizedBox(width: 4),
+                              SkeletonBand(width: 28, height: 28, borderRadius: 14),
+                            ],
+                          ),
+                          SizedBox(height: 12),
+                          SkeletonBand(width: 60, height: 28),
+                          SizedBox(height: 12),
+                          SkeletonBand(width: double.infinity, height: 6, borderRadius: 3),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              const SizedBox(height: 24),
+              // Toolbar Skeleton
+              if (isWide)
+                Row(
+                  children: const [
+                    Flexible(child: SkeletonBand(width: 320, height: 36, borderRadius: 12)),
+                    SizedBox(width: 12),
+                    SkeletonBand(width: 220, height: 36, borderRadius: 10),
+                  ],
+                )
+              else
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: const [
+                    SkeletonBand(width: double.infinity, height: 36, borderRadius: 12),
+                    SizedBox(height: 8),
+                    SkeletonBand(width: 200, height: 36, borderRadius: 10),
+                  ],
+                ),
+              const SizedBox(height: 18),
+              // Dossier Cards Skeletons
+              ...List.generate(
+                3,
+                (index) => Container(
                   margin: const EdgeInsets.only(bottom: 12),
-                  padding: const EdgeInsets.all(16),
+                  padding: const EdgeInsets.all(18),
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(16),
                     border: Border.all(color: const Color(0xFFE5E7EB)),
                   ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: const [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          SkeletonBand(width: 80, height: 12),
-                          SkeletonBand(width: 28, height: 28, borderRadius: 14),
-                        ],
-                      ),
-                      SizedBox(height: 12),
-                      SkeletonBand(width: 60, height: 28),
-                      SizedBox(height: 12),
-                      SkeletonBand(width: double.infinity, height: 6, borderRadius: 3),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-          const SizedBox(height: 24),
-          // Toolbar Skeleton
-          if (isDesktop)
-            Row(
-              children: const [
-                SkeletonBand(width: 320, height: 36, borderRadius: 12),
-                Spacer(),
-                SkeletonBand(width: 220, height: 36, borderRadius: 10),
-              ],
-            )
-          else
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: const [
-                SkeletonBand(width: double.infinity, height: 36, borderRadius: 12),
-                SizedBox(height: 8),
-                SkeletonBand(width: 200, height: 36, borderRadius: 10),
-              ],
-            ),
-          const SizedBox(height: 18),
-          // Dossier Cards Skeletons
-          ...List.generate(
-            3,
-            (index) => Container(
-              margin: const EdgeInsets.only(bottom: 12),
-              padding: const EdgeInsets.all(18),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: const Color(0xFFE5E7EB)),
-              ),
-              child: isDesktop
-                  ? Row(
-                      children: [
-                        const SkeletonBand(width: 48, height: 48, borderRadius: 16),
-                        const SizedBox(width: 14),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: const [
-                              SkeletonBand(width: 180, height: 18),
-                              SizedBox(height: 8),
-                              SkeletonBand(width: 280, height: 14),
-                            ],
-                          ),
-                        ),
-                        const SizedBox(width: 16),
-                        const SkeletonBand(width: 120, height: 32, borderRadius: 12),
-                        const SizedBox(width: 12),
-                        const SkeletonBand(width: 110, height: 36, borderRadius: 12),
-                      ],
-                    )
-                  : Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
+                  child: isWide
+                      ? Row(
                           children: [
-                            const SkeletonBand(width: 44, height: 44, borderRadius: 14),
-                            const SizedBox(width: 12),
+                            const SkeletonBand(width: 48, height: 48, borderRadius: 16),
+                            const SizedBox(width: 14),
                             Expanded(
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: const [
-                                  SkeletonBand(width: 140, height: 16),
-                                  SizedBox(height: 6),
-                                  SkeletonBand(width: 180, height: 12),
+                                  SkeletonBand(width: 180, height: 18),
+                                  SizedBox(height: 8),
+                                  SkeletonBand(width: 280, height: 14),
                                 ],
                               ),
                             ),
+                            const SizedBox(width: 16),
+                            const SkeletonBand(width: 120, height: 32, borderRadius: 12),
+                            const SizedBox(width: 12),
+                            const SkeletonBand(width: 110, height: 36, borderRadius: 12),
+                          ],
+                        )
+                      : Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                const SkeletonBand(width: 44, height: 44, borderRadius: 14),
+                                const SizedBox(width: 12),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: const [
+                                      SkeletonBand(width: 140, height: 16),
+                                      SizedBox(height: 6),
+                                      SkeletonBand(width: 180, height: 12),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 12),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: const [
+                                SkeletonBand(width: 100, height: 24, borderRadius: 12),
+                                SkeletonBand(width: 90, height: 32, borderRadius: 10),
+                              ],
+                            ),
                           ],
                         ),
-                        const SizedBox(height: 12),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: const [
-                            SkeletonBand(width: 100, height: 24, borderRadius: 12),
-                            SkeletonBand(width: 90, height: 32, borderRadius: 10),
-                          ],
-                        ),
-                      ],
-                    ),
-            ),
+                ),
+              ),
+            ],
           ),
-        ],
-      ),
+        );
+      },
     );
   }
 }

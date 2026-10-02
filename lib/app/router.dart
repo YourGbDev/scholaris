@@ -42,10 +42,13 @@ import 'package:scholaris/features/profile/presentation/profile_setup_screen.dar
 import 'package:scholaris/features/profile/providers/profile_setup_provider.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:scholaris/features/applications/presentation/application_detail_screen.dart';
+import 'package:scholaris/features/applications/presentation/submission_confirmation_receipt_screen.dart';
 import 'package:scholaris/features/scholarships/models/scholarship.dart';
 import 'package:scholaris/features/scholarships/presentation/scholarship_detail_screen.dart';
+import 'package:scholaris/features/scholarships/presentation/scholarship_qr_scanner_screen.dart';
 import 'package:scholaris/shared/widgets/mascot_pose_view.dart';
 import 'package:scholaris/features/scholarships/screens/saved_screen.dart';
+import 'package:scholaris/shared/theme/app_motion.dart';
 
 // -----------------------------------------------------------------------------
 // profileCompleteProvider / userRoleProvider
@@ -342,20 +345,34 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/saved',
         name: 'saved',
-        builder: (context, state) => const SavedScreen(),
+        pageBuilder: (context, state) =>
+            _scholarisSlidePage(state, child: const SavedScreen()),
       ),
 
       // --- Scholarship detail ------------------------------------------------
       GoRoute(
         path: '/scholarship/:id',
         name: 'scholarship-detail',
-        builder: (context, state) {
+        pageBuilder: (context, state) {
           final scholarship = state.extra as Scholarship?;
-          return ScholarshipDetailScreen(
-            scholarshipId: state.pathParameters['id']!,
-            initial: scholarship,
+          return _scholarisSlidePage(
+            state,
+            child: ScholarshipDetailScreen(
+              scholarshipId: state.pathParameters['id']!,
+              initial: scholarship,
+            ),
           );
         },
+      ),
+
+      // --- Scholarship QR Scanner --------------------------------------------
+      GoRoute(
+        path: '/scan-qr',
+        name: 'scan-qr',
+        pageBuilder: (context, state) => _scholarisSlidePage(
+          state,
+          child: const ScholarshipQrScannerScreen(),
+        ),
       ),
 
       // --- Applications & Tracker Routes -------------------------------------
@@ -363,7 +380,7 @@ final routerProvider = Provider<GoRouter>((ref) {
         path: '/applications',
         name: 'applications',
         redirect: (context, state) {
-          ref.read(homeTabIndexProvider.notifier).selectTab(2);
+          Future.microtask(() => ref.read(homeTabIndexProvider.notifier).selectTab(2));
           return '/home';
         },
       ),
@@ -371,7 +388,7 @@ final routerProvider = Provider<GoRouter>((ref) {
         path: '/tracker',
         name: 'tracker',
         redirect: (context, state) {
-          ref.read(homeTabIndexProvider.notifier).selectTab(2);
+          Future.microtask(() => ref.read(homeTabIndexProvider.notifier).selectTab(2));
           return '/home';
         },
       ),
@@ -379,7 +396,7 @@ final routerProvider = Provider<GoRouter>((ref) {
         path: '/discover',
         name: 'discover',
         redirect: (context, state) {
-          ref.read(homeTabIndexProvider.notifier).selectTab(1);
+          Future.microtask(() => ref.read(homeTabIndexProvider.notifier).selectTab(1));
           return '/home';
         },
       ),
@@ -387,16 +404,36 @@ final routerProvider = Provider<GoRouter>((ref) {
         path: '/profile',
         name: 'profile',
         redirect: (context, state) {
-          ref.read(homeTabIndexProvider.notifier).selectTab(3);
+          Future.microtask(() => ref.read(homeTabIndexProvider.notifier).selectTab(3));
           return '/home';
         },
       ),
       GoRoute(
         path: '/application/:id',
         name: 'application-detail',
-        builder: (context, state) => ApplicationDetailScreen(
-          applicationId: state.pathParameters['id']!,
+        pageBuilder: (context, state) => _scholarisSlidePage(
+          state,
+          child: ApplicationDetailScreen(
+            applicationId: state.pathParameters['id']!,
+          ),
         ),
+      ),
+
+      // --- Submission Receipt -----------------------------------------------
+      GoRoute(
+        path: '/submission-receipt',
+        name: 'submission-receipt',
+        redirect: (context, state) =>
+            state.extra is Scholarship ? null : '/home',
+        pageBuilder: (context, state) {
+          final scholarship = state.extra as Scholarship;
+          return _scholarisSlidePage(
+            state,
+            child: SubmissionConfirmationReceiptScreen(
+              scholarship: scholarship,
+            ),
+          );
+        },
       ),
 
       // --- Profile setup (multi-step) ----------------------------------------
@@ -481,6 +518,28 @@ final routerProvider = Provider<GoRouter>((ref) {
   return router;
 });
 
+/// Standard Scholaris horizontal slide + fade page transition per Section 5.3:
+/// 250ms duration, ease-out entry, ease-in exit, with reduced motion support.
+CustomTransitionPage<void> _scholarisSlidePage(
+  GoRouterState state, {
+  required Widget child,
+}) {
+  return CustomTransitionPage<void>(
+    key: state.pageKey,
+    child: child,
+    transitionDuration: kDurationStandard,
+    reverseTransitionDuration: kDurationStandard,
+    transitionsBuilder: (context, animation, secondaryAnimation, child) {
+      return buildScholarisPageTransition(
+        context: context,
+        animation: animation,
+        secondaryAnimation: secondaryAnimation,
+        child: child,
+      );
+    },
+  );
+}
+
 /// Calm fade + slight rise used for the first-run surfaces. Restrained by
 /// design: no bounce, no zoom; the content simply settles into place. The
 /// ~400ms duration keeps the hand-off alive without feeling abrupt or sluggish
@@ -498,21 +557,12 @@ CustomTransitionPage<void> _fadeRisePage(
   return CustomTransitionPage<void>(
     key: state.pageKey,
     child: child,
-    transitionDuration: const Duration(milliseconds: 400),
+    transitionDuration: const Duration(milliseconds: 350),
     transitionsBuilder: (context, animation, secondaryAnimation, child) {
-      final curved = CurvedAnimation(parent: animation, curve: Curves.easeOut);
-      // The outgoing page (the route beneath this one) fades out via
-      // secondaryAnimation so the ceremony → login hand-off is a clean
-      // cross-fade. Without this, the outgoing content stays fully opaque
-      // during the first ~50ms of the transition (easeOut starts slow),
-      // causing two overlapping surfaces for a few frames. The easeOut +
-      // Interval(0.0, 0.15) on the outgoing fade compresses the fade-out into
-      // the first ~15% of the transition so the underlying frame is gone
-      // (~21ms at 400ms transition duration) before the incoming one becomes
-      // visible.
+      final curved = CurvedAnimation(parent: animation, curve: kAppleSpringCurve);
       final outgoingFade = CurvedAnimation(
         parent: secondaryAnimation,
-        curve: const Interval(0.0, 0.15, curve: Curves.easeOut),
+        curve: const Interval(0.0, 0.15, curve: kAppleSpringCurve),
       );
 
       if (pureFade) {

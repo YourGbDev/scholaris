@@ -13,9 +13,11 @@
 // 6. Quick Apply primary CTA button
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../features/scholarships/models/scholarship.dart';
+import '../theme/app_motion.dart';
 import '../theme/app_theme.dart';
 import '../utils/constants.dart';
 
@@ -183,16 +185,17 @@ class ScholarshipCard extends StatelessWidget {
     return Semantics(
       button: true,
       label: 'View ${scholarship.title}',
-      child: Material(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(kRadiusCard),
-        child: InkWell(
+      child: PressableScale(
+        child: Material(
+          color: Colors.white,
           borderRadius: BorderRadius.circular(kRadiusCard),
-          onTap: () => context.push(
-            '/scholarship/${scholarship.id}',
-            extra: scholarship,
-          ),
-          child: Container(
+          child: InkWell(
+            borderRadius: BorderRadius.circular(kRadiusCard),
+            onTap: () => context.push(
+              '/scholarship/${scholarship.id}',
+              extra: scholarship,
+            ),
+            child: Container(
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(kRadiusCard),
@@ -477,29 +480,31 @@ class ScholarshipCard extends StatelessWidget {
                         Row(
                           children: [
                             Expanded(
-                              child: SizedBox(
-                                height: 42,
-                                child: TextButton(
-                                  onPressed: () => context.push(
-                                    '/scholarship/${scholarship.id}',
-                                    extra: scholarship,
-                                  ),
-                                  style: TextButton.styleFrom(
-                                    backgroundColor: const Color(0xFFE3E8F9), // kSurfaceContainerHigh
-                                    foregroundColor: const Color(0xFF161C27),
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(8),
+                              child: PressableScale(
+                                child: SizedBox(
+                                  height: 42,
+                                  child: TextButton(
+                                    onPressed: () => context.push(
+                                      '/scholarship/${scholarship.id}',
+                                      extra: scholarship,
                                     ),
-                                    padding: const EdgeInsets.symmetric(horizontal: 6),
-                                  ),
-                                  child: FittedBox(
-                                    fit: BoxFit.scaleDown,
-                                    child: Text(
-                                      'View Details',
-                                      style: outfit(
-                                        fontSize: 13,
-                                        fontWeight: FontWeight.w600,
-                                        color: const Color(0xFF161C27),
+                                    style: TextButton.styleFrom(
+                                      backgroundColor: const Color(0xFFE3E8F9), // kSurfaceContainerHigh
+                                      foregroundColor: const Color(0xFF161C27),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
+                                      padding: const EdgeInsets.symmetric(horizontal: 6),
+                                    ),
+                                    child: FittedBox(
+                                      fit: BoxFit.scaleDown,
+                                      child: Text(
+                                        'View Details',
+                                        style: outfit(
+                                          fontSize: 13,
+                                          fontWeight: FontWeight.w600,
+                                          color: const Color(0xFF161C27),
+                                        ),
                                       ),
                                     ),
                                   ),
@@ -508,49 +513,51 @@ class ScholarshipCard extends StatelessWidget {
                             ),
                             const SizedBox(width: 8),
                             Expanded(
-                              child: SizedBox(
-                                height: 42,
-                                child: ElevatedButton(
-                                  onPressed: () {
-                                    if (onQuickApply != null) {
-                                      onQuickApply!();
-                                    } else {
-                                      context.push(
-                                        '/scholarship/${scholarship.id}',
-                                        extra: scholarship,
-                                      );
-                                    }
-                                  },
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: const Color(0xFF0F4D2E), // kPrimaryContainer
-                                    foregroundColor: Colors.white,
-                                    elevation: 0,
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(8),
+                              child: PressableScale(
+                                child: SizedBox(
+                                  height: 42,
+                                  child: ElevatedButton(
+                                    onPressed: () {
+                                      if (onQuickApply != null) {
+                                        onQuickApply!();
+                                      } else {
+                                        context.push(
+                                          '/scholarship/${scholarship.id}',
+                                          extra: scholarship,
+                                        );
+                                      }
+                                    },
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: const Color(0xFF0F4D2E), // kPrimaryContainer
+                                      foregroundColor: Colors.white,
+                                      elevation: 0,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
+                                      padding: const EdgeInsets.symmetric(horizontal: 6),
                                     ),
-                                    padding: const EdgeInsets.symmetric(horizontal: 6),
-                                  ),
-                                  child: FittedBox(
-                                    fit: BoxFit.scaleDown,
-                                    child: Row(
-                                      mainAxisSize: MainAxisSize.min,
-                                      mainAxisAlignment: MainAxisAlignment.center,
-                                      children: [
-                                        Text(
-                                          'Apply Now',
-                                          style: outfit(
-                                            fontSize: 13,
-                                            fontWeight: FontWeight.w600,
+                                    child: FittedBox(
+                                      fit: BoxFit.scaleDown,
+                                      child: Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        children: [
+                                          Text(
+                                            'Apply Now',
+                                            style: outfit(
+                                              fontSize: 13,
+                                              fontWeight: FontWeight.w600,
+                                              color: Colors.white,
+                                            ),
+                                          ),
+                                          const SizedBox(width: 4),
+                                          const Icon(
+                                            Icons.arrow_forward_rounded,
+                                            size: 15,
                                             color: Colors.white,
                                           ),
-                                        ),
-                                        const SizedBox(width: 4),
-                                        const Icon(
-                                          Icons.arrow_forward_rounded,
-                                          size: 15,
-                                          color: Colors.white,
-                                        ),
-                                      ],
+                                        ],
+                                      ),
                                     ),
                                   ),
                                 ),
@@ -559,30 +566,32 @@ class ScholarshipCard extends StatelessWidget {
                           ],
                         )
                       else
-                        SizedBox(
-                          width: double.infinity,
-                          height: 42,
-                          child: TextButton(
-                            onPressed: () => context.push(
-                              '/scholarship/${scholarship.id}',
-                              extra: scholarship,
-                            ),
-                            style: TextButton.styleFrom(
-                              backgroundColor: const Color(0xFFE3E8F9), // kSurfaceContainerHigh
-                              foregroundColor: const Color(0xFF161C27),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8),
+                        PressableScale(
+                          child: SizedBox(
+                            width: double.infinity,
+                            height: 42,
+                            child: TextButton(
+                              onPressed: () => context.push(
+                                '/scholarship/${scholarship.id}',
+                                extra: scholarship,
                               ),
-                              padding: const EdgeInsets.symmetric(horizontal: 6),
-                            ),
-                            child: FittedBox(
-                              fit: BoxFit.scaleDown,
-                              child: Text(
-                                'View Details',
-                                style: outfit(
-                                  fontSize: 13,
-                                  fontWeight: FontWeight.w600,
-                                  color: const Color(0xFF161C27),
+                              style: TextButton.styleFrom(
+                                backgroundColor: const Color(0xFFE3E8F9), // kSurfaceContainerHigh
+                                foregroundColor: const Color(0xFF161C27),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                padding: const EdgeInsets.symmetric(horizontal: 6),
+                              ),
+                              child: FittedBox(
+                                fit: BoxFit.scaleDown,
+                                child: Text(
+                                  'View Details',
+                                  style: outfit(
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.w600,
+                                    color: const Color(0xFF161C27),
+                                  ),
                                 ),
                               ),
                             ),
@@ -596,7 +605,8 @@ class ScholarshipCard extends StatelessWidget {
           ),
         ),
       ),
-    );
+    ),
+  );
   }
 }
 
@@ -655,6 +665,7 @@ class _BookmarkButtonState extends State<_BookmarkButton>
   }
 
   void _handleTap() {
+    HapticFeedback.lightImpact();
     final willBookmark = !(widget.isBookmarked || _locallyBookmarked);
 
     if (willBookmark) {

@@ -195,6 +195,7 @@ class _AdminUsersTabState extends ConsumerState<AdminUsersTab> {
     final paddingH = isDesktop ? 32.0 : 16.0;
 
     return SingleChildScrollView(
+      physics: const AppleBouncingScrollPhysics(),
       padding: EdgeInsets.symmetric(horizontal: paddingH, vertical: 24),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -557,11 +558,16 @@ class _AdminUsersTabState extends ConsumerState<AdminUsersTab> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
-                title,
-                style: seqLabelMd(color: kSeqOnSurfaceVariant, fontWeight: FontWeight.w500),
+              Expanded(
+                child: Text(
+                  title,
+                  style: seqLabelMd(color: kSeqOnSurfaceVariant, fontWeight: FontWeight.w500),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
               ),
-              if (badge != null)
+              if (badge != null) ...[
+                const SizedBox(width: 6),
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                   decoration: BoxDecoration(
@@ -572,8 +578,8 @@ class _AdminUsersTabState extends ConsumerState<AdminUsersTab> {
                     badge,
                     style: seqLabelSm(color: badgeFg ?? kSeqOnSurface, fontWeight: FontWeight.w600),
                   ),
-                )
-              else if (topRightIcon != null)
+                ),
+              ] else if (topRightIcon != null)
                 Container(
                   padding: const EdgeInsets.all(4),
                   decoration: BoxDecoration(
@@ -591,7 +597,7 @@ class _AdminUsersTabState extends ConsumerState<AdminUsersTab> {
             children: [
               Text(
                 value,
-                style: seqDisplay(fontWeight: FontWeight.w700),
+                style: seqTabularFigures(seqDisplay(fontWeight: FontWeight.w700)),
               ),
               const SizedBox(width: 8),
               Text(
@@ -725,27 +731,32 @@ class _AdminUsersTabState extends ConsumerState<AdminUsersTab> {
       runSpacing: 8,
       children: [
         // Region Filter
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
-          decoration: BoxDecoration(
-            color: kSeqSurfaceContainerLow,
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: kSeqOutlineVariant.withValues(alpha: 0.25), width: 1),
-          ),
-          child: DropdownButtonHideUnderline(
-            child: DropdownButton<String>(
-              value: _selectedRegion,
-              style: seqLabelMd(color: kSeqOnSurface, fontWeight: FontWeight.w500),
-              icon: const Icon(Icons.expand_more_rounded, size: 16, color: kSeqOutline),
-              items: [
-                const DropdownMenuItem(value: 'all', child: Text('All Regions (Philippines)')),
-                ...kPhilippineRegions.map(
-                  (r) => DropdownMenuItem(value: r, child: Text(r)),
-                ),
-              ],
-              onChanged: (val) {
-                if (val != null) setState(() => _selectedRegion = val);
-              },
+        SizedBox(
+          width: 160,
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
+            decoration: BoxDecoration(
+              color: kSeqSurfaceContainerLow,
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: kSeqOutlineVariant.withValues(alpha: 0.25), width: 1),
+            ),
+            child: DropdownButtonHideUnderline(
+              child: DropdownButton<String>(
+                value: _selectedRegion,
+                isDense: true,
+                isExpanded: true,
+                style: seqLabelMd(color: kSeqOnSurface, fontWeight: FontWeight.w500),
+                icon: const Icon(Icons.expand_more_rounded, size: 16, color: kSeqOutline),
+                items: [
+                  const DropdownMenuItem(value: 'all', child: Text('All Regions', overflow: TextOverflow.ellipsis)),
+                  ...kPhilippineRegions.map(
+                    (r) => DropdownMenuItem(value: r, child: Text(r, overflow: TextOverflow.ellipsis)),
+                  ),
+                ],
+                onChanged: (val) {
+                  if (val != null) setState(() => _selectedRegion = val);
+                },
+              ),
             ),
           ),
         ),
@@ -759,13 +770,14 @@ class _AdminUsersTabState extends ConsumerState<AdminUsersTab> {
           ),
           child: DropdownButtonHideUnderline(
             child: DropdownButton<String>(
+              isDense: true,
               value: _selectedStatus,
               style: seqLabelMd(color: kSeqOnSurface, fontWeight: FontWeight.w500),
               icon: const Icon(Icons.expand_more_rounded, size: 16, color: kSeqOutline),
               items: const [
                 DropdownMenuItem(value: 'all', child: Text('Status: All')),
                 DropdownMenuItem(value: 'active', child: Text('Active / Complete')),
-                DropdownMenuItem(value: 'pending', child: Text('Setup / Review Pending')),
+                DropdownMenuItem(value: 'pending', child: Text('Pending Setup')),
                 DropdownMenuItem(value: 'deactivated', child: Text('Deactivated')),
               ],
               onChanged: (val) {
@@ -942,7 +954,7 @@ class _AdminUsersTabState extends ConsumerState<AdminUsersTab> {
                     ),
                   ),
                   SizedBox(
-                    width: 100,
+                    width: 150,
                     child: Text(
                       'ACTIONS',
                       textAlign: TextAlign.right,
@@ -1116,7 +1128,7 @@ class _AdminUsersTabState extends ConsumerState<AdminUsersTab> {
                       const SizedBox(height: 2),
                       Text(
                         u.email ?? 'ID: ${u.id.substring(0, 10)}...',
-                        style: GoogleFonts.robotoMono(
+                        style: adminDataMono(
                           fontSize: 11,
                           color: kSeqOutline,
                           fontWeight: FontWeight.w400,
@@ -1181,24 +1193,24 @@ class _AdminUsersTabState extends ConsumerState<AdminUsersTab> {
                 ),
                 Text(
                   _getAttributeValue(u, v),
-                  style: seqLabelMd(fontWeight: FontWeight.w600),
+                  style: seqTabularFigures(seqLabelMd(fontWeight: FontWeight.w600)),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
               ],
             ),
           ),
-          // 6. Actions (100px)
+          // 6. Actions (150px)
           SizedBox(
-            width: 100,
+            width: 150,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 PressableScale(
                   child: TextButton(
                     style: TextButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                      minimumSize: Size.zero,
+                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                      minimumSize: const Size(0, 36),
                       tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                     ),
                     onPressed: () => _showUserDetails(context, u, v),
@@ -1229,82 +1241,94 @@ class _AdminUsersTabState extends ConsumerState<AdminUsersTab> {
         ? u.fullName
         : (v?.orgName ?? u.email ?? 'Unnamed User');
 
-    return Container(
-      padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration(
-        color: kSeqSurfaceContainerLowest,
-        borderRadius: const BorderRadius.all(Radius.circular(12)),
-        border: Border.all(color: kSeqOutlineVariant.withValues(alpha: 0.3), width: 1),
+    return Card(
+      elevation: 0,
+      margin: EdgeInsets.zero,
+      clipBehavior: Clip.antiAlias,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+        side: BorderSide(color: kSeqOutlineVariant.withValues(alpha: 0.3), width: 1),
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              _buildUserAvatar(u, v, size: 32),
-              const SizedBox(width: 10),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      displayName,
-                      style: seqLabelLg(fontWeight: FontWeight.w600),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    Text(
-                      u.email ?? u.id,
-                      style: GoogleFonts.robotoMono(fontSize: 10, color: kSeqOutline),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ],
-                ),
-              ),
-              _buildActionPopupMenu(context, u),
-            ],
-          ),
-          const SizedBox(height: 10),
-          Row(
-            children: [
-              _buildRoleBadge(u.role),
-              const SizedBox(width: 8),
-              _buildVerificationBadge(u, v),
-            ],
-          ),
-          const SizedBox(height: 8),
-          Text(
-            '${_getAffiliationPrimary(u, v)} • ${_getAffiliationSecondary(u, v)}',
-            style: seqBodySm(color: kSeqOnSurfaceVariant),
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-          ),
-          const SizedBox(height: 10),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                '${_getAttributeLabel(u)}: ${_getAttributeValue(u, v)}',
-                style: seqLabelSm(color: kSeqOutline, fontWeight: FontWeight.w600),
-              ),
-              PressableScale(
-                child: TextButton(
-                  style: TextButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                    minimumSize: Size.zero,
-                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+      child: Container(
+        padding: const EdgeInsets.all(14),
+        color: kSeqSurfaceContainerLowest,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                _buildUserAvatar(u, v, size: 32),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        displayName,
+                        style: seqLabelLg(fontWeight: FontWeight.w600),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      Text(
+                        u.email ?? u.id,
+                        style: adminDataMono(fontSize: 10, color: kSeqOutline),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ],
                   ),
-                  onPressed: () => _showUserDetails(context, u, v),
+                ),
+                _buildActionPopupMenu(context, u),
+              ],
+            ),
+            const SizedBox(height: 10),
+            Wrap(
+              spacing: 8,
+              runSpacing: 4,
+              crossAxisAlignment: WrapCrossAlignment.center,
+              children: [
+                _buildRoleBadge(u.role),
+                _buildVerificationBadge(u, v),
+              ],
+            ),
+            const SizedBox(height: 8),
+            Text(
+              '${_getAffiliationPrimary(u, v)} • ${_getAffiliationSecondary(u, v)}',
+              style: seqBodySm(color: kSeqOnSurfaceVariant),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+            const SizedBox(height: 10),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Expanded(
                   child: Text(
-                    'Inspect Dossier',
-                    style: seqLabelSm(fontWeight: FontWeight.w600, color: kSeqPrimaryContainer),
+                    '${_getAttributeLabel(u)}: ${_getAttributeValue(u, v)}',
+                    style: seqTabularFigures(seqLabelSm(color: kSeqOutline, fontWeight: FontWeight.w600)),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ),
-              ),
-            ],
-          ),
-        ],
+                const SizedBox(width: 8),
+                PressableScale(
+                  child: TextButton(
+                    style: TextButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                      minimumSize: const Size(0, 36),
+                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                    ),
+                    onPressed: () => _showUserDetails(context, u, v),
+                    child: Text(
+                      'Inspect Dossier',
+                      style: seqLabelSm(fontWeight: FontWeight.w600, color: kSeqPrimaryContainer),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -1376,7 +1400,10 @@ class _AdminUsersTabState extends ConsumerState<AdminUsersTab> {
     if (u.role == 'student') {
       return u.course.isNotEmpty ? u.course : 'General Academic Program';
     } else if (u.role == 'provider') {
-      return v?.orgName ?? (u.fullName.isNotEmpty ? u.fullName : 'Independent Benefactor');
+      final org = v?.orgName;
+      if (org != null && org.isNotEmpty) return org;
+      if (u.school != null && u.school!.isNotEmpty) return u.school!;
+      return 'Independent Benefactor';
     } else {
       return 'Scholaris Executive Governance';
     }
@@ -1467,7 +1494,7 @@ class _AdminUsersTabState extends ConsumerState<AdminUsersTab> {
               ),
               const SizedBox(width: 5),
               Text(
-                'Suspended',
+                'Deactivated',
                 style: seqLabelSm(color: suspendedFg, fontWeight: FontWeight.w600),
               ),
             ],
@@ -1619,7 +1646,7 @@ class _AdminUsersTabState extends ConsumerState<AdminUsersTab> {
   Widget _buildActionPopupMenu(BuildContext context, StudentProfile u) {
     return PopupMenuButton<String>(
       icon: const Icon(Icons.more_vert_rounded, size: 16, color: kSeqOutline),
-      tooltip: 'User options',
+      tooltip: 'User actions',
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.all(Radius.circular(12)),
       ),
@@ -1764,10 +1791,14 @@ class _AdminUsersTabState extends ConsumerState<AdminUsersTab> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
-                category,
-                style: seqLabelSm(color: kSeqOutline, fontWeight: FontWeight.w600)
-                    .copyWith(letterSpacing: 0.5),
+              Expanded(
+                child: Text(
+                  category,
+                  style: seqLabelSm(color: kSeqOutline, fontWeight: FontWeight.w600)
+                      .copyWith(letterSpacing: 0.5),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
               ),
               if (headerDot != null)
                 Container(
@@ -1799,7 +1830,7 @@ class _AdminUsersTabState extends ConsumerState<AdminUsersTab> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Flexible(
+                Expanded(
                   child: Text(
                     footerLabel,
                     style: seqLabelSm(color: kSeqOutline),
@@ -1807,15 +1838,20 @@ class _AdminUsersTabState extends ConsumerState<AdminUsersTab> {
                     overflow: TextOverflow.ellipsis,
                   ),
                 ),
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                  decoration: BoxDecoration(
-                    color: footerBadgeColor,
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Text(
-                    footerValue,
-                    style: seqLabelSm(color: footerTextColor, fontWeight: FontWeight.w600),
+                const SizedBox(width: 8),
+                Flexible(
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: footerBadgeColor,
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Text(
+                      footerValue,
+                      style: seqLabelSm(color: footerTextColor, fontWeight: FontWeight.w600),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
                   ),
                 ),
               ],
@@ -2155,7 +2191,7 @@ class _AdminUsersTabState extends ConsumerState<AdminUsersTab> {
                   }
                 }
               },
-              child: const Text('Provision Identity'),
+              child: const Text('Create Account'),
             ),
           ],
         ),
@@ -2378,6 +2414,15 @@ class _AdminUsersTabState extends ConsumerState<AdminUsersTab> {
 
   Widget _detailRow(BuildContext context, String label, String value) {
     final isDesktop = MediaQuery.sizeOf(context).width >= 768;
+    final isMono = label.contains('ID') ||
+        label.contains('Date') ||
+        label.contains('At') ||
+        label.contains('GWA') ||
+        label.contains('Income') ||
+        label.contains('Registered');
+    final valStyle = isMono
+        ? seqTabularFigures(adminDataMono(fontSize: 13, color: kSeqOnSurface))
+        : seqBodyMd(fontWeight: FontWeight.w500);
 
     if (!isDesktop) {
       return Padding(
@@ -2389,7 +2434,7 @@ class _AdminUsersTabState extends ConsumerState<AdminUsersTab> {
             const SizedBox(height: 2),
             SelectableText(
               value,
-              style: seqBodyMd(fontWeight: FontWeight.w500),
+              style: valStyle,
             ),
           ],
         ),
@@ -2408,7 +2453,7 @@ class _AdminUsersTabState extends ConsumerState<AdminUsersTab> {
           Expanded(
             child: SelectableText(
               value,
-              style: seqBodyMd(fontWeight: FontWeight.w500),
+              style: valStyle,
             ),
           ),
         ],

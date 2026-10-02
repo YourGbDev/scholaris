@@ -11,6 +11,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:scholaris/features/profile/providers/profile_setup_provider.dart';
 import 'package:scholaris/shared/widgets/logout_confirmation_dialog.dart';
 import '../../providers/provider_type_provider.dart';
+import 'package:scholaris/shared/theme/app_motion.dart';
 import '../../../../core/auth/landing_redirect.dart';
 import '../org/org_provider_theme.dart';
 
@@ -90,6 +91,7 @@ class _IndividualSettingsTabState extends ConsumerState<IndividualSettingsTab> {
     return Container(
       color: kOrgCanvas,
       child: ListView(
+        physics: const AppleBouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
         padding: const EdgeInsets.fromLTRB(16, 16, 16, 32),
         children: [
           // Header
@@ -102,9 +104,10 @@ class _IndividualSettingsTabState extends ConsumerState<IndividualSettingsTab> {
 
           const SizedBox(height: 18),
 
-          // View Mode Switcher Tile (Org vs Individual)
-          Container(
-            padding: const EdgeInsets.all(14),
+          StaggeredListItem(
+            index: 0,
+            child: Container(
+              padding: const EdgeInsets.all(14),
             decoration: BoxDecoration(
               color: kOrgSurfaceWhite,
               borderRadius: BorderRadius.circular(12),
@@ -130,38 +133,44 @@ class _IndividualSettingsTabState extends ConsumerState<IndividualSettingsTab> {
                 Row(
                   children: [
                     Expanded(
-                      child: ChoiceChip(
-                        label: const FittedBox(
-                          fit: BoxFit.scaleDown,
-                          child: Text('Individual Benefactor'),
+                      child: PressableScale(
+                        scale: 0.98,
+                        child: ChoiceChip(
+                          label: const FittedBox(
+                            fit: BoxFit.scaleDown,
+                            child: Text('Individual Benefactor'),
+                          ),
+                          selected: activeType == 'individual',
+                          selectedColor: kOrgSidebarDark,
+                          labelStyle: orgLabel(
+                            color: activeType == 'individual'
+                                ? Colors.white
+                                : kOrgTextPrimary,
+                            fontSize: 11,
+                          ),
+                          onSelected: (_) => setProviderType(ref, 'individual'),
                         ),
-                        selected: activeType == 'individual',
-                        selectedColor: kOrgSidebarDark,
-                        labelStyle: orgLabel(
-                          color: activeType == 'individual'
-                              ? Colors.white
-                              : kOrgTextPrimary,
-                          fontSize: 11,
-                        ),
-                        onSelected: (_) => setProviderType(ref, 'individual'),
                       ),
                     ),
                     const SizedBox(width: 8),
                     Expanded(
-                      child: ChoiceChip(
-                        label: const FittedBox(
-                          fit: BoxFit.scaleDown,
-                          child: Text('Org Console'),
+                      child: PressableScale(
+                        scale: 0.98,
+                        child: ChoiceChip(
+                          label: const FittedBox(
+                            fit: BoxFit.scaleDown,
+                            child: Text('Org Console'),
+                          ),
+                          selected: activeType == 'organization',
+                          selectedColor: kOrgSidebarDark,
+                          labelStyle: orgLabel(
+                            color: activeType == 'organization'
+                                ? Colors.white
+                                : kOrgTextPrimary,
+                            fontSize: 11,
+                          ),
+                          onSelected: (_) => setProviderType(ref, 'organization'),
                         ),
-                        selected: activeType == 'organization',
-                        selectedColor: kOrgSidebarDark,
-                        labelStyle: orgLabel(
-                          color: activeType == 'organization'
-                              ? Colors.white
-                              : kOrgTextPrimary,
-                          fontSize: 11,
-                        ),
-                        onSelected: (_) => setProviderType(ref, 'organization'),
                       ),
                     ),
                   ],
@@ -169,12 +178,15 @@ class _IndividualSettingsTabState extends ConsumerState<IndividualSettingsTab> {
               ],
             ),
           ),
+          ),
 
           const SizedBox(height: 16),
 
           // Profile Form
-          Container(
-            padding: const EdgeInsets.all(16),
+          StaggeredListItem(
+            index: 1,
+            child: Container(
+              padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
               color: kOrgSurfaceWhite,
               borderRadius: BorderRadius.circular(12),
@@ -234,34 +246,41 @@ class _IndividualSettingsTabState extends ConsumerState<IndividualSettingsTab> {
 
                 SizedBox(
                   width: double.infinity,
-                  child: FilledButton.icon(
-                    style: FilledButton.styleFrom(
-                      backgroundColor: kOrgPrimary,
-                      padding: const EdgeInsets.symmetric(vertical: 10),
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8)),
+                  child: PressableScale(
+                    scale: 0.98,
+                    child: FilledButton.icon(
+                      style: FilledButton.styleFrom(
+                        backgroundColor: kOrgPrimary,
+                        padding: const EdgeInsets.symmetric(vertical: 14),
+                        minimumSize: const Size.fromHeight(48),
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8)),
+                      ),
+                      onPressed: _isSaving ? null : _handleSave,
+                      icon: _isSaving
+                          ? const SizedBox(
+                              width: 14,
+                              height: 14,
+                              child: CircularProgressIndicator(
+                                  strokeWidth: 2, color: Colors.white),
+                            )
+                          : const Icon(Icons.save_outlined, size: 16),
+                      label: const Text('Save Profile Changes'),
                     ),
-                    onPressed: _isSaving ? null : _handleSave,
-                    icon: _isSaving
-                        ? const SizedBox(
-                            width: 14,
-                            height: 14,
-                            child: CircularProgressIndicator(
-                                strokeWidth: 2, color: Colors.white),
-                          )
-                        : const Icon(Icons.save_outlined, size: 16),
-                    label: const Text('Save Profile Changes'),
                   ),
                 ),
               ],
             ),
           ),
+          ),
 
           const SizedBox(height: 16),
 
           // Sign Out
-          Container(
-            padding: const EdgeInsets.all(16),
+          StaggeredListItem(
+            index: 2,
+            child: Container(
+              padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
               color: kOrgSurfaceWhite,
               borderRadius: BorderRadius.circular(12),
@@ -278,23 +297,28 @@ class _IndividualSettingsTabState extends ConsumerState<IndividualSettingsTab> {
                         style: orgBody(fontSize: 11, color: kOrgTextSecondary)),
                   ],
                 ),
-                OutlinedButton.icon(
-                  style: OutlinedButton.styleFrom(
-                    foregroundColor: kOrgError,
-                    side: const BorderSide(color: kOrgError),
+                PressableScale(
+                  scale: 0.98,
+                  child: OutlinedButton.icon(
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: kOrgError,
+                      side: const BorderSide(color: kOrgError),
+                      minimumSize: const Size(110, 44),
+                    ),
+                    onPressed: () async {
+                      final confirmed =
+                          await showLogoutConfirmationDialog(context);
+                      if (confirmed) {
+                        await handleProviderSignOut();
+                      }
+                    },
+                    icon: const Icon(Icons.logout_rounded, size: 16),
+                    label: const Text('Sign Out'),
                   ),
-                  onPressed: () async {
-                    final confirmed =
-                        await showLogoutConfirmationDialog(context);
-                    if (confirmed) {
-                      await handleProviderSignOut();
-                    }
-                  },
-                  icon: const Icon(Icons.logout_rounded, size: 16),
-                  label: const Text('Sign Out'),
                 ),
               ],
             ),
+          ),
           ),
         ],
       ),

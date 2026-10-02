@@ -24,6 +24,7 @@ import 'package:scholaris/features/profile/providers/profile_setup_provider.dart
 import 'package:scholaris/features/profile/repositories/profile_repository.dart';
 import 'package:scholaris/features/scholarships/providers/scholarships_provider.dart';
 import 'package:scholaris/features/scholarships/repositories/scholarship_repository.dart';
+import 'package:scholaris/shared/theme/app_motion.dart';
 import 'package:scholaris/shared/utils/constants.dart';
 
 import 'helpers/fake_application_data_source.dart';
@@ -190,35 +191,35 @@ void main() {
       await tester.pumpWidget(_wrapHomeScreen());
       await tester.pump(const Duration(milliseconds: 500));
 
-      // All four destinations are present — scoped to the NavigationBar,
+      // All four destinations are present — scoped to the LiquidGlass pill,
       // matching the Stitch V2 navigation architecture.
       expect(
-        find.descendant(of: find.byType(NavigationBar), matching: find.text('Dashboard')),
+        find.descendant(of: find.byType(LiquidGlass), matching: find.text('Dashboard')),
         findsOneWidget,
       );
       expect(
-        find.descendant(of: find.byType(NavigationBar), matching: find.text('Discover')),
+        find.descendant(of: find.byType(LiquidGlass), matching: find.text('Discover')),
         findsOneWidget,
       );
       expect(
-        find.descendant(of: find.byType(NavigationBar), matching: find.text('Tracker')),
+        find.descendant(of: find.byType(LiquidGlass), matching: find.text('Tracker')),
         findsOneWidget,
       );
       expect(
-        find.descendant(of: find.byType(NavigationBar), matching: find.text('Profile')),
+        find.descendant(of: find.byType(LiquidGlass), matching: find.text('Profile')),
         findsOneWidget,
       );
 
       // Switching to the Tracker tab surfaces the tracking surface.
       await tester.tap(find.text('Tracker'));
-      await tester.pump(const Duration(milliseconds: 500));
+      await tester.pumpAndSettle();
 
       expect(find.text('My Applications'), findsOneWidget);
       expect(find.text('No applications yet'), findsOneWidget);
 
       // Dashboard still works after switching back — IndexedStack preserved.
       await tester.tap(find.text('Dashboard'));
-      await tester.pump(const Duration(milliseconds: 500));
+      await tester.pumpAndSettle();
       expect(find.textContaining('Maria'), findsOneWidget);
     });
 
@@ -238,7 +239,7 @@ void main() {
       await tester.pump(const Duration(milliseconds: 500));
 
       await tester.tap(find.text('Tracker'));
-      await tester.pump(const Duration(milliseconds: 500));
+      await tester.pumpAndSettle();
 
       expect(find.text('DOST-SEI Undergraduate Scholarship'), findsOneWidget);
       expect(find.text('CHED Merit Scholarship (MSRS)'), findsOneWidget);

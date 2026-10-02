@@ -12,6 +12,7 @@ import 'package:go_router/go_router.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'package:scholaris/app/confirmation_redirect.dart';
+import 'package:scholaris/shared/theme/app_motion.dart';
 import 'package:scholaris/shared/theme/app_theme.dart';
 import 'package:scholaris/shared/widgets/mascot_pose_view.dart';
 
@@ -138,6 +139,7 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
             // Scrollable Content
             Expanded(
               child: SingleChildScrollView(
+                physics: const AppleBouncingScrollPhysics(),
                 padding: const EdgeInsets.fromLTRB(20, 8, 20, 24),
                 child: Center(
                   child: ConstrainedBox(

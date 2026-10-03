@@ -9,15 +9,15 @@ part of 'applicant_profile.dart';
 _ApplicantProfile _$ApplicantProfileFromJson(Map<String, dynamic> json) =>
     _ApplicantProfile(
       id: json['id'] as String,
-      fullName: json['full_name'] as String,
+      fullName: json['full_name'] as String? ?? '',
       school: json['school'] as String?,
-      course: json['course'] as String,
-      yearLevel: (json['year_level'] as num).toInt(),
-      gpa: (json['gpa'] as num).toDouble(),
-      region: json['region'] as String,
+      course: json['course'] as String? ?? '',
+      yearLevel: (json['year_level'] as num?)?.toInt() ?? 1,
+      gpa: (json['gpa'] as num?)?.toDouble() ?? 0.0,
+      region: json['region'] as String? ?? '',
       province: json['province'] as String?,
       cityMunicipality: json['city_municipality'] as String?,
-      setupComplete: json['setup_complete'] as bool,
+      setupComplete: json['setup_complete'] as bool? ?? false,
       monthlyFamilyIncome: (json['monthly_family_income'] as num?)?.toDouble(),
     );
 

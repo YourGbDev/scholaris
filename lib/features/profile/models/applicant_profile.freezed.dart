@@ -220,7 +220,7 @@ return $default(_that.id,_that.fullName,_that.school,_that.course,_that.yearLeve
 @JsonSerializable()
 
 class _ApplicantProfile extends ApplicantProfile {
-  const _ApplicantProfile({required this.id, @JsonKey(name: 'full_name') required this.fullName, @JsonKey(name: 'school') this.school, @JsonKey(name: 'course') required this.course, @JsonKey(name: 'year_level') required this.yearLevel, @JsonKey(name: 'gpa') required this.gpa, @JsonKey(name: 'region') required this.region, @JsonKey(name: 'province') this.province, @JsonKey(name: 'city_municipality') this.cityMunicipality, @JsonKey(name: 'setup_complete') required this.setupComplete, @JsonKey(name: 'monthly_family_income') this.monthlyFamilyIncome}): super._();
+  const _ApplicantProfile({required this.id, @JsonKey(name: 'full_name') this.fullName = '', @JsonKey(name: 'school') this.school, @JsonKey(name: 'course') this.course = '', @JsonKey(name: 'year_level') this.yearLevel = 1, @JsonKey(name: 'gpa') this.gpa = 0.0, @JsonKey(name: 'region') this.region = '', @JsonKey(name: 'province') this.province, @JsonKey(name: 'city_municipality') this.cityMunicipality, @JsonKey(name: 'setup_complete') this.setupComplete = false, @JsonKey(name: 'monthly_family_income') this.monthlyFamilyIncome}): super._();
   factory _ApplicantProfile.fromJson(Map<String, dynamic> json) => _$ApplicantProfileFromJson(json);
 
 @override final  String id;

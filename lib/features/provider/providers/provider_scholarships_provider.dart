@@ -6,6 +6,7 @@ import 'dart:convert';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../applications/models/application.dart';
 import '../../applications/providers/applications_provider.dart';
 import '../../auth/controllers/auth_controller.dart';
 import '../../profile/models/applicant_profile.dart';
@@ -133,7 +134,13 @@ final providerApplicantProfilesProvider =
   if (userIds.isEmpty) return {};
   final profileRepo = ref.watch(profileRepositoryProvider);
   final results = await Future.wait(
-    userIds.map((id) => profileRepo.fetchApplicantProfile(id)),
+    userIds.map((id) async {
+      try {
+        return await profileRepo.fetchApplicantProfile(id);
+      } catch (_) {
+        return null;
+      }
+    }),
   );
   final map = <String, ApplicantProfile>{};
   for (final profile in results) {
@@ -145,6 +152,10 @@ final providerApplicantProfilesProvider =
   // Gracefully fallback to student metadata in application notes if database RLS
   // isolates the profiles table
   for (final app in apps) {
+    if (app.status == ApplicationStatus.draft ||
+        app.status == ApplicationStatus.withdrawn) {
+      continue;
+    }
     if (!map.containsKey(app.userId) && app.notes != null && app.notes!.trim().startsWith('{')) {
       try {
         final decoded = jsonDecode(app.notes!) as Map<String, dynamic>;

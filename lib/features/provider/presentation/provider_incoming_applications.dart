@@ -177,7 +177,13 @@ class _ApplicantNameBuilder extends ConsumerWidget {
 
     return FutureBuilder<List<ApplicantProfile?>>(
       future: Future.wait(
-        applicantIds.map((id) => repository.fetchApplicantProfile(id)),
+        applicantIds.map((id) async {
+          try {
+            return await repository.fetchApplicantProfile(id);
+          } catch (_) {
+            return null;
+          }
+        }),
       ),
       builder: (context, snapshot) {
         final profiles = snapshot.data;

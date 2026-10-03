@@ -34,7 +34,10 @@ CREATE POLICY "storage_student_upload_own_application_documents"
     bucket_id = 'application_documents'
     AND EXISTS (
       SELECT 1 FROM public.applications a
-      WHERE a.id = ((storage.foldername(name))[1])::uuid
+      WHERE a.id = CASE
+        WHEN (storage.foldername(name))[1] ~* '^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$'
+        THEN ((storage.foldername(name))[1])::uuid
+        ELSE NULL END
         AND a.user_id = auth.uid()
     )
   );
@@ -52,7 +55,10 @@ CREATE POLICY "storage_student_read_own_application_documents"
       -- Student reading their own uploaded application documents
       EXISTS (
         SELECT 1 FROM public.applications a
-        WHERE a.id = ((storage.foldername(name))[1])::uuid
+        WHERE a.id = CASE
+          WHEN (storage.foldername(name))[1] ~* '^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$'
+          THEN ((storage.foldername(name))[1])::uuid
+          ELSE NULL END
           AND a.user_id = auth.uid()
       )
       OR
@@ -66,11 +72,11 @@ CREATE POLICY "storage_student_read_own_application_documents"
       EXISTS (
         SELECT 1 FROM public.applications a
         JOIN public.scholarships s ON s.id = a.scholarship_id
-        WHERE a.id = ((storage.foldername(name))[1])::uuid
-          AND (
-            s.created_by = auth.uid()
-            OR s.provider = (SELECT organization_name FROM public.profiles WHERE id = auth.uid())
-          )
+        WHERE a.id = CASE
+          WHEN (storage.foldername(name))[1] ~* '^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$'
+          THEN ((storage.foldername(name))[1])::uuid
+          ELSE NULL END
+          AND s.created_by = auth.uid()
       )
     )
   );
@@ -85,7 +91,10 @@ CREATE POLICY "storage_student_delete_own_application_documents"
     bucket_id = 'application_documents'
     AND EXISTS (
       SELECT 1 FROM public.applications a
-      WHERE a.id = ((storage.foldername(name))[1])::uuid
+      WHERE a.id = CASE
+        WHEN (storage.foldername(name))[1] ~* '^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$'
+        THEN ((storage.foldername(name))[1])::uuid
+        ELSE NULL END
         AND a.user_id = auth.uid()
         AND a.status IN ('draft', 'submitted')
     )

@@ -1,3 +1,4 @@
+-- As of Oct 2026 prod has no such policy on public.profiles (pg_policies), so this is a no-op there. Safe to skip.
 -- =============================================================================
 -- Migration 0021: Drop Legacy Provider Profile Policy
 --

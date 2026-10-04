@@ -1,8 +1,9 @@
--- DRAFT, NOT APPLIED, apply only after review together with 0020/0021 and after confirming the provider UI never needs draft rows. Do not touch the 0006 update policy.
-
+-- DRAFT, NOT APPLIED. Run only after review. Do not touch the update policy.
+-- Prod's live policy is named providers_select_own_applications (pg_policies, Oct 2026).
+drop policy if exists "providers_select_own_applications" on public.applications;
 drop policy if exists "Providers can select applications to their own scholarships" on public.applications;
 
-create policy "Providers can select applications to their own scholarships"
+create policy "providers_select_own_applications"
   on public.applications for select
   to authenticated
   using (

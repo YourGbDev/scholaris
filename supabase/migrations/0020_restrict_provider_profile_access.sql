@@ -55,10 +55,10 @@ SELECT
   -- SENSITIVE FIELD AUDIT & JUSTIFICATION:
   -- The following field is classified as sensitive financial information under
   -- RA 10173. It is included in this view because provider evaluation screens:
-  --   1. lib/features/provider/presentation/provider_application_detail_screen.dart:656
-  --   2. lib/features/provider/presentation/widgets/applicant_review_drawer.dart:380,808
-  --   3. lib/features/provider/presentation/org/org_incoming_applications_tab.dart:1267
-  --   4. lib/features/provider/presentation/org/org_analytics_tab.dart:161
+  --   1. lib/features/provider/presentation/provider_application_detail_screen.dart
+  --   2. lib/features/provider/presentation/widgets/applicant_review_drawer.dart
+  --   3. lib/features/provider/presentation/org/org_incoming_applications_tab.dart
+  --   4. lib/features/provider/presentation/org/org_analytics_tab.dart
   -- genuinely require household income to evaluate eligibility for need-based grants
   -- (e.g. CHED Tulong Dunong, 4Ps thresholds).
   --
@@ -91,6 +91,7 @@ COMMENT ON VIEW public.provider_applicant_profiles IS
 
 GRANT SELECT ON public.provider_applicant_profiles TO authenticated;
 REVOKE ALL ON public.provider_applicant_profiles FROM PUBLIC, anon;
+REVOKE INSERT, UPDATE, DELETE, TRUNCATE, REFERENCES, TRIGGER ON public.provider_applicant_profiles FROM authenticated;
 
 -- -----------------------------------------------------------------------------
 -- 3. Security Definer RPC Helper: get_applicant_profile

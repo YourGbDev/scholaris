@@ -44,3 +44,8 @@ To act as a user in the Supabase SQL editor:
    Expected: 0 rows (the legacy policy is gone). The provider screens must still show applicant names via the view.
 10. As Student S1, select * from public.profiles where id = '<S1_UUID>';
     Expected: 1 row (own-profile policy still works).
+
+## Check 11 (grants, read-only)
+select grantee, privilege_type from information_schema.role_table_grants where table_schema = 'public' and table_name = 'provider_applicant_profiles' order by grantee, privilege_type;
+Expected: authenticated has only SELECT; anon and PUBLIC have no rows.
+This view must never be writable by providers.

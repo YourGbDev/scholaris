@@ -9,7 +9,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:scholaris/features/applications/models/application.dart';
 import 'package:scholaris/features/applications/presentation/application_status_chip.dart';
 import 'package:scholaris/features/applications/providers/applications_provider.dart';
-import 'package:scholaris/features/profile/models/student_profile.dart';
+import 'package:scholaris/features/profile/models/applicant_profile.dart';
 import 'package:scholaris/features/profile/providers/profile_setup_provider.dart';
 import 'package:scholaris/features/scholarships/models/scholarship.dart';
 import 'package:scholaris/features/scholarships/providers/scholarships_provider.dart';
@@ -30,7 +30,7 @@ class ProviderApplicationDetailScreen extends ConsumerStatefulWidget {
   final String applicationId;
   final Application? initialApplication;
   final Scholarship? initialScholarship;
-  final StudentProfile? initialProfile;
+  final ApplicantProfile? initialProfile;
 
   @override
   ConsumerState<ProviderApplicationDetailScreen> createState() =>
@@ -213,24 +213,23 @@ class _ProviderApplicationDetailScreenState
       ),
       body: widget.initialProfile != null
           ? _buildReviewContent(context, app, scholarship, widget.initialProfile!)
-          : FutureBuilder<StudentProfile?>(
+          : FutureBuilder<ApplicantProfile?>(
               future: ref
                   .read(profileRepositoryProvider)
-                  .fetchProfileById(app.userId),
+                  .fetchApplicantProfile(app.userId),
               builder: (context, snapshot) {
                 if (snapshot.connectionState != ConnectionState.done) {
                   return const Center(child: LoadingView());
                 }
                 final profile = snapshot.data ??
-                    StudentProfile(
+                    ApplicantProfile(
                       id: app.userId,
                       fullName: 'Applicant #${app.id.length >= 5 ? app.id.substring(0, 5).toUpperCase() : app.id}',
                       course: 'Degree Program Pending',
-                      school: 'Institution Pending',
                       yearLevel: 1,
                       gpa: 0.0,
                       region: 'Philippines',
-                      nationality: 'Filipino',
+                      setupComplete: false,
                     );
                 return _buildReviewContent(context, app, scholarship, profile);
               },
@@ -243,7 +242,7 @@ class _ProviderApplicationDetailScreenState
     BuildContext context,
     Application app,
     Scholarship? scholarship,
-    StudentProfile profile,
+    ApplicantProfile profile,
   ) {
     final refCode =
         '#SCH-2024-${app.id.hashCode.abs().toString().padLeft(4, '0').substring(0, 4)}';

@@ -1,10 +1,16 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:scholaris/features/applications/providers/applications_provider.dart';
+import 'package:scholaris/features/applications/repositories/application_repository.dart';
 import 'package:scholaris/features/auth/controllers/auth_controller.dart';
+import 'package:scholaris/features/profile/providers/profile_setup_provider.dart';
+import 'package:scholaris/features/profile/repositories/profile_repository.dart';
 import 'package:scholaris/features/provider/providers/provider_scholarships_provider.dart';
 import 'package:scholaris/features/scholarships/providers/scholarships_provider.dart';
 import 'package:scholaris/features/scholarships/repositories/scholarship_repository.dart';
 
+import 'helpers/fake_application_data_source.dart';
+import 'helpers/fake_profile_data_source.dart';
 import 'helpers/fake_scholarship_data_source.dart';
 
 void main() {
@@ -143,4 +149,37 @@ void main() {
       expect(searched.first.id, 'sch-1');
     });
   });
+
+  group('providerApplicantProfilesProvider', () {
+    test('resolves other profiles when one throws and skips draft notes fallback', () async {
+      final appSource = FakeApplicationDataSource();
+      appSource.scholarshipIndex['sch-1'] = {'id': 'sch-1', 'created_by': 'prov-1'};
+      await appSource.insertApplication('app-err', {'user_id': 'applicant-err', 'scholarship_id': 'sch-1', 'status': 'submitted'});
+      await appSource.insertApplication('app-ok', {'user_id': 'applicant-ok', 'scholarship_id': 'sch-1', 'status': 'submitted'});
+      await appSource.insertApplication('app-draft', {'user_id': 'applicant-draft', 'scholarship_id': 'sch-1', 'status': 'draft', 'notes': '{"full_name": "Draft Student", "course": "BS IT"}'});
+      final profileSource = _ThrowingProfileDataSource({'applicant-err'});
+      await profileSource.upsertProfile('applicant-ok', {'full_name': 'Valid Applicant', 'course': 'BS CS', 'year_level': 2, 'gpa': 3.75, 'region': 'NCR', 'setup_complete': true});
+      final container = ProviderContainer(overrides: [
+        currentUserIdProvider.overrideWithValue('prov-1'),
+        applicationRepositoryProvider.overrideWith((ref) => ApplicationRepository(dataSource: appSource, currentUserId: () => 'prov-1')),
+        profileRepositoryProvider.overrideWith((ref) => ProfileRepository(dataSource: profileSource, currentUserId: () => 'prov-1')),
+      ]);
+      addTearDown(container.dispose);
+      final profiles = await container.read(providerApplicantProfilesProvider.future);
+      expect(profiles['applicant-ok']?.fullName, 'Valid Applicant');
+      expect(profiles.containsKey('applicant-err'), isFalse);
+      expect(profiles.containsKey('applicant-draft'), isFalse);
+    });
+  });
 }
+
+class _ThrowingProfileDataSource extends FakeProfileDataSource {
+  final Set<String> throwIds;
+  _ThrowingProfileDataSource(this.throwIds);
+  @override
+  Future<Map<String, dynamic>?> fetchApplicantProfile(String userId) async {
+    if (throwIds.contains(userId)) throw Exception('Row corrupted for $userId');
+    return super.fetchApplicantProfile(userId);
+  }
+}
+

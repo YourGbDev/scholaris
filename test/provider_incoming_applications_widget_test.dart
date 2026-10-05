@@ -105,7 +105,7 @@ void main() {
     ]);
 
     final profiles = FakeProfileDataSource();
-    profiles.rows['applicant-1'] = {'id': 'applicant-1', 'full_name': 'Juan Dela Cruz'};
+    profiles.rows['applicant-1'] = {'id': 'applicant-1', 'full_name': 'Juan Dela Cruz', 'course': 'CS', 'year_level': 1, 'gpa': 1.0, 'region': 'NCR', 'setup_complete': true};
 
     await tester.pumpWidget(buildApp(
       applications: applications,
@@ -141,7 +141,7 @@ void main() {
     ]);
 
     final profiles = FakeProfileDataSource();
-    profiles.rows['applicant-2'] = {'id': 'applicant-2', 'full_name': 'Maria Santos'};
+    profiles.rows['applicant-2'] = {'id': 'applicant-2', 'full_name': 'Maria Santos', 'course': 'IT', 'year_level': 2, 'gpa': 2.0, 'region': 'NCR', 'setup_complete': true};
 
     await tester.pumpWidget(buildApp(
       applications: applications,
@@ -329,7 +329,8 @@ void main() {
       'year_level': 3,
       'gpa': 3.5,
       'region': 'NCR',
-      'nationality': 'Filipino',
+      'setup_complete': true,
+
     };
 
     await tester.pumpWidget(buildApp(
@@ -375,7 +376,8 @@ void main() {
       'year_level': 3,
       'gpa': 3.5,
       'region': 'NCR',
-      'nationality': 'Filipino',
+      'setup_complete': true,
+
     };
 
     await tester.pumpWidget(buildApp(
@@ -422,7 +424,8 @@ void main() {
       'year_level': 2,
       'gpa': 3.0,
       'region': 'NCR',
-      'nationality': 'Filipino',
+      'setup_complete': true,
+
     };
     profiles.rows['applicant-2'] = {
       'id': 'applicant-2',
@@ -431,7 +434,8 @@ void main() {
       'year_level': 3,
       'gpa': 3.2,
       'region': 'NCR',
-      'nationality': 'Filipino',
+      'setup_complete': true,
+
     };
 
     await tester.pumpWidget(buildApp(
@@ -496,8 +500,8 @@ void main() {
     ]);
 
     final profiles = FakeProfileDataSource();
-    profiles.rows['applicant-1'] = {'id': 'applicant-1', 'full_name': 'Juan Dela Cruz'};
-    profiles.rows['applicant-2'] = {'id': 'applicant-2', 'full_name': 'Maria Santos'};
+    profiles.rows['applicant-1'] = {'id': 'applicant-1', 'full_name': 'Juan Dela Cruz', 'course': 'CS', 'year_level': 1, 'gpa': 1.0, 'region': 'NCR', 'setup_complete': true};
+    profiles.rows['applicant-2'] = {'id': 'applicant-2', 'full_name': 'Maria Santos', 'course': 'IT', 'year_level': 2, 'gpa': 2.0, 'region': 'NCR', 'setup_complete': true};
 
     await tester.pumpWidget(buildApp(
       applications: applications,

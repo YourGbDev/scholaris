@@ -12,7 +12,7 @@
 //   3. Privacy & Data Shield — RA 10173 data usage banner, privacy policy, data
 //      dossier export, and third-party SUC permissions.
 //   4. Support & About — student help desk, live chat, and app build details.
-//   5. Account Actions & Trust Footer — calm logout, deactivation, and NPC registry.
+//   5. Account Actions & Trust Footer — calm logout, deactivation, and security facts.
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -248,7 +248,7 @@ class _AccountSettingsScreenState extends ConsumerState<AccountSettingsScreen> {
             _buildSupportAndAboutSection(),
             const SizedBox(height: 28),
 
-            // Group 5: Bottom Account Actions & NPC Trust Footer
+            // Group 5: Bottom Account Actions & Security Footer
             _buildBottomAccountActionsSection(),
           ],
         ),
@@ -1211,14 +1211,14 @@ class _AccountSettingsScreenState extends ConsumerState<AccountSettingsScreen> {
         ),
         const SizedBox(height: 12),
 
-        // End-to-end encrypted & National Privacy Commission Footer
+        // Security & Data Protection Footer
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(Icons.lock_clock_outlined, size: 14, color: Color(0xFF707971)),
+            const Icon(Icons.lock_outline_rounded, size: 14, color: Color(0xFF707971)),
             const SizedBox(width: 4),
             Text(
-              'END-TO-END ENCRYPTED',
+              'ENCRYPTED IN TRANSIT (TLS)',
               style: outfit(
                 fontSize: 10,
                 fontWeight: FontWeight.w700,
@@ -1231,7 +1231,7 @@ class _AccountSettingsScreenState extends ConsumerState<AccountSettingsScreen> {
         const SizedBox(height: 2),
         Center(
           child: Text(
-            'National Privacy Commission Registered (NPC-RA10173)',
+            'Access-Controlled Storage',
             style: openSans(
               fontSize: 11,
               color: const Color(0xFF707971),

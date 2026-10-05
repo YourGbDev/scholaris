@@ -9,7 +9,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:scholaris/features/applications/models/application.dart';
 import 'package:scholaris/features/applications/presentation/application_status_chip.dart';
 import 'package:scholaris/features/applications/providers/applications_provider.dart';
-import 'package:scholaris/features/profile/models/student_profile.dart';
+import 'package:scholaris/features/profile/models/applicant_profile.dart';
 import 'package:scholaris/features/profile/providers/profile_setup_provider.dart';
 import 'package:scholaris/features/scholarships/models/scholarship.dart';
 import 'package:scholaris/features/scholarships/providers/scholarships_provider.dart';
@@ -175,13 +175,19 @@ class _ApplicantNameBuilder extends ConsumerWidget {
     final applicantIds = applications.map((a) => a.userId).toSet().toList();
     final repository = ref.watch(profileRepositoryProvider);
 
-    return FutureBuilder<List<StudentProfile?>>(
+    return FutureBuilder<List<ApplicantProfile?>>(
       future: Future.wait(
-        applicantIds.map((id) => repository.fetchProfileById(id)),
+        applicantIds.map((id) async {
+          try {
+            return await repository.fetchApplicantProfile(id);
+          } catch (_) {
+            return null;
+          }
+        }),
       ),
       builder: (context, snapshot) {
         final profiles = snapshot.data;
-        final profileByUserId = <String, StudentProfile?>{};
+        final profileByUserId = <String, ApplicantProfile?>{};
         if (profiles != null) {
           for (var i = 0; i < applicantIds.length; i++) {
             profileByUserId[applicantIds[i]] = profiles[i];
@@ -226,7 +232,7 @@ class _IncomingApplicationRow extends ConsumerWidget {
   final Application application;
   final Scholarship? scholarship;
   final String applicantName;
-  final StudentProfile? applicantProfile;
+  final ApplicantProfile? applicantProfile;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -613,7 +619,7 @@ class _ApplicantCredentialsCard extends StatelessWidget {
     this.notes,
   });
 
-  final StudentProfile profile;
+  final ApplicantProfile profile;
   final String? notes;
 
   @override

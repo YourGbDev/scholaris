@@ -470,6 +470,12 @@ final routerProvider = Provider<GoRouter>((ref) {
             builder: (context, state) =>
                 const ProfileSetupScreen(step: 'financial'),
           ),
+          GoRoute(
+            path: 'location',
+            name: 'profile-setup-location',
+            builder: (context, state) =>
+                const ProfileSetupScreen(step: 'financial'),
+          ),
         ],
       ),
     ],

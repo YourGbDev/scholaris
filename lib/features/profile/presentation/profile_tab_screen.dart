@@ -438,34 +438,41 @@ class ProfileTabScreen extends ConsumerWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         // Section Header
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 2),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Expanded(
-                child: Text(
-                  'Verified Credentials',
-                  style: outfit(
-                    fontSize: 17,
-                    fontWeight: FontWeight.w700,
-                    color: kOnSurface,
+        Builder(
+          builder: (context) {
+            final syncedCount = (profile.course.trim().isNotEmpty ? 1 : 0) +
+                (profile.region.trim().isNotEmpty ? 1 : 0) +
+                (profile.monthlyFamilyIncome != null ? 1 : 0);
+            return Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 2),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Expanded(
+                    child: Text(
+                      'Verified Credentials',
+                      style: outfit(
+                        fontSize: 17,
+                        fontWeight: FontWeight.w700,
+                        color: kOnSurface,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
                   ),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
+                  const SizedBox(width: 8),
+                  Text(
+                    syncedCount > 0 ? '$syncedCount Categories Synced' : 'Pending Profile Setup',
+                    style: outfit(
+                      fontSize: 11,
+                      fontWeight: FontWeight.w600,
+                      color: syncedCount > 0 ? kPrimary : kOnSurfaceVariant,
+                    ),
+                  ),
+                ],
               ),
-              const SizedBox(width: 8),
-              Text(
-                '3 Categories Synced',
-                style: outfit(
-                  fontSize: 11,
-                  fontWeight: FontWeight.w600,
-                  color: kOnSurfaceVariant,
-                ),
-              ),
-            ],
-          ),
+            );
+          },
         ),
         const SizedBox(height: 10),
 
@@ -490,6 +497,19 @@ class ProfileTabScreen extends ConsumerWidget {
         ),
       ],
     );
+  }
+
+  bool _isStemCourse(String course) {
+    final lower = course.toLowerCase();
+    return lower.contains('science') ||
+        lower.contains('engineer') ||
+        lower.contains('tech') ||
+        lower.contains('math') ||
+        lower.contains('nurs') ||
+        lower.contains('medic') ||
+        lower.contains('comp') ||
+        lower.contains('it') ||
+        lower.contains('stem');
   }
 
   Widget _buildAcademicCard(BuildContext context, StudentProfile profile) {
@@ -568,8 +588,8 @@ class ProfileTabScreen extends ConsumerWidget {
               Expanded(
                 child: _buildGridItem(
                   label: 'Priority Field',
-                  value: 'STEM Priority',
-                  subtitle: 'CHED Category A',
+                  value: _isStemCourse(profile.course) ? 'STEM Priority' : 'General Degree',
+                  subtitle: _isStemCourse(profile.course) ? 'CHED Category A' : 'CHED Standard',
                 ),
               ),
             ],
@@ -581,42 +601,53 @@ class ProfileTabScreen extends ConsumerWidget {
                 child: _buildGridItem(
                   label: 'Academic Standing',
                   value: '${profile.yearLevel}${_ordinal(profile.yearLevel)} Year',
-                  subtitle: 'Enrolled • Regular',
+                  subtitle: profile.setupComplete ? 'Enrolled • Regular' : 'Setup Incomplete',
                 ),
               ),
               const SizedBox(width: 8),
               Expanded(
                 child: _buildGridItem(
                   label: 'Enrolled College',
-                  value: profile.school ?? 'UP Diliman',
-                  subtitle: profile.course,
+                  value: (profile.school != null && profile.school!.trim().isNotEmpty)
+                      ? profile.school!
+                      : 'University not set',
+                  subtitle: profile.course.isNotEmpty ? profile.course : 'Course not specified',
                 ),
               ),
             ],
           ),
           const SizedBox(height: 12),
-          // TCG Validated Banner
+          // TCG Document Status Banner
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
             decoration: BoxDecoration(
-              color: kPrimaryFixed.withValues(alpha: 0.35),
+              color: profile.setupComplete
+                  ? kPrimaryFixed.withValues(alpha: 0.35)
+                  : kSurfaceContainerLow,
               borderRadius: BorderRadius.circular(8),
+              border: Border.all(color: profile.setupComplete ? Colors.transparent : kBorderLight),
             ),
             child: Row(
               children: [
-                const Icon(
-                  Icons.check_circle_rounded,
+                Icon(
+                  profile.setupComplete
+                      ? Icons.check_circle_rounded
+                      : Icons.upload_file_outlined,
                   size: 16,
-                  color: kPrimary,
+                  color: profile.setupComplete ? kPrimary : kOnSurfaceVariant,
                 ),
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text(
-                    'True Copy of Grades (TCG) Validated ✓',
+                    profile.setupComplete
+                        ? 'True Copy of Grades (TCG) Validated ✓'
+                        : 'True Copy of Grades (TCG): Pending Registrar Upload',
                     style: openSans(
                       fontSize: 12,
                       fontWeight: FontWeight.w600,
-                      color: kOnPrimaryFixedVariant,
+                      color: profile.setupComplete
+                          ? kOnPrimaryFixedVariant
+                          : kOnSurfaceVariant,
                     ),
                   ),
                 ),
@@ -683,7 +714,7 @@ class ProfileTabScreen extends ConsumerWidget {
               ),
               const SizedBox(width: 8),
               _buildEditBadge(
-                onTap: () => context.go('/profile-setup/location'),
+                onTap: () => context.go('/profile-setup/financial'),
               ),
             ],
           ),
@@ -761,12 +792,16 @@ class ProfileTabScreen extends ConsumerWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Residency Duration',
+                        'Declared Residency',
                         style: outfit(fontSize: 11, color: kOnSurfaceVariant),
                       ),
                       const SizedBox(height: 1),
                       Text(
-                        '3+ Continuous Years',
+                        profile.province != null && profile.province!.trim().isNotEmpty
+                            ? '${profile.cityMunicipality != null && profile.cityMunicipality!.trim().isNotEmpty ? '${profile.cityMunicipality}, ' : ''}${profile.province}'
+                            : (profile.region.isNotEmpty
+                                ? profile.region
+                                : 'Region Not Set'),
                         style: openSans(
                           fontSize: 13,
                           fontWeight: FontWeight.w600,
@@ -780,11 +815,13 @@ class ProfileTabScreen extends ConsumerWidget {
                 ),
                 const SizedBox(width: 8),
                 Text(
-                  'Barangay Eligible',
+                  profile.region.isNotEmpty ? 'Region Declared' : 'Incomplete',
                   style: outfit(
                     fontSize: 11,
                     fontWeight: FontWeight.w700,
-                    color: kPrimary,
+                    color: profile.region.isNotEmpty
+                        ? kPrimary
+                        : kOnSurfaceVariant,
                   ),
                 ),
               ],
@@ -795,24 +832,34 @@ class ProfileTabScreen extends ConsumerWidget {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
             decoration: BoxDecoration(
-              color: kPrimaryFixed.withValues(alpha: 0.35),
+              color: profile.region.isNotEmpty
+                  ? kPrimaryFixed.withValues(alpha: 0.35)
+                  : kSurfaceContainerHigh,
               borderRadius: BorderRadius.circular(8),
             ),
             child: Row(
               children: [
-                const Icon(
-                  Icons.verified_rounded,
+                Icon(
+                  (profile.region.isNotEmpty && profile.setupComplete)
+                      ? Icons.verified_rounded
+                      : Icons.info_outline_rounded,
                   size: 16,
-                  color: kPrimary,
+                  color: (profile.region.isNotEmpty && profile.setupComplete)
+                      ? kPrimary
+                      : kOnSurfaceVariant,
                 ),
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text(
-                    'Eligible for LGU Tertiary Grant ✓',
+                    (profile.region.isNotEmpty && profile.setupComplete)
+                        ? 'Eligible for LGU Tertiary Grant ✓'
+                        : 'LGU Grant Matching: Set residency to unlock local grants',
                     style: openSans(
                       fontSize: 12,
                       fontWeight: FontWeight.w600,
-                      color: kOnPrimaryFixedVariant,
+                      color: (profile.region.isNotEmpty && profile.setupComplete)
+                          ? kOnPrimaryFixedVariant
+                          : kOnSurfaceVariant,
                     ),
                   ),
                 ),
@@ -932,11 +979,15 @@ class ProfileTabScreen extends ConsumerWidget {
                     ),
                     const SizedBox(width: 6),
                     Text(
-                      'BIR 2316 Verified',
+                      profile.monthlyFamilyIncome != null
+                          ? 'Declared Income'
+                          : 'Income Undisclosed',
                       style: outfit(
                         fontSize: 11,
                         fontWeight: FontWeight.w600,
-                        color: kPrimary,
+                        color: profile.monthlyFamilyIncome != null
+                            ? kPrimary
+                            : kOnSurfaceVariant,
                       ),
                     ),
                   ],
@@ -952,7 +1003,9 @@ class ProfileTabScreen extends ConsumerWidget {
                 ),
                 const SizedBox(height: 2),
                 Text(
-                  'Qualifies for needs-based tuition and stipend subsidies',
+                  profile.monthlyFamilyIncome != null
+                      ? 'Qualifies for needs-based tuition and stipend subsidies'
+                      : 'Declare monthly income to unlock needs-based subsidies',
                   style: openSans(fontSize: 11, color: kOnSurfaceVariant),
                 ),
               ],
@@ -975,7 +1028,13 @@ class ProfileTabScreen extends ConsumerWidget {
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  'First-Generation College Scholar',
+                  profile.isIndigenous
+                      ? 'Indigenous Peoples (IP) Beneficiary'
+                      : (profile.hasDisability
+                          ? 'Person with Disability (PWD) Grantee'
+                          : (profile.monthlyFamilyIncome != null && profile.monthlyFamilyIncome! < 25000
+                              ? 'Low-Income Bracket (Subsidized)'
+                              : 'Standard Grant Applicant')),
                   style: outfit(
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
@@ -984,7 +1043,11 @@ class ProfileTabScreen extends ConsumerWidget {
                 ),
                 const SizedBox(height: 2),
                 Text(
-                  'DSWD Listahanan cross-referenced',
+                  (profile.isIndigenous || profile.hasDisability)
+                      ? 'Self-declared beneficiary status'
+                      : (profile.monthlyFamilyIncome != null
+                          ? 'Based on declared family income bracket'
+                          : 'No special demographic status declared'),
                   style: openSans(fontSize: 11, color: kSecondary),
                 ),
               ],
@@ -1370,13 +1433,16 @@ class ProfileTabScreen extends ConsumerWidget {
 
   String _incomeLabel(StudentProfile profile) {
     if (profile.monthlyFamilyIncome == null) {
-      return 'Tier 2: Low-to-Middle Income';
+      return 'Income Undisclosed';
     }
     final amount = profile.monthlyFamilyIncome!;
     final formatted = amount >= 1000
         ? '${(amount / 1000).toStringAsFixed(amount >= 10000 ? 0 : 1)}k'
         : amount.toStringAsFixed(0);
-    return '₱$formatted / month (Low-to-Middle)';
+    final bracket = amount < 25000
+        ? 'Low Income'
+        : (amount <= 70000 ? 'Lower-Middle' : 'Middle-to-High');
+    return '₱$formatted / month ($bracket)';
   }
 
   String _ordinal(int n) => switch (n) {

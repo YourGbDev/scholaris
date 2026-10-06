@@ -201,19 +201,34 @@ class IdentityPhotoRequiredDialog extends ConsumerWidget {
         ),
       ),
       actions: [
-        Center(
-          child: TextButton(
-            key: const ValueKey('photo-upload-cancel'),
-            onPressed: () => Navigator.of(context).pop(false),
-            child: Text(
-              'Cancel',
-              style: GoogleFonts.openSans(
-                fontSize: 13,
-                fontWeight: FontWeight.w600,
-                color: const Color(0xFF707971),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            TextButton(
+              key: const ValueKey('photo-upload-cancel'),
+              onPressed: () => Navigator.of(context).pop(false),
+              child: Text(
+                'Cancel',
+                style: GoogleFonts.openSans(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w600,
+                  color: const Color(0xFF707971),
+                ),
               ),
             ),
-          ),
+            TextButton(
+              key: const ValueKey('photo-upload-later'),
+              onPressed: () => Navigator.of(context).pop(true),
+              child: Text(
+                'Proceed with Warning',
+                style: GoogleFonts.openSans(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w600,
+                  color: kPrimary,
+                ),
+              ),
+            ),
+          ],
         ),
       ],
     );

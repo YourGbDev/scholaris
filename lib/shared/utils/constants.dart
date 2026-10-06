@@ -25,6 +25,21 @@ String formatPeso(double amount) {
   return '₱$buffer';
 }
 
+/// Compact currency formatting helper — 150000 → "₱150k", 1500000 → "₱1.5M".
+String formatCompactPeso(double amount) {
+  if (amount >= 1000000) {
+    final millions = amount / 1000000;
+    final formatted = millions.toStringAsFixed(millions.truncateToDouble() == millions ? 0 : 1);
+    return '₱${formatted}M';
+  }
+  if (amount >= 1000) {
+    final thousands = amount / 1000;
+    final formatted = thousands.toStringAsFixed(thousands.truncateToDouble() == thousands ? 0 : 0);
+    return '₱${formatted}k';
+  }
+  return formatPeso(amount);
+}
+
 /// True when [days] until the scholarship deadline should be treated as
 /// "closing soon".
 bool isClosingSoon(int days) => days <= 14;

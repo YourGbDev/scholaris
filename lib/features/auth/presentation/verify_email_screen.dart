@@ -116,7 +116,7 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
                   IconButton(
                     icon: const Icon(Icons.help_outline_rounded, size: 22, color: kTextSecondary),
                     tooltip: 'Help and Support',
-                    onPressed: () {},
+                    onPressed: () => _showSupportSheet(context),
                   ),
                   Container(
                     width: 32,
@@ -467,6 +467,145 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
                 ),
               ),
             ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _showSupportSheet(BuildContext context) {
+    showModalBottomSheet<void>(
+      context: context,
+      backgroundColor: Colors.white,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
+      builder: (ctx) => SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(24, 16, 24, 28),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Center(
+                child: Container(
+                  width: 40,
+                  height: 4,
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFDDE2F3),
+                    borderRadius: BorderRadius.circular(2),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 16),
+              Text(
+                'Verification Help & Support',
+                style: poppins(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w700,
+                  color: kTextPrimary,
+                ),
+              ),
+              const SizedBox(height: 6),
+              Text(
+                'Having trouble receiving your 6-digit confirmation code?',
+                style: openSans(fontSize: 13, color: kTextSecondary),
+              ),
+              const SizedBox(height: 16),
+              _buildSupportOption(
+                icon: Icons.mark_email_unread_outlined,
+                title: 'Check Spam or Promotions folder',
+                description:
+                    'State university email servers often route automated links to Spam or quarantine.',
+              ),
+              const SizedBox(height: 12),
+              _buildSupportOption(
+                icon: Icons.alternate_email_rounded,
+                title: 'Entered the wrong email?',
+                description:
+                    'You can return to the registration screen to sign up with the correct address.',
+                onTap: () {
+                  Navigator.of(ctx).pop();
+                  context.go('/signup');
+                },
+              ),
+              const SizedBox(height: 12),
+              _buildSupportOption(
+                icon: Icons.support_agent_rounded,
+                title: 'Contact Scholaris Support',
+                description:
+                    'Email support@scholaris.ph • Operational Mon–Fri 8:00 AM – 5:00 PM PHT.',
+                onTap: () {
+                  Navigator.of(ctx).pop();
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Support email copied: support@scholaris.ph'),
+                      duration: Duration(seconds: 3),
+                    ),
+                  );
+                },
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSupportOption({
+    required IconData icon,
+    required String title,
+    required String description,
+    VoidCallback? onTap,
+  }) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(12),
+      child: Container(
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: const Color(0xFFF9F9FF),
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: const Color(0xFFDDE2F3)),
+        ),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: kPrimary.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Icon(icon, size: 20, color: kPrimary),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: poppins(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w600,
+                      color: kTextPrimary,
+                    ),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    description,
+                    style: openSans(fontSize: 11, color: kTextSecondary),
+                  ),
+                ],
+              ),
+            ),
+            if (onTap != null)
+              const Icon(
+                Icons.chevron_right_rounded,
+                size: 20,
+                color: kTextSecondary,
+              ),
           ],
         ),
       ),

@@ -95,6 +95,7 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
         TextEditingController(text: state.monthlyFamilyIncome);
     _provinceController = TextEditingController(text: state.province);
     _cityController = TextEditingController(text: state.cityMunicipality);
+    _selectedGpaScale = state.gpaScale;
   }
 
   void _syncHydration(ProfileSetupState? previous, ProfileSetupState next) {
@@ -113,6 +114,7 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
     _incomeController.text = state.monthlyFamilyIncome;
     _provinceController.text = state.province;
     _cityController.text = state.cityMunicipality;
+    _selectedGpaScale = state.gpaScale;
   }
 
   @override
@@ -776,7 +778,7 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
                     ),
                     const SizedBox(height: 2),
                     Text(
-                      'Pick a doodle or set up later',
+                      'Pick a doodle for now • Formal photo required for deliberation',
                       style: openSans(
                         fontSize: 11,
                         color: kTextSecondary,
@@ -1201,9 +1203,9 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
             ),
             child: Row(
               children: [
-                _scaleTab('1.0 – 5.0'),
-                _scaleTab('% Percentage'),
-                _scaleTab('4.0 Scale'),
+                _scaleTab('1.0 – 5.0', notifier),
+                _scaleTab('% Percentage', notifier),
+                _scaleTab('4.0 Scale', notifier),
               ],
             ),
           ),
@@ -1266,7 +1268,7 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
     );
   }
 
-  Widget _scaleTab(String scale) {
+  Widget _scaleTab(String scale, ProfileSetupNotifier notifier) {
     final isSelected = _selectedGpaScale == scale;
     return Expanded(
       child: PressableScale(
@@ -1275,6 +1277,7 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
             setState(() {
               _selectedGpaScale = scale;
             });
+            notifier.setGpaScale(scale);
           },
           child: Container(
             padding: const EdgeInsets.symmetric(vertical: 6),

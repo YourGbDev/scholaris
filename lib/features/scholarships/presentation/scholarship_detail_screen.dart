@@ -22,6 +22,7 @@ import 'package:scholaris/features/applications/models/application.dart';
 import 'package:scholaris/features/applications/presentation/submit_application_review_dialog.dart';
 import 'package:scholaris/features/applications/presentation/submission_confirmation_receipt_screen.dart';
 import 'package:scholaris/features/applications/providers/applications_provider.dart';
+import 'package:scholaris/features/applications/providers/application_draft_provider.dart';
 import 'package:scholaris/features/applications/repositories/application_repository.dart';
 import 'package:scholaris/features/auth/controllers/auth_controller.dart';
 import 'package:scholaris/features/bookmarks/providers/bookmarks_provider.dart';
@@ -319,9 +320,9 @@ class _DetailContent extends ConsumerWidget {
         const SizedBox(height: 20),
 
         // 6. Application Materials & Requirements
-        const StaggeredListItem(
+        StaggeredListItem(
           index: 5,
-          child: _ApplicationMaterialsCard(),
+          child: _ApplicationMaterialsCard(scholarshipId: scholarship.id),
         ),
         const SizedBox(height: 20),
 
@@ -513,12 +514,15 @@ class _HeroCard extends StatelessWidget {
             crossAxisAlignment: WrapCrossAlignment.center,
             spacing: 6,
             children: [
-              Text(
-                _grantValue(scholarship),
-                style: outfit(
-                  fontSize: 26,
-                  fontWeight: FontWeight.bold,
-                  color: kPrimaryContainer,
+              FittedBox(
+                fit: BoxFit.scaleDown,
+                child: Text(
+                  _grantValue(scholarship),
+                  style: outfit(
+                    fontSize: 26,
+                    fontWeight: FontWeight.bold,
+                    color: kPrimaryContainer,
+                  ),
                 ),
               ),
               Text(
@@ -1287,7 +1291,9 @@ class _EligibilityCard extends StatelessWidget {
 
 /// 6. Application Materials & Requirements Card: Checklist of documents matching Stitch code.html.
 class _ApplicationMaterialsCard extends ConsumerStatefulWidget {
-  const _ApplicationMaterialsCard();
+  const _ApplicationMaterialsCard({required this.scholarshipId});
+
+  final String scholarshipId;
 
   @override
   ConsumerState<_ApplicationMaterialsCard> createState() =>
@@ -1297,10 +1303,16 @@ class _ApplicationMaterialsCard extends ConsumerStatefulWidget {
 class _ApplicationMaterialsCardState
     extends ConsumerState<_ApplicationMaterialsCard> {
   bool _isEditingEssay = false;
-  final TextEditingController _essayController = TextEditingController();
-  final List<String> _recommenders = [];
+  late final TextEditingController _essayController;
   final TextEditingController _recEmailController = TextEditingController();
   bool _isAddingRec = false;
+
+  @override
+  void initState() {
+    super.initState();
+    final draft = ref.read(applicationDraftProvider(widget.scholarshipId));
+    _essayController = TextEditingController(text: draft.essay);
+  }
 
   @override
   void dispose() {
@@ -1315,12 +1327,15 @@ class _ApplicationMaterialsCardState
     final school = profile?.school;
     final hasTranscript = profile != null && school != null && school.isNotEmpty;
 
+    final draft = ref.watch(applicationDraftProvider(widget.scholarshipId));
+    final recommenders = draft.recommenders;
+
     final essayText = _essayController.text.trim();
     final wordCount = essayText.isEmpty
         ? 0
         : essayText.split(RegExp(r'\s+')).length;
     final hasEssay = wordCount > 0;
-    final hasRec = _recommenders.isNotEmpty;
+    final hasRec = recommenders.isNotEmpty;
 
     final readyCount =
         (hasEssay ? 1 : 0) + (hasTranscript ? 1 : 0) + (hasRec ? 1 : 0);
@@ -1493,7 +1508,10 @@ class _ApplicationMaterialsCardState
                                 padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                                 minimumSize: const Size(60, 30),
                               ),
-                              onPressed: () => setState(() => _isEditingEssay = false),
+                              onPressed: () {
+                                ref.read(applicationDraftProvider(widget.scholarshipId).notifier).setEssay(_essayController.text);
+                                setState(() => _isEditingEssay = false);
+                              },
                               child: Text(
                                 'Save Statement',
                                 style: outfit(fontSize: 11, fontWeight: FontWeight.w600),
@@ -1653,7 +1671,7 @@ class _ApplicationMaterialsCardState
                         borderRadius: BorderRadius.circular(4),
                       ),
                       child: Text(
-                        hasRec ? '${_recommenders.length} Linked' : '0 of 2 Linked',
+                        hasRec ? '${recommenders.length} Linked' : '0 of 2 Linked',
                         style: outfit(
                           fontSize: 10,
                           fontWeight: FontWeight.w600,
@@ -1671,7 +1689,7 @@ class _ApplicationMaterialsCardState
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      for (final rec in _recommenders)
+                      for (final rec in recommenders)
                         Padding(
                           padding: const EdgeInsets.only(bottom: 4),
                           child: Row(
@@ -1683,6 +1701,14 @@ class _ApplicationMaterialsCardState
                                   rec,
                                   style: openSans(fontSize: 11, color: kOnSurface),
                                 ),
+                              ),
+                              IconButton(
+                                constraints: const BoxConstraints(minWidth: 24, minHeight: 24),
+                                padding: EdgeInsets.zero,
+                                icon: const Icon(Icons.close_rounded, size: 14, color: Color(0xFF707971)),
+                                onPressed: () {
+                                  ref.read(applicationDraftProvider(widget.scholarshipId).notifier).removeRecommender(rec);
+                                },
                               ),
                             ],
                           ),
@@ -1721,8 +1747,8 @@ class _ApplicationMaterialsCardState
                                   onPressed: () {
                                     final email = _recEmailController.text.trim();
                                     if (email.isNotEmpty) {
+                                      ref.read(applicationDraftProvider(widget.scholarshipId).notifier).addRecommender(email);
                                       setState(() {
-                                        _recommenders.add(email);
                                         _recEmailController.clear();
                                         _isAddingRec = false;
                                       });
@@ -1998,13 +2024,26 @@ class _ApplySectionState extends ConsumerState<_ApplySection> {
           return;
         }
         if (!mounted) return;
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Identity photo verified! Proceeding with application...'),
-            backgroundColor: Color(0xFF145131),
-            duration: Duration(seconds: 2),
-          ),
-        );
+        final updatedAvatarState = ref.read(avatarProvider(userId));
+        if (updatedAvatarState.isRealPhoto) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Identity photo verified! Proceeding with application...'),
+              backgroundColor: Color(0xFF145131),
+              duration: Duration(seconds: 2),
+            ),
+          );
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text(
+                'Deliberation notice: Committee will require an official identity photo before final award.',
+              ),
+              backgroundColor: Color(0xFF5D4200),
+              duration: Duration(seconds: 3),
+            ),
+          );
+        }
       }
     }
 

@@ -119,6 +119,32 @@ void main() {
       expect(notifier.state.fieldErrors!.gpa, 'GPA must be between 1.0 and 4.0.');
     });
 
+    test('valid Philippine 1.0 - 5.0 scale allows GPA up to 5.0', () async {
+      final dataSource = FakeProfileDataSource();
+      final notifier = _notifier(dataSource);
+      _fill(notifier);
+      notifier.setGpaScale('1.0 – 5.0');
+      notifier.setGpa('4.5');
+
+      final ok = await notifier.submit();
+
+      expect(ok, isTrue);
+      expect(dataSource.rows['user-a']!['gpa'], 4.5);
+    });
+
+    test('valid Percentage scale allows grade between 60 and 100', () async {
+      final dataSource = FakeProfileDataSource();
+      final notifier = _notifier(dataSource);
+      _fill(notifier);
+      notifier.setGpaScale('% Percentage');
+      notifier.setGpa('88.5');
+
+      final ok = await notifier.submit();
+
+      expect(ok, isTrue);
+      expect(dataSource.rows['user-a']!['gpa'], 88.5);
+    });
+
     test('invalid year level blocks submission', () async {
       final dataSource = FakeProfileDataSource();
       final notifier = _notifier(dataSource);

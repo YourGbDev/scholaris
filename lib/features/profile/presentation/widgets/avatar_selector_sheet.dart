@@ -82,11 +82,35 @@ class AvatarSelectorSheet extends ConsumerWidget {
                 ),
                 IconButton(
                   icon: const Icon(Icons.close_rounded),
+                  constraints: const BoxConstraints(minWidth: 44, minHeight: 44),
+                  padding: const EdgeInsets.all(10),
                   onPressed: () => Navigator.of(context).pop(),
                 ),
               ],
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 10),
+            // Upfront Deliberation Notice
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              decoration: BoxDecoration(
+                color: const Color(0xFFFFF8E1),
+                borderRadius: BorderRadius.circular(10),
+                border: Border.all(color: const Color(0xFFFFE082)),
+              ),
+              child: Row(
+                children: [
+                  const Icon(Icons.info_outline_rounded, size: 16, color: Color(0xFF8D6E63)),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      'Note: Doodle avatars are great for browsing, but submitting applications requires a verified face photo for scholarship committee deliberation.',
+                      style: openSans(fontSize: 11, color: const Color(0xFF5D4037)),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 14),
 
             // Live preview
             Center(
@@ -148,14 +172,18 @@ class AvatarSelectorSheet extends ConsumerWidget {
                       !avatarState.isRealPhoto && avatarState.avatarId == preset.id;
 
                   return PressableScale(
-                    child: GestureDetector(
-                      key: ValueKey('avatar-option-${preset.id}'),
-                      onTap: () {
-                        HapticFeedback.selectionClick();
-                        notifier.selectDoodle(preset.id);
-                      },
-                      child: Container(
-                        width: 72,
+                    child: Semantics(
+                      label: '${preset.name} doodle avatar',
+                      button: true,
+                      selected: isSelected,
+                      child: GestureDetector(
+                        key: ValueKey('avatar-option-${preset.id}'),
+                        onTap: () {
+                          HapticFeedback.selectionClick();
+                          notifier.selectDoodle(preset.id);
+                        },
+                        child: Container(
+                          width: 72,
                         padding: const EdgeInsets.symmetric(vertical: 6),
                         decoration: BoxDecoration(
                           color: isSelected
@@ -193,8 +221,9 @@ class AvatarSelectorSheet extends ConsumerWidget {
                         ),
                       ),
                     ),
-                  );
-                },
+                  ),
+                );
+              },
               ),
             ),
             const SizedBox(height: 18),

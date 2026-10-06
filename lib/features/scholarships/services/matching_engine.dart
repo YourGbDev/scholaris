@@ -33,7 +33,7 @@ class MatchingEngine {
     Scholarship scholarship,
   ) {
     final failed = <EligibilityCriterion>[];
-    if (student.gpa < scholarship.minGpa) {
+    if (!isGpaEligible(student.gpa, scholarship.minGpa)) {
       failed.add(EligibilityCriterion.gpa);
     }
     if (scholarship.requiredYearLevels != null &&
@@ -55,6 +55,23 @@ class MatchingEngine {
       failed.add(EligibilityCriterion.income);
     }
     return failed;
+  }
+
+  /// Scale-aware GPA evaluation supporting Philippine standard 1.0–5.0 scale
+  /// (where cutoffs <= 1.75 denote Philippine honors where 1.0 is highest honor
+  /// and lower numeric values indicate higher standing) as well as standard 4.0
+  /// and percentage scales (where higher values indicate higher standing).
+  static bool isGpaEligible(double studentGpa, double minGpa) {
+    if (studentGpa <= 0) return false;
+    // Philippine honors cutoff (e.g. 1.75 Dean's List, 1.5 Magna, 1.25 Summa):
+    // In the Philippine grading system, 1.0 is the highest mark, so lower numeric
+    // values denote higher academic standing.
+    if (minGpa > 0 && minGpa <= 1.75) {
+      return studentGpa <= minGpa;
+    }
+    // Standard 4.0 scale (e.g. minGpa 2.0, 3.0, 3.5) or percentage scale (e.g. 85.0):
+    // Higher numeric values denote higher standing.
+    return studentGpa >= minGpa;
   }
 
   List<Scholarship> rank(

@@ -295,7 +295,6 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
     int totalMatches,
   ) {
     final notifier = ref.read(discoveryFilterProvider.notifier);
-    final highFitActive = state.query.isEmpty && !state.closingSoonOnly && state.incomeBracket == null;
 
     return SingleChildScrollView(
       physics: const AppleBouncingScrollPhysics(),
@@ -315,9 +314,9 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
           _StitchCarouselChip(
             label: 'Match >90%',
             hasDot: true,
-            isActive: highFitActive && state.isActive,
+            isActive: state.highFitOnly,
             onTap: () {
-              // Toggle search or filter focus
+              notifier.setHighFitOnly(!state.highFitOnly);
             },
           ),
           const SizedBox(width: 8),
@@ -337,9 +336,13 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
           // No Essay Required Chip
           _StitchCarouselChip(
             label: 'No Essay Required',
-            isActive: false,
+            isActive: state.query == 'No Essay',
             onTap: () {
-              notifier.setQuery('No Essay');
+              if (state.query == 'No Essay') {
+                notifier.setQuery('');
+              } else {
+                notifier.setQuery('No Essay');
+              }
             },
           ),
           const SizedBox(width: 8),
@@ -347,8 +350,10 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
           // ₱50k - ₱150k+ Chip
           _StitchCarouselChip(
             label: '₱50k - ₱150k+',
-            isActive: false,
-            onTap: () {},
+            isActive: state.minAmount == 50000,
+            onTap: () {
+              notifier.setMinAmount(state.minAmount == 50000 ? null : 50000);
+            },
           ),
           const SizedBox(width: 8),
 
@@ -578,6 +583,7 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
         ),
         const SizedBox(width: 8),
         PopupMenuButton<DiscoverySort>(
+          tooltip: 'Sort scholarships',
           initialValue: currentSort,
           onSelected: (sort) {
             ref.read(discoveryFilterProvider.notifier).setSort(sort);
@@ -1165,15 +1171,17 @@ class _FilterButton extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final count = ref.watch(discoveryActiveFilterCountProvider);
     return PressableScale(
-      child: Material(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        child: InkWell(
-          onTap: onPressed,
+      child: Tooltip(
+        message: 'Open discovery filters',
+        child: Material(
+          color: Colors.white,
           borderRadius: BorderRadius.circular(12),
-          child: Container(
-            height: 48,
-            padding: const EdgeInsets.symmetric(horizontal: 14),
+          child: InkWell(
+            onTap: onPressed,
+            borderRadius: BorderRadius.circular(12),
+            child: Container(
+              height: 48,
+              padding: const EdgeInsets.symmetric(horizontal: 14),
             alignment: Alignment.center,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(12),
@@ -1227,8 +1235,9 @@ class _FilterButton extends ConsumerWidget {
           ),
         ),
       ),
-    );
-  }
+    ),
+  );
+}
 }
 
 class _StitchCarouselChip extends StatelessWidget {

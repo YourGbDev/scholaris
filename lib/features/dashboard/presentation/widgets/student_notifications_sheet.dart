@@ -151,6 +151,8 @@ class StudentNotificationsSheet extends ConsumerWidget {
               ),
               PressableScale(
                 child: IconButton(
+                  constraints: const BoxConstraints(minWidth: 44, minHeight: 44),
+                  padding: const EdgeInsets.all(10),
                   icon: const Icon(
                     Icons.tune_rounded,
                     color: Color(0xFF707971),

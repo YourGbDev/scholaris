@@ -233,42 +233,51 @@ class ApplicationsScreen extends ConsumerWidget {
                           onRetry: () => ref.invalidate(scholarshipsProvider),
                         ),
                         data: (_) {
-                          return ListView.builder(
-                            physics: const AppleBouncingScrollPhysics(),
-                            // ignore: deprecated_member_use
-                            cacheExtent: 1500.0,
-                            padding: EdgeInsets.only(
-                              bottom: MediaQuery.of(context).padding.bottom + 64 + 16,
-                            ),
-                            itemCount: filtered.length +
-                                (urgentApp != null ? 1 : 0),
-                            itemBuilder: (context, index) {
-                              // If urgent banner exists, render it at index 0
-                              if (urgentApp != null && urgentScholarship != null) {
-                                if (index == 0) {
-                                  return Padding(
-                                    padding: const EdgeInsets.only(bottom: 12),
-                                    child: _UrgentDeadlineBanner(
-                                      application: urgentApp,
-                                      scholarship: urgentScholarship,
-                                    ),
-                                  );
-                                }
-                                index--;
-                              }
-
-                              final app = filtered[index];
-                              return StaggeredListItem(
-                                index: index,
-                                child: Padding(
-                                  padding: const EdgeInsets.only(bottom: 12),
-                                  child: _ApplicationCard(
-                                    application: app,
-                                    scholarship: byId[app.scholarshipId],
-                                  ),
-                                ),
-                              );
+                          return RefreshIndicator(
+                            onRefresh: () async {
+                              ref.invalidate(applicationsProvider);
+                              ref.invalidate(scholarshipsProvider);
+                              await ref.read(applicationsProvider.future);
                             },
+                            child: ListView.builder(
+                              physics: const AlwaysScrollableScrollPhysics(
+                                parent: AppleBouncingScrollPhysics(),
+                              ),
+                              // ignore: deprecated_member_use
+                              cacheExtent: 1500.0,
+                              padding: EdgeInsets.only(
+                                bottom: MediaQuery.of(context).padding.bottom + 64 + 16,
+                              ),
+                              itemCount: filtered.length +
+                                  (urgentApp != null ? 1 : 0),
+                              itemBuilder: (context, index) {
+                                // If urgent banner exists, render it at index 0
+                                if (urgentApp != null && urgentScholarship != null) {
+                                  if (index == 0) {
+                                    return Padding(
+                                      padding: const EdgeInsets.only(bottom: 12),
+                                      child: _UrgentDeadlineBanner(
+                                        application: urgentApp,
+                                        scholarship: urgentScholarship,
+                                      ),
+                                    );
+                                  }
+                                  index--;
+                                }
+
+                                final app = filtered[index];
+                                return StaggeredListItem(
+                                  index: index,
+                                  child: Padding(
+                                    padding: const EdgeInsets.only(bottom: 12),
+                                    child: _ApplicationCard(
+                                      application: app,
+                                      scholarship: byId[app.scholarshipId],
+                                    ),
+                                  ),
+                                );
+                              },
+                            ),
                           );
                         },
                       ),

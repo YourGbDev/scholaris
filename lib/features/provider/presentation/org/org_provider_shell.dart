@@ -11,7 +11,7 @@ import 'package:flutter/services.dart';
 
 import 'package:scholaris/features/applications/models/application.dart';
 import 'package:scholaris/features/applications/providers/applications_provider.dart';
-import 'package:scholaris/features/profile/models/student_profile.dart';
+import 'package:scholaris/features/profile/models/applicant_profile.dart';
 import 'package:scholaris/features/profile/providers/profile_setup_provider.dart';
 import 'package:scholaris/features/scholarships/models/scholarship.dart';
 import 'package:scholaris/shared/widgets/logout_confirmation_dialog.dart';
@@ -787,7 +787,7 @@ class _OrgCommandPaletteDialog extends ConsumerStatefulWidget {
   final void Function(
     Application app,
     Scholarship? scholarship,
-    StudentProfile? profile,
+    ApplicantProfile? profile,
   ) onSelectApplication;
 
   @override

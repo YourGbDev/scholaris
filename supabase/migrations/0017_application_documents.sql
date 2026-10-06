@@ -95,10 +95,7 @@ CREATE POLICY "providers_and_admins_read_application_documents"
       SELECT 1 FROM public.applications a
       JOIN public.scholarships s ON s.id = a.scholarship_id
       WHERE a.id = application_documents.application_id
-        AND (
-          s.created_by = auth.uid()
-          OR s.provider = (SELECT organization_name FROM public.profiles WHERE id = auth.uid())
-        )
+        AND s.created_by = auth.uid()
     )
   );
 
@@ -176,10 +173,7 @@ CREATE POLICY "storage_provider_admin_read_application_documents"
           SELECT 1 FROM public.applications a
           JOIN public.scholarships s ON s.id = a.scholarship_id
           WHERE a.id = ((storage.foldername(name))[1])::uuid
-            AND (
-              s.created_by = auth.uid()
-              OR s.provider = (SELECT organization_name FROM public.profiles WHERE id = auth.uid())
-            )
+            AND s.created_by = auth.uid()
         )
       )
     )

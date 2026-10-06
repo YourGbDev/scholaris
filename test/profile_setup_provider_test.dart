@@ -270,6 +270,11 @@ void main() {
 /// A [ProfileDataSource] whose reads throw, simulating a backend failure.
 class _ThrowingProfileDataSource implements ProfileDataSource {
   @override
+  Future<Map<String, dynamic>?> fetchApplicantProfile(String userId) async {
+    throw Exception('network down');
+  }
+
+  @override
   Future<Map<String, dynamic>?> fetchProfile(String userId) async {
     throw Exception('network down');
   }

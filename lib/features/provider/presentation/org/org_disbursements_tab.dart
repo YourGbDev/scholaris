@@ -18,7 +18,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:scholaris/features/profile/providers/profile_setup_provider.dart';
 import '../../../applications/models/application.dart';
 import '../../../applications/providers/applications_provider.dart';
-import '../../../profile/models/student_profile.dart';
+import '../../../profile/models/applicant_profile.dart';
 import '../../../scholarships/models/scholarship.dart';
 import '../../../scholarships/providers/scholarships_provider.dart';
 import '../../providers/provider_scholarships_provider.dart';
@@ -351,7 +351,7 @@ class _OrgDisbursementsTabState extends ConsumerState<OrgDisbursementsTab> {
 
   void _showLedgerDetailDialog(
     BuildContext context,
-    StudentProfile profile,
+    ApplicantProfile profile,
     Scholarship? scholarship,
     Application app,
     int trancheAmount,
@@ -498,17 +498,17 @@ class _OrgDisbursementsTabState extends ConsumerState<OrgDisbursementsTab> {
     final apps = incomingAppsAsync.valueOrNull ?? <Application>[];
     final isLoading = incomingAppsAsync.isLoading && incomingAppsAsync.valueOrNull == null;
     final profiles = ref.watch(providerApplicantProfilesProvider).valueOrNull ??
-        <String, StudentProfile>{};
+        <String, ApplicantProfile>{};
 
     final scholarshipsMap = <String, Scholarship>{
       for (final s in (scholarshipsAsync.valueOrNull ?? <Scholarship>[])) s.id: s
     };
 
           // Reliable profile resolution helper matching incoming applications tab
-          StudentProfile resolveProfile(Application app) {
+          ApplicantProfile resolveProfile(Application app) {
             final existing = profiles[app.userId];
             if (existing != null) return existing;
-            return StudentProfile(
+            return ApplicantProfile(
               id: app.userId,
               fullName: 'Applicant #${app.userId.length >= 8 ? app.userId.substring(0, 8) : app.userId}',
               school: 'School Pending',
@@ -516,7 +516,7 @@ class _OrgDisbursementsTabState extends ConsumerState<OrgDisbursementsTab> {
               gpa: 0.0,
               yearLevel: 1,
               region: 'NCR',
-              monthlyFamilyIncome: 0,
+              monthlyFamilyIncome: 0, setupComplete: false,
             );
           }
 
@@ -1503,7 +1503,7 @@ class _OrgDisbursementsTabState extends ConsumerState<OrgDisbursementsTab> {
     required List<Application> filteredApps,
     required int totalScholars,
     required Map<String, Scholarship> scholarshipsMap,
-    required StudentProfile Function(Application) resolveProfile,
+    required ApplicantProfile Function(Application) resolveProfile,
     required int perScholarTranche,
     required bool isDesktop,
   }) {

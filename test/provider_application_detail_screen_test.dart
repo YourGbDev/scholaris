@@ -6,7 +6,7 @@ import 'package:scholaris/features/applications/models/application.dart';
 import 'package:scholaris/features/applications/providers/applications_provider.dart';
 import 'package:scholaris/features/applications/repositories/application_repository.dart';
 import 'package:scholaris/features/auth/controllers/auth_controller.dart';
-import 'package:scholaris/features/profile/models/student_profile.dart';
+import 'package:scholaris/features/profile/models/applicant_profile.dart';
 import 'package:scholaris/features/profile/providers/profile_setup_provider.dart';
 import 'package:scholaris/features/profile/repositories/profile_repository.dart';
 import 'package:scholaris/features/provider/presentation/provider_application_detail_screen.dart';
@@ -22,7 +22,7 @@ void main() {
   Widget buildApp({
     required Application application,
     required Scholarship scholarship,
-    required StudentProfile profile,
+    required ApplicantProfile profile,
   }) {
     final appDs = FakeApplicationDataSource();
     final schDs = FakeScholarshipDataSource([
@@ -42,7 +42,8 @@ void main() {
       'year_level': profile.yearLevel,
       'gpa': profile.gpa,
       'region': profile.region,
-      'nationality': profile.nationality,
+      'setup_complete': profile.setupComplete,
+
     };
 
     return ProviderScope(
@@ -99,7 +100,7 @@ void main() {
         deadline: DateTime(2026, 11, 15),
       );
 
-      final profile = StudentProfile(
+      final profile = ApplicantProfile(
         id: 'student-1',
         fullName: 'Maya Santos Dela Cruz',
         course: 'BS Computer Science',
@@ -107,8 +108,8 @@ void main() {
         yearLevel: 2,
         gpa: 1.45,
         region: 'National Capital Region (NCR)',
-        nationality: 'Filipino',
         setupComplete: true,
+
         monthlyFamilyIncome: 20000,
       );
 
@@ -174,7 +175,7 @@ void main() {
         deadline: DateTime(2026, 11, 15),
       );
 
-      final profile = StudentProfile(
+      final profile = ApplicantProfile(
         id: 'student-2',
         fullName: 'Joshua Paolo Reyes',
         course: 'BS Electronics Eng',
@@ -182,7 +183,8 @@ void main() {
         yearLevel: 3,
         gpa: 1.58,
         region: 'National Capital Region (NCR)',
-        nationality: 'Filipino',
+        setupComplete: false,
+
       );
 
       await tester.pumpWidget(buildApp(
@@ -227,7 +229,7 @@ void main() {
         deadline: DateTime(2026, 11, 15),
       );
 
-      final profile = StudentProfile(
+      final profile = ApplicantProfile(
         id: 'student-3',
         fullName: 'Camille Anne Bautista',
         course: 'BS Chemistry',
@@ -235,7 +237,8 @@ void main() {
         yearLevel: 1,
         gpa: 1.70,
         region: 'National Capital Region (NCR)',
-        nationality: 'Filipino',
+        setupComplete: false,
+
       );
 
       await tester.pumpWidget(buildApp(

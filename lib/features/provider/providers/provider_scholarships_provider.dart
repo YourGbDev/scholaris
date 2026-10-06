@@ -6,9 +6,11 @@ import 'dart:convert';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../applications/models/application.dart';
 import '../../applications/providers/applications_provider.dart';
 import '../../auth/controllers/auth_controller.dart';
-import '../../profile/models/student_profile.dart';
+import '../../profile/models/applicant_profile.dart';
+
 import '../../profile/providers/profile_setup_provider.dart';
 import '../../scholarships/models/scholarship.dart';
 import '../../scholarships/providers/scholarships_provider.dart';
@@ -126,15 +128,21 @@ final filteredProviderScholarshipsProvider =
 
 /// Fetches student profiles for all applicant userIds present in incoming applications.
 final providerApplicantProfilesProvider =
-    FutureProvider<Map<String, StudentProfile>>((ref) async {
+    FutureProvider<Map<String, ApplicantProfile>>((ref) async {
   final apps = await ref.watch(incomingApplicationsProvider.future);
   final userIds = apps.map((a) => a.userId).toSet();
   if (userIds.isEmpty) return {};
   final profileRepo = ref.watch(profileRepositoryProvider);
   final results = await Future.wait(
-    userIds.map((id) => profileRepo.fetchProfileById(id)),
+    userIds.map((id) async {
+      try {
+        return await profileRepo.fetchApplicantProfile(id);
+      } catch (_) {
+        return null;
+      }
+    }),
   );
-  final map = <String, StudentProfile>{};
+  final map = <String, ApplicantProfile>{};
   for (final profile in results) {
     if (profile != null) {
       map[profile.id] = profile;
@@ -144,10 +152,14 @@ final providerApplicantProfilesProvider =
   // Gracefully fallback to student metadata in application notes if database RLS
   // isolates the profiles table
   for (final app in apps) {
+    if (app.status == ApplicationStatus.draft ||
+        app.status == ApplicationStatus.withdrawn) {
+      continue;
+    }
     if (!map.containsKey(app.userId) && app.notes != null && app.notes!.trim().startsWith('{')) {
       try {
         final decoded = jsonDecode(app.notes!) as Map<String, dynamic>;
-        map[app.userId] = StudentProfile(
+        map[app.userId] = ApplicantProfile(
           id: app.userId,
           fullName: decoded['full_name'] as String? ?? '',
           school: decoded['school'] as String?,
@@ -156,6 +168,7 @@ final providerApplicantProfilesProvider =
           yearLevel: (decoded['year_level'] as num?)?.toInt() ?? 1,
           region: decoded['region'] as String? ?? 'NCR',
           monthlyFamilyIncome: (decoded['monthly_family_income'] as num?)?.toDouble(),
+          setupComplete: true,
         );
       } catch (_) {}
     }

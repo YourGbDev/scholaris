@@ -13,6 +13,7 @@ import 'package:scholaris/features/admin/repositories/admin_audit_log_repository
 import 'package:scholaris/features/applications/models/application.dart';
 import 'package:scholaris/features/applications/providers/applications_provider.dart';
 import 'package:scholaris/features/profile/models/student_profile.dart';
+import 'package:scholaris/features/profile/models/applicant_profile.dart';
 import 'package:scholaris/features/profile/providers/profile_setup_provider.dart';
 import 'package:scholaris/features/provider/presentation/individual/individual_provider_shell.dart';
 import 'package:scholaris/features/provider/presentation/org/org_provider_shell.dart';
@@ -223,6 +224,22 @@ class _ProviderPreviewAppState extends State<ProviderPreviewApp> {
     ),
   ];
 
+  ApplicantProfile _toApplicantProfile(StudentProfile p) {
+    return ApplicantProfile(
+      id: p.id,
+      fullName: p.fullName,
+      school: p.school,
+      course: p.course,
+      yearLevel: p.yearLevel,
+      gpa: p.gpa,
+      region: p.region,
+      province: p.province,
+      cityMunicipality: p.cityMunicipality,
+      setupComplete: p.setupComplete,
+      monthlyFamilyIncome: p.monthlyFamilyIncome,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return ProviderScope(
@@ -231,7 +248,7 @@ class _ProviderPreviewAppState extends State<ProviderPreviewApp> {
         incomingApplicationsProvider.overrideWith(() => MockIncomingAppsNotifier(_mockApplications)),
         scholarshipsProvider.overrideWith((ref) => Future.value(_mockScholarships)),
         providerScholarshipsProvider.overrideWith(() => MockProviderScholarshipsNotifier(_mockScholarships)),
-        providerApplicantProfilesProvider.overrideWith((ref) => Future.value(_mockProfilesMap)),
+        providerApplicantProfilesProvider.overrideWith((ref) => Future.value(_mockProfilesMap.map((k, v) => MapEntry(k, _toApplicantProfile(v))))),
         adminApplicantsProvider.overrideWith((ref) => Future.value(_mockProfilesMap.values.toList())),
         adminAllApplicationsProvider.overrideWith((ref) => Future.value(_mockApplications)),
         adminAuditLogsProvider.overrideWith((ref) => Future.value(_mockAuditLogs)),
@@ -275,7 +292,7 @@ class _ProviderPreviewAppState extends State<ProviderPreviewApp> {
               child: ApplicantReviewDrawer(
                 application: _mockApplications[0],
                 scholarship: _mockScholarships[0],
-                applicantProfile: _mockMayaProfile,
+                applicantProfile: _toApplicantProfile(_mockMayaProfile),
               ),
             ),
           ),
@@ -294,7 +311,7 @@ class _ProviderPreviewAppState extends State<ProviderPreviewApp> {
           body: ApplicantReviewDrawer(
             application: _mockApplications[0],
             scholarship: _mockScholarships[0],
-            applicantProfile: _mockMayaProfile,
+            applicantProfile: _toApplicantProfile(_mockMayaProfile),
           ),
         );
 

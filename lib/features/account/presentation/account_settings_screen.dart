@@ -382,10 +382,14 @@ class _AccountSettingsScreenState extends ConsumerState<AccountSettingsScreen> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
-                'Email Address',
-                style: openSans(fontSize: 12, color: kTextSecondary),
+              Flexible(
+                child: Text(
+                  'Email Address',
+                  style: openSans(fontSize: 12, color: kTextSecondary),
+                  overflow: TextOverflow.ellipsis,
+                ),
               ),
+              const SizedBox(width: 8),
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                 decoration: BoxDecoration(
@@ -419,24 +423,29 @@ class _AccountSettingsScreenState extends ConsumerState<AccountSettingsScreen> {
             const SizedBox(height: 8),
             Row(
               children: [
-                OutlinedButton(
-                  onPressed: _isResending || email == null || email.isEmpty
-                      ? null
-                      : _onResend,
-                  style: OutlinedButton.styleFrom(
-                    side: const BorderSide(color: kPrimary),
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                    minimumSize: Size.zero,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
+                Flexible(
+                  child: OutlinedButton(
+                    onPressed: _isResending || email == null || email.isEmpty
+                        ? null
+                        : _onResend,
+                    style: OutlinedButton.styleFrom(
+                      side: const BorderSide(color: kPrimary),
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                      minimumSize: Size.zero,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
                     ),
-                  ),
-                  child: Text(
-                    _isResending ? 'Sending…' : 'Resend verification email',
-                    style: outfit(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w600,
-                      color: kPrimary,
+                    child: FittedBox(
+                      fit: BoxFit.scaleDown,
+                      child: Text(
+                        _isResending ? 'Sending…' : 'Resend verification email',
+                        style: outfit(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
+                          color: kPrimary,
+                        ),
+                      ),
                     ),
                   ),
                 ),
@@ -471,14 +480,18 @@ class _AccountSettingsScreenState extends ConsumerState<AccountSettingsScreen> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
-                'Change password',
-                style: outfit(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w700,
-                  color: kTextPrimary,
+              Flexible(
+                child: Text(
+                  'Change password',
+                  style: outfit(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w700,
+                    color: kTextPrimary,
+                  ),
+                  overflow: TextOverflow.ellipsis,
                 ),
               ),
+              const SizedBox(width: 8),
               Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
@@ -931,15 +944,19 @@ class _AccountSettingsScreenState extends ConsumerState<AccountSettingsScreen> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(
-              'PRIVACY & DATA SHIELD',
-              style: outfit(
-                fontSize: 12,
-                fontWeight: FontWeight.w700,
-                letterSpacing: 0.5,
-                color: kTextSecondary,
+            Flexible(
+              child: Text(
+                'PRIVACY & DATA SHIELD',
+                style: outfit(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w700,
+                  letterSpacing: 0.5,
+                  color: kTextSecondary,
+                ),
+                overflow: TextOverflow.ellipsis,
               ),
             ),
+            const SizedBox(width: 8),
             Row(
               mainAxisSize: MainAxisSize.min,
               children: [

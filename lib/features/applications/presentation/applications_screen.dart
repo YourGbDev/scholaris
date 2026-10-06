@@ -166,7 +166,15 @@ class ApplicationsScreen extends ConsumerWidget {
       ),
       data: (applications) {
         if (applications.isEmpty) {
-          return const _EmptyApplicationsState();
+          return RefreshIndicator(
+            color: kPrimary,
+            onRefresh: () async {
+              ref.invalidate(applicationsProvider);
+              ref.invalidate(scholarshipsProvider);
+              await ref.read(applicationsProvider.future);
+            },
+            child: const _EmptyApplicationsState(),
+          );
         }
 
         final counts = ApplicationFilters.statusCounts(applications);
@@ -224,22 +232,33 @@ class ApplicationsScreen extends ConsumerWidget {
               ),
               const SizedBox(height: 10),
               Expanded(
-                child: filtered.isEmpty
-                    ? _buildFilteredEmpty(context, ref, status)
-                    : scholarshipsAsync.when(
-                        loading: () => const LoadingView(),
-                        error: (_, _) => ErrorView(
-                          message: 'Could not load scholarship details.',
-                          onRetry: () => ref.invalidate(scholarshipsProvider),
-                        ),
-                        data: (_) {
-                          return RefreshIndicator(
-                            onRefresh: () async {
-                              ref.invalidate(applicationsProvider);
-                              ref.invalidate(scholarshipsProvider);
-                              await ref.read(applicationsProvider.future);
-                            },
-                            child: ListView.builder(
+                child: RefreshIndicator(
+                  color: kPrimary,
+                  onRefresh: () async {
+                    ref.invalidate(applicationsProvider);
+                    ref.invalidate(scholarshipsProvider);
+                    await ref.read(applicationsProvider.future);
+                  },
+                  child: filtered.isEmpty
+                      ? ListView(
+                          physics: const AlwaysScrollableScrollPhysics(
+                            parent: AppleBouncingScrollPhysics(),
+                          ),
+                          children: [
+                            SizedBox(
+                              height: 360,
+                              child: _buildFilteredEmpty(context, ref, status),
+                            ),
+                          ],
+                        )
+                      : scholarshipsAsync.when(
+                          loading: () => const LoadingView(),
+                          error: (_, _) => ErrorView(
+                            message: 'Could not load scholarship details.',
+                            onRetry: () => ref.invalidate(scholarshipsProvider),
+                          ),
+                          data: (_) {
+                            return ListView.builder(
                               physics: const AlwaysScrollableScrollPhysics(
                                 parent: AppleBouncingScrollPhysics(),
                               ),
@@ -277,10 +296,10 @@ class ApplicationsScreen extends ConsumerWidget {
                                   ),
                                 );
                               },
-                            ),
-                          );
+                            );
                         },
                       ),
+                ),
               ),
             ],
           ),
@@ -1568,7 +1587,9 @@ class _EmptyApplicationsState extends ConsumerWidget {
     final count = scholarshipsAsync.valueOrNull?.length ?? 38;
 
     return SingleChildScrollView(
-      physics: const AppleBouncingScrollPhysics(),
+      physics: const AlwaysScrollableScrollPhysics(
+        parent: AppleBouncingScrollPhysics(),
+      ),
       padding: const EdgeInsets.fromLTRB(20, 12, 20, 32),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,

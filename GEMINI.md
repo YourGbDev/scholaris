@@ -295,18 +295,16 @@ Scholaris uses specialized Git worktrees for concurrent AI roles sharing the sam
 
 ### Git-Backed Task-Card Relay Protocol (`docs/coordination/PROTOCOL.md`):
 
-1. **Architect Workflow**:
-   - Analyzes user request, inspects codebase, writes `docs/plans/<feature>_plan.md`.
-   - Writes task cards: `docs/tasks/task_builder.md`, `task_ui.md`, `task_qa.md`, `task_security.md`.
-   - **MANDATORY STOP**: Must halt with state `AWAITING HUMAN APPROVAL`. Never instruct specialists to begin until the human explicitly approves.
-   - Upon human approval, announces the execution sequence and 1-line triggers for each specialist worktree.
-   - Retrieves reports via `git checkout ai/<role> -- docs/reports/<feature>_<role>_report.md`.
-   - Consolidates findings and enforces verification standards (distinguishing `IMPLEMENTED`, `REVIEWED`, `TESTED`, `VERIFIED`, `BLOCKED`).
-   - If issues arise, issues remediation task cards and repeats testing before declaring complete.
-   - Produces final consolidated report `docs/reports/<feature>_FINAL_REPORT.md`.
+1. **Architect Workflow (Six-Phase Lifecycle)**:
+   - **Phase 1: Human Approval Gate**: Analyzes user request, inspects codebase, writes `docs/plans/<feature>_plan.md` and the 4 task cards (`task_builder.md`, `task_ui.md`, `task_qa.md`, `task_security.md`). **MANDATORY STOP**: Must halt with state `AWAITING HUMAN APPROVAL`. Never instruct specialists to begin until the human explicitly approves.
+   - **Phase 2: Specialist Trigger**: Upon human approval, announces the execution sequence and 1-line triggers (`> execute assigned task`) for each specialist worktree.
+   - **Phase 3: Automatic Report Monitoring**: Architect initiates a lightweight background check (via `schedule` cron every 2 mins) polling Git branch refs for completed specialist reports. **Self-terminating**: The moment all required reports for the active feature are detected, the monitor terminates itself (`manage_task kill`).
+   - **Phase 4: Architect Consolidation**: Architect automatically retrieves all reports via `git checkout ai/<role> -- docs/reports/<feature>_<role>_report.md`, inspects diffs/logs, and evaluates results against the master plan.
+   - **Phase 5: Remediation Loop**: If defects, test failures, or privacy leaks are identified, Architect issues `docs/tasks/remediation_task_<role>.md` and coordinates fix/retest before proceeding.
+   - **Phase 6: Final Verification**: Architect enforces verification standards (distinguishing `IMPLEMENTED`, `REVIEWED`, `TESTED`, `VERIFIED`, `BLOCKED`) and produces `docs/reports/<feature>_FINAL_REPORT.md` for the human.
 
 2. **Specialist Workflow (Builder, UI/UX, QA, Security)**:
-   - When triggered, retrieves task card directly from Git:
+   - When triggered with `> execute assigned task`, retrieves task card directly from Git:
      ```bash
      git checkout ai/architect -- docs/plans/ docs/tasks/task_<role>.md
      ```

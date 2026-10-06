@@ -277,13 +277,13 @@ When debugging:
 
 ---
 
-## 13. Git, Worktree & Role Discipline
+## 13. Git, Worktree & Multi-Agent Coordination Protocol
 
-Scholaris uses specialized Git worktrees for concurrent AI roles:
+Scholaris uses specialized Git worktrees for concurrent AI roles sharing the same underlying repository:
 
-* **`whelk`**: `ai/architect` — System design, data flow, tradeoffs, requirements, planning.
+* **`whelk`**: `ai/architect` — System design, coordinator, requirements, planning, task cards, report consolidation.
 * **`cowrie`**: `ai/builder` — Feature implementation, maintainable code, unit/widget tests.
-* **`bowhead`**: `ai/ui` — Flutter UI, responsive layouts, Apple HIG styling, motion, accessibility.
+* **`bowhead`**: `ai/ui` — Flutter UI, responsive layouts, Apple HIG styling, motion craft, accessibility.
 * **`cerith`**: `ai/qa` — Bug hunting, regression testing, edge case verification, failure reproduction.
 * **`fusilier`**: `ai/security` — Supabase RLS, storage policies, data exposure audits, privacy (RA 10173), auth boundaries.
 
@@ -292,6 +292,33 @@ Scholaris uses specialized Git worktrees for concurrent AI roles:
 * Do not assume another worktree's uncommitted or local changes exist in your worktree.
 * Do not modify `master` or `main` directly.
 * Avoid overwriting uncommitted work; keep Git working trees clean.
+
+### Git-Backed Task-Card Relay Protocol (`docs/coordination/PROTOCOL.md`):
+
+1. **Architect Workflow**:
+   - Analyzes user request, inspects codebase, writes `docs/plans/<feature>_plan.md`.
+   - Writes task cards: `docs/tasks/task_builder.md`, `task_ui.md`, `task_qa.md`, `task_security.md`.
+   - **MANDATORY STOP**: Must halt with state `AWAITING HUMAN APPROVAL`. Never instruct specialists to begin until the human explicitly approves.
+   - Upon human approval, announces the execution sequence and 1-line triggers for each specialist worktree.
+   - Retrieves reports via `git checkout ai/<role> -- docs/reports/<feature>_<role>_report.md`.
+   - Consolidates findings and enforces verification standards (distinguishing `IMPLEMENTED`, `REVIEWED`, `TESTED`, `VERIFIED`, `BLOCKED`).
+   - If issues arise, issues remediation task cards and repeats testing before declaring complete.
+   - Produces final consolidated report `docs/reports/<feature>_FINAL_REPORT.md`.
+
+2. **Specialist Workflow (Builder, UI/UX, QA, Security)**:
+   - When triggered, retrieves task card directly from Git:
+     ```bash
+     git checkout ai/architect -- docs/plans/ docs/tasks/task_<role>.md
+     ```
+   - Only modifies files permitted in their assigned task card.
+   - UI/UX MUST explicitly load and apply the 7 installed design skills in `.agents/skills/`.
+   - Produces structured completion report in `docs/reports/<feature>_<role>_report.md`.
+   - Commits changes and report to their active branch (`ai/<role>`).
+   - If a blocker or conflict arises, stops immediately and documents it in the report instead of improvising.
+
+3. **Verification Integrity Rule**:
+   - A Builder claiming "fixed" is NEVER sufficient to mark an item verified.
+   - Only independent verification by QA, Security, or UI/UX with concrete test evidence qualifies as `VERIFIED`.
 
 ---
 

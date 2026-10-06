@@ -1,48 +1,35 @@
-# Task Card: Security & Privacy (RA 10173 & RLS Audit)
+# Task Card: Security & Privacy (Master Remediation Audit)
 
 > **Assigned Role**: 🛡️ Security Specialist (`ai/security`)  
 > **Assigned Worktree**: `.../scholaris/fusilier`  
-> **Feature**: [Feature Name]  
-> **Master Plan**: `docs/plans/[feature]_plan.md`  
-> **Status**: `TEMPLATE / READY FOR ASSIGNMENT`
+> **Master Plan**: `docs/plans/2026-10-06_master_remediation_plan.md`  
+> **Status**: `AWAITING HUMAN APPROVAL`
 
 ---
 
-## 1. Objective
-[Concise summary of security, privacy, and authorization audit scope]
+## 1. Objectives
+Audit profile data model, RLS policies, and sensitive demographic data boundaries against RA 10173 and `GEMINI.md`.
 
 ---
 
-## 2. Security Boundaries & Mandates
-* **RA 10173 (Philippine Data Privacy Act)**:
-  - Providers must query `public.provider_applicant_profiles` or `public.get_applicant_profile()`.
-  - Sensitive demographic fields (birthdate, disability, indigenous status, phone, email) must NEVER leak to provider surfaces.
-* **Storage Buckets**:
-  - `application_documents` access is restricted to the student owner, admins, or the provider managing that specific submitted application.
-* **Draft & Withdrawn Protection**:
-  - Applications in `draft` or `withdrawn` status must remain completely invisible to providers.
-* **Identity**:
-  - All RLS mutations must bind strictly to `auth.uid()`.
-
----
-
-## 3. Allowed Files to Modify
+## 2. Allowed Files to Modify
 * `supabase/migrations/...` *(Requires explicit human authorization)*
 * `test/security/...`
 
 ---
 
-## 4. Security Audit Checklist
-- [ ] RLS policies inspected and tested against authenticated student/provider roles
-- [ ] Document storage download URLs audited for token/time expiration
-- [ ] No client-side bypasses or spoofable user IDs detected
+## 3. Security Audit Checklist
+- [ ] **Audit Finding 3.2.1**: Verify GPA scale changes do not weaken profile validation constraints or introduce SQL injection vectors.
+- [ ] **Audit Finding 3.2.3**: Verify that live document verification status is read through authorized RLS views and does not expose other students' document records.
+- [ ] **Verify Privacy Boundaries**: Confirm that provider queries continue using `public.provider_applicant_profiles` without leaking `birth_date`, `has_disability`, `is_indigenous`, `phone`, or `email`.
+- [ ] **Verify Identity Enforcement**: Confirm all profile mutations remain strictly bound to `auth.uid()`.
 
 ---
 
-## 5. Output Report Destination
-Save your report to: `docs/reports/[feature]_security_report.md`
-Commit your report:
+## 4. Output Report
+Save report to: `docs/reports/remediation_security_report.md`
+Commit to branch `ai/security`:
 ```bash
-git add docs/reports/[feature]_security_report.md
-git commit -m "audit(security): review [feature] security boundaries"
+git add docs/reports/remediation_security_report.md
+git commit -m "audit(security): audit master remediation privacy boundaries"
 ```

@@ -1,42 +1,40 @@
-# Task Card: Q&A (Testing & Verification)
+# Task Card: Q&A (Master Remediation Verification)
 
 > **Assigned Role**: 🔍 Q&A Engineer (`ai/qa`)  
 > **Assigned Worktree**: `.../scholaris/cerith`  
-> **Feature**: [Feature Name]  
-> **Master Plan**: `docs/plans/[feature]_plan.md`  
-> **Status**: `TEMPLATE / READY FOR ASSIGNMENT`
+> **Master Plan**: `docs/plans/2026-10-06_master_remediation_plan.md`  
+> **Status**: `AWAITING HUMAN APPROVAL`
 
 ---
 
-## 1. Objective
-[Concise summary of testing and verification targets]
+## 1. Objectives
+Independently test and verify all P0/P1 remediation fixes. A Builder claiming "fixed" is **NEVER** sufficient to mark something verified.
 
 ---
 
-## 2. Scope & Verification Mandate
-A Builder claiming "fixed" is **NEVER** sufficient to mark something verified. You must independently reproduce, test, and provide tangible evidence.
-
----
-
-## 3. Allowed Files to Modify
+## 2. Allowed Files to Modify
 * `test/...`
 * `integration_test/...`
-*(Do NOT modify application code unless approved for test harness support)*
 
 ---
 
-## 4. Testing Checklist
-- [ ] Automated widget & unit tests executed with exit code 0
-- [ ] Live data integrity verified: zero synthetic mocks or hardcoded completion states
-- [ ] Real-browser execution tested on narrow mobile (360px) and desktop (1280px)
-- [ ] Console checked for exceptions or unhandled Riverpod errors
+## 3. Verification Checklist
+- [ ] **Test Finding 3.2.1**: Write and execute unit tests for Philippine GPA validation:
+  - Input `1.25` on 5.0 scale -> Passes.
+  - Input `88.5` on percentage scale -> Passes.
+  - Input `3.75` on 4.0 scale -> Passes.
+  - Input `0.5` or `105.0` -> Fails with appropriate error message.
+- [ ] **Test Finding 3.2.2**: Verify tapping "Edit Location" on `ProfileTabScreen` navigates to financial/location step without 404.
+- [ ] **Test Finding 3.2.3**: Verify profile badges with clean account: zero fake "Verified" badges shown.
+- [ ] **Test Finding 3.3.1**: Verify Discovery filter chips ("Match >90%", "₱50k - ₱150k+") reactively filter results.
+- [ ] **Test Viewports**: Verify layouts at 320px, 360px, 440px, and 1280px. Confirm zero `RenderFlex` overflows in browser console.
 
 ---
 
-## 5. Output Report Destination
-Save your report to: `docs/reports/[feature]_qa_report.md`
-Commit your test code and report:
+## 4. Output Report
+Save report to: `docs/reports/remediation_qa_report.md`
+Commit to branch `ai/qa`:
 ```bash
-git add <test-files> docs/reports/[feature]_qa_report.md
-git commit -m "test(qa): verify [feature] test results"
+git add <test-files> docs/reports/remediation_qa_report.md
+git commit -m "test(qa): verify master remediation results"
 ```

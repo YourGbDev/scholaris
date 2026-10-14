@@ -16,6 +16,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'package:scholaris/features/account/providers/account_provider.dart';
@@ -57,6 +58,35 @@ class _AccountSettingsScreenState extends ConsumerState<AccountSettingsScreen> {
   bool _alertStatus = true;
   bool _alertWeeklyDigest = false;
   bool _alertEmail = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadNotificationPreferences();
+  }
+
+  Future<void> _loadNotificationPreferences() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final userId = ref.read(currentUserIdProvider) ?? 'anon';
+      if (!mounted) return;
+      setState(() {
+        _alertDeadline = prefs.getBool('pref_alert_deadline_$userId') ?? true;
+        _alertMatches = prefs.getBool('pref_alert_matches_$userId') ?? true;
+        _alertStatus = prefs.getBool('pref_alert_status_$userId') ?? true;
+        _alertWeeklyDigest = prefs.getBool('pref_alert_weekly_$userId') ?? false;
+        _alertEmail = prefs.getBool('pref_alert_email_$userId') ?? true;
+      });
+    } catch (_) {}
+  }
+
+  Future<void> _savePreference(String key, bool value) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final userId = ref.read(currentUserIdProvider) ?? 'anon';
+      await prefs.setBool('pref_${key}_$userId', value);
+    } catch (_) {}
+  }
 
   @override
   void dispose() {
@@ -352,10 +382,14 @@ class _AccountSettingsScreenState extends ConsumerState<AccountSettingsScreen> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
-                'Email Address',
-                style: openSans(fontSize: 12, color: kTextSecondary),
+              Flexible(
+                child: Text(
+                  'Email Address',
+                  style: openSans(fontSize: 12, color: kTextSecondary),
+                  overflow: TextOverflow.ellipsis,
+                ),
               ),
+              const SizedBox(width: 8),
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                 decoration: BoxDecoration(
@@ -389,24 +423,29 @@ class _AccountSettingsScreenState extends ConsumerState<AccountSettingsScreen> {
             const SizedBox(height: 8),
             Row(
               children: [
-                OutlinedButton(
-                  onPressed: _isResending || email == null || email.isEmpty
-                      ? null
-                      : _onResend,
-                  style: OutlinedButton.styleFrom(
-                    side: const BorderSide(color: kPrimary),
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                    minimumSize: Size.zero,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
+                Flexible(
+                  child: OutlinedButton(
+                    onPressed: _isResending || email == null || email.isEmpty
+                        ? null
+                        : _onResend,
+                    style: OutlinedButton.styleFrom(
+                      side: const BorderSide(color: kPrimary),
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                      minimumSize: Size.zero,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
                     ),
-                  ),
-                  child: Text(
-                    _isResending ? 'Sending…' : 'Resend verification email',
-                    style: outfit(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w600,
-                      color: kPrimary,
+                    child: FittedBox(
+                      fit: BoxFit.scaleDown,
+                      child: Text(
+                        _isResending ? 'Sending…' : 'Resend verification email',
+                        style: outfit(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
+                          color: kPrimary,
+                        ),
+                      ),
                     ),
                   ),
                 ),
@@ -441,14 +480,18 @@ class _AccountSettingsScreenState extends ConsumerState<AccountSettingsScreen> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
-                'Change password',
-                style: outfit(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w700,
-                  color: kTextPrimary,
+              Flexible(
+                child: Text(
+                  'Change password',
+                  style: outfit(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w700,
+                    color: kTextPrimary,
+                  ),
+                  overflow: TextOverflow.ellipsis,
                 ),
               ),
+              const SizedBox(width: 8),
               Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
@@ -767,7 +810,10 @@ class _AccountSettingsScreenState extends ConsumerState<AccountSettingsScreen> {
                 badgeColor: const Color(0xFFFFDAD6),
                 badgeTextColor: const Color(0xFF93000A),
                 value: _alertDeadline,
-                onChanged: (v) => setState(() => _alertDeadline = v),
+                onChanged: (v) {
+                  setState(() => _alertDeadline = v);
+                  _savePreference('alert_deadline', v);
+                },
               ),
               const Divider(height: 1, color: Color(0xFFF1F3FF)),
 
@@ -778,7 +824,10 @@ class _AccountSettingsScreenState extends ConsumerState<AccountSettingsScreen> {
                 badgeColor: kTertiaryFixed,
                 badgeTextColor: kOnTertiaryFixedVariant,
                 value: _alertMatches,
-                onChanged: (v) => setState(() => _alertMatches = v),
+                onChanged: (v) {
+                  setState(() => _alertMatches = v);
+                  _savePreference('alert_matches', v);
+                },
               ),
               const Divider(height: 1, color: Color(0xFFF1F3FF)),
 
@@ -786,7 +835,10 @@ class _AccountSettingsScreenState extends ConsumerState<AccountSettingsScreen> {
                 title: 'Application Status Updates',
                 subtitle: 'Real-time alerts when screening panels advance your dossier.',
                 value: _alertStatus,
-                onChanged: (v) => setState(() => _alertStatus = v),
+                onChanged: (v) {
+                  setState(() => _alertStatus = v);
+                  _savePreference('alert_status', v);
+                },
               ),
               const Divider(height: 1, color: Color(0xFFF1F3FF)),
 
@@ -794,7 +846,10 @@ class _AccountSettingsScreenState extends ConsumerState<AccountSettingsScreen> {
                 title: 'Weekly Grant Digest',
                 subtitle: 'A curated Friday summary of regional grants and university aids.',
                 value: _alertWeeklyDigest,
-                onChanged: (v) => setState(() => _alertWeeklyDigest = v),
+                onChanged: (v) {
+                  setState(() => _alertWeeklyDigest = v);
+                  _savePreference('alert_weekly', v);
+                },
               ),
               const Divider(height: 1, color: Color(0xFFF1F3FF)),
 
@@ -802,7 +857,10 @@ class _AccountSettingsScreenState extends ConsumerState<AccountSettingsScreen> {
                 title: 'Email Notifications',
                 subtitle: 'Receive formal notices, receipt confirmations, and interview invites.',
                 value: _alertEmail,
-                onChanged: (v) => setState(() => _alertEmail = v),
+                onChanged: (v) {
+                  setState(() => _alertEmail = v);
+                  _savePreference('alert_email', v);
+                },
               ),
             ],
           ),
@@ -886,15 +944,19 @@ class _AccountSettingsScreenState extends ConsumerState<AccountSettingsScreen> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(
-              'PRIVACY & DATA SHIELD',
-              style: outfit(
-                fontSize: 12,
-                fontWeight: FontWeight.w700,
-                letterSpacing: 0.5,
-                color: kTextSecondary,
+            Flexible(
+              child: Text(
+                'PRIVACY & DATA SHIELD',
+                style: outfit(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w700,
+                  letterSpacing: 0.5,
+                  color: kTextSecondary,
+                ),
+                overflow: TextOverflow.ellipsis,
               ),
             ),
+            const SizedBox(width: 8),
             Row(
               mainAxisSize: MainAxisSize.min,
               children: [

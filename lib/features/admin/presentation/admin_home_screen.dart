@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:scholaris/shared/theme/app_motion.dart';
 import 'package:scholaris/shared/widgets/logout_confirmation_dialog.dart';
@@ -81,6 +82,9 @@ class _AdminHomeScreenState extends ConsumerState<AdminHomeScreen> {
       try {
         await Supabase.instance.client.auth.signOut();
       } catch (_) {}
+      if (context.mounted) {
+        context.go('/admin-login');
+      }
     }
   }
 

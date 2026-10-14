@@ -21,6 +21,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 //   home_screen.dart         → HomeScreen()
 //   profile_setup_screen.dart → ProfileSetupScreen({required String step})
 import 'package:scholaris/features/admin/presentation/admin_home_screen.dart';
+import 'package:scholaris/features/admin/presentation/admin_login_screen.dart';
 import 'package:scholaris/features/auth/controllers/auth_controller.dart';
 import 'package:scholaris/features/auth/presentation/ceremony_screen.dart';
 import 'package:scholaris/features/auth/presentation/forgot_password_screen.dart';
@@ -298,6 +299,16 @@ final routerProvider = Provider<GoRouter>((ref) {
             inspectApproved: inspectApproved,
           );
         },
+      ),
+      // Dedicated institutional governance login for Super Administrators.
+      GoRoute(
+        path: '/admin-login',
+        name: 'admin-login',
+        builder: (context, state) => const AdminLoginScreen(),
+      ),
+      GoRoute(
+        path: '/admin/login',
+        redirect: (context, state) => '/admin-login',
       ),
 
       // --- First-launch intro / welcome ---------------------------------------
@@ -624,6 +635,7 @@ abstract final class ProviderRoute {
 /// branch of [authRedirectDecision].
 abstract final class AdminRoute {
   static const home = '/admin-home';
+  static const login = '/admin-login';
 }
 
 /// The classic auth screens a signed-out user may always reach. `/ceremony` is
@@ -636,6 +648,8 @@ abstract final class AdminRoute {
 /// (allowlist omission from 9de9f5f, fixed 2026-09-08).
 bool _isAuthRoute(String location) =>
     location == '/login' ||
+    location == '/admin-login' ||
+    location == '/admin/login' ||
     location == '/provider-login' ||
     location == '/signup' ||
     location == '/become-provider' ||

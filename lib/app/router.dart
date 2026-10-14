@@ -777,12 +777,17 @@ String? onboardingRedirectDecision({
       location == '/intro';
   if (!funnelsToLogin) return authDecision;
 
-  // Flag still loading → hold on splash.
-  if (onboardingLoading) {
-    return location == '/splash' ? null : '/splash';
+  // When splash completes its animation sequence, hand off directly to the onboarding slides
+  if (location == '/splash') {
+    return '/onboarding';
   }
 
-  // Proceed directly to login once splash completes
+  // When on onboarding, allow the user to view the slides
+  if (location == '/onboarding') {
+    return null;
+  }
+
+  // Once completed or when navigating to login, allow authDecision (/login)
   return authDecision;
 }
 

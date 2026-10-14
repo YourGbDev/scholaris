@@ -248,7 +248,7 @@ class _OrgIncomingApplicationsTabState
                       ref.invalidate(incomingApplicationsProvider);
                     },
                     child: SingleChildScrollView(
-                      physics: const AlwaysScrollableScrollPhysics(),
+                      physics: const AppleBouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
                       padding: EdgeInsets.symmetric(
                         horizontal: isDesktop ? 32 : 16,
                         vertical: isDesktop ? 28 : 20,

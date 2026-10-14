@@ -195,7 +195,7 @@ class _AdminUsersTabState extends ConsumerState<AdminUsersTab> {
     final paddingH = isDesktop ? 32.0 : 16.0;
 
     return SingleChildScrollView(
-      physics: const AppleBouncingScrollPhysics(),
+      physics: const AppleBouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
       padding: EdgeInsets.symmetric(horizontal: paddingH, vertical: 24),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -1866,6 +1866,7 @@ class _AdminUsersTabState extends ConsumerState<AdminUsersTab> {
 
   Widget _buildSkeleton(BuildContext context) {
     return SingleChildScrollView(
+      physics: const AppleBouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
       padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 24),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

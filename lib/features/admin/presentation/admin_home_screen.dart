@@ -507,7 +507,7 @@ class _AdminHomeScreenState extends ConsumerState<AdminHomeScreen> {
                             overflow: TextOverflow.ellipsis,
                           ),
                           Text(
-                            'CHED Officer',
+                            'Platform Root',
                             style: GoogleFonts.inter(
                               fontSize: 11,
                               color: kAdminTextSecondary,
@@ -612,55 +612,74 @@ class _SidebarNavItem extends StatelessWidget {
         scale: 0.98,
         spring: AppleSpringDescription.snappyPress,
         child: Material(
-          color: isSelected ? kAdminActiveNavBackground : const Color(0x000F4D2E),
+          color: Colors.transparent,
           borderRadius: BorderRadius.circular(10),
           child: InkWell(
             borderRadius: BorderRadius.circular(10),
-            hoverColor: isSelected ? null : const Color(0xFFE9E7ED),
             splashColor: Colors.transparent,
             highlightColor: Colors.transparent,
+            focusColor: Colors.transparent,
+            hoverColor: isSelected ? Colors.transparent : const Color(0xFFE9E7ED),
             onTap: onTap,
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(10),
-              boxShadow: isSelected
-                  ? const [
-                      BoxShadow(
-                        color: Color(0x1F0F4D2E),
-                        blurRadius: 4,
-                        offset: Offset(0, 1),
-                      ),
-                    ]
-                  : null,
-            ),
-            child: Row(
-              children: [
-                Icon(
-                  isSelected ? selectedIcon : icon,
-                  size: 19,
-                  color: isSelected ? kAdminActiveNavText : const Color(0xFF5E6D66),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Text(
-                    label,
-                    style: GoogleFonts.inter(
-                      fontSize: 13.5,
-                      fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
-                      color: isSelected ? kAdminActiveNavText : kAdminInactiveNavText,
-                      letterSpacing: -0.1,
-                    ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 180),
+              curve: Curves.easeOutCubic,
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
+              decoration: BoxDecoration(
+                // Interpolates strictly in green channel alpha without ever touching transparent black
+                color: isSelected
+                    ? kAdminActiveNavBackground
+                    : kAdminActiveNavBackground.withValues(alpha: 0),
+                borderRadius: BorderRadius.circular(10),
+                boxShadow: [
+                  BoxShadow(
+                    color: isSelected
+                        ? const Color(0x1F0F4D2E)
+                        : const Color(0x000F4D2E),
+                    blurRadius: 4,
+                    offset: const Offset(0, 1),
                   ),
-                ),
-              ],
+                ],
+              ),
+              child: Row(
+                children: [
+                  TweenAnimationBuilder<Color?>(
+                    duration: const Duration(milliseconds: 180),
+                    curve: Curves.easeOutCubic,
+                    tween: ColorTween(
+                      begin: isSelected ? const Color(0xFF5E6D66) : kAdminActiveNavText,
+                      end: isSelected
+                          ? kAdminActiveNavText
+                          : const Color(0xFF5E6D66),
+                    ),
+                    builder: (context, color, _) {
+                      return Icon(
+                        isSelected ? selectedIcon : icon,
+                        size: 19,
+                        color: color,
+                      );
+                    },
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Text(
+                      label,
+                      style: GoogleFonts.inter(
+                        fontSize: 13.5,
+                        fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+                        color: isSelected ? kAdminActiveNavText : kAdminInactiveNavText,
+                        letterSpacing: -0.1,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ),
       ),
-    ),
-  );
-}
+    );
+  }
 }

@@ -1053,6 +1053,7 @@ Widget _buildSkeletonLoader(BuildContext context) {
                   Expanded(
                     child: ListView(
                       controller: scrollController,
+                      physics: const AppleBouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
                       padding: const EdgeInsets.all(24),
                       children: [
                         // Core Audit Fields

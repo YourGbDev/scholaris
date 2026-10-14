@@ -1,3 +1,4 @@
+import 'dart:ui';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -8,6 +9,7 @@ import 'app/router.dart';
 import 'app/supabase_config.dart';
 import 'core/auth/tab_scoped_local_storage.dart';
 import 'core/security/login_lockout_service.dart';
+import 'shared/theme/app_motion.dart';
 import 'shared/theme/app_theme.dart';
 
 Future<void> main() async {
@@ -36,6 +38,25 @@ Future<void> main() async {
   runApp(const ProviderScope(child: ScholarisApp()));
 }
 
+class ScholarisSmoothScrollBehavior extends MaterialScrollBehavior {
+  const ScholarisSmoothScrollBehavior();
+
+  @override
+  Set<PointerDeviceKind> get dragDevices => {
+    PointerDeviceKind.touch,
+    PointerDeviceKind.mouse,
+    PointerDeviceKind.trackpad,
+    PointerDeviceKind.stylus,
+  };
+
+  @override
+  ScrollPhysics getScrollPhysics(BuildContext context) {
+    return const AppleBouncingScrollPhysics(
+      parent: AlwaysScrollableScrollPhysics(),
+    );
+  }
+}
+
 class ScholarisApp extends ConsumerWidget {
   const ScholarisApp({super.key});
 
@@ -47,6 +68,7 @@ class ScholarisApp extends ConsumerWidget {
       title: 'Scholaris',
       debugShowCheckedModeBanner: false,
       theme: scholarisTheme(),
+      scrollBehavior: const ScholarisSmoothScrollBehavior(),
       routerConfig: router,
     );
   }

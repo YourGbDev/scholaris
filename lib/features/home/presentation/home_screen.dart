@@ -77,9 +77,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             bottom: 0,
             child: SafeArea(
               top: false,
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(16, 0, 16, 14),
-                child: Center(
+              child: Builder(
+                builder: (context) {
+                  final screenWidth = MediaQuery.sizeOf(context).width;
+                  final horizontalPad = screenWidth < 360 ? 8.0 : 16.0;
+                  return Padding(
+                    padding: EdgeInsets.fromLTRB(horizontalPad, 0, horizontalPad, 14),
+                    child: Center(
                   heightFactor: 1.0,
                   child: ConstrainedBox(
                     constraints: const BoxConstraints(maxWidth: 440),
@@ -194,12 +198,14 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     ),
                   ),
                 ),
-              ),
-            ),
+              );
+            },
           ),
-        ],
+        ),
       ),
-    );
+    ],
+  ),
+);
   }
 }
 
@@ -229,7 +235,10 @@ class _StudentNavItem extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             Container(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+              padding: EdgeInsets.symmetric(
+                horizontal: MediaQuery.sizeOf(context).width < 360 ? 6.0 : 12.0,
+                vertical: 4,
+              ),
               decoration: BoxDecoration(
                 color: selected ? const Color(0xFFDCF3E5) : Colors.transparent,
                 borderRadius: BorderRadius.circular(16),
@@ -243,16 +252,19 @@ class _StudentNavItem extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 2),
-            Text(
-              label,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: outfit(
-                fontSize: 10.5,
-                fontWeight: selected ? FontWeight.bold : FontWeight.w500,
-                color: selected
-                    ? const Color(0xFF0F4D2E)
-                    : const Color(0xFF5A625C),
+            FittedBox(
+              fit: BoxFit.scaleDown,
+              child: Text(
+                label,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: outfit(
+                  fontSize: 10.5,
+                  fontWeight: selected ? FontWeight.bold : FontWeight.w500,
+                  color: selected
+                      ? const Color(0xFF0F4D2E)
+                      : const Color(0xFF5A625C),
+                ),
               ),
             ),
           ],

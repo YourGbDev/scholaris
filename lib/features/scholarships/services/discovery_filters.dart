@@ -32,6 +32,8 @@ class DiscoveryFilterState {
     this.incomeBracket,
     this.regions = const <String>{},
     this.closingSoonOnly = false,
+    this.highFitOnly = false,
+    this.minAmount,
     this.sort = DiscoverySort.defaultSort,
   });
 
@@ -47,6 +49,12 @@ class DiscoveryFilterState {
   /// Restrict to scholarships closing within 14 days.
   final bool closingSoonOnly;
 
+  /// Restrict to high-match / high-eligibility scholarships (>90% fit).
+  final bool highFitOnly;
+
+  /// Minimum scholarship grant amount (e.g. 50,000 PHP).
+  final double? minAmount;
+
   final DiscoverySort sort;
 
   /// True when any search/filter control deviates from the default.
@@ -54,13 +62,17 @@ class DiscoveryFilterState {
       query.trim().isNotEmpty ||
       incomeBracket != null ||
       regions.isNotEmpty ||
-      closingSoonOnly;
+      closingSoonOnly ||
+      highFitOnly ||
+      minAmount != null;
 
   DiscoveryFilterState copyWith({
     String? query,
     Object? incomeBracket = _unset,
     Set<String>? regions,
     bool? closingSoonOnly,
+    bool? highFitOnly,
+    Object? minAmount = _unset,
     DiscoverySort? sort,
   }) {
     return DiscoveryFilterState(
@@ -70,6 +82,10 @@ class DiscoveryFilterState {
           : incomeBracket as String?,
       regions: regions ?? this.regions,
       closingSoonOnly: closingSoonOnly ?? this.closingSoonOnly,
+      highFitOnly: highFitOnly ?? this.highFitOnly,
+      minAmount: identical(minAmount, _unset)
+          ? this.minAmount
+          : minAmount as double?,
       sort: sort ?? this.sort,
     );
   }
@@ -124,6 +140,8 @@ class DiscoveryFilters {
     if (!_matchesIncome(s, state.incomeBracket)) return false;
     if (!_matchesRegions(s, state.regions)) return false;
     if (!_matchesDeadline(s, state.closingSoonOnly, now: now)) return false;
+    if (state.highFitOnly && s.minGpa > 2.0) return false;
+    if (state.minAmount != null && s.amount < state.minAmount!) return false;
     return true;
   }
 

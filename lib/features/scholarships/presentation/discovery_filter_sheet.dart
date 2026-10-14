@@ -95,6 +95,13 @@ class _DiscoveryFilterSheetState extends ConsumerState<DiscoveryFilterSheet> {
                     ),
                   ),
                 ),
+                IconButton(
+                  tooltip: 'Close filters',
+                  constraints: const BoxConstraints(minWidth: 44, minHeight: 44),
+                  padding: const EdgeInsets.all(10),
+                  icon: const Icon(Icons.close_rounded, size: 20, color: Color(0xFF404942)),
+                  onPressed: () => Navigator.of(context).pop(),
+                ),
               ],
             ),
           ),

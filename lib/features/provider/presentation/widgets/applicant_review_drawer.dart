@@ -310,19 +310,65 @@ class _ApplicantReviewDrawerState extends ConsumerState<ApplicantReviewDrawer> {
     setState(() => _isProcessing = true);
 
     try {
-      // Advance status using providerUpdateStatus (satisfies Supabase RLS policy 0006)
-      await ref
-          .read(applicationRepositoryProvider)
-          .providerUpdateStatus(widget.application.id, targetStatus);
+      final repo = ref.read(applicationRepositoryProvider);
+      final deliberationNotes = _notesController.text.trim().isNotEmpty
+          ? _notesController.text.trim()
+          : null;
 
-      // Save deliberation remarks if entered
-      if (_notesController.text.trim().isNotEmpty) {
-        try {
-          await ref.read(applicationRepositoryProvider).updateNotes(
-                widget.application.id,
-                _notesController.text.trim(),
-              );
-        } catch (_) {}
+      // Advance status using providerUpdateStatus (satisfies Supabase RLS policy 0006)
+      await repo.providerUpdateStatus(widget.application.id, targetStatus);
+
+      // Persist 4-criterion rubric evaluation & deliberation notes
+      try {
+        await repo.saveEvaluation(
+          applicationId: widget.application.id,
+          scoreAcademic: _score1,
+          scoreFinancial: _score2,
+          scoreLeadership: _score3,
+          scoreVision: _score4,
+          compositeScore: double.parse(_compositeScore.toStringAsFixed(2)),
+          notes: deliberationNotes,
+          decision: targetStatus.dbValue,
+        );
+      } catch (evalErr) {
+        debugPrint('[ApplicantReviewDrawer] Evaluation persistence note: $evalErr');
+      }
+
+      // Record status transition in application_status_history
+      try {
+        await repo.recordStatusTransition(
+          applicationId: widget.application.id,
+          fromStatus: widget.application.status.dbValue,
+          toStatus: targetStatus.dbValue,
+          remarks: deliberationNotes,
+        );
+      } catch (histErr) {
+        debugPrint('[ApplicantReviewDrawer] Status transition log note: $histErr');
+      }
+
+      // Create in-app notification for the applicant student
+      try {
+        final scholarshipTitle = widget.scholarship?.title ?? 'Scholarship';
+        final notifTitle = targetStatus == ApplicationStatus.approved
+            ? 'Application Approved! 🎉'
+            : targetStatus == ApplicationStatus.rejected
+                ? 'Application Status Update'
+                : 'Application Under Review';
+        final notifMsg = targetStatus == ApplicationStatus.approved
+            ? 'Congratulations! Your application for "$scholarshipTitle" has been approved.'
+            : targetStatus == ApplicationStatus.rejected
+                ? 'Your application for "$scholarshipTitle" has been reviewed.'
+                : 'Your application for "$scholarshipTitle" is being evaluated by the committee.';
+
+        await repo.createNotification(
+          userId: widget.application.userId,
+          title: notifTitle,
+          message: notifMsg,
+          targetId: widget.application.id,
+          type: 'application_update',
+        );
+      } catch (notifErr) {
+        debugPrint('[ApplicantReviewDrawer] Notification persistence note: $notifErr');
       }
 
       ref.read(incomingApplicationsProvider.notifier).refresh();
@@ -359,10 +405,12 @@ class _ApplicantReviewDrawerState extends ConsumerState<ApplicantReviewDrawer> {
 
   @override
   Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.sizeOf(context).width;
-    final isDesktop = screenWidth >= 768;
-    final isNarrow = screenWidth < 640;
-    final app = widget.application;
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final screenWidth = MediaQuery.sizeOf(context).width;
+        final isDesktop = screenWidth >= 768;
+        final isNarrow = constraints.maxWidth < 640;
+        final app = widget.application;
 
     final profile = widget.applicantProfile;
     final hasProfile = profile != null && profile.fullName.trim().isNotEmpty;
@@ -570,8 +618,9 @@ class _ApplicantReviewDrawerState extends ConsumerState<ApplicantReviewDrawer> {
           _rawOvershootPx = 0.0;
         }
       },
-      child: drawerBody,
-    );
+        child: drawerBody,
+      );
+    });
   }
 
   // ---------------------------------------------------------------------------
@@ -642,41 +691,45 @@ class _ApplicantReviewDrawerState extends ConsumerState<ApplicantReviewDrawer> {
                         ),
                       ),
                     ),
-                    const SizedBox(width: 8),
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                      decoration: BoxDecoration(
-                        color: setupComplete
-                            ? const Color(0xFFB3F1C6)
-                            : const Color(0xFFFFDDBB),
-                        borderRadius: BorderRadius.circular(9999),
-                      ),
-                      child: Text(
-                        setupComplete ? 'Profile Complete' : 'Profile Incomplete',
-                        style: orgLabel(
-                          fontSize: 11,
-                          fontWeight: FontWeight.w600,
+                    if (!isNarrow) ...[
+                      const SizedBox(width: 8),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                        decoration: BoxDecoration(
                           color: setupComplete
-                              ? const Color(0xFF002110)
-                              : const Color(0xFF623A00),
+                              ? const Color(0xFFB3F1C6)
+                              : const Color(0xFFFFDDBB),
+                          borderRadius: BorderRadius.circular(9999),
+                        ),
+                        child: Text(
+                          setupComplete ? 'Profile Complete' : 'Profile Incomplete',
+                          style: orgLabel(
+                            fontSize: 11,
+                            fontWeight: FontWeight.w600,
+                            color: setupComplete
+                                ? const Color(0xFF002110)
+                                : const Color(0xFF623A00),
+                          ),
                         ),
                       ),
-                    ),
+                    ],
                   ],
                 ),
                 const SizedBox(height: 3),
                 Row(
                   children: [
-                    Text(
-                      'LRN: Not on file',
-                      style: orgBody(
-                        fontSize: 12,
-                        color: const Color(0xFF707971),
+                    if (!isNarrow) ...[
+                      Text(
+                        'LRN: Not on file',
+                        style: orgBody(
+                          fontSize: 12,
+                          color: const Color(0xFF707971),
+                        ),
                       ),
-                    ),
-                    const SizedBox(width: 6),
-                    const Text('•', style: TextStyle(color: Color(0xFF707971), fontSize: 12, letterSpacing: 0.15)),
-                    const SizedBox(width: 6),
+                      const SizedBox(width: 6),
+                      const Text('•', style: TextStyle(color: Color(0xFF707971), fontSize: 12, letterSpacing: 0.15)),
+                      const SizedBox(width: 6),
+                    ],
                     Expanded(
                       child: Text(
                         scholarshipTitle,
@@ -696,34 +749,36 @@ class _ApplicantReviewDrawerState extends ConsumerState<ApplicantReviewDrawer> {
           ),
 
           // Quick Action Icons
-          PressableScale(
-            child: IconButton(
-              tooltip: 'Export Evaluator Summary PDF',
-              icon: const Icon(Icons.print_outlined, size: 18, color: Color(0xFF404942)),
-              onPressed: () {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('Exporting Evaluator Summary PDF...'),
-                    duration: Duration(seconds: 2),
-                  ),
-                );
-              },
+          if (!isNarrow) ...[
+            PressableScale(
+              child: IconButton(
+                tooltip: 'Export Evaluator Summary PDF',
+                icon: const Icon(Icons.print_outlined, size: 18, color: Color(0xFF404942)),
+                onPressed: () {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Exporting Evaluator Summary PDF...'),
+                      duration: Duration(seconds: 2),
+                    ),
+                  );
+                },
+              ),
             ),
-          ),
-          PressableScale(
-            child: IconButton(
-              tooltip: 'Candidate Profile Share',
-              icon: const Icon(Icons.share_outlined, size: 18, color: Color(0xFF404942)),
-              onPressed: () {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('Candidate dossier link copied to clipboard'),
-                    duration: Duration(seconds: 2),
-                  ),
-                );
-              },
+            PressableScale(
+              child: IconButton(
+                tooltip: 'Candidate Profile Share',
+                icon: const Icon(Icons.share_outlined, size: 18, color: Color(0xFF404942)),
+                onPressed: () {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Candidate dossier link copied to clipboard'),
+                      duration: Duration(seconds: 2),
+                    ),
+                  );
+                },
+              ),
             ),
-          ),
+          ],
           PressableScale(
             child: IconButton(
               tooltip: 'Close Drawer',
@@ -1086,12 +1141,16 @@ class _ApplicantReviewDrawerState extends ConsumerState<ApplicantReviewDrawer> {
         children: [
           Icon(icon, color: iconColor, size: 14),
           const SizedBox(width: 5),
-          Text(
-            text,
-            style: orgLabel(
-              fontSize: 11,
-              fontWeight: FontWeight.w500,
-              color: const Color(0xFF1A1B1F),
+          Flexible(
+            child: Text(
+              text,
+              style: orgLabel(
+                fontSize: 11,
+                fontWeight: FontWeight.w500,
+                color: const Color(0xFF1A1B1F),
+              ),
+              overflow: TextOverflow.ellipsis,
+              maxLines: 1,
             ),
           ),
         ],
@@ -1109,15 +1168,19 @@ class _ApplicantReviewDrawerState extends ConsumerState<ApplicantReviewDrawer> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(
-              'SUBMITTED EVIDENCE (0 FILES)',
-              style: orgLabel(
-                fontSize: 11,
-                fontWeight: FontWeight.w600,
-                color: const Color(0xFF404942),
-                letterSpacing: 0.2,
+            Flexible(
+              child: Text(
+                'SUBMITTED EVIDENCE (0 FILES)',
+                style: orgLabel(
+                  fontSize: 11,
+                  fontWeight: FontWeight.w600,
+                  color: const Color(0xFF404942),
+                  letterSpacing: 0.2,
+                ),
+                overflow: TextOverflow.ellipsis,
               ),
             ),
+            const SizedBox(width: 8),
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
               decoration: BoxDecoration(
@@ -1214,28 +1277,31 @@ class _ApplicantReviewDrawerState extends ConsumerState<ApplicantReviewDrawer> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'PROVIDER SCORING RUBRIC',
-                    style: orgLabel(
-                      fontSize: 10,
-                      fontWeight: FontWeight.w600,
-                      color: const Color(0xFF404942),
-                      letterSpacing: 0.2,
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'PROVIDER SCORING RUBRIC',
+                      style: orgLabel(
+                        fontSize: 10,
+                        fontWeight: FontWeight.w600,
+                        color: const Color(0xFF404942),
+                        letterSpacing: 0.2,
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 2),
-                  Text(
-                    'Candidate Evaluation',
-                    style: orgHeadline(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w700,
+                    const SizedBox(height: 2),
+                    Text(
+                      'Candidate Evaluation',
+                      style: orgHeadline(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w700,
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
+              const SizedBox(width: 8),
 
               // Composite Score Pill
               Container(
@@ -1320,15 +1386,17 @@ class _ApplicantReviewDrawerState extends ConsumerState<ApplicantReviewDrawer> {
                     size: 20,
                     color: kOrgPrimary,
                   ),
-                  const SizedBox(width: 4),
-                  Text(
-                    _isRubricExpanded
-                        ? 'Hide detailed rubric criteria'
-                        : 'Show 4 evaluation criteria sliders',
-                    style: orgLabel(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w600,
-                      color: kOrgPrimary,
+                  Flexible(
+                    child: Text(
+                      _isRubricExpanded
+                          ? 'Hide detailed rubric criteria'
+                          : 'Show 4 evaluation criteria sliders',
+                      style: orgLabel(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
+                        color: kOrgPrimary,
+                      ),
+                      overflow: TextOverflow.ellipsis,
                     ),
                   ),
                 ],
@@ -1401,20 +1469,28 @@ class _ApplicantReviewDrawerState extends ConsumerState<ApplicantReviewDrawer> {
       children: [
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Row(
-              children: [
-                Text(
-                  title,
-                  style: orgHeadline(fontSize: 13, fontWeight: FontWeight.w600),
-                ),
-                const SizedBox(width: 6),
-                Text(
-                  weightText,
-                  style: orgBody(fontSize: 11, color: const Color(0xFF404942)),
-                ),
-              ],
+            Expanded(
+              child: Row(
+                children: [
+                  Flexible(
+                    child: Text(
+                      title,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: orgHeadline(fontSize: 13, fontWeight: FontWeight.w600),
+                    ),
+                  ),
+                  const SizedBox(width: 6),
+                  Text(
+                    weightText,
+                    style: orgBody(fontSize: 11, color: const Color(0xFF404942)),
+                  ),
+                ],
+              ),
             ),
+            const SizedBox(width: 8),
             Text(
               value.toStringAsFixed(1),
               style: orgHeadline(
@@ -1467,15 +1543,19 @@ class _ApplicantReviewDrawerState extends ConsumerState<ApplicantReviewDrawer> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(
-              'EVALUATION COMMENTARY',
-              style: orgLabel(
-                fontSize: 11,
-                fontWeight: FontWeight.w600,
-                color: const Color(0xFF404942),
-                letterSpacing: 0.2,
+            Flexible(
+              child: Text(
+                'EVALUATION COMMENTARY',
+                style: orgLabel(
+                  fontSize: 11,
+                  fontWeight: FontWeight.w600,
+                  color: const Color(0xFF404942),
+                  letterSpacing: 0.2,
+                ),
+                overflow: TextOverflow.ellipsis,
               ),
             ),
+            const SizedBox(width: 8),
             Text(
               'REF: #$refCode',
               style: orgLabel(
@@ -1631,13 +1711,17 @@ class _ApplicantReviewDrawerState extends ConsumerState<ApplicantReviewDrawer> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
-                'Cohort Percentile Distribution',
-                style: orgHeadline(
-                  fontSize: 13,
-                  fontWeight: FontWeight.w600,
+              Flexible(
+                child: Text(
+                  'Cohort Percentile Distribution',
+                  style: orgHeadline(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w600,
+                  ),
+                  overflow: TextOverflow.ellipsis,
                 ),
               ),
+              const SizedBox(width: 8),
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                 decoration: BoxDecoration(
@@ -1704,16 +1788,24 @@ class _ApplicantReviewDrawerState extends ConsumerState<ApplicantReviewDrawer> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
-                'Registered Pool: $totalCohortCount candidate',
-                style: orgBody(fontSize: 11, color: const Color(0xFF404942)),
+              Flexible(
+                child: Text(
+                  'Registered Pool: $totalCohortCount candidate',
+                  style: orgBody(fontSize: 11, color: const Color(0xFF404942)),
+                  overflow: TextOverflow.ellipsis,
+                ),
               ),
-              Text(
-                'Candidate Score: ${_compositeScore.toStringAsFixed(2)}',
-                style: orgLabel(
-                  fontSize: 11,
-                  fontWeight: FontWeight.w700,
-                  color: kOrgPrimary,
+              const SizedBox(width: 8),
+              Flexible(
+                child: Text(
+                  'Candidate Score: ${_compositeScore.toStringAsFixed(2)}',
+                  style: orgLabel(
+                    fontSize: 11,
+                    fontWeight: FontWeight.w700,
+                    color: kOrgPrimary,
+                  ),
+                  overflow: TextOverflow.ellipsis,
+                  textAlign: TextAlign.end,
                 ),
               ),
             ],
@@ -1774,16 +1866,24 @@ class _ApplicantReviewDrawerState extends ConsumerState<ApplicantReviewDrawer> {
                 : Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(
-                        'Proposed Grant Allocation',
-                        style: orgBody(fontSize: 11, color: const Color(0xFF404942)),
+                      Flexible(
+                        child: Text(
+                          'Proposed Grant Allocation',
+                          style: orgBody(fontSize: 11, color: const Color(0xFF404942)),
+                          overflow: TextOverflow.ellipsis,
+                        ),
                       ),
-                      Text(
-                        '$allocationAmount / Academic Year (Direct + Allowance)',
-                        style: orgLabel(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w600,
-                          color: kOrgPrimary,
+                      const SizedBox(width: 8),
+                      Flexible(
+                        child: Text(
+                          '$allocationAmount / Academic Year (Direct + Allowance)',
+                          style: orgLabel(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w600,
+                            color: kOrgPrimary,
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                          textAlign: TextAlign.end,
                         ),
                       ),
                     ],

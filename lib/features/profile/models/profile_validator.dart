@@ -66,11 +66,12 @@ class ProfileValidator {
     required String monthlyFamilyIncome,
     required bool incomeUndisclosed,
     required String? region,
+    String gpaScale = '4.0 Scale',
   }) {
     return ProfileFieldErrors(
       fullName: _fullNameError(fullName),
       nationality: _nationalityError(nationality),
-      gpa: _gpaError(gpa),
+      gpa: _gpaError(gpa, gpaScale),
       yearLevel: _yearLevelError(yearLevel),
       course: _courseError(course),
       monthlyFamilyIncome: _incomeError(monthlyFamilyIncome, incomeUndisclosed),
@@ -84,8 +85,26 @@ class ProfileValidator {
   String? _nationalityError(String v) =>
       v.trim().isEmpty ? 'Nationality is required.' : null;
 
-  String? _gpaError(double? gpa) {
+  String? validateGpa(double? gpa, [String gpaScale = '4.0 Scale']) =>
+      _gpaError(gpa, gpaScale);
+
+  String? _gpaError(double? gpa, [String gpaScale = '4.0 Scale']) {
     if (gpa == null) return 'Enter your GPA.';
+    final normalizedScale = gpaScale.toLowerCase();
+    if (normalizedScale.contains('5.0') ||
+        normalizedScale.contains('ph standard') ||
+        normalizedScale.contains('1.0 – 5.0') ||
+        normalizedScale.contains('1.0 - 5.0')) {
+      if (gpa < 1.0 || gpa > 5.0) return 'GPA must be between 1.0 and 5.0.';
+      return null;
+    }
+    if (normalizedScale.contains('%') ||
+        normalizedScale.contains('percentage')) {
+      if (gpa < 60.0 || gpa > 100.0) {
+        return 'Percentage grade must be between 60.0 and 100.0.';
+      }
+      return null;
+    }
     if (gpa < 1.0 || gpa > 4.0) return 'GPA must be between 1.0 and 4.0.';
     return null;
   }

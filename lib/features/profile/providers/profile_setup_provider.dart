@@ -25,6 +25,7 @@ class ProfileSetupState {
     this.course = '',
     this.school = '',
     this.gpa = '',
+    this.gpaScale = '4.0 Scale',
     this.monthlyFamilyIncome = '',
     this.incomeUndisclosed = false,
     this.region,
@@ -50,6 +51,7 @@ class ProfileSetupState {
   final String course;
   final String school;
   final String gpa;
+  final String gpaScale;
 
   // Step 3 — financial & location
   final String monthlyFamilyIncome;
@@ -80,6 +82,7 @@ class ProfileSetupState {
     String? course,
     String? school,
     String? gpa,
+    String? gpaScale,
     String? monthlyFamilyIncome,
     bool? incomeUndisclosed,
     String? region,
@@ -104,6 +107,7 @@ class ProfileSetupState {
       course: course ?? this.course,
       school: school ?? this.school,
       gpa: gpa ?? this.gpa,
+      gpaScale: gpaScale ?? this.gpaScale,
       monthlyFamilyIncome: monthlyFamilyIncome ?? this.monthlyFamilyIncome,
       incomeUndisclosed: incomeUndisclosed ?? this.incomeUndisclosed,
       region: region ?? this.region,
@@ -267,6 +271,11 @@ class ProfileSetupNotifier extends StateNotifier<ProfileSetupState> {
     _refreshErrors();
   }
 
+  void setGpaScale(String value) {
+    state = state.copyWith(gpaScale: value);
+    _refreshErrors();
+  }
+
   // --- Step 3 — financial & location ---------------------------------------
 
   void setMonthlyFamilyIncome(String value) {
@@ -393,6 +402,7 @@ class ProfileSetupNotifier extends StateNotifier<ProfileSetupState> {
       monthlyFamilyIncome: state.monthlyFamilyIncome,
       incomeUndisclosed: state.incomeUndisclosed,
       region: state.region,
+      gpaScale: state.gpaScale,
     );
   }
 

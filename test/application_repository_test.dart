@@ -311,6 +311,118 @@ void main() {
         throwsA(isA<ApplicationNotAuthenticatedException>()),
       );
     });
+
+    group('Provider persistence & transaction cycle', () {
+      test('providerUpdateNotes updates notes regardless of applicant user_id', () async {
+        final row = await dataSource.insertApplication('user-student', {
+          'user_id': 'user-student',
+          'scholarship_id': 'sch-provider-owned',
+          'status': 'submitted',
+          'notes': 'original notes',
+        });
+
+        final providerRepo = ApplicationRepository(
+          dataSource: dataSource,
+          currentUserId: () => 'provider-1',
+        );
+
+        await providerRepo.providerUpdateNotes(row['id'] as String, 'Deliberation notes');
+
+        final studentApps = await dataSource.fetchApplications('user-student');
+        expect(studentApps.single['notes'], 'Deliberation notes');
+      });
+
+      test('saveEvaluation records rubric criteria scores and JSON fallback in notes', () async {
+        final row = await dataSource.insertApplication('user-student', {
+          'user_id': 'user-student',
+          'scholarship_id': 'sch-provider-owned',
+          'status': 'submitted',
+        });
+
+        final providerRepo = ApplicationRepository(
+          dataSource: dataSource,
+          currentUserId: () => 'provider-1',
+        );
+
+        await providerRepo.saveEvaluation(
+          applicationId: row['id'] as String,
+          scoreAcademic: 9.5,
+          scoreFinancial: 9.0,
+          scoreLeadership: 8.8,
+          scoreVision: 9.2,
+          compositeScore: 9.18,
+          notes: 'Top tier candidate',
+          decision: 'approved',
+        );
+
+        expect(dataSource.evaluations, hasLength(1));
+        final eval = dataSource.evaluations.single;
+        expect(eval['application_id'], row['id']);
+        expect(eval['reviewer_id'], 'provider-1');
+        expect(eval['score_academic'], 9.5);
+        expect(eval['score_financial'], 9.0);
+        expect(eval['score_leadership'], 8.8);
+        expect(eval['score_vision'], 9.2);
+        expect(eval['composite_score'], 9.18);
+        expect(eval['deliberation_notes'], 'Top tier candidate');
+        expect(eval['decision'], 'approved');
+
+        // Check JSON fallback in notes
+        final studentApps = await dataSource.fetchApplications('user-student');
+        expect(studentApps.single['notes'], contains('"composite":9.18'));
+        expect(studentApps.single['notes'], contains('"decision":"approved"'));
+      });
+
+      test('recordStatusTransition logs from_status and to_status in history', () async {
+        final row = await dataSource.insertApplication('user-student', {
+          'user_id': 'user-student',
+          'scholarship_id': 'sch-provider-owned',
+          'status': 'submitted',
+        });
+
+        final providerRepo = ApplicationRepository(
+          dataSource: dataSource,
+          currentUserId: () => 'provider-1',
+        );
+
+        await providerRepo.recordStatusTransition(
+          applicationId: row['id'] as String,
+          fromStatus: 'submitted',
+          toStatus: 'approved',
+          remarks: 'Approved by committee',
+        );
+
+        expect(dataSource.statusHistory, hasLength(1));
+        final hist = dataSource.statusHistory.single;
+        expect(hist['application_id'], row['id']);
+        expect(hist['changed_by'], 'provider-1');
+        expect(hist['from_status'], 'submitted');
+        expect(hist['to_status'], 'approved');
+        expect(hist['remarks'], 'Approved by committee');
+      });
+
+      test('createNotification persists notification for student user_id', () async {
+        final providerRepo = ApplicationRepository(
+          dataSource: dataSource,
+          currentUserId: () => 'provider-1',
+        );
+
+        await providerRepo.createNotification(
+          userId: 'user-student',
+          title: 'Application Approved! 🎉',
+          message: 'Congratulations! Your grant has been approved.',
+          targetId: 'app-1',
+        );
+
+        expect(dataSource.notifications, hasLength(1));
+        final notif = dataSource.notifications.single;
+        expect(notif['user_id'], 'user-student');
+        expect(notif['title'], 'Application Approved! 🎉');
+        expect(notif['message'], 'Congratulations! Your grant has been approved.');
+        expect(notif['target_id'], 'app-1');
+        expect(notif['is_read'], isFalse);
+      });
+    });
   });
   });
 }

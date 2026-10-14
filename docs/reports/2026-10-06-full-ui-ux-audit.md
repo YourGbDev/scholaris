@@ -417,7 +417,7 @@ Total findings identified: **46 discrete findings** (7 Critical, 14 High, 16 Med
 │ Admin Surfaces           │ • High-density data tables                       │
 │                          │ • Monospace metrics                              │
 │                          │ • Dark mode only (unresponsive to theme toggle)  │
-\──────────────────────────┴──────────────────────────────────────────────────┘
+└──────────────────────────┴──────────────────────────────────────────────────┘
 ```
 
 The app currently functions as three separate visual sub-products. While administrative portals naturally demand higher information density, typography, button styles, corner radii, and color semantic tokens must share a single design system source of truth in `lib/shared/theme/`.
@@ -427,7 +427,7 @@ The app currently functions as three separate visual sub-products. While adminis
 ## 11. Highest-Priority Issues (Summary Table)
 
 | Rank | Issue ID | Area | Severity | Core Root Cause |
-| :--- | :--- | :--- | :---: | :--- |
+| :---: | :--- | :--- | :---: | :--- |
 | **1** | Finding 3.2.1 | Academic Profile Setup | **Critical** | Hardcoded `gpa <= 4.0` domain validator locks out students entering valid PH 1.0–5.0 or percentage grades. |
 | **2** | Finding 3.2.2 | Profile Tab Screen | **Critical** | Edit button routes to non-existent `/profile-setup/location`, producing a 404 crash. |
 | **3** | Finding 3.2.3 | Profile Document Badges | **Critical** | Hardcoded fake "Verified" badges violate `GEMINI.md` Rule 2 and mislead students. |

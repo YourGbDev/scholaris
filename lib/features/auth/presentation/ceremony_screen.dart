@@ -8,6 +8,8 @@
 // Flow:
 //   /ceremony → GraduationCeremony plays → onCompleted → /login
 
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -15,18 +17,56 @@ import 'package:scholaris/features/auth/presentation/graduation_ceremony.dart';
 
 /// Opening screen that plays the Scholaris graduation ceremony and then
 /// transitions to the login screen.
-class CeremonyScreen extends StatelessWidget {
-  const CeremonyScreen({super.key, this.assetPath = kCeremonyAsset});
+class CeremonyScreen extends StatefulWidget {
+  const CeremonyScreen({
+    super.key,
+    this.assetPath = kCeremonyAsset,
+    this.autoAdvanceDuration,
+  });
 
   /// Overridable asset path for the ceremony Lottie (used in tests).
   final String assetPath;
+
+  /// Optional auto-advance duration (e.g. 2500ms safety timer).
+  final Duration? autoAdvanceDuration;
+
+  @override
+  State<CeremonyScreen> createState() => _CeremonyScreenState();
+}
+
+class _CeremonyScreenState extends State<CeremonyScreen> {
+  Timer? _advanceTimer;
+  bool _hasNavigated = false;
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.autoAdvanceDuration != null) {
+      _advanceTimer = Timer(widget.autoAdvanceDuration!, _onContinuePressed);
+    }
+  }
+
+  void _onContinuePressed() {
+    _advanceTimer?.cancel();
+    _advanceTimer = null;
+    if (_hasNavigated || !mounted) return;
+    _hasNavigated = true;
+    context.go('/login');
+  }
+
+  @override
+  void dispose() {
+    _advanceTimer?.cancel();
+    _advanceTimer = null;
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: GraduationCeremony(
-        assetPath: assetPath,
-        onCompleted: () => context.go('/login'),
+        assetPath: widget.assetPath,
+        onCompleted: _onContinuePressed,
       ),
     );
   }

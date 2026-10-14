@@ -62,6 +62,20 @@ extension ScholarshipAwardExt on Scholarship {
     return '₱$formatted';
   }
 
+  String get formattedCompactAmount {
+    if (amount >= 1000000) {
+      final millions = amount / 1000000;
+      final formatted = millions.toStringAsFixed(millions.truncateToDouble() == millions ? 0 : 1);
+      return '₱${formatted}M';
+    }
+    if (amount >= 1000) {
+      final thousands = amount / 1000;
+      final formatted = thousands.toStringAsFixed(thousands.truncateToDouble() == thousands ? 0 : 0);
+      return '₱${formatted}k';
+    }
+    return formattedAmount;
+  }
+
   String get formattedFrequency {
     switch (frequency.toLowerCase()) {
       case 'per_semester':

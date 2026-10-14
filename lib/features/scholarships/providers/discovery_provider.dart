@@ -43,6 +43,12 @@ class DiscoveryFilterNotifier extends AutoDisposeNotifier<DiscoveryFilterState> 
   void setClosingSoonOnly(bool value) =>
       state = state.copyWith(closingSoonOnly: value);
 
+  void setHighFitOnly(bool value) =>
+      state = state.copyWith(highFitOnly: value);
+
+  void setMinAmount(double? value) =>
+      state = state.copyWith(minAmount: value);
+
   void setSort(DiscoverySort value) => state = state.copyWith(sort: value);
 
   void reset() => state = const DiscoveryFilterState();
@@ -56,6 +62,8 @@ final discoveryActiveFilterCountProvider = Provider<int>((ref) {
   if (s.incomeBracket != null) count++;
   count += s.regions.length;
   if (s.closingSoonOnly) count++;
+  if (s.highFitOnly) count++;
+  if (s.minAmount != null) count++;
   return count;
 });
 

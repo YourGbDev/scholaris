@@ -6,9 +6,10 @@
 -- Purpose:
 --   1. Idempotently creates 0023 database tables (application_evaluations,
 --      application_status_history, notifications) and Row-Level Security (RLS) policies.
---   2. Ensures verified demo accounts exist (student, provider) with credentials:
+--   2. Ensures verified demo accounts exist (student, provider, admin) with credentials:
 --        • Student:  student.demo@scholaris.edu.ph  /  Scholaris2026!
 --        • Provider: provider.dost@scholaris.gov.ph /  Scholaris2026!
+--        • Admin:    admin@scholaris.edu.ph         /  Scholaris2026!
 --   3. Seeds the DOST-SEI Undergraduate Scholarship owned by the provider.
 --   4. Cleans/resets any previous application test runs for the demo student so
 --      you can rehearse tonight and reset in 1 click right before your demo!
@@ -16,6 +17,9 @@
 -- HOW TO RUN:
 --   Paste this entire script into the Supabase Dashboard -> SQL Editor and click "Run".
 -- =============================================================================
+
+-- Temporarily bypass server-side trigger restrictions during seeding
+SET session_replication_role = 'replica';
 
 -- =============================================================================
 -- PART 1: MIGRATION 0023 TABLES & RLS POLICIES
@@ -331,24 +335,28 @@ ON CONFLICT (id) DO UPDATE SET
 
 -- 2.4 Seed or Update Provider Profile in public.profiles
 INSERT INTO public.profiles (
-  id, full_name, role, school, setup_complete
+  id, full_name, role, school, organization, provider_type, setup_complete
 ) VALUES (
   'd0570002-0000-0000-0000-000000000002',
   'Dr. Renato U. Solidum Jr.',
   'provider',
   'DOST-SEI',
+  'Department of Science and Technology - SEI',
+  'organization',
   true
 )
 ON CONFLICT (id) DO UPDATE SET
   full_name = EXCLUDED.full_name,
   role = 'provider',
   school = 'DOST-SEI',
+  organization = 'Department of Science and Technology - SEI',
+  provider_type = 'organization',
   setup_complete = true;
 
 -- 2.5 Ensure Provider Verification Record exists
 INSERT INTO public.provider_verifications (
   user_id,
-  organization_name,
+  org_name,
   provider_type,
   status,
   submitted_at,
@@ -356,14 +364,15 @@ INSERT INTO public.provider_verifications (
 ) VALUES (
   'd0570002-0000-0000-0000-000000000002',
   'Department of Science and Technology - SEI',
-  'institutional',
+  'organization',
   'approved',
   now(),
   now()
 )
 ON CONFLICT (user_id) DO UPDATE SET
+  org_name = EXCLUDED.org_name,
   status = 'approved',
-  provider_type = 'institutional';
+  provider_type = 'organization';
 
 
 -- =============================================================================
@@ -437,6 +446,9 @@ WHERE application_id IN (
 -- 4.5 Delete prior application records for the demo student
 DELETE FROM public.applications
 WHERE user_id = 'd0570001-0000-0000-0000-000000000001';
+
+-- Restore default session replication role
+SET session_replication_role = 'origin';
 
 -- Output verification message
 SELECT '✅ Scholaris 3rd Increment checking environment initialized and reset successfully!' AS status;

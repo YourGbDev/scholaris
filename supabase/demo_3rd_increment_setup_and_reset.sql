@@ -199,12 +199,37 @@ GRANT SELECT, INSERT, UPDATE ON public.notifications TO authenticated;
 -- =============================================================================
 
 -- Fixed UUIDs for predictable demo binding
+-- Admin UUID:    d0570000-0000-0000-0000-000000000000
 -- Student UUID:  d0570001-0000-0000-0000-000000000001
 -- Provider UUID: d0570002-0000-0000-0000-000000000002
 -- Scholarship:   d0570003-0000-0000-0000-000000000003
 
 DO $$
 BEGIN
+  -- 2.0 Seed Admin in auth.users
+  IF NOT EXISTS (SELECT 1 FROM auth.users WHERE email = 'admin@scholaris.edu.ph') THEN
+    INSERT INTO auth.users (
+      instance_id, id, aud, role, email, encrypted_password,
+      email_confirmed_at, recovery_sent_at, last_sign_in_at,
+      raw_app_meta_data, raw_user_meta_data, created_at, updated_at,
+      confirmation_token, email_change, email_change_token_new, recovery_token
+    ) VALUES (
+      '00000000-0000-0000-0000-000000000000',
+      'd0570000-0000-0000-0000-000000000000',
+      'authenticated', 'authenticated', 'admin@scholaris.edu.ph',
+      crypt('Scholaris2026!', gen_salt('bf')),
+      now(), now(), now(),
+      '{"provider":"email","providers":["email"]}',
+      '{"full_name":"Scholaris System Administrator"}',
+      now(), now(), '', '', '', ''
+    );
+  ELSE
+    UPDATE auth.users
+    SET encrypted_password = crypt('Scholaris2026!', gen_salt('bf')),
+        email_confirmed_at = now()
+    WHERE email = 'admin@scholaris.edu.ph';
+  END IF;
+
   -- 2.1 Seed Student in auth.users
   IF NOT EXISTS (SELECT 1 FROM auth.users WHERE email = 'student.demo@scholaris.edu.ph') THEN
     INSERT INTO auth.users (
@@ -253,6 +278,20 @@ BEGIN
     WHERE email = 'provider.dost@scholaris.gov.ph';
   END IF;
 END $$;
+
+-- 2.0 Seed or Update Admin Profile in public.profiles
+INSERT INTO public.profiles (
+  id, full_name, role, setup_complete
+) VALUES (
+  'd0570000-0000-0000-0000-000000000000',
+  'Scholaris Administrator',
+  'admin',
+  true
+)
+ON CONFLICT (id) DO UPDATE SET
+  full_name = EXCLUDED.full_name,
+  role = 'admin',
+  setup_complete = true;
 
 -- 2.3 Seed or Update Student Profile in public.profiles
 INSERT INTO public.profiles (
@@ -374,21 +413,28 @@ ON CONFLICT (id) DO UPDATE SET
 DELETE FROM public.notifications
 WHERE user_id = 'd0570001-0000-0000-0000-000000000001';
 
--- 4.2 Delete evaluations for applications belonging to the demo student
+-- 4.2 Delete prior disbursements for applications belonging to the demo student
+DELETE FROM public.disbursements
+WHERE application_id IN (
+  SELECT id FROM public.applications
+  WHERE user_id = 'd0570001-0000-0000-0000-000000000001'
+);
+
+-- 4.3 Delete evaluations for applications belonging to the demo student
 DELETE FROM public.application_evaluations
 WHERE application_id IN (
   SELECT id FROM public.applications
   WHERE user_id = 'd0570001-0000-0000-0000-000000000001'
 );
 
--- 4.3 Delete status history for applications belonging to the demo student
+-- 4.4 Delete status history for applications belonging to the demo student
 DELETE FROM public.application_status_history
 WHERE application_id IN (
   SELECT id FROM public.applications
   WHERE user_id = 'd0570001-0000-0000-0000-000000000001'
 );
 
--- 4.4 Delete prior application records for the demo student
+-- 4.5 Delete prior application records for the demo student
 DELETE FROM public.applications
 WHERE user_id = 'd0570001-0000-0000-0000-000000000001';
 

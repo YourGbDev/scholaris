@@ -1326,8 +1326,8 @@ class _ApplicationsOversightScreenState
                               item,
                             );
                           },
-                          icon: const Icon(Icons.payments_outlined, size: 18),
-                          label: const Text('Create Disbursement'),
+                          icon: const Icon(Icons.verified_rounded, size: 18),
+                          label: const Text('Confirm Award & Disburse'),
                           style: FilledButton.styleFrom(
                             backgroundColor: kSeqPrimary,
                             foregroundColor: kSeqOnPrimary,
@@ -1724,13 +1724,50 @@ class _CreateDisbursementSheetState extends State<_CreateDisbursementSheet> {
             ? null
             : _notesController.text.trim(),
       });
+
+      // Officially advance application status from 'approved' to 'awarded' (Migration 0009 Admin Policy)
+      try {
+        await supabase
+            .from('applications')
+            .update({
+              'status': 'awarded',
+              'updated_at': DateTime.now().toUtc().toIso8601String(),
+            })
+            .eq('id', widget.item.id);
+      } catch (appErr) {
+        debugPrint('[ApplicationsOversight] Award update note: $appErr');
+      }
+
+      // Record in status history ledger
+      try {
+        await supabase.from('application_status_history').insert({
+          'application_id': widget.item.id,
+          'changed_by': supabase.auth.currentUser?.id,
+          'from_status': 'approved',
+          'to_status': 'awarded',
+          'remarks': 'Award officially confirmed and disbursement scheduled by administrator',
+        });
+      } catch (_) {}
+
+      // Create persistent notification for student
+      try {
+        final schTitle = widget.item.scholarshipTitle ?? 'Scholarship';
+        await supabase.from('notifications').insert({
+          'user_id': widget.item.userId,
+          'title': 'Scholarship Officially Awarded! 🎓',
+          'message': 'Congratulations! Your grant for "$schTitle" has been officially confirmed by the administration and disbursement is scheduled.',
+          'type': 'application_update',
+          'target_id': widget.item.id,
+        });
+      } catch (_) {}
+
       widget.onSuccess();
     } catch (e) {
       if (mounted) {
         setState(() => _isSubmitting = false);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Failed to create disbursement: $e'),
+            content: Text('Failed to confirm award & disbursement: $e'),
             backgroundColor: kSeqError,
           ),
         );
@@ -1771,7 +1808,7 @@ class _CreateDisbursementSheetState extends State<_CreateDisbursementSheet> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  'Create Disbursement',
+                  'Confirm Award & Schedule Disbursement',
                   style: seqHeadlineSm(fontWeight: FontWeight.w700),
                 ),
                 IconButton(

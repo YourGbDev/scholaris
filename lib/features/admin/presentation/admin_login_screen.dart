@@ -205,7 +205,7 @@ class _AdminLoginScreenState extends ConsumerState<AdminLoginScreen> {
           ],
         ),
         content: Text(
-          'This account does not have Special Disbursing or Governance privileges.\n\nOnly authorized institutional comptrollers and governance officers can sign in to the DOST-SEI Grant Finance Console.',
+          'This account does not have Super Administrator privileges.\n\nOnly authorized institutional governance officers can sign in to the Scholaris Admin Console.',
           style: GoogleFonts.openSans(color: const Color(0xFF94A3B8), fontSize: 13, height: 1.5),
         ),
         actions: [
@@ -316,7 +316,7 @@ class _AdminLoginScreenState extends ConsumerState<AdminLoginScreen> {
                                 ),
                                 const SizedBox(width: 8),
                                 Text(
-                                  'DOST-SEI COMPTROLLER • SPECIAL DISBURSING AUTHORITY',
+                                  'RESTRICTED ACCESS • CENTRAL GOVERNANCE & AUDIT',
                                   style: GoogleFonts.outfit(
                                     fontSize: 10.5,
                                     fontWeight: FontWeight.w700,
@@ -360,9 +360,9 @@ class _AdminLoginScreenState extends ConsumerState<AdminLoginScreen> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    'DOST-SEI Grant Finance Console',
+                                    'Scholaris Admin Console',
                                     style: GoogleFonts.outfit(
-                                      fontSize: 21,
+                                      fontSize: 22,
                                       fontWeight: FontWeight.bold,
                                       color: Colors.white,
                                       letterSpacing: -0.3,
@@ -370,7 +370,7 @@ class _AdminLoginScreenState extends ConsumerState<AdminLoginScreen> {
                                   ),
                                   const SizedBox(height: 2),
                                   Text(
-                                    'Institutional Grant Disbursement & Award Conferral',
+                                    'Central Platform Oversight & Grant Disbursement',
                                     style: GoogleFonts.openSans(
                                       fontSize: 12,
                                       color: const Color(0xFF94A3B8),
@@ -387,7 +387,7 @@ class _AdminLoginScreenState extends ConsumerState<AdminLoginScreen> {
 
                         // Subtitle
                         Text(
-                          'Sign in to verify DOST-SEI grant committee evaluations, authorize official award status, and release scholarship fund disbursements.',
+                          'Sign in to verify scholarship providers, audit application lifecycle approvals, and authorize official grant disbursements.',
                           style: GoogleFonts.openSans(
                             fontSize: 13,
                             height: 1.5,
@@ -428,7 +428,7 @@ class _AdminLoginScreenState extends ConsumerState<AdminLoginScreen> {
 
                         // Email Field
                         Text(
-                          'COMPTROLLER EMAIL',
+                          'ADMINISTRATOR EMAIL',
                           style: GoogleFonts.outfit(
                             fontSize: 11,
                             fontWeight: FontWeight.bold,
@@ -443,7 +443,7 @@ class _AdminLoginScreenState extends ConsumerState<AdminLoginScreen> {
                           style: GoogleFonts.openSans(color: Colors.white, fontSize: 14),
                           keyboardType: TextInputType.emailAddress,
                           decoration: InputDecoration(
-                            hintText: 'e.g. finance.dost@scholaris.gov.ph or admin@scholaris.edu.ph',
+                            hintText: 'e.g. admin@scholaris.edu.ph',
                             hintStyle: GoogleFonts.openSans(color: const Color(0xFF64748B), fontSize: 13),
                             prefixIcon: const Icon(Icons.alternate_email_rounded, color: Color(0xFF94A3B8), size: 19),
                             filled: true,

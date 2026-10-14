@@ -497,7 +497,7 @@ class _AdminHomeScreenState extends ConsumerState<AdminHomeScreen> {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           Text(
-                            'DOST-SEI Comptroller',
+                            'Scholaris Admin',
                             style: GoogleFonts.inter(
                               fontSize: 13,
                               fontWeight: FontWeight.w600,
@@ -507,7 +507,7 @@ class _AdminHomeScreenState extends ConsumerState<AdminHomeScreen> {
                             overflow: TextOverflow.ellipsis,
                           ),
                           Text(
-                            'Special Disbursing Authority',
+                            'Platform Root',
                             style: GoogleFonts.inter(
                               fontSize: 11,
                               color: kAdminTextSecondary,

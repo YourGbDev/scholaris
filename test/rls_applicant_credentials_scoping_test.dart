@@ -294,6 +294,36 @@ class RlsEnforcingApplicationDataSource implements ApplicationDataSource {
       rawApplications[i] = {...rawApplications[i], 'status': status};
     }
   }
+
+  final List<Map<String, dynamic>> rawEvaluations = [];
+  final List<Map<String, dynamic>> rawStatusHistory = [];
+  final List<Map<String, dynamic>> rawNotifications = [];
+
+  @override
+  Future<void> updateApplicationNotes(
+    String applicationId,
+    String notes,
+  ) async {
+    final i = rawApplications.indexWhere((a) => a['id'] == applicationId);
+    if (i != -1) {
+      rawApplications[i] = {...rawApplications[i], 'notes': notes};
+    }
+  }
+
+  @override
+  Future<void> insertEvaluation(Map<String, dynamic> row) async {
+    rawEvaluations.add(Map<String, dynamic>.of(row));
+  }
+
+  @override
+  Future<void> insertStatusHistory(Map<String, dynamic> row) async {
+    rawStatusHistory.add(Map<String, dynamic>.of(row));
+  }
+
+  @override
+  Future<void> insertNotification(Map<String, dynamic> row) async {
+    rawNotifications.add(Map<String, dynamic>.of(row));
+  }
 }
 
 void main() {

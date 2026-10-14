@@ -26,7 +26,7 @@ class IntroSeenNotifier extends AsyncNotifier<bool> {
   @override
   Future<bool> build() async {
     final prefs = await SharedPreferences.getInstance();
-    return prefs.getBool(kIntroSeenKey) ?? false;
+    return prefs.getBool(kIntroSeenKey) ?? true;
   }
 
   /// Marks intro as seen and persists the flag so the intro screen never shows again.
@@ -48,7 +48,7 @@ class OnboardingSeenNotifier extends AsyncNotifier<bool> {
   @override
   Future<bool> build() async {
     final prefs = await SharedPreferences.getInstance();
-    return prefs.getBool(kOnboardingSeenKey) ?? false;
+    return prefs.getBool(kOnboardingSeenKey) ?? true;
   }
 
   /// Marks onboarding as seen (completed or skipped) and persists the flag so

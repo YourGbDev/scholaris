@@ -782,16 +782,8 @@ String? onboardingRedirectDecision({
     return location == '/splash' ? null : '/splash';
   }
 
-  // Flag known: seen users resume their normal entry point.
-  if (onboardingSeen) return authDecision;
-
-  // First run: if intro has not been seen yet, route to /intro.
-  if (!introSeen) {
-    return location == '/intro' ? null : '/intro';
-  }
-
-  // Once intro is seen, proceed through onboarding.
-  return location == '/onboarding' ? null : '/onboarding';
+  // Proceed directly to login once splash completes
+  return authDecision;
 }
 
 /// Pure redirect decision, extracted from [_redirect] so it can be unit-tested

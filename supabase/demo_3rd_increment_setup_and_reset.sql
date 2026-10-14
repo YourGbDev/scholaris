@@ -281,6 +281,30 @@ BEGIN
         email_confirmed_at = now()
     WHERE email = 'provider.dost@scholaris.gov.ph';
   END IF;
+
+  -- 2.3 Seed DOST-SEI Finance Comptroller in auth.users
+  IF NOT EXISTS (SELECT 1 FROM auth.users WHERE email = 'finance.dost@scholaris.gov.ph') THEN
+    INSERT INTO auth.users (
+      instance_id, id, aud, role, email, encrypted_password,
+      email_confirmed_at, recovery_sent_at, last_sign_in_at,
+      raw_app_meta_data, raw_user_meta_data, created_at, updated_at,
+      confirmation_token, email_change, email_change_token_new, recovery_token
+    ) VALUES (
+      '00000000-0000-0000-0000-000000000000',
+      'd0570004-0000-0000-0000-000000000004',
+      'authenticated', 'authenticated', 'finance.dost@scholaris.gov.ph',
+      crypt('Scholaris2026!', gen_salt('bf')),
+      now(), now(), now(),
+      '{"provider":"email","providers":["email"]}',
+      '{"full_name":"DOST-SEI Disbursing Comptroller"}',
+      now(), now(), '', '', '', ''
+    );
+  ELSE
+    UPDATE auth.users
+    SET encrypted_password = crypt('Scholaris2026!', gen_salt('bf')),
+        email_confirmed_at = now()
+    WHERE email = 'finance.dost@scholaris.gov.ph';
+  END IF;
 END $$;
 
 -- 2.0 Seed or Update Admin Profile in public.profiles
@@ -288,7 +312,21 @@ INSERT INTO public.profiles (
   id, full_name, role, setup_complete
 ) VALUES (
   'd0570000-0000-0000-0000-000000000000',
-  'Scholaris Administrator',
+  'DOST-SEI Disbursing Comptroller',
+  'admin',
+  true
+)
+ON CONFLICT (id) DO UPDATE SET
+  full_name = EXCLUDED.full_name,
+  role = 'admin',
+  setup_complete = true;
+
+-- 2.1 Seed or Update DOST Comptroller Profile in public.profiles
+INSERT INTO public.profiles (
+  id, full_name, role, setup_complete
+) VALUES (
+  'd0570004-0000-0000-0000-000000000004',
+  'DOST-SEI Disbursing Comptroller',
   'admin',
   true
 )

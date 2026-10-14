@@ -10,6 +10,7 @@
 // radius, and subtle borders.
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:scholaris/features/applications/models/application.dart';
@@ -17,6 +18,7 @@ import 'package:scholaris/features/applications/providers/application_document_p
 import 'package:scholaris/features/applications/presentation/widgets/document_upload_sheet.dart';
 import 'package:scholaris/features/applications/providers/applications_provider.dart';
 import 'package:scholaris/features/applications/repositories/application_repository.dart';
+import 'package:scholaris/features/auth/presentation/ceremony_screen.dart';
 import 'package:scholaris/features/scholarships/models/scholarship.dart';
 import 'package:scholaris/features/scholarships/presentation/scholarship_detail_screen.dart';
 import 'package:scholaris/features/scholarships/providers/scholarships_provider.dart';
@@ -230,6 +232,21 @@ class _DetailBodyState extends ConsumerState<_DetailBody> {
     );
   }
 
+  void _openCelebration(BuildContext context) {
+    HapticFeedback.mediumImpact();
+    Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        fullscreenDialog: true,
+        builder: (modalContext) => CeremonyScreen(
+          title: '🎉 Grant Award Confirmed!',
+          subtitle:
+              'Congratulations! You have officially been awarded the ${widget.scholarship?.title ?? 'scholarship'}.',
+          onCompleted: () => Navigator.of(modalContext).pop(),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     ref.watch(applicationsProvider);
@@ -332,6 +349,17 @@ class _DetailBodyState extends ConsumerState<_DetailBody> {
             child: _RejectedConsolingBanner(
               programName: scholarship?.title ?? 'Scholarship Program',
               reason: application.notes,
+            ),
+          ),
+          const SizedBox(height: 14),
+        ],
+        if (application.status == ApplicationStatus.approved ||
+            application.status == ApplicationStatus.awarded) ...[
+          StaggeredListItem(
+            index: 1,
+            child: _AwardCelebrationCard(
+              scholarshipTitle: scholarship?.title ?? 'Scholarship Program',
+              onCelebrate: () => _openCelebration(context),
             ),
           ),
           const SizedBox(height: 14),
@@ -445,6 +473,127 @@ class _StatusSection extends StatelessWidget {
             ),
           ),
           ApplicationStatusChip(status: application.status),
+        ],
+      ),
+    );
+  }
+}
+
+class _AwardCelebrationCard extends StatelessWidget {
+  const _AwardCelebrationCard({
+    required this.scholarshipTitle,
+    required this.onCelebrate,
+  });
+
+  final String scholarshipTitle;
+  final VoidCallback onCelebrate;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(18),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: const Color(0xFFD4AF37), width: 1.5),
+        boxShadow: const [
+          BoxShadow(
+            color: Color(0x12D4AF37),
+            blurRadius: 16,
+            offset: Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              const MascotPoseView(
+                pose: MascotPose.celebrating,
+                height: 52,
+                width: 52,
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 3,
+                      ),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFDCF3E5),
+                        borderRadius: BorderRadius.circular(6),
+                      ),
+                      child: Text(
+                        'OFFICIAL GRANT AWARD',
+                        style: outfit(
+                          fontSize: 10,
+                          fontWeight: FontWeight.w700,
+                          color: const Color(0xFF0F4D2E),
+                          letterSpacing: 0.5,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      'Congratulations! Your Grant is Approved',
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: outfit(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w700,
+                        color: const Color(0xFF0F4D2E),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          Text(
+            'The institutional review committee has deliberated and approved your application for $scholarshipTitle. Your award ceremony and grant package are ready to celebrate.',
+            style: openSans(
+              fontSize: 13,
+              color: const Color(0xFF404942),
+              height: 1.4,
+            ),
+          ),
+          const SizedBox(height: 14),
+          SizedBox(
+            width: double.infinity,
+            height: 46,
+            child: PressableScale(
+              child: FilledButton.icon(
+                key: const ValueKey('view-award-ceremony-btn'),
+                style: FilledButton.styleFrom(
+                  backgroundColor: const Color(0xFF0F4D2E),
+                  foregroundColor: Colors.white,
+                  elevation: 2,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+                onPressed: onCelebrate,
+                icon: const Icon(Icons.celebration_rounded, size: 20),
+                label: FittedBox(
+                  fit: BoxFit.scaleDown,
+                  child: Text(
+                    '🎉 View Award Ceremony & Package',
+                    style: outfit(
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
+                      letterSpacing: 0.2,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
         ],
       ),
     );

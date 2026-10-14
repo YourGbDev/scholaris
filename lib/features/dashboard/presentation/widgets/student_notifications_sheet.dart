@@ -240,19 +240,17 @@ class StudentNotificationsSheet extends ConsumerWidget {
       switch (app.status) {
         case ApplicationStatus.approved:
         case ApplicationStatus.awarded:
+          final isAwarded = app.status == ApplicationStatus.awarded;
           list.add(
             StudentNotificationItem(
               id: 'app_approved_${app.id}',
-              title: app.status == ApplicationStatus.awarded
-                  ? 'Grant Awarded!'
-                  : 'Application Approved!',
+              title: isAwarded ? 'Grant Awarded!' : 'Application Approved!',
               subtitle:
-                  'Congratulations! Your submission for $schTitle has been ${app.status == ApplicationStatus.awarded ? "awarded" : "approved"}.',
-              icon: Icons.verified_rounded,
+                  'Congratulations! Your submission for $schTitle has been ${isAwarded ? "awarded" : "approved"}. Tap to view award package & celebrate!',
+              icon: Icons.celebration_rounded,
               iconColor: const Color(0xFF0F4D2E),
               iconBgColor: const Color(0xFFDCF3E5),
-              badgeText:
-                  app.status == ApplicationStatus.awarded ? 'Awarded' : 'Approved',
+              badgeText: isAwarded ? 'Awarded' : 'Approved',
               onTap: () {
                 HapticFeedback.lightImpact();
                 Navigator.of(context).pop();

@@ -279,26 +279,80 @@ class _ApplicantReviewDrawerState extends ConsumerState<ApplicantReviewDrawer> {
       builder: (dialogCtx) => AlertDialog(
         backgroundColor: Colors.white,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: Text('Confirm Decision', style: orgHeadline(fontSize: 16)),
-        content: Text(
-          'Are you sure you want to $actionLabel for $candidateName?',
-          style: orgBody(fontSize: 13),
+        title: Row(
+          children: [
+            Icon(
+              isDestructive
+                  ? Icons.warning_amber_rounded
+                  : targetStatus == ApplicationStatus.approved
+                      ? Icons.verified_rounded
+                      : Icons.help_outline_rounded,
+              color: isDestructive ? kOrgError : kOrgPrimary,
+              size: 22,
+            ),
+            const SizedBox(width: 8),
+            Expanded(
+              child: Text(
+                'Confirm Decision',
+                style: orgHeadline(fontSize: 17, fontWeight: FontWeight.bold),
+              ),
+            ),
+          ],
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Are you sure you want to $actionLabel for $candidateName?',
+              style: orgBody(fontSize: 13, color: const Color(0xFF161C27)),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              targetStatus == ApplicationStatus.approved
+                  ? 'The applicant will be notified immediately and awarded the corresponding scholarship package.'
+                  : isDestructive
+                      ? 'The application will be marked as ineligible in the institutional roster.'
+                      : 'The applicant will be notified that the committee requires additional supporting information.',
+              style: orgBody(fontSize: 12, color: const Color(0xFF707971)),
+            ),
+          ],
         ),
         actions: [
           PressableScale(
             child: TextButton(
               onPressed: () => Navigator.of(dialogCtx).pop(false),
-              child: Text('Cancel', style: orgLabel(color: kOrgTextMuted)),
+              style: TextButton.styleFrom(
+                minimumSize: const Size(44, 44),
+                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+              ),
+              child: Text(
+                'Cancel',
+                style: orgLabel(
+                  color: kOrgTextMuted,
+                  fontSize: 13,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
             ),
           ),
           PressableScale(
             child: FilledButton(
               style: FilledButton.styleFrom(
+                minimumSize: const Size(44, 44),
                 backgroundColor: isDestructive ? kOrgError : kOrgPrimary,
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
               ),
               onPressed: () => Navigator.of(dialogCtx).pop(true),
-              child: Text(actionLabel, style: orgLabel(color: Colors.white)),
+              child: Text(
+                actionLabel,
+                style: orgLabel(
+                  color: Colors.white,
+                  fontSize: 13,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
             ),
           ),
         ],
@@ -333,23 +387,59 @@ class _ApplicantReviewDrawerState extends ConsumerState<ApplicantReviewDrawer> {
 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
           backgroundColor: isDestructive ? kOrgError : kOrgPrimary,
-          content: Text(
-            targetStatus == ApplicationStatus.approved
-                ? 'Candidate officially approved for grant award!'
-                : targetStatus == ApplicationStatus.rejected
-                    ? 'Application marked as ineligible.'
-                    : 'Application placed under review / request info.',
-            style: orgBody(color: Colors.white),
+          content: Row(
+            children: [
+              Icon(
+                isDestructive ? Icons.cancel_outlined : Icons.check_circle_rounded,
+                color: Colors.white,
+                size: 20,
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Text(
+                  targetStatus == ApplicationStatus.approved
+                      ? 'Candidate officially approved for grant award! Student has been notified.'
+                      : targetStatus == ApplicationStatus.rejected
+                          ? 'Application marked as ineligible.'
+                          : 'Application placed under review / request info.',
+                  style: orgBody(
+                    color: Colors.white,
+                    fontSize: 13,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+            ],
           ),
         ),
       );
     } catch (e) {
+      debugPrint('[DECISION ERROR] $e');
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
           backgroundColor: kOrgError,
-          content: Text('Failed to update status: $e'),
+          content: Row(
+            children: [
+              const Icon(Icons.error_outline_rounded, color: Colors.white, size: 20),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Text(
+                  'Could not record deliberation decision. Please check your network connection and try again.',
+                  style: orgBody(
+                    color: Colors.white,
+                    fontSize: 13,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       );
     } finally {

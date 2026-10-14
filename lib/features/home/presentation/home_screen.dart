@@ -66,9 +66,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       body: Stack(
         children: [
           Positioned.fill(
-            child: TabContentCrossFade(
-              activeKey: ValueKey<int>(tabIndex),
-              child: _tabs[tabIndex],
+            child: IndexedStack(
+              index: tabIndex,
+              children: _tabs,
             ),
           ),
           Positioned(
@@ -110,6 +110,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                 children: [
                                   Expanded(
                                     child: _StudentNavItem(
+                                      key: const ValueKey('student-nav-dashboard'),
                                       icon: Icons.home_outlined,
                                       selectedIcon: Icons.home_rounded,
                                       label: 'Dashboard',
@@ -121,6 +122,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                   ),
                                   Expanded(
                                     child: _StudentNavItem(
+                                      key: const ValueKey('student-nav-discover'),
                                       icon: Icons.explore_outlined,
                                       selectedIcon: Icons.explore,
                                       label: 'Discover',
@@ -132,6 +134,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                   ),
                                   Expanded(
                                     child: _StudentNavItem(
+                                      key: const ValueKey('student-nav-tracker'),
                                       icon: Icons.assignment_outlined,
                                       selectedIcon: Icons.assignment,
                                       label: 'Tracker',
@@ -143,6 +146,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                   ),
                                   Expanded(
                                     child: _StudentNavItem(
+                                      key: const ValueKey('student-nav-profile'),
                                       icon: Icons.person_outline_rounded,
                                       selectedIcon: Icons.person,
                                       label: 'Profile',
@@ -211,6 +215,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
 class _StudentNavItem extends StatelessWidget {
   const _StudentNavItem({
+    super.key,
     required this.icon,
     required this.selectedIcon,
     required this.label,

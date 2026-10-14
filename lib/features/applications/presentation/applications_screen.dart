@@ -191,13 +191,11 @@ class ApplicationsScreen extends ConsumerWidget {
           totalPotential += _scholarshipAmountValue(s);
         }
 
-        // Check for urgent upcoming deadline (within 7 days)
+        // Check for urgent upcoming deadline (within 7 days) for draft applications
         Application? urgentApp;
         Scholarship? urgentScholarship;
         for (final app in applications) {
-          if (app.status == ApplicationStatus.draft ||
-              app.status == ApplicationStatus.underReview ||
-              app.status == ApplicationStatus.submitted) {
+          if (app.status == ApplicationStatus.draft) {
             final s = byId[app.scholarshipId];
             if (s != null) {
               final diff = s.deadline.difference(DateTime.now()).inDays;
@@ -779,15 +777,20 @@ class _UrgentDeadlineBanner extends StatelessWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(
-                        timeLabel.toUpperCase(),
-                        style: outfit(
-                          fontSize: 10.5,
-                          fontWeight: FontWeight.w800,
-                          color: const Color(0xFFBA1A1A),
-                          letterSpacing: 0.6,
+                      Flexible(
+                        child: Text(
+                          timeLabel.toUpperCase(),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: outfit(
+                            fontSize: 10.5,
+                            fontWeight: FontWeight.w800,
+                            color: const Color(0xFFBA1A1A),
+                            letterSpacing: 0.6,
+                          ),
                         ),
                       ),
+                      const SizedBox(width: 8),
                       Text(
                         '1 Action Needed',
                         style: openSans(
@@ -1137,22 +1140,26 @@ class _ApplicationCard extends StatelessWidget {
         const SizedBox(height: 10),
         SizedBox(
           width: double.infinity,
-          height: 38,
+          height: 44,
           child: FilledButton.icon(
+            key: const ValueKey('accept-award-package-btn'),
             style: FilledButton.styleFrom(
               backgroundColor: const Color(0xFF0F4D2E),
               foregroundColor: Colors.white,
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8),
+                borderRadius: BorderRadius.circular(10),
               ),
             ),
             onPressed: () => _openApplicationDetail(context),
-            icon: const Icon(Icons.draw_rounded, size: 16),
-            label: Text(
-              'Review & Sign Acceptance',
-              style: outfit(
-                fontSize: 12.5,
-                fontWeight: FontWeight.bold,
+            icon: const Icon(Icons.celebration_rounded, size: 18),
+            label: FittedBox(
+              fit: BoxFit.scaleDown,
+              child: Text(
+                'Accept & Sign Award Package',
+                style: outfit(
+                  fontSize: 13,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
           ),

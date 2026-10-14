@@ -114,4 +114,41 @@ class FakeApplicationDataSource implements ApplicationDataSource {
       }
     }
   }
+
+  final List<Map<String, dynamic>> evaluations = [];
+  final List<Map<String, dynamic>> statusHistory = [];
+  final List<Map<String, dynamic>> notifications = [];
+
+  @override
+  Future<void> updateApplicationNotes(
+    String applicationId,
+    String notes,
+  ) async {
+    for (final rows in _rows.values) {
+      final i = rows.indexWhere((r) => r['id'] == applicationId);
+      if (i != -1) {
+        rows[i] = {
+          ...rows[i],
+          'notes': notes,
+          'updated_at': DateTime.now().toUtc().toIso8601String(),
+        };
+        return;
+      }
+    }
+  }
+
+  @override
+  Future<void> insertEvaluation(Map<String, dynamic> row) async {
+    evaluations.add(Map<String, dynamic>.of(row));
+  }
+
+  @override
+  Future<void> insertStatusHistory(Map<String, dynamic> row) async {
+    statusHistory.add(Map<String, dynamic>.of(row));
+  }
+
+  @override
+  Future<void> insertNotification(Map<String, dynamic> row) async {
+    notifications.add(Map<String, dynamic>.of(row));
+  }
 }

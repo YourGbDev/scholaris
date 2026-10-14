@@ -15,6 +15,8 @@
 // exercise persistence, scoping, duplicate protection and the security guard
 // without a real Supabase client.
 
+import 'dart:convert';
+
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../models/application.dart';
@@ -74,6 +76,19 @@ abstract class ApplicationDataSource {
   Future<void> updateApplicationStatus(
     String applicationId,
     String status,
+  );
+  Future<void> updateApplicationNotes(
+    String applicationId,
+    String notes,
+  );
+  Future<void> insertEvaluation(
+    Map<String, dynamic> row,
+  );
+  Future<void> insertStatusHistory(
+    Map<String, dynamic> row,
+  );
+  Future<void> insertNotification(
+    Map<String, dynamic> row,
   );
 }
 
@@ -178,6 +193,35 @@ class SupabaseApplicationDataSource implements ApplicationDataSource {
         .from('applications')
         .update({'status': status})
         .eq('id', applicationId);
+  }
+
+  @override
+  Future<void> updateApplicationNotes(
+    String applicationId,
+    String notes,
+  ) async {
+    await _client
+        .from('applications')
+        .update({
+          'notes': notes,
+          'updated_at': DateTime.now().toUtc().toIso8601String(),
+        })
+        .eq('id', applicationId);
+  }
+
+  @override
+  Future<void> insertEvaluation(Map<String, dynamic> row) async {
+    await _client.from('application_evaluations').insert(row);
+  }
+
+  @override
+  Future<void> insertStatusHistory(Map<String, dynamic> row) async {
+    await _client.from('application_status_history').insert(row);
+  }
+
+  @override
+  Future<void> insertNotification(Map<String, dynamic> row) async {
+    await _client.from('notifications').insert(row);
   }
 }
 
@@ -381,6 +425,98 @@ class ApplicationRepository {
     final userId = _requireUserId();
     await _dataSource
         .updateApplication(userId, applicationId, {'notes': notes});
+  }
+
+  /// Updates the notes of an application for a provider-owned scholarship.
+  /// Enforced at the database level by RLS policy 0006.
+  Future<void> providerUpdateNotes(String applicationId, String notes) async {
+    _requireUserId();
+    await _dataSource.updateApplicationNotes(applicationId, notes);
+  }
+
+  /// Persists committee rubric evaluation scores and remarks into
+  /// `application_evaluations` and provides JSON fallback in `applications.notes`.
+  Future<void> saveEvaluation({
+    required String applicationId,
+    required double scoreAcademic,
+    required double scoreFinancial,
+    required double scoreLeadership,
+    required double scoreVision,
+    required double compositeScore,
+    String? notes,
+    required String decision,
+  }) async {
+    final reviewerId = _requireUserId();
+    final row = <String, dynamic>{
+      'application_id': applicationId,
+      'reviewer_id': reviewerId,
+      'score_academic': scoreAcademic,
+      'score_financial': scoreFinancial,
+      'score_leadership': scoreLeadership,
+      'score_vision': scoreVision,
+      'composite_score': compositeScore,
+      'deliberation_notes': notes,
+      'decision': decision,
+      'created_at': DateTime.now().toUtc().toIso8601String(),
+    };
+
+    await _dataSource.insertEvaluation(row);
+
+    // Gracefully encode rubric summary into applications.notes as JSON fallback
+    final rubricSummary = jsonEncode({
+      'academic': scoreAcademic,
+      'financial': scoreFinancial,
+      'leadership': scoreLeadership,
+      'vision': scoreVision,
+      'composite': compositeScore,
+      'decision': decision,
+      'remarks': notes ?? '',
+    });
+    try {
+      await _dataSource.updateApplicationNotes(applicationId, rubricSummary);
+    } catch (_) {
+      // Non-fatal if fallback update encounters constraints
+    }
+  }
+
+  /// Records an audit log transition in `application_status_history`.
+  Future<void> recordStatusTransition({
+    required String applicationId,
+    required String fromStatus,
+    required String toStatus,
+    String? remarks,
+  }) async {
+    final changedBy = _requireUserId();
+    final row = <String, dynamic>{
+      'application_id': applicationId,
+      'changed_by': changedBy,
+      'from_status': fromStatus,
+      'to_status': toStatus,
+      'remarks': remarks,
+      'created_at': DateTime.now().toUtc().toIso8601String(),
+    };
+    await _dataSource.insertStatusHistory(row);
+  }
+
+  /// Creates an in-app notification in `notifications` for the specified user.
+  Future<void> createNotification({
+    required String userId,
+    required String title,
+    required String message,
+    String? targetId,
+    String type = 'application_update',
+  }) async {
+    _requireUserId();
+    final row = <String, dynamic>{
+      'user_id': userId,
+      'title': title,
+      'message': message,
+      'type': type,
+      'target_id': targetId,
+      'is_read': false,
+      'created_at': DateTime.now().toUtc().toIso8601String(),
+    };
+    await _dataSource.insertNotification(row);
   }
 
   String _requireUserId() {

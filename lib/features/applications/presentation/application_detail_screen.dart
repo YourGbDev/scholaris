@@ -18,7 +18,8 @@ import 'package:scholaris/features/applications/providers/application_document_p
 import 'package:scholaris/features/applications/presentation/widgets/document_upload_sheet.dart';
 import 'package:scholaris/features/applications/providers/applications_provider.dart';
 import 'package:scholaris/features/applications/repositories/application_repository.dart';
-import 'package:scholaris/features/auth/presentation/ceremony_screen.dart';
+import 'application_decision_letter.dart';
+import 'package:scholaris/features/profile/providers/profile_setup_provider.dart';
 import 'package:scholaris/features/scholarships/models/scholarship.dart';
 import 'package:scholaris/features/scholarships/presentation/scholarship_detail_screen.dart';
 import 'package:scholaris/features/scholarships/providers/scholarships_provider.dart';
@@ -232,16 +233,15 @@ class _DetailBodyState extends ConsumerState<_DetailBody> {
     );
   }
 
-  void _openCelebration(BuildContext context) {
-    HapticFeedback.mediumImpact();
+  void _openDecisionLetter(BuildContext context) {
+    HapticFeedback.selectionClick();
     Navigator.of(context).push(
       MaterialPageRoute<void>(
-        fullscreenDialog: true,
-        builder: (modalContext) => CeremonyScreen(
-          title: '🎉 Grant Award Confirmed!',
-          subtitle:
-              'Congratulations! You have officially been awarded the ${widget.scholarship?.title ?? 'scholarship'}.',
-          onCompleted: () => Navigator.of(modalContext).pop(),
+        builder: (_) => ApplicationDecisionLetter(
+          application: widget.application,
+          scholarshipTitle: widget.scholarship?.title ?? 'Scholarship',
+          providerName: widget.scholarship?.provider,
+          studentName: ref.read(currentProfileProvider).valueOrNull?.fullName,
         ),
       ),
     );
@@ -250,6 +250,7 @@ class _DetailBodyState extends ConsumerState<_DetailBody> {
   @override
   Widget build(BuildContext context) {
     ref.watch(applicationsProvider);
+    ref.watch(currentProfileProvider);
     final application = widget.application;
     final scholarship = widget.scholarship;
     final scholarshipKnown = scholarship != null;
@@ -357,9 +358,10 @@ class _DetailBodyState extends ConsumerState<_DetailBody> {
             application.status == ApplicationStatus.awarded) ...[
           StaggeredListItem(
             index: 1,
-            child: _AwardCelebrationCard(
+            child: _DecisionLetterCard(
               scholarshipTitle: scholarship?.title ?? 'Scholarship Program',
-              onCelebrate: () => _openCelebration(context),
+              awarded: application.status == ApplicationStatus.awarded,
+              onOpen: () => _openDecisionLetter(context),
             ),
           ),
           const SizedBox(height: 14),
@@ -479,14 +481,16 @@ class _StatusSection extends StatelessWidget {
   }
 }
 
-class _AwardCelebrationCard extends StatelessWidget {
-  const _AwardCelebrationCard({
+class _DecisionLetterCard extends StatelessWidget {
+  const _DecisionLetterCard({
     required this.scholarshipTitle,
-    required this.onCelebrate,
+    required this.onOpen,
+    required this.awarded,
   });
 
   final String scholarshipTitle;
-  final VoidCallback onCelebrate;
+  final VoidCallback onOpen;
+  final bool awarded;
 
   @override
   Widget build(BuildContext context) {
@@ -529,7 +533,9 @@ class _AwardCelebrationCard extends StatelessWidget {
                         borderRadius: BorderRadius.circular(6),
                       ),
                       child: Text(
-                        'OFFICIAL GRANT AWARD',
+                        awarded
+                            ? 'SCHOLARSHIP AWARDED'
+                            : 'APPLICATION APPROVED',
                         style: outfit(
                           fontSize: 10,
                           fontWeight: FontWeight.w700,
@@ -540,7 +546,9 @@ class _AwardCelebrationCard extends StatelessWidget {
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      'Congratulations! Your Grant is Approved',
+                      awarded
+                          ? 'Your scholarship has been awarded'
+                          : 'Your application is approved',
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                       style: outfit(
@@ -556,7 +564,7 @@ class _AwardCelebrationCard extends StatelessWidget {
           ),
           const SizedBox(height: 12),
           Text(
-            'The institutional review committee has deliberated and approved your application for $scholarshipTitle. Your award ceremony and grant package are ready to celebrate.',
+            'View your saved decision for $scholarshipTitle and contact your provider for the next steps.',
             style: openSans(
               fontSize: 13,
               color: const Color(0xFF404942),
@@ -569,7 +577,7 @@ class _AwardCelebrationCard extends StatelessWidget {
             height: 46,
             child: PressableScale(
               child: FilledButton.icon(
-                key: const ValueKey('view-award-ceremony-btn'),
+                key: const ValueKey('view-decision-letter-btn'),
                 style: FilledButton.styleFrom(
                   backgroundColor: const Color(0xFF0F4D2E),
                   foregroundColor: Colors.white,
@@ -578,12 +586,12 @@ class _AwardCelebrationCard extends StatelessWidget {
                     borderRadius: BorderRadius.circular(12),
                   ),
                 ),
-                onPressed: onCelebrate,
-                icon: const Icon(Icons.celebration_rounded, size: 20),
+                onPressed: onOpen,
+                icon: const Icon(Icons.description_outlined, size: 20),
                 label: FittedBox(
                   fit: BoxFit.scaleDown,
                   child: Text(
-                    '🎉 View Award Ceremony & Package',
+                    awarded ? 'View Award Certificate' : 'View Approval Letter',
                     style: outfit(
                       fontSize: 14,
                       fontWeight: FontWeight.bold,

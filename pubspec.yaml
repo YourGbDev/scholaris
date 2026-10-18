@@ -62,3 +62,6 @@ flutter:
     - assets/images/onboarding_slide2.svg
     - assets/images/onboarding_slide3.svg
     - assets/images/login_hero.svg
+    - assets/images/hero_banner_exact.png
+    - assets/images/hero_banner_female.png
+

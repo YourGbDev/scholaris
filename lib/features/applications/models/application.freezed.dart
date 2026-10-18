@@ -16,7 +16,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$Application {
 
- String get id;@JsonKey(name: 'user_id') String get userId;@JsonKey(name: 'scholarship_id') String get scholarshipId;@JsonKey(fromJson: _statusFromJson, toJson: _statusToJson) ApplicationStatus get status; String? get notes;@JsonKey(name: 'applied_at', fromJson: _dateTimeFromJson, toJson: _dateTimeToJson) DateTime? get appliedAt;@JsonKey(name: 'updated_at', fromJson: _dateTimeFromJson, toJson: _dateTimeToJson) DateTime? get updatedAt;
+ String get id;@JsonKey(name: 'user_id') String get userId;@JsonKey(name: 'scholarship_id') String get scholarshipId;@JsonKey(fromJson: _statusFromJson, toJson: _statusToJson) ApplicationStatus get status; String? get notes;@JsonKey(name: 'endorsed_by') String? get endorsedBy;@JsonKey(name: 'endorsed_at', fromJson: _dateTimeFromJson, toJson: _dateTimeToJson) DateTime? get endorsedAt;@JsonKey(name: 'decided_by') String? get decidedBy;@JsonKey(name: 'decided_at', fromJson: _dateTimeFromJson, toJson: _dateTimeToJson) DateTime? get decidedAt;@JsonKey(name: 'applied_at', fromJson: _dateTimeFromJson, toJson: _dateTimeToJson) DateTime? get appliedAt;@JsonKey(name: 'updated_at', fromJson: _dateTimeFromJson, toJson: _dateTimeToJson) DateTime? get updatedAt;
 /// Create a copy of Application
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -29,16 +29,16 @@ $ApplicationCopyWith<Application> get copyWith => _$ApplicationCopyWithImpl<Appl
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is Application&&(identical(other.id, id) || other.id == id)&&(identical(other.userId, userId) || other.userId == userId)&&(identical(other.scholarshipId, scholarshipId) || other.scholarshipId == scholarshipId)&&(identical(other.status, status) || other.status == status)&&(identical(other.notes, notes) || other.notes == notes)&&(identical(other.appliedAt, appliedAt) || other.appliedAt == appliedAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is Application&&(identical(other.id, id) || other.id == id)&&(identical(other.userId, userId) || other.userId == userId)&&(identical(other.scholarshipId, scholarshipId) || other.scholarshipId == scholarshipId)&&(identical(other.status, status) || other.status == status)&&(identical(other.notes, notes) || other.notes == notes)&&(identical(other.endorsedBy, endorsedBy) || other.endorsedBy == endorsedBy)&&(identical(other.endorsedAt, endorsedAt) || other.endorsedAt == endorsedAt)&&(identical(other.decidedBy, decidedBy) || other.decidedBy == decidedBy)&&(identical(other.decidedAt, decidedAt) || other.decidedAt == decidedAt)&&(identical(other.appliedAt, appliedAt) || other.appliedAt == appliedAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,userId,scholarshipId,status,notes,appliedAt,updatedAt);
+int get hashCode => Object.hash(runtimeType,id,userId,scholarshipId,status,notes,endorsedBy,endorsedAt,decidedBy,decidedAt,appliedAt,updatedAt);
 
 @override
 String toString() {
-  return 'Application(id: $id, userId: $userId, scholarshipId: $scholarshipId, status: $status, notes: $notes, appliedAt: $appliedAt, updatedAt: $updatedAt)';
+  return 'Application(id: $id, userId: $userId, scholarshipId: $scholarshipId, status: $status, notes: $notes, endorsedBy: $endorsedBy, endorsedAt: $endorsedAt, decidedBy: $decidedBy, decidedAt: $decidedAt, appliedAt: $appliedAt, updatedAt: $updatedAt)';
 }
 
 
@@ -49,7 +49,7 @@ abstract mixin class $ApplicationCopyWith<$Res>  {
   factory $ApplicationCopyWith(Application value, $Res Function(Application) _then) = _$ApplicationCopyWithImpl;
 @useResult
 $Res call({
- String id,@JsonKey(name: 'user_id') String userId,@JsonKey(name: 'scholarship_id') String scholarshipId,@JsonKey(fromJson: _statusFromJson, toJson: _statusToJson) ApplicationStatus status, String? notes,@JsonKey(name: 'applied_at', fromJson: _dateTimeFromJson, toJson: _dateTimeToJson) DateTime? appliedAt,@JsonKey(name: 'updated_at', fromJson: _dateTimeFromJson, toJson: _dateTimeToJson) DateTime? updatedAt
+ String id,@JsonKey(name: 'user_id') String userId,@JsonKey(name: 'scholarship_id') String scholarshipId,@JsonKey(fromJson: _statusFromJson, toJson: _statusToJson) ApplicationStatus status, String? notes,@JsonKey(name: 'endorsed_by') String? endorsedBy,@JsonKey(name: 'endorsed_at', fromJson: _dateTimeFromJson, toJson: _dateTimeToJson) DateTime? endorsedAt,@JsonKey(name: 'decided_by') String? decidedBy,@JsonKey(name: 'decided_at', fromJson: _dateTimeFromJson, toJson: _dateTimeToJson) DateTime? decidedAt,@JsonKey(name: 'applied_at', fromJson: _dateTimeFromJson, toJson: _dateTimeToJson) DateTime? appliedAt,@JsonKey(name: 'updated_at', fromJson: _dateTimeFromJson, toJson: _dateTimeToJson) DateTime? updatedAt
 });
 
 
@@ -66,14 +66,18 @@ class _$ApplicationCopyWithImpl<$Res>
 
 /// Create a copy of Application
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? userId = null,Object? scholarshipId = null,Object? status = null,Object? notes = freezed,Object? appliedAt = freezed,Object? updatedAt = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? userId = null,Object? scholarshipId = null,Object? status = null,Object? notes = freezed,Object? endorsedBy = freezed,Object? endorsedAt = freezed,Object? decidedBy = freezed,Object? decidedAt = freezed,Object? appliedAt = freezed,Object? updatedAt = freezed,}) {
   return _then(Application(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,userId: null == userId ? _self.userId : userId // ignore: cast_nullable_to_non_nullable
 as String,scholarshipId: null == scholarshipId ? _self.scholarshipId : scholarshipId // ignore: cast_nullable_to_non_nullable
 as String,status: null == status ? _self.status : status // ignore: cast_nullable_to_non_nullable
 as ApplicationStatus,notes: freezed == notes ? _self.notes : notes // ignore: cast_nullable_to_non_nullable
-as String?,appliedAt: freezed == appliedAt ? _self.appliedAt : appliedAt // ignore: cast_nullable_to_non_nullable
+as String?,endorsedBy: freezed == endorsedBy ? _self.endorsedBy : endorsedBy // ignore: cast_nullable_to_non_nullable
+as String?,endorsedAt: freezed == endorsedAt ? _self.endorsedAt : endorsedAt // ignore: cast_nullable_to_non_nullable
+as DateTime?,decidedBy: freezed == decidedBy ? _self.decidedBy : decidedBy // ignore: cast_nullable_to_non_nullable
+as String?,decidedAt: freezed == decidedAt ? _self.decidedAt : decidedAt // ignore: cast_nullable_to_non_nullable
+as DateTime?,appliedAt: freezed == appliedAt ? _self.appliedAt : appliedAt // ignore: cast_nullable_to_non_nullable
 as DateTime?,updatedAt: freezed == updatedAt ? _self.updatedAt : updatedAt // ignore: cast_nullable_to_non_nullable
 as DateTime?,
   ));
@@ -160,10 +164,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id, @JsonKey(name: 'user_id')  String userId, @JsonKey(name: 'scholarship_id')  String scholarshipId, @JsonKey(fromJson: _statusFromJson, toJson: _statusToJson)  ApplicationStatus status,  String? notes, @JsonKey(name: 'applied_at', fromJson: _dateTimeFromJson, toJson: _dateTimeToJson)  DateTime? appliedAt, @JsonKey(name: 'updated_at', fromJson: _dateTimeFromJson, toJson: _dateTimeToJson)  DateTime? updatedAt)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id, @JsonKey(name: 'user_id')  String userId, @JsonKey(name: 'scholarship_id')  String scholarshipId, @JsonKey(fromJson: _statusFromJson, toJson: _statusToJson)  ApplicationStatus status,  String? notes, @JsonKey(name: 'endorsed_by')  String? endorsedBy, @JsonKey(name: 'endorsed_at', fromJson: _dateTimeFromJson, toJson: _dateTimeToJson)  DateTime? endorsedAt, @JsonKey(name: 'decided_by')  String? decidedBy, @JsonKey(name: 'decided_at', fromJson: _dateTimeFromJson, toJson: _dateTimeToJson)  DateTime? decidedAt, @JsonKey(name: 'applied_at', fromJson: _dateTimeFromJson, toJson: _dateTimeToJson)  DateTime? appliedAt, @JsonKey(name: 'updated_at', fromJson: _dateTimeFromJson, toJson: _dateTimeToJson)  DateTime? updatedAt)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _Application() when $default != null:
-return $default(_that.id,_that.userId,_that.scholarshipId,_that.status,_that.notes,_that.appliedAt,_that.updatedAt);case _:
+return $default(_that.id,_that.userId,_that.scholarshipId,_that.status,_that.notes,_that.endorsedBy,_that.endorsedAt,_that.decidedBy,_that.decidedAt,_that.appliedAt,_that.updatedAt);case _:
   return orElse();
 
 }
@@ -181,10 +185,10 @@ return $default(_that.id,_that.userId,_that.scholarshipId,_that.status,_that.not
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id, @JsonKey(name: 'user_id')  String userId, @JsonKey(name: 'scholarship_id')  String scholarshipId, @JsonKey(fromJson: _statusFromJson, toJson: _statusToJson)  ApplicationStatus status,  String? notes, @JsonKey(name: 'applied_at', fromJson: _dateTimeFromJson, toJson: _dateTimeToJson)  DateTime? appliedAt, @JsonKey(name: 'updated_at', fromJson: _dateTimeFromJson, toJson: _dateTimeToJson)  DateTime? updatedAt)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id, @JsonKey(name: 'user_id')  String userId, @JsonKey(name: 'scholarship_id')  String scholarshipId, @JsonKey(fromJson: _statusFromJson, toJson: _statusToJson)  ApplicationStatus status,  String? notes, @JsonKey(name: 'endorsed_by')  String? endorsedBy, @JsonKey(name: 'endorsed_at', fromJson: _dateTimeFromJson, toJson: _dateTimeToJson)  DateTime? endorsedAt, @JsonKey(name: 'decided_by')  String? decidedBy, @JsonKey(name: 'decided_at', fromJson: _dateTimeFromJson, toJson: _dateTimeToJson)  DateTime? decidedAt, @JsonKey(name: 'applied_at', fromJson: _dateTimeFromJson, toJson: _dateTimeToJson)  DateTime? appliedAt, @JsonKey(name: 'updated_at', fromJson: _dateTimeFromJson, toJson: _dateTimeToJson)  DateTime? updatedAt)  $default,) {final _that = this;
 switch (_that) {
 case _Application():
-return $default(_that.id,_that.userId,_that.scholarshipId,_that.status,_that.notes,_that.appliedAt,_that.updatedAt);case _:
+return $default(_that.id,_that.userId,_that.scholarshipId,_that.status,_that.notes,_that.endorsedBy,_that.endorsedAt,_that.decidedBy,_that.decidedAt,_that.appliedAt,_that.updatedAt);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -201,10 +205,10 @@ return $default(_that.id,_that.userId,_that.scholarshipId,_that.status,_that.not
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id, @JsonKey(name: 'user_id')  String userId, @JsonKey(name: 'scholarship_id')  String scholarshipId, @JsonKey(fromJson: _statusFromJson, toJson: _statusToJson)  ApplicationStatus status,  String? notes, @JsonKey(name: 'applied_at', fromJson: _dateTimeFromJson, toJson: _dateTimeToJson)  DateTime? appliedAt, @JsonKey(name: 'updated_at', fromJson: _dateTimeFromJson, toJson: _dateTimeToJson)  DateTime? updatedAt)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id, @JsonKey(name: 'user_id')  String userId, @JsonKey(name: 'scholarship_id')  String scholarshipId, @JsonKey(fromJson: _statusFromJson, toJson: _statusToJson)  ApplicationStatus status,  String? notes, @JsonKey(name: 'endorsed_by')  String? endorsedBy, @JsonKey(name: 'endorsed_at', fromJson: _dateTimeFromJson, toJson: _dateTimeToJson)  DateTime? endorsedAt, @JsonKey(name: 'decided_by')  String? decidedBy, @JsonKey(name: 'decided_at', fromJson: _dateTimeFromJson, toJson: _dateTimeToJson)  DateTime? decidedAt, @JsonKey(name: 'applied_at', fromJson: _dateTimeFromJson, toJson: _dateTimeToJson)  DateTime? appliedAt, @JsonKey(name: 'updated_at', fromJson: _dateTimeFromJson, toJson: _dateTimeToJson)  DateTime? updatedAt)?  $default,) {final _that = this;
 switch (_that) {
 case _Application() when $default != null:
-return $default(_that.id,_that.userId,_that.scholarshipId,_that.status,_that.notes,_that.appliedAt,_that.updatedAt);case _:
+return $default(_that.id,_that.userId,_that.scholarshipId,_that.status,_that.notes,_that.endorsedBy,_that.endorsedAt,_that.decidedBy,_that.decidedAt,_that.appliedAt,_that.updatedAt);case _:
   return null;
 
 }
@@ -216,7 +220,7 @@ return $default(_that.id,_that.userId,_that.scholarshipId,_that.status,_that.not
 @JsonSerializable()
 
 class _Application implements Application {
-  const _Application({required this.id, @JsonKey(name: 'user_id') required this.userId, @JsonKey(name: 'scholarship_id') required this.scholarshipId, @JsonKey(fromJson: _statusFromJson, toJson: _statusToJson) this.status = ApplicationStatus.draft, this.notes, @JsonKey(name: 'applied_at', fromJson: _dateTimeFromJson, toJson: _dateTimeToJson) this.appliedAt, @JsonKey(name: 'updated_at', fromJson: _dateTimeFromJson, toJson: _dateTimeToJson) this.updatedAt});
+  const _Application({required this.id, @JsonKey(name: 'user_id') required this.userId, @JsonKey(name: 'scholarship_id') required this.scholarshipId, @JsonKey(fromJson: _statusFromJson, toJson: _statusToJson) this.status = ApplicationStatus.draft, this.notes, @JsonKey(name: 'endorsed_by') this.endorsedBy, @JsonKey(name: 'endorsed_at', fromJson: _dateTimeFromJson, toJson: _dateTimeToJson) this.endorsedAt, @JsonKey(name: 'decided_by') this.decidedBy, @JsonKey(name: 'decided_at', fromJson: _dateTimeFromJson, toJson: _dateTimeToJson) this.decidedAt, @JsonKey(name: 'applied_at', fromJson: _dateTimeFromJson, toJson: _dateTimeToJson) this.appliedAt, @JsonKey(name: 'updated_at', fromJson: _dateTimeFromJson, toJson: _dateTimeToJson) this.updatedAt});
   factory _Application.fromJson(Map<String, dynamic> json) => _$ApplicationFromJson(json);
 
 @override final  String id;
@@ -224,6 +228,10 @@ class _Application implements Application {
 @override@JsonKey(name: 'scholarship_id') final  String scholarshipId;
 @override@JsonKey(fromJson: _statusFromJson, toJson: _statusToJson) final  ApplicationStatus status;
 @override final  String? notes;
+@override@JsonKey(name: 'endorsed_by') final  String? endorsedBy;
+@override@JsonKey(name: 'endorsed_at', fromJson: _dateTimeFromJson, toJson: _dateTimeToJson) final  DateTime? endorsedAt;
+@override@JsonKey(name: 'decided_by') final  String? decidedBy;
+@override@JsonKey(name: 'decided_at', fromJson: _dateTimeFromJson, toJson: _dateTimeToJson) final  DateTime? decidedAt;
 @override@JsonKey(name: 'applied_at', fromJson: _dateTimeFromJson, toJson: _dateTimeToJson) final  DateTime? appliedAt;
 @override@JsonKey(name: 'updated_at', fromJson: _dateTimeFromJson, toJson: _dateTimeToJson) final  DateTime? updatedAt;
 
@@ -240,16 +248,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Application&&(identical(other.id, id) || other.id == id)&&(identical(other.userId, userId) || other.userId == userId)&&(identical(other.scholarshipId, scholarshipId) || other.scholarshipId == scholarshipId)&&(identical(other.status, status) || other.status == status)&&(identical(other.notes, notes) || other.notes == notes)&&(identical(other.appliedAt, appliedAt) || other.appliedAt == appliedAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Application&&(identical(other.id, id) || other.id == id)&&(identical(other.userId, userId) || other.userId == userId)&&(identical(other.scholarshipId, scholarshipId) || other.scholarshipId == scholarshipId)&&(identical(other.status, status) || other.status == status)&&(identical(other.notes, notes) || other.notes == notes)&&(identical(other.endorsedBy, endorsedBy) || other.endorsedBy == endorsedBy)&&(identical(other.endorsedAt, endorsedAt) || other.endorsedAt == endorsedAt)&&(identical(other.decidedBy, decidedBy) || other.decidedBy == decidedBy)&&(identical(other.decidedAt, decidedAt) || other.decidedAt == decidedAt)&&(identical(other.appliedAt, appliedAt) || other.appliedAt == appliedAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,userId,scholarshipId,status,notes,appliedAt,updatedAt);
+int get hashCode => Object.hash(runtimeType,id,userId,scholarshipId,status,notes,endorsedBy,endorsedAt,decidedBy,decidedAt,appliedAt,updatedAt);
 
 @override
 String toString() {
-  return 'Application(id: $id, userId: $userId, scholarshipId: $scholarshipId, status: $status, notes: $notes, appliedAt: $appliedAt, updatedAt: $updatedAt)';
+  return 'Application(id: $id, userId: $userId, scholarshipId: $scholarshipId, status: $status, notes: $notes, endorsedBy: $endorsedBy, endorsedAt: $endorsedAt, decidedBy: $decidedBy, decidedAt: $decidedAt, appliedAt: $appliedAt, updatedAt: $updatedAt)';
 }
 
 
@@ -260,7 +268,7 @@ abstract mixin class _$ApplicationCopyWith<$Res> implements $ApplicationCopyWith
   factory _$ApplicationCopyWith(_Application value, $Res Function(_Application) _then) = __$ApplicationCopyWithImpl;
 @override @useResult
 $Res call({
- String id,@JsonKey(name: 'user_id') String userId,@JsonKey(name: 'scholarship_id') String scholarshipId,@JsonKey(fromJson: _statusFromJson, toJson: _statusToJson) ApplicationStatus status, String? notes,@JsonKey(name: 'applied_at', fromJson: _dateTimeFromJson, toJson: _dateTimeToJson) DateTime? appliedAt,@JsonKey(name: 'updated_at', fromJson: _dateTimeFromJson, toJson: _dateTimeToJson) DateTime? updatedAt
+ String id,@JsonKey(name: 'user_id') String userId,@JsonKey(name: 'scholarship_id') String scholarshipId,@JsonKey(fromJson: _statusFromJson, toJson: _statusToJson) ApplicationStatus status, String? notes,@JsonKey(name: 'endorsed_by') String? endorsedBy,@JsonKey(name: 'endorsed_at', fromJson: _dateTimeFromJson, toJson: _dateTimeToJson) DateTime? endorsedAt,@JsonKey(name: 'decided_by') String? decidedBy,@JsonKey(name: 'decided_at', fromJson: _dateTimeFromJson, toJson: _dateTimeToJson) DateTime? decidedAt,@JsonKey(name: 'applied_at', fromJson: _dateTimeFromJson, toJson: _dateTimeToJson) DateTime? appliedAt,@JsonKey(name: 'updated_at', fromJson: _dateTimeFromJson, toJson: _dateTimeToJson) DateTime? updatedAt
 });
 
 
@@ -277,14 +285,18 @@ class __$ApplicationCopyWithImpl<$Res>
 
 /// Create a copy of Application
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? userId = null,Object? scholarshipId = null,Object? status = null,Object? notes = freezed,Object? appliedAt = freezed,Object? updatedAt = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? userId = null,Object? scholarshipId = null,Object? status = null,Object? notes = freezed,Object? endorsedBy = freezed,Object? endorsedAt = freezed,Object? decidedBy = freezed,Object? decidedAt = freezed,Object? appliedAt = freezed,Object? updatedAt = freezed,}) {
   return _then(_Application(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,userId: null == userId ? _self.userId : userId // ignore: cast_nullable_to_non_nullable
 as String,scholarshipId: null == scholarshipId ? _self.scholarshipId : scholarshipId // ignore: cast_nullable_to_non_nullable
 as String,status: null == status ? _self.status : status // ignore: cast_nullable_to_non_nullable
 as ApplicationStatus,notes: freezed == notes ? _self.notes : notes // ignore: cast_nullable_to_non_nullable
-as String?,appliedAt: freezed == appliedAt ? _self.appliedAt : appliedAt // ignore: cast_nullable_to_non_nullable
+as String?,endorsedBy: freezed == endorsedBy ? _self.endorsedBy : endorsedBy // ignore: cast_nullable_to_non_nullable
+as String?,endorsedAt: freezed == endorsedAt ? _self.endorsedAt : endorsedAt // ignore: cast_nullable_to_non_nullable
+as DateTime?,decidedBy: freezed == decidedBy ? _self.decidedBy : decidedBy // ignore: cast_nullable_to_non_nullable
+as String?,decidedAt: freezed == decidedAt ? _self.decidedAt : decidedAt // ignore: cast_nullable_to_non_nullable
+as DateTime?,appliedAt: freezed == appliedAt ? _self.appliedAt : appliedAt // ignore: cast_nullable_to_non_nullable
 as DateTime?,updatedAt: freezed == updatedAt ? _self.updatedAt : updatedAt // ignore: cast_nullable_to_non_nullable
 as DateTime?,
   ));

@@ -20,7 +20,7 @@ import 'package:go_router/go_router.dart';
 
 import 'package:scholaris/features/applications/models/application.dart';
 import 'package:scholaris/features/applications/presentation/submit_application_review_dialog.dart';
-import 'package:scholaris/features/applications/presentation/submission_confirmation_receipt_screen.dart';
+import 'package:scholaris/features/applications/providers/application_document_provider.dart';
 import 'package:scholaris/features/applications/providers/applications_provider.dart';
 import 'package:scholaris/features/applications/providers/application_draft_provider.dart';
 import 'package:scholaris/features/applications/repositories/application_repository.dart';
@@ -2498,16 +2498,20 @@ class _DraftBanner extends StatelessWidget {
 
 /// Official Digital Tracking Receipt (Stitch scholaris_submission_confirmation_receipt).
 /// Replaces the apply button once applied, displaying "Application submitted".
-class _AppliedBanner extends StatelessWidget {
+class _AppliedBanner extends ConsumerWidget {
   const _AppliedBanner({required this.scholarship});
 
   final Scholarship scholarship;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final application = ref.watch(applicationsProvider).valueOrNull
+        ?.where((a) => a.scholarshipId == scholarship.id).firstOrNull;
+    final documents = application == null ? null : ref.watch(applicationDocumentsProvider(application.id));
+    final savedStatus = application?.status.dbValue.replaceAll('_', ' ') ?? 'saved';
     return Semantics(
       liveRegion: true,
-      label: 'Application submitted',
+      label: 'Application $savedStatus',
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -2552,7 +2556,7 @@ class _AppliedBanner extends StatelessWidget {
                     borderRadius: BorderRadius.circular(20),
                   ),
                   child: Text(
-                    'PACKET SECURED & SEALED',
+                    'SUBMISSION SAVED',
                     style: outfit(
                       fontSize: 10,
                       fontWeight: FontWeight.w700,
@@ -2563,7 +2567,7 @@ class _AppliedBanner extends StatelessWidget {
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  'Application submitted',
+                  'Application $savedStatus',
                   style: outfit(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
@@ -2572,7 +2576,7 @@ class _AppliedBanner extends StatelessWidget {
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  'Your packet is officially logged and queued for review.',
+                  'Your application has been saved. Check the tracker for its current status.',
                   textAlign: TextAlign.center,
                   style: openSans(
                     fontSize: 13,
@@ -2686,7 +2690,7 @@ class _AppliedBanner extends StatelessWidget {
                               style: openSans(fontSize: 10, color: const Color(0xFF404942)),
                             ),
                             Text(
-                              'REC-2025-${scholarship.id.toUpperCase().replaceAll('_', '-')}-PH',
+                              application?.id ?? 'Application unavailable',
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                               style: outfit(
@@ -2702,7 +2706,9 @@ class _AppliedBanner extends StatelessWidget {
                       IconButton(
                         tooltip: 'Copy Tracking ID',
                         icon: const Icon(Icons.content_copy_rounded, size: 16, color: kSecondary),
-                        onPressed: () {
+                        onPressed: application == null ? null : () async {
+                          await Clipboard.setData(ClipboardData(text: application.id));
+                          if (!context.mounted) return;
                           ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(content: Text('Receipt ID copied to clipboard.')),
                           );
@@ -2727,7 +2733,7 @@ class _AppliedBanner extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            'VERIFIED ATTACHMENTS (4 OF 4)',
+                            'UPLOADED ATTACHMENTS',
                             style: outfit(
                               fontSize: 10,
                               fontWeight: FontWeight.w700,
@@ -2742,10 +2748,10 @@ class _AppliedBanner extends StatelessWidget {
                         spacing: 8,
                         runSpacing: 4,
                         children: [
-                          _receiptTag('UP Diliman TCG/Transcript'),
-                          _receiptTag('Personal Narrative Essay'),
-                          _receiptTag('2 Faculty Rec Letters'),
-                          _receiptTag('Certificate of Indigency / BIR 2316'),
+                          if (documents?.isLoading == true) _receiptTag('Loading attachments'),
+                          if (documents?.hasError == true) _receiptTag('Could not load attachments'),
+                          for (final doc in documents?.valueOrNull ?? []) _receiptTag(doc.fileName),
+                          if (documents?.hasValue == true && documents!.valueOrNull!.isEmpty) _receiptTag('No documents attached'),
                         ],
                       ),
                     ],
@@ -2764,7 +2770,7 @@ class _AppliedBanner extends StatelessWidget {
                           const SizedBox(width: 4),
                           Flexible(
                             child: Text(
-                              'SHA-256: e3b0c442...8b456',
+                              'Submitted: ${application?.appliedAt?.toLocal() ?? 'Not available'}',
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                               style: outfit(fontSize: 10, color: const Color(0xFF404942)),
@@ -2775,7 +2781,7 @@ class _AppliedBanner extends StatelessWidget {
                     ),
                     const SizedBox(width: 6),
                     Text(
-                      'Scholaris Vault Sealed',
+                      'Pending review',
                       style: outfit(fontSize: 10, fontWeight: FontWeight.w600, color: kPrimaryContainer),
                     ),
                   ],
@@ -2802,18 +2808,10 @@ class _AppliedBanner extends StatelessWidget {
                 const SizedBox(height: 8),
                 Center(
                   child: TextButton.icon(
-                    onPressed: () {
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (_) => SubmissionConfirmationReceiptScreen(
-                            scholarship: scholarship,
-                          ),
-                        ),
-                      );
-                    },
+                    onPressed: application == null ? null : () => context.push('/application/${application.id}'),
                     icon: const Icon(Icons.receipt_long_rounded, size: 16, color: kPrimaryContainer),
                     label: Text(
-                      'View Full Receipt & Roadmap',
+                      'View Application Status',
                       style: outfit(
                         fontSize: 12,
                         fontWeight: FontWeight.w600,

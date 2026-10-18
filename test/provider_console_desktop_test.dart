@@ -7,6 +7,7 @@ import 'package:scholaris/features/auth/controllers/auth_controller.dart';
 import 'package:scholaris/features/profile/providers/profile_setup_provider.dart';
 import 'package:scholaris/features/profile/repositories/profile_repository.dart';
 import 'package:scholaris/features/provider/presentation/org/org_provider_shell.dart';
+import 'package:scholaris/features/provider/providers/provider_sub_role_provider.dart';
 import 'package:scholaris/features/scholarships/providers/scholarships_provider.dart';
 import 'package:scholaris/features/scholarships/repositories/scholarship_repository.dart';
 
@@ -69,6 +70,9 @@ void main() {
 
     return ProviderScope(
       overrides: [
+        organizationMembershipProvider.overrideWith((ref) async => {
+          'user_id': 'prov-1', 'organization_id': 'prov-1', 'role': 'org_admin',
+        }),
         currentUserIdProvider.overrideWithValue('prov-1'),
         profileRepositoryProvider.overrideWith(
           (ref) => ProfileRepository(
@@ -104,7 +108,7 @@ void main() {
 
     // Top bar and workspace
     expect(find.text('Incoming Applications'), findsOneWidget);
-    expect(find.text('AY 2024–2025 • Sem 1'), findsOneWidget);
+    expect(find.text('ORG ADMIN'), findsOneWidget);
     expect(find.text('New Grant'), findsOneWidget);
     expect(find.byIcon(Icons.logout_rounded), findsNWidgets(2));
 
@@ -127,7 +131,7 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('Incoming Applications'), findsOneWidget);
-    expect(find.text('AY 2024–2025 • Sem 1'), findsOneWidget);
+    expect(find.text('ORG ADMIN'), findsOneWidget);
     expect(find.text('New Grant'), findsOneWidget);
     expect(find.text('Sofia Cruz'), findsOneWidget);
     expect(find.text('Review Dossier'), findsOneWidget);

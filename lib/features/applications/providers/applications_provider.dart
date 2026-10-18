@@ -7,6 +7,7 @@
 // [filteredApplicationsProvider] derives the narrowed list from it.
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../auth/controllers/auth_controller.dart';
 import '../models/application.dart';
@@ -16,6 +17,13 @@ import '../services/application_filters.dart';
 final applicationRepositoryProvider = Provider<ApplicationRepository>(
   (ref) => ApplicationRepository(),
 );
+
+final endorsedEvaluationProvider = FutureProvider.autoDispose.family<Map<String, dynamic>?, String>((ref, id) async {
+  ref.watch(currentUserIdProvider);
+  return Supabase.instance.client.from('application_evaluations').select()
+      .eq('application_id', id).eq('decision', 'endorsed')
+      .order('created_at', ascending: false).limit(1).maybeSingle();
+});
 
 final applicationsProvider =
     AsyncNotifierProvider<ApplicationsNotifier, List<Application>>(

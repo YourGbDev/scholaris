@@ -50,6 +50,7 @@ class ApplicationWithdrawalException implements Exception {
 
 /// Low-level row access for the `applications` table.
 abstract class ApplicationDataSource {
+  Future<Map<String, dynamic>> reviewApplication(Map<String, dynamic> params);
   Future<List<Map<String, dynamic>>> fetchApplications(String userId);
   Future<List<Map<String, dynamic>>> fetchAllApplications();
   Future<List<Map<String, dynamic>>> fetchApplicationsForScholarships(
@@ -97,7 +98,19 @@ abstract class ApplicationDataSource {
 
 /// Production implementation backed by Supabase.
 class SupabaseApplicationDataSource implements ApplicationDataSource {
-  SupabaseClient get _client => Supabase.instance.client;
+  SupabaseApplicationDataSource({SupabaseClient? client}) : _providedClient = client;
+  final SupabaseClient? _providedClient;
+  SupabaseClient get _client => _providedClient ?? Supabase.instance.client;
+
+  @override
+  Future<Map<String, dynamic>> reviewApplication(Map<String, dynamic> params) async {
+    final response = await _client.rpc('review_application', params: params);
+    final result = response is List && response.length == 1 ? response.single : response;
+    if (result is! Map<String, dynamic> || result['id'] != params['p_application_id']) {
+      throw StateError('No application was updated. Refresh and try again.');
+    }
+    return result;
+  }
 
   @override
   Future<List<Map<String, dynamic>>> fetchApplications(String userId) async {
@@ -130,11 +143,7 @@ class SupabaseApplicationDataSource implements ApplicationDataSource {
 
   @override
   Future<List<String>> fetchProviderScholarshipIds(String providerId) async {
-    final query = _client.from('scholarships').select('id');
-    final rows = (providerId == 'd0570004-0000-0000-0000-000000000004' ||
-            _client.auth.currentUser?.email?.contains('finance') == true)
-        ? await query.or('created_by.eq.$providerId,created_by.eq.d0570002-0000-0000-0000-000000000002')
-        : await query.eq('created_by', providerId);
+    final rows = await _client.rpc('organization_scholarship_ids') as List;
     return [
       for (final row in rows)
         if (row['id'] is String) row['id'] as String,
@@ -185,7 +194,7 @@ class SupabaseApplicationDataSource implements ApplicationDataSource {
         .from('applications')
         .update(row)
         .eq('user_id', userId)
-        .eq('id', applicationId);
+        .eq('id', applicationId).select('id').single();
   }
 
   @override
@@ -196,7 +205,7 @@ class SupabaseApplicationDataSource implements ApplicationDataSource {
     await _client
         .from('applications')
         .update({'status': status})
-        .eq('id', applicationId);
+        .eq('id', applicationId).select('id').single();
   }
 
   @override
@@ -210,7 +219,7 @@ class SupabaseApplicationDataSource implements ApplicationDataSource {
           'notes': notes,
           'updated_at': DateTime.now().toUtc().toIso8601String(),
         })
-        .eq('id', applicationId);
+        .eq('id', applicationId).select('id').single();
   }
 
   @override
@@ -246,6 +255,35 @@ class ApplicationRepository {
   final String? Function() _currentUserId;
 
   String? get currentUserId => _currentUserId();
+
+  /// The database commits the evaluation, status, actor, history and final
+  /// notification together. Any failure aborts the entire transaction.
+  Future<Application> reviewApplication({
+    required String applicationId,
+    required ApplicationStatus expectedStatus,
+    required String action,
+    Map<String, double>? scores,
+    String? notes,
+  }) async {
+    _requireUserId();
+    final row = await _dataSource.reviewApplication({
+      'p_application_id': applicationId,
+      'p_expected_status': expectedStatus.dbValue,
+      'p_action': action,
+      'p_scores': scores,
+      'p_notes': notes,
+    });
+    final expectedResult = switch (action) {
+      'endorse' => ApplicationStatus.underReview,
+      'approve' => ApplicationStatus.approved,
+      'reject' => ApplicationStatus.rejected,
+      _ => throw ArgumentError.value(action, 'action'),
+    };
+    if (row['id'] != applicationId || row['status'] != expectedResult.dbValue) {
+      throw StateError('The review was not confirmed. Refresh and try again.');
+    }
+    return Application.fromJson(row);
+  }
 
   /// The signed-in user's own applications, newest first, or an empty list when
   /// signed out. Never reads another user's applications.
@@ -365,7 +403,6 @@ class ApplicationRepository {
       'user_id': userId,
       'scholarship_id': scholarshipId,
       'status': ApplicationStatus.draft.dbValue,
-      'created_at': now,
       'updated_at': now,
     };
     if (notes != null) {
@@ -481,11 +518,7 @@ class ApplicationRepository {
       'decision': decision,
       'remarks': notes ?? '',
     });
-    try {
-      await _dataSource.updateApplicationNotes(applicationId, rubricSummary);
-    } catch (_) {
-      // Non-fatal if fallback update encounters constraints
-    }
+    await _dataSource.updateApplicationNotes(applicationId, rubricSummary);
   }
 
   /// Records an audit log transition in `application_status_history`.

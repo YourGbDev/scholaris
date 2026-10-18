@@ -1278,7 +1278,7 @@ class _OrgIncomingApplicationsTabState
 
     if (app.status == ApplicationStatus.approved ||
         app.status == ApplicationStatus.awarded) {
-      statusTitle = 'Approved & Awarded';
+      statusTitle = app.status == ApplicationStatus.awarded ? 'Awarded' : 'Approved';
       statusBg = const Color(0xFFB3F1C6);
       statusTextColor = const Color(0xFF00351C);
       statusIcon = Icons.verified_rounded;

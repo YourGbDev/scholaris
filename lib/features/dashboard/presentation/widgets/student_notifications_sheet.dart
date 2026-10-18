@@ -8,6 +8,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+import '../../../auth/controllers/auth_controller.dart';
 
 import 'package:scholaris/features/account/presentation/account_settings_screen.dart';
 import 'package:scholaris/features/applications/models/application.dart';
@@ -22,6 +24,7 @@ import 'package:scholaris/shared/theme/app_theme.dart';
 
 Future<void> showStudentNotificationsSheet(BuildContext context) {
   HapticFeedback.lightImpact();
+  ProviderScope.containerOf(context, listen: false).invalidate(applicationsProvider);
   return showModalBottomSheet<void>(
     context: context,
     isScrollControlled: true,
@@ -33,6 +36,13 @@ Future<void> showStudentNotificationsSheet(BuildContext context) {
     builder: (ctx) => const StudentNotificationsSheet(),
   );
 }
+
+final studentNotificationsProvider = FutureProvider.autoDispose<List<Map<String, dynamic>>>((ref) async {
+  final userId = ref.watch(currentUserIdProvider);
+  if (userId == null) return [];
+  return Supabase.instance.client.from('notifications').select()
+      .eq('user_id', userId).order('created_at', ascending: false);
+});
 
 class StudentNotificationItem {
   const StudentNotificationItem({
@@ -65,6 +75,7 @@ class StudentNotificationsSheet extends ConsumerWidget {
     final appsAsync = ref.watch(applicationsProvider);
     final scholarshipsAsync = ref.watch(scholarshipsProvider);
     final profileAsync = ref.watch(currentProfileProvider);
+    final savedNotifications = ref.watch(studentNotificationsProvider);
 
     final apps = appsAsync.valueOrNull ?? [];
     final scholarships = scholarshipsAsync.valueOrNull ?? [];
@@ -77,6 +88,38 @@ class StudentNotificationsSheet extends ConsumerWidget {
       scholarships: scholarships,
       profile: profile,
     );
+    for (final row in (savedNotifications.valueOrNull ?? []).reversed) {
+      items.insert(0, StudentNotificationItem(
+        id: row['id'] as String,
+        title: row['title'] as String,
+        subtitle: row['message'] as String,
+        icon: Icons.notifications_active_outlined,
+        iconColor: kPrimary,
+        iconBgColor: const Color(0xFFDCF3E5),
+        badgeText: row['is_read'] == true ? 'Read' : 'New',
+        onTap: () async {
+          try {
+            await Supabase.instance.client.from('notifications')
+                .update({'is_read': true}).eq('id', row['id'] as String).select('id').single();
+            ref.invalidate(studentNotificationsProvider);
+            if (!context.mounted) return;
+            Navigator.of(context).pop();
+            final target = row['target_id'] as String?;
+            if (target != null) context.push('/application/$target');
+          } catch (_) {
+            if (context.mounted) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Could not mark notification as read. Please retry.')));
+            }
+          }
+        },
+      ));
+    }
+    if (savedNotifications.hasError) {
+      items.insert(0, StudentNotificationItem(id: 'load_error', title: 'Could not load notifications',
+        subtitle: 'Tap to retry.', icon: Icons.refresh, iconColor: kPrimary,
+        iconBgColor: const Color(0xFFDCF3E5), onTap: () => ref.invalidate(studentNotificationsProvider)));
+    }
 
     return Container(
       constraints: BoxConstraints(
@@ -175,7 +218,9 @@ class StudentNotificationsSheet extends ConsumerWidget {
           const SizedBox(height: 16),
 
           // Content Area
-          if (items.isEmpty)
+          if (savedNotifications.isLoading)
+            const Padding(padding: EdgeInsets.all(20), child: CircularProgressIndicator())
+          else if (items.isEmpty)
             _buildEmptyState(context)
           else
             Flexible(
@@ -234,6 +279,9 @@ class StudentNotificationsSheet extends ConsumerWidget {
 
     // 2. Live Application Status Notices
     for (final app in apps) {
+      // Final decision messages must come from the committed notification row.
+      if (app.status == ApplicationStatus.approved || app.status == ApplicationStatus.rejected ||
+          app.status == ApplicationStatus.awarded) { continue; }
       final sch = scholarships
           .cast<Scholarship?>()
           .firstWhere((s) => s?.id == app.scholarshipId, orElse: () => null);

@@ -11,17 +11,19 @@
 // - Cohort Chart: With 1 applicant in pool, statistical bell curve is replaced with an honest "Insufficient Pool Data" card.
 // - Trust Badges: Removed fake DepEd/PhilSys badges -> shows honest system states (Profile Complete, External ID: Pending, Income: Self-Declared).
 
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/physics.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:url_launcher/url_launcher.dart';
+import '../../../applications/providers/application_document_provider.dart';
+import '../../../applications/repositories/application_document_repository.dart';
 
 import '../../../applications/models/application.dart';
 import '../../../applications/providers/applications_provider.dart';
 import '../../../profile/models/applicant_profile.dart';
 import '../../../scholarships/models/scholarship.dart';
 import '../../../../shared/theme/app_motion.dart';
+import '../../providers/provider_sub_role_provider.dart';
 import '../org/org_provider_theme.dart';
 
 class ApplicantReviewDrawer extends ConsumerStatefulWidget {
@@ -108,7 +110,7 @@ class _ReviewerDrawerAnimationController extends AnimationController {
     super.duration = kDurationSlow,
     super.reverseDuration = kDurationStandard,
     super.debugLabel,
-  }) : super(lowerBound: 0.0, upperBound: 2.0);
+  }) : super(lowerBound: 0.0, upperBound: 1.0);
 
   final SpringDescription spring;
 
@@ -124,7 +126,7 @@ class _ReviewerDrawerAnimationController extends AnimationController {
     if (from != null) value = from;
     // Dismiss springs back from the current presentation value, inheriting live velocity!
     final sim = SpringSimulation(spring, value, 0.0, velocity);
-    return animateWith(sim);
+    return animateBackWith(sim);
   }
 }
 
@@ -222,10 +224,10 @@ class _ApplicantReviewDrawerState extends ConsumerState<ApplicantReviewDrawer> {
       !_scrollController.hasClients || _scrollController.offset <= 0;
 
   // 4 Rubric Criteria Sliders
-  double _score1 = 9.5; // Academic Excellence (40%)
-  double _score2 = 9.0; // Financial Need & Context (30%)
-  double _score3 = 8.8; // Leadership & Community (20%)
-  double _score4 = 9.2; // Innovation Essay & Vision (10%)
+  double _score1 = 0; // Academic Excellence (40%)
+  double _score2 = 0; // Financial Need & Context (30%)
+  double _score3 = 0; // Leadership & Community (20%)
+  double _score4 = 0; // Innovation Essay & Vision (10%)
 
   double get _compositeScore =>
       (_score1 * 0.4) + (_score2 * 0.3) + (_score3 * 0.2) + (_score4 * 0.1);
@@ -234,15 +236,7 @@ class _ApplicantReviewDrawerState extends ConsumerState<ApplicantReviewDrawer> {
   void initState() {
     super.initState();
     _scrollController = ScrollController();
-    final rawNotes = widget.application.notes ?? '';
-    String initialNotes = rawNotes;
-    if (rawNotes.trim().startsWith('{')) {
-      try {
-        final decoded = jsonDecode(rawNotes) as Map<String, dynamic>;
-        initialNotes = decoded['statement'] as String? ?? decoded['remarks'] as String? ?? '';
-      } catch (_) {}
-    }
-    _notesController = TextEditingController(text: initialNotes);
+    _notesController = TextEditingController();
   }
 
   @override
@@ -262,11 +256,14 @@ class _ApplicantReviewDrawerState extends ConsumerState<ApplicantReviewDrawer> {
   }
 
   Future<void> _handleDecision(ApplicationStatus targetStatus) async {
+    final identity = ref.read(providerSubRoleProvider);
+    if (_isProcessing || !(targetStatus == ApplicationStatus.underReview
+        ? identity.isEvaluator : identity.isOrgAdmin)) { return; }
     final actionLabel = targetStatus == ApplicationStatus.approved
         ? 'Approve Award'
         : targetStatus == ApplicationStatus.rejected
             ? 'Mark Ineligible'
-            : 'Request Info / Under Review';
+            : 'Endorse to Org Admin';
 
     final isDestructive = targetStatus == ApplicationStatus.rejected;
 
@@ -310,10 +307,10 @@ class _ApplicantReviewDrawerState extends ConsumerState<ApplicantReviewDrawer> {
             const SizedBox(height: 8),
             Text(
               targetStatus == ApplicationStatus.approved
-                  ? 'The applicant will be notified immediately and awarded the corresponding scholarship package.'
+                  ? 'The final approval and student notification will be saved together.'
                   : isDestructive
                       ? 'The application will be marked as ineligible in the institutional roster.'
-                      : 'The applicant will be notified that the committee requires additional supporting information.',
+                      : 'The rubric evaluation will be saved and sent to the organization admin for a final decision.',
               style: orgBody(fontSize: 12, color: const Color(0xFF707971)),
             ),
           ],
@@ -362,6 +359,10 @@ class _ApplicantReviewDrawerState extends ConsumerState<ApplicantReviewDrawer> {
     if (confirmed != true || !mounted) return;
 
     setState(() => _isProcessing = true);
+    final container = ProviderScope.containerOf(context, listen: false);
+    final messenger = ScaffoldMessenger.of(context);
+    final navigator = Navigator.of(context);
+    final route = ModalRoute.of(context);
 
     try {
       final repo = ref.read(applicationRepositoryProvider);
@@ -369,69 +370,25 @@ class _ApplicantReviewDrawerState extends ConsumerState<ApplicantReviewDrawer> {
           ? _notesController.text.trim()
           : null;
 
-      // Advance status using providerUpdateStatus (satisfies Supabase RLS policy 0006)
-      await repo.providerUpdateStatus(widget.application.id, targetStatus);
+      await repo.reviewApplication(
+        applicationId: widget.application.id,
+        expectedStatus: widget.application.status,
+        action: targetStatus == ApplicationStatus.underReview
+            ? 'endorse'
+            : targetStatus == ApplicationStatus.approved ? 'approve' : 'reject',
+        scores: targetStatus == ApplicationStatus.underReview ? {
+          'academic': _score1,
+          'financial': _score2,
+          'leadership': _score3,
+          'vision': _score4,
+        } : null,
+        notes: deliberationNotes,
+      );
 
-      // Persist 4-criterion rubric evaluation & deliberation notes
-      try {
-        await repo.saveEvaluation(
-          applicationId: widget.application.id,
-          scoreAcademic: _score1,
-          scoreFinancial: _score2,
-          scoreLeadership: _score3,
-          scoreVision: _score4,
-          compositeScore: double.parse(_compositeScore.toStringAsFixed(2)),
-          notes: deliberationNotes,
-          decision: targetStatus.dbValue,
-        );
-      } catch (evalErr) {
-        debugPrint('[ApplicantReviewDrawer] Evaluation persistence note: $evalErr');
-      }
-
-      // Record status transition in application_status_history
-      try {
-        await repo.recordStatusTransition(
-          applicationId: widget.application.id,
-          fromStatus: widget.application.status.dbValue,
-          toStatus: targetStatus.dbValue,
-          remarks: deliberationNotes,
-        );
-      } catch (histErr) {
-        debugPrint('[ApplicantReviewDrawer] Status transition log note: $histErr');
-      }
-
-      // Create in-app notification for the applicant student
-      try {
-        final scholarshipTitle = widget.scholarship?.title ?? 'Scholarship';
-        final notifTitle = targetStatus == ApplicationStatus.approved
-            ? 'Application Approved for Merit! 🎉'
-            : targetStatus == ApplicationStatus.rejected
-                ? 'Application Status Update'
-                : 'Application Under Review';
-        final notifMsg = targetStatus == ApplicationStatus.approved
-            ? 'Congratulations! Your application for "$scholarshipTitle" has been approved for merit and forwarded to DOST Finance & Disbursement Desk.'
-            : targetStatus == ApplicationStatus.rejected
-                ? 'Your application for "$scholarshipTitle" has been reviewed.'
-                : 'Your application for "$scholarshipTitle" is being evaluated by the committee.';
-
-        await repo.createNotification(
-          userId: widget.application.userId,
-          title: notifTitle,
-          message: notifMsg,
-          targetId: widget.application.id,
-          type: 'application_update',
-        );
-      } catch (notifErr) {
-        debugPrint('[ApplicantReviewDrawer] Notification persistence note: $notifErr');
-      }
-
-      ref.read(incomingApplicationsProvider.notifier).refresh();
-      widget.onStatusChanged?.call();
-
-      if (!mounted) return;
-      Navigator.of(context).pop();
-
-      ScaffoldMessenger.of(context).showSnackBar(
+      container.invalidate(incomingApplicationsProvider);
+      if (navigator.mounted && route?.isCurrent == true) navigator.pop();
+      if (!messenger.mounted) return;
+      messenger.showSnackBar(
         SnackBar(
           behavior: SnackBarBehavior.floating,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -447,10 +404,10 @@ class _ApplicantReviewDrawerState extends ConsumerState<ApplicantReviewDrawer> {
               Expanded(
                 child: Text(
                   targetStatus == ApplicationStatus.approved
-                      ? 'Candidate approved for merit! Forwarded to DOST Finance & Disbursement Desk.'
+                      ? 'Application approved. Student notification saved.'
                       : targetStatus == ApplicationStatus.rejected
                           ? 'Application marked as ineligible.'
-                          : 'Application placed under review / request info.',
+                          : 'Evaluation saved and endorsed to the organization admin.',
                   style: orgBody(
                     color: Colors.white,
                     fontSize: 13,
@@ -464,8 +421,8 @@ class _ApplicantReviewDrawerState extends ConsumerState<ApplicantReviewDrawer> {
       );
     } catch (e) {
       debugPrint('[DECISION ERROR] $e');
-      if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
+      if (!messenger.mounted) return;
+      messenger.showSnackBar(
         SnackBar(
           behavior: SnackBarBehavior.floating,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -495,6 +452,15 @@ class _ApplicantReviewDrawerState extends ConsumerState<ApplicantReviewDrawer> {
 
   @override
   Widget build(BuildContext context) {
+    if (widget.application.endorsedBy != null) {
+      final evaluation = ref.watch(endorsedEvaluationProvider(widget.application.id)).valueOrNull;
+      if (evaluation != null) {
+        _score1 = (evaluation['score_academic'] as num).toDouble();
+        _score2 = (evaluation['score_financial'] as num).toDouble();
+        _score3 = (evaluation['score_leadership'] as num).toDouble();
+        _score4 = (evaluation['score_vision'] as num).toDouble();
+      }
+    }
     return LayoutBuilder(
       builder: (context, constraints) {
         final screenWidth = MediaQuery.sizeOf(context).width;
@@ -1252,94 +1218,37 @@ class _ApplicantReviewDrawerState extends ConsumerState<ApplicantReviewDrawer> {
   // 3. ATTACHED VERIFICATION DOCUMENTS (Honest Empty State)
   // ---------------------------------------------------------------------------
   Widget _buildVerificationDocumentsSection(bool isNarrow) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Flexible(
-              child: Text(
-                'SUBMITTED EVIDENCE (0 FILES)',
-                style: orgLabel(
-                  fontSize: 11,
-                  fontWeight: FontWeight.w600,
-                  color: const Color(0xFF404942),
-                  letterSpacing: 0.2,
-                ),
-                overflow: TextOverflow.ellipsis,
-              ),
-            ),
-            const SizedBox(width: 8),
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-              decoration: BoxDecoration(
-                color: const Color(0xFFEEEDF3),
-                borderRadius: BorderRadius.circular(6),
-              ),
-              child: Text(
-                'Awaiting Uploads',
-                style: orgLabel(
-                  fontSize: 11,
-                  fontWeight: FontWeight.w500,
-                  color: const Color(0xFF707971),
-                ),
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 8),
-
-        // Honest Empty State Card
-        Container(
-          width: double.infinity,
-          padding: const EdgeInsets.all(20),
-          decoration: BoxDecoration(
-            color: const Color(0xFFF4F3F8),
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: const Color(0xFFE5E7EB)),
+    final documents = ref.watch(applicationDocumentsProvider(widget.application.id));
+    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      Text('SUBMITTED EVIDENCE', style: orgLabel(fontSize: 11, fontWeight: FontWeight.w600)),
+      const SizedBox(height: 8),
+      documents.when(
+        loading: () => const CircularProgressIndicator(),
+        error: (_, _) => TextButton(onPressed: () => ref.invalidate(applicationDocumentsProvider(widget.application.id)),
+          child: const Text('Could not load documents. Retry')),
+        data: (docs) => Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          if (docs.isEmpty) const Text('No verification documents on file'),
+          for (final doc in docs) ListTile(
+            contentPadding: EdgeInsets.zero,
+            leading: const Icon(Icons.description_outlined),
+            title: Text(doc.humanType),
+            subtitle: Text(doc.fileName, maxLines: 2, overflow: TextOverflow.ellipsis),
+            trailing: IconButton(tooltip: 'Open document', icon: const Icon(Icons.open_in_new),
+              onPressed: () async {
+                final url = await ref.read(applicationDocumentRepositoryProvider)
+                    .getSecureDocumentUrl(doc.filePath, expiresIn: 300);
+                if (!mounted) return;
+                if (url == null || !await launchUrl(Uri.parse(url))) {
+                  if (mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('Document access failed. Please retry.')));
+                  }
+                }
+              }),
           ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Container(
-                width: 44,
-                height: 44,
-                decoration: BoxDecoration(
-                  color: const Color(0xFFEEEDF3),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                alignment: Alignment.center,
-                child: const Icon(
-                  Icons.folder_open_rounded,
-                  color: Color(0xFF707971),
-                  size: 24,
-                ),
-              ),
-              const SizedBox(height: 10),
-              Text(
-                'No verification documents on file',
-                style: orgHeadline(
-                  fontSize: 13,
-                  fontWeight: FontWeight.w600,
-                  color: const Color(0xFF1A1B1F),
-                ),
-              ),
-              const SizedBox(height: 4),
-              Text(
-                'The applicant has not uploaded digital attachments (such as certified Form 5, BIR 2316, or personal statement PDF) for this application cycle.',
-                textAlign: TextAlign.center,
-                style: orgBody(
-                  fontSize: 11.5,
-                  color: const Color(0xFF707971),
-                  height: 1.4,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ],
-    );
+        ]),
+      ),
+    ]);
   }
 
   // ---------------------------------------------------------------------------
@@ -1506,7 +1415,7 @@ class _ApplicantReviewDrawerState extends ConsumerState<ApplicantReviewDrawer> {
                   title: 'Academic Excellence',
                   weightText: '(Weight 40%)',
                   value: _score1,
-                  note: 'Evaluates GPA standing (1.24 GWA) and program course rigor.',
+                  note: 'Review the recorded GPA and the scholarship course requirements.',
                   onChanged: (val) => setState(() => _score1 = val),
                 ),
                 const SizedBox(height: 14),
@@ -1516,7 +1425,7 @@ class _ApplicantReviewDrawerState extends ConsumerState<ApplicantReviewDrawer> {
                   title: 'Financial Need & Context',
                   weightText: '(Weight 30%)',
                   value: _score2,
-                  note: 'Evaluates household earnings (₱180k/yr) against regional poverty thresholds.',
+                  note: 'Review disclosed household income. Missing income is not verified.',
                   onChanged: (val) => setState(() => _score2 = val),
                 ),
                 const SizedBox(height: 14),
@@ -1602,10 +1511,11 @@ class _ApplicantReviewDrawerState extends ConsumerState<ApplicantReviewDrawer> {
           ),
           child: Slider(
             value: value,
-            min: 1.0,
+            min: 0.0,
             max: 10.0,
             divisions: 90,
-            onChanged: onChanged,
+            onChanged: ref.watch(providerSubRoleProvider).isEvaluator && widget.application.endorsedBy == null
+                ? onChanged : null,
           ),
         ),
         Text(
@@ -1623,8 +1533,10 @@ class _ApplicantReviewDrawerState extends ConsumerState<ApplicantReviewDrawer> {
   // 5. REVIEWER DELIBERATION NOTES & COMMITTEE LOG (Real Notes & Honest State)
   // ---------------------------------------------------------------------------
   Widget _buildEvaluationCommentarySection(Application app) {
-    final hasRealNotes = app.notes?.trim().isNotEmpty == true;
-    final realNotesText = app.notes?.trim() ?? '';
+    final evaluation = app.endorsedBy == null ? null
+        : ref.watch(endorsedEvaluationProvider(app.id)).valueOrNull;
+    final realNotesText = evaluation?['deliberation_notes'] as String? ?? '';
+    final hasRealNotes = realNotesText.trim().isNotEmpty;
     final refCode = 'SCH-${app.id.length >= 8 ? app.id.substring(0, 8).toUpperCase() : app.id.toUpperCase()}';
 
     return Column(
@@ -1931,6 +1843,11 @@ class _ApplicantReviewDrawerState extends ConsumerState<ApplicantReviewDrawer> {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
+          if (widget.application.endorsedBy != null) ...[
+            Text('Endorsed by reviewer ${widget.application.endorsedBy} on ${widget.application.endorsedAt?.toLocal()}.',
+              style: orgBody(fontSize: 12, color: kOrgPrimary)),
+            const SizedBox(height: 8),
+          ],
           // Funding Allocation Summary Ribbon
           Padding(
             padding: const EdgeInsets.only(bottom: 12, left: 2, right: 2),
@@ -1980,107 +1897,135 @@ class _ApplicantReviewDrawerState extends ConsumerState<ApplicantReviewDrawer> {
                   ),
           ),
 
-          // Action Buttons Row
-          Row(
-            children: [
-              // Ineligible (Reject) Button
-              Expanded(
-                flex: 3,
-                child: SizedBox(
-                  height: 46,
-                  child: PressableScale(
-                    child: FilledButton.icon(
-                      style: FilledButton.styleFrom(
-                        backgroundColor: const Color(0xFFFFDAD6),
-                        foregroundColor: const Color(0xFFBA1A1A),
-                        elevation: 0,
-                        padding: const EdgeInsets.symmetric(horizontal: 8),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                      ),
-                      onPressed: _isProcessing
-                          ? null
-                          : () => _handleDecision(ApplicationStatus.rejected),
-                      icon: const Icon(Icons.block, size: 16),
-                      label: const FittedBox(
-                        fit: BoxFit.scaleDown,
-                        child: Text(
-                          'Ineligible',
-                          style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13, letterSpacing: 0.1),
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-              const SizedBox(width: 8),
+          // Action Buttons Row (Enforces Reviewer vs Org Admin Role Separation)
+          Builder(
+            builder: (ctx) {
+              final identity = ref.watch(providerSubRoleProvider);
+              final isReviewer = identity.isEvaluator; // Evaluator / Reviewer staff
 
-              // Request Info Button
-              Expanded(
-                flex: 4,
-                child: SizedBox(
-                  height: 46,
-                  child: PressableScale(
-                    child: FilledButton.icon(
-                      style: FilledButton.styleFrom(
-                        backgroundColor: const Color(0xFFE9E7ED),
-                        foregroundColor: const Color(0xFF1A1B1F),
-                        elevation: 0,
-                        padding: const EdgeInsets.symmetric(horizontal: 8),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                      ),
-                      onPressed: _isProcessing
-                          ? null
-                          : () => _handleDecision(ApplicationStatus.underReview),
-                      icon: const Icon(Icons.help_outline_rounded, size: 16, color: Color(0xFF404942)),
-                      label: const FittedBox(
-                        fit: BoxFit.scaleDown,
-                        child: Text(
-                          'Request Info',
-                          style: TextStyle(fontWeight: FontWeight.w500, fontSize: 13, letterSpacing: 0.1),
+              if (!isReviewer && !identity.isOrgAdmin) {
+                return const Text('Review access unavailable. Contact your organization admin.');
+              }
+              if (!widget.application.status.isPending || widget.application.status == ApplicationStatus.draft) {
+                return Text('Final result: ${widget.application.status.dbValue}');
+              }
+              if (isReviewer && widget.application.endorsedBy != null) {
+                return const Text('Endorsed to organization admin. Awaiting final decision.');
+              }
+              if (identity.isOrgAdmin && widget.application.endorsedBy == null) {
+                return const Text('Awaiting a separate reviewer endorsement.');
+              }
+              if (isReviewer) {
+                // Reviewer can ONLY evaluate, adjust rubric, and endorse to Org Admin.
+                return Row(
+                  children: [
+                    Expanded(
+                      child: SizedBox(
+                        height: 48,
+                        child: PressableScale(
+                          child: FilledButton.icon(
+                            style: FilledButton.styleFrom(
+                              backgroundColor: kOrgPrimary,
+                              foregroundColor: Colors.white,
+                              elevation: 2,
+                              padding: const EdgeInsets.symmetric(horizontal: 16),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                            ),
+                            onPressed: _isProcessing
+                                ? null
+                                : () => _handleDecision(ApplicationStatus.underReview),
+                            icon: const Icon(Icons.verified_rounded, size: 18),
+                            label: const FittedBox(
+                              fit: BoxFit.scaleDown,
+                              child: Text(
+                                'Endorse to Org Admin for Decision',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w700,
+                                  fontSize: 14,
+                                  letterSpacing: 0.1,
+                                ),
+                              ),
+                            ),
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                ),
-              ),
-              const SizedBox(width: 8),
+                  ],
+                );
+              }
 
-              // Approve Award Button
-              Expanded(
-                flex: 5,
-                child: SizedBox(
-                  height: 46,
-                  child: PressableScale(
-                    child: FilledButton.icon(
-                      style: FilledButton.styleFrom(
-                        backgroundColor: kOrgPrimary,
-                        foregroundColor: Colors.white,
-                        elevation: 2,
-                        padding: const EdgeInsets.symmetric(horizontal: 10),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                      ),
-                      onPressed: _isProcessing
-                          ? null
-                          : () => _handleDecision(ApplicationStatus.approved),
-                      icon: const Icon(Icons.check_rounded, size: 18),
-                      label: const FittedBox(
-                        fit: BoxFit.scaleDown,
-                        child: Text(
-                          'Approve Award',
-                          style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13, letterSpacing: 0.1),
+              // Org Admin has final decision authority (Approve Award / Ineligible)
+              return Row(
+                children: [
+                  // Ineligible (Reject) Button
+                  Expanded(
+                    flex: 4,
+                    child: SizedBox(
+                      height: 46,
+                      child: PressableScale(
+                        child: FilledButton.icon(
+                          style: FilledButton.styleFrom(
+                            backgroundColor: const Color(0xFFFFDAD6),
+                            foregroundColor: const Color(0xFFBA1A1A),
+                            elevation: 0,
+                            padding: const EdgeInsets.symmetric(horizontal: 8),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                          ),
+                          onPressed: _isProcessing
+                              ? null
+                              : () => _handleDecision(ApplicationStatus.rejected),
+                          icon: const Icon(Icons.block, size: 16),
+                          label: const FittedBox(
+                            fit: BoxFit.scaleDown,
+                            child: Text(
+                              'Ineligible',
+                              style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13, letterSpacing: 0.1),
+                            ),
+                          ),
                         ),
                       ),
                     ),
                   ),
-                ),
-              ),
-            ],
+                  const SizedBox(width: 8),
+
+                  // Approve Award Button
+                  Expanded(
+                    flex: 6,
+                    child: SizedBox(
+                      height: 46,
+                      child: PressableScale(
+                        child: FilledButton.icon(
+                          style: FilledButton.styleFrom(
+                            backgroundColor: kOrgPrimary,
+                            foregroundColor: Colors.white,
+                            elevation: 2,
+                            padding: const EdgeInsets.symmetric(horizontal: 10),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                          ),
+                          onPressed: _isProcessing
+                              ? null
+                              : () => _handleDecision(ApplicationStatus.approved),
+                          icon: const Icon(Icons.check_rounded, size: 18),
+                          label: const FittedBox(
+                            fit: BoxFit.scaleDown,
+                            child: Text(
+                              'Approve Award',
+                              style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13, letterSpacing: 0.1),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              );
+            },
           ),
         ],
       ),

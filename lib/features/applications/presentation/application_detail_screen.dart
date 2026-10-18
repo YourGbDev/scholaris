@@ -997,7 +997,7 @@ class _NotesCard extends StatelessWidget {
           ),
           const SizedBox(height: 3),
           Text(
-            'Private notes only you can see.',
+            'Notes shared with authorized organization reviewers.',
             style: openSans(fontSize: 12, color: const Color(0xFF707971)),
           ),
           const SizedBox(height: 12),

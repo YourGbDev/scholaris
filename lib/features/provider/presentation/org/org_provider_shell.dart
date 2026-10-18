@@ -118,7 +118,21 @@ class _OrgProviderShellState extends ConsumerState<OrgProviderShell> {
 
   @override
   Widget build(BuildContext context) {
+    final membership = ref.watch(organizationMembershipProvider);
+    if (membership.isLoading) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
     final identity = ref.watch(providerSubRoleProvider);
+    if (identity.role == ProviderSubRole.unavailable) {
+      return Scaffold(
+        appBar: AppBar(title: const Text('Organization access')),
+        body: Center(child: Column(mainAxisSize: MainAxisSize.min, children: [
+          const Text('Organization membership is unavailable.'),
+          TextButton(onPressed: () => ref.invalidate(organizationMembershipProvider), child: const Text('Retry')),
+          TextButton(onPressed: () => _handleSignOut(context), child: const Text('Sign out')),
+        ])),
+      );
+    }
     final isDesktop = MediaQuery.sizeOf(context).width >= 768;
 
     // RBAC tab enforcement:
@@ -126,7 +140,7 @@ class _OrgProviderShellState extends ConsumerState<OrgProviderShell> {
     // Evaluator only has access to Applications (0), Decisioning (1), Scholarships (2), Settings (5).
     if (identity.isFinance && (_selectedTab < 3)) {
       _selectedTab = 4;
-    } else if (identity.isEvaluator && (_selectedTab == 3 || _selectedTab == 4)) {
+    } else if (identity.isEvaluator && (_selectedTab == 2 || _selectedTab == 3 || _selectedTab == 4)) {
       _selectedTab = 0;
     }
 
@@ -358,7 +372,7 @@ class _OrgProviderShellState extends ConsumerState<OrgProviderShell> {
           ),
           const SizedBox(width: 12),
           // Action button depending on role
-          if (identity.isEvaluator && screenWidth >= 980) ...[
+          if (identity.isOrgAdmin && screenWidth >= 980) ...[
             ElevatedButton.icon(
               onPressed: () {
                 setState(() => _selectedTab = 2);
@@ -490,7 +504,7 @@ class _OrgProviderShellState extends ConsumerState<OrgProviderShell> {
                     ),
                   ),
                   child: Text(
-                    identity.isFinance ? 'FINANCE' : 'EVALUATOR',
+                    identity.isOrgAdmin ? 'ORG ADMIN' : identity.isEvaluator ? 'REVIEWER' : 'FINANCE',
                     style: orgLabel(
                       fontSize: 8.5,
                       fontWeight: FontWeight.w700,
@@ -521,7 +535,7 @@ class _OrgProviderShellState extends ConsumerState<OrgProviderShell> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  if (identity.isEvaluator) ...[
+                  if (identity.isEvaluator || identity.isOrgAdmin) ...[
                     _sectionHeader('Academic & Intake'),
                     _buildNavItem(
                       index: 0,
@@ -537,14 +551,14 @@ class _OrgProviderShellState extends ConsumerState<OrgProviderShell> {
                       label: 'Decisioning',
                       isDrawer: isDrawer,
                     ),
-                    _buildNavItem(
+                    if (identity.isOrgAdmin) _buildNavItem(
                       index: 2,
                       icon: Icons.folder_special_outlined,
                       activeIcon: Icons.folder_special_rounded,
                       label: 'My Scholarships',
                       isDrawer: isDrawer,
                     ),
-                  ] else ...[
+                  ] else if (identity.isFinance) ...[
                     _sectionHeader('Treasury & Operations'),
                     _buildNavItem(
                       index: 4,

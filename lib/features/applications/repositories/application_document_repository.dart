@@ -23,7 +23,6 @@ class ApplicationDocumentRepository {
   /// Fetches all documents uploaded for a specific application.
   Future<List<ApplicationDocument>> fetchForApplication(
       String applicationId) async {
-    try {
       final response = await _client
           .from('application_documents')
           .select('*')
@@ -35,14 +34,6 @@ class ApplicationDocumentRepository {
               ApplicationDocument.fromJson(json as Map<String, dynamic>))
           .toList();
       return list;
-    } on PostgrestException catch (e) {
-      debugPrint('[DOCUMENTS REPO] PostgrestException fetching docs: ${e.message}');
-      // Fallback: If table does not exist or empty, return empty list
-      return const [];
-    } catch (e) {
-      debugPrint('[DOCUMENTS REPO] Unexpected error fetching docs: $e');
-      return const [];
-    }
   }
 
   /// Uploads file bytes to Supabase Storage and records metadata in application_documents.
@@ -57,24 +48,16 @@ class ApplicationDocumentRepository {
     final sanitizedFileName = fileName.replaceAll(RegExp(r'[^a-zA-Z0-9._-]'), '_');
     final storagePath = '$applicationId/$documentId/$sanitizedFileName';
 
-    String? publicUrl;
-    try {
       // 1. Upload to Supabase Storage
       await _client.storage.from(_bucket).uploadBinary(
             storagePath,
             fileBytes,
             fileOptions: FileOptions(
               contentType: mimeType,
-              upsert: true,
+              upsert: false,
             ),
           );
 
-      publicUrl = _client.storage.from(_bucket).getPublicUrl(storagePath);
-    } catch (e) {
-      debugPrint('[DOCUMENTS REPO] Storage upload notice: $e (proceeding with local path)');
-      // If bucket is pending or restricted, storagePath remains valid for record
-      publicUrl = storagePath;
-    }
 
     // 2. Insert into application_documents table
     final docData = <String, dynamic>{
@@ -82,7 +65,7 @@ class ApplicationDocumentRepository {
       'document_type': documentType,
       'file_name': fileName,
       'file_path': storagePath,
-      'storage_url': publicUrl,
+      'storage_url': null,
       'file_size_bytes': fileBytes.length,
       'mime_type': mimeType,
       'uploaded_at': DateTime.now().toUtc().toIso8601String(),
@@ -96,39 +79,19 @@ class ApplicationDocumentRepository {
           .single();
 
       return ApplicationDocument.fromJson(res);
-    } on PostgrestException catch (e) {
-      debugPrint('[DOCUMENTS REPO] Insert PostgrestException: ${e.message}');
-      // Return optimistic local model if table migration is pending on live DB
-      return ApplicationDocument(
-        id: 'local_${DateTime.now().millisecondsSinceEpoch}',
-        applicationId: applicationId,
-        documentType: documentType,
-        fileName: fileName,
-        filePath: storagePath,
-        storageUrl: publicUrl,
-        fileSizeBytes: fileBytes.length,
-        mimeType: mimeType,
-        uploadedAt: DateTime.now(),
-      );
+    } catch (_) {
+      // Best-effort cleanup never turns a failed metadata write into success.
+      try { await _client.storage.from(_bucket).remove([storagePath]); }
+      catch (_) { /* An orphaned private object can be cleaned up by an operator. */ }
+      rethrow;
     }
   }
 
   /// Deletes a document record and removes file from storage.
   Future<void> deleteDocument(ApplicationDocument doc) async {
-    try {
-      await _client
-          .from('application_documents')
-          .delete()
-          .eq('id', doc.id);
-    } catch (e) {
-      debugPrint('[DOCUMENTS REPO] Delete row warning: $e');
-    }
-
-    try {
-      await _client.storage.from(_bucket).remove([doc.filePath]);
-    } catch (e) {
-      debugPrint('[DOCUMENTS REPO] Delete storage warning: $e');
-    }
+    await _client.storage.from(_bucket).remove([doc.filePath]);
+    await _client.from('application_documents').delete()
+        .eq('id', doc.id).select('id').single();
   }
 
   /// Generates a time-limited signed URL for securely reading private documents.

@@ -17,7 +17,8 @@ import 'package:scholaris/shared/theme/app_theme.dart';
 import 'package:scholaris/shared/widgets/responsive_container.dart';
 import 'package:scholaris/shared/widgets/state_views.dart';
 
-import 'provider_application_detail_screen.dart';
+import 'widgets/applicant_review_drawer.dart';
+import '../providers/provider_sub_role_provider.dart';
 
 final providerStatusFilterProvider =
     StateProvider.autoDispose<ApplicationStatus?>((ref) => null);
@@ -453,20 +454,10 @@ class _IncomingApplicationRow extends ConsumerWidget {
 
   void _showStatusSheet(BuildContext context, WidgetRef ref) {
     final validNextStatuses = <ApplicationStatus>[];
-    if (application.status == ApplicationStatus.submitted) {
-      validNextStatuses.addAll([
-        ApplicationStatus.underReview,
-        ApplicationStatus.approved,
-        ApplicationStatus.rejected,
-      ]);
-    } else if (application.status == ApplicationStatus.underReview) {
-      validNextStatuses.addAll([
-        ApplicationStatus.approved,
-        ApplicationStatus.rejected,
-      ]);
+    if (ref.read(providerSubRoleProvider).isOrgAdmin &&
+        application.status == ApplicationStatus.underReview && application.endorsedBy != null) {
+      validNextStatuses.addAll([ApplicationStatus.approved, ApplicationStatus.rejected]);
     }
-
-    if (validNextStatuses.isEmpty) return;
 
     showModalBottomSheet<void>(
       context: context,
@@ -506,16 +497,8 @@ class _IncomingApplicationRow extends ConsumerWidget {
                       ),
                       onPressed: () {
                         Navigator.of(bottomSheetContext).pop();
-                        Navigator.of(context).push(
-                          MaterialPageRoute<void>(
-                            builder: (_) => ProviderApplicationDetailScreen(
-                              applicationId: application.id,
-                              initialApplication: application,
-                              initialScholarship: scholarship,
-                              initialProfile: applicantProfile,
-                            ),
-                          ),
-                        );
+                        ApplicantReviewDrawer.show(context, application: application,
+                          scholarship: scholarship, applicantProfile: applicantProfile);
                       },
                       icon: const Icon(Icons.open_in_new_rounded, size: 14),
                       label: const Text('View Full Dossier & Audit Log'),
@@ -546,7 +529,8 @@ class _IncomingApplicationRow extends ConsumerWidget {
                       try {
                         await ref
                             .read(applicationRepositoryProvider)
-                            .updateStatus(application.id, status);
+                            .reviewApplication(applicationId: application.id, expectedStatus: application.status,
+                              action: status == ApplicationStatus.approved ? 'approve' : 'reject');
                         ref
                             .read(incomingApplicationsProvider.notifier)
                             .refresh();

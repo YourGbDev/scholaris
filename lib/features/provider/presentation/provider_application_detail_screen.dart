@@ -4,6 +4,7 @@
 // Built to match Stitch design reference: scholaris_application_detail_provider_view.
 
 import 'package:flutter/material.dart';
+import 'widgets/applicant_review_drawer.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:scholaris/features/applications/models/application.dart';
@@ -63,67 +64,10 @@ class _ProviderApplicationDetailScreenState
           _isSavingRemark = false;
         });
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Deliberation remark recorded.')),
+          const SnackBar(content: Text('Draft remark added. Use Application Review to submit.')),
         );
       }
     });
-  }
-
-  Future<void> _updateStatus(Application app, ApplicationStatus status) async {
-    final actionLabel =
-        status == ApplicationStatus.approved ? 'Approve' : 'Reject';
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (dialogCtx) => AlertDialog(
-        title: Text(
-          '$actionLabel Application',
-          style: poppins(fontWeight: FontWeight.w600, fontSize: 18),
-        ),
-        content: Text(
-          'Are you sure you want to ${actionLabel.toLowerCase()} this application? This decision is final.',
-          style: openSans(fontSize: 14),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(dialogCtx).pop(false),
-            child: const Text('Cancel'),
-          ),
-          FilledButton(
-            style: FilledButton.styleFrom(
-              backgroundColor:
-                  status == ApplicationStatus.approved ? kPrimary : kError,
-            ),
-            onPressed: () => Navigator.of(dialogCtx).pop(true),
-            child: Text(actionLabel),
-          ),
-        ],
-      ),
-    );
-
-    if (confirmed == true && mounted) {
-      try {
-        await ref
-            .read(applicationRepositoryProvider)
-            .updateStatus(app.id, status);
-        ref.read(incomingApplicationsProvider.notifier).refresh();
-        if (!mounted) return;
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              status == ApplicationStatus.approved
-                  ? 'Candidate successfully approved!'
-                  : 'Application marked as rejected.',
-            ),
-          ),
-        );
-        Navigator.of(context).pop();
-      } catch (e) {
-        if (!mounted) return;
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Failed to update application status.')),
-        );
-      }
-    }
   }
 
   @override
@@ -1110,102 +1054,16 @@ class _ProviderApplicationDetailScreenState
 
 
   Widget _buildStickyActionBar(BuildContext context, Application app) {
-    final isTerminal = app.status == ApplicationStatus.approved ||
-        app.status == ApplicationStatus.rejected;
-
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.06),
-            blurRadius: 12,
-            offset: const Offset(0, -4),
-          ),
-        ],
-      ),
-      child: SafeArea(
-        top: false,
-        child: isTerminal
-            ? Center(
-                child: Text(
-                  'Application decision has been recorded (${ApplicationStatusUi.of(app.status).label}).',
-                  style: poppins(
-                    fontSize: 13,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.black54,
-                  ),
-                ),
-              )
-            : Row(
-                children: [
-                  // Reject button
-                  OutlinedButton.icon(
-                    onPressed: () => _updateStatus(app, ApplicationStatus.rejected),
-                    icon: const Icon(Icons.close_rounded, size: 16, color: kError),
-                    label: const Text('Reject'),
-                    style: OutlinedButton.styleFrom(
-                      foregroundColor: kError,
-                      side: const BorderSide(color: kError),
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 12, vertical: 12),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-
-                  // Request Docs button
-                  OutlinedButton.icon(
-                    onPressed: () {
-                      _noteController.text =
-                          'Conditionally held pending additional verification of: ';
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text(
-                              'Deliberation note template inserted for document request.'),
-                        ),
-                      );
-                    },
-                    icon: const Icon(Icons.help_outline_rounded,
-                        size: 16, color: kNavyTrust),
-                    label: const Text('Request Docs'),
-                    style: OutlinedButton.styleFrom(
-                      foregroundColor: kNavyTrust,
-                      side: const BorderSide(color: kNavyTrust),
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 12, vertical: 12),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-
-                  // Advance / Approve button
-                  Expanded(
-                    child: ElevatedButton.icon(
-                      onPressed: () =>
-                          _updateStatus(app, ApplicationStatus.approved),
-                      icon: const Icon(Icons.check_circle_rounded, size: 18),
-                      label: const Text(
-                        'Approve',
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: kPrimary,
-                        foregroundColor: Colors.white,
-                        padding: const EdgeInsets.symmetric(vertical: 12),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
+    return SafeArea(
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: FilledButton.icon(
+          onPressed: () => ApplicantReviewDrawer.show(context,
+            application: app, scholarship: widget.initialScholarship,
+            applicantProfile: widget.initialProfile),
+          icon: const Icon(Icons.rate_review_outlined),
+          label: const Text('Open Application Review'),
+        ),
       ),
     );
   }

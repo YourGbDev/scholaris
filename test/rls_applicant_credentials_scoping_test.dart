@@ -123,6 +123,15 @@ class RlsEnforcingProfileDataSource implements ProfileDataSource {
 ///    `exists (select 1 from scholarships s where s.id = applications.scholarship_id
 ///             and s.created_by = auth.uid())` (migration 0005)
 class RlsEnforcingApplicationDataSource implements ApplicationDataSource {
+  @override
+  Future<void> insertDisbursement(Map<String, dynamic> row) async {
+    throw UnimplementedError('Disbursements are outside this privacy fixture.');
+  }
+  @override
+  Future<Map<String, dynamic>> reviewApplication(Map<String, dynamic> params) async {
+    throw UnimplementedError('Workflow authorization is tested against PostgreSQL.');
+  }
+
   RlsEnforcingApplicationDataSource({
     required this.currentUserId,
   });

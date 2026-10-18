@@ -69,6 +69,12 @@ abstract class Application with _$Application {
     @Default(ApplicationStatus.draft)
     ApplicationStatus status,
     String? notes,
+    @JsonKey(name: 'endorsed_by') String? endorsedBy,
+    @JsonKey(name: 'endorsed_at', fromJson: _dateTimeFromJson, toJson: _dateTimeToJson)
+    DateTime? endorsedAt,
+    @JsonKey(name: 'decided_by') String? decidedBy,
+    @JsonKey(name: 'decided_at', fromJson: _dateTimeFromJson, toJson: _dateTimeToJson)
+    DateTime? decidedAt,
     @JsonKey(name: 'applied_at', fromJson: _dateTimeFromJson, toJson: _dateTimeToJson)
     DateTime? appliedAt,
     @JsonKey(name: 'updated_at', fromJson: _dateTimeFromJson, toJson: _dateTimeToJson)

@@ -1,16 +1,17 @@
 // lib/features/provider/providers/provider_sub_role_provider.dart
 //
-// Role-Based Access Control (RBAC) Sub-Role Provider for DOST Organization:
-// - Evaluator: Dr. Renato U. Solidum Jr. (Academic Evaluator) -> Port 5001 / provider.dost@scholaris.gov.ph
-// - Finance: Engr. Maria Santos, CPA (Disbursing Officer) -> Port 5002 / finance.dost@scholaris.gov.ph
+// Organization membership is provisioned by a trusted database operator.
+// UI state fails closed while loading; database authorization remains decisive.
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../../auth/controllers/auth_controller.dart';
 import '../../profile/providers/profile_setup_provider.dart';
 
 enum ProviderSubRole {
+  unavailable,
+  orgAdmin,
   evaluator,
   finance,
 }
@@ -32,57 +33,38 @@ class ProviderIdentityInfo {
 
   bool get isFinance => role == ProviderSubRole.finance;
   bool get isEvaluator => role == ProviderSubRole.evaluator;
+  bool get isOrgAdmin => role == ProviderSubRole.orgAdmin;
 }
+
+final organizationMembershipProvider = FutureProvider<Map<String, dynamic>?>((ref) async {
+  final userId = ref.watch(currentUserIdProvider);
+  if (userId == null) return null;
+  return Supabase.instance.client.from('organization_memberships')
+      .select('user_id, organization_id, role')
+      .eq('user_id', userId).eq('active', true).maybeSingle();
+});
 
 final providerSubRoleProvider = Provider<ProviderIdentityInfo>((ref) {
   final profile = ref.watch(currentProfileProvider).valueOrNull;
-  final currentUser = Supabase.instance.client.auth.currentUser;
-  final email = currentUser?.email?.toLowerCase().trim() ?? '';
-  final fullName = profile?.fullName.trim() ?? '';
-
-  bool isFinance = false;
-
-  // 1. Port-based isolation for local testing / demo rehearsal
-  if (kIsWeb) {
-    final port = Uri.base.port;
-    if (port == 5002) {
-      isFinance = true;
-    } else if (port == 5001) {
-      isFinance = false;
-    }
-  }
-
-  // 2. Email-based binding (authoritative)
-  if (email == 'finance.dost@scholaris.gov.ph' || email.startsWith('finance.')) {
-    isFinance = true;
-  } else if (email == 'provider.dost@scholaris.gov.ph' || email.startsWith('provider.')) {
-    isFinance = false;
-  }
-
-  // 3. Name fallback
-  if (!isFinance &&
-      (fullName.contains('Maria Santos') ||
-          fullName.contains('Disbursing') ||
-          fullName.contains('Comptroller') ||
-          fullName.contains('Finance'))) {
-    isFinance = true;
-  }
-
-  if (isFinance) {
-    return const ProviderIdentityInfo(
-      role: ProviderSubRole.finance,
-      name: 'Engr. Maria Santos, CPA',
-      initials: 'MS',
-      roleSubtitle: 'Disbursing Officer',
-      topEyebrow: 'ENGR. MARIA SANTOS, CPA • TREASURY & DISBURSEMENTS',
-    );
-  }
-
-  return const ProviderIdentityInfo(
-    role: ProviderSubRole.evaluator,
-    name: 'Dr. Renato U. Solidum Jr.',
-    initials: 'RS',
-    roleSubtitle: 'Academic Evaluator',
-    topEyebrow: 'DR. RENATO U. SOLIDUM JR. • ACADEMIC EVALUATION DESK',
+  final membership = ref.watch(organizationMembershipProvider).valueOrNull;
+  final role = switch (membership?['role']) {
+    'org_admin' => ProviderSubRole.orgAdmin,
+    'reviewer' => ProviderSubRole.evaluator,
+    'finance' => ProviderSubRole.finance,
+    _ => ProviderSubRole.unavailable,
+  };
+  final name = profile?.fullName.trim() ?? '';
+  final subtitle = switch (role) {
+    ProviderSubRole.orgAdmin => 'Organization Admin',
+    ProviderSubRole.evaluator => 'Reviewer',
+    ProviderSubRole.finance => 'Finance',
+    ProviderSubRole.unavailable => 'Membership unavailable',
+  };
+  return ProviderIdentityInfo(
+    role: role,
+    name: name.isEmpty ? 'Organization member' : name,
+    initials: name.isEmpty ? '?' : name.split(RegExp(r'\s+')).take(2).map((s) => s[0]).join(),
+    roleSubtitle: subtitle,
+    topEyebrow: subtitle.toUpperCase(),
   );
 });

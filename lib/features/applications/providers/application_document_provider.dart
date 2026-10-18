@@ -7,6 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../models/application_document.dart';
 import '../repositories/application_document_repository.dart';
+import '../../auth/controllers/auth_controller.dart';
 
 final applicationDocumentsProvider = AsyncNotifierProvider.family<
     ApplicationDocumentsNotifier, List<ApplicationDocument>, String>(
@@ -17,6 +18,7 @@ class ApplicationDocumentsNotifier
     extends FamilyAsyncNotifier<List<ApplicationDocument>, String> {
   @override
   Future<List<ApplicationDocument>> build(String arg) async {
+    ref.watch(currentUserIdProvider);
     final repo = ref.watch(applicationDocumentRepositoryProvider);
     return repo.fetchForApplication(arg);
   }

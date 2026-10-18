@@ -4,6 +4,11 @@ import 'package:scholaris/features/applications/repositories/application_reposit
 /// user id so the repository's own-user scoping can be exercised without a
 /// Supabase client. Each insert generates a sequential id like `app-1`.
 class FakeApplicationDataSource implements ApplicationDataSource {
+  @override
+  Future<Map<String, dynamic>> reviewApplication(Map<String, dynamic> params) async {
+    throw UnimplementedError('Workflow authorization is tested against PostgreSQL.');
+  }
+
   final Map<String, List<Map<String, dynamic>>> _rows = {};
   int _seq = 0;
 

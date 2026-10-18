@@ -12,6 +12,9 @@
 // 6. Pinned final submit action (with loading state) & exit-intent draft protection
 
 import 'package:flutter/material.dart';
+import '../providers/applications_provider.dart';
+import '../providers/application_document_provider.dart';
+import 'widgets/document_upload_sheet.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -27,7 +30,7 @@ class SubmitApplicationReviewDialog extends ConsumerStatefulWidget {
     super.key,
     required this.scholarship,
     required this.onSaveDraft,
-    this.initialCertificationsChecked = true,
+    this.initialCertificationsChecked = false,
   });
 
   final Scholarship scholarship;
@@ -81,6 +84,7 @@ class _SubmitApplicationReviewDialogState
   late bool _cert2;
   late bool _cert3;
   bool _isSavingDraft = false;
+  String? _packetError;
 
   @override
   void initState() {
@@ -305,7 +309,7 @@ class _SubmitApplicationReviewDialogState
             children: [
               Flexible(
                 child: Text(
-                  'Step 3 of 3: Sign & Submit',
+                  'Review & Submit',
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: GoogleFonts.outfit(
@@ -317,7 +321,7 @@ class _SubmitApplicationReviewDialogState
               ),
               const SizedBox(width: 8),
               Text(
-                '100% Prepared',
+                'Review Required',
                 style: GoogleFonts.outfit(
                   fontSize: 12,
                   fontWeight: FontWeight.w600,
@@ -660,336 +664,45 @@ class _SubmitApplicationReviewDialogState
 
   // --- CARD 3: Application Packet Card -------------------------------------
   Widget _buildPacketCard({required StudentProfile? profile}) {
-    final school = profile?.school;
-    final hasTranscript = profile != null && school != null && school.isNotEmpty;
-    final transcriptTitle = hasTranscript
-        ? '$school Academic Transcript'
-        : 'Official Academic Transcript';
-    final gpaText = profile != null
-        ? 'GPA ${profile.gpa.toStringAsFixed(2)}'
-        : 'Pending';
-
+    final application = ref.watch(applicationsProvider).valueOrNull
+        ?.where((a) => a.scholarshipId == widget.scholarship.id).firstOrNull;
+    final documents = application == null ? null
+        : ref.watch(applicationDocumentsProvider(application.id));
     return Container(
       padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: const Color(0xFFE2E8F3)),
-        boxShadow: const [
-          BoxShadow(
-            color: Color(0x0A161C27),
-            blurRadius: 10,
-            offset: Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Application Packet',
-                      style: GoogleFonts.outfit(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        color: kOnSurface,
-                      ),
-                    ),
-                    Text(
-                      hasTranscript
-                          ? 'Academic records & materials verified'
-                          : 'Materials pending verification',
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: GoogleFonts.openSans(
-                        fontSize: 11,
-                        color: kOnSurfaceVariant,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(width: 8),
-              Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(
-                    hasTranscript ? Icons.verified_rounded : Icons.pending_rounded,
-                    size: 16,
-                    color: hasTranscript ? kPrimaryContainer : kSecondary,
-                  ),
-                  const SizedBox(width: 4),
-                  Text(
-                    hasTranscript ? 'Verified' : 'In Review',
-                    style: GoogleFonts.outfit(
-                      fontSize: 12,
-                      fontWeight: FontWeight.bold,
-                      color: hasTranscript ? kPrimaryContainer : kSecondary,
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-          const SizedBox(height: 12),
-
-          // 1. Personal Statement
-          _buildPacketItem(
-            icon: Icons.description_outlined,
-            iconBg: kPrimaryFixed,
-            iconColor: kOnPrimaryFixed,
-            title: 'Personal Statement',
-            tag: 'Draft Included',
-            subtitle: 'Personal statement and academic intent',
-            statusIcon: Icons.check_rounded,
-            statusLabel: 'Attached to Application Packet',
-            actionIcon: Icons.visibility_outlined,
-          ),
-          const SizedBox(height: 8),
-
-          // 2. Academic Transcript
-          _buildPacketItem(
-            icon: Icons.school_outlined,
-            iconBg: hasTranscript ? kSecondaryFixed : const Color(0xFFFFDAD6),
-            iconColor: hasTranscript ? kOnSecondaryFixed : const Color(0xFF93000A),
-            title: transcriptTitle,
-            tag: gpaText,
-            subtitle: hasTranscript
-                ? 'Synced and verified from student profile'
-                : 'Academic transcript record pending in profile',
-            statusIcon: hasTranscript ? Icons.lock_outline_rounded : Icons.info_outline_rounded,
-            statusLabel: hasTranscript
-                ? 'Official Academic Record Attached'
-                : 'Pending Profile Verification',
-            actionIcon: Icons.open_in_new_rounded,
-          ),
-          const SizedBox(height: 8),
-
-          // 3. Recommendations
-          Container(
-            padding: const EdgeInsets.all(10),
-            decoration: BoxDecoration(
-              color: kSurfaceContainerLow,
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Container(
-                  width: 36,
-                  height: 36,
-                  decoration: BoxDecoration(
-                    color: kPrimaryFixed,
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: const Icon(
-                    Icons.contact_mail_outlined,
-                    size: 20,
-                    color: kOnPrimaryFixed,
-                  ),
-                ),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Faculty Recommendations',
-                        style: GoogleFonts.outfit(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w600,
-                          color: kOnSurface,
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        'Institutional endorsements and academic references',
-                        style: GoogleFonts.openSans(
-                          fontSize: 11,
-                          color: kOnSurfaceVariant,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 8),
-
-          // 4. PSA Birth Cert & BIR Form 2316
-          _buildPacketItem(
-            icon: Icons.receipt_long_outlined,
-            iconBg: kSecondaryFixed,
-            iconColor: kOnSecondaryFixed,
-            title: 'PSA Birth Cert & BIR Form 2316',
-            tag: 'Verified',
-            subtitle: 'Philippine PSA & BIR Proof Encrypted & Synced',
-            statusIcon: Icons.enhanced_encryption_outlined,
-            statusLabel: 'Financial Need Verification Passed',
-            actionIcon: Icons.lock_outline_rounded,
-          ),
-          const SizedBox(height: 10),
-
-          // Combined Packet Action Button
-          SizedBox(
-            width: double.infinity,
-            height: 38,
-            child: FilledButton.tonal(
-              style: FilledButton.styleFrom(
-                backgroundColor: kSurfaceContainer,
-                foregroundColor: kSecondary,
-                padding: const EdgeInsets.symmetric(horizontal: 12),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
-                ),
-              ),
-              onPressed: () {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Viewing Combined Packet PDF (4.2 MB)...')),
-                );
-              },
-              child: FittedBox(
-                fit: BoxFit.scaleDown,
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const Icon(Icons.picture_as_pdf_outlined, size: 16),
-                    const SizedBox(width: 8),
-                    Text(
-                      'View Combined Packet (PDF 4.2 MB)',
-                      style: GoogleFonts.outfit(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
+      decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(16)),
+      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        Text('Application Packet', style: GoogleFonts.outfit(fontSize: 16, fontWeight: FontWeight.bold)),
+        const SizedBox(height: 8),
+        Text('Academic profile: ${profile?.school ?? 'School not recorded'}. Information is self-reported and awaits review.'),
+        const SizedBox(height: 8),
+        if (documents == null) const Text('No supporting documents attached yet.'),
+        if (_packetError != null) Text(_packetError!, style: const TextStyle(color: Colors.red)),
+        if (documents != null) documents.when(
+          loading: () => const CircularProgressIndicator(),
+          error: (_, _) => const Text('Could not load attachments. Please retry before submitting.'),
+          data: (docs) => Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Text(docs.isEmpty ? 'No supporting documents attached yet.' : 'Uploaded attachments (awaiting review):'),
+            for (final doc in docs) Text('${doc.humanType}: ${doc.fileName}'),
+          ]),
+        ),
+        TextButton.icon(
+          onPressed: _isSavingDraft ? null : () async {
+            setState(() { _isSavingDraft = true; _packetError = null; });
+            try {
+              final draft = application ?? await ref.read(applicationsProvider.notifier).saveDraft(widget.scholarship.id);
+              if (!mounted) return;
+              await showDocumentUploadSheet(context, preselectedApplicationId: draft.id);
+            } catch (_) {
+              if (mounted) setState(() => _packetError = 'Could not prepare document upload. Please retry.');
+            } finally { if (mounted) setState(() => _isSavingDraft = false); }
+          },
+          icon: const Icon(Icons.upload_file), label: const Text('Upload supporting document'),
+        ),
+      ]),
     );
   }
 
-  Widget _buildPacketItem({
-    required IconData icon,
-    required Color iconBg,
-    required Color iconColor,
-    required String title,
-    required String tag,
-    required String subtitle,
-    required IconData statusIcon,
-    required String statusLabel,
-    required IconData actionIcon,
-  }) {
-    return Container(
-      padding: const EdgeInsets.all(10),
-      decoration: BoxDecoration(
-        color: kSurfaceContainerLow,
-        borderRadius: BorderRadius.circular(10),
-      ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            width: 36,
-            height: 36,
-            decoration: BoxDecoration(
-              color: iconBg,
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Icon(icon, size: 20, color: iconColor),
-          ),
-          const SizedBox(width: 10),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    Expanded(
-                      child: Text(
-                        title,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: GoogleFonts.outfit(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w600,
-                          color: kOnSurface,
-                        ),
-                      ),
-                    ),
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                      decoration: BoxDecoration(
-                        color: kSurfaceContainer,
-                        borderRadius: BorderRadius.circular(4),
-                      ),
-                      child: Text(
-                        tag,
-                        style: GoogleFonts.outfit(
-                          fontSize: 9,
-                          fontWeight: FontWeight.w600,
-                          color: kOnSurfaceVariant,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 2),
-                Text(
-                  subtitle,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: GoogleFonts.openSans(
-                    fontSize: 11,
-                    fontStyle: FontStyle.italic,
-                    color: kOnSurfaceVariant,
-                  ),
-                ),
-                const SizedBox(height: 2),
-                Row(
-                  children: [
-                    Icon(statusIcon, size: 12, color: kPrimaryContainer),
-                    const SizedBox(width: 4),
-                    Expanded(
-                      child: Text(
-                        statusLabel,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: GoogleFonts.outfit(
-                          fontSize: 10,
-                          fontWeight: FontWeight.w600,
-                          color: kPrimaryContainer,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(width: 6),
-          IconButton(
-            padding: EdgeInsets.zero,
-            constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
-            icon: Icon(actionIcon, size: 18, color: kSecondary),
-            onPressed: () {},
-          ),
-        ],
-      ),
-    );
-  }
-
-  // --- CARD 4: Affirmations & Honor Code Card ------------------------------
   Widget _buildAffirmationsCard() {
     return Container(
       padding: const EdgeInsets.all(16),
@@ -1033,7 +746,7 @@ class _SubmitApplicationReviewDialogState
             value: _cert1,
             onChanged: (v) => setState(() => _cert1 = v ?? false),
             text:
-                'I certify under penalty of law that all personal information, essays, and UP Diliman academic records provided are true, accurate, and original.',
+                'I confirm that the application information I am submitting is accurate.',
           ),
           const SizedBox(height: 8),
 
@@ -1042,7 +755,7 @@ class _SubmitApplicationReviewDialogState
             value: _cert2,
             onChanged: (v) => setState(() => _cert2 = v ?? false),
             text:
-                'I authorize Scholaris and the DOST-SEI screening panel to verify academic standing with the University of the Philippines Diliman Office of the University Registrar (OUR).',
+                'I understand that authorized staff of the scholarship organization can review my submitted information and attachments.',
           ),
           const SizedBox(height: 8),
 
@@ -1051,7 +764,7 @@ class _SubmitApplicationReviewDialogState
             value: _cert3,
             onChanged: (v) => setState(() => _cert3 = v ?? false),
             text:
-                'I understand that stipends and tuition subsidies will be disbursed via authorized LandBank / DBP scholar accounts or direct to university upon official awarding.',
+                'I understand that submitting an application does not guarantee a scholarship.',
           ),
         ],
       ),
@@ -1127,7 +840,7 @@ class _SubmitApplicationReviewDialogState
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'DIGITAL SIGNATURE',
+                'APPLICANT',
                 style: GoogleFonts.outfit(
                   fontSize: 10,
                   fontWeight: FontWeight.w700,
@@ -1145,7 +858,7 @@ class _SubmitApplicationReviewDialogState
                   ),
                   const SizedBox(width: 4),
                   Text(
-                    'Legally Binding',
+                    'Review Pending',
                     style: GoogleFonts.outfit(
                       fontSize: 11,
                       fontWeight: FontWeight.bold,
@@ -1175,7 +888,7 @@ class _SubmitApplicationReviewDialogState
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'Applicant Full Legal Name',
+                            'Applicant Name',
                             style: GoogleFonts.openSans(
                               fontSize: 10,
                               color: kOnSurfaceVariant,
@@ -1210,7 +923,7 @@ class _SubmitApplicationReviewDialogState
                   children: [
                     Expanded(
                       child: Text(
-                        'Timestamp: Oct 10, 2025 • 4:18 PM PST',
+                        'Submission time is saved after successful submission.',
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: GoogleFonts.openSans(
@@ -1221,7 +934,7 @@ class _SubmitApplicationReviewDialogState
                     ),
                     const SizedBox(width: 8),
                     Text(
-                      'ID: SCH-98214-ML',
+                      '',
                       style: GoogleFonts.outfit(
                         fontSize: 11,
                         fontWeight: FontWeight.bold,
@@ -1251,7 +964,7 @@ class _SubmitApplicationReviewDialogState
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text(
-                    'Tamper-evident SHA-256 ledger record created upon submission.',
+                    'A submission is complete only after it is saved successfully.',
                     style: GoogleFonts.openSans(
                       fontSize: 11,
                       color: kOnSurfaceVariant,

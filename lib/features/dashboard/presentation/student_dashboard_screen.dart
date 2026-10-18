@@ -512,7 +512,7 @@ class _StudentDashboardScreenState
     }
   }
 
-  // --- 3. Free-Floating Mascot Hero & Dynamic Speech Bubble ---
+  // --- 3. Free-Floating Mascot Hero & "Your Next Chapter" Stacked Card ---
   Widget _buildMascotHeroSection({
     required StudentProfile? profile,
     required int matchCount,
@@ -522,140 +522,332 @@ class _StudentDashboardScreenState
         ? 'assets/images/mascot_female.png'
         : 'assets/images/mascot_male.png';
 
-    return Stack(
-      clipBehavior: Clip.none,
-      children: [
-        // Background botanical foliage & gold visual energy dashes
-        Positioned.fill(
-          child: CustomPaint(
-            painter: _MascotDecorationsPainter(),
-          ),
-        ),
+    // Singular / Plural / Empty match messaging
+    final String countHeading;
+    final String countSubheading;
+    final String ctaLabel;
 
-        // Foreground: Left Mascot (cropped at waist) + Right Speech Bubble
-        Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            // Upper body mascot, cropped at waist
-            SizedBox(
-              width: 110,
-              height: 172,
-              child: ClipRect(
-                child: OverflowBox(
-                  maxHeight: 320,
-                  maxWidth: 260,
-                  alignment: Alignment.topCenter,
-                  child: Image.asset(
-                    mascotAsset,
-                    height: 310,
-                    fit: BoxFit.contain,
-                    errorBuilder: (context, error, stackTrace) {
-                      debugPrint('[MASCOT ERROR] $error');
-                      return const SizedBox(
-                        width: 110,
-                        height: 172,
-                      );
-                    },
-                  ),
-                ),
-              ),
-            ),
-            const SizedBox(width: 6),
+    if (matchCount > 1) {
+      countHeading = '$matchCount new\nmatches';
+      countSubheading = 'A step closer to your future.';
+      ctaLabel = 'Explore matches →';
+    } else if (matchCount == 1) {
+      countHeading = '1 new\nmatch';
+      countSubheading = 'A step closer to your future.';
+      ctaLabel = 'Explore match →';
+    } else {
+      countHeading = 'Explore\nmatches';
+      countSubheading = 'Complete profile to discover.';
+      ctaLabel = 'Find scholarships →';
+    }
 
-            // White rounded speech bubble with thin green border
-            Flexible(
-              child: Container(
-                constraints: const BoxConstraints(maxWidth: 215),
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final availableWidth = constraints.maxWidth;
+        // Adaptive sizing across small mobile (360px) and larger viewports
+        final isNarrow = availableWidth < 370;
+        final mascotWidth = isNarrow ? 100.0 : 115.0;
+        final mascotHeight = isNarrow ? 190.0 : 210.0;
+        final heroContainerHeight = isNarrow ? 195.0 : 215.0;
+
+        return SizedBox(
+          height: heroContainerHeight,
+          child: Stack(
+            clipBehavior: Clip.none,
+            children: [
+              // Faint campus architectural facade linework & subtle academic arcs
+              Positioned.fill(
                 child: CustomPaint(
-                  painter: _SpeechBubblePainter(
-                    color: Colors.white,
-                    borderColor: const Color(0xFF0F4D2E),
-                    borderWidth: 1.2,
-                    borderRadius: 16.0,
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.fromLTRB(14, 9, 12, 9),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Container(
-                          width: 30,
-                          height: 30,
-                          decoration: const BoxDecoration(
-                            color: Color(0xFFDCF3E5),
-                            shape: BoxShape.circle,
-                          ),
-                          child: const Center(
-                            child: Icon(
-                              Icons.school_rounded,
-                              color: Color(0xFF0F4D2E),
-                              size: 16,
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: 8),
-                        Flexible(
-                          child: FittedBox(
-                            fit: BoxFit.scaleDown,
-                            alignment: Alignment.centerLeft,
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Text(
-                                  'You have ',
-                                  style: outfit(
-                                    fontSize: 12.0,
-                                    fontWeight: FontWeight.w600,
-                                    color: const Color(0xFF161C27),
-                                    height: 1.25,
-                                  ),
-                                ),
-                                CountUpAnimation(
-                                  targetValue: matchCount,
-                                  style: outfit(
-                                    fontSize: 12.0,
-                                    fontWeight: FontWeight.w700,
-                                    color: const Color(0xFF0F4D2E),
-                                    height: 1.25,
-                                  ),
-                                ),
-                                Text(
-                                  ' new\nscholarship matches! 🎓',
-                                  style: outfit(
-                                    fontSize: 12.0,
-                                    fontWeight: FontWeight.w600,
-                                    color: const Color(0xFF161C27),
-                                    height: 1.25,
-                                  ),
-                                ),
-                              ],
-                            ),
+                  painter: _CampusArchitecturePainter(),
+                ),
+              ),
+
+              // Elegantly waving Philippine national flag on flagpole (secondary accent)
+              Positioned(
+                right: isNarrow ? 8.0 : 18.0,
+                top: 2.0,
+                width: isNarrow ? 108.0 : 124.0,
+                height: isNarrow ? 66.0 : 76.0,
+                child: CustomPaint(
+                  painter: _PhilippineFlagPainter(),
+                ),
+              ),
+
+              // Foreground Row: Mascot on left, Offset Layered Card on right
+              Positioned.fill(
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    // Mascot: Anchored at bottom-left looking up towards flag
+                    SizedBox(
+                      width: mascotWidth,
+                      height: mascotHeight,
+                      child: ClipRect(
+                        child: OverflowBox(
+                          maxHeight: mascotHeight * 1.7,
+                          maxWidth: mascotWidth * 2.3,
+                          alignment: Alignment.topCenter,
+                          child: Image.asset(
+                            mascotAsset,
+                            height: mascotHeight * 1.65,
+                            fit: BoxFit.contain,
+                            errorBuilder: (context, error, stackTrace) {
+                              debugPrint('[MASCOT ERROR] $error');
+                              return SizedBox(
+                                width: mascotWidth,
+                                height: mascotHeight,
+                              );
+                            },
                           ),
                         ),
-                      ],
+                      ),
                     ),
+                    const SizedBox(width: 6),
+
+                    // "Your Next Chapter" Layered Stacked Cards
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.only(bottom: 2, right: 10),
+                        child: Stack(
+                          clipBehavior: Clip.none,
+                          alignment: Alignment.bottomRight,
+                          children: [
+                            // Layer 1: Bottom-most Warm Cream Card (offset bottom-right)
+                            Positioned(
+                              right: -8.0,
+                              bottom: -4.0,
+                              left: 20.0,
+                              top: 22.0,
+                              child: Transform.rotate(
+                                angle: 0.055,
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    color: const Color(0xFFFBF4D4), // Warm cream
+                                    borderRadius: BorderRadius.circular(20),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: const Color(0xFF0F4D2E).withValues(alpha: 0.06),
+                                        blurRadius: 10,
+                                        offset: const Offset(2, 4),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
+
+                            // Layer 2: Middle Soft Mint Card (offset to the top/left)
+                            Positioned(
+                              right: 8.0,
+                              bottom: 8.0,
+                              left: 4.0,
+                              top: 2.0,
+                              child: Transform.rotate(
+                                angle: -0.035,
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    color: const Color(0xFFDCF4E8), // Soft mint
+                                    borderRadius: BorderRadius.circular(20),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: const Color(0xFF0F4D2E).withValues(alpha: 0.05),
+                                        blurRadius: 8,
+                                        offset: const Offset(-2, 3),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
+
+                            // Layer 3: Main White Card
+                            Container(
+                              margin: const EdgeInsets.only(right: 0, bottom: 4),
+                              padding: EdgeInsets.symmetric(
+                                horizontal: isNarrow ? 12.0 : 15.0,
+                                vertical: isNarrow ? 11.0 : 13.0,
+                              ),
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(18),
+                                border: Border.all(
+                                  color: const Color(0xFFE2EFE7),
+                                  width: 1.0,
+                                ),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: const Color(0xFF0F4D2E).withValues(alpha: 0.08),
+                                    blurRadius: 16,
+                                    offset: const Offset(0, 6),
+                                  ),
+                                ],
+                              ),
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  // Chapter Badge Row
+                                  Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Container(
+                                        width: 20,
+                                        height: 20,
+                                        decoration: const BoxDecoration(
+                                          color: Color(0xFFDCF3E5),
+                                          shape: BoxShape.circle,
+                                        ),
+                                        child: const Center(
+                                          child: Icon(
+                                            Icons.school_rounded,
+                                            size: 11,
+                                            color: Color(0xFF0F4D2E),
+                                          ),
+                                        ),
+                                      ),
+                                      const SizedBox(width: 5),
+                                      Flexible(
+                                        child: Text(
+                                          'YOUR NEXT CHAPTER',
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: outfit(
+                                            fontSize: 9.0,
+                                            fontWeight: FontWeight.w800,
+                                            color: const Color(0xFF161C27),
+                                            letterSpacing: 0.8,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  const SizedBox(height: 5),
+
+                                  // Bold Editorial Headline: "2 new matches"
+                                  FittedBox(
+                                    fit: BoxFit.scaleDown,
+                                    alignment: Alignment.centerLeft,
+                                    child: Text(
+                                      countHeading,
+                                      style: outfit(
+                                        fontSize: isNarrow ? 21.0 : 24.0,
+                                        fontWeight: FontWeight.w900,
+                                        color: const Color(0xFF0F4D2E),
+                                        height: 1.05,
+                                        letterSpacing: -0.5,
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(height: 3),
+
+                                  // Subtitle
+                                  Text(
+                                    countSubheading,
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: openSans(
+                                      fontSize: 10.0,
+                                      fontWeight: FontWeight.w500,
+                                      color: const Color(0xFF5A665E),
+                                    ),
+                                  ),
+                                  const SizedBox(height: 8),
+
+                                  // Action CTA: Explore matches →
+                                  PressableScale(
+                                    onTap: () {
+                                      HapticFeedback.lightImpact();
+                                      ref.read(homeTabIndexProvider.notifier).selectTab(1);
+                                    },
+                                    child: Container(
+                                      padding: EdgeInsets.symmetric(
+                                        horizontal: isNarrow ? 10.0 : 12.0,
+                                        vertical: 6.0,
+                                      ),
+                                      decoration: BoxDecoration(
+                                        color: const Color(0xFF0F4D2E),
+                                        borderRadius: BorderRadius.circular(12),
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: const Color(0xFF0F4D2E).withValues(alpha: 0.25),
+                                            blurRadius: 6,
+                                            offset: const Offset(0, 2),
+                                          ),
+                                        ],
+                                      ),
+                                      child: FittedBox(
+                                        fit: BoxFit.scaleDown,
+                                        child: Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            Text(
+                                              ctaLabel,
+                                              style: outfit(
+                                                fontSize: 11.0,
+                                                fontWeight: FontWeight.w700,
+                                                color: Colors.white,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+
+              // Floating decorative academic accents: Diploma & Grad Cap
+              Positioned(
+                top: isNarrow ? 8.0 : 12.0,
+                left: isNarrow ? 125.0 : 145.0,
+                child: Transform.rotate(
+                  angle: 0.25,
+                  child: Icon(
+                    Icons.history_edu_rounded,
+                    size: isNarrow ? 18.0 : 22.0,
+                    color: const Color(0xFFC7A24A).withValues(alpha: 0.60), // Warm gold
                   ),
                 ),
               ),
-            ),
-          ],
-        ),
+              Positioned(
+                bottom: 2.0,
+                right: -4.0,
+                child: Transform.rotate(
+                  angle: -0.15,
+                  child: Icon(
+                    Icons.school_outlined,
+                    size: isNarrow ? 18.0 : 22.0,
+                    color: const Color(0xFFC7A24A).withValues(alpha: 0.55),
+                  ),
+                ),
+              ),
 
-        // Semantic key for widget tests to maintain zero regressions
-        Positioned(
-          left: 0,
-          top: 0,
-          child: SizedBox(
-            height: 0,
-            width: 0,
-            child: Text(
-              '$matchCount',
-              key: const ValueKey('stat-count-matches'),
-              style: const TextStyle(fontSize: 0, color: Colors.transparent),
-            ),
+              // Semantic key for widget tests to maintain zero regressions
+              Positioned(
+                left: 0.0,
+                top: 0.0,
+                child: SizedBox(
+                  height: 0.0,
+                  width: 0.0,
+                  child: Text(
+                    '$matchCount',
+                    key: const ValueKey('stat-count-matches'),
+                    style: const TextStyle(fontSize: 0, color: Colors.transparent),
+                  ),
+                ),
+              ),
+            ],
           ),
-        ),
-      ],
+        );
+      },
     );
   }
 
@@ -1187,305 +1379,289 @@ class _StudentDashboardScreenState
   }
 }
 
-class _SpeechBubblePainter extends CustomPainter {
-  final Color color;
-  final Color borderColor;
-  final double borderWidth;
-  final double borderRadius;
-
-  _SpeechBubblePainter({
-    required this.color,
-    required this.borderColor,
-    required this.borderWidth,
-    required this.borderRadius,
-  });
-
+// --- Faint Campus Architectural Linework & Subtle Arcs ---
+class _CampusArchitecturePainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
-    const tailWidth = 7.0;
-    const tailHeight = 10.0;
-    final r = borderRadius;
-
-    final bodyRRect = RRect.fromRectAndRadius(
-      Rect.fromLTWH(tailWidth, 0, size.width - tailWidth, size.height),
-      Radius.circular(r),
-    );
-
-    final path = Path()..addRRect(bodyRRect);
-
-    final tailY = (size.height - tailHeight) / 2;
-    final tailPath = Path()
-      ..moveTo(tailWidth + 0.5, tailY)
-      ..lineTo(0, tailY + tailHeight / 2)
-      ..lineTo(tailWidth + 0.5, tailY + tailHeight)
-      ..close();
-
-    final combinedPath = Path.combine(PathOperation.union, path, tailPath);
-
-    canvas.drawShadow(
-      combinedPath,
-      Colors.black.withValues(alpha: 0.05),
-      6,
-      false,
-    );
-
-    final paintFill = Paint()
-      ..color = color
-      ..style = PaintingStyle.fill;
-    canvas.drawPath(combinedPath, paintFill);
-
-    final paintStroke = Paint()
-      ..color = borderColor
+    // 1. Subtle warm academic circular arcs
+    final arcPaint = Paint()
+      ..color = const Color(0xFFC7A24A).withValues(alpha: 0.15) // Faint warm gold
       ..style = PaintingStyle.stroke
-      ..strokeWidth = borderWidth
-      ..strokeJoin = StrokeJoin.round;
-    canvas.drawPath(combinedPath, paintStroke);
+      ..strokeWidth = 1.0;
+
+    canvas.drawArc(
+      Rect.fromCircle(center: Offset(size.width * 0.35, size.height * 0.55), radius: 110),
+      -math.pi * 0.8,
+      math.pi * 0.6,
+      false,
+      arcPaint,
+    );
+    canvas.drawArc(
+      Rect.fromCircle(center: Offset(size.width * 0.35, size.height * 0.55), radius: 140),
+      -math.pi * 0.75,
+      math.pi * 0.5,
+      false,
+      arcPaint,
+    );
+
+    // 2. Faint Institutional / Heritage College Linework
+    final buildingPaint = Paint()
+      ..color = const Color(0xFF0F4D2E).withValues(alpha: 0.10) // Very faint green
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 1.1;
+
+    final fillPaint = Paint()
+      ..color = const Color(0xFF0F4D2E).withValues(alpha: 0.02)
+      ..style = PaintingStyle.fill;
+
+    // Campus tower/facade placed gracefully between mascot and stacked card
+    final towerLeft = size.width * 0.32;
+    final towerWidth = 46.0;
+    final towerBase = size.height - 4;
+    final towerRoof = size.height * 0.38;
+
+    // Tower base & body
+    final towerBody = Path()
+      ..moveTo(towerLeft, towerBase)
+      ..lineTo(towerLeft, towerRoof + 24)
+      ..lineTo(towerLeft + towerWidth, towerRoof + 24)
+      ..lineTo(towerLeft + towerWidth, towerBase);
+    canvas.drawPath(towerBody, fillPaint);
+    canvas.drawPath(towerBody, buildingPaint);
+
+    // Tower pediment & arched bell windows
+    final pediment = Path()
+      ..moveTo(towerLeft - 3, towerRoof + 24)
+      ..lineTo(towerLeft + towerWidth / 2, towerRoof + 12)
+      ..lineTo(towerLeft + towerWidth + 3, towerRoof + 24)
+      ..close();
+    canvas.drawPath(pediment, buildingPaint);
+
+    // Small dome / cupola on top
+    final dome = Path()
+      ..moveTo(towerLeft + 12, towerRoof + 12)
+      ..quadraticBezierTo(
+        towerLeft + towerWidth / 2,
+        towerRoof - 4,
+        towerLeft + towerWidth - 12,
+        towerRoof + 12,
+      );
+    canvas.drawPath(dome, buildingPaint);
+
+    // Spire on top of dome
+    canvas.drawLine(
+      Offset(towerLeft + towerWidth / 2, towerRoof - 4),
+      Offset(towerLeft + towerWidth / 2, towerRoof - 14),
+      buildingPaint,
+    );
+
+    // Arched windows in tower
+    final windowArch = Path()
+      ..moveTo(towerLeft + 16, towerRoof + 52)
+      ..lineTo(towerLeft + 16, towerRoof + 38)
+      ..arcToPoint(
+        Offset(towerLeft + towerWidth - 16, towerRoof + 38),
+        radius: const Radius.circular(7),
+      )
+      ..lineTo(towerLeft + towerWidth - 16, towerRoof + 52)
+      ..close();
+    canvas.drawPath(windowArch, buildingPaint);
+
+    // Subtle horizontal balustrade lines
+    canvas.drawLine(
+      Offset(towerLeft + 4, towerRoof + 64),
+      Offset(towerLeft + towerWidth - 4, towerRoof + 64),
+      buildingPaint,
+    );
+    canvas.drawLine(
+      Offset(towerLeft + 4, towerRoof + 92),
+      Offset(towerLeft + towerWidth - 4, towerRoof + 92),
+      buildingPaint,
+    );
+
+    // Adjacent campus colonnade wings
+    canvas.drawLine(
+      Offset(towerLeft + towerWidth, towerRoof + 48),
+      Offset(size.width * 0.62, towerRoof + 48),
+      buildingPaint,
+    );
+    canvas.drawLine(
+      Offset(towerLeft + towerWidth, towerRoof + 78),
+      Offset(size.width * 0.62, towerRoof + 78),
+      buildingPaint,
+    );
   }
 
   @override
   bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }
 
-class _MascotDecorationsPainter extends CustomPainter {
+// --- Tastefully Styled Secondary Waving Philippine National Flag ---
+class _PhilippineFlagPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
-    // Lush botanical green shades with high opacity and organic vibrancy
-    final greenPrimary = const Color(0xFF76B68C).withValues(alpha: 0.92);
-    final greenAccent = const Color(0xFF86C49B).withValues(alpha: 0.94);
-    final greenDeep = const Color(0xFF5BA475).withValues(alpha: 0.90);
-    final greenLight = const Color(0xFF9DD4B0).withValues(alpha: 0.88);
-    final veinColor = const Color(0xFF38764F).withValues(alpha: 0.60);
+    // Silver / Gold Finial Flagpole
+    final polePaint = Paint()
+      ..color = const Color(0xFFC7A24A) // Polished brass gold flagpole
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 2.4
+      ..strokeCap = StrokeCap.round;
 
-    // Dynamic bright gold energy dashes
-    const goldColor = Color(0xFFF1B41E);
+    final poleX = 8.0;
+    canvas.drawLine(Offset(poleX, 2), Offset(poleX, size.height), polePaint);
 
-    // ----------------------------------------------------
-    // 1. UPPER LEFT / LEFT CLUSTER (Hat Tassel & Shoulder)
-    // ----------------------------------------------------
-    // Gold energy dashes beside tassel
-    _drawDash(canvas, x: 24, y: 64, length: 19, thickness: 4.5, angle: -0.68, color: goldColor);
-    _drawDash(canvas, x: 16, y: 78, length: 14, thickness: 4.0, angle: -0.50, color: goldColor);
+    // Finial ball on pole tip
+    final finialPaint = Paint()
+      ..color = const Color(0xFFD4AF37)
+      ..style = PaintingStyle.fill;
+    canvas.drawCircle(Offset(poleX, 3), 3.2, finialPaint);
 
-    // Foliage behind left shoulder / toga
-    _drawLeaf(
-      canvas,
-      base: const Offset(28, 165),
-      tip: const Offset(10, 102),
-      width: 24,
-      curvature: -0.18,
-      color: greenPrimary,
-      veinColor: veinColor,
-    );
-    _drawLeaf(
-      canvas,
-      base: const Offset(40, 170),
-      tip: const Offset(32, 82),
-      width: 26,
-      curvature: -0.05,
-      color: greenAccent,
-      veinColor: veinColor,
-    );
-    _drawLeaf(
-      canvas,
-      base: const Offset(18, 160),
-      tip: const Offset(4, 128),
-      width: 18,
-      curvature: -0.22,
-      color: greenLight,
-      veinColor: veinColor,
-    );
+    // Flag dimensions with dynamic gentle wave
+    final flagLeft = poleX + 1.2;
+    final flagWidth = size.width - flagLeft - 4;
+    final flagHeight = size.height * 0.64;
+    final halfHeight = flagHeight / 2;
+    const waveAmp = 4.2;
 
-    // ----------------------------------------------------
-    // 2. CENTER CLUSTER (Between Mascot Neck & Speech Bubble)
-    // ----------------------------------------------------
-    // Gold energy dash near cheek / ear
-    _drawDash(canvas, x: 122, y: 84, length: 18, thickness: 4.5, angle: 0.68, color: goldColor);
+    // Middle Divider Curve (Y=8 + halfHeight)
+    final midY = 8 + halfHeight;
+    final midRight = Offset(flagLeft + flagWidth, midY);
 
-    // Leaves rising behind neck / collar
-    _drawLeaf(
-      canvas,
-      base: const Offset(116, 162),
-      tip: const Offset(124, 88),
-      width: 22,
-      curvature: 0.08,
-      color: greenPrimary,
-      veinColor: veinColor,
-    );
-    _drawLeaf(
-      canvas,
-      base: const Offset(124, 166),
-      tip: const Offset(156, 102),
-      width: 26,
-      curvature: 0.15,
-      color: greenAccent,
-      veinColor: veinColor,
-    );
-    _drawLeaf(
-      canvas,
-      base: const Offset(130, 170),
-      tip: const Offset(172, 126),
-      width: 24,
-      curvature: 0.18,
-      color: greenDeep,
-      veinColor: veinColor,
-    );
+    // Bottom Wave Curve (Y=8 + flagHeight)
+    final botY = 8 + flagHeight;
+    final botRight = Offset(flagLeft + flagWidth, botY);
 
-    // Angled gold energy dashes beneath speech bubble
-    _drawDash(canvas, x: 174, y: 120, length: 22, thickness: 5.0, angle: -0.62, color: goldColor);
-    _drawDash(canvas, x: 184, y: 136, length: 16, thickness: 4.2, angle: -0.48, color: goldColor);
-
-    // ----------------------------------------------------
-    // 3. UPPER RIGHT & RIGHT CLUSTERS (Wrapping Mascot & Speech Bubble)
-    // ----------------------------------------------------
-    // Floating leaf above top-right of speech bubble
-    _drawLeaf(
-      canvas,
-      base: const Offset(298, 30),
-      tip: const Offset(318, 10),
-      width: 14,
-      curvature: 0.12,
-      color: greenAccent,
-      veinColor: veinColor,
-    );
-
-    // Gold energy dash near upper right of speech bubble
-    _drawDash(canvas, x: 318, y: 38, length: 16, thickness: 4.2, angle: -0.60, color: goldColor);
-
-    // Lush botanical foliage seamlessly framing the right side of the speech bubble
-    _drawLeaf(
-      canvas,
-      base: const Offset(265, 110),
-      tip: const Offset(298, 32),
-      width: 22,
-      curvature: -0.08,
-      color: greenLight,
-      veinColor: veinColor,
-    );
-    _drawLeaf(
-      canvas,
-      base: const Offset(275, 95),
-      tip: const Offset(325, 42),
-      width: 26,
-      curvature: 0.10,
-      color: greenAccent,
-      veinColor: veinColor,
-    );
-    _drawLeaf(
-      canvas,
-      base: const Offset(285, 105),
-      tip: const Offset(340, 78),
-      width: 30,
-      curvature: 0.14,
-      color: greenPrimary,
-      veinColor: veinColor,
-    );
-    _drawLeaf(
-      canvas,
-      base: const Offset(280, 115),
-      tip: const Offset(332, 125),
-      width: 26,
-      curvature: 0.15,
-      color: greenDeep,
-      veinColor: veinColor,
-    );
-    _drawLeaf(
-      canvas,
-      base: const Offset(270, 120),
-      tip: const Offset(305, 148),
-      width: 22,
-      curvature: 0.10,
-      color: greenDeep,
-      veinColor: veinColor,
-    );
-  }
-
-  void _drawLeaf(
-    Canvas canvas, {
-    required Offset base,
-    required Offset tip,
-    required double width,
-    required Color color,
-    Color? veinColor,
-    double curvature = 0.0,
-  }) {
-    final dx = tip.dx - base.dx;
-    final dy = tip.dy - base.dy;
-    final length = math.sqrt(dx * dx + dy * dy);
-    if (length <= 0.001) return;
-
-    final nx = -dy / length;
-    final ny = dx / length;
-
-    final midX = base.dx + dx * 0.45;
-    final midY = base.dy + dy * 0.45;
-
-    final curveOffset = curvature * width;
-
-    final leftCp = Offset(
-      midX + nx * (width + curveOffset),
-      midY + ny * (width + curveOffset),
-    );
-    final rightCp = Offset(
-      midX - nx * (width - curveOffset),
-      midY - ny * (width - curveOffset),
-    );
-
-    final path = Path()
-      ..moveTo(base.dx, base.dy)
-      ..quadraticBezierTo(leftCp.dx, leftCp.dy, tip.dx, tip.dy)
-      ..quadraticBezierTo(rightCp.dx, rightCp.dy, base.dx, base.dy)
+    // 1. Royal Blue Upper Stripe (Panata / Kapayapaan)
+    final bluePath = Path()
+      ..moveTo(flagLeft, 8)
+      ..cubicTo(
+        flagLeft + flagWidth * 0.35,
+        8 - waveAmp,
+        flagLeft + flagWidth * 0.65,
+        8 + waveAmp,
+        flagLeft + flagWidth,
+        8,
+      )
+      ..lineTo(midRight.dx, midRight.dy)
+      ..cubicTo(
+        flagLeft + flagWidth * 0.65,
+        midY + waveAmp,
+        flagLeft + flagWidth * 0.35,
+        midY - waveAmp,
+        flagLeft,
+        midY,
+      )
       ..close();
 
-    final fillPaint = Paint()
-      ..color = color
+    final bluePaint = Paint()
+      ..shader = const LinearGradient(
+        colors: [Color(0xFF0038A8), Color(0xFF1E5AD6)], // Rich Philippine Royal Blue
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+      ).createShader(Rect.fromLTWH(flagLeft, 8, flagWidth, halfHeight));
+    canvas.drawPath(bluePath, bluePaint);
+
+    // 2. Scarlet Red Lower Stripe (Kagitingan)
+    final redPath = Path()
+      ..moveTo(flagLeft, midY)
+      ..cubicTo(
+        flagLeft + flagWidth * 0.35,
+        midY - waveAmp,
+        flagLeft + flagWidth * 0.65,
+        midY + waveAmp,
+        midRight.dx,
+        midRight.dy,
+      )
+      ..lineTo(botRight.dx, botRight.dy)
+      ..cubicTo(
+        flagLeft + flagWidth * 0.65,
+        botY + waveAmp,
+        flagLeft + flagWidth * 0.35,
+        botY - waveAmp,
+        flagLeft,
+        botY,
+      )
+      ..close();
+
+    final redPaint = Paint()
+      ..shader = const LinearGradient(
+        colors: [Color(0xFFCE1126), Color(0xFFE5283E)], // Vibrant Philippine Scarlet Red
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+      ).createShader(Rect.fromLTWH(flagLeft, midY, flagWidth, halfHeight));
+    canvas.drawPath(redPath, redPaint);
+
+    // 3. Equilateral White Hoist Triangle (Kalayaan & Pagkakaisa)
+    final triangleTipX = flagLeft + flagWidth * 0.44;
+    final triangleTipY = midY;
+    final trianglePath = Path()
+      ..moveTo(flagLeft, 8)
+      ..lineTo(triangleTipX, triangleTipY)
+      ..lineTo(flagLeft, botY)
+      ..close();
+
+    final whitePaint = Paint()
+      ..color = const Color(0xFFFFFFFF)
       ..style = PaintingStyle.fill;
-    canvas.drawPath(path, fillPaint);
+    canvas.drawShadow(trianglePath, Colors.black.withValues(alpha: 0.12), 3, false);
+    canvas.drawPath(trianglePath, whitePaint);
 
-    if (veinColor != null) {
-      final veinPaint = Paint()
-        ..color = veinColor
-        ..style = PaintingStyle.stroke
-        ..strokeWidth = 1.3
-        ..strokeCap = StrokeCap.round;
+    // 4. Golden Sun with 8 Primary Rays (Sentro ng tatsulok)
+    final sunCenterX = flagLeft + flagWidth * 0.16;
+    final sunCenterY = triangleTipY;
+    final sunCenter = Offset(sunCenterX, sunCenterY);
 
-      final startX = base.dx + dx * 0.12;
-      final startY = base.dy + dy * 0.12;
-      final endX = base.dx + dx * 0.88;
-      final endY = base.dy + dy * 0.88;
+    final sunPaint = Paint()
+      ..color = const Color(0xFFFCD116) // Official Philippine Gold
+      ..style = PaintingStyle.fill;
 
-      final veinPath = Path()
-        ..moveTo(startX, startY)
-        ..quadraticBezierTo(
-          midX + nx * curveOffset * 0.5,
-          midY + ny * curveOffset * 0.5,
-          endX,
-          endY,
-        );
-      canvas.drawPath(veinPath, veinPaint);
+    // Sun disc
+    canvas.drawCircle(sunCenter, 4.2, sunPaint);
+
+    // 8 Major Rays
+    final rayPaint = Paint()
+      ..color = const Color(0xFFFCD116)
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 1.3
+      ..strokeCap = StrokeCap.round;
+
+    for (int i = 0; i < 8; i++) {
+      final angle = (i * math.pi) / 4;
+      final start = Offset(
+        sunCenterX + 4.8 * math.cos(angle),
+        sunCenterY + 4.8 * math.sin(angle),
+      );
+      final end = Offset(
+        sunCenterX + 7.6 * math.cos(angle),
+        sunCenterY + 7.6 * math.sin(angle),
+      );
+      canvas.drawLine(start, end, rayPaint);
     }
+
+    // 5. Three Golden Stars (Luzon, Visayas, Mindanao) at the 3 vertices
+    final starTop = Offset(flagLeft + 3.5, 12.5);
+    final starBottom = Offset(flagLeft + 3.5, botY - 4.5);
+    final starTip = Offset(triangleTipX - 4.2, triangleTipY);
+
+    _drawStar(canvas, starTop, 1.8, sunPaint);
+    _drawStar(canvas, starBottom, 1.8, sunPaint);
+    _drawStar(canvas, starTip, 1.8, sunPaint);
   }
 
-  void _drawDash(
-    Canvas canvas, {
-    required double x,
-    required double y,
-    required double length,
-    required double thickness,
-    required double angle,
-    required Color color,
-  }) {
-    canvas.save();
-    canvas.translate(x, y);
-    canvas.rotate(angle);
-    final rrect = RRect.fromRectAndRadius(
-      Rect.fromCenter(center: Offset.zero, width: length, height: thickness),
-      Radius.circular(thickness / 2),
-    );
-    final paint = Paint()
-      ..color = color
-      ..style = PaintingStyle.fill;
-    canvas.drawRRect(rrect, paint);
-    canvas.restore();
+  void _drawStar(Canvas canvas, Offset center, double radius, Paint paint) {
+    final path = Path();
+    for (int i = 0; i < 5; i++) {
+      final double outerAngle = -math.pi / 2 + (i * 4 * math.pi) / 5;
+      final double x = center.dx + radius * math.cos(outerAngle);
+      final double y = center.dy + radius * math.sin(outerAngle);
+      if (i == 0) {
+        path.moveTo(x, y);
+      } else {
+        path.lineTo(x, y);
+      }
+    }
+    path.close();
+    canvas.drawPath(path, paint);
   }
 
   @override

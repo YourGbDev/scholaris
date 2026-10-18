@@ -78,10 +78,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             child: Builder(
               builder: (context) {
                 final screenWidth = MediaQuery.sizeOf(context).width;
-                final horizontalPad = screenWidth < 360 ? 8.0 : 16.0;
-                // Align snugly near the bottom edge while respecting the safe area / home indicator
+                final horizontalPad = screenWidth < 360 ? 10.0 : 16.0;
+                // Elegant floating island elevation above the safe area / home indicator
                 final safeBottom = MediaQuery.paddingOf(context).bottom;
-                final bottomPad = safeBottom > 0 ? (safeBottom * 0.35).clamp(4.0, 10.0) : 8.0;
+                final bottomPad = safeBottom > 0 ? safeBottom + 4.0 : 16.0;
 
                 return Padding(
                   padding: EdgeInsets.fromLTRB(horizontalPad, 0, horizontalPad, bottomPad),
@@ -91,19 +91,18 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       constraints: const BoxConstraints(maxWidth: 440),
                       child: SizedBox(
                         height: 62,
-                        // Unified Frosted Glass Dock (Pill + Quick Action Button)
-                        child: LiquidGlass(
-                          borderRadius: 31,
-                          blur: 24.0,
-                          saturation: 1.8,
-                          tintOpacity: 0.68,
-                          showLightEdge: true,
-                          lightEdgeColor: const Color(0x66FFFFFF),
-                          child: SizedBox.expand(
-                            child: Row(
-                              children: [
-                                // 4 Student Navigation Tabs
-                                Expanded(
+                        child: Row(
+                          children: [
+                            // 1. Tarsi-Style Floating Navigation Island (Pill Dock)
+                            Expanded(
+                              child: LiquidGlass(
+                                borderRadius: 31,
+                                blur: 24.0,
+                                saturation: 1.8,
+                                tintOpacity: 0.72,
+                                showLightEdge: true,
+                                lightEdgeColor: const Color(0x66FFFFFF),
+                                child: SizedBox.expand(
                                   child: Row(
                                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                     children: [
@@ -158,47 +157,38 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                     ],
                                   ),
                                 ),
-                                // Subtle vertical hairline divider
-                                Container(
-                                  width: 1,
-                                  height: 28,
-                                  margin: const EdgeInsets.symmetric(horizontal: 2),
-                                  color: const Color(0x1F000000),
-                                ),
-                                // Quick Action '+' Button integrated into frosted dock
-                                PressableScale(
-                                  scale: 0.92,
-                                  onTap: () {
-                                    HapticFeedback.lightImpact();
-                                    showStudentActionSheet(context);
-                                  },
-                                  child: Container(
-                                    width: 48,
-                                    height: 48,
-                                    margin: const EdgeInsets.only(right: 6, left: 4),
-                                    decoration: BoxDecoration(
-                                      shape: BoxShape.circle,
-                                      color: const Color(0xFF0F4D2E),
-                                      boxShadow: [
-                                        BoxShadow(
-                                          color: const Color(0xFF0F4D2E).withValues(alpha: 0.28),
-                                          blurRadius: 8,
-                                          offset: const Offset(0, 2),
-                                        ),
-                                      ],
-                                    ),
-                                    child: const Center(
-                                      child: Icon(
-                                        Icons.add_rounded,
-                                        color: Colors.white,
-                                        size: 26,
-                                      ),
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                            // 2. Tarsi-Style Standalone Floating Quick Action '+' Button Island
+                            PressableScale(
+                              scale: 0.92,
+                              onTap: () {
+                                HapticFeedback.lightImpact();
+                                showStudentActionSheet(context);
+                              },
+                              child: SizedBox(
+                                width: 62,
+                                height: 62,
+                                child: LiquidGlass(
+                                  key: const ValueKey('student-nav-quick-action'),
+                                  borderRadius: 31,
+                                  blur: 24.0,
+                                  saturation: 1.8,
+                                  tintOpacity: 0.72,
+                                  showLightEdge: true,
+                                  lightEdgeColor: const Color(0x66FFFFFF),
+                                  child: const Center(
+                                    child: Icon(
+                                      Icons.add_rounded,
+                                      color: Color(0xFF161C27),
+                                      size: 26,
                                     ),
                                   ),
                                 ),
-                              ],
+                              ),
                             ),
-                          ),
+                          ],
                         ),
                       ),
                     ),

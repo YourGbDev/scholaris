@@ -203,7 +203,7 @@ double projectMomentum({
 
 /// Custom scroll physics applying Apple's exact logarithmic rubber-banding formula (0.55)
 /// and critically damped spring return to any Flutter scroll view.
-class AppleBouncingScrollPhysics extends ScrollPhysics {
+class AppleBouncingScrollPhysics extends BouncingScrollPhysics {
   const AppleBouncingScrollPhysics({
     super.parent,
     this.rubberBandConstant = 0.55,
@@ -248,22 +248,6 @@ class AppleBouncingScrollPhysics extends ScrollPhysics {
 
     final delta = newResisted - currentResisted;
     return offset < 0 ? -delta : delta;
-  }
-
-  @override
-  Simulation? createBallisticSimulation(ScrollMetrics position, double velocity) {
-    if (position.outOfRange) {
-      final double target = position.pixels < position.minScrollExtent
-          ? position.minScrollExtent
-          : position.maxScrollExtent;
-      return SpringSimulation(
-        AppleSpringDescription.critical,
-        position.pixels,
-        target,
-        velocity,
-      );
-    }
-    return super.createBallisticSimulation(position, velocity);
   }
 }
 

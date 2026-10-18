@@ -131,7 +131,7 @@ class StudentActionSheet extends StatelessWidget {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                'Scan Scholarship QR',
+                                'Scan QR Code',
                                 style: outfit(
                                   fontSize: 15,
                                   fontWeight: FontWeight.w700,
@@ -226,7 +226,7 @@ class StudentActionSheet extends StatelessWidget {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                'Upload Document',
+                                'Upload Quick Documents',
                                 style: outfit(
                                   fontSize: 15,
                                   fontWeight: FontWeight.w700,

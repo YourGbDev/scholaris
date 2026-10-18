@@ -151,4 +151,11 @@ class FakeApplicationDataSource implements ApplicationDataSource {
   Future<void> insertNotification(Map<String, dynamic> row) async {
     notifications.add(Map<String, dynamic>.of(row));
   }
+
+  final List<Map<String, dynamic>> disbursements = [];
+
+  @override
+  Future<void> insertDisbursement(Map<String, dynamic> row) async {
+    disbursements.add(Map<String, dynamic>.of(row));
+  }
 }

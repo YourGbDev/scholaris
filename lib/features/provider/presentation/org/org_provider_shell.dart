@@ -12,11 +12,11 @@ import 'package:flutter/services.dart';
 import 'package:scholaris/features/applications/models/application.dart';
 import 'package:scholaris/features/applications/providers/applications_provider.dart';
 import 'package:scholaris/features/profile/models/applicant_profile.dart';
-import 'package:scholaris/features/profile/providers/profile_setup_provider.dart';
 import 'package:scholaris/features/scholarships/models/scholarship.dart';
 import 'package:scholaris/shared/widgets/logout_confirmation_dialog.dart';
 import 'package:scholaris/shared/widgets/scholaris_logo.dart';
 import '../../providers/provider_scholarships_provider.dart';
+import '../../providers/provider_sub_role_provider.dart';
 import '../scholarship_form_screen.dart';
 import '../widgets/applicant_review_drawer.dart';
 import '../widgets/provider_verification_banner.dart';
@@ -118,16 +118,17 @@ class _OrgProviderShellState extends ConsumerState<OrgProviderShell> {
 
   @override
   Widget build(BuildContext context) {
-    final profile = ref.watch(currentProfileProvider).valueOrNull;
+    final identity = ref.watch(providerSubRoleProvider);
     final isDesktop = MediaQuery.sizeOf(context).width >= 768;
 
-    final orgName = (profile?.fullName.trim().isNotEmpty == true)
-        ? profile!.fullName.trim()
-        : 'Ayala Foundation Partner';
-
-    final initials = orgName.length >= 2
-        ? orgName.substring(0, 2).toUpperCase()
-        : 'AF';
+    // RBAC tab enforcement:
+    // Finance Officer only has access to Disbursements (4), Analytics (3), Settings (5).
+    // Evaluator only has access to Applications (0), Decisioning (1), Scholarships (2), Settings (5).
+    if (identity.isFinance && (_selectedTab < 3)) {
+      _selectedTab = 4;
+    } else if (identity.isEvaluator && (_selectedTab == 3 || _selectedTab == 4)) {
+      _selectedTab = 0;
+    }
 
     final tabs = [
       const OrgIncomingApplicationsTab(key: ValueKey('org_applications_tab')),
@@ -154,7 +155,7 @@ class _OrgProviderShellState extends ConsumerState<OrgProviderShell> {
                 // Persistent 256px Apple Light Sidebar
                 SizedBox(
                   width: 256,
-                  child: _buildSidebarContent(context, orgName, initials, isDrawer: false),
+                  child: _buildSidebarContent(context, identity, isDrawer: false),
                 ),
 
                 // Main Workspace (Top Bar + Active Tab Surface)
@@ -162,7 +163,7 @@ class _OrgProviderShellState extends ConsumerState<OrgProviderShell> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      _buildTopBar(context, orgName, initials),
+                      _buildTopBar(context, identity),
                       const ProviderVerificationBanner(),
                       Expanded(
                         child: TabContentCrossFade(
@@ -226,7 +227,7 @@ class _OrgProviderShellState extends ConsumerState<OrgProviderShell> {
             drawer: Drawer(
               backgroundColor: kOrgSidebarLight,
               child: SafeArea(
-                child: _buildSidebarContent(context, orgName, initials, isDrawer: true),
+                child: _buildSidebarContent(context, identity, isDrawer: true),
               ),
             ),
             body: Column(
@@ -259,7 +260,7 @@ class _OrgProviderShellState extends ConsumerState<OrgProviderShell> {
     );
   }
 
-  Widget _buildTopBar(BuildContext context, String orgName, String initials) {
+  Widget _buildTopBar(BuildContext context, ProviderIdentityInfo identity) {
     final screenWidth = MediaQuery.sizeOf(context).width;
     return Container(
       height: 56,
@@ -286,7 +287,7 @@ class _OrgProviderShellState extends ConsumerState<OrgProviderShell> {
                     onTap: () => _openCommandPalette(context),
                     hoverColor: const Color(0xFFEBEAF0),
                     child: Container(
-                      constraints: const BoxConstraints(maxWidth: 320),
+                      constraints: const BoxConstraints(maxWidth: 280),
                       height: 36,
                       padding: const EdgeInsets.symmetric(horizontal: 12),
                       decoration: BoxDecoration(
@@ -300,7 +301,7 @@ class _OrgProviderShellState extends ConsumerState<OrgProviderShell> {
                           const SizedBox(width: 8),
                           Expanded(
                             child: Text(
-                              '⌘K Search applicants, grants...',
+                              '⌘K Search applicants...',
                               style: orgBody(
                                 fontSize: 13,
                                 color: kOrgTextSecondary.withValues(alpha: 0.8),
@@ -318,41 +319,46 @@ class _OrgProviderShellState extends ConsumerState<OrgProviderShell> {
             ),
           ),
           const SizedBox(width: 12),
-          // Academic Year badge
-          if (screenWidth >= 960) ...[
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-              decoration: BoxDecoration(
-                color: const Color(0xFFF4F3F8),
-                borderRadius: BorderRadius.circular(20),
-              ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Container(
-                    width: 6,
-                    height: 6,
-                    decoration: const BoxDecoration(
-                      color: kOrgPrimary,
-                      shape: BoxShape.circle,
-                    ),
-                  ),
-                  const SizedBox(width: 6),
-                  Text(
-                    'AY 2024–2025 • Sem 1',
-                    style: orgLabel(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w500,
-                      color: kOrgTextPrimary,
-                    ),
-                  ),
-                ],
+          // Dynamic Top Header Eyebrow Tag (Evaluator vs Finance Desk)
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+            decoration: BoxDecoration(
+              color: identity.isFinance
+                  ? const Color(0xFFE8F5E9)
+                  : const Color(0xFFF4F3F8),
+              borderRadius: BorderRadius.circular(20),
+              border: Border.all(
+                color: identity.isFinance
+                    ? const Color(0xFFB3F1C6)
+                    : kOrgHairline,
               ),
             ),
-            const SizedBox(width: 12),
-          ],
-          // New Scholarship Grant Action Button
-          if (screenWidth >= 880) ...[
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(
+                  identity.isFinance
+                      ? Icons.account_balance_wallet_rounded
+                      : Icons.verified_user_rounded,
+                  size: 13,
+                  color: identity.isFinance ? const Color(0xFF0F4D2E) : kOrgPrimary,
+                ),
+                const SizedBox(width: 6),
+                Text(
+                  identity.topEyebrow,
+                  style: orgLabel(
+                    fontSize: 11,
+                    fontWeight: FontWeight.w700,
+                    color: identity.isFinance ? const Color(0xFF0F4D2E) : kOrgTextPrimary,
+                    letterSpacing: 0.3,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(width: 12),
+          // Action button depending on role
+          if (identity.isEvaluator && screenWidth >= 980) ...[
             ElevatedButton.icon(
               onPressed: () {
                 setState(() => _selectedTab = 2);
@@ -377,6 +383,31 @@ class _OrgProviderShellState extends ConsumerState<OrgProviderShell> {
               ),
             ),
             const SizedBox(width: 8),
+          ] else if (identity.isFinance && screenWidth >= 980) ...[
+            ElevatedButton.icon(
+              onPressed: () {
+                setState(() => _selectedTab = 4);
+              },
+              icon: const Icon(Icons.payments_rounded, size: 16, color: Colors.white),
+              label: Text(
+                'Disbursements',
+                style: orgLabel(
+                  fontSize: 12.5,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.white,
+                ),
+              ),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFF0F4D2E),
+                elevation: 0,
+                minimumSize: const Size(0, 36),
+                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+              ),
+            ),
+            const SizedBox(width: 8),
           ],
           // Sign out button
           IconButton(
@@ -390,7 +421,7 @@ class _OrgProviderShellState extends ConsumerState<OrgProviderShell> {
             radius: 16,
             backgroundColor: kOrgPrimary,
             child: Text(
-              initials,
+              identity.initials,
               style: orgLabel(
                 fontSize: 11,
                 fontWeight: FontWeight.w700,
@@ -405,8 +436,7 @@ class _OrgProviderShellState extends ConsumerState<OrgProviderShell> {
 
   Widget _buildSidebarContent(
     BuildContext context,
-    String orgName,
-    String initials, {
+    ProviderIdentityInfo identity, {
     required bool isDrawer,
   }) {
     return Container(
@@ -447,17 +477,26 @@ class _OrgProviderShellState extends ConsumerState<OrgProviderShell> {
                   ),
                 ),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
+                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2.5),
                   decoration: BoxDecoration(
-                    color: const Color(0xFFE3E2E7),
+                    color: identity.isFinance
+                        ? const Color(0xFFE8F5E9)
+                        : const Color(0xFFE3E2E7),
                     borderRadius: BorderRadius.circular(6),
+                    border: Border.all(
+                      color: identity.isFinance
+                          ? const Color(0xFFB3F1C6)
+                          : Colors.transparent,
+                    ),
                   ),
                   child: Text(
-                    'ORG',
+                    identity.isFinance ? 'FINANCE' : 'EVALUATOR',
                     style: orgLabel(
-                      fontSize: 9,
+                      fontSize: 8.5,
                       fontWeight: FontWeight.w700,
-                      color: const Color(0xFF404942),
+                      color: identity.isFinance
+                          ? const Color(0xFF0F4D2E)
+                          : const Color(0xFF404942),
                     ),
                   ),
                 ),
@@ -474,7 +513,7 @@ class _OrgProviderShellState extends ConsumerState<OrgProviderShell> {
           ),
           const Divider(height: 1, color: kOrgHairline),
 
-          // Scrollable Nav Items
+          // Scrollable Nav Items (Strict RBAC Filtered)
           Expanded(
             child: SingleChildScrollView(
               physics: const AppleBouncingScrollPhysics(),
@@ -482,44 +521,46 @@ class _OrgProviderShellState extends ConsumerState<OrgProviderShell> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  _sectionHeader('Grants & Intake'),
-                  _buildNavItem(
-                    index: 0,
-                    icon: Icons.inbox_outlined,
-                    activeIcon: Icons.inbox_rounded,
-                    label: 'Applications',
-                    isDrawer: isDrawer,
-                  ),
-                  _buildNavItem(
-                    index: 1,
-                    icon: Icons.rate_review_outlined,
-                    activeIcon: Icons.rate_review_rounded,
-                    label: 'Decisioning',
-                    isDrawer: isDrawer,
-                  ),
-                  _buildNavItem(
-                    index: 2,
-                    icon: Icons.folder_special_outlined,
-                    activeIcon: Icons.folder_special_rounded,
-                    label: 'My Scholarships',
-                    isDrawer: isDrawer,
-                  ),
-                  const SizedBox(height: 12),
-                  _sectionHeader('Operations'),
-                  _buildNavItem(
-                    index: 3,
-                    icon: Icons.insights_outlined,
-                    activeIcon: Icons.insights_rounded,
-                    label: 'Analytics & Impact',
-                    isDrawer: isDrawer,
-                  ),
-                  _buildNavItem(
-                    index: 4,
-                    icon: Icons.payments_outlined,
-                    activeIcon: Icons.payments_rounded,
-                    label: 'Disbursements',
-                    isDrawer: isDrawer,
-                  ),
+                  if (identity.isEvaluator) ...[
+                    _sectionHeader('Academic & Intake'),
+                    _buildNavItem(
+                      index: 0,
+                      icon: Icons.inbox_outlined,
+                      activeIcon: Icons.inbox_rounded,
+                      label: 'Applications',
+                      isDrawer: isDrawer,
+                    ),
+                    _buildNavItem(
+                      index: 1,
+                      icon: Icons.rate_review_outlined,
+                      activeIcon: Icons.rate_review_rounded,
+                      label: 'Decisioning',
+                      isDrawer: isDrawer,
+                    ),
+                    _buildNavItem(
+                      index: 2,
+                      icon: Icons.folder_special_outlined,
+                      activeIcon: Icons.folder_special_rounded,
+                      label: 'My Scholarships',
+                      isDrawer: isDrawer,
+                    ),
+                  ] else ...[
+                    _sectionHeader('Treasury & Operations'),
+                    _buildNavItem(
+                      index: 4,
+                      icon: Icons.payments_outlined,
+                      activeIcon: Icons.payments_rounded,
+                      label: 'Disbursements',
+                      isDrawer: isDrawer,
+                    ),
+                    _buildNavItem(
+                      index: 3,
+                      icon: Icons.insights_outlined,
+                      activeIcon: Icons.insights_rounded,
+                      label: 'Analytics & Impact',
+                      isDrawer: isDrawer,
+                    ),
+                  ],
                   const SizedBox(height: 12),
                   _sectionHeader('Account'),
                   _buildNavItem(
@@ -552,7 +593,7 @@ class _OrgProviderShellState extends ConsumerState<OrgProviderShell> {
                       radius: 17,
                       backgroundColor: kOrgPrimary,
                       child: Text(
-                        initials,
+                        identity.initials,
                         style: orgLabel(
                           fontSize: 11,
                           fontWeight: FontWeight.w700,
@@ -567,7 +608,7 @@ class _OrgProviderShellState extends ConsumerState<OrgProviderShell> {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           Text(
-                            orgName,
+                            identity.name,
                             style: orgHeadline(
                               fontSize: 13,
                               fontWeight: FontWeight.w600,
@@ -577,7 +618,7 @@ class _OrgProviderShellState extends ConsumerState<OrgProviderShell> {
                             overflow: TextOverflow.ellipsis,
                           ),
                           Text(
-                            'Lead Grant Administrator',
+                            identity.roleSubtitle,
                             style: orgLabel(
                               fontSize: 11,
                               fontWeight: FontWeight.w400,

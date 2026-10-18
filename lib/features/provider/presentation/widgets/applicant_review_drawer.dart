@@ -404,12 +404,12 @@ class _ApplicantReviewDrawerState extends ConsumerState<ApplicantReviewDrawer> {
       try {
         final scholarshipTitle = widget.scholarship?.title ?? 'Scholarship';
         final notifTitle = targetStatus == ApplicationStatus.approved
-            ? 'Application Approved! 🎉'
+            ? 'Application Approved for Merit! 🎉'
             : targetStatus == ApplicationStatus.rejected
                 ? 'Application Status Update'
                 : 'Application Under Review';
         final notifMsg = targetStatus == ApplicationStatus.approved
-            ? 'Congratulations! Your application for "$scholarshipTitle" has been approved.'
+            ? 'Congratulations! Your application for "$scholarshipTitle" has been approved for merit and forwarded to DOST Finance & Disbursement Desk.'
             : targetStatus == ApplicationStatus.rejected
                 ? 'Your application for "$scholarshipTitle" has been reviewed.'
                 : 'Your application for "$scholarshipTitle" is being evaluated by the committee.';
@@ -447,7 +447,7 @@ class _ApplicantReviewDrawerState extends ConsumerState<ApplicantReviewDrawer> {
               Expanded(
                 child: Text(
                   targetStatus == ApplicationStatus.approved
-                      ? 'Candidate officially approved for grant award! Student has been notified.'
+                      ? 'Candidate approved for merit! Forwarded to DOST Finance & Disbursement Desk.'
                       : targetStatus == ApplicationStatus.rejected
                           ? 'Application marked as ineligible.'
                           : 'Application placed under review / request info.',

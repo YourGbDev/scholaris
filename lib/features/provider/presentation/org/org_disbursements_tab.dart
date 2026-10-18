@@ -456,6 +456,244 @@ class _OrgDisbursementsTabState extends ConsumerState<OrgDisbursementsTab> {
     );
   }
 
+  void _showAuthorizeAwardDialog(
+    BuildContext context,
+    ApplicantProfile profile,
+    Scholarship? scholarship,
+    Application app,
+    int trancheAmount,
+  ) {
+    bool isProcessing = false;
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (ctx) {
+        return StatefulBuilder(
+          builder: (context, setModalState) {
+            final scholarName = profile.fullName.isNotEmpty
+                ? profile.fullName
+                : 'Applicant #${app.userId.length >= 8 ? app.userId.substring(0, 8) : app.userId}';
+            final grantTitle = scholarship?.title ?? 'DOST-SEI Merit Scholarship Program';
+            final trancheFormatted = _formatCurrency(trancheAmount);
+
+            return Dialog(
+              backgroundColor: kOrgSurfaceWhite,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 540),
+                child: Padding(
+                  padding: const EdgeInsets.all(24),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Container(
+                            width: 48,
+                            height: 48,
+                            decoration: BoxDecoration(
+                              color: const Color(0xFF0F4D2E).withValues(alpha: 0.12),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: const Center(
+                              child: Icon(Icons.payments_rounded, color: kOrgPrimary, size: 26),
+                            ),
+                          ),
+                          const SizedBox(width: 14),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'Authorize Grant Award & Release Tranche',
+                                  style: inter(
+                                    fontSize: 16.5,
+                                    fontWeight: FontWeight.w700,
+                                    color: kOrgTextPrimary,
+                                  ),
+                                ),
+                                Text(
+                                  'DOST-SEI Treasury & Disbursing Desk Authorization',
+                                  style: inter(
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w500,
+                                    color: kOrgTextSecondary,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          if (!isProcessing)
+                            IconButton(
+                              icon: const Icon(Icons.close_rounded, color: kOrgTextSecondary),
+                              onPressed: () => Navigator.of(ctx).pop(),
+                            ),
+                        ],
+                      ),
+                      const SizedBox(height: 18),
+                      const Divider(height: 1, color: kOrgBorder),
+                      const SizedBox(height: 16),
+                      _buildDetailRow('Award Scholar', scholarName),
+                      _buildDetailRow('Academic Institution', '${profile.school?.isNotEmpty == true ? profile.school! : "University of the Philippines"} (${profile.course.isNotEmpty ? profile.course : "BS Computer Science"})'),
+                      _buildDetailRow('Scholarship Portfolio', grantTitle),
+                      _buildDetailRow('Academic Cycle', 'AY ${DateTime.now().year}–${DateTime.now().year + 1} • Semester 1'),
+                      _buildDetailRow('Initial Release Tranche', '$trancheFormatted.00 (Living Allowance + Tuition Subsidy)'),
+                      _buildDetailRow('Settlement Depository', 'Accredited Philippine Landbank / DBP Direct Remittance'),
+                      _buildDetailRow('Compliance Clearance', 'Verified Academic GWA & Certified Registration Validated'),
+                      _buildDetailRow('Authorizing Signatory', 'Engr. Maria Santos, CPA • Disbursing Officer'),
+                      const SizedBox(height: 20),
+                      Container(
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFF0FDF4),
+                          borderRadius: BorderRadius.circular(10),
+                          border: Border.all(color: const Color(0xFFB3F1C6)),
+                        ),
+                        child: Row(
+                          children: [
+                            const Icon(Icons.verified_user_rounded, color: kOrgPrimary, size: 20),
+                            const SizedBox(width: 10),
+                            Expanded(
+                              child: Text(
+                                'Confirming this transaction will mark the grant as officially Awarded, release Tranche 1 to the scholar, and notify the student immediately.',
+                                style: inter(fontSize: 11.5, color: const Color(0xFF0F4D2E), fontWeight: FontWeight.w500),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 20),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          if (!isProcessing)
+                            TextButton(
+                              onPressed: () => Navigator.of(ctx).pop(),
+                              child: Text(
+                                'Cancel',
+                                style: inter(color: kOrgTextSecondary, fontWeight: FontWeight.w600),
+                              ),
+                            ),
+                          const SizedBox(width: 12),
+                          ElevatedButton.icon(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: const Color(0xFF0F4D2E),
+                              foregroundColor: Colors.white,
+                              padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                            ),
+                            icon: isProcessing
+                                ? const SizedBox(
+                                    width: 16,
+                                    height: 16,
+                                    child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                                  )
+                                : const Icon(Icons.check_circle_rounded, size: 18, color: Colors.white),
+                            label: Text(
+                              isProcessing ? 'Authorizing & Releasing...' : 'Confirm Authorization & Release Tranche',
+                              style: inter(fontSize: 13, fontWeight: FontWeight.w700, color: Colors.white),
+                            ),
+                            onPressed: isProcessing
+                                ? null
+                                : () async {
+                                    setModalState(() => isProcessing = true);
+                                    try {
+                                      final repo = ref.read(applicationRepositoryProvider);
+                                      // 1. Transition status from 'approved' to 'awarded'
+                                      await repo.providerUpdateStatus(app.id, ApplicationStatus.awarded);
+
+                                      // 2. Record status history audit log
+                                      try {
+                                        await repo.recordStatusTransition(
+                                          applicationId: app.id,
+                                          fromStatus: 'approved',
+                                          toStatus: 'awarded',
+                                          remarks: 'Tranche 1 payout authorized and released by DOST Disbursing Officer (Engr. Maria Santos, CPA)',
+                                        );
+                                      } catch (histErr) {
+                                        debugPrint('[OrgDisbursementsTab] Status history error: $histErr');
+                                      }
+
+                                      // 3. Insert record into disbursements table
+                                      final refNum = 'DOST-TR1-${DateTime.now().millisecondsSinceEpoch.toString().substring(5)}';
+                                      try {
+                                        await repo.recordDisbursement(
+                                          applicationId: app.id,
+                                          scholarshipId: app.scholarshipId,
+                                          recipientId: app.userId,
+                                          amount: trancheAmount.toDouble(),
+                                          referenceNumber: refNum,
+                                          paymentMethod: 'Direct Institutional Bank Transfer',
+                                          notes: 'AY ${DateTime.now().year}–${DateTime.now().year + 1} Sem 1 Tranche 1 release by DOST Finance Desk',
+                                        );
+                                      } catch (disbErr) {
+                                        debugPrint('[OrgDisbursementsTab] Disbursement record error: $disbErr');
+                                      }
+
+                                      // 4. Create celebration student notification
+                                      try {
+                                        await repo.createNotification(
+                                          userId: app.userId,
+                                          title: 'Grant Disbursed! 🎓💰',
+                                          message: 'Congratulations $scholarName! Your DOST scholarship tranche of $trancheFormatted has been authorized and disbursed to your account.',
+                                          targetId: app.id,
+                                          type: 'disbursement',
+                                        );
+                                      } catch (notifErr) {
+                                        debugPrint('[OrgDisbursementsTab] Notification error: $notifErr');
+                                      }
+
+                                      // Refresh provider applications
+                                      ref.read(incomingApplicationsProvider.notifier).refresh();
+
+                                      if (!ctx.mounted) return;
+                                      Navigator.of(ctx).pop();
+
+                                      ScaffoldMessenger.of(context).showSnackBar(
+                                        SnackBar(
+                                          behavior: SnackBarBehavior.floating,
+                                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                                          backgroundColor: kOrgPrimary,
+                                          content: Row(
+                                            children: [
+                                              const Icon(Icons.check_circle_rounded, color: Colors.white, size: 22),
+                                              const SizedBox(width: 12),
+                                              Expanded(
+                                                child: Text(
+                                                  'Grant officially awarded! Tranche 1 payout of $trancheFormatted released to $scholarName (Ref #$refNum).',
+                                                  style: inter(fontSize: 13, fontWeight: FontWeight.w600, color: Colors.white),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      );
+                                    } catch (e) {
+                                      setModalState(() => isProcessing = false);
+                                      ScaffoldMessenger.of(context).showSnackBar(
+                                        SnackBar(
+                                          behavior: SnackBarBehavior.floating,
+                                          backgroundColor: kOrgError,
+                                          content: Text('Failed to authorize disbursement: $e'),
+                                        ),
+                                      );
+                                    }
+                                  },
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
   Widget _buildDetailRow(String label, String value) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 10),
@@ -1827,40 +2065,87 @@ class _OrgDisbursementsTabState extends ConsumerState<OrgDisbursementsTab> {
                               Container(
                                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                                 decoration: BoxDecoration(
-                                  color: const Color(0xFFB3F1C6).withValues(alpha: 0.6),
+                                  color: app.status == ApplicationStatus.approved
+                                      ? const Color(0xFFFFF3D6)
+                                      : const Color(0xFFB3F1C6).withValues(alpha: 0.6),
                                   borderRadius: BorderRadius.circular(12),
+                                  border: app.status == ApplicationStatus.approved
+                                      ? Border.all(color: const Color(0xFFFFD566))
+                                      : null,
                                 ),
                                 child: Row(
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
-                                    const Icon(Icons.verified_rounded, size: 12, color: Color(0xFF00351C)),
+                                    Icon(
+                                      app.status == ApplicationStatus.approved
+                                          ? Icons.pending_actions_rounded
+                                          : Icons.verified_rounded,
+                                      size: 12,
+                                      color: app.status == ApplicationStatus.approved
+                                          ? const Color(0xFF8C5D00)
+                                          : const Color(0xFF00351C),
+                                    ),
                                     const SizedBox(width: 4),
                                     Text(
-                                      'Verified (Ref #${app.id.length >= 6 ? app.id.substring(0, 6) : app.id})',
+                                      app.status == ApplicationStatus.approved
+                                          ? 'Awaiting Tranche Release'
+                                          : 'Verified & Awarded (Ref #${app.id.length >= 6 ? app.id.substring(0, 6) : app.id})',
                                       style: inter(
                                         fontSize: 10.5,
                                         fontWeight: FontWeight.w600,
-                                        color: const Color(0xFF00351C),
+                                        color: app.status == ApplicationStatus.approved
+                                            ? const Color(0xFF8C5D00)
+                                            : const Color(0xFF00351C),
                                       ),
                                     ),
                                   ],
                                 ),
                               ),
                             ),
-                            // Ledger Detail action
+                            // Ledger Detail & Payout Actions
                             DataCell(
                               Align(
                                 alignment: Alignment.centerRight,
-                                child: TextButton(
-                                  onPressed: () => _showLedgerDetailDialog(context, p, s, app, perScholarTranche),
-                                  style: TextButton.styleFrom(
-                                    backgroundColor: const Color(0xFFF4F3F8),
-                                    foregroundColor: kOrgTextPrimary,
-                                    minimumSize: const Size(0, 36),
-                                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                                  ),
-                                  child: Text('View Ledger →', style: inter(fontSize: 11, fontWeight: FontWeight.w500)),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    if (app.status == ApplicationStatus.approved) ...[
+                                      ElevatedButton.icon(
+                                        onPressed: () => _showAuthorizeAwardDialog(
+                                          context,
+                                          p,
+                                          s,
+                                          app,
+                                          perScholarTranche,
+                                        ),
+                                        icon: const Icon(Icons.payments_rounded, size: 14, color: Colors.white),
+                                        label: Text(
+                                          'Authorize Award & Release Tranche',
+                                          style: inter(fontSize: 11, fontWeight: FontWeight.w700, color: Colors.white),
+                                        ),
+                                        style: ElevatedButton.styleFrom(
+                                          backgroundColor: const Color(0xFF0F4D2E),
+                                          foregroundColor: Colors.white,
+                                          elevation: 0,
+                                          minimumSize: const Size(0, 36),
+                                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                                        ),
+                                      ),
+                                      const SizedBox(width: 8),
+                                    ],
+                                    TextButton(
+                                      onPressed: () => _showLedgerDetailDialog(context, p, s, app, perScholarTranche),
+                                      style: TextButton.styleFrom(
+                                        backgroundColor: const Color(0xFFF4F3F8),
+                                        foregroundColor: kOrgTextPrimary,
+                                        minimumSize: const Size(0, 36),
+                                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                                      ),
+                                      child: Text('View Ledger →', style: inter(fontSize: 11, fontWeight: FontWeight.w500)),
+                                    ),
+                                  ],
                                 ),
                               ),
                             ),

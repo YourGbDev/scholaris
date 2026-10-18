@@ -1,0 +1,69 @@
+name: Build Scholaris iOS (.ipa)
+
+on:
+  workflow_dispatch: # Allows manual trigger from GitHub Actions tab
+  push:
+    branches:
+      - master
+      - main
+      - fix/touch-targets-oct02
+
+jobs:
+  build-ios:
+    name: Build iOS Application
+    runs-on: macos-14 # Apple Silicon M-series runner for fast builds
+    timeout-minutes: 45
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'zulu'
+          java-version: '17'
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+          cache: true
+
+      - name: Verify Flutter Installation
+        run: flutter --version
+
+      - name: Inject Supabase Configuration
+        run: |
+          mkdir -p lib/app
+          cat << 'EOF' > lib/app/supabase_config.dart
+          // lib/app/supabase_config.dart
+          class SupabaseConfig {
+            static const String url = '${{ secrets.SUPABASE_URL || 'https://yqwbarzxpduzmtrxnrbm.supabase.co' }}';
+            static const String anonKey = '${{ secrets.SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inlxd2Jhcnp4cGR1em10cnhucmJtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODc0MzAxNjksImV4cCI6MjEwMzAwNjE2OX0.2vPnP-ASCMcyMxnMzbBFzflzYPnb2mDIKl1YhHyWHv4' }}';
+            static const String resetPasswordRedirect = 'scholaris://reset-password';
+          }
+          EOF
+
+      - name: Install Dependencies
+        run: flutter pub get
+
+      - name: Run Build Runner (Code Generation)
+        run: dart run build_runner build --delete-conflicting-outputs
+
+      - name: Build iOS App (.app)
+        run: flutter build ios --release --no-codesign
+
+      - name: Package .app into Sideloadable .ipa
+        run: |
+          mkdir -p Payload
+          cp -r build/ios/iphoneos/Runner.app Payload/
+          zip -r Scholaris.ipa Payload
+          ls -lh Scholaris.ipa
+
+      - name: Upload Scholaris .ipa Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Scholaris-iOS-App
+          path: Scholaris.ipa
+          retention-days: 14

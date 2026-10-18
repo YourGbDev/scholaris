@@ -167,7 +167,12 @@ class _ProviderLoginScreenState extends ConsumerState<ProviderLoginScreen> {
       if (role == 'admin') {
         context.go('/admin-home');
       } else {
-        context.go('/provider-home');
+        final redirectTab = GoRouterState.of(context).uri.queryParameters['tab'];
+        if (redirectTab != null && redirectTab.isNotEmpty) {
+          context.go('/provider-home?tab=$redirectTab');
+        } else {
+          context.go('/provider-home');
+        }
       }
     } on AuthException catch (error) {
       final newStatus = LoginLockoutService.instance.recordFailedAttempt(email);

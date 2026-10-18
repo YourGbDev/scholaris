@@ -137,7 +137,7 @@ CREATE POLICY "status_history_insert_authorized_actors"
         SELECT 1 FROM public.applications a
         JOIN public.scholarships s ON s.id = a.scholarship_id
         WHERE a.id = application_status_history.application_id
-          AND s.created_by = auth.uid()
+          AND (s.created_by = auth.uid() OR auth.uid() = 'd0570004-0000-0000-0000-000000000004'::uuid)
       )
     )
   );
@@ -156,7 +156,7 @@ CREATE POLICY "status_history_select_authorized_actors"
       SELECT 1 FROM public.applications a
       JOIN public.scholarships s ON s.id = a.scholarship_id
       WHERE a.id = application_status_history.application_id
-        AND s.created_by = auth.uid()
+        AND (s.created_by = auth.uid() OR auth.uid() = 'd0570004-0000-0000-0000-000000000004'::uuid)
     )
   );
 
@@ -196,6 +196,123 @@ CREATE POLICY "notifications_update_by_owner"
   WITH CHECK (auth.uid() = user_id);
 
 GRANT SELECT, INSERT, UPDATE ON public.notifications TO authenticated;
+
+-- 1.5 Provider Multi-Role RLS Policies (DOST Evaluator & DOST Finance Officer)
+-- Applications SELECT
+DROP POLICY IF EXISTS "providers_select_own_applications" ON public.applications;
+CREATE POLICY "providers_select_own_applications"
+  ON public.applications FOR SELECT
+  TO authenticated
+  USING (
+    public.is_admin()
+    OR (
+      status NOT IN ('draft', 'withdrawn')
+      AND EXISTS (
+        SELECT 1 FROM public.scholarships s
+        WHERE s.id = applications.scholarship_id
+          AND (s.created_by = auth.uid() OR auth.uid() = 'd0570004-0000-0000-0000-000000000004'::uuid)
+      )
+    )
+    OR user_id = auth.uid()
+  );
+
+-- Applications UPDATE status
+DROP POLICY IF EXISTS "Providers can update status of applications to their own scholarships" ON public.applications;
+CREATE POLICY "Providers can update status of applications to their own scholarships"
+  ON public.applications FOR UPDATE
+  TO authenticated
+  USING (
+    public.is_admin()
+    OR EXISTS (
+      SELECT 1 FROM public.scholarships s
+      WHERE s.id = applications.scholarship_id
+        AND (s.created_by = auth.uid() OR auth.uid() = 'd0570004-0000-0000-0000-000000000004'::uuid)
+    )
+  )
+  WITH CHECK (
+    public.is_admin()
+    OR EXISTS (
+      SELECT 1 FROM public.scholarships s
+      WHERE s.id = applications.scholarship_id
+        AND (s.created_by = auth.uid() OR auth.uid() = 'd0570004-0000-0000-0000-000000000004'::uuid)
+    )
+  );
+
+-- Disbursements Table & RLS
+CREATE TABLE IF NOT EXISTS public.disbursements (
+  id                uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  application_id    uuid NOT NULL REFERENCES public.applications(id) ON DELETE RESTRICT,
+  scholarship_id    uuid NOT NULL REFERENCES public.scholarships(id) ON DELETE RESTRICT,
+  recipient_id      uuid NOT NULL REFERENCES public.profiles(id) ON DELETE RESTRICT,
+  amount            numeric NOT NULL CHECK (amount > 0),
+  status            text NOT NULL DEFAULT 'pending'
+                    CHECK (status IN ('pending', 'released', 'failed', 'cancelled')),
+  payment_method    text,
+  reference_number  text,
+  released_at       timestamptz,
+  released_by       uuid REFERENCES public.profiles(id) ON DELETE SET NULL,
+  notes             text,
+  created_at        timestamptz NOT NULL DEFAULT now(),
+  updated_at        timestamptz NOT NULL DEFAULT now()
+);
+
+ALTER TABLE public.disbursements ENABLE ROW LEVEL SECURITY;
+
+DROP POLICY IF EXISTS "providers_manage_disbursements" ON public.disbursements;
+CREATE POLICY "providers_manage_disbursements"
+  ON public.disbursements
+  FOR ALL
+  TO authenticated
+  USING (
+    public.is_admin()
+    OR auth.uid() = 'd0570004-0000-0000-0000-000000000004'::uuid
+    OR recipient_id = auth.uid()
+    OR EXISTS (
+      SELECT 1 FROM public.scholarships s
+      WHERE s.id = disbursements.scholarship_id
+        AND (s.created_by = auth.uid() OR auth.uid() = 'd0570004-0000-0000-0000-000000000004'::uuid)
+    )
+  )
+  WITH CHECK (
+    public.is_admin()
+    OR auth.uid() = 'd0570004-0000-0000-0000-000000000004'::uuid
+    OR EXISTS (
+      SELECT 1 FROM public.scholarships s
+      WHERE s.id = disbursements.scholarship_id
+        AND (s.created_by = auth.uid() OR auth.uid() = 'd0570004-0000-0000-0000-000000000004'::uuid)
+    )
+  );
+
+GRANT SELECT, INSERT, UPDATE ON public.disbursements TO authenticated;
+
+-- Security-Barrier View: public.provider_applicant_profiles (authorize DOST sub-roles)
+CREATE OR REPLACE VIEW public.provider_applicant_profiles
+WITH (security_barrier = true) AS
+SELECT
+  p.id,
+  p.full_name,
+  p.school,
+  p.course,
+  p.year_level,
+  p.gpa,
+  p.region,
+  p.province,
+  p.city_municipality,
+  p.setup_complete,
+  p.monthly_family_income
+FROM public.profiles p
+WHERE
+  public.is_admin()
+  OR EXISTS (
+    SELECT 1
+    FROM public.applications a
+    JOIN public.scholarships s ON s.id = a.scholarship_id
+    WHERE a.user_id = p.id
+      AND (s.created_by = auth.uid() OR auth.uid() = 'd0570004-0000-0000-0000-000000000004'::uuid)
+      AND a.status NOT IN ('draft', 'withdrawn')
+  );
+
+GRANT SELECT ON public.provider_applicant_profiles TO authenticated;
 
 
 -- =============================================================================
@@ -282,7 +399,7 @@ BEGIN
     WHERE email = 'provider.dost@scholaris.gov.ph';
   END IF;
 
-  -- 2.3 Seed DOST-SEI Finance Comptroller in auth.users
+  -- 2.3 Seed DOST-SEI Finance Officer in auth.users
   IF NOT EXISTS (SELECT 1 FROM auth.users WHERE email = 'finance.dost@scholaris.gov.ph') THEN
     INSERT INTO auth.users (
       instance_id, id, aud, role, email, encrypted_password,
@@ -296,13 +413,14 @@ BEGIN
       crypt('Scholaris2026!', gen_salt('bf')),
       now(), now(), now(),
       '{"provider":"email","providers":["email"]}',
-      '{"full_name":"DOST-SEI Disbursing Comptroller"}',
+      '{"full_name":"Engr. Maria Santos, CPA"}',
       now(), now(), '', '', '', ''
     );
   ELSE
     UPDATE auth.users
     SET encrypted_password = crypt('Scholaris2026!', gen_salt('bf')),
-        email_confirmed_at = now()
+        email_confirmed_at = now(),
+        raw_user_meta_data = '{"full_name":"Engr. Maria Santos, CPA"}'
     WHERE email = 'finance.dost@scholaris.gov.ph';
   END IF;
 END $$;
@@ -312,7 +430,7 @@ INSERT INTO public.profiles (
   id, full_name, role, setup_complete
 ) VALUES (
   'd0570000-0000-0000-0000-000000000000',
-  'DOST-SEI Disbursing Comptroller',
+  'Scholaris System Administrator',
   'admin',
   true
 )
@@ -321,19 +439,46 @@ ON CONFLICT (id) DO UPDATE SET
   role = 'admin',
   setup_complete = true;
 
--- 2.1 Seed or Update DOST Comptroller Profile in public.profiles
+-- 2.1 Seed or Update DOST Finance Officer Profile in public.profiles
 INSERT INTO public.profiles (
-  id, full_name, role, setup_complete
+  id, full_name, role, school, organization, provider_type, setup_complete
 ) VALUES (
   'd0570004-0000-0000-0000-000000000004',
-  'DOST-SEI Disbursing Comptroller',
-  'admin',
+  'Engr. Maria Santos, CPA',
+  'provider',
+  'DOST-SEI',
+  'Department of Science and Technology - SEI',
+  'organization',
   true
 )
 ON CONFLICT (id) DO UPDATE SET
   full_name = EXCLUDED.full_name,
-  role = 'admin',
+  role = 'provider',
+  school = 'DOST-SEI',
+  organization = 'Department of Science and Technology - SEI',
+  provider_type = 'organization',
   setup_complete = true;
+
+-- 2.2 Seed Provider Verification for DOST Finance Officer
+INSERT INTO public.provider_verifications (
+  user_id,
+  org_name,
+  provider_type,
+  status,
+  submitted_at,
+  reviewed_at
+) VALUES (
+  'd0570004-0000-0000-0000-000000000004',
+  'Department of Science and Technology - SEI',
+  'organization',
+  'approved',
+  now(),
+  now()
+)
+ON CONFLICT (user_id) DO UPDATE SET
+  org_name = EXCLUDED.org_name,
+  status = 'approved',
+  provider_type = 'organization';
 
 -- 2.3 Seed or Update Student Profile in public.profiles
 INSERT INTO public.profiles (
@@ -484,6 +629,31 @@ WHERE application_id IN (
 -- 4.5 Delete prior application records for the demo student
 DELETE FROM public.applications
 WHERE user_id = 'd0570001-0000-0000-0000-000000000001';
+
+-- 4.6 Reusable Reset Function (Callable anytime from SQL Editor or API: SELECT public.reset_demo_student();)
+CREATE OR REPLACE FUNCTION public.reset_demo_student()
+RETURNS text
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public
+AS $$
+BEGIN
+  DELETE FROM public.notifications WHERE user_id = 'd0570001-0000-0000-0000-000000000001';
+  DELETE FROM public.disbursements WHERE application_id IN (
+    SELECT id FROM public.applications WHERE user_id = 'd0570001-0000-0000-0000-000000000001'
+  );
+  DELETE FROM public.application_evaluations WHERE application_id IN (
+    SELECT id FROM public.applications WHERE user_id = 'd0570001-0000-0000-0000-000000000001'
+  );
+  DELETE FROM public.application_status_history WHERE application_id IN (
+    SELECT id FROM public.applications WHERE user_id = 'd0570001-0000-0000-0000-000000000001'
+  );
+  DELETE FROM public.applications WHERE user_id = 'd0570001-0000-0000-0000-000000000001';
+  RETURN 'Demo student reset complete!';
+END;
+$$;
+
+GRANT EXECUTE ON FUNCTION public.reset_demo_student() TO authenticated, anon;
 
 -- Restore default session replication role
 SET session_replication_role = 'origin';

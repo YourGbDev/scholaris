@@ -27,11 +27,14 @@ Use the following pre-configured credentials or create new accounts with these a
 | Role | Username / Email | Password | Pre-Conditions & Attributes |
 | :--- | :--- | :--- | :--- |
 | **Student** (Applicant) | `student.demo@scholaris.edu.ph` | `Scholaris2026!` | • University: *University of the Philippines Diliman*<br>• Course: *BS Computer Science*<br>• Year Level: *3rd Year*<br>• GWA: *1.24* (Philippine Scale)<br>• Monthly Household Income: *₱15,000*<br>• Avatar / Identity Photo: *Configured* |
-| **Provider** (DOST Reviewer) | `provider.dost@scholaris.gov.ph` | `Scholaris2026!` | • Organization: *DOST-SEI (Science Education Institute)*<br>• Role: *Scholarship Committee Reviewer*<br>• Owned Scholarship: *DOST-SEI Undergraduate Scholarship* |
+| **Provider** (DOST Reviewer) | `provider.dost@scholaris.gov.ph` | `Scholaris2026!` | • Organization: *DOST-SEI (Science Education Institute)*<br>• Role: *Scholarship Committee Reviewer / Org Admin*<br>• Owned Scholarship: *DOST-SEI Undergraduate Scholarship (RA 7687)* |
 | **Admin** (Telemetry/Oversight) | `admin@scholaris.edu.ph` | `Scholaris2026!` | • Platform Administrator with `is_admin() = true`<br>• Global analytics & audit log visibility |
 
 > [!NOTE]
-> If testing on an ephemeral local instance or reset database, log in as `student.demo@scholaris.edu.ph` and complete the 4-step Profile Setup screen once to ensure `setup_complete: true` and avatar selection are stored.
+> **Pre-Demo Reset & Slate Cleanliness**:
+> 1. To start the demonstration with a clean slate (0 applications, 0 notifications), execute `SELECT public.reset_demo_student();` in the Supabase SQL Editor.
+> 2. Ensure `public.organization_memberships` contains an active `org_admin` record for the provider (`d0570002-0000-0000-0000-000000000002`) so the incoming queue is visible under Migration 0024 RBAC policies.
+> 3. If testing on an ephemeral local instance or reset database, log in as `student.demo@scholaris.edu.ph` and complete the 4-step Profile Setup screen once to ensure `setup_complete: true` and avatar selection are stored.
 
 ---
 
@@ -66,7 +69,7 @@ Demonstrate that a student discovers an eligible scholarship, reviews institutio
 2. **Navigate to Discover**:
    - Tap the **"Discover"** tab in the bottom navigation bar (`/discover`).
 3. **Select Scholarship**:
-   - Locate **"DOST-SEI Undergraduate Scholarship"** (or use the search bar: type `DOST`).
+   - Locate **"DOST-SEI Undergraduate Scholarship (RA 7687)"** (or use the search bar: type `DOST`).
    - Tap the scholarship card. The **Scholarship Detail Screen** (`/scholarship/:id`) opens with hero banner and deadline indicators.
 4. **Evaluate Matching Power & Eligibility**:
    - Scroll down to the **"Your Eligibility Breakdown"** card.

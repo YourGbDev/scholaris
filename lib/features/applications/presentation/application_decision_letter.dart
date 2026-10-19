@@ -40,16 +40,28 @@ class ApplicationDecisionLetter extends StatelessWidget {
                 padding: const EdgeInsets.all(24),
                 decoration: BoxDecoration(
                   color: Colors.white,
-                  border: Border.all(color: const Color(0xFFB38A35)),
-                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(
+                    color: const Color(0xFFB38A35),
+                    width: awarded ? 2.0 : 1.5,
+                  ),
+                  borderRadius: BorderRadius.circular(16),
+                  boxShadow: const [
+                    BoxShadow(
+                      color: Color(0x120F4D2E),
+                      blurRadius: 20,
+                      offset: Offset(0, 8),
+                    ),
+                  ],
                 ),
                 child: eligible
                     ? Column(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
-                          const Icon(
+                          Icon(
                             Icons.workspace_premium_outlined,
-                            color: Color(0xFF0F4D2E),
+                            color: awarded
+                                ? const Color(0xFFB38A35)
+                                : const Color(0xFF0F4D2E),
                             size: 48,
                           ),
                           const SizedBox(height: 12),
@@ -90,6 +102,10 @@ class ApplicationDecisionLetter extends StatelessWidget {
                                 ? 'Your scholarship has been awarded for'
                                 : 'Your application has been approved for',
                             textAlign: TextAlign.center,
+                            style: openSans(
+                              fontSize: 14,
+                              color: const Color(0xFF404942),
+                            ),
                           ),
                           const SizedBox(height: 12),
                           Text(
@@ -105,6 +121,10 @@ class ApplicationDecisionLetter extends StatelessWidget {
                             Text(
                               providerName!.trim(),
                               textAlign: TextAlign.center,
+                              style: openSans(
+                                fontSize: 14,
+                                color: const Color(0xFF707971),
+                              ),
                             ),
                           ],
                           const Padding(
@@ -115,11 +135,21 @@ class ApplicationDecisionLetter extends StatelessWidget {
                             Text(
                               'Application approved on ${_date(application.decidedAt!.toLocal())}',
                               textAlign: TextAlign.center,
+                              style: openSans(
+                                fontSize: 13,
+                                fontWeight: FontWeight.w500,
+                                color: const Color(0xFF404942),
+                              ),
                             ),
                           const SizedBox(height: 12),
                           SelectableText(
                             'Application reference\n${application.id}',
                             textAlign: TextAlign.center,
+                            style: openSans(
+                              fontSize: 13,
+                              color: const Color(0xFF707971),
+                              height: 1.4,
+                            ),
                           ),
                           const SizedBox(height: 24),
                           Text(
@@ -127,7 +157,11 @@ class ApplicationDecisionLetter extends StatelessWidget {
                                 ? 'This record reflects your saved scholarship status in Scholaris. Contact your provider for the next steps and release schedule.'
                                 : 'This letter records your application approval in Scholaris. Contact your provider for the next steps. Approval does not confirm that funds have been released.',
                             textAlign: TextAlign.center,
-                            style: const TextStyle(height: 1.5),
+                            style: openSans(
+                              fontSize: 13,
+                              color: const Color(0xFF404942),
+                              height: 1.5,
+                            ),
                           ),
                         ],
                       )

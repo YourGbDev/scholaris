@@ -323,11 +323,11 @@ create trigger trg_guard_scholarship_capacity
 
 | Worktree | Branch | Role | Baseline Hash | Sprint Status |
 | :--- | :--- | :--- | :--- | :--- |
-| `whelk` | `ai/architect` | 🧠 Architecture, Coordination & Planning | `269ef75` | Active (Monitoring & Consolidation) |
+| `whelk` | `ai/architect` | 🧠 Architecture, Coordination & Planning | `77e720a` | Active (Monitoring & Consolidation) |
 | `cowrie` | `ai/builder` | 🔨 Backend, Migrations, Repositories & RPCs | `1964b55` | **Completed (`1964b556a0a56b3b1a3fdb6ab2e16e748655dd06`)** |
 | `bowhead` | `ai/ui` | 🎨 Flutter UI, Apple HIG, Motion & Viewports | `46bb7fd` | **Completed (`46bb7fd492409095933dca4fd505ef24ffef69e9`)** |
-| `fusilier` | `ai/security` | 🛡️ Supabase RLS, Privacy & Concurrency Tests | `f7fd26a` | **Completed (`f7fd26a8189c40d31d89fe57668a0c792942203a`)** |
-| `cerith` | `ai/qa` | 🔍 Acceptance, Regression & E2E Verification | `7423c3e` | **Unlocked — Ready for Activation** |
+| `fusilier` | `ai/security` | 🛡️ Supabase RLS, Privacy & Concurrency Tests | `72533eb` | **Completed with Dual-Connection Concurrency Proof (`72533eb`)** |
+| `cerith` | `ai/qa` | 🔍 Acceptance, Regression & E2E Verification | `de22b3b` | **In Progress (Active Acceptance & Regression Matrix)** |
 
 *Common Ancestor: `26094165d3824f8d75cf81c2069fa89487c80ee9`.*
 
@@ -336,8 +336,8 @@ create trigger trg_guard_scholarship_capacity
 ```
 [Builder: cowrie] ──(1964b55)──┬──► [UI/UX: bowhead] ─────(46bb7fd)───────┐
   (COMPLETED)                  │     (COMPLETED)                            ▼
-                               └──► [Security: fusilier] ──(f7fd26a)──► [QA: cerith] ──► [Architect Final]
-                                     (COMPLETED)                         (UNLOCKED)
+                               └──► [Security: fusilier] ──(72533eb)──► [QA: cerith] ──► [Architect Final]
+                                     (COMPLETED)                         (IN PROGRESS)
 ```
 
 > [!IMPORTANT]
@@ -449,14 +449,15 @@ create trigger trg_guard_scholarship_capacity
 ---
 
 ### 🛡️ 3. Security in `fusilier` (`ai/security`):
-* **Sprint Status**: `COMPLETED`
-* Completed Commit: [`f7fd26a8189c40d31d89fe57668a0c792942203a`](file:///C:/Users/Windows%2011/orca/workspaces/scholaris/whelk/docs/reports/2026-10-19_org_controls_security_report.md)
+* **Sprint Status**: `COMPLETED & VERIFIED`
+* Completed Commit: [`72533eb`](file:///C:/Users/Windows%2011/orca/workspaces/scholaris/whelk/docs/reports/2026-10-19_org_controls_security_report.md)
 * Completed Report: [`docs/reports/2026-10-19_org_controls_security_report.md`](file:///C:/Users/Windows%2011/orca/workspaces/scholaris/whelk/docs/reports/2026-10-19_org_controls_security_report.md)
-* **Concurrency Proof**: Genuine parallel race condition on isolated local DB passed (1 approved, 1 rejected with P0001). 64/64 total tests passed, 0 vulnerabilities. Zero touches on production fixtures.
+* **Concurrency Proof**: Executed `tools/test_two_connection_concurrency.mjs` on an **isolated local PostgreSQL 18 server** with **two independent TCP client connections** (`pg.Client`). Concurrently racing for the last available slot proved: exactly 1 approval committed as `approved`, exactly 1 failed with `P0001 (Scholarship capacity reached. No slots remaining (1/1 occupied))`, atomic rollback occurred with zero partial writes (unapproved applicant remained intact in `under_review`, slot count strictly 1/1 occupied, 0 remaining).
+* **Legal Compliance Scope**: Technical RLS and column-minimization tests verify software-level access controls and security-barrier views. Technical test passes do NOT constitute legal compliance with the Philippine Data Privacy Act of 2012 (RA 10173) on their own without organizational, administrative, and physical governance.
 
 ---
 
-### 🔍 4. Trigger QA in `cerith` (UNLOCKED):
+### 🔍 4. Trigger QA in `cerith` (ACTIVE / IN PROGRESS):
 ```text
 > execute assigned task
 
@@ -469,8 +470,7 @@ git merge --no-edit 1964b556a0a56b3b1a3fdb6ab2e16e748655dd06
 git merge --no-edit 46bb7fd492409095933dca4fd505ef24ffef69e9
 
 Inspect Security's report: docs/reports/2026-10-19_org_controls_security_report.md.
-Confirm Security executed concurrency tests exclusively against an isolated local database (zero production/demo fixture tampering).
-Do not mark VERIFIED if Security reports any unresolved vulnerability.
+Confirm Security verified genuine multi-session concurrency across two independent TCP client connections on an isolated local PostgreSQL database with zero partial writes (commit 72533eb).
 
 Execute acceptance and regression test suite:
 1. Main acceptance cycle: Student submission -> Reviewer endorsement -> Org-admin decision -> Student notification.
@@ -486,8 +486,9 @@ Write completion report to docs/reports/2026-10-19_org_controls_qa_report.md and
 ---
 
 > [!IMPORTANT]
-> **GATE STATUS: BUILDER, SECURITY & UI/UX COMPLETED — QA UNLOCKED**  
-> Builder (`1964b55`), Security (`f7fd26a`), and UI/UX (`46bb7fd`) have all completed and independently verified their deliverables.  
-> QA (`cerith`) is **UNLOCKED** and ready for activation with both verified commit hashes.  
+> **GATE STATUS: BUILDER, UI/UX & SECURITY COMPLETED — QA ACTIVE**  
+> Builder (`1964b55`) and UI/UX (`46bb7fd`) have completed and verified their deliverables.  
+> Security (`72533eb`) has proven genuine multi-session concurrency using two independent client connections on an isolated local PostgreSQL server with atomic rollback and zero partial writes.  
+> QA (`cerith`) is active and executing its acceptance test matrix.  
 > Background monitoring is running under Task ID `de5a1e5e-acf2-405a-b418-7130d31eecb9/task-742` (`*/5 * * * *`).  
 > Remote migrations, final merging, deployment, and IPA builds remain strictly prohibited pending separate explicit approval.

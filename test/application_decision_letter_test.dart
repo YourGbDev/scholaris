@@ -87,5 +87,36 @@ void main() {
         expect(tester.takeException(), isNull);
       },
     );
+
+    testWidgets(
+      'awarded certificate fits $width with complete fields and long strings',
+      (tester) async {
+        tester.view.physicalSize = Size(width, 800);
+        tester.view.devicePixelRatio = 1;
+        addTearDown(tester.view.reset);
+        await tester.pumpWidget(
+          MaterialApp(
+            home: ApplicationDecisionLetter(
+              application: Application(
+                id: '3c8f828a-6b5d-4f1e-9231-10cbfb9d3328',
+                userId: 'demo-student-long-id',
+                scholarshipId: 'dost-merit-scholarship-id',
+                status: ApplicationStatus.awarded,
+                decidedAt: DateTime(2026, 10, 19, 14, 30),
+              ),
+              scholarshipTitle: 'DOST-SEI Science and Technology Undergraduate Merit Scholarship 2026-2027',
+              studentName: 'Maria Clara de los Santos-Bernardino y Villamor Jr.',
+              providerName: 'Department of Science and Technology - Science Education Institute',
+            ),
+          ),
+        );
+        await tester.pumpAndSettle();
+        expect(find.text('Scholarship Award Certificate'), findsOneWidget);
+        expect(find.text('Maria Clara de los Santos-Bernardino y Villamor Jr.'), findsOneWidget);
+        expect(find.text('Department of Science and Technology - Science Education Institute'), findsOneWidget);
+        expect(find.text('Application approved on 19 Oct 2026'), findsOneWidget);
+        expect(tester.takeException(), isNull);
+      },
+    );
   }
 }

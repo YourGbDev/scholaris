@@ -44,6 +44,11 @@ final organizationMembershipProvider = FutureProvider<Map<String, dynamic>?>((re
       .eq('user_id', userId).eq('active', true).maybeSingle();
 });
 
+final currentOrganizationIdProvider = Provider<String?>((ref) {
+  final membership = ref.watch(organizationMembershipProvider).valueOrNull;
+  return membership?['organization_id'] as String?;
+});
+
 final providerSubRoleProvider = Provider<ProviderIdentityInfo>((ref) {
   final profile = ref.watch(currentProfileProvider).valueOrNull;
   final membership = ref.watch(organizationMembershipProvider).valueOrNull;

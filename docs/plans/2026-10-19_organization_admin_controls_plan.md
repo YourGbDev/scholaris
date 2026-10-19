@@ -319,25 +319,24 @@ create trigger trg_guard_scholarship_capacity
 
 ## 5. Worktree File Ownership & Commit Integration Sequence
 
-### Baseline Commit Matrix & Worktree Status
+### Baseline Commit Matrix (Verified Across Worktrees)
 
-| Worktree | Branch | Role | Baseline Hash | Sprint Status |
-| :--- | :--- | :--- | :--- | :--- |
-| `whelk` | `ai/architect` | 🧠 Architecture, Coordination & Planning | `7273934` | Active (Monitoring & Consolidation) |
-| `cowrie` | `ai/builder` | 🔨 Backend, Migrations, Repositories & RPCs | `1964b55` | **Completed (`1964b556a0a56b3b1a3fdb6ab2e16e748655dd06`)** |
-| `bowhead` | `ai/ui` | 🎨 Flutter UI, Apple HIG, Motion & Viewports | `f571672` | **Unlocked — Ready for Activation** |
-| `fusilier` | `ai/security` | 🛡️ Supabase RLS, Privacy & Concurrency Tests | `68dcaba` | **Unlocked — Ready for Activation** |
-| `cerith` | `ai/qa` | 🔍 Acceptance, Regression & E2E Verification | `7423c3e` | Gated on UI & Security Commits |
+| Worktree | Branch | Role | Baseline Hash |
+| :--- | :--- | :--- | :--- |
+| `whelk` | `ai/architect` | 🧠 Architecture, Coordination & Planning | `52e4496` |
+| `cowrie` | `ai/builder` | 🔨 Backend, Migrations, Repositories & RPCs | `33e1308` |
+| `bowhead` | `ai/ui` | 🎨 Flutter UI, Apple HIG, Motion & Viewports | `f571672` |
+| `fusilier` | `ai/security` | 🛡️ Supabase RLS, Privacy & Concurrency Tests | `68dcaba` |
+| `cerith` | `ai/qa` | 🔍 Acceptance, Regression & E2E Verification | `7423c3e` |
 
 *Common Ancestor: `26094165d3824f8d75cf81c2069fa89487c80ee9`.*
 
 ### Worktree Execution Order & File Ownership
 
 ```
-[Builder: cowrie] ──(1964b55)──┬──► [UI/UX: bowhead] ─────(commit hash)───┐
-  (COMPLETED)                  │     (UNLOCKED)                            ▼
-                               └──► [Security: fusilier] ──(report)──► [QA: cerith] ──► [Architect Final]
-                                     (UNLOCKED)                         (GATED)
+[Builder: cowrie] ──(commit hash)──┬──► [UI/UX: bowhead] ─────(commit hash)───┐
+                                    │                                           ▼
+                                    └──► [Security: fusilier] ──(report)──► [QA: cerith] ──► [Architect Final]
 ```
 
 #### 1. 🔨 Builder (`cowrie` / `ai/builder`)
@@ -406,44 +405,42 @@ create trigger trg_guard_scholarship_capacity
    - The Architect uses the Antigravity native `schedule` tool:
      `schedule(CronExpression="*/5 * * * *", Prompt="Poll specialist branches for completion reports and consolidate progress", IsDaemon=false)`
    - This fires in the background every 5 minutes without blocking or polling loops.
-2. **Active Task ID**:
-   - Background monitoring task is active:
-     - **Exact Task ID**: `de5a1e5e-acf2-405a-b418-7130d31eecb9/task-742`
-     - **Cadence**: Every 5 minutes (`*/5 * * * *`)
+2. **Immediate Task ID Disclosure**:
+   - Upon activation after human approval, Architect will run `schedule` and provide you with:
+     - The **exact system Task ID** (e.g. `de5a1e5e.../task-<num>`).
+     - The timestamp of the first scheduled trigger.
 3. **Self-Termination**:
    - The moment all 4 specialist reports are committed and consolidated, Architect calls `manage_task(Action="kill", TaskId=...)` to terminate the cron schedule cleanly.
 
 ---
 
-## 7. Specialist Activation Messages & Task Retrieval Protocol
+## 7. Specialist Activation Messages (For Human to Trigger)
 
-### 🔨 1. Builder in `cowrie` (`ai/builder`):
-* **Sprint Status**: `COMPLETED`
-* Completed Commit: [`1964b556a0a56b3b1a3fdb6ab2e16e748655dd06`](file:///C:/Users/Windows%2011/orca/workspaces/scholaris/whelk/docs/reports/2026-10-19_org_controls_builder_report.md)
-* Completed Report: [`docs/reports/2026-10-19_org_controls_builder_report.md`](file:///C:/Users/Windows%2011/orca/workspaces/scholaris/whelk/docs/reports/2026-10-19_org_controls_builder_report.md)
-* All unit tests passed (30/30 tests passed, 0 analyzer errors).
+When you are ready to activate the specialists, paste the following triggers:
 
----
-
-### Safe Task-File Retrieval Protocol for Specialists
-> [!WARNING]
-> **Preserve Local Modifications Before Retrieval**:  
-> Running `git status && git checkout` does not prevent file replacement because `git status` exits with `0`.  
-> Before retrieving updated files from `ai/architect`, always inspect working tree status (`git status --short docs/plans/ docs/tasks/`). If any planning or task files contain uncommitted local edits, preserve them (e.g. `git stash push -m "local-task-backup" docs/plans/ docs/tasks/` or copy to `.bak`) before checkout.  
-> Using `git diff --exit-code <files> && git checkout ai/architect -- <files>` ensures that if local modifications exist, the command halts and outputs the diff rather than clobbering your changes.
-
----
-
-### 🎨 2. Trigger UI/UX in `bowhead` (UNLOCKED):
+### 🔨 1. Trigger Builder in `cowrie`:
 ```text
 > execute assigned task
 
-Inspect working tree and preserve any modified planning files before retrieval:
-git diff --exit-code docs/plans/2026-10-19_organization_admin_controls_plan.md docs/tasks/org_controls_task_ui.md && git checkout ai/architect -- docs/plans/2026-10-19_organization_admin_controls_plan.md docs/tasks/org_controls_task_ui.md
-# (If local edits are detected, git diff halts with exit code 1 to protect your work. Preserve files via stash or backup, then checkout)
+Retrieve your assignment card from git:
+git checkout ai/architect -- docs/plans/2026-10-19_organization_admin_controls_plan.md docs/tasks/org_controls_task_builder.md
+
+Implement backend controls, capacity accounting & school eligibility:
+1. Migration 0026_organization_controls_slots_schools.sql (public.schools master table, seed 10 unranked universities, add_custom_school RPC, review_application atomic slot lock & capacity check, scholarship_capacities security-barrier view respecting visibility, guard_scholarship_capacity trigger, school submission validation in guard_application_workflow, and student profiles.school_id backfill).
+2. SchoolRepository, ScholarshipCapacityRepository, OrganizationActivityRepository, OrganizationTeamRepository, and Riverpod providers.
+3. Unit tests verifying slot accounting (inactive/pending withdrawals consume 0 slots), capacity limit rejection, school normalization, deduplication, and aggregate slot access.
+Write completion report to docs/reports/2026-10-19_org_controls_builder_report.md, output your commit hash in the header, and commit to ai/builder.
+```
+
+### 🎨 2. Trigger UI/UX in `bowhead` (After Builder Commits):
+```text
+> execute assigned task
+
+Retrieve your assignment card from git:
+git checkout ai/architect -- docs/plans/2026-10-19_organization_admin_controls_plan.md docs/tasks/org_controls_task_ui.md
 
 Integrate Builder's completed commit hash:
-git merge --no-edit 1964b556a0a56b3b1a3fdb6ab2e16e748655dd06
+git merge --no-edit <BUILDER_COMMIT_HASH>
 
 Implement presentation layer:
 1. OrgProviderShell: Add Activity Log and Team & Reviewers to Org Admin sidebar.
@@ -456,16 +453,15 @@ Verify viewports at 360px, 440px, and 1280px with zero browser alerts.
 Write report to docs/reports/2026-10-19_org_controls_ui_report.md, output your commit hash, and commit to ai/ui.
 ```
 
-### 🛡️ 3. Trigger Security in `fusilier` (UNLOCKED):
+### 🛡️ 3. Trigger Security in `fusilier` (After Builder Commits):
 ```text
 > execute assigned task
 
-Inspect working tree and preserve any modified planning files before retrieval:
-git diff --exit-code docs/plans/2026-10-19_organization_admin_controls_plan.md docs/tasks/org_controls_task_security.md && git checkout ai/architect -- docs/plans/2026-10-19_organization_admin_controls_plan.md docs/tasks/org_controls_task_security.md
-# (If local edits are detected, git diff halts with exit code 1 to protect your work. Preserve files via stash or backup, then checkout)
+Retrieve your assignment card from git:
+git checkout ai/architect -- docs/plans/2026-10-19_organization_admin_controls_plan.md docs/tasks/org_controls_task_security.md
 
 Integrate Builder's completed commit hash:
-git merge --no-edit 1964b556a0a56b3b1a3fdb6ab2e16e748655dd06
+git merge --no-edit <BUILDER_COMMIT_HASH>
 
 Execute automated security & genuine concurrency test matrix:
 1. Genuine parallel concurrency test on ISOLATED LOCAL DATABASE (never production fixtures): two simultaneous connections executing review_application('approve') on last slot; exactly one succeeds, one fails with P0001.
@@ -479,16 +475,15 @@ Execute automated security & genuine concurrency test matrix:
 Write report to docs/reports/2026-10-19_org_controls_security_report.md, output commit hash, and commit to ai/security.
 ```
 
-### 🔍 4. Trigger QA in `cerith` (After UI & Security Commit):
+### 🔍 4. Trigger QA in `cerith` (After Builder & UI Commit):
 ```text
 > execute assigned task
 
-Inspect working tree and preserve any modified planning files before retrieval:
-git diff --exit-code docs/plans/2026-10-19_organization_admin_controls_plan.md docs/tasks/org_controls_task_qa.md && git checkout ai/architect -- docs/plans/2026-10-19_organization_admin_controls_plan.md docs/tasks/org_controls_task_qa.md
-# (If local edits are detected, git diff halts with exit code 1 to protect your work. Preserve files via stash or backup, then checkout)
+Retrieve your assignment card from git:
+git checkout ai/architect -- docs/plans/2026-10-19_organization_admin_controls_plan.md docs/tasks/org_controls_task_qa.md
 
 Integrate completed Builder and UI commit hashes:
-git merge --no-edit 1964b556a0a56b3b1a3fdb6ab2e16e748655dd06
+git merge --no-edit <BUILDER_COMMIT_HASH>
 git merge --no-edit <UI_COMMIT_HASH>
 
 Inspect Security's report: docs/reports/2026-10-19_org_controls_security_report.md.
@@ -496,23 +491,17 @@ Confirm Security executed concurrency tests exclusively against an isolated loca
 Do not mark VERIFIED if Security reports any unresolved vulnerability.
 
 Execute acceptance and regression test suite:
-1. Main acceptance cycle: Student submission -> Reviewer endorsement -> Org-admin decision -> Student notification.
-2. Platform-admin awarding regression: Test platform-admin awarding (approved -> awarded under migration 0025) separately as regression coverage with 0 additional slots consumed.
-3. Slot accounting: Last slot reservation, duplicate decision idempotency, inactive/pending withdrawals consume 0 slots, uncapped grant capacity.
-4. Capacity visibility: Confirm capacity queries respect scholarship visibility (inactive grants hidden from students).
-5. School eligibility: Allowed school submission success, disallowed school rejection, missing school handling, legacy data compatibility.
-6. Student profile school editing and truthful wording audit across UI.
-7. Full regression: flutter test test/features/applications/transaction_cycle_test.dart.
+1. Complete cycle: Student submission -> Reviewer endorsement -> Org-admin decision -> Student notification.
+2. Slot accounting: Last slot reservation, approved -> awarded zero-consumption, duplicate decision idempotency, inactive/pending withdrawals consume 0 slots, uncapped grant capacity.
+3. Capacity visibility: Confirm capacity queries respect scholarship visibility (inactive grants hidden from students).
+4. School eligibility: Allowed school submission success, disallowed school rejection, missing school handling, legacy data compatibility.
+5. Student profile school editing and truthful wording audit across UI.
+6. Regression: flutter test test/features/applications/transaction_cycle_test.dart.
 Write completion report to docs/reports/2026-10-19_org_controls_qa_report.md and commit to ai/qa.
 ```
 
 ---
 
 > [!IMPORTANT]
-> **GATE STATUS: COORDINATION RESUMED — BUILDER RE-VERIFIED; UI/UX & SECURITY UNLOCKED**  
-> Coordination resumed per operator instruction.  
-> 1. Background monitoring is running under Task ID `de5a1e5e-acf2-405a-b418-7130d31eecb9/task-742` (`*/5 * * * *`).  
-> 2. Builder (`cowrie`) implementation (`a57f1de`) and report (`1964b55`) verified with 30/30 unit tests passing and 0 analyzer errors.  
-> 3. UI/UX (`bowhead`) and Security (`fusilier`) triggers are unlocked and pinned to verified Builder commit `1964b556a0a56b3b1a3fdb6ab2e16e748655dd06`.  
-> 4. QA (`cerith`) remains strictly gated until UI/UX and Security completion reports are delivered.  
-> 5. Remote migrations, final merging, deployment, and IPA builds remain strictly prohibited pending separate explicit approval.
+> **APPROVAL GATE: AWAITING HUMAN APPROVAL**  
+> Architect remains strictly paused. No background tasks or workers are running. No migrations have been applied to the remote database. Awaiting your review and explicit go signal.

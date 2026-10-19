@@ -6,7 +6,7 @@
 **Active Branch:** `ai/ui`  
 **Baseline Commit:** `f5716726d44a4f8d3c724a80e36147bfb493a3e9`  
 **Reference Plan:** `docs/plans/2026-10-19_organization_admin_controls_plan.md`  
-**Status:** `UNLOCKED — READY FOR ACTIVATION`
+**Status:** `AWAITING ACTIVATION (HUMAN APPROVAL GATE)`
 
 ---
 
@@ -52,9 +52,9 @@ You MUST load and apply the 5 installed skills in `.agents/skills/`:
 ---
 
 ## 4. Integration Requirement: Commit-Based Ingestion
-Do NOT merge an unfinished branch tip. Builder has committed their completed implementation at hash `1964b556a0a56b3b1a3fdb6ab2e16e748655dd06`. Integrate using:
+Do NOT merge an unfinished branch tip. Wait until Builder commits their completed implementation and provides their exact commit hash `<BUILDER_COMMIT_HASH>`. Integrate using:
 ```bash
-git merge --no-edit 1964b556a0a56b3b1a3fdb6ab2e16e748655dd06
+git merge --no-edit <BUILDER_COMMIT_HASH>
 ```
 
 ---

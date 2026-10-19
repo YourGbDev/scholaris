@@ -6,7 +6,7 @@
 **Active Branch:** `ai/qa`  
 **Baseline Commit:** `7423c3eebfd16be6934e9876c0e9aeb9d0f7cf62`  
 **Reference Plan:** `docs/plans/2026-10-19_organization_admin_controls_plan.md`  
-**Status:** `GATED ON BUILDER & UI COMMITS + SECURITY AUDIT`
+**Status:** `AWAITING ACTIVATION (HUMAN APPROVAL GATE)`
 
 ---
 
@@ -33,7 +33,7 @@ Perform independent end-to-end acceptance testing, negative boundary checks, and
 ## 3. Integration Requirement & Mandatory Security Gate
 1. Do NOT merge unfinished branch tips. Wait until Builder and UI commit their completed implementations with specific hashes:
    ```bash
-   git merge --no-edit 1964b556a0a56b3b1a3fdb6ab2e16e748655dd06
+   git merge --no-edit <BUILDER_COMMIT_HASH>
    git merge --no-edit <UI_COMMIT_HASH>
    ```
 2. **Mandatory Security Audit Gate**:
@@ -47,30 +47,28 @@ Perform independent end-to-end acceptance testing, negative boundary checks, and
 
 ## 4. Acceptance & Regression Test Matrix
 
-### A. Main Acceptance Cycle: Student -> Reviewer -> Org-Admin -> Student Notification
-1. **Main Acceptance Flow**:
+### A. Full Cycle & Slot Accounting Tests
+1. **End-to-End Cycle**:
    - Student submits application $\rightarrow$ Evaluator endorses (4 rubric scores, status `under_review`, 0 slots consumed).
    - Org admin approves $\rightarrow$ consumes 1 slot, status `approved`, real-time student notification created (Org admins retain final approval/rejection authority).
-   - Confirm org admin rejection path as well: Org admin rejects $\rightarrow$ status `rejected`, consumes 0 slots, real-time student notification created.
-   - Confirm org admin cannot award directly (attempting to set `awarded` as org_admin fails with permission error).
-
-### B. Slot Accounting & Capacity Limits
-1. **Last Available Slot Test**:
+   - Confirm org admin cannot award directly (attempting to set `awarded` as org_admin fails).
+   - Platform admin awards $\rightarrow$ status `awarded` under migration 0025 (`public.is_admin()`), 0 additional slots consumed.
+2. **Last Available Slot Test**:
    - Given a grant with 1 slot remaining, approving an applicant consumes the last slot (remaining becomes 0).
-2. **Overbooking Rejection & In-App Error Test**:
+3. **Overbooking Rejection & In-App Error Test**:
    - Attempting to approve an additional applicant on a full grant fails with clean in-app error feedback; does not crash app or corrupt database state.
-3. **Duplicate Decision Idempotency**:
+4. **Duplicate Decision Idempotency**:
    - Re-approving an already approved application succeeds without double-incrementing occupied count.
-4. **Inactive/Pending Withdrawal Slot Verification**:
+5. **Inactive/Pending Withdrawal Slot Verification**:
    - Confirm student withdrawing a `draft`, `submitted`, or `under_review` application consumes **0 slots** and releases 0 slots.
    - Confirm student cannot withdraw an `approved` application under authoritative 0024/0025 rules.
-5. **Uncapped Capacity Test**:
+6. **Uncapped Capacity Test**:
    - Approving applications for an uncapped grant (`slots == null`) proceeds without limits and displays "Uncapped" in UI.
-6. **Backend Aggregate Slot Access & Visibility Verification**:
+7. **Backend Aggregate Slot Access & Visibility Verification**:
    - Verify that student and provider UI read capacity from `scholarship_capacities` view and reflect accurate numbers.
    - Verify that inactive/draft scholarships are not visible to students in capacity queries.
 
-### C. School Eligibility & Profile Migration Tests
+### B. School Eligibility & Profile Migration Tests
 1. **Allowed School Application**:
    - Student enrolled in an eligible school applies successfully.
 2. **Disallowed School Application**:
@@ -83,7 +81,7 @@ Perform independent end-to-end acceptance testing, negative boundary checks, and
    - Verify that existing student profiles with legacy text schools are backfilled with valid `school_id`.
    - Verify that students can search, select, or add schools via `ProfileSetupScreen` and `ProfileTabScreen`.
 
-### D. Truthful Verification Wording Audit
+### C. Truthful Verification Wording Audit
 - Verify that student and provider UI **NEVER display misleading claims** of "Verified Student" or "Verified Institution" without registrar integration.
 - Verify standard labels are present:
   - "Student-Declared Enrolled Institution"
@@ -91,11 +89,7 @@ Perform independent end-to-end acceptance testing, negative boundary checks, and
   - "Eligible based on declared profile"
   - "Subject to documentary review: verified via uploaded Certificate of Registration or School ID."
 
-### E. Platform-Admin Awarding & Full Regression Coverage
-1. **Platform-Admin Awarding (Separated Regression Test)**:
-   - Platform admin awards $\rightarrow$ status `awarded` under migration 0025 (`public.is_admin()`), consumes **0 additional slots**.
-   - Verify that non-admins attempting this update are denied.
-2. **Full Regression Suite Execution**:
+### D. Full Regression Suite Execution
 ```bash
 # 1. Existing Transaction Cycle Regression Test
 flutter test test/features/applications/transaction_cycle_test.dart

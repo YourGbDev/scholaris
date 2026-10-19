@@ -106,21 +106,24 @@ declare
   v_norm text;
   v_school_id uuid;
 begin
-  for r in select id, school from public.profiles where school is not null and trim(school) <> '' and school_id is null loop
+  -- Strictly filter to students: do not convert provider organization names (e.g. DOST-SEI) into schools.
+  -- Only match against curated seed institutions (is_curated = true).
+  -- Ambiguous or unmatched text is preserved in profiles.school without inventing a campus association.
+  for r in select id, school from public.profiles
+    where role = 'student' and school is not null and trim(school) <> '' and school_id is null loop
     v_norm := lower(trim(regexp_replace(r.school, '\s+', ' ', 'g')));
 
     select id into v_school_id
     from public.schools
-    where normalized_name = v_norm or v_norm = any(aliases)
+    where is_curated = true
+      and (normalized_name = v_norm or v_norm = any(aliases))
     limit 1;
 
-    if v_school_id is null then
-      insert into public.schools (name, normalized_name, aliases, is_curated)
-      values (trim(r.school), v_norm, '{}', false)
-      returning id into v_school_id;
+    -- If matched to a curated seed institution, link it.
+    -- If unmatched or ambiguous, leave school_id as NULL, preserving original school text.
+    if v_school_id is not null then
+      update public.profiles set school_id = v_school_id where id = r.id;
     end if;
-
-    update public.profiles set school_id = v_school_id where id = r.id;
   end loop;
 end $$;
 

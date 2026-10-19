@@ -44,7 +44,8 @@ Audit the database security layer, Row-Level Security (RLS) policies, and Philip
      - Can update application status to `'under_review'` or `'endorsed'`.
      - **CANNOT** update status to `'approved'` or `'awarded'`.
    - Org Admin role (`'org_admin'`):
-     - Can transition status from `'endorsed'` to `'approved'` or `'awarded'`.
+     - Can transition status from `'under_review'` to `'approved'` or `'rejected'`.
+     - **CANNOT** update status to `'awarded'` (awarding is strictly platform-admin-only under migration 0025 via `public.is_admin()`).
 2. **Student Isolation**:
    - Verify that students can only read and write their own applications (`user_id = auth.uid()`).
    - Confirm students cannot modify reviewer scores or read internal deliberation notes.

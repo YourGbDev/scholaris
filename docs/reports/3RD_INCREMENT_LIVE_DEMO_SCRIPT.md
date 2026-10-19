@@ -143,7 +143,8 @@ Demonstrate that the institutional committee reviewer accesses their console, re
    - In the **"Deliberation Remarks & Committee Notes"** field, input:
      `"Unanimous committee approval. Candidate demonstrates outstanding academic consistency and impactful community involvement in STEM literacy."`
 6. **Execute Award Decision**:
-   - Tap the primary green button: **"Approve Award"**.
+   - **Reviewer Endorsement Path**: When evaluating as a Reviewer/Evaluator, tap **"Endorse to Org Admin for Decision"** and confirm. The application transitions to `under_review` with persisted rubric scores and reviewer ID.
+   - **Org Admin Decision Path**: When evaluating as Org Admin (or single-provider mode), tap **"Approve Award"**.
    - An Apple HIG-styled confirmation dialog appears:
      - Title: *"Confirm Grant Award"*
      - Message: *"Approve Juan Dela Cruz for the DOST-SEI Undergraduate Scholarship with composite score 91.8/100?"*
@@ -242,13 +243,18 @@ Demonstrate that the student receives the real-time notification, views their up
    - The **Application Detail Screen** loads with active award state:
      - Header Badge: **"Approved"** in vibrant emerald green.
      - Review Summary Card: Displays the committee decision date and verified match breakdown.
-4. **Trigger Award Ceremony Celebration**:
+4. **Trigger Award Celebration & View Decision Letter**:
    - Locate the prominent celebration card:
      > **"Congratulations! Your Grant is Approved"**  
      > *"You have officially been selected as a DOST-SEI scholar for Academic Year 2026-2027."*
-   - Tap the primary celebration button:
-     **"🎉 View Award Ceremony & Package"** (or **"Accept & Sign Award Package"**).
-5. **Experience the Ceremony Screen**:
+   - Tap **"🎉 View Award Ceremony & Package"**:
+     - Mounts the official **Scholarship Approval Letter & Award Certificate** (`ApplicationDecisionLetter`):
+       - Official institutional header with reference UUID (`APP-...`).
+       - Addressed to applicant: `Juan Dela Cruz`.
+       - Organization signatory: `DOST-SEI`.
+       - Verified approval date stamp and institutional grant allocation terms.
+       - Clean navigation back stack restoring application detail without state reset.
+5. **Experience the Ceremony Screen Celebration**:
    - The app transitions into the full-screen **CeremonyScreen**:
      - Physics-based confetti cascade animation.
      - Animated graduation cap and celebratory scholarship banner.

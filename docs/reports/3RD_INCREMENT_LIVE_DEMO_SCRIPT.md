@@ -27,11 +27,14 @@ Use the following pre-configured credentials or create new accounts with these a
 | Role | Username / Email | Password | Pre-Conditions & Attributes |
 | :--- | :--- | :--- | :--- |
 | **Student** (Applicant) | `student.demo@scholaris.edu.ph` | `Scholaris2026!` | • University: *University of the Philippines Diliman*<br>• Course: *BS Computer Science*<br>• Year Level: *3rd Year*<br>• GWA: *1.24* (Philippine Scale)<br>• Monthly Household Income: *₱15,000*<br>• Avatar / Identity Photo: *Configured* |
-| **Provider** (DOST Reviewer) | `provider.dost@scholaris.gov.ph` | `Scholaris2026!` | • Organization: *DOST-SEI (Science Education Institute)*<br>• Role: *Scholarship Committee Reviewer*<br>• Owned Scholarship: *DOST-SEI Undergraduate Scholarship* |
+| **Provider** (DOST Reviewer) | `provider.dost@scholaris.gov.ph` | `Scholaris2026!` | • Organization: *DOST-SEI (Science Education Institute)*<br>• Role: *Scholarship Committee Reviewer / Org Admin*<br>• Owned Scholarship: *DOST-SEI Undergraduate Scholarship (RA 7687)* |
 | **Admin** (Telemetry/Oversight) | `admin@scholaris.edu.ph` | `Scholaris2026!` | • Platform Administrator with `is_admin() = true`<br>• Global analytics & audit log visibility |
 
 > [!NOTE]
-> If testing on an ephemeral local instance or reset database, log in as `student.demo@scholaris.edu.ph` and complete the 4-step Profile Setup screen once to ensure `setup_complete: true` and avatar selection are stored.
+> **Pre-Demo Reset & Slate Cleanliness**:
+> 1. To start the demonstration with a clean slate (0 applications, 0 notifications), execute `SELECT public.reset_demo_student();` in the Supabase SQL Editor.
+> 2. Ensure `public.organization_memberships` contains an active `org_admin` record for the provider (`d0570002-0000-0000-0000-000000000002`) so the incoming queue is visible under Migration 0024 RBAC policies.
+> 3. If testing on an ephemeral local instance or reset database, log in as `student.demo@scholaris.edu.ph` and complete the 4-step Profile Setup screen once to ensure `setup_complete: true` and avatar selection are stored.
 
 ---
 
@@ -66,7 +69,7 @@ Demonstrate that a student discovers an eligible scholarship, reviews institutio
 2. **Navigate to Discover**:
    - Tap the **"Discover"** tab in the bottom navigation bar (`/discover`).
 3. **Select Scholarship**:
-   - Locate **"DOST-SEI Undergraduate Scholarship"** (or use the search bar: type `DOST`).
+   - Locate **"DOST-SEI Undergraduate Scholarship (RA 7687)"** (or use the search bar: type `DOST`).
    - Tap the scholarship card. The **Scholarship Detail Screen** (`/scholarship/:id`) opens with hero banner and deadline indicators.
 4. **Evaluate Matching Power & Eligibility**:
    - Scroll down to the **"Your Eligibility Breakdown"** card.
@@ -143,7 +146,8 @@ Demonstrate that the institutional committee reviewer accesses their console, re
    - In the **"Deliberation Remarks & Committee Notes"** field, input:
      `"Unanimous committee approval. Candidate demonstrates outstanding academic consistency and impactful community involvement in STEM literacy."`
 6. **Execute Award Decision**:
-   - Tap the primary green button: **"Approve Award"**.
+   - **Reviewer Endorsement Path**: When evaluating as a Reviewer/Evaluator, tap **"Endorse to Org Admin for Decision"** and confirm. The application transitions to `under_review` with persisted rubric scores and reviewer ID.
+   - **Org Admin Decision Path**: When evaluating as Org Admin (or single-provider mode), tap **"Approve Award"**.
    - An Apple HIG-styled confirmation dialog appears:
      - Title: *"Confirm Grant Award"*
      - Message: *"Approve Juan Dela Cruz for the DOST-SEI Undergraduate Scholarship with composite score 91.8/100?"*
@@ -242,13 +246,18 @@ Demonstrate that the student receives the real-time notification, views their up
    - The **Application Detail Screen** loads with active award state:
      - Header Badge: **"Approved"** in vibrant emerald green.
      - Review Summary Card: Displays the committee decision date and verified match breakdown.
-4. **Trigger Award Ceremony Celebration**:
+4. **Trigger Award Celebration & View Decision Letter**:
    - Locate the prominent celebration card:
      > **"Congratulations! Your Grant is Approved"**  
      > *"You have officially been selected as a DOST-SEI scholar for Academic Year 2026-2027."*
-   - Tap the primary celebration button:
-     **"🎉 View Award Ceremony & Package"** (or **"Accept & Sign Award Package"**).
-5. **Experience the Ceremony Screen**:
+   - Tap **"🎉 View Award Ceremony & Package"**:
+     - Mounts the official **Scholarship Approval Letter & Award Certificate** (`ApplicationDecisionLetter`):
+       - Official institutional header with reference UUID (`APP-...`).
+       - Addressed to applicant: `Juan Dela Cruz`.
+       - Organization signatory: `DOST-SEI`.
+       - Verified approval date stamp and institutional grant allocation terms.
+       - Clean navigation back stack restoring application detail without state reset.
+5. **Experience the Ceremony Screen Celebration**:
    - The app transitions into the full-screen **CeremonyScreen**:
      - Physics-based confetti cascade animation.
      - Animated graduation cap and celebratory scholarship banner.

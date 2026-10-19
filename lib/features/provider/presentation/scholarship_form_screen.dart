@@ -6,12 +6,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../../shared/theme/app_motion.dart';
 import '../../../shared/theme/app_theme.dart';
 import '../../../shared/widgets/primary_button.dart';
 import '../../../shared/widgets/responsive_container.dart';
 import '../../scholarships/models/scholarship.dart';
+import '../../schools/models/school.dart';
+import '../../schools/providers/school_provider.dart';
 import '../providers/provider_scholarships_provider.dart';
 
 class ScholarshipFormScreen extends ConsumerStatefulWidget {
@@ -50,6 +53,10 @@ class _ScholarshipFormScreenState extends ConsumerState<ScholarshipFormScreen> {
   late bool _forPwd;
   late bool _isActive;
 
+  bool _restrictSchools = false;
+  final Set<String> _selectedSchoolIds = <String>{};
+  final TextEditingController _schoolFilterController = TextEditingController();
+
   bool _isSaving = false;
 
   @override
@@ -87,6 +94,30 @@ class _ScholarshipFormScreenState extends ConsumerState<ScholarshipFormScreen> {
     _forIndigenous = init?.forIndigenous ?? false;
     _forPwd = init?.forPwd ?? false;
     _isActive = init?.isActive ?? true;
+
+    if (widget.isEditing) {
+      final editId = widget.scholarshipId ?? widget.initialScholarship?.id;
+      if (editId != null) {
+        Future.microtask(() async {
+          try {
+            final data = await Supabase.instance.client
+                .from('scholarships')
+                .select('eligible_school_ids')
+                .eq('id', editId)
+                .maybeSingle();
+            if (data != null && mounted) {
+              final list = data['eligible_school_ids'] as List<dynamic>?;
+              if (list != null && list.isNotEmpty) {
+                setState(() {
+                  _restrictSchools = true;
+                  _selectedSchoolIds.addAll(list.map((e) => e.toString()));
+                });
+              }
+            }
+          } catch (_) {}
+        });
+      }
+    }
   }
 
   @override
@@ -100,6 +131,7 @@ class _ScholarshipFormScreenState extends ConsumerState<ScholarshipFormScreen> {
     _coursesController.dispose();
     _locationController.dispose();
     _urlController.dispose();
+    _schoolFilterController.dispose();
     super.dispose();
   }
 
@@ -183,6 +215,10 @@ class _ScholarshipFormScreenState extends ConsumerState<ScholarshipFormScreen> {
             ? null
             : _urlController.text.trim(),
         'is_active': _isActive,
+        'eligible_school_ids':
+            _restrictSchools && _selectedSchoolIds.isNotEmpty
+                ? _selectedSchoolIds.toList()
+                : null,
       };
 
       final notifier = ref.read(providerScholarshipsProvider.notifier);
@@ -408,6 +444,57 @@ class _ScholarshipFormScreenState extends ConsumerState<ScholarshipFormScreen> {
               ),
 
               const SizedBox(height: 20),
+              // School / Institution Eligibility Section
+              Text(
+                'School / Institution Eligibility',
+                style: poppins(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w600,
+                  color: kPrimary,
+                ),
+              ),
+              const SizedBox(height: 6),
+              Row(
+                children: [
+                  ChoiceChip(
+                    label: const Text('Open to all schools'),
+                    selected: !_restrictSchools,
+                    selectedColor: kPrimary.withValues(alpha: 0.15),
+                    checkmarkColor: kPrimary,
+                    labelStyle: openSans(
+                      fontSize: 12,
+                      fontWeight:
+                          !_restrictSchools ? FontWeight.w600 : FontWeight.w500,
+                      color: !_restrictSchools ? kPrimary : Colors.black87,
+                    ),
+                    onSelected: (val) {
+                      setState(() => _restrictSchools = false);
+                    },
+                  ),
+                  const SizedBox(width: 8),
+                  ChoiceChip(
+                    label: const Text('Restricted to selected schools'),
+                    selected: _restrictSchools,
+                    selectedColor: kPrimary.withValues(alpha: 0.15),
+                    checkmarkColor: kPrimary,
+                    labelStyle: openSans(
+                      fontSize: 12,
+                      fontWeight:
+                          _restrictSchools ? FontWeight.w600 : FontWeight.w500,
+                      color: _restrictSchools ? kPrimary : Colors.black87,
+                    ),
+                    onSelected: (val) {
+                      setState(() => _restrictSchools = true);
+                    },
+                  ),
+                ],
+              ),
+              if (_restrictSchools) ...[
+                const SizedBox(height: 12),
+                _buildSchoolMultiSelector(context),
+              ],
+
+              const SizedBox(height: 20),
               // Priority & Inclusivity Toggles
               Material(
                 color: Colors.white,
@@ -610,6 +697,375 @@ class _ScholarshipFormScreenState extends ConsumerState<ScholarshipFormScreen> {
             ),
             const SizedBox(width: 8),
             const Icon(Icons.arrow_drop_down, color: Colors.black45),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSchoolMultiSelector(BuildContext context) {
+    final schoolsAsync = ref.watch(schoolsProvider);
+    final query = _schoolFilterController.text.trim().toLowerCase();
+
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.black12),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              const Icon(Icons.school_outlined, size: 18, color: kPrimary),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  'Eligible Universities & Colleges',
+                  style: poppins(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.black87,
+                  ),
+                ),
+              ),
+              TextButton.icon(
+                icon: const Icon(Icons.add, size: 16),
+                label: const Text('Add Unlisted'),
+                style: TextButton.styleFrom(
+                  foregroundColor: kPrimary,
+                  textStyle: openSans(fontSize: 12, fontWeight: FontWeight.w600),
+                  visualDensity: VisualDensity.compact,
+                ),
+                onPressed: () => _showAddSchoolDialog(context),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          Text(
+            'Students enrolled in other institutions will be alerted before applying.',
+            style: openSans(fontSize: 12, color: Colors.black54),
+          ),
+          const SizedBox(height: 12),
+
+          // Selected schools chips
+          if (_selectedSchoolIds.isNotEmpty) ...[
+            schoolsAsync.maybeWhen(
+              data: (allSchools) {
+                final schoolMap = {for (final School s in allSchools) s.id: s.name};
+                return Wrap(
+                  spacing: 6,
+                  runSpacing: 6,
+                  children: _selectedSchoolIds.map((id) {
+                    final name = schoolMap[id] ?? 'Selected Institution';
+                    return Chip(
+                      avatar: const Icon(Icons.school, size: 14, color: kPrimary),
+                      label: Text(
+                        name,
+                        style: openSans(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w500,
+                          color: kPrimary,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      backgroundColor: kPrimary.withValues(alpha: 0.1),
+                      side: BorderSide(color: kPrimary.withValues(alpha: 0.3)),
+                      deleteIcon: const Icon(Icons.close, size: 14, color: kPrimary),
+                      onDeleted: () {
+                        setState(() {
+                          _selectedSchoolIds.remove(id);
+                        });
+                      },
+                    );
+                  }).toList(),
+                );
+              },
+              orElse: () => Wrap(
+                spacing: 6,
+                runSpacing: 6,
+                children: _selectedSchoolIds.map((id) {
+                  return Chip(
+                    label: Text(
+                      'Institution ($id)',
+                      style: openSans(fontSize: 11),
+                    ),
+                    onDeleted: () => setState(() => _selectedSchoolIds.remove(id)),
+                  );
+                }).toList(),
+              ),
+            ),
+            const SizedBox(height: 12),
+          ],
+
+          // Search Field
+          TextField(
+            controller: _schoolFilterController,
+            onChanged: (_) => setState(() {}),
+            style: openSans(fontSize: 13),
+            decoration: InputDecoration(
+              isDense: true,
+              hintText: 'Search Philippine universities & colleges...',
+              hintStyle: openSans(fontSize: 12, color: Colors.black38),
+              prefixIcon: const Icon(Icons.search, size: 18, color: Colors.black45),
+              suffixIcon: _schoolFilterController.text.isNotEmpty
+                  ? IconButton(
+                      icon: const Icon(Icons.clear, size: 16),
+                      onPressed: () {
+                        _schoolFilterController.clear();
+                        setState(() {});
+                      },
+                    )
+                  : null,
+              filled: true,
+              fillColor: const Color(0xFFF9FAFB),
+              contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(8),
+                borderSide: const BorderSide(color: Colors.black12),
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(8),
+                borderSide: const BorderSide(color: Colors.black12),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(8),
+                borderSide: const BorderSide(color: kPrimary),
+              ),
+            ),
+          ),
+          const SizedBox(height: 8),
+
+          // Schools list
+          schoolsAsync.when(
+            loading: () => const Padding(
+              padding: EdgeInsets.symmetric(vertical: 16),
+              child: Center(
+                child: SizedBox(
+                  width: 24,
+                  height: 24,
+                  child: CircularProgressIndicator(strokeWidth: 2),
+                ),
+              ),
+            ),
+            error: (err, _) => Padding(
+              padding: const EdgeInsets.all(8),
+              child: Text(
+                'Failed to load school catalog: $err',
+                style: openSans(fontSize: 12, color: Colors.red),
+              ),
+            ),
+            data: (allSchools) {
+              final filtered = allSchools.where((s) {
+                if (query.isEmpty) return true;
+                if (s.name.toLowerCase().contains(query)) return true;
+                if (s.normalizedName.contains(query)) return true;
+                return s.aliases.any((a) => a.toLowerCase().contains(query));
+              }).toList();
+
+              final hasExactMatch = query.isNotEmpty &&
+                  allSchools.any((s) => s.name.trim().toLowerCase() == query);
+
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  ConstrainedBox(
+                    constraints: const BoxConstraints(maxHeight: 180),
+                    child: filtered.isEmpty
+                        ? Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 16),
+                            child: Center(
+                              child: Text(
+                                'No matching institutions found.',
+                                style: openSans(fontSize: 12, color: Colors.black45),
+                              ),
+                            ),
+                          )
+                        : ListView.separated(
+                            shrinkWrap: true,
+                            itemCount: filtered.length,
+                            separatorBuilder: (_, _) => const Divider(height: 1, indent: 40),
+                            itemBuilder: (context, index) {
+                              final school = filtered[index];
+                              final isSelected = _selectedSchoolIds.contains(school.id);
+
+                              return CheckboxListTile(
+                                dense: true,
+                                controlAffinity: ListTileControlAffinity.trailing,
+                                activeColor: kPrimary,
+                                value: isSelected,
+                                secondary: Icon(
+                                  Icons.account_balance_outlined,
+                                  size: 18,
+                                  color: isSelected ? kPrimary : Colors.black45,
+                                ),
+                                title: Text(
+                                  school.name,
+                                  style: openSans(
+                                    fontSize: 12,
+                                    fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
+                                    color: isSelected ? kPrimary : Colors.black87,
+                                  ),
+                                ),
+                                subtitle: !school.isCurated
+                                    ? Text(
+                                        'Custom institution',
+                                        style: openSans(fontSize: 10, color: Colors.black45),
+                                      )
+                                    : null,
+                                onChanged: (val) {
+                                  setState(() {
+                                    if (val == true) {
+                                      _selectedSchoolIds.add(school.id);
+                                    } else {
+                                      _selectedSchoolIds.remove(school.id);
+                                    }
+                                  });
+                                },
+                              );
+                            },
+                          ),
+                  ),
+                  if (query.isNotEmpty && !hasExactMatch) ...[
+                    const Divider(height: 1),
+                    ListTile(
+                      dense: true,
+                      leading: const Icon(Icons.add_circle_outline, color: kPrimary, size: 20),
+                      title: Text(
+                        'Add "${_schoolFilterController.text.trim()}"',
+                        style: poppins(
+                          color: kPrimary,
+                          fontWeight: FontWeight.w600,
+                          fontSize: 12,
+                        ),
+                      ),
+                      subtitle: Text(
+                        'Register a new higher education institution',
+                        style: openSans(fontSize: 11, color: Colors.black54),
+                      ),
+                      onTap: () => _showAddSchoolDialog(
+                        context,
+                        initialName: _schoolFilterController.text.trim(),
+                      ),
+                    ),
+                  ],
+                ],
+              );
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _showAddSchoolDialog(BuildContext context, {String? initialName}) async {
+    final nameController = TextEditingController(text: initialName ?? '');
+    final formKey = GlobalKey<FormState>();
+    bool isSubmitting = false;
+
+    await showDialog<void>(
+      context: context,
+      builder: (dialogCtx) => StatefulBuilder(
+        builder: (ctx, setDialogState) => AlertDialog(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          title: Text(
+            'Add Higher Education Institution',
+            style: poppins(fontSize: 16, fontWeight: FontWeight.w700, color: kPrimary),
+          ),
+          content: Form(
+            key: formKey,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Enter the official name of the university or college in the Philippines.',
+                  style: openSans(fontSize: 12, color: Colors.black54),
+                ),
+                const SizedBox(height: 16),
+                TextFormField(
+                  controller: nameController,
+                  autofocus: true,
+                  style: openSans(fontSize: 13),
+                  decoration: InputDecoration(
+                    labelText: 'Institution Name *',
+                    labelStyle: openSans(fontSize: 12),
+                    hintText: 'e.g. Pamantasan ng Lungsod ng Maynila',
+                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+                  ),
+                  validator: (v) {
+                    if (v == null || v.trim().isEmpty) {
+                      return 'Institution name is required';
+                    }
+                    if (v.trim().length < 3) {
+                      return 'Name is too short (min 3 characters)';
+                    }
+                    return null;
+                  },
+                ),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: isSubmitting ? null : () => Navigator.of(dialogCtx).pop(),
+              child: Text('Cancel', style: openSans(fontSize: 13, color: Colors.black54)),
+            ),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: kPrimary,
+                foregroundColor: Colors.white,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+              ),
+              onPressed: isSubmitting
+                  ? null
+                  : () async {
+                      if (!formKey.currentState!.validate()) return;
+                      setDialogState(() => isSubmitting = true);
+                      try {
+                        final newId = await ref
+                            .read(schoolRepositoryProvider)
+                            .addSchool(nameController.text.trim());
+                        ref.invalidate(schoolsProvider);
+                        if (mounted) {
+                          setState(() {
+                            _selectedSchoolIds.add(newId);
+                            _schoolFilterController.clear();
+                          });
+                        }
+                        if (dialogCtx.mounted) {
+                          Navigator.of(dialogCtx).pop();
+                        }
+                        if (context.mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text('Added "${nameController.text.trim()}" to institution catalog.'),
+                            ),
+                          );
+                        }
+                      } catch (err) {
+                        setDialogState(() => isSubmitting = false);
+                        if (dialogCtx.mounted) {
+                          ScaffoldMessenger.of(dialogCtx).showSnackBar(
+                            SnackBar(
+                              backgroundColor: Colors.red.shade700,
+                              content: Text('Failed to add institution: $err'),
+                            ),
+                          );
+                        }
+                      }
+                    },
+              child: isSubmitting
+                  ? const SizedBox(
+                      width: 16,
+                      height: 16,
+                      child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                    )
+                  : Text('Add Institution', style: openSans(fontSize: 13, fontWeight: FontWeight.w600)),
+            ),
           ],
         ),
       ),

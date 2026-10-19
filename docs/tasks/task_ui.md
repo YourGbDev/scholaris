@@ -1,64 +1,77 @@
 # Task Card: UI/UX (`bowhead` / `ai/ui`)
 
-**Sprint:** 3rd Increment Checking (End-to-End Transaction Cycle)  
-**Role:** 🎨 Frontend Components, Polish & Apple HIG Specialist  
-**Reference Plan:** `docs/plans/2026-10-15_3rd_increment_transaction_cycle_plan.md`  
-**Status:** `READY FOR IMPLEMENTATION`
+**Sprint:** 3rd Increment Pre-Presentation Audit  
+**Role:** 🎨 Flutter UI, Apple HIG & Motion Craft Specialist  
+**Reference Plan:** `docs/plans/2026-10-19_increment3_pre_presentation_audit_plan.md`  
+**Status:** `READY FOR AUDIT`
 
 ---
 
 ## 1. Objective
-1. Bridge the Student Award Celebration flow: enable students to trigger and view the Ceremony celebration directly upon approval.
-2. Enforce the **STRICT UI RULE**: Zero browser alerts (`window.alert`), zero raw error messages, and cohesive, branded in-app feedback (SnackBars, dialogs, toasts) throughout the entire transaction cycle.
+Audit the presentation layer across Student, Reviewer, and Org Admin portals. Rigorously enforce the instructor's ban on browser alerts ("localhost says"), verify responsive layouts across 360px, 440px, and 1280px viewports, and audit the visual hierarchy, optical typography, and animation discipline of the new official **Scholarship Approval Letter & Award Certificate** view.
 
 ---
 
-## 2. Deliverables & Specifications
-
-### A. Award Celebration & Ceremony Screen Enhancements
-1. **Update `CeremonyScreen` (`lib/features/auth/presentation/ceremony_screen.dart`)**:
-   - Add optional constructor parameters:
-     - `final VoidCallback? onCompleted;`
-     - `final String? title;` (e.g. `'Grant Award Confirmed!'`)
-     - `final String? subtitle;` (e.g. `'You have officially been awarded this scholarship!'`)
-   - If `onCompleted` is provided, invoke it on completion instead of hardcoding `context.go('/login')`.
-   - Provide a calm close/dismiss button in the top-right corner so authenticated students can easily exit back to their application details.
-2. **Update `ApplicationDetailScreen` (`lib/features/applications/presentation/application_detail_screen.dart`)**:
-   - When `application.status == ApplicationStatus.approved || application.status == ApplicationStatus.awarded`:
-     - Display a prominent, celebratory action card:
-       - Header: `"Congratulations! Your Grant is Approved"`
-       - Action Button: `"🎉 View Award Ceremony & Package"`
-       - On Tap: Open `CeremonyScreen` in a full-screen modal or page route with custom celebratory text and return callback.
-3. **Update `ApplicationsScreen` (`lib/features/applications/presentation/applications_screen.dart`)**:
-   - In `_buildApprovedSection`, ensure the action button `"Accept & Sign Award Package"` clearly leads to the detail screen and prompts the celebration flow.
-
-### B. STRICT UI Enforcement (Zero Browser Alerts)
-Audit every user touchpoint along the transaction path:
-1. **Student Apply Action (`scholarship_detail_screen.dart`)**:
-   - Verify that submission errors or duplicate notifications use styled `ScaffoldMessenger.of(context).showSnackBar` with clear human-readable copy.
-   - Show loading state on button (`_isApplying`) to prevent double-clicks.
-2. **Provider Decision Action (`applicant_review_drawer.dart`)**:
-   - Audit `_handleDecision`:
-     - Replace any generic error SnackBar with styled feedback banner indicating specific success/error.
-     - Confirmation dialog must use Apple HIG typography, rounded corners (16dp), clear primary vs destructive colors (`kOrgPrimary` vs `kOrgError`).
-3. **Student Notification Center (`student_notifications_sheet.dart`)**:
-   - Ensure the notification item for `approved`/`awarded` has an active visual badge, celebratory icon, and immediate tap-through to the application detail screen.
+## 2. Mandatory Design Skills to Apply
+You MUST explicitly load, reference, and cite the workspace design skills in `.agents/skills/`:
+- `apple-design` (`.agents/skills/apple-design/SKILL.md`): Review against Apple HIG principles (Clarity, Deference, Depth) and component standards.
+- `emil-design-eng` (`.agents/skills/emil-design-eng/SKILL.md`): Review animation purpose, button tactile scale (`scale(0.97)`), and GPU-only transforms.
+- `emil-apple-design` (`.agents/skills/emil-apple-design/SKILL.md`): Spring physics defaults (`damping: 1.0`, response `0.3-0.4`), optical type tracking, tactile feedback.
+- `review-animations` (`.agents/skills/review-animations/SKILL.md`): The Ten Non-Negotiable Standards, zero unhandled overflow during transitions.
 
 ---
 
-## 3. Allowed Files to Modify
-- `lib/features/auth/presentation/ceremony_screen.dart`
+## 3. Permitted Files
+- `lib/features/applications/presentation/application_decision_letter.dart`
 - `lib/features/applications/presentation/application_detail_screen.dart`
-- `lib/features/applications/presentation/applications_screen.dart`
-- `lib/features/dashboard/presentation/widgets/student_notifications_sheet.dart`
-- `lib/features/scholarships/presentation/scholarship_detail_screen.dart`
+- `lib/features/applications/presentation/widgets/student_notifications_sheet.dart`
+- `lib/features/applications/presentation/widgets/applicant_review_drawer.dart`
+- `lib/features/applications/presentation/widgets/submit_application_review_dialog.dart`
+- `lib/features/provider/presentation/org/org_provider_shell.dart`
+- `lib/features/provider/presentation/org/org_disbursements_tab.dart`
+- `lib/shared/theme/app_motion.dart`
+- `test/award_celebration_ui_test.dart`
+- `test/application_decision_letter_test.dart`
+- `test/features/student/bottom_nav_tab_switch_test.dart`
+- `docs/reports/2026-10-19_increment3_ui_report.md` (report deliverable)
 
 ---
 
-## 4. Verification & Testing
-Run:
-```bash
-flutter analyze lib/features/auth lib/features/applications lib/features/dashboard
-flutter test test/shared/theme/apple_motion_test.dart
-```
-Ensure responsive layouts across mobile (360px) and desktop (1280px) viewports with zero `RenderFlex` overflows.
+## 4. Specific Audit Checklist
+
+### A. Strict Zero-Browser-Alert Verification
+1. Search the presentation codebase to confirm **zero** usage of `window.alert()`, `dart:html` `window.alert`, or JavaScript alert popups.
+2. Confirm that all notifications, errors, and success confirmations are delivered through:
+   - In-app sliding `StudentNotificationsSheet`.
+   - Themed Flutter floating `SnackBar`.
+   - Native Flutter `AlertDialog` / `showDialog` modal widgets with institutional Scholaris styling.
+
+### B. Approval Letter & Certificate Visual Craft
+1. Audit `ApplicationDecisionLetter` ([`application_decision_letter.dart`](file:///C:/scholaris/lib/features/applications/presentation/application_decision_letter.dart)):
+   - Verify layout and typography for both `ApplicationStatus.approved` (Letter of Approval) and `ApplicationStatus.awarded` (Official Award Certificate).
+   - Ensure dynamic resolution of student full name (`profile.fullName`), scholarship title, provider name, and formatted award date.
+   - Guard all text rows with `Flexible` or `Expanded` and `TextOverflow.ellipsis`.
+
+### C. Responsive Viewport Checks & Tests
+1. Run UI test suites across mobile (360px), large mobile (440px), and desktop (1280px):
+   ```bash
+   flutter test test/application_decision_letter_test.dart
+   flutter test test/award_celebration_ui_test.dart
+   flutter test test/features/student/bottom_nav_tab_switch_test.dart
+   ```
+2. Verify zero `RenderFlex overflowed` warnings.
+
+---
+
+## 5. Deliverable Report
+Commit completion report to:
+`docs/reports/2026-10-19_increment3_ui_report.md`
+
+Must include:
+- `### Skills Applied` (cite specific HIG sections and design engineering principles).
+- `### Zero-Browser-Alert Audit Verdict`
+- `### Responsive Viewport Verification Table`
+- `### Implemented / Audited`
+- `### Verified`
+- `### Not verified`
+- `### Remaining risks`

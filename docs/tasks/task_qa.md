@@ -1,87 +1,79 @@
 # Task Card: QA (`cerith` / `ai/qa`)
 
-**Sprint:** 3rd Increment Checking (End-to-End Transaction Cycle)  
-**Role:** 🔍 Testing, Edge Cases & Compliance Specialist  
-**Reference Plan:** `docs/plans/2026-10-15_3rd_increment_transaction_cycle_plan.md`  
-**Status:** `READY FOR IMPLEMENTATION`
+**Sprint:** 3rd Increment Pre-Presentation Audit  
+**Role:** 🔍 Independent Quality Assurance & Bug Hunting Specialist  
+**Reference Plan:** `docs/plans/2026-10-19_increment3_pre_presentation_audit_plan.md`  
+**Status:** `READY FOR AUDIT`
 
 ---
 
 ## 1. Objective
-1. Produce the official **3rd Increment Live Demo Script & Verification Guide** (`docs/reports/3RD_INCREMENT_LIVE_DEMO_SCRIPT.md`) with concrete step-by-step instructions, demo credentials, click targets, and Supabase query validations.
-2. Independently verify the end-to-end Student -> Provider -> Student transaction path, confirming zero unhandled exceptions, zero browser alerts, and verified database persistence.
+Perform an independent, adversarial quality audit of the complete transaction cycle to ensure bulletproof stability during the instructor's live demonstration. Verify that all automated tests pass, edge cases (unauthorized submission, withdrawal constraints, premature approval) fail safely, and the classroom demonstration script is clear and verified.
 
 ---
 
-## 2. Deliverables & Specifications
-
-### A. Live Demo Script (`docs/reports/3RD_INCREMENT_LIVE_DEMO_SCRIPT.md`)
-Draft a bulletproof demo script structured into three chronological acts:
-
-#### Act 1: Student Application Submission
-- **Initial Setup**: Demo student account credentials (or sign-up email/password). Ensure student profile has GWA, Course, and photo/avatar configured so `IdentityPhotoRequiredDialog` does not block.
-- **Action**:
-  1. Navigate to Discover (`/discover`).
-  2. Select targeted scholarship (e.g., LGU / Provincial Partner Grant).
-  3. Inspect eligibility breakdown and match score.
-  4. Tap "Start Application".
-  5. Complete 3-step Review dialog (certifications checked, digital signature).
-  6. Tap "Submit Application".
-- **Verification**:
-  - Show in-app success SnackBar.
-  - Verify row in Supabase: `SELECT id, status, applied_at FROM public.applications WHERE status = 'submitted'`.
-
-#### Act 2: Provider Deliberation & Rubric Scoring
-- **Initial Setup**: Provider account login (`/provider-login` or `/provider-home`).
-- **Action**:
-  1. Open Provider Console -> Incoming Applications tab.
-  2. Locate the student's submitted application.
-  3. Tap "Review Application" -> Opens Reviewer Drawer.
-  4. Demonstrate 4 Rubric Sliders:
-     - Academic Excellence (40%)
-     - Financial Need (30%)
-     - Leadership & Community (20%)
-     - Innovation Essay (10%)
-     - Composite Score calculation.
-  5. Type Deliberation Remarks.
-  6. Tap "Approve Award" and confirm dialog.
-- **Verification**:
-  - Show in-app success confirmation banner.
-  - Verify rows in Supabase:
-    - `public.applications`: `status = 'approved'`.
-    - `public.application_evaluations`: composite & criteria scores saved.
-    - `public.application_status_history`: transition from `submitted` to `approved` logged.
-    - `public.notifications`: row created for student `user_id`.
-
-#### Act 3: Student Confirmation & Award Ceremony
-- **Action**:
-  1. Switch to Student session.
-  2. Open Notification Center -> Observe active notification: `"Application Approved!"`.
-  3. Tap notification -> Opens Application Detail Screen.
-  4. Observe Status badge changed to `"Approved"`.
-  5. Tap `"🎉 View Award Ceremony & Package"`.
-  6. Experience full graduation ceremony celebration with award confirmation.
-- **Verification**:
-  - Confirm zero browser `window.alert` dialogs encountered.
-  - Confirm full transaction state reflected in live UI.
-
-### B. Automated Verification Suite
-- Write or update `test/features/applications/transaction_cycle_test.dart` (or `test/transaction_cycle_smoke_test.dart`):
-  - Exercise application submission, rubric score saving, status history transition, and notification generation.
-  - Verify terminal output with exit code 0.
+## 2. Permitted Files
+- `test/application_workflow_transport_test.dart`
+- `test/reviewer_drawer_lifecycle_test.dart`
+- `test/application_decision_letter_test.dart`
+- `test/award_celebration_ui_test.dart`
+- `test/features/provider/provider_sub_role_test.dart`
+- `test/features/student/bottom_nav_tab_switch_test.dart`
+- `scratch/verify_post_cleanup_state.mjs`
+- `docs/reports/3RD_INCREMENT_LIVE_DEMO_SCRIPT.md`
+- `docs/reports/2026-10-19_increment3_qa_report.md` (report deliverable)
 
 ---
 
-## 3. Allowed Files to Modify / Create
-- `docs/reports/3RD_INCREMENT_LIVE_DEMO_SCRIPT.md` (new)
-- `test/features/applications/transaction_cycle_test.dart` (or similar smoke test)
+## 3. Specific Audit Checklist
 
----
+### A. Core Transaction Cycle Validation
+1. **The 4-Stage Transaction Loop**:
+   - Trace the exact sequence:
+     1. Student completes and submits application (`submitted`).
+     2. Reviewer scores rubric and endorses (`endorsed`).
+     3. Org Admin reviews evaluator rubric and approves (`approved`) or rejects (`rejected`). (Awarding to `awarded` is strictly platform-admin-only under migration 0025 via `public.is_admin()`).
+     4. Student receives in-app notification and views official decision letter / certificate.
+2. **Negative Edge Cases**:
+   - Verify withdrawal guard: Can an application in `endorsed`, `approved`, or `awarded` status be withdrawn? (Must throw `ApplicationWithdrawalException` and display user-friendly snackbar).
+   - Verify unauthenticated guard: What happens when an unauthenticated user attempts to submit an application? (Must be blocked cleanly).
+   - Verify empty state handling: Check that zero applications in incoming queues render clean, explanatory empty state cards without crashing.
 
-## 4. Verification & Testing
-Execute:
+### B. Automated Test Suite Execution
+Execute the full suite of transaction, workflow, and lifecycle tests:
 ```bash
-flutter test test/features/applications/
-flutter analyze
+flutter test test/application_workflow_transport_test.dart
+flutter test test/reviewer_drawer_lifecycle_test.dart
+flutter test test/application_decision_letter_test.dart
+flutter test test/award_celebration_ui_test.dart
+flutter test test/features/provider/provider_sub_role_test.dart
+flutter test test/features/student/bottom_nav_tab_switch_test.dart
 ```
-Confirm all tests pass and static analysis passes with zero warnings.
+
+### C. Live Demo Readiness & Script Audit
+1. Run read-only database state check:
+   ```bash
+   node scratch/verify_post_cleanup_state.mjs
+   ```
+2. Verify that:
+   - Student tracker has **0 applications**.
+   - Student notifications has **0 items**.
+   - Reviewer queue has **0 applications**.
+   - Org admin queue has **0 applications**.
+   - The 3 DOST demo scholarships are active with deadlines in December 2026.
+3. Review and audit `docs/reports/3RD_INCREMENT_LIVE_DEMO_SCRIPT.md` to guarantee every presentation step and credential matches current live system configuration.
+
+---
+
+## 4. Deliverable Report
+Commit completion report to:
+`docs/reports/2026-10-19_increment3_qa_report.md`
+
+Must include:
+- `### Test Execution Summary` (with exact test names, pass/fail counts, execution times)
+- `### Negative & Edge Case Analysis`
+- `### Live Demo Environment Status`
+- `### Implemented / Audited`
+- `### Verified`
+- `### Not verified`
+- `### Remaining risks`

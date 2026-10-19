@@ -20,12 +20,14 @@ import '../../providers/provider_sub_role_provider.dart';
 import '../scholarship_form_screen.dart';
 import '../widgets/applicant_review_drawer.dart';
 import '../widgets/provider_verification_banner.dart';
+import 'org_activity_log_view.dart';
 import 'org_analytics_tab.dart';
 import 'org_disbursements_tab.dart';
 import 'org_incoming_applications_tab.dart';
 import 'org_provider_theme.dart';
 import 'org_scholarships_tab.dart';
 import 'org_settings_tab.dart';
+import 'org_team_view.dart';
 import '../../../../core/auth/landing_redirect.dart';
 import '../../../../shared/theme/app_motion.dart';
 
@@ -138,9 +140,10 @@ class _OrgProviderShellState extends ConsumerState<OrgProviderShell> {
     // RBAC tab enforcement:
     // Finance Officer only has access to Disbursements (4), Analytics (3), Settings (5).
     // Evaluator only has access to Applications (0), Decisioning (1), Scholarships (2), Settings (5).
-    if (identity.isFinance && (_selectedTab < 3)) {
+    // Org Admin controls (Team at 6, Activity Log at 7) are strictly reserved for Org Admin.
+    if (identity.isFinance && (_selectedTab < 3 || _selectedTab >= 6)) {
       _selectedTab = 4;
-    } else if (identity.isEvaluator && (_selectedTab == 2 || _selectedTab == 3 || _selectedTab == 4)) {
+    } else if (identity.isEvaluator && (_selectedTab == 2 || _selectedTab == 3 || _selectedTab == 4 || _selectedTab >= 6)) {
       _selectedTab = 0;
     }
 
@@ -159,6 +162,8 @@ class _OrgProviderShellState extends ConsumerState<OrgProviderShell> {
       const OrgAnalyticsTab(key: ValueKey('org_analytics_tab')),
       const OrgDisbursementsTab(key: ValueKey('org_disbursements_tab')),
       const OrgSettingsTab(key: ValueKey('org_settings_tab')),
+      const OrgTeamView(key: ValueKey('org_team_view')),
+      const OrgActivityLogView(key: ValueKey('org_activity_log_view')),
     ];
 
     final shellScaffold = isDesktop
@@ -575,6 +580,24 @@ class _OrgProviderShellState extends ConsumerState<OrgProviderShell> {
                       isDrawer: isDrawer,
                     ),
                   ],
+                  if (identity.isOrgAdmin) ...[
+                    const SizedBox(height: 12),
+                    _sectionHeader('Organization Controls'),
+                    _buildNavItem(
+                      index: 6,
+                      icon: Icons.groups_outlined,
+                      activeIcon: Icons.groups_rounded,
+                      label: 'Team & Reviewers',
+                      isDrawer: isDrawer,
+                    ),
+                    _buildNavItem(
+                      index: 7,
+                      icon: Icons.history_edu_outlined,
+                      activeIcon: Icons.history_edu_rounded,
+                      label: 'Activity Log',
+                      isDrawer: isDrawer,
+                    ),
+                  ],
                   const SizedBox(height: 12),
                   _sectionHeader('Account'),
                   _buildNavItem(
@@ -936,6 +959,18 @@ class _OrgCommandPaletteDialogState
         subtitle: 'Organization details & credentials',
         icon: Icons.manage_accounts_outlined,
         action: () => widget.onSelectTab(5)
+      ),
+      (
+        title: 'Team & Reviewers',
+        subtitle: 'Staff roster, evaluators & assignment quotas',
+        icon: Icons.groups_outlined,
+        action: () => widget.onSelectTab(6)
+      ),
+      (
+        title: 'Organization Activity Log',
+        subtitle: 'Immutable audit trail & deliberation ledger',
+        icon: Icons.history_edu_outlined,
+        action: () => widget.onSelectTab(7)
       ),
     ];
 

@@ -12,8 +12,10 @@ import 'package:scholaris/features/profile/providers/profile_setup_provider.dart
 import '../../../applications/models/application.dart';
 import '../../../applications/providers/applications_provider.dart';
 import '../../../profile/models/applicant_profile.dart';
+import '../../../auth/controllers/auth_controller.dart';
 import '../../../scholarships/models/scholarship.dart';
 import '../../../scholarships/providers/scholarships_provider.dart';
+import '../../providers/organization_team_provider.dart';
 import '../../providers/provider_scholarships_provider.dart';
 import '../widgets/applicant_review_drawer.dart';
 import 'org_provider_theme.dart';
@@ -40,6 +42,7 @@ class _OrgIncomingApplicationsTabState
   String? _selectedScholarshipId;
   String? _selectedHei;
   String _selectedGwaRange = 'All'; // 'All', '1.00 - 1.50', '1.51 - 2.00', '2.01 - 3.00'
+  bool _assignedToMe = false;
 
   @override
   void initState() {
@@ -188,7 +191,21 @@ class _OrgIncomingApplicationsTabState
               break;
           }
 
-          // Parameter Filtering (Search, Scholarship, HEI, GWA)
+          final currentUserId = ref.watch(currentUserIdProvider);
+          final assignedScholarshipIds = <String>{};
+          if (_assignedToMe && currentUserId != null) {
+            for (final s in scholarships) {
+              final assignments = ref
+                      .watch(scholarshipReviewerAssignmentsProvider(s.id))
+                      .valueOrNull ??
+                  [];
+              if (assignments.any((a) => a.reviewerId == currentUserId)) {
+                assignedScholarshipIds.add(s.id);
+              }
+            }
+          }
+
+          // Parameter Filtering (Search, Scholarship, HEI, GWA, Assigned to Me)
           final displayApps = segmentApps.where((app) {
             final prof = profiles[app.userId];
             final sch = scholarshipsMap[app.scholarshipId];
@@ -226,6 +243,13 @@ class _OrgIncomingApplicationsTabState
                 return false;
               }
               if (_selectedGwaRange == '2.01 - 3.00' && (gwa <= 2.00 || gwa > 3.00)) {
+                return false;
+              }
+            }
+
+            // 5. Assigned to Me Filter
+            if (_assignedToMe && currentUserId != null) {
+              if (!assignedScholarshipIds.contains(app.scholarshipId)) {
                 return false;
               }
             }
@@ -1048,6 +1072,33 @@ class _OrgIncomingApplicationsTabState
                   onSelected: (val) => setState(() => _selectedGwaRange = val),
                 ),
                 const SizedBox(width: 8),
+                // Assigned to Me Filter Chip
+                FilterChip(
+                  avatar: Icon(
+                    Icons.assignment_ind_rounded,
+                    size: 14,
+                    color: _assignedToMe ? Colors.white : kOrgPrimary,
+                  ),
+                  label: Text(
+                    'Assigned to Me',
+                    style: orgLabel(
+                      fontSize: 11.5,
+                      fontWeight: _assignedToMe ? FontWeight.w600 : FontWeight.w500,
+                      color: _assignedToMe ? Colors.white : kOrgTextPrimary,
+                    ),
+                  ),
+                  selected: _assignedToMe,
+                  selectedColor: kOrgPrimary,
+                  backgroundColor: const Color(0xFFF4F3F8),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                    side: BorderSide(
+                      color: _assignedToMe ? kOrgPrimary : const Color(0xFFE5E7EB),
+                    ),
+                  ),
+                  onSelected: (val) => setState(() => _assignedToMe = val),
+                ),
+                const SizedBox(width: 8),
                 // Reset Button
                 IconButton(
                   tooltip: 'Reset Filters',
@@ -1059,6 +1110,7 @@ class _OrgIncomingApplicationsTabState
                       _selectedScholarshipId = null;
                       _selectedHei = null;
                       _selectedGwaRange = 'All';
+                      _assignedToMe = false;
                     });
                   },
                 ),
@@ -1145,6 +1197,47 @@ class _OrgIncomingApplicationsTabState
                         ],
                         onSelected: (val) =>
                             setState(() => _selectedGwaRange = val),
+                      ),
+                      const SizedBox(width: 8),
+                      FilterChip(
+                        avatar: Icon(
+                          Icons.assignment_ind_rounded,
+                          size: 14,
+                          color: _assignedToMe ? Colors.white : kOrgPrimary,
+                        ),
+                        label: Text(
+                          'Assigned to Me',
+                          style: orgLabel(
+                            fontSize: 11.5,
+                            fontWeight: _assignedToMe ? FontWeight.w600 : FontWeight.w500,
+                            color: _assignedToMe ? Colors.white : kOrgTextPrimary,
+                          ),
+                        ),
+                        selected: _assignedToMe,
+                        selectedColor: kOrgPrimary,
+                        backgroundColor: const Color(0xFFF4F3F8),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                          side: BorderSide(
+                            color: _assignedToMe ? kOrgPrimary : const Color(0xFFE5E7EB),
+                          ),
+                        ),
+                        onSelected: (val) => setState(() => _assignedToMe = val),
+                      ),
+                      const SizedBox(width: 4),
+                      IconButton(
+                        tooltip: 'Reset Filters',
+                        icon: const Icon(Icons.restart_alt_rounded,
+                            size: 18, color: kOrgTextSecondary),
+                        onPressed: () {
+                          setState(() {
+                            _searchQuery = '';
+                            _selectedScholarshipId = null;
+                            _selectedHei = null;
+                            _selectedGwaRange = 'All';
+                            _assignedToMe = false;
+                          });
+                        },
                       ),
                     ],
                   ),

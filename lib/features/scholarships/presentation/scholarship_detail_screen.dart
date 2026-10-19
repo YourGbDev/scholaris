@@ -30,15 +30,55 @@ import 'package:scholaris/features/profile/providers/avatar_provider.dart';
 import 'package:scholaris/features/profile/providers/profile_setup_provider.dart';
 import 'package:scholaris/features/provider/presentation/widgets/scholarship_qr_dialog.dart';
 import 'package:scholaris/features/scholarships/models/scholarship.dart';
+import 'package:scholaris/features/scholarships/models/scholarship_capacity.dart';
 import 'package:scholaris/features/scholarships/presentation/widgets/identity_photo_dialog.dart';
+import 'package:scholaris/features/scholarships/providers/scholarship_capacity_provider.dart';
 import 'package:scholaris/features/scholarships/providers/scholarships_provider.dart';
 import 'package:scholaris/features/scholarships/services/application_readiness.dart';
 import 'package:scholaris/features/scholarships/services/match_reasons.dart';
+import 'package:scholaris/features/schools/models/school.dart';
+import 'package:scholaris/features/schools/providers/school_provider.dart';
 import 'package:scholaris/shared/theme/app_motion.dart';
 import 'package:scholaris/shared/theme/app_theme.dart';
 import 'package:scholaris/shared/utils/constants.dart';
 import 'package:scholaris/shared/widgets/responsive_container.dart';
 import 'package:scholaris/shared/widgets/state_views.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+
+final scholarshipEligibleSchoolsProvider =
+    FutureProvider.family<List<String>?, String>((ref, scholarshipId) async {
+  try {
+    final res = await Supabase.instance.client
+        .from('scholarships')
+        .select('eligible_school_ids')
+        .eq('id', scholarshipId)
+        .maybeSingle();
+    if (res == null) return null;
+    final list = res['eligible_school_ids'] as List<dynamic>?;
+    return list?.map((e) => e.toString()).toList();
+  } catch (_) {
+    return null;
+  }
+});
+
+final studentProfileSchoolIdProvider =
+    FutureProvider.family<String?, String>((ref, userId) async {
+  try {
+    final res = await Supabase.instance.client
+        .from('profiles')
+        .select('school_id')
+        .eq('id', userId)
+        .maybeSingle();
+    return res?['school_id'] as String?;
+  } catch (_) {
+    return null;
+  }
+});
+
+extension ScholarshipCapacityFullExt on ScholarshipCapacity {
+  bool get isFull =>
+      !isUncapped && totalSlots != null && (remainingSlots ?? 0) <= 0;
+}
 
 class ScholarshipDetailScreen extends ConsumerStatefulWidget {
   const ScholarshipDetailScreen({
@@ -280,9 +320,23 @@ class _DetailContent extends ConsumerWidget {
         ),
         const SizedBox(height: 12),
 
-        // 2. Application Readiness & CTA / Banner
+        // Capacity Status Card
         StaggeredListItem(
           index: 1,
+          child: _CapacityStatusCard(scholarship: scholarship),
+        ),
+        const SizedBox(height: 12),
+
+        // School Eligibility Guidance Card (disclosing self-declared status)
+        StaggeredListItem(
+          index: 2,
+          child: _SchoolEligibilityGuidanceCard(scholarship: scholarship),
+        ),
+        const SizedBox(height: 14),
+
+        // 2. Application Readiness & CTA / Banner
+        StaggeredListItem(
+          index: 3,
           child: _ApplySection(
             scholarship: scholarship,
             onScrollToChecklist: onScrollToChecklist,
@@ -293,7 +347,7 @@ class _DetailContent extends ConsumerWidget {
         // 3. Algorithmic Fit & Criteria Checklist
         if (reasons.isNotEmpty) ...[
           StaggeredListItem(
-            index: 2,
+            index: 4,
             child: Container(
               key: checklistKey,
               child: _AlgorithmicFitCard(
@@ -307,28 +361,28 @@ class _DetailContent extends ConsumerWidget {
 
         // 4. Award Overview & Impact
         StaggeredListItem(
-          index: 3,
+          index: 5,
           child: _AwardOverviewCard(scholarship: scholarship),
         ),
         const SizedBox(height: 20),
 
         // 5. Eligibility Section
         StaggeredListItem(
-          index: 4,
+          index: 6,
           child: _EligibilityCard(scholarship: scholarship),
         ),
         const SizedBox(height: 20),
 
         // 6. Application Materials & Requirements
         StaggeredListItem(
-          index: 5,
+          index: 7,
           child: _ApplicationMaterialsCard(scholarshipId: scholarship.id),
         ),
         const SizedBox(height: 20),
 
         // 7. Verified Institutional Provider Trust Card
         StaggeredListItem(
-          index: 6,
+          index: 8,
           child: _ProviderTrustCard(scholarship: scholarship),
         ),
       ],
@@ -394,7 +448,7 @@ class _BreadcrumbRow extends StatelessWidget {
 
 /// 1. Hero Card: Provider header, verified tick, program code tag, title,
 /// grant value in ₱ with allowance details, urgency deadline banner, and Stitch category pills.
-class _HeroCard extends StatelessWidget {
+class _HeroCard extends ConsumerWidget {
   const _HeroCard({
     required this.scholarship,
     required this.closing,
@@ -408,7 +462,7 @@ class _HeroCard extends StatelessWidget {
   final int daysLeft;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final providerName = scholarship.provider ?? 'Scholarship Provider';
     final codeTag = _programCodeTag(scholarship);
 
@@ -538,7 +592,7 @@ class _HeroCard extends StatelessWidget {
           const SizedBox(height: 8),
 
           // Deadline Urgency Banner
-          _buildDeadlineBanner(),
+          _buildDeadlineBanner(ref),
           const SizedBox(height: 8),
 
           // Category Pills
@@ -566,7 +620,7 @@ class _HeroCard extends StatelessWidget {
     );
   }
 
-  Widget _buildDeadlineBanner() {
+  Widget _buildDeadlineBanner(WidgetRef ref) {
     if (expired) {
       return Container(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
@@ -584,6 +638,37 @@ class _HeroCard extends StatelessWidget {
                 fontSize: 12,
                 fontWeight: FontWeight.w600,
                 color: const Color(0xFF93000A),
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+
+    final capacityAsync = ref.watch(scholarshipCapacityProvider(scholarship.id));
+    final capacity = capacityAsync.valueOrNull;
+
+    if (capacity != null && capacity.isFull) {
+      return Container(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        decoration: BoxDecoration(
+          color: const Color(0xFFFFDAD6),
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: Row(
+          children: [
+            const Icon(Icons.group_off_rounded, size: 16, color: Color(0xFF93000A)),
+            const SizedBox(width: 8),
+            Expanded(
+              child: Text(
+                'Capacity Reached • All ${capacity.totalSlots} slots occupied',
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: outfit(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w600,
+                  color: const Color(0xFF93000A),
+                ),
               ),
             ),
           ],
@@ -619,6 +704,19 @@ class _HeroCard extends StatelessWidget {
       );
     }
 
+    final String slotInfo;
+    if (capacity != null) {
+      if (capacity.isUncapped) {
+        slotInfo = ' · Uncapped capacity • ${capacity.occupiedSlots} scholar approved';
+      } else {
+        slotInfo = ' · ${capacity.remainingSlots} of ${capacity.totalSlots} slots remaining';
+      }
+    } else if (scholarship.slots != null) {
+      slotInfo = ' · ${scholarship.slots.toString().replaceAllMapped(RegExp(r"(\d{1,3})(?=(\d{3})+(?!\d))"), (Match m) => "${m[1]},")} slots available';
+    } else {
+      slotInfo = '';
+    }
+
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       decoration: BoxDecoration(
@@ -631,7 +729,7 @@ class _HeroCard extends StatelessWidget {
           const SizedBox(width: 8),
           Expanded(
             child: Text(
-              '${deadlineLabel(scholarship.deadline)}${scholarship.slots != null ? " · ${scholarship.slots.toString().replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]},')} slots available" : ""}',
+              '${deadlineLabel(scholarship.deadline)}$slotInfo',
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
               style: outfit(
@@ -682,6 +780,377 @@ class _HeroPill extends StatelessWidget {
           fontWeight: FontWeight.w600,
           color: kSecondary,
         ),
+      ),
+    );
+  }
+}
+
+/// Slot Capacity Status Card: Displays authoritative seat accounting from scholarship_capacities.
+class _CapacityStatusCard extends ConsumerWidget {
+  const _CapacityStatusCard({required this.scholarship});
+
+  final Scholarship scholarship;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final capacityAsync = ref.watch(scholarshipCapacityProvider(scholarship.id));
+
+    return capacityAsync.when(
+      loading: () => const SizedBox.shrink(),
+      error: (_, _) => const SizedBox.shrink(),
+      data: (capacity) {
+        if (capacity == null) return const SizedBox.shrink();
+
+        final isUncapped = capacity.isUncapped;
+        final isFull = capacity.isFull;
+        final occupied = capacity.occupiedSlots;
+        final total = capacity.totalSlots;
+        final remaining = capacity.remainingSlots;
+
+        final rem = remaining ?? 0;
+        final tot = total ?? 0;
+
+        return Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(
+              color: isFull ? const Color(0xFFFFCDD2) : const Color(0xFFE2E8F3),
+            ),
+            boxShadow: const [
+              BoxShadow(
+                color: kCardShadow,
+                blurRadius: 16,
+                offset: Offset(0, 6),
+              ),
+            ],
+          ),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Icon(
+                    isFull ? Icons.group_off_rounded : Icons.people_outline_rounded,
+                    size: 18,
+                    color: isFull ? const Color(0xFFC62828) : kPrimary,
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      'Slot Capacity & Seat Accounting',
+                      style: outfit(
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold,
+                        color: isFull ? const Color(0xFFC62828) : kOnSurface,
+                      ),
+                    ),
+                  ),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                    decoration: BoxDecoration(
+                      color: isFull
+                          ? const Color(0xFFFFEBEE)
+                          : isUncapped
+                              ? const Color(0xFFE8F5E9)
+                              : (rem <= 3 ? const Color(0xFFFFF3E0) : const Color(0xFFE8F5E9)),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Text(
+                      isFull
+                          ? 'Capacity Reached'
+                          : isUncapped
+                              ? 'Uncapped'
+                              : '$rem Seats Open',
+                      style: openSans(
+                        fontSize: 11,
+                        fontWeight: FontWeight.w700,
+                        color: isFull
+                            ? const Color(0xFFC62828)
+                            : isUncapped
+                                ? const Color(0xFF2E7D32)
+                                : (rem <= 3 ? const Color(0xFFE65100) : const Color(0xFF2E7D32)),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 8),
+              if (isUncapped)
+                Text(
+                  'Uncapped capacity • $occupied scholar${occupied == 1 ? '' : 's'} approved',
+                  style: openSans(fontSize: 12, color: Colors.black87),
+                )
+              else ...[
+                Text(
+                  '$tot total • $occupied occupied • $rem remaining',
+                  style: openSans(fontSize: 12, fontWeight: FontWeight.w600, color: Colors.black87),
+                ),
+                const SizedBox(height: 6),
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(4),
+                  child: LinearProgressIndicator(
+                    value: tot > 0 ? (occupied / tot).clamp(0.0, 1.0) : 0.0,
+                    minHeight: 6,
+                    backgroundColor: const Color(0xFFEEEEEE),
+                    valueColor: AlwaysStoppedAnimation<Color>(
+                      isFull ? const Color(0xFFC62828) : kPrimary,
+                    ),
+                  ),
+                ),
+              ],
+            ],
+          ),
+        );
+      },
+    );
+  }
+}
+
+/// School Eligibility Guidance Card: Discloses self-declared enrollment verification status
+/// and partner institution restrictions.
+class _SchoolEligibilityGuidanceCard extends ConsumerWidget {
+  const _SchoolEligibilityGuidanceCard({required this.scholarship});
+
+  final Scholarship scholarship;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final eligibleSchoolIdsAsync =
+        ref.watch(scholarshipEligibleSchoolsProvider(scholarship.id));
+    final currentProfile = ref.watch(currentProfileProvider).valueOrNull;
+    final userId = ref.watch(currentUserIdProvider);
+    final userSchoolIdAsync = userId != null
+        ? ref.watch(studentProfileSchoolIdProvider(userId))
+        : const AsyncValue.data(null);
+    final schoolsAsync = ref.watch(schoolsProvider);
+
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: const Color(0xFFE2E8F3)),
+        boxShadow: const [
+          BoxShadow(
+            color: kCardShadow,
+            blurRadius: 16,
+            offset: Offset(0, 6),
+          ),
+        ],
+      ),
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                width: 32,
+                height: 32,
+                decoration: BoxDecoration(
+                  color: kPrimary.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: const Icon(
+                  Icons.account_balance_outlined,
+                  size: 18,
+                  color: kPrimary,
+                ),
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Text(
+                  'Student-Declared Enrolled Institution',
+                  style: outfit(
+                    fontSize: 15,
+                    fontWeight: FontWeight.bold,
+                    color: kOnSurface,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+
+          // Eligibility status badge
+          eligibleSchoolIdsAsync.when(
+            loading: () => const SizedBox(
+              height: 24,
+              child: Center(
+                child: SizedBox(
+                  width: 16,
+                  height: 16,
+                  child: CircularProgressIndicator(strokeWidth: 2),
+                ),
+              ),
+            ),
+            error: (_, _) => const SizedBox.shrink(),
+            data: (eligibleIds) {
+              if (eligibleIds == null || eligibleIds.isEmpty) {
+                // Open to all schools
+                return Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFE8F5E9),
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(color: const Color(0xFFA5D6A7)),
+                  ),
+                  child: Row(
+                    children: [
+                      const Icon(Icons.check_circle_outline_rounded, size: 16, color: Color(0xFF2E7D32)),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Text(
+                          'Open to all accredited Philippine universities & colleges',
+                          style: openSans(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w600,
+                            color: const Color(0xFF1B5E20),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              }
+
+              // Restricted to specific schools
+              final studentSchoolId = userSchoolIdAsync.valueOrNull;
+              final studentSchoolText = currentProfile?.school?.trim();
+              final allSchools = schoolsAsync.valueOrNull ?? const <School>[];
+
+              bool isMatch = false;
+              String? matchedSchoolName;
+
+              if (studentSchoolId != null && eligibleIds.contains(studentSchoolId)) {
+                isMatch = true;
+                matchedSchoolName = allSchools
+                    .firstWhere(
+                      (s) => s.id == studentSchoolId,
+                      orElse: () => School(
+                        id: studentSchoolId,
+                        name: studentSchoolText ?? 'Declared Institution',
+                        normalizedName: '',
+                      ),
+                    )
+                    .name;
+              } else if (studentSchoolText != null && studentSchoolText.isNotEmpty) {
+                final matchByText = allSchools.where(
+                  (s) =>
+                      eligibleIds.contains(s.id) &&
+                      (s.name.toLowerCase() == studentSchoolText.toLowerCase() ||
+                          s.aliases.any((a) => a.toLowerCase() == studentSchoolText.toLowerCase())),
+                );
+                if (matchByText.isNotEmpty) {
+                  isMatch = true;
+                  matchedSchoolName = matchByText.first.name;
+                }
+              }
+
+              if (isMatch) {
+                return Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFE8F5E9),
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(color: const Color(0xFFA5D6A7)),
+                  ),
+                  child: Row(
+                    children: [
+                      const Icon(Icons.verified_outlined, size: 16, color: Color(0xFF2E7D32)),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Text(
+                          'Eligible based on declared profile (Matches: ${matchedSchoolName ?? studentSchoolText})',
+                          style: openSans(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w600,
+                            color: const Color(0xFF1B5E20),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              }
+
+              // Ineligible based on profile
+              final eligibleNames = allSchools
+                  .where((s) => eligibleIds.contains(s.id))
+                  .map((s) => s.name)
+                  .take(3)
+                  .join(', ');
+              final moreCount = eligibleIds.length - 3;
+              final partnerSummary = moreCount > 0 ? '$eligibleNames +$moreCount more' : eligibleNames;
+
+              return Container(
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFFFF8E1),
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: const Color(0xFFFFE082)),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        const Icon(Icons.warning_amber_rounded, size: 16, color: Color(0xFFE65100)),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: Text(
+                            'Ineligible based on profile: Restricted to partner institutions.',
+                            style: openSans(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w600,
+                              color: const Color(0xFFBF360C),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    if (partnerSummary.isNotEmpty) ...[
+                      const SizedBox(height: 4),
+                      Text(
+                        'Partner institutions: $partnerSummary',
+                        style: openSans(fontSize: 11, color: const Color(0xFF795548)),
+                      ),
+                    ],
+                  ],
+                ),
+              );
+            },
+          ),
+          const SizedBox(height: 12),
+
+          // Truth Disclosure
+          Container(
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              color: const Color(0xFFF9FAFB),
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all(color: Colors.black12),
+            ),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Icon(Icons.info_outline_rounded, size: 15, color: Colors.black54),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    'Academic enrollment is self-declared on your student profile and verified by scholarship administrators through your uploaded Certificate of Registration (COR) or Student ID.',
+                    style: openSans(
+                      fontSize: 11,
+                      height: 1.4,
+                      color: Colors.black87,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -1214,13 +1683,16 @@ class _MetricTile extends StatelessWidget {
 }
 
 /// 5. Eligibility Card: Criteria Chips.
-class _EligibilityCard extends StatelessWidget {
+class _EligibilityCard extends ConsumerWidget {
   const _EligibilityCard({required this.scholarship});
 
   final Scholarship scholarship;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final eligibleSchoolIdsAsync =
+        ref.watch(scholarshipEligibleSchoolsProvider(scholarship.id));
+
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
@@ -1281,6 +1753,21 @@ class _EligibilityCard extends StatelessWidget {
                   icon: Icons.accessible_rounded,
                   label: 'PWD priority',
                 ),
+              eligibleSchoolIdsAsync.maybeWhen(
+                data: (ids) {
+                  if (ids != null && ids.isNotEmpty) {
+                    return _EligibilityChip(
+                      icon: Icons.account_balance_outlined,
+                      label: 'Restricted to ${ids.length} Partner School${ids.length == 1 ? '' : 's'}',
+                    );
+                  }
+                  return const _EligibilityChip(
+                    icon: Icons.account_balance_outlined,
+                    label: 'Open to all schools',
+                  );
+                },
+                orElse: () => const SizedBox.shrink(),
+              ),
             ],
           ),
         ],
@@ -2223,8 +2710,54 @@ class _ApplySectionState extends ConsumerState<_ApplySection> {
       referenceNow: DateTime.now(),
     );
 
+    // Authoritative slot capacity & school eligibility checks
+    final eligibleSchoolIds =
+        ref.watch(scholarshipEligibleSchoolsProvider(widget.scholarship.id)).valueOrNull;
+    final userSchoolId = userId != null
+        ? ref.watch(studentProfileSchoolIdProvider(userId)).valueOrNull
+        : null;
+    final allSchools = ref.watch(schoolsProvider).valueOrNull ?? const <School>[];
+
+    bool isSchoolRestricted = eligibleSchoolIds != null && eligibleSchoolIds.isNotEmpty;
+    bool isSchoolIneligible = false;
+    if (isSchoolRestricted) {
+      final studentSchoolText = profile?.school?.trim();
+      bool match = false;
+      if (userSchoolId != null && eligibleSchoolIds.contains(userSchoolId)) {
+        match = true;
+      } else if (studentSchoolText != null && studentSchoolText.isNotEmpty) {
+        match = allSchools.any((s) =>
+            eligibleSchoolIds.contains(s.id) &&
+            (s.name.toLowerCase() == studentSchoolText.toLowerCase() ||
+                s.aliases.any((a) => a.toLowerCase() == studentSchoolText.toLowerCase())));
+      }
+      if (!match) {
+        isSchoolIneligible = true;
+      }
+    }
+
+    final capacity =
+        ref.watch(scholarshipCapacityProvider(widget.scholarship.id)).valueOrNull;
+    final isCapacityReached = capacity != null && capacity.isFull;
+
     switch (readiness.state) {
       case ApplicationReadinessState.eligible:
+        if (isSchoolIneligible) {
+          return const _ReadinessNotice(
+            icon: Icons.school_outlined,
+            title: "Why you can't apply",
+            message:
+                'Ineligible based on profile: Restricted to partner institutions.',
+          );
+        }
+        if (isCapacityReached) {
+          return const _ReadinessNotice(
+            icon: Icons.group_off_rounded,
+            title: 'Scholarship capacity reached',
+            message:
+                'All allocated slots for this scholarship have been filled by approved scholars.',
+          );
+        }
         return _applyButtonRow(onPressed: _apply);
 
       case ApplicationReadinessState.closed:

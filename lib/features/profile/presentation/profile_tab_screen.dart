@@ -358,7 +358,9 @@ class ProfileTabScreen extends ConsumerWidget {
                     ),
                     const SizedBox(height: 2),
                     Text(
-                      profile.school ?? 'University of the Philippines Diliman',
+                      (profile.school != null && profile.school!.trim().isNotEmpty)
+                          ? profile.school!
+                          : 'Institution not set',
                       style: openSans(
                         fontSize: 13,
                         color: kOnSurfaceVariant,
@@ -630,18 +632,18 @@ class ProfileTabScreen extends ConsumerWidget {
             child: Row(
               children: [
                 Icon(
-                  profile.setupComplete
-                      ? Icons.check_circle_rounded
-                      : Icons.upload_file_outlined,
+                  (profile.school != null && profile.school!.trim().isNotEmpty)
+                      ? Icons.school_outlined
+                      : Icons.info_outline_rounded,
                   size: 16,
                   color: profile.setupComplete ? kPrimary : kOnSurfaceVariant,
                 ),
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text(
-                    profile.setupComplete
-                        ? 'True Copy of Grades (TCG) Validated ✓'
-                        : 'True Copy of Grades (TCG): Pending Registrar Upload',
+                    (profile.school != null && profile.school!.trim().isNotEmpty)
+                        ? 'Enrolled institution self-declared • Verified via COR/ID'
+                        : 'Institution not declared on profile',
                     style: openSans(
                       fontSize: 12,
                       fontWeight: FontWeight.w600,

@@ -22,10 +22,13 @@ import 'package:scholaris/features/profile/models/student_profile.dart';
 import 'package:scholaris/features/profile/presentation/widgets/avatar_display.dart';
 import 'package:scholaris/features/profile/providers/avatar_provider.dart';
 import 'package:scholaris/features/profile/providers/profile_setup_provider.dart';
+import 'package:scholaris/features/schools/models/school.dart';
+import 'package:scholaris/features/schools/providers/school_provider.dart';
 import 'package:scholaris/shared/theme/app_motion.dart';
 import 'package:scholaris/shared/theme/app_theme.dart';
 import 'package:scholaris/shared/widgets/scholaris_logo.dart';
 import 'package:scholaris/shared/widgets/success_overlay.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class ProfileSetupScreen extends ConsumerStatefulWidget {
   const ProfileSetupScreen({super.key, required this.step});
@@ -51,6 +54,10 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
   String _selectedGpaScale = '1.0 – 5.0';
   bool _is4psBeneficiary = false;
   bool _isSoloParentDependent = false;
+
+  String? _selectedSchoolId;
+  final TextEditingController _schoolSearchController = TextEditingController();
+  bool _isSchoolSelectorExpanded = false;
 
   int get _stepIndex => switch (widget.step) {
         'personal' => 1,
@@ -96,6 +103,22 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
     _provinceController = TextEditingController(text: state.province);
     _cityController = TextEditingController(text: state.cityMunicipality);
     _selectedGpaScale = state.gpaScale;
+
+    if (userId != null) {
+      Supabase.instance.client
+          .from('profiles')
+          .select('school_id')
+          .eq('id', userId)
+          .maybeSingle()
+          .then((row) {
+        if (row != null && mounted) {
+          final sId = row['school_id'] as String?;
+          if (sId != null) {
+            setState(() => _selectedSchoolId = sId);
+          }
+        }
+      }).catchError((_) {});
+    }
   }
 
   void _syncHydration(ProfileSetupState? previous, ProfileSetupState next) {
@@ -127,6 +150,7 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
     _incomeController.dispose();
     _provinceController.dispose();
     _cityController.dispose();
+    _schoolSearchController.dispose();
     super.dispose();
   }
 
@@ -652,15 +676,7 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
             validator: (_) => _fieldError((e) => e.course),
           ),
           const SizedBox(height: 16),
-          _textField(
-            label: 'School',
-            controller: _schoolController,
-            onChanged: notifier.setSchool,
-            optional: true,
-            hintText: 'Search state U, college, or institute... (e.g. UP Diliman, UST)',
-            prefixIcon: Icons.account_balance_outlined,
-            helperText: 'Unlocks institution-specific alumni grants, campus work-study, CHED UniFAST, and LGU partner funds.',
-          ),
+          _buildSchoolSelector(notifier, state),
           const SizedBox(height: 16),
           _buildGpaCard(notifier, state),
         ],
@@ -1993,6 +2009,409 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
     );
   }
 
+  Widget _buildSchoolSelector(
+    ProfileSetupNotifier notifier,
+    ProfileSetupState state,
+  ) {
+    final schoolsAsync = ref.watch(schoolsProvider);
+    final query = _schoolSearchController.text.trim().toLowerCase();
+    final hasSelectedSchool = _schoolController.text.trim().isNotEmpty;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            const Icon(Icons.account_balance_outlined, size: 16, color: kPrimary),
+            const SizedBox(width: 6),
+            Text(
+              'Enrolled College or University',
+              style: openSans(
+                fontSize: 13,
+                fontWeight: FontWeight.w600,
+                color: kOnSurface,
+              ),
+            ),
+            const SizedBox(width: 4),
+            Text(
+              '(Optional)',
+              style: openSans(fontSize: 12, color: Colors.black45),
+            ),
+            const Spacer(),
+            TextButton.icon(
+              icon: const Icon(Icons.add, size: 14),
+              label: const Text('Add Unlisted'),
+              style: TextButton.styleFrom(
+                foregroundColor: kPrimary,
+                textStyle: openSans(fontSize: 11, fontWeight: FontWeight.w600),
+                visualDensity: VisualDensity.compact,
+              ),
+              onPressed: () => _showAddSchoolDialog(context),
+            ),
+          ],
+        ),
+        const SizedBox(height: 4),
+        Text(
+          'Matches campus-specific endowments, CHED UniFAST subsidies, and alumni grants.',
+          style: openSans(fontSize: 11, color: Colors.black54),
+        ),
+        const SizedBox(height: 8),
+
+        // Selected institution card
+        if (hasSelectedSchool && !_isSchoolSelectorExpanded)
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: kPrimary.withValues(alpha: 0.3)),
+              boxShadow: const [
+                BoxShadow(
+                  color: Color(0x06000000),
+                  blurRadius: 8,
+                  offset: Offset(0, 2),
+                ),
+              ],
+            ),
+            child: Row(
+              children: [
+                Container(
+                  width: 36,
+                  height: 36,
+                  decoration: BoxDecoration(
+                    color: kPrimary.withValues(alpha: 0.1),
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(Icons.school, size: 18, color: kPrimary),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        _schoolController.text,
+                        style: openSans(
+                          fontSize: 13,
+                          fontWeight: FontWeight.w600,
+                          color: kOnSurface,
+                        ),
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        'Student-declared • Verified via COR/Student ID',
+                        style: openSans(fontSize: 10, color: Colors.black54),
+                      ),
+                    ],
+                  ),
+                ),
+                TextButton(
+                  onPressed: () => setState(() => _isSchoolSelectorExpanded = true),
+                  child: Text(
+                    'Change',
+                    style: openSans(fontSize: 12, fontWeight: FontWeight.w600, color: kPrimary),
+                  ),
+                ),
+              ],
+            ),
+          )
+        else ...[
+          // Search box & Dropdown list
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: Colors.black12),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                TextField(
+                  controller: _schoolSearchController,
+                  onChanged: (_) => setState(() {}),
+                  style: openSans(fontSize: 13),
+                  decoration: InputDecoration(
+                    isDense: true,
+                    hintText: 'Search Philippine universities & colleges...',
+                    hintStyle: openSans(fontSize: 12, color: Colors.black38),
+                    prefixIcon: const Icon(Icons.search, size: 18, color: Colors.black45),
+                    suffixIcon: _schoolSearchController.text.isNotEmpty
+                        ? IconButton(
+                            icon: const Icon(Icons.clear, size: 16),
+                            onPressed: () {
+                              _schoolSearchController.clear();
+                              setState(() {});
+                            },
+                          )
+                        : (hasSelectedSchool
+                            ? TextButton(
+                                onPressed: () => setState(() => _isSchoolSelectorExpanded = false),
+                                child: Text('Done', style: openSans(fontSize: 11, color: kPrimary)),
+                              )
+                            : null),
+                    filled: true,
+                    fillColor: const Color(0xFFF9FAFB),
+                    contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                      borderSide: const BorderSide(color: Colors.black12),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                      borderSide: const BorderSide(color: Colors.black12),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                      borderSide: const BorderSide(color: kPrimary),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 8),
+                schoolsAsync.when(
+                  loading: () => const Padding(
+                    padding: EdgeInsets.symmetric(vertical: 16),
+                    child: Center(
+                      child: SizedBox(
+                        width: 20,
+                        height: 20,
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      ),
+                    ),
+                  ),
+                  error: (err, _) => Padding(
+                    padding: const EdgeInsets.all(8),
+                    child: Text(
+                      'Failed to load institutions: $err',
+                      style: openSans(fontSize: 12, color: Colors.red),
+                    ),
+                  ),
+                  data: (allSchools) {
+                    final filtered = allSchools.where((s) {
+                      if (query.isEmpty) return true;
+                      if (s.name.toLowerCase().contains(query)) return true;
+                      if (s.normalizedName.contains(query)) return true;
+                      return s.aliases.any((a) => a.toLowerCase().contains(query));
+                    }).toList();
+
+                    final hasExactMatch = query.isNotEmpty &&
+                        allSchools.any((s) => s.name.trim().toLowerCase() == query);
+
+                    return Column(
+                      children: [
+                        ConstrainedBox(
+                          constraints: const BoxConstraints(maxHeight: 180),
+                          child: filtered.isEmpty
+                              ? Padding(
+                                  padding: const EdgeInsets.symmetric(vertical: 16),
+                                  child: Center(
+                                    child: Text(
+                                      'No matching institutions found.',
+                                      style: openSans(fontSize: 12, color: Colors.black45),
+                                    ),
+                                  ),
+                                )
+                              : ListView.separated(
+                                  shrinkWrap: true,
+                                  itemCount: filtered.length,
+                                  separatorBuilder: (_, _) =>
+                                      const Divider(height: 1, indent: 40),
+                                  itemBuilder: (context, index) {
+                                    final school = filtered[index];
+                                    final isSelected = _selectedSchoolId == school.id ||
+                                        _schoolController.text.trim().toLowerCase() ==
+                                            school.name.trim().toLowerCase();
+
+                                    return ListTile(
+                                      dense: true,
+                                      leading: Icon(
+                                        Icons.account_balance_outlined,
+                                        size: 18,
+                                        color: isSelected ? kPrimary : Colors.black45,
+                                      ),
+                                      title: Text(
+                                        school.name,
+                                        style: openSans(
+                                          fontSize: 12,
+                                          fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
+                                          color: isSelected ? kPrimary : Colors.black87,
+                                        ),
+                                      ),
+                                      subtitle: !school.isCurated
+                                          ? Text(
+                                              'Custom institution',
+                                              style: openSans(fontSize: 10, color: Colors.black45),
+                                            )
+                                          : null,
+                                      trailing: isSelected
+                                          ? const Icon(Icons.check, size: 16, color: kPrimary)
+                                          : null,
+                                      onTap: () => _onSchoolSelected(school),
+                                    );
+                                  },
+                                ),
+                        ),
+                        if (query.isNotEmpty && !hasExactMatch) ...[
+                          const Divider(height: 1),
+                          ListTile(
+                            dense: true,
+                            leading: const Icon(Icons.add_circle_outline, color: kPrimary, size: 20),
+                            title: Text(
+                              'Add "${_schoolSearchController.text.trim()}"',
+                              style: poppins(
+                                color: kPrimary,
+                                fontWeight: FontWeight.w600,
+                                fontSize: 12,
+                              ),
+                            ),
+                            subtitle: Text(
+                              'Register a new higher education institution',
+                              style: openSans(fontSize: 11, color: Colors.black54),
+                            ),
+                            onTap: () => _showAddSchoolDialog(
+                              context,
+                              initialName: _schoolSearchController.text.trim(),
+                            ),
+                          ),
+                        ],
+                      ],
+                    );
+                  },
+                ),
+              ],
+            ),
+          ),
+        ],
+      ],
+    );
+  }
+
+  Future<void> _onSchoolSelected(School school) async {
+    setState(() {
+      _selectedSchoolId = school.id;
+      _schoolController.text = school.name;
+      _isSchoolSelectorExpanded = false;
+      _schoolSearchController.clear();
+    });
+    final userId = ref.read(currentUserIdProvider);
+    if (userId != null) {
+      ref.read(profileSetupProvider(userId).notifier).setSchool(school.name);
+      try {
+        await Supabase.instance.client
+            .from('profiles')
+            .update({'school_id': school.id, 'school': school.name})
+            .eq('id', userId);
+      } catch (_) {}
+    }
+  }
+
+  Future<void> _showAddSchoolDialog(BuildContext context, {String? initialName}) async {
+    final nameController = TextEditingController(text: initialName ?? '');
+    final formKey = GlobalKey<FormState>();
+    bool isSubmitting = false;
+
+    await showDialog<void>(
+      context: context,
+      builder: (dialogCtx) => StatefulBuilder(
+        builder: (ctx, setDialogState) => AlertDialog(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          title: Text(
+            'Add Higher Education Institution',
+            style: poppins(fontSize: 16, fontWeight: FontWeight.w700, color: kPrimary),
+          ),
+          content: Form(
+            key: formKey,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Enter the official name of the university or college in the Philippines.',
+                  style: openSans(fontSize: 12, color: Colors.black54),
+                ),
+                const SizedBox(height: 16),
+                TextFormField(
+                  controller: nameController,
+                  autofocus: true,
+                  style: openSans(fontSize: 13),
+                  decoration: InputDecoration(
+                    labelText: 'Institution Name *',
+                    labelStyle: openSans(fontSize: 12),
+                    hintText: 'e.g. Pamantasan ng Lungsod ng Maynila',
+                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+                  ),
+                  validator: (v) {
+                    if (v == null || v.trim().isEmpty) {
+                      return 'Institution name is required';
+                    }
+                    if (v.trim().length < 3) {
+                      return 'Name is too short (min 3 characters)';
+                    }
+                    return null;
+                  },
+                ),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: isSubmitting ? null : () => Navigator.of(dialogCtx).pop(),
+              child: Text('Cancel', style: openSans(fontSize: 13, color: Colors.black54)),
+            ),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: kPrimary,
+                foregroundColor: Colors.white,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+              ),
+              onPressed: isSubmitting
+                  ? null
+                  : () async {
+                      if (!formKey.currentState!.validate()) return;
+                      setDialogState(() => isSubmitting = true);
+                      try {
+                        final name = nameController.text.trim();
+                        final newId = await ref
+                            .read(schoolRepositoryProvider)
+                            .addSchool(name);
+                        ref.invalidate(schoolsProvider);
+                        if (dialogCtx.mounted) {
+                          Navigator.of(dialogCtx).pop();
+                        }
+                        await _onSchoolSelected(
+                          School(id: newId, name: name, normalizedName: ''),
+                        );
+                        if (context.mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text('Added and linked "$name".')),
+                          );
+                        }
+                      } catch (err) {
+                        setDialogState(() => isSubmitting = false);
+                        if (dialogCtx.mounted) {
+                          ScaffoldMessenger.of(dialogCtx).showSnackBar(
+                            SnackBar(
+                              backgroundColor: Colors.red.shade700,
+                              content: Text('Failed to add institution: $err'),
+                            ),
+                          );
+                        }
+                      }
+                    },
+              child: isSubmitting
+                  ? const SizedBox(
+                      width: 16,
+                      height: 16,
+                      child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                    )
+                  : Text('Add Institution', style: openSans(fontSize: 13, fontWeight: FontWeight.w600)),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   Future<void> _handleNextOrSubmit(bool isLastStep) async {
     final userId = ref.read(currentUserIdProvider);
     if (userId == null) return;
@@ -2006,6 +2425,15 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
       final success = await notifier.submit();
       if (!mounted) return;
       if (success) {
+        if (_selectedSchoolId != null) {
+          try {
+            await Supabase.instance.client
+                .from('profiles')
+                .update({'school_id': _selectedSchoolId})
+                .eq('id', userId);
+          } catch (_) {}
+        }
+        if (!mounted) return;
         await SuccessOverlay.show(context);
         if (!mounted) return;
         ref.invalidate(profileCompleteProvider);
@@ -2017,6 +2445,15 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
         context.go('/home');
       }
     } else {
+      if (_selectedSchoolId != null) {
+        try {
+          await Supabase.instance.client
+              .from('profiles')
+              .update({'school_id': _selectedSchoolId})
+              .eq('id', userId);
+        } catch (_) {}
+      }
+      if (!mounted) return;
       final nextRoute = widget.step == 'academic'
           ? ProfileSetupRoute.financial
           : ProfileSetupRoute.academic;

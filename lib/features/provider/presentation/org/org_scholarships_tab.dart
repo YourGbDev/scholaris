@@ -12,11 +12,13 @@ import 'package:scholaris/features/profile/providers/profile_setup_provider.dart
 import '../../../applications/models/application.dart';
 import '../../../applications/providers/applications_provider.dart';
 import '../../../scholarships/models/scholarship.dart';
+import '../../../scholarships/providers/scholarship_capacity_provider.dart';
 import '../../providers/provider_scholarships_provider.dart';
 import '../scholarship_form_screen.dart';
 import '../widgets/scholarship_qr_dialog.dart';
 import 'package:scholaris/shared/theme/app_motion.dart';
 import 'org_provider_theme.dart';
+import 'widgets/assign_reviewer_dialog.dart';
 
 class OrgScholarshipsTab extends ConsumerStatefulWidget {
   const OrgScholarshipsTab({
@@ -1064,22 +1066,27 @@ class _OrgScholarshipsTabState extends ConsumerState<OrgScholarshipsTab> {
     final targetApps =
         apps.where((a) => a.scholarshipId == scholarship.id).toList();
     final applicantCount = targetApps.length;
-    final approvedCount = targetApps
-        .where((a) =>
-            a.status == ApplicationStatus.approved ||
-            a.status == ApplicationStatus.awarded)
-        .length;
-    final totalSlots = scholarship.slots;
-    final hasSlots = totalSlots != null;
+
+    final capacityAsync = ref.watch(scholarshipCapacityProvider(scholarship.id));
+    final capacity = capacityAsync.valueOrNull;
+
+    final occupiedCount = capacity?.occupiedSlots ??
+        targetApps
+            .where((a) =>
+                a.status == ApplicationStatus.approved ||
+                a.status == ApplicationStatus.awarded)
+            .length;
+    final totalSlots = capacity?.totalSlots ?? scholarship.slots;
+    final hasSlots = totalSlots != null && !(capacity?.isUncapped ?? false);
+    final remainingSeats = capacity?.remainingSlots ??
+        (hasSlots ? (totalSlots - occupiedCount).clamp(0, totalSlots) : null);
 
     final daysLeft = scholarship.deadline.difference(DateTime.now()).inDays;
     final isExpired = daysLeft < 0;
     final fillRatio = hasSlots && totalSlots > 0
-        ? (approvedCount / totalSlots).clamp(0.0, 1.0)
+        ? (occupiedCount / totalSlots).clamp(0.0, 1.0)
         : 0.0;
     final fillPercent = (fillRatio * 100).toInt();
-    final remainingSeats =
-        hasSlots ? (totalSlots - approvedCount).clamp(0, totalSlots) : null;
     final totalAllocation =
         hasSlots ? totalSlots * scholarship.awardAmount : null;
 
@@ -1264,7 +1271,7 @@ class _OrgScholarshipsTabState extends ConsumerState<OrgScholarshipsTab> {
                               text: TextSpan(
                                 children: [
                                   TextSpan(
-                                    text: '$approvedCount ',
+                                    text: '$occupiedCount ',
                                     style: orgHeadline(
                                         fontSize: 14.5,
                                         fontWeight: FontWeight.w700),
@@ -1346,15 +1353,24 @@ class _OrgScholarshipsTabState extends ConsumerState<OrgScholarshipsTab> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text('Selection Quota Progress',
+                        Flexible(
+                          child: Text(
+                            hasSlots
+                                ? '$totalSlots total • $occupiedCount occupied • ${remainingSeats ?? 0} remaining'
+                                : 'Uncapped capacity • $occupiedCount scholar${occupiedCount == 1 ? "" : "s"} approved',
                             style: orgLabel(
-                                fontSize: 11, color: kOrgTextSecondary)),
+                                fontSize: 11, color: kOrgTextSecondary),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                        const SizedBox(width: 8),
                         Text(
                           !hasSlots
-                              ? 'Uncapped intake ($approvedCount awarded)'
+                              ? 'Uncapped intake ($occupiedCount approved)'
                               : fillPercent >= 100
-                                  ? '100% (Cohort Filled)'
-                                  : '$fillPercent% ($remainingSeats seats open)',
+                                  ? '100% (Fully Booked)'
+                                  : '$fillPercent% (${remainingSeats ?? 0} open)',
                           style: orgHeadline(
                             fontSize: 11,
                             fontWeight: FontWeight.w600,
@@ -1443,6 +1459,35 @@ class _OrgScholarshipsTabState extends ConsumerState<OrgScholarshipsTab> {
                               const SizedBox(width: 4),
                               Text(
                                 'QR',
+                                style: orgLabel(
+                                  fontSize: 11.5,
+                                  fontWeight: FontWeight.w500,
+                                  color: kOrgTextPrimary,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Material(
+                      color: const Color(0xFFE3E2E7).withValues(alpha: 0.6),
+                      borderRadius: BorderRadius.circular(8),
+                      child: InkWell(
+                        borderRadius: BorderRadius.circular(8),
+                        onTap: () => AssignReviewerDialog.show(context, scholarship),
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 8, vertical: 6),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              const Icon(Icons.assignment_ind_outlined,
+                                  size: 15, color: kOrgTextPrimary),
+                              const SizedBox(width: 4),
+                              Text(
+                                'Reviewers',
                                 style: orgLabel(
                                   fontSize: 11.5,
                                   fontWeight: FontWeight.w500,

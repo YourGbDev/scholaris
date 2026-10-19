@@ -224,6 +224,47 @@ void main() {
       expect(find.text('Start Application'), findsNothing);
     });
 
+    testWidgets('Legacy unlinked profile (school_id == null): Renders update prompt and fails closed', (tester) async {
+      tester.view.physicalSize = const Size(1280, 800);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.resetPhysicalSize);
+
+      const profile = StudentProfile(
+        id: 'student-1',
+        fullName: 'Juan Dela Cruz',
+        school: 'University of the Philippines Diliman',
+        gpa: 1.5,
+        setupComplete: true,
+      );
+
+      await tester.pumpWidget(createWidget(
+        scholarship: baseScholarship,
+        profile: profile,
+        eligibleSchoolIds: ['sch-upd'],
+        studentSchoolId: null, // Legacy unlinked profile
+        capacity: const ScholarshipCapacity(
+          scholarshipId: 'sch-stem-101',
+          totalSlots: 25,
+          occupiedSlots: 1,
+          remainingSlots: 24,
+          isUncapped: false,
+        ),
+      ));
+      await tester.pumpAndSettle();
+
+      // Guidance badge prompts to update profile
+      expect(
+        find.text('Profile update required: Please select your institution in your profile to verify partner eligibility.'),
+        findsOneWidget,
+      );
+
+      // Apply button should NOT be available; readiness prompt with action is shown
+      expect(find.byKey(const ValueKey('apply-now')), findsNothing);
+      expect(find.text('Start Application'), findsNothing);
+      expect(find.text('Profile update required'), findsOneWidget);
+      expect(find.text('Update profile'), findsOneWidget);
+    });
+
     testWidgets('Capacity accounting: Uncapped capacity renders Uncapped status', (tester) async {
       tester.view.physicalSize = const Size(1280, 800);
       tester.view.devicePixelRatio = 1.0;

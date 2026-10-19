@@ -1020,33 +1020,45 @@ class _SchoolEligibilityGuidanceCard extends ConsumerWidget {
               final studentSchoolText = currentProfile?.school?.trim();
               final allSchools = schoolsAsync.valueOrNull ?? const <School>[];
 
-              bool isMatch = false;
-              String? matchedSchoolName;
-
-              if (studentSchoolId != null && eligibleIds.contains(studentSchoolId)) {
-                isMatch = true;
-                matchedSchoolName = allSchools
-                    .firstWhere(
-                      (s) => s.id == studentSchoolId,
-                      orElse: () => School(
-                        id: studentSchoolId,
-                        name: studentSchoolText ?? 'Declared Institution',
-                        normalizedName: '',
+              // Legacy or unlinked profile: fail closed and prompt to update profile
+              if (studentSchoolId == null) {
+                return Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFFFF8E1),
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(color: const Color(0xFFFFE082)),
+                  ),
+                  child: Row(
+                    children: [
+                      const Icon(Icons.info_outline_rounded, size: 16, color: Color(0xFFE65100)),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Text(
+                          'Profile update required: Please select your institution in your profile to verify partner eligibility.',
+                          style: openSans(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w600,
+                            color: const Color(0xFFBF360C),
+                          ),
+                        ),
                       ),
-                    )
-                    .name;
-              } else if (studentSchoolText != null && studentSchoolText.isNotEmpty) {
-                final matchByText = allSchools.where(
-                  (s) =>
-                      eligibleIds.contains(s.id) &&
-                      (s.name.toLowerCase() == studentSchoolText.toLowerCase() ||
-                          s.aliases.any((a) => a.toLowerCase() == studentSchoolText.toLowerCase())),
+                    ],
+                  ),
                 );
-                if (matchByText.isNotEmpty) {
-                  isMatch = true;
-                  matchedSchoolName = matchByText.first.name;
-                }
               }
+
+              final isMatch = eligibleIds.contains(studentSchoolId);
+              final matchedSchoolName = allSchools
+                  .firstWhere(
+                    (s) => s.id == studentSchoolId,
+                    orElse: () => School(
+                      id: studentSchoolId,
+                      name: studentSchoolText ?? 'Declared Institution',
+                      normalizedName: '',
+                    ),
+                  )
+                  .name;
 
               if (isMatch) {
                 return Container(
@@ -1062,7 +1074,7 @@ class _SchoolEligibilityGuidanceCard extends ConsumerWidget {
                       const SizedBox(width: 8),
                       Expanded(
                         child: Text(
-                          'Eligible based on declared profile (Matches: ${matchedSchoolName ?? studentSchoolText})',
+                          'Eligible based on declared profile (Matches: $matchedSchoolName)',
                           style: openSans(
                             fontSize: 12,
                             fontWeight: FontWeight.w600,
@@ -2716,22 +2728,14 @@ class _ApplySectionState extends ConsumerState<_ApplySection> {
     final userSchoolId = userId != null
         ? ref.watch(studentProfileSchoolIdProvider(userId)).valueOrNull
         : null;
-    final allSchools = ref.watch(schoolsProvider).valueOrNull ?? const <School>[];
 
     bool isSchoolRestricted = eligibleSchoolIds != null && eligibleSchoolIds.isNotEmpty;
     bool isSchoolIneligible = false;
+    bool isSchoolLegacyUnlinked = false;
     if (isSchoolRestricted) {
-      final studentSchoolText = profile?.school?.trim();
-      bool match = false;
-      if (userSchoolId != null && eligibleSchoolIds.contains(userSchoolId)) {
-        match = true;
-      } else if (studentSchoolText != null && studentSchoolText.isNotEmpty) {
-        match = allSchools.any((s) =>
-            eligibleSchoolIds.contains(s.id) &&
-            (s.name.toLowerCase() == studentSchoolText.toLowerCase() ||
-                s.aliases.any((a) => a.toLowerCase() == studentSchoolText.toLowerCase())));
-      }
-      if (!match) {
+      if (userSchoolId == null) {
+        isSchoolLegacyUnlinked = true;
+      } else if (!eligibleSchoolIds.contains(userSchoolId)) {
         isSchoolIneligible = true;
       }
     }
@@ -2742,6 +2746,16 @@ class _ApplySectionState extends ConsumerState<_ApplySection> {
 
     switch (readiness.state) {
       case ApplicationReadinessState.eligible:
+        if (isSchoolLegacyUnlinked) {
+          return _ReadinessNotice(
+            icon: Icons.school_outlined,
+            title: 'Profile update required',
+            message:
+                'This grant is restricted to partner institutions. Please update your profile to select your school.',
+            actionLabel: 'Update profile',
+            onAction: () => context.go('/profile-setup/personal'),
+          );
+        }
         if (isSchoolIneligible) {
           return const _ReadinessNotice(
             icon: Icons.school_outlined,

@@ -3,7 +3,7 @@
 **Role**: `ai/ui` (Specialist Worktree: `bowhead`)  
 **Sprint**: Organization-Admin Controls, Capacity Accounting & School Eligibility (Phase 1)  
 **Date**: October 19, 2026  
-**Commit**: `PENDING_COMMIT_HASH`  
+**Commit**: `961e9b99b1e16b61cf1e02e631f1bccda3299f56`  
 **Task Card**: `docs/tasks/org_controls_task_ui.md`  
 **Specification Plan**: `docs/plans/2026-10-19_organization_admin_controls_plan.md`  
 

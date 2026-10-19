@@ -32,8 +32,8 @@ Perform an independent, adversarial quality audit of the complete transaction cy
    - Trace the exact sequence:
      1. Student completes and submits application (`submitted`).
      2. Reviewer scores rubric and endorses (`endorsed`).
-     3. Org Admin reviews evaluator rubric and approves (`approved` / `awarded`).
-     4. Student receives in-app award notification and views official decision letter / certificate.
+     3. Org Admin reviews evaluator rubric and approves (`approved`) or rejects (`rejected`). (Awarding to `awarded` is strictly platform-admin-only under migration 0025 via `public.is_admin()`).
+     4. Student receives in-app notification and views official decision letter / certificate.
 2. **Negative Edge Cases**:
    - Verify withdrawal guard: Can an application in `endorsed`, `approved`, or `awarded` status be withdrawn? (Must throw `ApplicationWithdrawalException` and display user-friendly snackbar).
    - Verify unauthenticated guard: What happens when an unauthenticated user attempts to submit an application? (Must be blocked cleanly).

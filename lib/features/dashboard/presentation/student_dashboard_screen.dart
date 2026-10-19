@@ -1141,12 +1141,13 @@ class _StatCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final numericValue = int.tryParse(rawCount ?? count.replaceAll(RegExp(r'[^0-9]'), '')) ?? 0;
+    final numericValue =
+        int.tryParse(rawCount ?? count.replaceAll(RegExp(r'[^0-9]'), '')) ?? 0;
 
     return PressableScale(
       child: Material(
         key: itemKey,
-        color: isUrgent ? const Color(0xFFFFDAD6).withValues(alpha: 0.65) : Colors.white,
+        color: isUrgent ? const Color(0xFFFFF7E7) : Colors.white,
         borderRadius: BorderRadius.circular(12),
         child: InkWell(
           borderRadius: BorderRadius.circular(12),
@@ -1155,11 +1156,13 @@ class _StatCard extends StatelessWidget {
             onTap();
           },
           child: Container(
-            padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
+            padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 8),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(12),
               border: Border.all(
-                color: isUrgent ? const Color(0xFFFFB4AB) : const Color(0xFFE2E8F3),
+                color: isUrgent
+                    ? const Color(0xFFE9D8AD)
+                    : const Color(0xFFE2E8F3),
                 width: 1,
               ),
               boxShadow: [
@@ -1173,71 +1176,67 @@ class _StatCard extends StatelessWidget {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Container(
-                  width: 30,
-                  height: 30,
-                  decoration: BoxDecoration(
-                    color: iconBg,
-                    shape: BoxShape.circle,
-                  ),
-                  child: Center(
-                    child: Icon(icon, size: 16, color: iconColor),
-                  ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Container(
+                      width: 26,
+                      height: 26,
+                      decoration: BoxDecoration(
+                        color: isUrgent ? const Color(0xFFFFE8B5) : iconBg,
+                        shape: BoxShape.circle,
+                      ),
+                      child: Icon(
+                        icon,
+                        size: 16,
+                        color: isUrgent ? const Color(0xFF785400) : iconColor,
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Flexible(
+                      child: FittedBox(
+                        fit: BoxFit.scaleDown,
+                        child: CountUpAnimation(
+                          targetValue: numericValue,
+                          style: outfit(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                            color: isUrgent
+                                ? const Color(0xFF694A00)
+                                : const Color(0xFF161C27),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-                const SizedBox(height: 6),
                 if (countKey != null)
                   SizedBox(
                     height: 0,
                     width: 0,
-                    child: Text(
-                      '$numericValue',
-                      key: countKey,
-                      style: const TextStyle(fontSize: 0, color: Colors.transparent),
-                    ),
-                  ),
-                FittedBox(
-                  fit: BoxFit.scaleDown,
-                  child: CountUpAnimation(
-                    targetValue: numericValue,
-                    suffix: (rawCount == null && count.contains('Action')) ? ' Action' : '',
-                    style: outfit(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: isUrgent ? const Color(0xFF93000A) : const Color(0xFF161C27),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 2),
-                FittedBox(
-                  fit: BoxFit.scaleDown,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      if (isUrgent) ...[
-                        Container(
-                          width: 5,
-                          height: 5,
-                          decoration: const BoxDecoration(
-                            color: Color(0xFFBA1A1A),
-                            shape: BoxShape.circle,
-                          ),
-                        ),
-                        const SizedBox(width: 3),
-                      ],
-                      Flexible(
-                        child: Text(
-                          label,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: openSans(
-                            fontSize: 11,
-                            fontWeight: FontWeight.w600,
-                            color: isUrgent ? const Color(0xFFBA1A1A) : const Color(0xFF404942),
-                          ),
+                    child: ExcludeSemantics(
+                      child: Text(
+                        '$numericValue',
+                        key: countKey,
+                        style: const TextStyle(
+                          fontSize: 0,
+                          color: Colors.transparent,
                         ),
                       ),
-                    ],
+                    ),
+                  ),
+                const SizedBox(height: 2),
+                Text(
+                  label,
+                  textAlign: TextAlign.center,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: openSans(
+                    fontSize: 11,
+                    fontWeight: FontWeight.w600,
+                    color: isUrgent
+                        ? const Color(0xFF785400)
+                        : const Color(0xFF404942),
                   ),
                 ),
               ],

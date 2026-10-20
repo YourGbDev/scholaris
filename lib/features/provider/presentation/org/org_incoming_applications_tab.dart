@@ -1382,11 +1382,15 @@ class _OrgIncomingApplicationsTabState
       statusIcon = Icons.calendar_month_rounded;
     } else if (app.status == ApplicationStatus.rejected ||
         app.status == ApplicationStatus.withdrawn) {
-      statusTitle = 'Not Qualified';
+      statusTitle = app.status == ApplicationStatus.withdrawn ? 'Withdrawn' : 'Rejected';
       statusBg = const Color(0xFFFFDAD6);
       statusTextColor = const Color(0xFF93000A);
     } else {
-      statusTitle = 'Under Review (Stage 2)';
+      statusTitle = switch (app.status) {
+        ApplicationStatus.submitted => 'Submitted',
+        ApplicationStatus.draft => 'Draft',
+        _ => 'Under Review',
+      };
       statusBg = const Color(0xFFEEEDF3);
       statusTextColor = kOrgTextPrimary;
       pulseDot = true;

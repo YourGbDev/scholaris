@@ -19,6 +19,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:scholaris/features/applications/models/application.dart';
+import 'package:scholaris/features/applications/presentation/application_status_chip.dart';
 import 'package:scholaris/features/applications/presentation/submit_application_review_dialog.dart';
 import 'package:scholaris/features/applications/providers/application_document_provider.dart';
 import 'package:scholaris/features/applications/providers/applications_provider.dart';
@@ -3328,7 +3329,9 @@ class _AppliedBanner extends ConsumerWidget {
                     ),
                     const SizedBox(width: 6),
                     Text(
-                      'Pending review',
+                      application == null
+                          ? 'Status unavailable'
+                          : ApplicationStatusUi.of(application.status).label,
                       style: outfit(fontSize: 10, fontWeight: FontWeight.w600, color: kPrimaryContainer),
                     ),
                   ],

@@ -274,6 +274,24 @@ void main() {
   });
 
   group('Applied state', () {
+    for (final status in ['approved', 'awarded']) {
+      testWidgets('dashboard distinguishes $status applications', (tester) async {
+        final applications = FakeApplicationDataSource();
+        await applications.insertApplication('user-a', {
+          'user_id': 'user-a',
+          'scholarship_id': 'sch-dost',
+          'status': status,
+        });
+        await _pumpDiscover(tester, applications: applications);
+        expect(find.text(status == 'approved'
+            ? 'Application Approved'
+            : 'Scholarship Awarded!'), findsOneWidget);
+        if (status == 'approved') {
+          expect(find.text('Scholarship Awarded!'), findsNothing);
+        }
+      });
+    }
+
     testWidgets('a closing-soon card shows the applied indicator',
         (tester) async {
       final applications = FakeApplicationDataSource();

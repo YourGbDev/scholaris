@@ -356,8 +356,12 @@ class _StudentDashboardScreenState
       icon = Icons.celebration_rounded;
       iconColor = const Color(0xFF0F4D2E);
       bgColor = const Color(0xFFB3F1C6);
-      title = 'Scholarship Awarded!';
-      subtitle = 'Congratulations! Your scholarship application was approved.';
+      title = app.status == ApplicationStatus.awarded
+          ? 'Scholarship Awarded!'
+          : 'Application Approved';
+      subtitle = app.status == ApplicationStatus.awarded
+          ? 'View your award details in the tracker.'
+          : 'View your approval letter and contact your provider for next steps.';
     } else if (app.status == ApplicationStatus.underReview) {
       icon = Icons.hourglass_top_rounded;
       iconColor = const Color(0xFF5D4200);

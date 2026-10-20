@@ -260,7 +260,7 @@ class _ApplicantReviewDrawerState extends ConsumerState<ApplicantReviewDrawer> {
     if (_isProcessing || !(targetStatus == ApplicationStatus.underReview
         ? identity.isEvaluator : identity.isOrgAdmin)) { return; }
     final actionLabel = targetStatus == ApplicationStatus.approved
-        ? 'Approve Award'
+        ? 'Approve Application'
         : targetStatus == ApplicationStatus.rejected
             ? 'Mark Ineligible'
             : 'Endorse to Org Admin';
@@ -2015,7 +2015,7 @@ class _ApplicantReviewDrawerState extends ConsumerState<ApplicantReviewDrawer> {
                           label: const FittedBox(
                             fit: BoxFit.scaleDown,
                             child: Text(
-                              'Approve Award',
+                              'Approve Application',
                               style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13, letterSpacing: 0.1),
                             ),
                           ),

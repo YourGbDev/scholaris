@@ -165,7 +165,7 @@ class _SubmitApplicationReviewDialogState
                   const SizedBox(height: 12),
 
                   // CARD 2: Award & Key Facts Card
-                  _buildAwardCard(),
+                  _buildAwardCard(profile: profile),
                   const SizedBox(height: 12),
 
                   // CARD 3: Application Packet
@@ -423,7 +423,7 @@ class _SubmitApplicationReviewDialogState
   }
 
   // --- CARD 2: Award & Key Facts Card --------------------------------------
-  Widget _buildAwardCard() {
+  Widget _buildAwardCard({required StudentProfile? profile}) {
     final now = DateTime.now();
     final daysLeft = widget.scholarship.deadline.difference(now).inDays;
 
@@ -472,7 +472,7 @@ class _SubmitApplicationReviewDialogState
                         alignment: Alignment.centerLeft,
                         child: RichText(
                           text: TextSpan(
-                            text: _grantValue(widget.scholarship),
+                            text: widget.scholarship.formattedAmount,
                             style: GoogleFonts.outfit(
                               fontSize: 20,
                               fontWeight: FontWeight.bold,
@@ -480,7 +480,7 @@ class _SubmitApplicationReviewDialogState
                             ),
                             children: [
                               TextSpan(
-                                text: ' / semester',
+                                text: ' ${widget.scholarship.formattedFrequency}',
                                 style: GoogleFonts.openSans(
                                   fontSize: 12,
                                   fontWeight: FontWeight.normal,
@@ -533,7 +533,7 @@ class _SubmitApplicationReviewDialogState
                     ),
                     const SizedBox(height: 3),
                     Text(
-                      '4-Year Renewable',
+                      widget.scholarship.coverage,
                       style: GoogleFonts.openSans(
                         fontSize: 10,
                         color: kOnSurfaceVariant,
@@ -631,7 +631,7 @@ class _SubmitApplicationReviewDialogState
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'Recipient',
+                              'Declared school',
                               style: GoogleFonts.outfit(
                                 fontSize: 10,
                                 fontWeight: FontWeight.w600,
@@ -639,7 +639,9 @@ class _SubmitApplicationReviewDialogState
                               ),
                             ),
                             Text(
-                              'UP Diliman',
+                              profile?.school?.trim().isNotEmpty == true
+                                  ? profile!.school!
+                                  : 'School not recorded',
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                               style: GoogleFonts.outfit(
@@ -1083,7 +1085,7 @@ class _SubmitApplicationReviewDialogState
           ),
           const SizedBox(height: 4),
           Text(
-            'Once submitted, your application is locked and transmitted to the review committee. You will receive an official timestamp receipt via your UP Diliman email.',
+            'Once submitted, your application is sent for review. Your submission receipt and status updates are available in the app.',
             textAlign: TextAlign.center,
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
@@ -1097,19 +1099,4 @@ class _SubmitApplicationReviewDialogState
       ),
     );
   }
-}
-
-String _grantValue(Scholarship scholarship) {
-  final provider = scholarship.provider?.toLowerCase() ?? '';
-  final title = scholarship.title.toLowerCase();
-  if (provider.contains('dost') || title.contains('dost')) {
-    return '₱40,000';
-  } else if (provider.contains('ched') || title.contains('ched')) {
-    return '₱60,000';
-  } else if (provider.contains('gokongwei') ||
-      provider.contains('ayala') ||
-      provider.contains('sm')) {
-    return '₱100,000';
-  }
-  return '₱50,000';
 }

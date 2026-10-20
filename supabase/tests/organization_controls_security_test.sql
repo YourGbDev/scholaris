@@ -232,6 +232,7 @@ select set_config('request.jwt.claim.sub', '11111111-0000-0000-0000-000000000001
 do $$
 declare
   v_admin_a uuid := '11111111-0000-0000-0000-000000000001';
+  v_rev_a uuid := '11111111-0000-0000-0000-000000000002';
   v_admin_b uuid := '22222222-0000-0000-0000-000000000001';
   v_grant_capped uuid := '44444444-0000-0000-0000-000000000001';
   v_count int;
@@ -254,6 +255,124 @@ begin
     get stacked diagnostics v_err_code = returned_sqlstate, v_err_msg = message_text;
     insert into test_results values ('Vector 10: Cross-Org Assignment Boundary', 'PASS', 'Rejected with code: ' || v_err_code);
   end;
+
+  -- Vector 10b: Org Admin Assign and Unassign Reviewer
+  perform public.assign_scholarship_reviewer(v_grant_capped, v_rev_a);
+  if exists (select 1 from public.scholarship_reviewer_assignments where scholarship_id = v_grant_capped and reviewer_id = v_rev_a) then
+    insert into test_results values ('Vector 10b: Org Admin Assign Reviewer', 'PASS', 'Reviewer successfully assigned');
+  else
+    raise exception 'Reviewer assignment was not created';
+  end if;
+
+  perform public.unassign_scholarship_reviewer(v_grant_capped, v_rev_a);
+  if not exists (select 1 from public.scholarship_reviewer_assignments where scholarship_id = v_grant_capped and reviewer_id = v_rev_a) then
+    insert into test_results values ('Vector 10c: Org Admin Unassign Reviewer', 'PASS', 'Reviewer successfully unassigned');
+  else
+    raise exception 'Reviewer assignment was not deleted';
+  end if;
+end;
+$$;
+
+-- -----------------------------------------------------------------------------
+-- Authenticated as Outsider (Student Ateneo attempting assign/unassign)
+-- -----------------------------------------------------------------------------
+set local role authenticated;
+select set_config('request.jwt.claim.sub', '33333333-0000-0000-0000-000000000002', true);
+
+do $$
+declare
+  v_grant_capped uuid := '44444444-0000-0000-0000-000000000001';
+  v_rev_a uuid := '11111111-0000-0000-0000-000000000002';
+  v_err_code text;
+begin
+  begin
+    perform public.assign_scholarship_reviewer(v_grant_capped, v_rev_a);
+    raise exception 'Outsider assign unexpectedly succeeded';
+  exception when others then
+    get stacked diagnostics v_err_code = returned_sqlstate;
+    if v_err_code = '42501' then
+      insert into test_results values ('Vector 10d: Outsider Assign Denied', 'PASS', 'Rejected with 42501');
+    else
+      raise exception 'Expected 42501 but got %', v_err_code;
+    end if;
+  end;
+
+  begin
+    perform public.unassign_scholarship_reviewer(v_grant_capped, v_rev_a);
+    raise exception 'Outsider unassign unexpectedly succeeded';
+  exception when others then
+    get stacked diagnostics v_err_code = returned_sqlstate;
+    if v_err_code = '42501' then
+      insert into test_results values ('Vector 10e: Outsider Unassign Denied', 'PASS', 'Rejected with 42501');
+    else
+      raise exception 'Expected 42501 but got %', v_err_code;
+    end if;
+  end;
+end;
+$$;
+
+-- -----------------------------------------------------------------------------
+-- Authenticated as Reviewer (Reviewer A attempting assign/unassign)
+-- -----------------------------------------------------------------------------
+set local role authenticated;
+select set_config('request.jwt.claim.sub', '11111111-0000-0000-0000-000000000002', true);
+
+do $$
+declare
+  v_grant_capped uuid := '44444444-0000-0000-0000-000000000001';
+  v_rev_a uuid := '11111111-0000-0000-0000-000000000002';
+  v_err_code text;
+begin
+  begin
+    perform public.assign_scholarship_reviewer(v_grant_capped, v_rev_a);
+    raise exception 'Reviewer assign unexpectedly succeeded';
+  exception when others then
+    get stacked diagnostics v_err_code = returned_sqlstate;
+    if v_err_code = '42501' then
+      insert into test_results values ('Vector 10f: Reviewer Assign Denied', 'PASS', 'Rejected with 42501');
+    else
+      raise exception 'Expected 42501 but got %', v_err_code;
+    end if;
+  end;
+
+  begin
+    perform public.unassign_scholarship_reviewer(v_grant_capped, v_rev_a);
+    raise exception 'Reviewer unassign unexpectedly succeeded';
+  exception when others then
+    get stacked diagnostics v_err_code = returned_sqlstate;
+    if v_err_code = '42501' then
+      insert into test_results values ('Vector 10g: Reviewer Unassign Denied', 'PASS', 'Rejected with 42501');
+    else
+      raise exception 'Expected 42501 but got %', v_err_code;
+    end if;
+  end;
+end;
+$$;
+
+-- -----------------------------------------------------------------------------
+-- Authenticated as Platform Admin (Assign and Unassign Reviewer)
+-- -----------------------------------------------------------------------------
+set local role authenticated;
+select set_config('request.jwt.claim.sub', '99999999-0000-0000-0000-000000000001', true);
+
+do $$
+declare
+  v_grant_capped uuid := '44444444-0000-0000-0000-000000000001';
+  v_rev_a uuid := '11111111-0000-0000-0000-000000000002';
+begin
+  perform public.assign_scholarship_reviewer(v_grant_capped, v_rev_a);
+  if exists (select 1 from public.scholarship_reviewer_assignments where scholarship_id = v_grant_capped and reviewer_id = v_rev_a) then
+    insert into test_results values ('Vector 10h: Platform Admin Assign Reviewer', 'PASS', 'Reviewer successfully assigned');
+  else
+    raise exception 'Platform admin reviewer assignment was not created';
+  end if;
+
+  perform public.unassign_scholarship_reviewer(v_grant_capped, v_rev_a);
+  if not exists (select 1 from public.scholarship_reviewer_assignments where scholarship_id = v_grant_capped and reviewer_id = v_rev_a) then
+    insert into test_results values ('Vector 10i: Platform Admin Unassign Reviewer', 'PASS', 'Reviewer successfully unassigned');
+  else
+    raise exception 'Platform admin reviewer assignment was not deleted';
+  end if;
 end;
 $$;
 

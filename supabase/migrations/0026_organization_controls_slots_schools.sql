@@ -430,7 +430,7 @@ begin
   if not found then raise exception 'Scholarship not found' using errcode = 'P0002'; end if;
 
   v_role := public.organization_role(v_scholarship.created_by);
-  if not (public.is_admin() or v_role = 'org_admin') then
+  if (public.is_admin() or v_role = 'org_admin') is not true then
     raise exception 'Only organization admins can assign reviewers' using errcode = '42501';
   end if;
 
@@ -485,7 +485,7 @@ begin
   if not found then raise exception 'Scholarship not found' using errcode = 'P0002'; end if;
 
   v_role := public.organization_role(v_scholarship.created_by);
-  if not (public.is_admin() or v_role = 'org_admin') then
+  if (public.is_admin() or v_role = 'org_admin') is not true then
     raise exception 'Only organization admins can unassign reviewers' using errcode = '42501';
   end if;
 

@@ -524,6 +524,106 @@ await test('Vector 10: Cross-organization isolation & audit ledger integrity: cr
 });
 
 // -----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
+// Vector 12: Assign/Unassign Authorization Matrix (Outsider, Cross-Org Admin, Reviewer, Org Admin, Platform Admin)
+// -----------------------------------------------------------------------------
+await test('Vector 12: Assign & unassign authorization matrix: outsider, cross-org admin, and reviewer denied with 42501 (leaving assignments and audit logs unchanged); authorized org admin and platform admin succeed', async () => {
+  const outsider = studentB; // Authenticated user with no membership in Org A
+  const crossOrgAdmin = orgAdminB; // Org admin of Org B, no membership in Org A
+  const reviewer = reviewerA; // Reviewer in Org A, not org admin
+  const authorizedOrgAdmin = orgAdminA; // Org admin in Org A
+  const targetScholarship = reductionGrant; // Owned by Org A
+  const targetReviewer = reviewerA; // Reviewer in Org A
+
+  const getAssignmentsCount = async () =>
+    Number((await db.query('select count(*) as c from public.scholarship_reviewer_assignments where scholarship_id = $1', [targetScholarship])).rows[0].c);
+
+  const getAuditLogsCount = async () =>
+    Number((await db.query('select count(*) as c from public.audit_logs where target_id = $1', [targetScholarship])).rows[0].c);
+
+  // Helper for denied test asserting table & audit immutability
+  const assertDenied = async (actor, actionName, querySql, params) => {
+    const preAssign = await getAssignmentsCount();
+    const preAudit = await getAuditLogsCount();
+
+    await assert.rejects(
+      as(actor, querySql, params),
+      (err) => {
+        const matches = err.code === '42501' || (err.message && err.message.includes('Only organization admins'));
+        assert(matches, `${actionName} by ${actor} should fail with 42501, but got: ${err.message}`);
+        return true;
+      }
+    );
+
+    const postAssign = await getAssignmentsCount();
+    const postAudit = await getAuditLogsCount();
+    assert.equal(postAssign, preAssign, `${actionName} denial MUST leave assignments count unchanged`);
+    assert.equal(postAudit, preAudit, `${actionName} denial MUST leave audit logs count unchanged`);
+  };
+
+  // 1. Authenticated Outsider (has no membership in Org A): assign and unassign denied
+  await assertDenied(outsider, 'Outsider Assign', 'select public.assign_scholarship_reviewer($1, $2)', [targetScholarship, targetReviewer]);
+  await assertDenied(outsider, 'Outsider Unassign', 'select public.unassign_scholarship_reviewer($1, $2)', [targetScholarship, targetReviewer]);
+
+  // 2. Cross-Org Admin (org_admin in Org B, no membership in Org A): assign and unassign denied
+  await assertDenied(crossOrgAdmin, 'Cross-Org Admin Assign', 'select public.assign_scholarship_reviewer($1, $2)', [targetScholarship, targetReviewer]);
+  await assertDenied(crossOrgAdmin, 'Cross-Org Admin Unassign', 'select public.unassign_scholarship_reviewer($1, $2)', [targetScholarship, targetReviewer]);
+
+  // 3. Reviewer (member in Org A, but role is reviewer, not org_admin): assign and unassign denied
+  await assertDenied(reviewer, 'Reviewer Assign', 'select public.assign_scholarship_reviewer($1, $2)', [targetScholarship, targetReviewer]);
+  await assertDenied(reviewer, 'Reviewer Unassign', 'select public.unassign_scholarship_reviewer($1, $2)', [targetScholarship, targetReviewer]);
+
+  // 4. Authorized Org Admin: Assign succeeds
+  const preOrgAssignAudit = await getAuditLogsCount();
+  const assignOrgRes = await as(authorizedOrgAdmin, 'select * from public.assign_scholarship_reviewer($1, $2)', [targetScholarship, targetReviewer]);
+  assert.equal(assignOrgRes.rows.length, 1, 'Authorized org admin assign must succeed');
+  assert.equal(await getAssignmentsCount(), 1, 'Assignment row must be created');
+  assert.equal(await getAuditLogsCount(), preOrgAssignAudit + 1, 'Audit log must record assign_reviewer event');
+  const orgAssignLog = (await db.query('select * from public.audit_logs where target_id = $1 order by created_at desc limit 1', [targetScholarship])).rows[0];
+  assert.equal(orgAssignLog.action, 'assign_reviewer');
+  assert.equal(orgAssignLog.actor_id, authorizedOrgAdmin);
+
+  // When assignment exists, verify outsider, cross-org admin, and reviewer STILL CANNOT unassign
+  await assertDenied(outsider, 'Outsider Unassign existing', 'select public.unassign_scholarship_reviewer($1, $2)', [targetScholarship, targetReviewer]);
+  assert.equal(await getAssignmentsCount(), 1, 'Outsider unassign must not delete existing assignment');
+
+  await assertDenied(crossOrgAdmin, 'Cross-Org Admin Unassign existing', 'select public.unassign_scholarship_reviewer($1, $2)', [targetScholarship, targetReviewer]);
+  assert.equal(await getAssignmentsCount(), 1, 'Cross-org admin unassign must not delete existing assignment');
+
+  await assertDenied(reviewer, 'Reviewer Unassign existing', 'select public.unassign_scholarship_reviewer($1, $2)', [targetScholarship, targetReviewer]);
+  assert.equal(await getAssignmentsCount(), 1, 'Reviewer unassign must not delete existing assignment');
+
+  // Authorized Org Admin: Unassign succeeds
+  const preOrgUnassignAudit = await getAuditLogsCount();
+  const unassignOrgRes = await as(authorizedOrgAdmin, 'select public.unassign_scholarship_reviewer($1, $2)', [targetScholarship, targetReviewer]);
+  assert.equal(unassignOrgRes.rows[0].unassign_scholarship_reviewer, true, 'Authorized org admin unassign must return true');
+  assert.equal(await getAssignmentsCount(), 0, 'Assignment row must be deleted');
+  assert.equal(await getAuditLogsCount(), preOrgUnassignAudit + 1, 'Audit log must record unassign_reviewer event');
+  const orgUnassignLog = (await db.query('select * from public.audit_logs where target_id = $1 order by created_at desc limit 1', [targetScholarship])).rows[0];
+  assert.equal(orgUnassignLog.action, 'unassign_reviewer');
+  assert.equal(orgUnassignLog.actor_id, authorizedOrgAdmin);
+
+  // 5. Platform Admin: Assign and Unassign succeed
+  const prePlatAssignAudit = await getAuditLogsCount();
+  const assignPlatRes = await as(platformAdmin, 'select * from public.assign_scholarship_reviewer($1, $2)', [targetScholarship, targetReviewer]);
+  assert.equal(assignPlatRes.rows.length, 1, 'Platform admin assign must succeed');
+  assert.equal(await getAssignmentsCount(), 1, 'Platform admin assignment row must be created');
+  assert.equal(await getAuditLogsCount(), prePlatAssignAudit + 1, 'Audit log must record platform admin assign_reviewer event');
+  const platAssignLog = (await db.query('select * from public.audit_logs where target_id = $1 order by created_at desc limit 1', [targetScholarship])).rows[0];
+  assert.equal(platAssignLog.action, 'assign_reviewer');
+  assert.equal(platAssignLog.actor_id, platformAdmin);
+
+  const prePlatUnassignAudit = await getAuditLogsCount();
+  const unassignPlatRes = await as(platformAdmin, 'select public.unassign_scholarship_reviewer($1, $2)', [targetScholarship, targetReviewer]);
+  assert.equal(unassignPlatRes.rows[0].unassign_scholarship_reviewer, true, 'Platform admin unassign must return true');
+  assert.equal(await getAssignmentsCount(), 0, 'Platform admin assignment row must be deleted');
+  assert.equal(await getAuditLogsCount(), prePlatUnassignAudit + 1, 'Audit log must record platform admin unassign_reviewer event');
+  const platUnassignLog = (await db.query('select * from public.audit_logs where target_id = $1 order by created_at desc limit 1', [targetScholarship])).rows[0];
+  assert.equal(platUnassignLog.action, 'unassign_reviewer');
+  assert.equal(platUnassignLog.actor_id, platformAdmin);
+});
+
+// -----------------------------------------------------------------------------
 // Vector 11: SQL Test Script Verification (supabase/tests/organization_controls_security_test.sql)
 // -----------------------------------------------------------------------------
 await test('Vector 11: SQL Regression Suite: supabase/tests/organization_controls_security_test.sql runs to completion with transactional rollback', async () => {

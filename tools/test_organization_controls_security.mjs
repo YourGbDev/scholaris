@@ -135,6 +135,13 @@ await db.exec(`
 
 await migration('0024_organization_review_cycle');
 await migration('0025_preserve_existing_award_transition');
+// Mirror Supabase production default privileges (scratch/0026_codex_remote_default_privileges.json):
+// defaclobjtype 'r' (tables/views), 'S' (sequences), 'f' (functions) automatically granted to anon, authenticated.
+await db.exec(`
+  alter default privileges in schema public grant all on tables to anon, authenticated;
+  alter default privileges in schema public grant all on sequences to anon, authenticated;
+  alter default privileges in schema public grant all on functions to anon, authenticated;
+`);
 await migration('0026_organization_controls_slots_schools');
 
 // -----------------------------------------------------------------------------
@@ -624,6 +631,158 @@ await test('Vector 12: Assign & unassign authorization matrix: outsider, cross-o
 });
 
 // -----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
+// Vector 13: Direct-Table Mutation Defense Under Production Default Privileges
+// (Direct INSERT/UPDATE/DELETE denied, actor spoofing & cross-org blocked, audit events enforced, SELECT preserved via RLS)
+// -----------------------------------------------------------------------------
+await test('Vector 13: Direct-table mutation defense under production default privileges: direct INSERT/UPDATE/DELETE denied; actor spoofing and cross-org reviewers blocked; audit events strictly required; authenticated SELECT preserved through RLS', async () => {
+  const targetScholarship = reductionGrant; // Owned by Org A
+  const validReviewer = reviewerA; // Org A reviewer
+  const crossOrgReviewer = reviewerB; // Org B reviewer
+  const outsider = studentB;
+
+  const getAssignmentsCount = async () =>
+    Number((await db.query('select count(*) as c from public.scholarship_reviewer_assignments where scholarship_id = $1', [targetScholarship])).rows[0].c);
+
+  const getAuditLogsCount = async () =>
+    Number((await db.query('select count(*) as c from public.audit_logs where target_id = $1', [targetScholarship])).rows[0].c);
+
+  const initialAssignments = await getAssignmentsCount();
+  const initialAudits = await getAuditLogsCount();
+
+  // 1. Direct table INSERT must be DENIED for all client roles, even with production default grants
+  // A. Authorized Org Admin attempting direct INSERT (bypassing RPC)
+  await assert.rejects(
+    as(orgAdminA, 'insert into public.scholarship_reviewer_assignments(scholarship_id, reviewer_id, assigned_by) values ($1, $2, $3)',
+      [targetScholarship, validReviewer, orgAdminA]),
+    (err) => {
+      assert(err.code === '42501', `Direct INSERT by orgAdminA should fail with 42501, got: ${err.message} (${err.code})`);
+      return true;
+    }
+  );
+
+  // B. Actor Spoofing via direct INSERT: orgAdminA trying to forge assigned_by as orgAdminB
+  await assert.rejects(
+    as(orgAdminA, 'insert into public.scholarship_reviewer_assignments(scholarship_id, reviewer_id, assigned_by) values ($1, $2, $3)',
+      [targetScholarship, validReviewer, orgAdminB]),
+    (err) => {
+      assert(err.code === '42501', `Actor-spoofed direct INSERT should fail with 42501, got: ${err.message} (${err.code})`);
+      return true;
+    }
+  );
+
+  // C. Cross-Org Reviewer via direct INSERT: orgAdminA trying to assign reviewerB (from Org B)
+  await assert.rejects(
+    as(orgAdminA, 'insert into public.scholarship_reviewer_assignments(scholarship_id, reviewer_id, assigned_by) values ($1, $2, $3)',
+      [targetScholarship, crossOrgReviewer, orgAdminA]),
+    (err) => {
+      assert(err.code === '42501', `Cross-org direct INSERT should fail with 42501, got: ${err.message} (${err.code})`);
+      return true;
+    }
+  );
+
+  // D. Direct INSERT by outsider (studentB)
+  await assert.rejects(
+    as(outsider, 'insert into public.scholarship_reviewer_assignments(scholarship_id, reviewer_id, assigned_by) values ($1, $2, $3)',
+      [targetScholarship, validReviewer, outsider]),
+    (err) => {
+      assert(err.code === '42501', `Direct INSERT by outsider should fail with 42501, got: ${err.message} (${err.code})`);
+      return true;
+    }
+  );
+
+  // Verify that all rejected direct INSERT attempts left assignments and audit logs unchanged
+  assert.equal(await getAssignmentsCount(), initialAssignments, 'Direct INSERT denials must leave assignments unchanged');
+  assert.equal(await getAuditLogsCount(), initialAudits, 'Direct INSERT denials must leave audit logs unchanged');
+
+  // 2. Validate RPC enforcement: cross-org reviewer assignment rejected with P0002
+  await assert.rejects(
+    as(orgAdminA, 'select public.assign_scholarship_reviewer($1, $2)', [targetScholarship, crossOrgReviewer]),
+    (err) => {
+      assert(err.code === 'P0002' || (err.message && err.message.includes('not an active reviewer')),
+        `Cross-org reviewer assignment via RPC must fail with P0002, got: ${err.message} (${err.code})`);
+      return true;
+    }
+  );
+  assert.equal(await getAssignmentsCount(), initialAssignments, 'Rejected RPC must leave assignments unchanged');
+  assert.equal(await getAuditLogsCount(), initialAudits, 'Rejected RPC must leave audit logs unchanged');
+
+  // 3. Authorized RPC assign succeeds, binds assigned_by to auth.uid(), and records required audit log
+  const assignRes = await as(orgAdminA, 'select * from public.assign_scholarship_reviewer($1, $2)', [targetScholarship, validReviewer]);
+  assert.equal(assignRes.rows.length, 1, 'Valid RPC assignment must succeed');
+  assert.equal(assignRes.rows[0].assigned_by, orgAdminA, 'assigned_by must strictly bind to auth.uid()');
+  assert.equal(await getAssignmentsCount(), initialAssignments + 1, 'Assignment row created');
+  assert.equal(await getAuditLogsCount(), initialAudits + 1, 'Audit log emitted');
+
+  const auditEntry = (await db.query('select * from public.audit_logs where target_id = $1 order by created_at desc limit 1', [targetScholarship])).rows[0];
+  assert.equal(auditEntry.action, 'assign_reviewer', 'Audit action must be assign_reviewer');
+  assert.equal(auditEntry.actor_id, orgAdminA, 'Audit actor must match authenticated caller');
+  assert.equal(auditEntry.details?.reviewer_id, validReviewer, 'Audit details must record reviewer_id');
+
+  // 4. Direct table UPDATE must be DENIED for all client roles
+  await assert.rejects(
+    as(orgAdminA, 'update public.scholarship_reviewer_assignments set reviewer_id = $1 where scholarship_id = $2', [crossOrgReviewer, targetScholarship]),
+    (err) => {
+      assert(err.code === '42501', `Direct UPDATE by orgAdminA should fail with 42501, got: ${err.message} (${err.code})`);
+      return true;
+    }
+  );
+  await assert.rejects(
+    as(outsider, 'update public.scholarship_reviewer_assignments set reviewer_id = $1 where scholarship_id = $2', [crossOrgReviewer, targetScholarship]),
+    (err) => {
+      assert(err.code === '42501', `Direct UPDATE by outsider should fail with 42501, got: ${err.message} (${err.code})`);
+      return true;
+    }
+  );
+
+  // 5. Direct table DELETE must be DENIED for all client roles
+  await assert.rejects(
+    as(orgAdminA, 'delete from public.scholarship_reviewer_assignments where scholarship_id = $1 and reviewer_id = $2', [targetScholarship, validReviewer]),
+    (err) => {
+      assert(err.code === '42501', `Direct DELETE by orgAdminA should fail with 42501, got: ${err.message} (${err.code})`);
+      return true;
+    }
+  );
+  await assert.rejects(
+    as(outsider, 'delete from public.scholarship_reviewer_assignments where scholarship_id = $1 and reviewer_id = $2', [targetScholarship, validReviewer]),
+    (err) => {
+      assert(err.code === '42501', `Direct DELETE by outsider should fail with 42501, got: ${err.message} (${err.code})`);
+      return true;
+    }
+  );
+
+  // 6. Authenticated SELECT is preserved through RLS
+  // A. Org Admin of Org A can SELECT assignments
+  const adminSelectRes = await as(orgAdminA, 'select * from public.scholarship_reviewer_assignments where scholarship_id = $1', [targetScholarship]);
+  assert.equal(adminSelectRes.rows.length, 1, 'Org admin must be able to SELECT assignments via RLS');
+
+  // B. Reviewer of Org A can SELECT assignments
+  const reviewerSelectRes = await as(reviewerA, 'select * from public.scholarship_reviewer_assignments where scholarship_id = $1', [targetScholarship]);
+  assert.equal(reviewerSelectRes.rows.length, 1, 'Org reviewer must be able to SELECT assignments via RLS');
+
+  // C. Outsider (studentB) cannot see assignments (RLS filters out)
+  const outsiderSelectRes = await as(outsider, 'select * from public.scholarship_reviewer_assignments where scholarship_id = $1', [targetScholarship]);
+  assert.equal(outsiderSelectRes.rows.length, 0, 'Outsider SELECT must return 0 rows under RLS');
+
+  // D. Cross-Org Admin (orgAdminB) cannot see Org A assignments
+  const crossAdminSelectRes = await as(orgAdminB, 'select * from public.scholarship_reviewer_assignments where scholarship_id = $1', [targetScholarship]);
+  assert.equal(crossAdminSelectRes.rows.length, 0, 'Cross-org admin SELECT must return 0 rows under RLS');
+
+  // E. Platform Admin can SELECT all assignments
+  const platSelectRes = await as(platformAdmin, 'select * from public.scholarship_reviewer_assignments where scholarship_id = $1', [targetScholarship]);
+  assert.equal(platSelectRes.rows.length, 1, 'Platform admin must be able to SELECT assignments');
+
+  // 7. Cleanup via authorized RPC unassign emits required audit log
+  const unassignRes = await as(orgAdminA, 'select public.unassign_scholarship_reviewer($1, $2)', [targetScholarship, validReviewer]);
+  assert.equal(unassignRes.rows[0].unassign_scholarship_reviewer, true, 'Authorized unassign must succeed');
+  assert.equal(await getAssignmentsCount(), initialAssignments, 'Assignment row deleted');
+  assert.equal(await getAuditLogsCount(), initialAudits + 2, 'Unassign audit log emitted');
+
+  const unassignAudit = (await db.query('select * from public.audit_logs where target_id = $1 order by created_at desc limit 1', [targetScholarship])).rows[0];
+  assert.equal(unassignAudit.action, 'unassign_reviewer', 'Audit action must be unassign_reviewer');
+  assert.equal(unassignAudit.actor_id, orgAdminA, 'Audit actor must match authenticated caller');
+});
+
 // Vector 11: SQL Test Script Verification (supabase/tests/organization_controls_security_test.sql)
 // -----------------------------------------------------------------------------
 await test('Vector 11: SQL Regression Suite: supabase/tests/organization_controls_security_test.sql runs to completion with transactional rollback', async () => {

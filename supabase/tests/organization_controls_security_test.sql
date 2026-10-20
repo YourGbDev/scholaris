@@ -270,6 +270,56 @@ begin
   else
     raise exception 'Reviewer assignment was not deleted';
   end if;
+
+  -- Vector 10j: Org Admin Direct Table INSERT Denied (Must use validated RPC)
+  begin
+    insert into public.scholarship_reviewer_assignments (scholarship_id, reviewer_id, assigned_by)
+    values (v_grant_capped, v_rev_a, v_admin_a);
+    raise exception 'Direct INSERT unexpectedly succeeded';
+  exception when others then
+    get stacked diagnostics v_err_code = returned_sqlstate;
+    if v_err_code = '42501' then
+      insert into test_results values ('Vector 10j: Org Admin Direct INSERT Denied', 'PASS', 'Rejected with 42501');
+    else
+      raise exception 'Expected 42501 on direct INSERT but got %', v_err_code;
+    end if;
+  end;
+
+  -- Vector 10k: Org Admin Direct Table UPDATE Denied
+  begin
+    update public.scholarship_reviewer_assignments set reviewer_id = v_rev_a where scholarship_id = v_grant_capped;
+    raise exception 'Direct UPDATE unexpectedly succeeded';
+  exception when others then
+    get stacked diagnostics v_err_code = returned_sqlstate;
+    if v_err_code = '42501' then
+      insert into test_results values ('Vector 10k: Org Admin Direct UPDATE Denied', 'PASS', 'Rejected with 42501');
+    else
+      raise exception 'Expected 42501 on direct UPDATE but got %', v_err_code;
+    end if;
+  end;
+
+  -- Vector 10l: Org Admin Direct Table DELETE Denied
+  begin
+    delete from public.scholarship_reviewer_assignments where scholarship_id = v_grant_capped;
+    raise exception 'Direct DELETE unexpectedly succeeded';
+  exception when others then
+    get stacked diagnostics v_err_code = returned_sqlstate;
+    if v_err_code = '42501' then
+      insert into test_results values ('Vector 10l: Org Admin Direct DELETE Denied', 'PASS', 'Rejected with 42501');
+    else
+      raise exception 'Expected 42501 on direct DELETE but got %', v_err_code;
+    end if;
+  end;
+
+  -- Vector 10m: Org Admin SELECT on assignments visible through RLS
+  perform public.assign_scholarship_reviewer(v_grant_capped, v_rev_a);
+  select count(*) into v_count from public.scholarship_reviewer_assignments where scholarship_id = v_grant_capped;
+  if v_count = 1 then
+    insert into test_results values ('Vector 10m: Org Admin Assignments SELECT Preserved', 'PASS', 'Assignment visible via RLS');
+  else
+    raise exception 'Org admin expected 1 assignment but got %', v_count;
+  end if;
+  perform public.unassign_scholarship_reviewer(v_grant_capped, v_rev_a);
 end;
 $$;
 
@@ -284,6 +334,7 @@ declare
   v_grant_capped uuid := '44444444-0000-0000-0000-000000000001';
   v_rev_a uuid := '11111111-0000-0000-0000-000000000002';
   v_err_code text;
+  v_count int;
 begin
   begin
     perform public.assign_scholarship_reviewer(v_grant_capped, v_rev_a);
@@ -308,6 +359,28 @@ begin
       raise exception 'Expected 42501 but got %', v_err_code;
     end if;
   end;
+
+  -- Vector 10n: Outsider Direct Table INSERT Denied
+  begin
+    insert into public.scholarship_reviewer_assignments (scholarship_id, reviewer_id, assigned_by)
+    values (v_grant_capped, v_rev_a, '33333333-0000-0000-0000-000000000002');
+    raise exception 'Outsider direct INSERT unexpectedly succeeded';
+  exception when others then
+    get stacked diagnostics v_err_code = returned_sqlstate;
+    if v_err_code = '42501' then
+      insert into test_results values ('Vector 10n: Outsider Direct INSERT Denied', 'PASS', 'Rejected with 42501');
+    else
+      raise exception 'Expected 42501 on outsider direct INSERT but got %', v_err_code;
+    end if;
+  end;
+
+  -- Vector 10o: Outsider SELECT on assignments filtered to 0 rows by RLS
+  select count(*) into v_count from public.scholarship_reviewer_assignments where scholarship_id = v_grant_capped;
+  if v_count = 0 then
+    insert into test_results values ('Vector 10o: Outsider Assignments SELECT Isolated', 'PASS', 'Returned 0 rows under RLS');
+  else
+    raise exception 'Outsider saw % assignments under RLS', v_count;
+  end if;
 end;
 $$;
 

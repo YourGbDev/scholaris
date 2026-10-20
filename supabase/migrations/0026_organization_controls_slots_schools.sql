@@ -36,8 +36,9 @@ drop policy if exists "Schools are readable by all authenticated users" on publi
 create policy "Schools are readable by all authenticated users"
   on public.schools for select to authenticated using (true);
 
+revoke all on public.schools from public, anon;
+revoke insert, update, delete, truncate on public.schools from authenticated;
 grant select on public.schools to authenticated;
-revoke insert, update, delete on public.schools from public, anon, authenticated;
 
 -- Seed 10 neutral, pre-populated Philippine universities in alphabetical order (zero arbitrary rankings)
 insert into public.schools (name, normalized_name, aliases, is_curated) values
@@ -155,6 +156,8 @@ where (
 )
 group by s.id, s.slots, s.is_active, s.created_by;
 
+revoke all on public.scholarship_capacities from public, anon;
+revoke insert, update, delete, truncate on public.scholarship_capacities from authenticated;
 grant select on public.scholarship_capacities to authenticated;
 
 create or replace function public.get_scholarship_capacity(p_scholarship_id uuid)
@@ -205,6 +208,7 @@ drop trigger if exists trg_guard_scholarship_capacity on public.scholarships;
 create trigger trg_guard_scholarship_capacity
   before update of slots on public.scholarships
   for each row execute function public.guard_scholarship_capacity();
+revoke all on function public.guard_scholarship_capacity() from public, anon, authenticated;
 
 -- -----------------------------------------------------------------------------
 -- 6. Atomic Slot Capacity Enforcement in public.review_application
@@ -358,6 +362,7 @@ begin
   return new;
 end;
 $$;
+revoke all on function public.guard_application_workflow() from public, anon, authenticated;
 
 -- -----------------------------------------------------------------------------
 -- 8. Table: public.scholarship_reviewer_assignments & Assignment RPCs
@@ -378,6 +383,8 @@ create index if not exists idx_scholarship_reviewer_assignments_reviewer
 
 alter table public.scholarship_reviewer_assignments enable row level security;
 
+drop policy if exists "Org members can view reviewer assignments for org scholarships"
+  on public.scholarship_reviewer_assignments;
 create policy "Org members can view reviewer assignments for org scholarships"
   on public.scholarship_reviewer_assignments
   for select to authenticated
@@ -390,26 +397,13 @@ create policy "Org members can view reviewer assignments for org scholarships"
     )
   );
 
-create policy "Org admins can manage reviewer assignments"
-  on public.scholarship_reviewer_assignments
-  for all to authenticated
-  using (
-    public.is_admin()
-    or exists (
-      select 1 from public.scholarships s
-      where s.id = scholarship_reviewer_assignments.scholarship_id
-        and public.organization_role(s.created_by) = 'org_admin'
-    )
-  )
-  with check (
-    public.is_admin()
-    or exists (
-      select 1 from public.scholarships s
-      where s.id = scholarship_reviewer_assignments.scholarship_id
-        and public.organization_role(s.created_by) = 'org_admin'
-    )
-  );
+-- Direct client mutations are strictly forbidden; assignments must be managed
+-- exclusively via public.assign_scholarship_reviewer and public.unassign_scholarship_reviewer.
+drop policy if exists "Org admins can manage reviewer assignments"
+  on public.scholarship_reviewer_assignments;
 
+revoke all on public.scholarship_reviewer_assignments from public, anon;
+revoke insert, update, delete, truncate on public.scholarship_reviewer_assignments from authenticated;
 grant select on public.scholarship_reviewer_assignments to authenticated;
 
 -- RPC: public.assign_scholarship_reviewer

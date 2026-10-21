@@ -728,6 +728,9 @@ String? _redirect(Ref ref, GoRouterState state) {
     introSeen: intro.valueOrNull ?? false,
     recoveryActive: recoveryActive,
   );
+  if (result == '/home' && location.startsWith('/profile-setup')) {
+    Future.microtask(() => ref.read(homeTabIndexProvider.notifier).selectTab(0));
+  }
   debugPrint('[ROUTER] final redirect=$result');
   return result;
 }

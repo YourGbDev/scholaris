@@ -16,6 +16,7 @@ import 'package:go_router/go_router.dart';
 
 import 'package:scholaris/app/router.dart';
 import 'package:scholaris/features/auth/controllers/auth_controller.dart';
+import 'package:scholaris/features/home/presentation/home_screen.dart';
 import 'package:scholaris/features/profile/models/avatar_item.dart';
 import 'package:scholaris/features/profile/models/profile_validator.dart';
 import 'package:scholaris/features/profile/models/student_profile.dart';
@@ -1837,6 +1838,7 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
     final effectiveValue = items.any((item) => item.value == value) ? value : null;
     return DropdownButtonFormField<T>(
       key: ValueKey(effectiveValue),
+      isExpanded: true,
       initialValue: effectiveValue,
       hint: hint == null
           ? null
@@ -1994,13 +1996,17 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
                     )
                   : Row(
                       mainAxisAlignment: MainAxisAlignment.center,
+                      mainAxisSize: MainAxisSize.min,
                       children: [
-                        Text(
-                          isLastStep ? 'Complete Profile' : 'Continue',
-                          style: outfit(
-                            fontSize: 15,
-                            fontWeight: FontWeight.w600,
-                            color: Colors.white,
+                        Flexible(
+                          child: Text(
+                            isLastStep ? 'Complete Profile' : 'Continue',
+                            style: outfit(
+                              fontSize: 15,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.white,
+                            ),
+                            overflow: TextOverflow.ellipsis,
                           ),
                         ),
                         const SizedBox(width: 6),
@@ -2465,6 +2471,7 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
           await ref.read(profileCompleteProvider.future);
         } catch (_) {}
         if (!mounted) return;
+        ref.read(homeTabIndexProvider.notifier).selectTab(0);
         context.go('/home');
       }
     } else {

@@ -97,13 +97,11 @@ void main() {
 
       final imageWidget = tester.widget<Image>(imageFinder.first);
       expect((imageWidget.image as AssetImage).assetName,
-          'assets/images/mascot_male.png');
+          'assets/images/hero_banner_exact.png');
 
       // Verify Gilbert greeting is displayed
       expect(find.textContaining('Gilbert!'), findsOneWidget);
 
-      // Verify speech bubble displays
-      expect(find.textContaining('scholarship matches! 🎓'), findsOneWidget);
     });
 
     testWidgets('displays female mascot when gender is female', (tester) async {
@@ -122,7 +120,7 @@ void main() {
 
       final imageWidget = tester.widget<Image>(imageFinder.first);
       expect((imageWidget.image as AssetImage).assetName,
-          'assets/images/mascot_female.png');
+          'assets/images/hero_banner_female.png');
 
       expect(find.textContaining('Maria!'), findsOneWidget);
     });

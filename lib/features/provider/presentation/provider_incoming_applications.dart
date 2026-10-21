@@ -453,9 +453,13 @@ class _IncomingApplicationRow extends ConsumerWidget {
   }
 
   void _showStatusSheet(BuildContext context, WidgetRef ref) {
+    final identity = ref.read(providerSubRoleProvider);
     final validNextStatuses = <ApplicationStatus>[];
-    if (ref.read(providerSubRoleProvider).isOrgAdmin &&
+    if (identity.isOrgAdmin &&
         application.status == ApplicationStatus.underReview && application.endorsedBy != null) {
+      validNextStatuses.addAll([ApplicationStatus.approved, ApplicationStatus.rejected]);
+    } else if (identity.isIndividualBenefactor &&
+        (application.status == ApplicationStatus.submitted || application.status == ApplicationStatus.underReview)) {
       validNextStatuses.addAll([ApplicationStatus.approved, ApplicationStatus.rejected]);
     }
 

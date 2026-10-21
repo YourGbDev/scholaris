@@ -1,3 +1,4 @@
+import 'dart:async';
 // Day 9 — Discover dashboard widget tests.
 //
 // Verifies the compact dashboard summary and the Closing Soon urgency surface
@@ -136,6 +137,7 @@ List<Map<String, dynamic>> _rows() => [
 
 ProviderScope _wrap({
   Widget? child,
+  Future<StudentProfile?>? profileFuture,
   FakeBookmarkDataSource? bookmarks,
   FakeApplicationDataSource? applications,
 }) {
@@ -145,6 +147,8 @@ ProviderScope _wrap({
   return ProviderScope(
     overrides: [
       currentUserIdProvider.overrideWithValue('user-a'),
+      if (profileFuture != null)
+        currentProfileProvider.overrideWith((ref) => profileFuture),
       profileRepositoryProvider.overrideWith(
         (ref) => ProfileRepository(
           dataSource: profileSource,
@@ -201,6 +205,29 @@ Finder _inClosingSoon(Finder inner) => find.descendant(
 void main() {
   setUpAll(() {
     GoogleFonts.config.allowRuntimeFetching = false;
+  });
+
+  testWidgets('female login never paints a male hero while profile loads', (tester) async {
+    final pending = Completer<StudentProfile?>();
+    await tester.pumpWidget(_wrap(profileFuture: pending.future));
+    await tester.pump(const Duration(milliseconds: 100));
+    Finder banner(String name) => find.byWidgetPredicate((w) =>
+      w is Image && w.image is AssetImage &&
+      (w.image as AssetImage).assetName == 'assets/images/$name');
+    expect(banner('hero_banner_exact.png'), findsNothing);
+    expect(find.byKey(const ValueKey('student-hero-loading')), findsOneWidget);
+    pending.complete(_student().copyWith(gender: 'female'));
+    await tester.pumpAndSettle();
+    expect(banner('hero_banner_exact.png'), findsNothing);
+    expect(banner('hero_banner_female.png'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('explicit male gender wins over a name containing Maria', (tester) async {
+    await tester.pumpWidget(_wrap(profileFuture: Future.value(_student().copyWith(gender: 'male'))));
+    await tester.pumpAndSettle();
+    expect(find.byWidgetPredicate((w) => w is Image && w.image is AssetImage &&
+      (w.image as AssetImage).assetName == 'assets/images/hero_banner_exact.png'), findsOneWidget);
   });
 
   group('Dashboard summary', () {

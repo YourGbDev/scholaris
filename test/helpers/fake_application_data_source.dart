@@ -158,9 +158,25 @@ class FakeApplicationDataSource implements ApplicationDataSource {
   }
 
   final List<Map<String, dynamic>> disbursements = [];
+  Object? disbursementFetchError;
 
   @override
   Future<void> insertDisbursement(Map<String, dynamic> row) async {
     disbursements.add(Map<String, dynamic>.of(row));
+  }
+
+  @override
+  Future<Map<String, dynamic>?> fetchDisbursementByApplication(
+    String applicationId,
+  ) async {
+    if (disbursementFetchError != null) {
+      throw disbursementFetchError!;
+    }
+    for (final d in disbursements) {
+      if (d['application_id'] == applicationId) {
+        return Map<String, dynamic>.of(d);
+      }
+    }
+    return null;
   }
 }

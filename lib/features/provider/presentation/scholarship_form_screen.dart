@@ -454,7 +454,9 @@ class _ScholarshipFormScreenState extends ConsumerState<ScholarshipFormScreen> {
                 ),
               ),
               const SizedBox(height: 6),
-              Row(
+              Wrap(
+                spacing: 8,
+                runSpacing: 8,
                 children: [
                   ChoiceChip(
                     label: const Text('Open to all schools'),
@@ -471,7 +473,6 @@ class _ScholarshipFormScreenState extends ConsumerState<ScholarshipFormScreen> {
                       setState(() => _restrictSchools = false);
                     },
                   ),
-                  const SizedBox(width: 8),
                   ChoiceChip(
                     label: const Text('Restricted to selected schools'),
                     selected: _restrictSchools,

@@ -22,12 +22,14 @@ void main() {
     required List<Application> applications,
     required List<Scholarship> scholarships,
     required StudentProfile? profile,
+    List<Map<String, dynamic>> notifications = const [],
   }) {
     return ProviderScope(
       overrides: [
         applicationsProvider.overrideWith(() => _FakeApplicationsNotifier(applications)),
         scholarshipsProvider.overrideWith((ref) => Future.value(scholarships)),
         currentProfileProvider.overrideWith((ref) => Future.value(profile)),
+        studentNotificationsProvider.overrideWith((ref) => Future.value(notifications)),
       ],
       child: const MaterialApp(
         home: Scaffold(
@@ -166,6 +168,15 @@ void main() {
           applications: [awardedApp],
           scholarships: [dummyScholarship],
           profile: null,
+          notifications: [
+            {
+              'id': 'notif_award_1',
+              'title': 'Grant Awarded!',
+              'message': 'Congratulations! Your submission for Ayala Future Leaders Program 2026 has been awarded.',
+              'is_read': false,
+              'target_id': 'app_2',
+            },
+          ],
         ),
       );
       await tester.pumpAndSettle();

@@ -978,8 +978,11 @@ class _OrgIncomingApplicationsTabState
           ),
         ],
       ),
-      child: isDesktop
-          ? Row(
+      child: LayoutBuilder(
+        builder: (context, toolbarConstraints) {
+          final isWide = isDesktop && toolbarConstraints.maxWidth >= 1180;
+          return isWide
+              ? Row(
               children: [
                 // Search Field
                 Expanded(
@@ -1243,7 +1246,9 @@ class _OrgIncomingApplicationsTabState
                   ),
                 ),
               ],
-            ),
+            );
+        },
+      ),
     );
 
     return Column(

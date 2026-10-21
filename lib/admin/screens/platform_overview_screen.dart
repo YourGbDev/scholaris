@@ -189,8 +189,8 @@ class PlatformOverviewScreen extends ConsumerWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: const [
-            SkeletonBand(width: 220, height: 28),
-            SkeletonBand(width: 100, height: 28, borderRadius: 14),
+            SkeletonBand(width: 160, height: 28),
+            SkeletonBand(width: 80, height: 28, borderRadius: 14),
           ],
         ),
         const SizedBox(height: 24),

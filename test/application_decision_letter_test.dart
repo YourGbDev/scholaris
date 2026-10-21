@@ -46,7 +46,11 @@ void main() {
         expect(find.text('Demo Student'), findsOneWidget);
         expect(find.text('Community Foundation'), findsOneWidget);
         expect(
-          find.text('Application approved on 19 Oct 2026'),
+          find.text(
+            status == ApplicationStatus.awarded
+                ? 'Scholarship awarded on 19 Oct 2026'
+                : 'Application approved on 19 Oct 2026',
+          ),
           findsOneWidget,
         );
         expect(find.textContaining('saved-reference'), findsOneWidget);
@@ -114,7 +118,7 @@ void main() {
         expect(find.text('Scholarship Award Certificate'), findsOneWidget);
         expect(find.text('Maria Clara de los Santos-Bernardino y Villamor Jr.'), findsOneWidget);
         expect(find.text('Department of Science and Technology - Science Education Institute'), findsOneWidget);
-        expect(find.text('Application approved on 19 Oct 2026'), findsOneWidget);
+        expect(find.text('Scholarship awarded on 19 Oct 2026'), findsOneWidget);
         expect(tester.takeException(), isNull);
       },
     );

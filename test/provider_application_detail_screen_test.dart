@@ -10,6 +10,7 @@ import 'package:scholaris/features/profile/models/applicant_profile.dart';
 import 'package:scholaris/features/profile/providers/profile_setup_provider.dart';
 import 'package:scholaris/features/profile/repositories/profile_repository.dart';
 import 'package:scholaris/features/provider/presentation/provider_application_detail_screen.dart';
+import 'package:scholaris/features/provider/providers/provider_sub_role_provider.dart';
 import 'package:scholaris/features/scholarships/models/scholarship.dart';
 import 'package:scholaris/features/scholarships/providers/scholarships_provider.dart';
 import 'package:scholaris/features/scholarships/repositories/scholarship_repository.dart';
@@ -48,6 +49,9 @@ void main() {
 
     return ProviderScope(
       overrides: [
+        organizationMembershipProvider.overrideWith((ref) async => {
+          'user_id': 'prov-1', 'organization_id': 'org-1', 'role': 'org_admin',
+        }),
         currentUserIdProvider.overrideWithValue('prov-1'),
         applicationRepositoryProvider.overrideWith(
           (ref) => ApplicationRepository(
@@ -148,12 +152,10 @@ void main() {
       expect(find.text('Passionate about artificial intelligence and open source.'), findsOneWidget);
 
       // Sticky Action Bar
-      expect(find.text('Reject'), findsOneWidget);
-      expect(find.text('Request Docs'), findsOneWidget);
-      expect(find.text('Approve'), findsOneWidget);
+      expect(find.text('Open Application Review'), findsOneWidget);
     });
 
-    testWidgets('tapping Approve shows confirmation dialog', (tester) async {
+    testWidgets('tapping Open Application Review opens review drawer with decision controls', (tester) async {
       tester.view.physicalSize = const Size(800, 1600);
       tester.view.devicePixelRatio = 1.0;
       addTearDown(() {
@@ -166,6 +168,7 @@ void main() {
         userId: 'student-2',
         scholarshipId: 'sch-1',
         status: ApplicationStatus.underReview,
+        endorsedBy: 'reviewer-1',
       );
 
       final sch = Scholarship(
@@ -194,11 +197,14 @@ void main() {
       ));
       await tester.pumpAndSettle();
 
-      await tester.tap(find.text('Approve'));
+      await tester.tap(find.text('Open Application Review'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Approve Application'), findsOneWidget);
+      await tester.tap(find.text('Approve Application'));
       await tester.pumpAndSettle();
 
       expect(find.byType(AlertDialog), findsOneWidget);
-      expect(find.text('Approve Application'), findsOneWidget);
       expect(find.text('Cancel'), findsOneWidget);
 
       await tester.tap(find.text('Cancel'));

@@ -187,6 +187,7 @@ class ProfileSetupNotifier extends StateNotifier<ProfileSetupState> {
       course: profile.course,
       school: profile.school ?? '',
       gpa: profile.gpa.toStringAsFixed(2),
+      gpaScale: gradingScaleLabel(profile.gpaScale),
       monthlyFamilyIncome: _formatIncome(profile.monthlyFamilyIncome),
       incomeUndisclosed: profile.monthlyFamilyIncome == null,
       region: profile.region,
@@ -289,9 +290,13 @@ class ProfileSetupNotifier extends StateNotifier<ProfileSetupState> {
   }
 
   void setRegion(String value) {
-    debugPrint('[ProfileSetup] setRegion called value=$value before=${state.region}');
+    debugPrint(
+      '[ProfileSetup] setRegion called value=$value before=${state.region}',
+    );
     state = state.copyWith(region: value);
-    debugPrint('[ProfileSetup] setRegion after state.region=${state.region} attempted=${state.attempted}');
+    debugPrint(
+      '[ProfileSetup] setRegion after state.region=${state.region} attempted=${state.attempted}',
+    );
     _refreshErrors();
   }
 
@@ -303,32 +308,43 @@ class ProfileSetupNotifier extends StateNotifier<ProfileSetupState> {
   void setHasDisability(bool value) =>
       state = state.copyWith(hasDisability: value);
 
-  void setIsIndigenous(bool value) => state = state.copyWith(isIndigenous: value);
+  void setIsIndigenous(bool value) =>
+      state = state.copyWith(isIndigenous: value);
 
   /// Validates only the fields of the current [step] and exposes the errors so
   /// the form can surface them per-input. Returns the (possibly empty) errors.
   ProfileFieldErrors? validateStep(String step) {
     final all = _validateAll();
-    debugPrint('[ProfileSetup] validateStep step=$step all.region=${all.region} all.monthlyFamilyIncome=${all.monthlyFamilyIncome} all.isValid=${all.isValid}');
+    debugPrint(
+      '[ProfileSetup] validateStep step=$step all.region=${all.region} all.monthlyFamilyIncome=${all.monthlyFamilyIncome} all.isValid=${all.isValid}',
+    );
     final errors = switch (step) {
       'personal' => ProfileFieldErrors(
-          fullName: all.fullName,
-          nationality: all.nationality,
-        ),
+        fullName: all.fullName,
+        nationality: all.nationality,
+      ),
       'academic' => ProfileFieldErrors(
-          gpa: all.gpa,
-          yearLevel: all.yearLevel,
-          course: all.course,
-        ),
+        gpa: all.gpa,
+        yearLevel: all.yearLevel,
+        course: all.course,
+      ),
       _ => ProfileFieldErrors(
-          monthlyFamilyIncome: all.monthlyFamilyIncome,
-          region: all.region,
-        ),
+        monthlyFamilyIncome: all.monthlyFamilyIncome,
+        region: all.region,
+      ),
     };
-    debugPrint('[ProfileSetup] validateStep result region=${errors.region} monthlyFamilyIncome=${errors.monthlyFamilyIncome} isValid=${errors.isValid}');
+    debugPrint(
+      '[ProfileSetup] validateStep result region=${errors.region} monthlyFamilyIncome=${errors.monthlyFamilyIncome} isValid=${errors.isValid}',
+    );
     final result = errors.isValid ? null : errors;
-    state = state.copyWith(attempted: true, fieldErrors: result, clearFieldErrors: result == null);
-    debugPrint('[ProfileSetup] validateStep stored fieldErrors region=${state.fieldErrors?.region}');
+    state = state.copyWith(
+      attempted: true,
+      fieldErrors: result,
+      clearFieldErrors: result == null,
+    );
+    debugPrint(
+      '[ProfileSetup] validateStep stored fieldErrors region=${state.fieldErrors?.region}',
+    );
     return result;
   }
 
@@ -366,6 +382,8 @@ class ProfileSetupNotifier extends StateNotifier<ProfileSetupState> {
         province: _blankToNull(current.province),
         cityMunicipality: _blankToNull(current.cityMunicipality),
         gpa: double.parse(current.gpa),
+        gpaScale: current.gpaScale,
+        profileSetupStep: 3,
         yearLevel: current.yearLevel,
         course: current.course.trim(),
         school: _blankToNull(current.school),
@@ -391,8 +409,63 @@ class ProfileSetupNotifier extends StateNotifier<ProfileSetupState> {
 
   // --- Internals ------------------------------------------------------------
 
+  /// Save completed steps to the private profile row, not plaintext device prefs.
+  /// A failed write keeps the user on the current step with all input in memory.
+  Future<bool> saveCheckpoint(String step) async {
+    if (state.isSubmitting) return false;
+    if (validateStep(step) != null) return false;
+    final userId = _repository.currentUserId;
+    if (userId == null) {
+      state = state.copyWith(
+        error: 'Your session ended. Sign in again to continue.',
+      );
+      return false;
+    }
+    final s = state;
+    state = state.copyWith(isSubmitting: true, clearError: true);
+    try {
+      final existing = await _repository.fetchCurrent();
+      if (existing?.setupComplete != true) {
+        await _repository.saveCurrent(
+          profile: StudentProfile(
+            id: userId,
+            fullName: s.fullName.trim(),
+            nationality: s.nationality.trim(),
+            birthDate: s.birthDate,
+            gender: s.gender,
+            yearLevel: s.yearLevel,
+            course: s.course.trim(),
+            school: _blankToNull(s.school),
+            gpa: double.tryParse(s.gpa) ?? 0,
+            gpaScale: s.gpaScale,
+            region: s.region ?? '',
+            province: _blankToNull(s.province),
+            cityMunicipality: _blankToNull(s.cityMunicipality),
+            monthlyFamilyIncome: s.incomeUndisclosed
+                ? null
+                : double.tryParse(s.monthlyFamilyIncome),
+            hasDisability: s.hasDisability,
+            isIndigenous: s.isIndigenous,
+            setupComplete: false,
+            profileSetupStep: step == 'personal' ? 2 : 3,
+          ),
+        );
+      }
+      state = state.copyWith(isSubmitting: false, clearError: true);
+      return true;
+    } catch (_) {
+      state = state.copyWith(
+        isSubmitting: false,
+        error: 'Could not save your progress. Your entries are still here. Please try again.',
+      );
+      return false;
+    }
+  }
+
   ProfileFieldErrors _validateAll() {
-    debugPrint('[ProfileSetup] _validateAll region=${state.region} incomeUndisclosed=${state.incomeUndisclosed} monthlyFamilyIncome="${state.monthlyFamilyIncome}"');
+    debugPrint(
+      '[ProfileSetup] _validateAll region=${state.region} incomeUndisclosed=${state.incomeUndisclosed} monthlyFamilyIncome="${state.monthlyFamilyIncome}"',
+    );
     return _validator.validate(
       fullName: state.fullName,
       nationality: state.nationality,
@@ -407,11 +480,18 @@ class ProfileSetupNotifier extends StateNotifier<ProfileSetupState> {
   }
 
   void _refreshErrors() {
-    debugPrint('[ProfileSetup] _refreshErrors called attempted=${state.attempted}');
+    debugPrint(
+      '[ProfileSetup] _refreshErrors called attempted=${state.attempted}',
+    );
     if (!state.attempted) return;
     final all = _validateAll();
-    debugPrint('[ProfileSetup] _refreshErrors result region=${all.region} monthlyFamilyIncome=${all.monthlyFamilyIncome} isValid=${all.isValid}');
-    state = state.copyWith(fieldErrors: all.isValid ? null : all, clearFieldErrors: all.isValid);
+    debugPrint(
+      '[ProfileSetup] _refreshErrors result region=${all.region} monthlyFamilyIncome=${all.monthlyFamilyIncome} isValid=${all.isValid}',
+    );
+    state = state.copyWith(
+      fieldErrors: all.isValid ? null : all,
+      clearFieldErrors: all.isValid,
+    );
   }
 
   static String? _blankToNull(String value) =>
@@ -428,12 +508,11 @@ final profileRepositoryProvider = Provider<ProfileRepository>(
 /// that user's notifier (and its in-progress draft) is dropped, and the next
 /// user gets a fresh notifier that hydrates from their own profile. User A's
 /// draft can therefore never surface in User B's session.
-final profileSetupProvider = StateNotifierProvider.family.autoDispose<
-    ProfileSetupNotifier,
-    ProfileSetupState,
-    String>(
-  (ref, userId) => ProfileSetupNotifier(ref.watch(profileRepositoryProvider)),
-);
+final profileSetupProvider = StateNotifierProvider.family
+    .autoDispose<ProfileSetupNotifier, ProfileSetupState, String>(
+      (ref, userId) =>
+          ProfileSetupNotifier(ref.watch(profileRepositoryProvider)),
+    );
 
 /// The signed-in user's full profile, or null when signed out / not built yet.
 /// Consumed by the matches provider and the profile tab.
@@ -441,9 +520,7 @@ final profileSetupProvider = StateNotifierProvider.family.autoDispose<
 /// Watches [currentUserIdProvider] so it is recomputed for every auth
 /// transition: logging out yields null and logging in as another user fetches
 /// that user's own profile instead of serving the previous user's cache.
-final currentProfileProvider = FutureProvider<StudentProfile?>(
-  (ref) {
-    ref.watch(currentUserIdProvider);
-    return ref.watch(profileRepositoryProvider).fetchCurrent();
-  },
-);
+final currentProfileProvider = FutureProvider<StudentProfile?>((ref) {
+  ref.watch(currentUserIdProvider);
+  return ref.watch(profileRepositoryProvider).fetchCurrent();
+});

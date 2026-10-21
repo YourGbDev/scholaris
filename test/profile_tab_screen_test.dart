@@ -230,7 +230,7 @@ void main() {
       expect(find.text('Verified Credentials'), findsOneWidget);
       expect(find.text('3 Categories Synced'), findsOneWidget);
       expect(find.text('Academic Information'), findsOneWidget);
-      expect(find.text('True Copy of Grades (TCG) Validated ✓'), findsOneWidget);
+      expect(find.text('Institution not declared on profile'), findsOneWidget);
       expect(find.text('Location & Residency'), findsOneWidget);
       expect(find.text('Eligible for LGU Tertiary Grant ✓'), findsOneWidget);
       expect(find.text('Financial Background'), findsOneWidget);

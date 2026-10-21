@@ -44,7 +44,7 @@ void main() {
       }
     });
 
-    test('fresh unauthenticated request to /splash funnels to /intro on first launch', () {
+    test('fresh unauthenticated request to /splash funnels to /onboarding on first launch', () {
       expect(
         onboardingRedirectDecision(
           authDecision: '/login',
@@ -53,7 +53,7 @@ void main() {
           onboardingSeen: false,
           introSeen: false,
         ),
-        '/intro',
+        '/onboarding',
       );
     });
 
@@ -69,7 +69,7 @@ void main() {
       );
     });
 
-    test('while the flag loads, splash is the holding room', () {
+    test('splash hands off directly to /onboarding slides', () {
       expect(
         onboardingRedirectDecision(
           authDecision: '/login',
@@ -77,7 +77,7 @@ void main() {
           onboardingLoading: true,
           onboardingSeen: false,
         ),
-        isNull,
+        '/onboarding',
       );
       expect(
         onboardingRedirectDecision(
@@ -86,7 +86,7 @@ void main() {
           onboardingLoading: true,
           onboardingSeen: false,
         ),
-        '/splash',
+        '/login',
       );
     });
 
@@ -250,10 +250,10 @@ void main() {
       );
     }
 
-    test('first launch, flag loading → hold on splash', () {
+    test('first launch, flag loading → /onboarding', () {
       expect(
         startupDecision(loggedIn: false, loading: true, seen: false),
-        isNull,
+        '/onboarding',
       );
     });
 
@@ -264,10 +264,10 @@ void main() {
       );
     });
 
-    test('returning signed-out user → /login', () {
+    test('returning signed-out user on splash → /onboarding', () {
       expect(
         startupDecision(loggedIn: false, loading: false, seen: true),
-        '/login',
+        '/onboarding',
       );
     });
 

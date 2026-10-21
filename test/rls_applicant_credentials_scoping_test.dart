@@ -127,6 +127,11 @@ class RlsEnforcingApplicationDataSource implements ApplicationDataSource {
   Future<void> insertDisbursement(Map<String, dynamic> row) async {
     throw UnimplementedError('Disbursements are outside this privacy fixture.');
   }
+
+  @override
+  Future<Map<String, dynamic>?> fetchDisbursementByApplication(String applicationId) async {
+    return null;
+  }
   @override
   Future<Map<String, dynamic>> reviewApplication(Map<String, dynamic> params) async {
     throw UnimplementedError('Workflow authorization is tested against PostgreSQL.');

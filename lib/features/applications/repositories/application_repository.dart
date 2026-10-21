@@ -94,6 +94,9 @@ abstract class ApplicationDataSource {
   Future<void> insertDisbursement(
     Map<String, dynamic> row,
   );
+  Future<Map<String, dynamic>?> fetchDisbursementByApplication(
+    String applicationId,
+  );
 }
 
 /// Production implementation backed by Supabase.
@@ -240,6 +243,17 @@ class SupabaseApplicationDataSource implements ApplicationDataSource {
   @override
   Future<void> insertDisbursement(Map<String, dynamic> row) async {
     await _client.from('disbursements').insert(row);
+  }
+
+  @override
+  Future<Map<String, dynamic>?> fetchDisbursementByApplication(
+    String applicationId,
+  ) async {
+    return await _client
+        .from('disbursements')
+        .select('id, amount, status, payment_method, reference_number, released_at, notes')
+        .eq('application_id', applicationId)
+        .maybeSingle();
   }
 }
 
@@ -559,6 +573,11 @@ class ApplicationRepository {
       'created_at': DateTime.now().toUtc().toIso8601String(),
     };
     await _dataSource.insertNotification(row);
+  }
+
+  /// Fetches an existing disbursement record for [applicationId], if one exists.
+  Future<Map<String, dynamic>?> getDisbursement(String applicationId) async {
+    return _dataSource.fetchDisbursementByApplication(applicationId);
   }
 
   /// Records a grant tranche disbursement in `disbursements`.

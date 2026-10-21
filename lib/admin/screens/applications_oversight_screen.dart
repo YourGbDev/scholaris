@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:scholaris/features/admin/presentation/admin_theme.dart';
+import 'package:scholaris/features/applications/providers/applications_provider.dart';
 import 'package:scholaris/shared/theme/app_motion.dart';
 import 'package:scholaris/shared/widgets/state_views.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -1261,87 +1262,119 @@ class _ApplicationsOversightScreenState
             mainAxisSize: MainAxisSize.min,
             children: [
               if (item.status.toLowerCase().trim() == 'approved') ...[
-                FutureBuilder<Map<String, dynamic>?>(
-                  future: Supabase.instance.client
-                      .from('disbursements')
-                      .select('id')
-                      .eq('application_id', item.id)
-                      .maybeSingle(),
-                  builder: (fContext, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return const Center(
-                        child: Padding(
-                          padding: EdgeInsets.symmetric(vertical: 8),
-                          child: SizedBox(
-                            width: 20,
-                            height: 20,
-                            child: CircularProgressIndicator(strokeWidth: 2),
-                          ),
-                        ),
-                      );
-                    }
-                    final existing = snapshot.data;
-                    if (existing != null) {
-                      return Container(
+                Consumer(
+                  builder: (fContext, cRef, _) {
+                    final disbAsync = cRef.watch(applicationDisbursementProvider(item.id));
+                    return disbAsync.when(
+                      loading: () => Container(
                         width: double.infinity,
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 14,
-                          vertical: 10,
-                        ),
-                        decoration: BoxDecoration(
-                          color: kSeqPrimaryFixed,
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Container(
-                              width: 8,
-                              height: 8,
-                              decoration: const BoxDecoration(
-                                color: kSeqPrimary,
-                                shape: BoxShape.circle,
-                              ),
-                            ),
-                            const SizedBox(width: 8),
-                            Text(
-                              '● Disbursement on record',
-                              style: seqLabelSm(
-                                color: kSeqOnPrimaryFixedVariant,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                          ],
-                        ),
-                      );
-                    }
-                    return SizedBox(
-                      width: double.infinity,
-                      child: PressableScale(
-                        child: FilledButton.icon(
-                          onPressed: () {
-                            _openCreateDisbursementSheet(
-                              context,
-                              dialogContext,
-                              item,
-                            );
-                          },
-                          icon: const Icon(Icons.verified_rounded, size: 18),
-                          label: const Text('Confirm Award & Disburse'),
-                          style: FilledButton.styleFrom(
-                            backgroundColor: kSeqPrimary,
-                            foregroundColor: kSeqOnPrimary,
-                            padding: const EdgeInsets.symmetric(vertical: 14),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            textStyle: seqLabelMd(
-                              fontWeight: FontWeight.w600,
-                              color: kSeqOnPrimary,
-                            ),
+                        padding: const EdgeInsets.symmetric(vertical: 14),
+                        alignment: Alignment.center,
+                        child: const SizedBox(
+                          width: 20,
+                          height: 20,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            valueColor: AlwaysStoppedAnimation<Color>(kSeqPrimary),
                           ),
                         ),
                       ),
+                      error: (err, _) => Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                        decoration: BoxDecoration(
+                          color: kSeqErrorContainer,
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Row(
+                          children: [
+                            const Icon(Icons.error_outline_rounded, size: 18, color: kSeqOnErrorContainer),
+                            const SizedBox(width: 8),
+                            Expanded(
+                              child: Text(
+                                'Unable to verify disbursement record. Please try again.',
+                                style: seqLabelSm(color: kSeqOnErrorContainer, fontWeight: FontWeight.w500),
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                            TextButton.icon(
+                              style: TextButton.styleFrom(
+                                foregroundColor: kSeqOnErrorContainer,
+                                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                minimumSize: Size.zero,
+                                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                              ),
+                              onPressed: () => cRef.invalidate(applicationDisbursementProvider(item.id)),
+                              icon: const Icon(Icons.refresh_rounded, size: 14),
+                              label: const Text('Retry', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 12)),
+                            ),
+                          ],
+                        ),
+                      ),
+                      data: (existing) {
+                        if (existing != null) {
+                          return Container(
+                            width: double.infinity,
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 14,
+                              vertical: 10,
+                            ),
+                            decoration: BoxDecoration(
+                              color: kSeqPrimaryFixed,
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Container(
+                                  width: 8,
+                                  height: 8,
+                                  decoration: const BoxDecoration(
+                                    color: kSeqPrimary,
+                                    shape: BoxShape.circle,
+                                  ),
+                                ),
+                                const SizedBox(width: 8),
+                                Text(
+                                  '● Disbursement on record',
+                                  style: seqLabelSm(
+                                    color: kSeqOnPrimaryFixedVariant,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          );
+                        }
+                        return SizedBox(
+                          width: double.infinity,
+                          child: PressableScale(
+                            child: FilledButton.icon(
+                              onPressed: () {
+                                _openCreateDisbursementSheet(
+                                  context,
+                                  dialogContext,
+                                  item,
+                                );
+                              },
+                              icon: const Icon(Icons.verified_rounded, size: 18),
+                              label: const Text('Confirm Award & Disburse'),
+                              style: FilledButton.styleFrom(
+                                backgroundColor: kSeqPrimary,
+                                foregroundColor: kSeqOnPrimary,
+                                padding: const EdgeInsets.symmetric(vertical: 14),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                textStyle: seqLabelMd(
+                                  fontWeight: FontWeight.w600,
+                                  color: kSeqOnPrimary,
+                                ),
+                              ),
+                            ),
+                          ),
+                        );
+                      },
                     );
                   },
                 ),
@@ -1389,6 +1422,7 @@ class _ApplicationsOversightScreenState
               ),
             );
             ref.invalidate(adminApplicationsProvider);
+            ref.invalidate(applicationDisbursementProvider(item.id));
           },
         );
       },
@@ -1807,10 +1841,15 @@ class _CreateDisbursementSheetState extends State<_CreateDisbursementSheet> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
-                  'Confirm Award & Schedule Disbursement',
-                  style: seqHeadlineSm(fontWeight: FontWeight.w700),
+                Expanded(
+                  child: Text(
+                    'Confirm Award & Schedule Disbursement',
+                    style: seqHeadlineSm(fontWeight: FontWeight.w700),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
                 ),
+                const SizedBox(width: 8),
                 IconButton(
                   icon: const Icon(Icons.close_rounded, size: 20),
                   onPressed: () => Navigator.of(context).pop(),

@@ -133,7 +133,9 @@ class ApplicationDecisionLetter extends StatelessWidget {
                           ),
                           if (application.decidedAt != null)
                             Text(
-                              'Application approved on ${_date(application.decidedAt!.toLocal())}',
+                              awarded
+                                  ? 'Scholarship awarded on ${_date(application.decidedAt!.toLocal())}'
+                                  : 'Application approved on ${_date(application.decidedAt!.toLocal())}',
                               textAlign: TextAlign.center,
                               style: openSans(
                                 fontSize: 13,

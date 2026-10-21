@@ -66,7 +66,7 @@ Scholarship _scholarship({
       forPwd: forPwd,
       forIndigenous: forIndigenous,
       slots: slots,
-      deadline: deadline ?? DateTime(2026, 10, 15, 23, 59),
+      deadline: deadline ?? _now.add(const Duration(days: 43)),
       isActive: isActive,
     );
 
@@ -404,7 +404,7 @@ void main() {
         referenceNow: _now,
       );
       final engineEligible =
-          engine.getEligible(student, [scholarship]).isNotEmpty;
+          engine.getEligible(student, [scholarship], now: _now).isNotEmpty;
 
       expect(readiness.state, ApplicationReadinessState.eligible);
       expect(engineEligible, isTrue);
@@ -434,7 +434,7 @@ void main() {
         referenceNow: _now,
       );
       final engineEligible =
-          engine.getEligible(student, [scholarship]).isNotEmpty;
+          engine.getEligible(student, [scholarship], now: _now).isNotEmpty;
 
       expect(engineEligible, isFalse);
       expect(readiness.state, ApplicationReadinessState.notEligible);
@@ -470,7 +470,7 @@ void main() {
         referenceNow: _now,
       );
       final engineEligible =
-          engine.getEligible(student, [scholarship]).isNotEmpty;
+          engine.getEligible(student, [scholarship], now: _now).isNotEmpty;
 
       expect(readiness.canApply, engineEligible);
     });

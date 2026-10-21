@@ -20,6 +20,7 @@ import 'package:scholaris/features/profile/models/avatar_item.dart';
 import 'package:scholaris/features/profile/models/profile_validator.dart';
 import 'package:scholaris/features/profile/models/student_profile.dart';
 import 'package:scholaris/features/profile/presentation/widgets/avatar_display.dart';
+import 'package:scholaris/features/profile/presentation/widgets/profile_setup_account_switch.dart';
 import 'package:scholaris/features/profile/providers/avatar_provider.dart';
 import 'package:scholaris/features/profile/providers/profile_setup_provider.dart';
 import 'package:scholaris/features/schools/models/school.dart';
@@ -28,7 +29,6 @@ import 'package:scholaris/shared/theme/app_motion.dart';
 import 'package:scholaris/shared/theme/app_theme.dart';
 import 'package:scholaris/shared/widgets/scholaris_logo.dart';
 import 'package:scholaris/shared/widgets/success_overlay.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 
 class ProfileSetupScreen extends ConsumerStatefulWidget {
   const ProfileSetupScreen({super.key, required this.step});
@@ -105,19 +105,22 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
     _selectedGpaScale = state.gpaScale;
 
     if (userId != null) {
-      Supabase.instance.client
-          .from('profiles')
-          .select('school_id')
-          .eq('id', userId)
-          .maybeSingle()
-          .then((row) {
-        if (row != null && mounted) {
-          final sId = row['school_id'] as String?;
-          if (sId != null) {
-            setState(() => _selectedSchoolId = sId);
-          }
-        }
-      }).catchError((_) {});
+      _loadSchoolId(userId);
+    }
+  }
+
+  Future<void> _loadSchoolId(String userId) async {
+    try {
+      final sId = await ref.read(profileRepositoryProvider).fetchSchoolId(userId);
+      if (sId != null && mounted) {
+        setState(() => _selectedSchoolId = sId);
+      }
+    } catch (e) {
+      if (e is AssertionError || (e is StateError && e.message.contains('initialized'))) {
+        debugPrint('[ProfileSetup] Supabase uninitialized in test environment: $e');
+      } else {
+        debugPrint('[ProfileSetup] Offline or network error fetching school_id: $e');
+      }
     }
   }
 
@@ -275,6 +278,11 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
 
                     // Bottom Action Bar
                     _buildButtons(context, state),
+                    const SizedBox(height: 12),
+                    ProfileSetupAccountSwitch(
+                      disabled: state.isSubmitting,
+                      onSignedOut: () => context.go('/login'),
+                    ),
                   ],
                 ),
               ),
@@ -2024,20 +2032,30 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
           children: [
             const Icon(Icons.account_balance_outlined, size: 16, color: kPrimary),
             const SizedBox(width: 6),
-            Text(
-              'Enrolled College or University',
-              style: openSans(
-                fontSize: 13,
-                fontWeight: FontWeight.w600,
-                color: kOnSurface,
+            Expanded(
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Flexible(
+                    child: Text(
+                      'Enrolled College or University',
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: openSans(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w600,
+                        color: kOnSurface,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 4),
+                  Text(
+                    '(Optional)',
+                    style: openSans(fontSize: 12, color: Colors.black45),
+                  ),
+                ],
               ),
             ),
-            const SizedBox(width: 4),
-            Text(
-              '(Optional)',
-              style: openSans(fontSize: 12, color: Colors.black45),
-            ),
-            const Spacer(),
             TextButton.icon(
               icon: const Icon(Icons.add, size: 14),
               label: const Text('Add Unlisted'),
@@ -2297,11 +2315,14 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
     if (userId != null) {
       ref.read(profileSetupProvider(userId).notifier).setSchool(school.name);
       try {
-        await Supabase.instance.client
-            .from('profiles')
-            .update({'school_id': school.id, 'school': school.name})
-            .eq('id', userId);
-      } catch (_) {}
+        await ref.read(profileRepositoryProvider).updateSchoolId(
+          userId,
+          schoolId: school.id,
+          schoolName: school.name,
+        );
+      } catch (e) {
+        debugPrint('[ProfileSetup] Failed to update school_id: $e');
+      }
     }
   }
 
@@ -2427,11 +2448,13 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
       if (success) {
         if (_selectedSchoolId != null) {
           try {
-            await Supabase.instance.client
-                .from('profiles')
-                .update({'school_id': _selectedSchoolId})
-                .eq('id', userId);
-          } catch (_) {}
+            await ref.read(profileRepositoryProvider).updateSchoolId(
+              userId,
+              schoolId: _selectedSchoolId,
+            );
+          } catch (e) {
+            debugPrint('[ProfileSetup] Failed to persist school_id checkpoint: $e');
+          }
         }
         if (!mounted) return;
         await SuccessOverlay.show(context);
@@ -2445,13 +2468,18 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
         context.go('/home');
       }
     } else {
+      final saved = await notifier.saveCheckpoint(widget.step);
+      if (!mounted || !saved) return;
+      ref.invalidate(currentProfileProvider);
       if (_selectedSchoolId != null) {
         try {
-          await Supabase.instance.client
-              .from('profiles')
-              .update({'school_id': _selectedSchoolId})
-              .eq('id', userId);
-        } catch (_) {}
+          await ref.read(profileRepositoryProvider).updateSchoolId(
+            userId,
+            schoolId: _selectedSchoolId,
+          );
+        } catch (e) {
+          debugPrint('[ProfileSetup] Failed to persist school_id checkpoint: $e');
+        }
       }
       if (!mounted) return;
       final nextRoute = widget.step == 'academic'

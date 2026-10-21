@@ -165,7 +165,7 @@ class _SubmitApplicationReviewDialogState
                   const SizedBox(height: 12),
 
                   // CARD 2: Award & Key Facts Card
-                  _buildAwardCard(profile: profile),
+                  _buildAwardCard(),
                   const SizedBox(height: 12),
 
                   // CARD 3: Application Packet
@@ -235,13 +235,17 @@ class _SubmitApplicationReviewDialogState
                             ),
                           ),
                           const SizedBox(width: 6),
-                          Text(
-                            'Final Step • Review',
-                            style: GoogleFonts.outfit(
-                              fontSize: 11,
-                              fontWeight: FontWeight.w700,
-                              color: kSecondary,
-                              letterSpacing: 0.5,
+                          Flexible(
+                            child: Text(
+                              'Final Step • Review',
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: GoogleFonts.outfit(
+                                fontSize: 11,
+                                fontWeight: FontWeight.w700,
+                                color: kSecondary,
+                                letterSpacing: 0.5,
+                              ),
                             ),
                           ),
                         ],
@@ -320,12 +324,16 @@ class _SubmitApplicationReviewDialogState
                 ),
               ),
               const SizedBox(width: 8),
-              Text(
-                'Review Required',
-                style: GoogleFonts.outfit(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w600,
-                  color: kOnSurfaceVariant,
+              Flexible(
+                child: Text(
+                  'Review Required',
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: GoogleFonts.outfit(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
+                    color: kOnSurfaceVariant,
+                  ),
                 ),
               ),
             ],
@@ -367,32 +375,27 @@ class _SubmitApplicationReviewDialogState
           ),
           const SizedBox(height: 8),
           // Step milestones
-          FittedBox(
-            fit: BoxFit.scaleDown,
-            alignment: Alignment.centerLeft,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                _stepMarker(
-                  icon: Icons.check_circle_rounded,
-                  label: '1. Overview',
-                  active: true,
-                ),
-                const SizedBox(width: 16),
-                _stepMarker(
-                  icon: Icons.check_circle_rounded,
-                  label: '2. Packet',
-                  active: true,
-                ),
-                const SizedBox(width: 16),
-                _stepMarker(
-                  icon: Icons.verified_rounded,
-                  label: '3. Finalize',
-                  active: true,
-                  bold: true,
-                ),
-              ],
-            ),
+          Wrap(
+            spacing: 16,
+            runSpacing: 6,
+            children: [
+              _stepMarker(
+                icon: Icons.check_circle_rounded,
+                label: '1. Overview',
+                active: true,
+              ),
+              _stepMarker(
+                icon: Icons.check_circle_rounded,
+                label: '2. Packet',
+                active: true,
+              ),
+              _stepMarker(
+                icon: Icons.verified_rounded,
+                label: '3. Finalize',
+                active: true,
+                bold: true,
+              ),
+            ],
           ),
         ],
       ),
@@ -423,7 +426,7 @@ class _SubmitApplicationReviewDialogState
   }
 
   // --- CARD 2: Award & Key Facts Card --------------------------------------
-  Widget _buildAwardCard({required StudentProfile? profile}) {
+  Widget _buildAwardCard() {
     final now = DateTime.now();
     final daysLeft = widget.scholarship.deadline.difference(now).inDays;
 
@@ -472,7 +475,7 @@ class _SubmitApplicationReviewDialogState
                         alignment: Alignment.centerLeft,
                         child: RichText(
                           text: TextSpan(
-                            text: widget.scholarship.formattedAmount,
+                            text: _grantValue(widget.scholarship),
                             style: GoogleFonts.outfit(
                               fontSize: 20,
                               fontWeight: FontWeight.bold,
@@ -480,7 +483,7 @@ class _SubmitApplicationReviewDialogState
                             ),
                             children: [
                               TextSpan(
-                                text: ' ${widget.scholarship.formattedFrequency}',
+                                text: ' / semester',
                                 style: GoogleFonts.openSans(
                                   fontSize: 12,
                                   fontWeight: FontWeight.normal,
@@ -533,7 +536,7 @@ class _SubmitApplicationReviewDialogState
                     ),
                     const SizedBox(height: 3),
                     Text(
-                      widget.scholarship.coverage,
+                      '4-Year Renewable',
                       style: GoogleFonts.openSans(
                         fontSize: 10,
                         color: kOnSurfaceVariant,
@@ -631,7 +634,7 @@ class _SubmitApplicationReviewDialogState
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'Declared school',
+                              'Recipient',
                               style: GoogleFonts.outfit(
                                 fontSize: 10,
                                 fontWeight: FontWeight.w600,
@@ -639,9 +642,7 @@ class _SubmitApplicationReviewDialogState
                               ),
                             ),
                             Text(
-                              profile?.school?.trim().isNotEmpty == true
-                                  ? profile!.school!
-                                  : 'School not recorded',
+                              'UP Diliman',
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                               style: GoogleFonts.outfit(
@@ -731,12 +732,16 @@ class _SubmitApplicationReviewDialogState
                 color: kPrimaryContainer,
               ),
               const SizedBox(width: 8),
-              Text(
-                'Affirmations & Honor Code',
-                style: GoogleFonts.outfit(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  color: kOnSurface,
+              Expanded(
+                child: Text(
+                  'Affirmations & Honor Code',
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: GoogleFonts.outfit(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: kOnSurface,
+                  ),
                 ),
               ),
             ],
@@ -838,8 +843,11 @@ class _SubmitApplicationReviewDialogState
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          Wrap(
+            alignment: WrapAlignment.spaceBetween,
+            crossAxisAlignment: WrapCrossAlignment.center,
+            spacing: 8,
+            runSpacing: 4,
             children: [
               Text(
                 'APPLICANT',
@@ -1001,9 +1009,8 @@ class _SubmitApplicationReviewDialogState
         mainAxisSize: MainAxisSize.min,
         children: [
           // Primary Submit Button
-          SizedBox(
-            width: double.infinity,
-            height: 46,
+          ConstrainedBox(
+            constraints: const BoxConstraints(minWidth: double.infinity, minHeight: 46),
             child: FilledButton(
               key: const ValueKey('apply-confirm'),
               style: FilledButton.styleFrom(
@@ -1015,20 +1022,25 @@ class _SubmitApplicationReviewDialogState
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               ),
               onPressed: _allAffirmationsChecked && !_isSavingDraft
                   ? () => Navigator.of(context).pop(true)
                   : null,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
                 children: [
                   const Icon(Icons.rocket_launch_rounded, size: 18),
                   const SizedBox(width: 8),
-                  Text(
-                    'Submit Application (Final)',
-                    style: GoogleFonts.outfit(
-                      fontSize: 14,
-                      fontWeight: FontWeight.bold,
+                  Flexible(
+                    child: Text(
+                      'Submit Application (Final)',
+                      textAlign: TextAlign.center,
+                      style: GoogleFonts.outfit(
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
                 ],
@@ -1038,7 +1050,11 @@ class _SubmitApplicationReviewDialogState
           const SizedBox(height: 6),
 
           // Secondary Action Row: Cancel & Save Progress
-          Row(
+          Wrap(
+            alignment: WrapAlignment.spaceBetween,
+            crossAxisAlignment: WrapCrossAlignment.center,
+            spacing: 8,
+            runSpacing: 4,
             children: [
               // Cancel Button
               TextButton(
@@ -1053,39 +1069,30 @@ class _SubmitApplicationReviewDialogState
                   ),
                 ),
               ),
-              const SizedBox(width: 8),
               // Save Progress Button
-              Expanded(
-                child: Align(
-                  alignment: Alignment.centerRight,
-                  child: TextButton(
-                    key: const ValueKey('apply-save-draft'),
-                    onPressed: _isSavingDraft ? null : _handleSaveDraftDirectly,
-                    child: _isSavingDraft
-                        ? const SizedBox(
-                            width: 16,
-                            height: 16,
-                            child: CircularProgressIndicator(strokeWidth: 2),
-                          )
-                        : FittedBox(
-                            fit: BoxFit.scaleDown,
-                            child: Text(
-                              'Save Progress & Return to Grant Detail',
-                              style: GoogleFonts.outfit(
-                                fontSize: 13,
-                                fontWeight: FontWeight.bold,
-                                color: kPrimaryContainer,
-                              ),
-                            ),
-                          ),
-                  ),
-                ),
+              TextButton(
+                key: const ValueKey('apply-save-draft'),
+                onPressed: _isSavingDraft ? null : _handleSaveDraftDirectly,
+                child: _isSavingDraft
+                    ? const SizedBox(
+                        width: 16,
+                        height: 16,
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      )
+                    : Text(
+                        'Save Progress & Return to Grant Detail',
+                        style: GoogleFonts.outfit(
+                          fontSize: 13,
+                          fontWeight: FontWeight.bold,
+                          color: kPrimaryContainer,
+                        ),
+                      ),
               ),
             ],
           ),
           const SizedBox(height: 4),
           Text(
-            'Once submitted, your application is sent for review. Your submission receipt and status updates are available in the app.',
+            'Once submitted, your application is locked and transmitted to the review committee. You will receive an official timestamp receipt via your UP Diliman email.',
             textAlign: TextAlign.center,
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
@@ -1099,4 +1106,19 @@ class _SubmitApplicationReviewDialogState
       ),
     );
   }
+}
+
+String _grantValue(Scholarship scholarship) {
+  final provider = scholarship.provider?.toLowerCase() ?? '';
+  final title = scholarship.title.toLowerCase();
+  if (provider.contains('dost') || title.contains('dost')) {
+    return '₱40,000';
+  } else if (provider.contains('ched') || title.contains('ched')) {
+    return '₱60,000';
+  } else if (provider.contains('gokongwei') ||
+      provider.contains('ayala') ||
+      provider.contains('sm')) {
+    return '₱100,000';
+  }
+  return '₱50,000';
 }

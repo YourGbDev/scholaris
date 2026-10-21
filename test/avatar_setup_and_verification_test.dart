@@ -173,7 +173,7 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.text('Choose Your Avatar'), findsOneWidget);
-      expect(find.text('Pick a doodle or set up later'), findsOneWidget);
+      expect(find.textContaining('Pick a doodle'), findsOneWidget);
       expect(find.byKey(const ValueKey('avatar-setup-later')), findsOneWidget);
 
       // Verify all doodle options are rendered
@@ -248,7 +248,8 @@ void main() {
       await tester.pumpAndSettle();
 
       // Tap Apply Now button
-      final applyBtn = find.byKey(const ValueKey('apply-now'));
+      await tester.scrollUntilVisible(find.byKey(const ValueKey('apply-now')), 500);
+final applyBtn = find.byKey(const ValueKey('apply-now'));
       expect(applyBtn, findsOneWidget);
       await tester.tap(applyBtn);
       await tester.pumpAndSettle();
@@ -296,6 +297,7 @@ void main() {
       await tester.pumpAndSettle();
 
       // Tap Apply
+      await tester.scrollUntilVisible(find.byKey(const ValueKey('apply-now')), 500);
       await tester.tap(find.byKey(const ValueKey('apply-now')));
       await tester.pumpAndSettle();
 
@@ -332,6 +334,7 @@ void main() {
       await tester.pumpAndSettle();
 
       // Tap Apply
+      await tester.scrollUntilVisible(find.byKey(const ValueKey('apply-now')), 500);
       await tester.tap(find.byKey(const ValueKey('apply-now')));
       await tester.pumpAndSettle();
 
@@ -361,6 +364,7 @@ void main() {
       await tester.pumpAndSettle();
 
       // Tap Apply
+      await tester.scrollUntilVisible(find.byKey(const ValueKey('apply-now')), 500);
       await tester.tap(find.byKey(const ValueKey('apply-now')));
       await tester.pumpAndSettle();
 

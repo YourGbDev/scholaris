@@ -413,25 +413,29 @@ Widget _buildSkeletonLoader(BuildContext context) {
       ),
     );
 
-    if (isDesktop) {
-      return Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        crossAxisAlignment: CrossAxisAlignment.end,
-        children: [
-          titleBlock,
-          exportButton,
-        ],
-      );
-    }
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        if (isDesktop && constraints.maxWidth >= 600) {
+          return Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              Expanded(child: titleBlock),
+              const SizedBox(width: 16),
+              exportButton,
+            ],
+          );
+        }
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        titleBlock,
-        const SizedBox(height: 14),
-        exportButton,
-      ],
-    );
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            titleBlock,
+            const SizedBox(height: 14),
+            exportButton,
+          ],
+        );
+      },    );
   }
 
   void _exportPdf(BuildContext context, List<AuditLogEntry> logs) {
@@ -669,6 +673,7 @@ Widget _buildSkeletonLoader(BuildContext context) {
     required ValueChanged<String?> onChanged,
   }) {
     return Container(
+      constraints: const BoxConstraints(maxWidth: 200),
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 2),
       decoration: BoxDecoration(
         color: kSeqSurfaceContainerLow,
@@ -683,6 +688,7 @@ Widget _buildSkeletonLoader(BuildContext context) {
         child: DropdownButton<String>(
           value: items.contains(value) ? value : 'all',
           isDense: true,
+          isExpanded: true,
           style: seqLabelSm(color: kSeqOnSurface, fontWeight: FontWeight.w600),
           icon: const Icon(Icons.arrow_drop_down, color: kSeqOutline),
           items: items.map((it) {
@@ -691,7 +697,11 @@ Widget _buildSkeletonLoader(BuildContext context) {
                 : '$label: ${_formatActionName(it)}';
             return DropdownMenuItem<String>(
               value: it,
-              child: Text(displayText),
+              child: Text(
+                displayText,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
             );
           }).toList(),
           onChanged: onChanged,

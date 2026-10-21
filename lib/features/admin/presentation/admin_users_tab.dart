@@ -352,7 +352,7 @@ class _AdminUsersTabState extends ConsumerState<AdminUsersTab> {
           ],
         );
 
-        if (isMobile) {
+        if (isMobile || constraints.maxWidth < 640) {
           return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -1046,31 +1046,42 @@ class _AdminUsersTabState extends ConsumerState<AdminUsersTab> {
                 : Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Text(
-                            'Showing 1 to ${filtered.length} of ${filtered.length} registered platform identities',
-                            style: seqLabelSm(color: kSeqOnSurfaceVariant),
-                          ),
-                          const SizedBox(width: 8),
-                          Text('•', style: seqLabelSm(color: kSeqOutline)),
-                          const SizedBox(width: 8),
-                          Container(
-                            width: 6,
-                            height: 6,
-                            decoration: const BoxDecoration(
-                              color: kSeqPrimaryContainer,
-                              shape: BoxShape.circle,
+                      Expanded(
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Flexible(
+                              child: Text(
+                                'Showing 1 to ${filtered.length} of ${filtered.length} registered platform identities',
+                                style: seqLabelSm(color: kSeqOnSurfaceVariant),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
                             ),
-                          ),
-                          const SizedBox(width: 6),
-                          Text(
-                            'Supabase PostgreSQL Database Connected',
-                            style: seqLabelSm(color: kSeqOutline),
-                          ),
-                        ],
+                            const SizedBox(width: 8),
+                            Text('•', style: seqLabelSm(color: kSeqOutline)),
+                            const SizedBox(width: 8),
+                            Container(
+                              width: 6,
+                              height: 6,
+                              decoration: const BoxDecoration(
+                                color: kSeqPrimaryContainer,
+                                shape: BoxShape.circle,
+                              ),
+                            ),
+                            const SizedBox(width: 6),
+                            Flexible(
+                              child: Text(
+                                'Supabase PostgreSQL Database Connected',
+                                style: seqLabelSm(color: kSeqOutline),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
+                      const SizedBox(width: 12),
                       Text(
                         'Page 1 of 1',
                         style: seqLabelSm(color: kSeqOutline, fontWeight: FontWeight.w600),
@@ -1127,7 +1138,8 @@ class _AdminUsersTabState extends ConsumerState<AdminUsersTab> {
                       ),
                       const SizedBox(height: 2),
                       Text(
-                        u.email ?? 'ID: ${u.id.substring(0, 10)}...',
+                        u.email ??
+                            'ID: ${u.id.length >= 10 ? u.id.substring(0, 10) : u.id}...',
                         style: adminDataMono(
                           fontSize: 11,
                           color: kSeqOutline,

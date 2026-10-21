@@ -257,8 +257,10 @@ class _ApplicantReviewDrawerState extends ConsumerState<ApplicantReviewDrawer> {
 
   Future<void> _handleDecision(ApplicationStatus targetStatus) async {
     final identity = ref.read(providerSubRoleProvider);
-    if (_isProcessing || !(targetStatus == ApplicationStatus.underReview
-        ? identity.isEvaluator : identity.isOrgAdmin)) { return; }
+    final canDecide = targetStatus == ApplicationStatus.underReview
+        ? identity.isEvaluator
+        : (identity.isOrgAdmin || identity.isIndividualBenefactor);
+    if (_isProcessing || !canDecide) { return; }
     final actionLabel = targetStatus == ApplicationStatus.approved
         ? 'Approve Application'
         : targetStatus == ApplicationStatus.rejected
@@ -386,6 +388,7 @@ class _ApplicantReviewDrawerState extends ConsumerState<ApplicantReviewDrawer> {
       );
 
       container.invalidate(incomingApplicationsProvider);
+      widget.onStatusChanged?.call();
       if (navigator.mounted && route?.isCurrent == true) navigator.pop();
       if (!messenger.mounted) return;
       messenger.showSnackBar(
@@ -1902,8 +1905,9 @@ class _ApplicantReviewDrawerState extends ConsumerState<ApplicantReviewDrawer> {
             builder: (ctx) {
               final identity = ref.watch(providerSubRoleProvider);
               final isReviewer = identity.isEvaluator; // Evaluator / Reviewer staff
+              final isDecider = identity.isOrgAdmin || identity.isIndividualBenefactor;
 
-              if (!isReviewer && !identity.isOrgAdmin) {
+              if (!isReviewer && !isDecider) {
                 return const Text('Review access unavailable. Contact your organization admin.');
               }
               if (!widget.application.status.isPending || widget.application.status == ApplicationStatus.draft) {

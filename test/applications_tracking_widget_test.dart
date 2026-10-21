@@ -396,8 +396,10 @@ void main() {
       await tester.pumpAndSettle();
 
       // The card derives its deadline chip from the shared deadlineLabel
-      // helper (FakeScholarshipDataSource: sch-dost closes 2026-10-15).
-      final expected = deadlineLabel(DateTime(2026, 10, 15));
+      // helper, matching the active deadline of sch-dost in FakeScholarshipDataSource.
+      final dostRow = FakeScholarshipDataSource.defaultRows.firstWhere((r) => r['id'] == 'sch-dost');
+      final deadline = DateTime.parse(dostRow['deadline'] as String);
+      final expected = deadlineLabel(deadline);
       expect(find.text(expected), findsOneWidget);
     });
   });

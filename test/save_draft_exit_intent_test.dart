@@ -168,6 +168,7 @@ void main() {
       await tester.pumpAndSettle();
 
       // Tap Start Application
+      await tester.scrollUntilVisible(find.text('Start Application'), 500);
       await tester.tap(find.text('Start Application'));
       await tester.pumpAndSettle();
 
@@ -202,6 +203,7 @@ void main() {
       );
       await tester.pumpAndSettle();
 
+      await tester.scrollUntilVisible(find.text('Start Application'), 500);
       await tester.tap(find.text('Start Application'));
       await tester.pumpAndSettle();
 
@@ -247,6 +249,7 @@ void main() {
       );
       await tester.pumpAndSettle();
 
+      await tester.scrollUntilVisible(find.text('DRAFT IN PROGRESS'), 500);
       expect(find.text('DRAFT IN PROGRESS'), findsOneWidget);
       final continueBtn = find.byKey(const ValueKey('continue-application'));
       expect(continueBtn, findsOneWidget);
@@ -259,11 +262,24 @@ void main() {
 
       expect(find.text('Apply to this scholarship?'), findsOneWidget);
 
+      // Affirm all required certifications
+      final checkboxes = find.byType(Checkbox);
+      for (int i = 0; i < checkboxes.evaluate().length; i++) {
+        await tester.ensureVisible(checkboxes.at(i));
+        await tester.pumpAndSettle();
+        await tester.tap(checkboxes.at(i));
+        await tester.pumpAndSettle();
+      }
+
       // Confirm application
-      await tester.tap(find.byKey(const ValueKey('apply-confirm')));
+      final submitBtn = find.byKey(const ValueKey('apply-confirm'));
+      await tester.ensureVisible(submitBtn);
+      await tester.pumpAndSettle();
+      await tester.tap(submitBtn);
       await tester.pumpAndSettle();
 
       // Now officially applied
+      await tester.scrollUntilVisible(find.text('Application submitted'), 500);
       expect(find.text('Application submitted'), findsOneWidget);
 
       // Upgraded in data source to submitted (not duplicate error)

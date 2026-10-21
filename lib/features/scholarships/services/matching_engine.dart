@@ -10,14 +10,15 @@ enum EligibilityCriterion { gpa, yearLevel, course, region, income, pwd, indigen
 class MatchingEngine {
   List<Scholarship> getEligible(
     StudentProfile student,
-    List<Scholarship> all,
-  ) {
-    final now = DateTime.now();
+    List<Scholarship> all, {
+    DateTime? now,
+  }) {
+    final referenceNow = now ?? DateTime.now();
     return all.where((s) {
       if (!s.isActive) {
         return false;
       }
-      if (!s.deadline.isAfter(now)) {
+      if (!s.deadline.isAfter(referenceNow)) {
         return false;
       }
       return failedCriteria(student, s).isEmpty;

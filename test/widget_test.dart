@@ -15,16 +15,16 @@ import 'package:scholaris/features/profile/repositories/profile_repository.dart'
 import 'helpers/fake_profile_data_source.dart';
 
 Widget _wrap(String step) {
+  final repo = ProfileRepository(
+    dataSource: FakeProfileDataSource(),
+    currentUserId: () => 'user-a',
+  );
   return ProviderScope(
     overrides: [
       currentUserIdProvider.overrideWithValue('user-a'),
+      profileRepositoryProvider.overrideWithValue(repo),
       profileSetupProvider.overrideWith(
-        (ref, userId) => ProfileSetupNotifier(
-          ProfileRepository(
-            dataSource: FakeProfileDataSource(),
-            currentUserId: () => 'user-a',
-          ),
-        ),
+        (ref, userId) => ProfileSetupNotifier(repo),
       ),
     ],
     child: MaterialApp(
@@ -59,7 +59,7 @@ void main() {
     expect(find.text('Year Level *'), findsOneWidget);
     expect(find.text('Course *'), findsOneWidget);
     expect(find.text('GPA *'), findsOneWidget);
-    expect(find.text('School (optional)'), findsOneWidget);
+    expect(find.textContaining('College or University'), findsOneWidget);
   });
 
   testWidgets('financial step renders income, region and optional flags',
@@ -94,16 +94,16 @@ void main() {
       'setup_complete': true,
     });
 
+    final repo = ProfileRepository(
+      dataSource: dataSource,
+      currentUserId: () => 'user-a',
+    );
     await tester.pumpWidget(ProviderScope(
       overrides: [
         currentUserIdProvider.overrideWithValue('user-a'),
+        profileRepositoryProvider.overrideWithValue(repo),
         profileSetupProvider.overrideWith(
-          (ref, userId) => ProfileSetupNotifier(
-            ProfileRepository(
-              dataSource: dataSource,
-              currentUserId: () => 'user-a',
-            ),
-          ),
+          (ref, userId) => ProfileSetupNotifier(repo),
         ),
       ],
       // Academic step exposes GPA / course / school — distinctive hydrated values.
@@ -130,16 +130,16 @@ void main() {
       'setup_complete': true,
     });
 
+    final repo = ProfileRepository(
+      dataSource: dataSource,
+      currentUserId: () => 'user-a',
+    );
     await tester.pumpWidget(ProviderScope(
       overrides: [
         currentUserIdProvider.overrideWithValue('user-a'),
+        profileRepositoryProvider.overrideWithValue(repo),
         profileSetupProvider.overrideWith(
-          (ref, userId) => ProfileSetupNotifier(
-            ProfileRepository(
-              dataSource: dataSource,
-              currentUserId: () => 'user-a',
-            ),
-          ),
+          (ref, userId) => ProfileSetupNotifier(repo),
         ),
       ],
       child: const MaterialApp(home: ProfileSetupScreen(step: 'personal')),
@@ -153,16 +153,16 @@ void main() {
       (tester) async {
     final dataSource = FakeProfileDataSource(); // No profile row for user-a.
 
+    final repo = ProfileRepository(
+      dataSource: dataSource,
+      currentUserId: () => 'user-a',
+    );
     await tester.pumpWidget(ProviderScope(
       overrides: [
         currentUserIdProvider.overrideWithValue('user-a'),
+        profileRepositoryProvider.overrideWithValue(repo),
         profileSetupProvider.overrideWith(
-          (ref, userId) => ProfileSetupNotifier(
-            ProfileRepository(
-              dataSource: dataSource,
-              currentUserId: () => 'user-a',
-            ),
-          ),
+          (ref, userId) => ProfileSetupNotifier(repo),
         ),
       ],
       child: const MaterialApp(home: ProfileSetupScreen(step: 'personal')),

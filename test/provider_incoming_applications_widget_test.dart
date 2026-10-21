@@ -11,6 +11,7 @@ import 'package:scholaris/features/profile/repositories/profile_repository.dart'
 import 'package:scholaris/features/scholarships/providers/scholarships_provider.dart';
 import 'package:scholaris/features/scholarships/repositories/scholarship_repository.dart';
 import 'package:scholaris/features/provider/presentation/provider_incoming_applications.dart';
+import 'package:scholaris/features/provider/providers/provider_sub_role_provider.dart';
 
 import 'helpers/fake_application_data_source.dart';
 import 'helpers/fake_profile_data_source.dart';
@@ -33,6 +34,24 @@ class _MockApplicationRepository implements ApplicationRepository {
   }
 
   @override
+  Future<Application> reviewApplication({
+    required String applicationId,
+    required ApplicationStatus expectedStatus,
+    required String action,
+    Map<String, double>? scores,
+    String? notes,
+  }) async {
+    lastUpdatedId = applicationId;
+    lastUpdatedStatus = action == 'approve' ? ApplicationStatus.approved : ApplicationStatus.rejected;
+    return Application(
+      id: applicationId,
+      userId: 'applicant-3',
+      scholarshipId: 'sch-1',
+      status: lastUpdatedStatus!,
+    );
+  }
+
+  @override
   Future<void> updateStatus(String applicationId, ApplicationStatus status) async {
     lastUpdatedId = applicationId;
     lastUpdatedStatus = status;
@@ -51,6 +70,7 @@ void main() {
     return ProviderScope(
       overrides: [
         currentUserIdProvider.overrideWithValue('prov-1'),
+        providerSubRoleProvider.overrideWithValue(const ProviderIdentityInfo(role: ProviderSubRole.individualBenefactor, name: 'Test Benefactor', initials: 'TB', roleSubtitle: 'Individual Benefactor', topEyebrow: 'INDIVIDUAL BENEFACTOR')),
         applicationRepositoryProvider.overrideWith(
           (ref) => ApplicationRepository(
             dataSource: applications,
@@ -79,6 +99,7 @@ void main() {
     return ProviderScope(
       overrides: [
         currentUserIdProvider.overrideWithValue('prov-1'),
+        providerSubRoleProvider.overrideWithValue(const ProviderIdentityInfo(role: ProviderSubRole.individualBenefactor, name: 'Test Benefactor', initials: 'TB', roleSubtitle: 'Individual Benefactor', topEyebrow: 'INDIVIDUAL BENEFACTOR')),
         applicationRepositoryProvider.overrideWithValue(repo),
         scholarshipRepositoryProvider.overrideWith((ref) => ScholarshipRepository(dataSource: scholarships)),
         profileRepositoryProvider.overrideWith((ref) => ProfileRepository(dataSource: profiles, currentUserId: () => 'prov-1')),
@@ -87,7 +108,7 @@ void main() {
     );
   }
 
-  testWidgets('tapping a submitted row shows Under review/Approved/Rejected options', (tester) async {
+  testWidgets('tapping a submitted row shows Approved/Rejected options for individual provider', (tester) async {
     final applications = FakeApplicationDataSource();
     applications.scholarshipIndex['sch-1'] = {'id': 'sch-1', 'created_by': 'prov-1'};
     await applications.insertApplication('applicant-1', {
@@ -118,9 +139,9 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('Update Application Status'), findsOneWidget);
-    expect(find.text('Under review'), findsOneWidget);
     expect(find.text('Approved'), findsOneWidget);
     expect(find.text('Rejected'), findsOneWidget);
+    expect(find.text('View Full Dossier & Audit Log'), findsOneWidget);
   });
 
   testWidgets('tapping an approved row does nothing', (tester) async {
@@ -156,7 +177,7 @@ void main() {
     expect(find.text('Update Application Status'), findsNothing);
   });
 
-  testWidgets('selecting Under review updates status directly without confirmation dialog', (tester) async {
+  testWidgets('submitted row for institutional reviewer directs to full dossier drawer rather than raw status change', (tester) async {
     final mockRepo = _MockApplicationRepository();
 
     final scholarships = FakeScholarshipDataSource([
@@ -170,23 +191,36 @@ void main() {
     final profiles = FakeProfileDataSource();
     profiles.rows['applicant-3'] = {'id': 'applicant-3', 'full_name': 'Jose Rizal'};
 
-    await tester.pumpWidget(buildAppWithRepo(
-      mockRepo,
-      scholarships: scholarships,
-      profiles: profiles,
+    // Build with institutional reviewer role
+    await tester.pumpWidget(ProviderScope(
+      overrides: [
+        currentUserIdProvider.overrideWithValue('reviewer-1'),
+        applicationRepositoryProvider.overrideWithValue(mockRepo),
+        scholarshipRepositoryProvider.overrideWith((ref) => ScholarshipRepository(dataSource: scholarships)),
+        profileRepositoryProvider.overrideWith((ref) => ProfileRepository(dataSource: profiles, currentUserId: () => 'reviewer-1')),
+        providerSubRoleProvider.overrideWithValue(
+          const ProviderIdentityInfo(
+            role: ProviderSubRole.evaluator,
+            name: 'Reviewer',
+            initials: 'R',
+            roleSubtitle: 'Reviewer',
+            topEyebrow: 'REVIEWER',
+          ),
+        ),
+      ],
+      child: const MaterialApp(home: Scaffold(body: ProviderIncomingApplications())),
     ));
     await tester.pumpAndSettle();
 
     await tester.tap(find.text('Test Scholarship'));
     await tester.pumpAndSettle();
 
-    await tester.tap(find.text('Under review'));
-    await tester.pumpAndSettle();
-
-    // No dialog shown, directly updated
-    expect(find.byType(AlertDialog), findsNothing);
-    expect(mockRepo.lastUpdatedId, 'app-3');
-    expect(mockRepo.lastUpdatedStatus, ApplicationStatus.underReview);
+    // Institutional reviewer cannot bypass rubric: direct status change options are not shown;
+    // they must view full dossier to submit scored rubric evaluation
+    expect(find.text('Update Application Status'), findsOneWidget);
+    expect(find.text('View Full Dossier & Audit Log'), findsOneWidget);
+    expect(find.text('Under review'), findsNothing);
+    expect(find.text('Approved'), findsNothing);
   });
 
   testWidgets('selecting Approved shows confirmation dialog and Cancel aborts update', (tester) async {

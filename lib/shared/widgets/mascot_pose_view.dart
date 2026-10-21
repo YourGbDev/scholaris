@@ -1,7 +1,7 @@
 // lib/shared/widgets/mascot_pose_view.dart
 //
 // Centralized mascot pose widget that automatically adapts to the student's
-// stored gender/pronoun field, falling back to female as the neutral default.
+// stored gender field, reserving space while the profile loads.
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -88,11 +88,14 @@ class MascotPoseView extends StatelessWidget {
       return Consumer(
         builder: (context, ref, _) {
           final profile = ref.watch(currentProfileProvider).valueOrNull;
-          return _buildImage(profile?.gender);
+          if (profile == null) {
+            return SizedBox(height: height, width: width ?? height);
+          }
+          return _buildImage(profile.gender);
         },
       );
     } catch (_) {
-      return _buildImage(null);
+      return SizedBox(height: height, width: width ?? height);
     }
   }
 }

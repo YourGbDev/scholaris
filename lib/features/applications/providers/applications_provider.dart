@@ -18,6 +18,15 @@ final applicationRepositoryProvider = Provider<ApplicationRepository>(
   (ref) => ApplicationRepository(),
 );
 
+/// Watches the disbursement record for [applicationId].
+/// Re-evaluates whenever [applicationRepositoryProvider] changes or when invalidated.
+final applicationDisbursementProvider =
+    FutureProvider.autoDispose.family<Map<String, dynamic>?, String>(
+  (ref, applicationId) async {
+    return ref.watch(applicationRepositoryProvider).getDisbursement(applicationId);
+  },
+);
+
 final endorsedEvaluationProvider = FutureProvider.autoDispose.family<Map<String, dynamic>?, String>((ref, id) async {
   ref.watch(currentUserIdProvider);
   return Supabase.instance.client.from('application_evaluations').select()

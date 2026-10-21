@@ -243,47 +243,49 @@ class _AdminScholarshipsTabState extends ConsumerState<AdminScholarshipsTab> {
     Map<String, Map<String, dynamic>> providersMap,
     Map<String, int> demandMap,
   ) {
-    final width = MediaQuery.sizeOf(context).width;
-    final isDesktop = width >= 768;
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final isWide = constraints.maxWidth >= 720;
+        final titleBlock = Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Scholarship Oversight & Moderation',
-                    style: isDesktop
-                        ? seqHeadlineLg(fontWeight: FontWeight.w700)
-                        : seqHeadlineMd(fontWeight: FontWeight.w700),
-                  ),
-                  const SizedBox(height: 4),
-                  ConstrainedBox(
-                    constraints: const BoxConstraints(maxWidth: 820),
-                    child: Text(
-                      'Platform-wide governance across active grant listings. Monitor quota fulfillment and verified philanthropic capital allocation.',
-                      style: seqBodyMd(color: kSeqOnSurfaceVariant),
-                    ),
-                  ),
-                ],
+            Text(
+              'Scholarship Oversight & Moderation',
+              style: isWide
+                  ? seqHeadlineLg(fontWeight: FontWeight.w700)
+                  : seqHeadlineMd(fontWeight: FontWeight.w700),
+            ),
+            const SizedBox(height: 4),
+            ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 820),
+              child: Text(
+                'Platform-wide governance across active grant listings. Monitor quota fulfillment and verified philanthropic capital allocation.',
+                style: seqBodyMd(color: kSeqOnSurfaceVariant),
               ),
             ),
-            if (isDesktop) ...[
+          ],
+        );
+
+        if (isWide) {
+          return Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(child: titleBlock),
               const SizedBox(width: 16),
               _buildActionButtons(allScholarships, providersMap, demandMap),
             ],
+          );
+        }
+
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            titleBlock,
+            const SizedBox(height: 14),
+            _buildActionButtons(allScholarships, providersMap, demandMap),
           ],
-        ),
-        if (!isDesktop) ...[
-          const SizedBox(height: 14),
-          _buildActionButtons(allScholarships, providersMap, demandMap),
-        ],
-      ],
+        );
+      },
     );
   }
 
@@ -887,7 +889,6 @@ class _AdminScholarshipsTabState extends ConsumerState<AdminScholarshipsTab> {
     int demand,
   ) {
     final width = MediaQuery.sizeOf(context).width;
-    final isDesktop = width >= 768;
 
     final providerDisplayName = pInfo?['organization'] ??
         pInfo?['full_name'] ??
@@ -1002,7 +1003,7 @@ class _AdminScholarshipsTabState extends ConsumerState<AdminScholarshipsTab> {
                             borderRadius: BorderRadius.circular(6),
                           ),
                           child: Text(
-                            'SCH-${s.id.substring(0, 8).toUpperCase()}',
+                            'SCH-${(s.id.length >= 8 ? s.id.substring(0, 8) : s.id).toUpperCase()}',
                             style: GoogleFonts.robotoMono(
                               fontSize: 10,
                               fontWeight: FontWeight.w500,
@@ -1039,7 +1040,7 @@ class _AdminScholarshipsTabState extends ConsumerState<AdminScholarshipsTab> {
                   ],
                 ),
               ),
-              if (isDesktop) ...[
+              if (width >= 900) ...[
                 const SizedBox(width: 14),
                 _buildCardActionCluster(context, s),
               ],
@@ -1159,7 +1160,7 @@ class _AdminScholarshipsTabState extends ConsumerState<AdminScholarshipsTab> {
                 ),
             ],
           ),
-          if (!isDesktop) ...[
+          if (width < 900) ...[
             const SizedBox(height: 12),
             _buildCardActionCluster(context, s),
           ],

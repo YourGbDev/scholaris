@@ -266,6 +266,11 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.text('DOST-SEI Undergraduate Scholarship'), findsOneWidget);
+      await tester.scrollUntilVisible(
+        find.text('Why this matches you'),
+        200,
+        scrollable: find.byType(Scrollable).first,
+      );
       expect(find.text('Why this matches you'), findsOneWidget);
       // The reasons section pushes "About" below the fold on the default test
       // surface — scroll to it.
@@ -345,6 +350,11 @@ void main() {
 
       // The section must not claim a match the engine would reject.
       expect(find.text('Why this matches you'), findsNothing);
+      await tester.scrollUntilVisible(
+        find.text('About'),
+        200,
+        scrollable: find.byType(Scrollable).first,
+      );
       expect(find.text('About'), findsOneWidget);
     });
 
@@ -389,6 +399,11 @@ void main() {
 
       // The deterministic, value-bearing readiness explanation replaces the
       // match-reasons section for a profile that does not qualify.
+      await tester.scrollUntilVisible(
+        find.text("Why you can't apply"),
+        200,
+        scrollable: find.byType(Scrollable).first,
+      );
       expect(find.text("Why you can't apply"), findsOneWidget);
       expect(find.text('Minimum GPA 3.50 — your GPA is 3.20'), findsOneWidget);
       expect(find.text('Why this matches you'), findsNothing);

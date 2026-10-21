@@ -1,67 +1,66 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:scholaris/admin/screens/applications_oversight_screen.dart';
 import 'package:scholaris/features/admin/presentation/admin_applicants_tab.dart';
 import 'package:scholaris/features/applications/providers/applications_provider.dart';
 import 'package:scholaris/features/applications/repositories/application_repository.dart';
 import 'package:scholaris/features/auth/controllers/auth_controller.dart';
-import 'package:scholaris/features/profile/providers/profile_setup_provider.dart';
-import 'package:scholaris/features/profile/repositories/profile_repository.dart';
-import 'package:scholaris/features/scholarships/providers/scholarships_provider.dart';
-import 'package:scholaris/features/scholarships/repositories/scholarship_repository.dart';
-
 import 'helpers/fake_application_data_source.dart';
-import 'helpers/fake_profile_data_source.dart';
-import 'helpers/fake_scholarship_data_source.dart';
 
 void main() {
-  testWidgets('AdminApplicantsTab renders student list, searches, and opens inspect dialog', (tester) async {
+  final sampleApp1 = ApplicationRecord(
+    id: 'app-approved-1',
+    userId: 'student-1',
+    scholarshipId: 'sch-1',
+    status: 'approved',
+    notes: 'Strong candidate',
+    appliedAt: DateTime.parse('2026-08-01T04:30:00.000Z'),
+    updatedAt: DateTime.parse('2026-08-05T04:30:00.000Z'),
+    applicantName: 'Juan Dela Cruz',
+    school: 'University of the Philippines',
+    course: 'BS Computer Science',
+    yearLevel: 3,
+    gpa: 3.85,
+    region: 'NCR',
+    scholarshipTitle: 'DOST Merit Scholarship',
+    scholarshipAmount: 50000,
+  );
+
+  final sampleApp2 = ApplicationRecord(
+    id: 'app-submitted-2',
+    userId: 'student-2',
+    scholarshipId: 'sch-2',
+    status: 'submitted',
+    notes: null,
+    appliedAt: DateTime.parse('2026-08-10T04:30:00.000Z'),
+    updatedAt: DateTime.parse('2026-08-10T04:30:00.000Z'),
+    applicantName: 'Maria Santos',
+    school: 'De La Salle University',
+    course: 'BS Civil Engineering',
+    yearLevel: 2,
+    gpa: 3.70,
+    region: 'Region IV-A',
+    scholarshipTitle: 'CHED Merit Grant',
+    scholarshipAmount: 40000,
+  );
+
+  testWidgets('AdminApplicantsTab renders application list, searches, and filters', (tester) async {
     tester.view.physicalSize = const Size(1280, 900);
     tester.view.devicePixelRatio = 1.0;
     addTearDown(tester.view.resetPhysicalSize);
     addTearDown(tester.view.resetDevicePixelRatio);
 
-    final fakeProfileDs = FakeProfileDataSource();
-    fakeProfileDs.rows['student-1'] = {
-      'id': 'student-1',
-      'full_name': 'Juan Dela Cruz',
-      'course': 'BS Computer Science',
-      'school': 'University of the Philippines',
-      'year_level': 3,
-      'gpa': 3.85,
-      'region': 'NCR',
-      'nationality': 'Filipino',
-      'role': 'student',
-      'setup_complete': true,
-    };
-    fakeProfileDs.rows['student-2'] = {
-      'id': 'student-2',
-      'full_name': 'Maria Santos',
-      'course': 'BS Civil Engineering',
-      'school': 'De La Salle University',
-      'year_level': 2,
-      'gpa': 3.70,
-      'region': 'Region IV-A',
-      'nationality': 'Filipino',
-      'role': 'student',
-      'setup_complete': true,
-    };
-    fakeProfileDs.rows['provider-1'] = {
-      'id': 'provider-1',
-      'full_name': 'DOST Officer',
-      'role': 'provider',
-    };
+    final fakeAppDs = FakeApplicationDataSource();
+    final repo = ApplicationRepository(dataSource: fakeAppDs);
 
     await tester.pumpWidget(
       ProviderScope(
         overrides: [
           currentUserIdProvider.overrideWithValue('admin-1'),
-          profileRepositoryProvider.overrideWith(
-            (ref) => ProfileRepository(
-              dataSource: fakeProfileDs,
-              currentUserId: () => 'admin-1',
-            ),
-          ),
+          applicationRepositoryProvider.overrideWithValue(repo),
+          adminApplicationsProvider.overrideWith((ref) => Future.value([sampleApp1, sampleApp2])),
         ],
         child: const MaterialApp(
           home: Scaffold(body: AdminApplicantsTab()),
@@ -70,12 +69,10 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    // Verify title and student entries
-    expect(find.text('Student Directory'), findsOneWidget);
+    // Verify title and applications
+    expect(find.text('Applications Oversight'), findsOneWidget);
     expect(find.text('Juan Dela Cruz'), findsOneWidget);
     expect(find.text('Maria Santos'), findsOneWidget);
-    // Provider excluded from student directory
-    expect(find.text('DOST Officer'), findsNothing);
 
     // Search for Juan
     await tester.enterText(find.byType(TextField), 'Juan');
@@ -84,85 +81,161 @@ void main() {
     expect(find.text('Juan Dela Cruz'), findsOneWidget);
     expect(find.text('Maria Santos'), findsNothing);
 
-    // Tap Inspect button
-    final inspectBtn = find.widgetWithText(TextButton, 'Inspect').first;
-    await tester.tap(inspectBtn);
+    // Clear search
+    await tester.enterText(find.byType(TextField), '');
+    await tester.pumpAndSettle();
+    expect(find.text('Juan Dela Cruz'), findsOneWidget);
+    expect(find.text('Maria Santos'), findsOneWidget);
+  });
+
+  testWidgets('Confirmed successful lookup with no record allows award action for approved application', (tester) async {
+    tester.view.physicalSize = const Size(1280, 900);
+    tester.view.devicePixelRatio = 1.0;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    final fakeAppDs = FakeApplicationDataSource();
+    final repo = ApplicationRepository(dataSource: fakeAppDs);
+
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          currentUserIdProvider.overrideWithValue('admin-1'),
+          applicationRepositoryProvider.overrideWithValue(repo),
+          adminApplicationsProvider.overrideWith((ref) => Future.value([sampleApp1])),
+        ],
+        child: const MaterialApp(
+          home: Scaffold(body: AdminApplicantsTab()),
+        ),
+      ),
+    );
     await tester.pumpAndSettle();
 
-    // Dialog appears with student details
-    expect(find.byType(AlertDialog), findsOneWidget);
-    expect(
-      find.descendant(
-        of: find.byType(AlertDialog),
-        matching: find.text('University of the Philippines'),
-      ),
-      findsOneWidget,
-    );
-    expect(find.text('BS Computer Science'), findsWidgets);
+    // Verify card is rendered
+    expect(find.text('Juan Dela Cruz'), findsOneWidget);
+    expect(find.text('Inspect Dossier'), findsOneWidget);
 
-    // Close dialog
+    // Open dossier
+    await tester.tap(find.text('Inspect Dossier'));
+    await tester.pumpAndSettle();
+
+    // Dossier dialog shows student details and 'Confirm Award & Disburse'
+    expect(find.text('Confirm Award & Disburse'), findsOneWidget);
+
+    // Tap 'Confirm Award & Disburse'
+    await tester.tap(find.text('Confirm Award & Disburse'));
+    await tester.pumpAndSettle();
+
+    // Modal appears with guard header and details
+    expect(find.text('Confirm Award & Schedule Disbursement'), findsOneWidget);
+    expect(find.text('Recipient'), findsOneWidget);
+    expect(find.text('Scholarship'), findsOneWidget);
+    expect(find.text('Amount'), findsOneWidget);
+
+    // Close disbursement sheet
+    await tester.tap(find.byIcon(Icons.close_rounded));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Confirm Award & Schedule Disbursement'), findsNothing);
+  });
+
+  testWidgets('Loading disbursement state keeps award/disbursement action unavailable', (tester) async {
+    tester.view.physicalSize = const Size(1280, 900);
+    tester.view.devicePixelRatio = 1.0;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    final completer = Completer<Map<String, dynamic>?>();
+
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          currentUserIdProvider.overrideWithValue('admin-1'),
+          applicationDisbursementProvider('app-approved-1').overrideWith((ref) => completer.future),
+          adminApplicationsProvider.overrideWith((ref) => Future.value([sampleApp1])),
+        ],
+        child: const MaterialApp(
+          home: Scaffold(body: AdminApplicantsTab()),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    // Open dossier
+    await tester.tap(find.text('Inspect Dossier'));
+    await tester.pump(); // Pump frame without settling completer
+
+    // Verify CircularProgressIndicator is displayed and award action is UNAVAILABLE
+    expect(find.byType(CircularProgressIndicator), findsOneWidget);
+    expect(find.text('Confirm Award & Disburse'), findsNothing);
+    expect(find.text('Confirm Award & Schedule Disbursement'), findsNothing);
+
+    // Now resolve completer
+    completer.complete(null);
+    await tester.pumpAndSettle();
+
+    // Award action is now available
+    expect(find.text('Confirm Award & Disburse'), findsOneWidget);
+  });
+
+  testWidgets('Lookup error shows understandable error and retry action; keeps award action unavailable', (tester) async {
+    tester.view.physicalSize = const Size(1280, 900);
+    tester.view.devicePixelRatio = 1.0;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    final fakeAppDs = FakeApplicationDataSource();
+    fakeAppDs.disbursementFetchError = Exception('Simulated network timeout querying disbursements');
+    final repo = ApplicationRepository(dataSource: fakeAppDs);
+
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          currentUserIdProvider.overrideWithValue('admin-1'),
+          applicationRepositoryProvider.overrideWithValue(repo),
+          adminApplicationsProvider.overrideWith((ref) => Future.value([sampleApp1])),
+        ],
+        child: const MaterialApp(
+          home: Scaffold(body: AdminApplicantsTab()),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    // Open dossier
+    await tester.tap(find.text('Inspect Dossier'));
+    await tester.pumpAndSettle();
+
+    // Verify error UI is displayed
+    expect(find.text('Unable to verify disbursement record. Please try again.'), findsOneWidget);
+    expect(find.text('Retry'), findsOneWidget);
+
+    // Award action MUST be completely unavailable
+    expect(find.text('Confirm Award & Disburse'), findsNothing);
+    expect(find.text('Confirm Award & Schedule Disbursement'), findsNothing);
+
+    // Verify tapping close closes dialog without invoking mutation
     await tester.tap(find.text('Close'));
     await tester.pumpAndSettle();
-    expect(find.byType(AlertDialog), findsNothing);
+    expect(find.text('Confirm Award & Schedule Disbursement'), findsNothing);
   });
 
-  testWidgets('Admin can confirm award for approved application with confirmation guard', (tester) async {
+  testWidgets('Retry action refetches and transitions from error to success when resolved', (tester) async {
     tester.view.physicalSize = const Size(1280, 900);
     tester.view.devicePixelRatio = 1.0;
     addTearDown(tester.view.resetPhysicalSize);
     addTearDown(tester.view.resetDevicePixelRatio);
 
-    final fakeProfileDs = FakeProfileDataSource();
-    fakeProfileDs.rows['student-1'] = {
-      'id': 'student-1',
-      'full_name': 'Juan Dela Cruz',
-      'course': 'BS Computer Science',
-      'school': 'University of the Philippines',
-      'year_level': 3,
-      'gpa': 3.85,
-      'region': 'NCR',
-      'nationality': 'Filipino',
-      'role': 'student',
-      'setup_complete': true,
-    };
-
     final fakeAppDs = FakeApplicationDataSource();
-    await fakeAppDs.insertApplication('student-1', {
-      'id': 'app-approved-1',
-      'user_id': 'student-1',
-      'scholarship_id': 'sch-1',
-      'status': 'approved',
-    });
-
-    final fakeSchDs = FakeScholarshipDataSource([
-      {
-        ...FakeScholarshipDataSource.defaultRows.first,
-        'id': 'sch-1',
-        'title': 'DOST Merit Scholarship',
-      }
-    ]);
+    fakeAppDs.disbursementFetchError = Exception('Transient connection drop');
+    final repo = ApplicationRepository(dataSource: fakeAppDs);
 
     await tester.pumpWidget(
       ProviderScope(
         overrides: [
           currentUserIdProvider.overrideWithValue('admin-1'),
-          profileRepositoryProvider.overrideWith(
-            (ref) => ProfileRepository(
-              dataSource: fakeProfileDs,
-              currentUserId: () => 'admin-1',
-            ),
-          ),
-          applicationRepositoryProvider.overrideWith(
-            (ref) => ApplicationRepository(
-              dataSource: fakeAppDs,
-              currentUserId: () => 'admin-1',
-            ),
-          ),
-          scholarshipRepositoryProvider.overrideWith(
-            (ref) => ScholarshipRepository(
-              dataSource: fakeSchDs,
-            ),
-          ),
+          applicationRepositoryProvider.overrideWithValue(repo),
+          adminApplicationsProvider.overrideWith((ref) => Future.value([sampleApp1])),
         ],
         child: const MaterialApp(
           home: Scaffold(body: AdminApplicantsTab()),
@@ -171,107 +244,53 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    // Verify Award button is rendered for student-1 with approved application
-    final awardBtn = find.widgetWithText(FilledButton, 'Award');
-    expect(awardBtn, findsOneWidget);
-
-    // Tap Award button
-    await tester.tap(awardBtn);
+    // Open dossier
+    await tester.tap(find.text('Inspect Dossier'));
     await tester.pumpAndSettle();
 
-    // Verify confirmation dialog appears with guard text
-    expect(find.byType(AlertDialog), findsOneWidget);
-    expect(find.text('Confirm award'), findsWidgets);
-    expect(find.textContaining('officially award the "DOST Merit Scholarship" scholarship to Juan Dela Cruz'), findsOneWidget);
+    // Initially in error state
+    expect(find.text('Unable to verify disbursement record. Please try again.'), findsOneWidget);
+    expect(find.text('Confirm Award & Disburse'), findsNothing);
 
-    // Test Cancel button aborts
-    await tester.tap(find.text('Cancel'));
-    await tester.pumpAndSettle();
-    expect(find.byType(AlertDialog), findsNothing);
+    // Clear error
+    fakeAppDs.disbursementFetchError = null;
 
-    // Application status should still be approved
-    final appsAfterCancel = await fakeAppDs.fetchAllApplications();
-    expect(appsAfterCancel.first['status'], 'approved');
-
-    // Tap Award again and confirm
-    await tester.tap(awardBtn);
+    // Tap Retry
+    await tester.tap(find.text('Retry'));
+    await tester.pump();
     await tester.pumpAndSettle();
 
-    final confirmBtn = find.widgetWithText(FilledButton, 'Confirm award');
-    expect(confirmBtn, findsOneWidget);
-    await tester.tap(confirmBtn);
+    // Error is dismissed and award button appears
+    expect(find.text('Unable to verify disbursement record. Please try again.'), findsNothing);
+    expect(find.text('Confirm Award & Disburse'), findsOneWidget);
+
+    // Action can now be executed
+    await tester.tap(find.text('Confirm Award & Disburse'));
     await tester.pumpAndSettle();
-
-    // Dialog closes, SnackBar appears
-    expect(find.byType(AlertDialog), findsNothing);
-    expect(find.text('Scholarship awarded to Juan Dela Cruz.'), findsOneWidget);
-
-    // Data source updated to awarded
-    final appsAfterConfirm = await fakeAppDs.fetchAllApplications();
-    expect(appsAfterConfirm.first['status'], 'awarded');
-
-    // Table re-renders and Award button is no longer shown (since status is now awarded, not approved)
-    expect(find.widgetWithText(FilledButton, 'Award'), findsNothing);
+    expect(find.text('Confirm Award & Schedule Disbursement'), findsOneWidget);
   });
 
-  testWidgets('Inspect dialog displays applications and allows confirming award', (tester) async {
+  testWidgets('Existing disbursement record prevents duplicate action', (tester) async {
     tester.view.physicalSize = const Size(1280, 900);
     tester.view.devicePixelRatio = 1.0;
     addTearDown(tester.view.resetPhysicalSize);
     addTearDown(tester.view.resetDevicePixelRatio);
 
-    final fakeProfileDs = FakeProfileDataSource();
-    fakeProfileDs.rows['student-1'] = {
-      'id': 'student-1',
-      'full_name': 'Juan Dela Cruz',
-      'course': 'BS Computer Science',
-      'school': 'University of the Philippines',
-      'year_level': 3,
-      'gpa': 3.85,
-      'region': 'NCR',
-      'nationality': 'Filipino',
-      'role': 'student',
-      'setup_complete': true,
-    };
-
     final fakeAppDs = FakeApplicationDataSource();
-    await fakeAppDs.insertApplication('student-1', {
-      'id': 'app-approved-1',
-      'user_id': 'student-1',
-      'scholarship_id': 'sch-1',
-      'status': 'approved',
-      'applied_at': '2026-08-01T04:30:00.000Z',
+    fakeAppDs.disbursements.add({
+      'id': 'disb-existing-101',
+      'application_id': sampleApp1.id,
+      'amount': 50000,
+      'status': 'released',
     });
-
-    final fakeSchDs = FakeScholarshipDataSource([
-      {
-        ...FakeScholarshipDataSource.defaultRows.first,
-        'id': 'sch-1',
-        'title': 'DOST Merit Scholarship',
-      }
-    ]);
+    final repo = ApplicationRepository(dataSource: fakeAppDs);
 
     await tester.pumpWidget(
       ProviderScope(
         overrides: [
           currentUserIdProvider.overrideWithValue('admin-1'),
-          profileRepositoryProvider.overrideWith(
-            (ref) => ProfileRepository(
-              dataSource: fakeProfileDs,
-              currentUserId: () => 'admin-1',
-            ),
-          ),
-          applicationRepositoryProvider.overrideWith(
-            (ref) => ApplicationRepository(
-              dataSource: fakeAppDs,
-              currentUserId: () => 'admin-1',
-            ),
-          ),
-          scholarshipRepositoryProvider.overrideWith(
-            (ref) => ScholarshipRepository(
-              dataSource: fakeSchDs,
-            ),
-          ),
+          applicationRepositoryProvider.overrideWithValue(repo),
+          adminApplicationsProvider.overrideWith((ref) => Future.value([sampleApp1])),
         ],
         child: const MaterialApp(
           home: Scaffold(body: AdminApplicantsTab()),
@@ -280,34 +299,50 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    // Open Inspect dialog
-    await tester.tap(find.widgetWithText(TextButton, 'Inspect'));
+    // Open dossier
+    await tester.tap(find.text('Inspect Dossier'));
     await tester.pumpAndSettle();
 
-    // Verify dialog has applications section
-    expect(find.text('Scholarship applications'), findsOneWidget);
-    expect(find.text('DOST Merit Scholarship'), findsOneWidget);
-    expect(find.text('Approved'), findsOneWidget);
+    // Shows record indicator and prevents duplicate award trigger
+    expect(find.text('● Disbursement on record'), findsOneWidget);
+    expect(find.text('Confirm Award & Disburse'), findsNothing);
+  });
 
-    final dialogConfirmBtn = find.widgetWithText(FilledButton, 'Confirm award');
-    expect(dialogConfirmBtn, findsOneWidget);
+  testWidgets('Non-approved application does not show award action in dossier', (tester) async {
+    tester.view.physicalSize = const Size(1280, 900);
+    tester.view.devicePixelRatio = 1.0;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
 
-    // Tap Confirm award from inside Inspect dialog
-    await tester.tap(dialogConfirmBtn);
+    final fakeAppDs = FakeApplicationDataSource();
+    final repo = ApplicationRepository(dataSource: fakeAppDs);
+
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          currentUserIdProvider.overrideWithValue('admin-1'),
+          applicationRepositoryProvider.overrideWithValue(repo),
+          adminApplicationsProvider.overrideWith((ref) => Future.value([sampleApp2])),
+        ],
+        child: const MaterialApp(
+          home: Scaffold(body: AdminApplicantsTab()),
+        ),
+      ),
+    );
     await tester.pumpAndSettle();
 
-    // Guard dialog appears
-    expect(find.text('Confirm award'), findsWidgets);
+    expect(find.text('Maria Santos'), findsOneWidget);
 
-    // Confirm
-    await tester.tap(find.widgetWithText(FilledButton, 'Confirm award'));
+    // Open dossier for submitted application
+    await tester.tap(find.text('Inspect Dossier'));
     await tester.pumpAndSettle();
 
-    // SnackBar appears
-    expect(find.text('Scholarship awarded to Juan Dela Cruz.'), findsOneWidget);
+    // 'Confirm Award & Disburse' should NOT be present for submitted status
+    expect(find.text('Confirm Award & Disburse'), findsNothing);
+    expect(find.text('Close'), findsOneWidget);
 
-    // DB updated
-    final apps = await fakeAppDs.fetchAllApplications();
-    expect(apps.first['status'], 'awarded');
+    // Close dossier
+    await tester.tap(find.text('Close'));
+    await tester.pumpAndSettle();
   });
 }

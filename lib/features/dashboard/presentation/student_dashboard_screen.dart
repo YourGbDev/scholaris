@@ -520,9 +520,20 @@ class _StudentDashboardScreenState
     required StudentProfile? profile,
     required int matchCount,
   }) {
-    final genderStr = profile?.gender?.trim().toLowerCase();
-    final isFemale = genderStr == 'female' ||
-        (profile?.fullName.toLowerCase().contains('maria') ?? false);
+    // Reserve the artwork's space without guessing a gender before hydration.
+    if (profile == null) {
+      return Center(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 440),
+          child: const AspectRatio(
+            key: ValueKey('student-hero-loading'),
+            aspectRatio: 853 / 520,
+            child: SizedBox.expand(),
+          ),
+        ),
+      );
+    }
+    final isFemale = profile.gender?.trim().toLowerCase() == 'female';
     final bannerAsset = isFemale
         ? 'assets/images/hero_banner_female.png'
         : 'assets/images/hero_banner_exact.png';

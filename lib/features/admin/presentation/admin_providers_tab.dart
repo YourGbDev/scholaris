@@ -593,10 +593,10 @@ class _AdminProvidersTabState extends ConsumerState<AdminProvidersTab> {
 }
 
   Widget _buildSkeletonLoader() {
-    return Padding(
+    return ListView(
+      physics: const NeverScrollableScrollPhysics(),
       padding: const EdgeInsets.all(24),
-      child: Column(
-        children: List.generate(
+      children: List.generate(
           6,
           (i) => const Padding(
             padding: EdgeInsets.only(bottom: 12),
@@ -613,7 +613,6 @@ class _AdminProvidersTabState extends ConsumerState<AdminProvidersTab> {
             ),
           ),
         ),
-      ),
     );
   }
 
@@ -713,8 +712,10 @@ class _ProviderReviewDialogState extends ConsumerState<_ProviderReviewDialog> {
     }
 
     setState(() => _isProcessing = true);
-    final adminId =
-        Supabase.instance.client.auth.currentUser?.id ?? 'admin-reviewer';
+    String adminId = 'admin-reviewer';
+    try {
+      adminId = Supabase.instance.client.auth.currentUser?.id ?? 'admin-reviewer';
+    } catch (_) {}
 
     if (status == 'approved') {
       await ref
@@ -876,8 +877,10 @@ class _ProviderReviewDialogState extends ConsumerState<_ProviderReviewDialog> {
               const Divider(height: 24, color: kAdminHairline),
 
               // Action Buttons
-              Row(
-                mainAxisAlignment: MainAxisAlignment.end,
+              Wrap(
+                alignment: WrapAlignment.end,
+                spacing: 12,
+                runSpacing: 10,
                 children: [
                   OutlinedButton(
                     onPressed: _isProcessing

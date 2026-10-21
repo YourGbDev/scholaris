@@ -713,6 +713,7 @@ String? _redirect(Ref ref, GoRouterState state) {
         profileAsync.isLoading || (roleAsync.isLoading && roleAsync.value == null),
     profileComplete: profileAsync.valueOrNull ?? false,
     role: roleAsync.valueOrNull ?? 'student',
+    profileSetupStep: ref.read(currentProfileProvider).valueOrNull?.profileSetupStep ?? 1,
   );
   debugPrint('[ROUTER] authDecision=$authDecision');
 
@@ -817,6 +818,7 @@ String? authRedirectDecision({
   required bool profileComplete,
   bool onVerifyRoute = false,
   String role = 'student',
+  int profileSetupStep = 1,
 }) {
   if (location == AuthRoute.forgotPassword) return null;
 
@@ -873,6 +875,11 @@ String? authRedirectDecision({
     return null;
   }
 
-  return onSetupRoute ? null : ProfileSetupRoute.personal;
+  final resumeRoute = switch (profileSetupStep) {
+    2 => ProfileSetupRoute.academic,
+    3 => ProfileSetupRoute.financial,
+    _ => ProfileSetupRoute.personal,
+  };
+  return onSetupRoute ? null : resumeRoute;
 }
 

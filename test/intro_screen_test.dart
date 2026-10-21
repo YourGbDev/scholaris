@@ -143,7 +143,7 @@ void main() {
   });
 
   group('onboardingRedirectDecision with introSeen', () {
-    test('when introSeen is false, first launch funnels to /intro', () {
+    test('when introSeen is false, first launch funnels to /onboarding', () {
       expect(
         onboardingRedirectDecision(
           authDecision: '/login',
@@ -152,7 +152,7 @@ void main() {
           onboardingSeen: false,
           introSeen: false,
         ),
-        '/intro',
+        '/onboarding',
       );
       expect(
         onboardingRedirectDecision(
@@ -162,7 +162,7 @@ void main() {
           onboardingSeen: false,
           introSeen: false,
         ),
-        '/intro',
+        '/login',
       );
       expect(
         onboardingRedirectDecision(
@@ -172,7 +172,7 @@ void main() {
           onboardingSeen: false,
           introSeen: false,
         ),
-        isNull,
+        '/login',
       );
     });
 

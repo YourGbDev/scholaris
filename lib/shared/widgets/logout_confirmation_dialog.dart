@@ -8,7 +8,10 @@ import 'package:scholaris/shared/theme/app_theme.dart';
 
 /// Displays a confirmation dialog asking the user if they are sure they want to log out.
 /// Returns `true` if the user confirmed "Log Out", `false` if cancelled or dismissed.
-Future<bool> showLogoutConfirmationDialog(BuildContext context) async {
+Future<bool> showLogoutConfirmationDialog(
+  BuildContext context, {
+  String message = 'Are you sure you want to log out?',
+}) async {
   final result = await showDialog<bool>(
     context: context,
     builder: (dialogContext) => AlertDialog(
@@ -23,7 +26,7 @@ Future<bool> showLogoutConfirmationDialog(BuildContext context) async {
         ),
       ),
       content: Text(
-        'Are you sure you want to log out?',
+        message,
         style: openSans(
           fontSize: 14,
           color: const Color(0xFF404944),

@@ -17,6 +17,8 @@ import 'package:scholaris/app/supabase_config.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 void main() {
+  const isLiveOptIn = bool.fromEnvironment('ENABLE_LIVE_SUPABASE_TESTS', defaultValue: false);
+
   group('Provider Portal Cross-Role & Verification E2E Tests', () {
     late ProviderVerificationRepository repo;
 
@@ -168,5 +170,5 @@ void main() {
       final emptyResult = await repo.fetchVerificationForUser('non-existent-user-999');
       expect(emptyResult, isNull);
     });
-  });
+  }, skip: !isLiveOptIn ? 'Live integration tests are disabled by default. Pass --dart-define=ENABLE_LIVE_SUPABASE_TESTS=true to run against an approved disposable environment.' : null);
 }

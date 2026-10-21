@@ -66,7 +66,7 @@ class FakeScholarshipDataSource implements ScholarshipDataSource {
       'for_pwd': false,
       'for_indigenous': false,
       'slots': 8000,
-      'deadline': '2026-10-15',
+      'deadline': DateTime.now().add(const Duration(days: 30)).toIso8601String().split('T').first,
       'application_url': 'https://ched.gov.ph/scholarships',
       'is_active': true,
     },

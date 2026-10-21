@@ -166,9 +166,29 @@ Widget _wrap({
   );
 }
 
+Future<void> _checkAffirmationsAndConfirm(WidgetTester tester) async {
+  for (final cb in find.byType(Checkbox).evaluate()) {
+    await tester.tap(find.byWidget(cb.widget));
+  }
+  await tester.pumpAndSettle();
+  await tester.tap(find.byKey(const ValueKey('apply-confirm')));
+}
+
 void main() {
   setUpAll(() {
     GoogleFonts.config.allowRuntimeFetching = false;
+  });
+
+  setUp(() {
+    final view = TestWidgetsFlutterBinding.instance.platformDispatcher.views.first;
+    view.physicalSize = const Size(800, 1400);
+    view.devicePixelRatio = 1.0;
+  });
+
+  tearDown(() {
+    final view = TestWidgetsFlutterBinding.instance.platformDispatcher.views.first;
+    view.resetPhysicalSize();
+    view.resetDevicePixelRatio();
   });
 
   group('Apply action rendering', () {
@@ -251,7 +271,7 @@ void main() {
 
       await tester.tap(find.text('Start Application'));
       await tester.pumpAndSettle();
-      await tester.tap(find.byKey(const ValueKey('apply-confirm')));
+      await _checkAffirmationsAndConfirm(tester);
       await tester.pumpAndSettle();
 
       expect(find.text('Application submitted!'), findsOneWidget);
@@ -277,7 +297,7 @@ void main() {
 
       await tester.tap(find.text('Start Application'));
       await tester.pumpAndSettle();
-      await tester.tap(find.byKey(const ValueKey('apply-confirm')));
+      await _checkAffirmationsAndConfirm(tester);
       await tester.pump();
 
       expect(find.byType(CircularProgressIndicator), findsOneWidget);
@@ -428,7 +448,7 @@ void main() {
 
       await tester.tap(find.text('Start Application'));
       await tester.pumpAndSettle();
-      await tester.tap(find.byKey(const ValueKey('apply-confirm')));
+      await _checkAffirmationsAndConfirm(tester);
       await tester.pumpAndSettle();
 
       expect(
@@ -486,7 +506,7 @@ void main() {
       // Applying still works after bookmarking.
       await tester.tap(find.text('Start Application'));
       await tester.pumpAndSettle();
-      await tester.tap(find.byKey(const ValueKey('apply-confirm')));
+      await _checkAffirmationsAndConfirm(tester);
       await tester.pumpAndSettle();
       expect(find.text('Application submitted'), findsOneWidget);
       expect(await applications.fetchApplications('user-a'), hasLength(1));

@@ -81,7 +81,8 @@ String? incomeBracketName(double? monthlyIncome) =>
 DateTime? _dateFromJson(Object? value) =>
     value is String && value.isNotEmpty ? DateTime.parse(value) : null;
 
-String? _dateToJson(DateTime? value) => value == null ? null : formatDate(value);
+String? _dateToJson(DateTime? value) =>
+    value == null ? null : formatDate(value);
 
 @freezed
 abstract class StudentProfile with _$StudentProfile {
@@ -96,6 +97,8 @@ abstract class StudentProfile with _$StudentProfile {
     String? province,
     @JsonKey(name: 'city_municipality') String? cityMunicipality,
     @Default(0.0) double gpa,
+    @JsonKey(name: 'gpa_scale') String? gpaScale,
+    @JsonKey(name: 'profile_setup_step') @Default(1) int profileSetupStep,
     @JsonKey(name: 'year_level') @Default(1) int yearLevel,
     @Default('') String course,
     String? school,
@@ -124,23 +127,41 @@ abstract class StudentProfile with _$StudentProfile {
   /// System columns (`id`, `created_at`, `updated_at`) are excluded — they are
   /// managed by the database.
   Map<String, dynamic> toDbRow() => {
-        'full_name': fullName,
-        'birth_date': birthDate == null ? null : formatDate(birthDate!),
-        'gender': gender,
-        'nationality': nationality,
-        'region': region,
-        'province': province,
-        'city_municipality': cityMunicipality,
-        'gpa': gpa,
-        'year_level': yearLevel,
-        'course': course,
-        'school': school,
-        'monthly_family_income': monthlyFamilyIncome,
-        'has_disability': hasDisability,
-        'is_indigenous': isIndigenous,
-        'setup_complete': setupComplete,
-      };
+    'full_name': fullName,
+    'birth_date': birthDate == null ? null : formatDate(birthDate!),
+    'gender': gender,
+    'nationality': nationality,
+    'region': region,
+    'province': province,
+    'city_municipality': cityMunicipality,
+    'gpa': gpa,
+    'gpa_scale': gradingScaleCode(gpaScale),
+    'profile_setup_step': profileSetupStep,
+    'year_level': yearLevel,
+    'course': course,
+    'school': school,
+    'monthly_family_income': monthlyFamilyIncome,
+    'has_disability': hasDisability,
+    'is_indigenous': isIndigenous,
+    'setup_complete': setupComplete,
+  };
 
   /// Income bracket consumed by the matching engine (derived, never stored).
   String? get incomeBracket => incomeBracketName(monthlyFamilyIncome);
 }
+
+/// Persist a scale explicitly; never infer it from the numerical grade.
+String? gradingScaleCode(String? value) {
+  if (value == null) return null;
+  final scale = value.toLowerCase();
+  if (scale == 'percentage' || scale.contains('%')) return 'percentage';
+  if (scale == 'five_point' || scale.contains('5.0')) return 'five_point';
+  if (scale == 'four_point' || scale.contains('4.0')) return 'four_point';
+  throw ArgumentError.value(value, 'gpaScale', 'Unsupported grading scale');
+}
+
+String gradingScaleLabel(String? value) => switch (gradingScaleCode(value)) {
+  'percentage' => '% Percentage',
+  'five_point' => '1.0 – 5.0',
+  _ => '4.0 Scale',
+};

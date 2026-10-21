@@ -3,7 +3,7 @@
 // Riverpod state management for Provider Verification & Admin inspection.
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:scholaris/features/auth/controllers/auth_controller.dart';
 
 import '../data/provider_verification_repository.dart';
 import '../models/provider_verification.dart';
@@ -14,13 +14,15 @@ final providerVerificationRepositoryProvider =
 });
 
 /// Watches the verification record for the currently signed-in user.
+/// Reacts to [currentUserIdProvider] so auth transitions, sign-outs, and account switches
+/// automatically invalidate and refetch state without converting failures into a "no user" state.
 final currentUserVerificationProvider =
     FutureProvider<ProviderVerification?>((ref) async {
-  final user = Supabase.instance.client.auth.currentUser;
-  if (user == null) return null;
+  final userId = ref.watch(currentUserIdProvider);
+  if (userId == null) return null;
 
   final repo = ref.watch(providerVerificationRepositoryProvider);
-  return repo.fetchVerificationForUser(user.id);
+  return repo.fetchVerificationForUser(userId);
 });
 
 /// StateNotifier/AsyncNotifier for Admin Verification management

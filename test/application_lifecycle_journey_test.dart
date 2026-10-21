@@ -147,6 +147,10 @@ void main() {
 
     // Day 15: the write only happens after the pre-apply confirmation.
     expect(find.text('Apply to this scholarship?'), findsOneWidget);
+    for (final cb in find.byType(Checkbox).evaluate()) {
+      await tester.tap(find.byWidget(cb.widget));
+    }
+    await tester.pump(const Duration(milliseconds: 500));
     await tester.tap(find.byKey(const ValueKey('apply-confirm')));
     await tester.pump(const Duration(milliseconds: 500));
 
@@ -255,10 +259,11 @@ void main() {
         initial: _scholarship(),
       ),
     );
+    await tester.pumpAndSettle();
 
     // The duplicate guard is unchanged: the preserved (withdrawn) record
     // still shows the applied banner, not a re-apply affordance.
-    expect(find.text('Application submitted'), findsOneWidget);
+    expect(find.text('Application withdrawn'), findsOneWidget);
     expect(find.text('Start Application'), findsNothing);
   });
 }

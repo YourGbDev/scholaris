@@ -1,62 +1,53 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:scholaris/features/admin/presentation/admin_audit_logs_provider.dart';
+import 'package:scholaris/admin/screens/audit_trail_screen.dart';
 import 'package:scholaris/features/admin/presentation/admin_audit_logs_tab.dart';
-import 'package:scholaris/features/admin/repositories/admin_audit_log_repository.dart';
-
-class FakeAuditLogDataSource implements AuditLogDataSource {
-  FakeAuditLogDataSource(this.logs);
-  final List<Map<String, dynamic>> logs;
-
-  @override
-  Future<List<Map<String, dynamic>>> fetchAuditLogs() async => logs;
-}
 
 void main() {
-  final sampleLogs = [
-    {
-      'id': 'log-001',
-      'action': 'user_created',
-      'target_type': 'user',
-      'target_id': 'usr-123',
-      'actor_email': 'admin@scholaris.ph',
-      'actor_role': 'admin',
-      'details': {'name': 'Juan Dela Cruz', 'role': 'student'},
-      'ip_address': '192.168.1.1',
-      'created_at': '2026-09-19T10:00:00Z',
-    },
-    {
-      'id': 'log-002',
-      'action': 'role_and_status_updated',
-      'target_type': 'user',
-      'target_id': 'usr-456',
-      'actor_email': 'admin@scholaris.ph',
-      'actor_role': 'admin',
-      'details': {'old_role': 'student', 'new_role': 'provider'},
-      'ip_address': '192.168.1.2',
-      'created_at': '2026-09-19T11:00:00Z',
-    },
-    {
-      'id': 'log-003',
-      'action': 'account_lockout_triggered',
-      'target_type': 'auth',
-      'target_id': 'usr-789',
-      'actor_email': 'attacker@example.com',
-      'actor_role': 'anonymous',
-      'details': {'failed_attempts': 3},
-      'ip_address': '10.0.0.99',
-      'created_at': '2026-09-19T12:00:00Z',
-    },
+  final sampleLogs = <AuditLogEntry>[
+    AuditLogEntry(
+      id: 'log-001',
+      action: 'user_created',
+      targetType: 'user',
+      targetId: 'usr-123',
+      actorId: 'adm-001',
+      actorEmail: 'admin@scholaris.ph',
+      actorRole: 'admin',
+      details: const {'name': 'Juan Dela Cruz', 'role': 'student'},
+      ipAddress: '192.168.1.1',
+      createdAt: DateTime.parse('2026-09-19T10:00:00Z'),
+    ),
+    AuditLogEntry(
+      id: 'log-002',
+      action: 'role_and_status_updated',
+      targetType: 'user',
+      targetId: 'usr-456',
+      actorId: 'adm-001',
+      actorEmail: 'admin@scholaris.ph',
+      actorRole: 'admin',
+      details: const {'old_role': 'student', 'new_role': 'provider'},
+      ipAddress: '192.168.1.2',
+      createdAt: DateTime.parse('2026-09-19T11:00:00Z'),
+    ),
+    AuditLogEntry(
+      id: 'log-003',
+      action: 'account_lockout_triggered',
+      targetType: 'auth',
+      targetId: 'usr-789',
+      actorId: 'anon-001',
+      actorEmail: 'attacker@example.com',
+      actorRole: 'anonymous',
+      details: const {'failed_attempts': 3},
+      ipAddress: '10.0.0.99',
+      createdAt: DateTime.parse('2026-09-19T12:00:00Z'),
+    ),
   ];
 
-  Widget buildApp({List<Map<String, dynamic>>? logs}) {
-    final fakeDs = FakeAuditLogDataSource(logs ?? sampleLogs);
-    final repo = AdminAuditLogRepository(dataSource: fakeDs);
-
+  Widget buildApp({List<AuditLogEntry>? logs}) {
     return ProviderScope(
       overrides: [
-        adminAuditLogRepositoryProvider.overrideWithValue(repo),
+        auditTrailLogsProvider.overrideWith((ref) => Future.value(logs ?? sampleLogs)),
       ],
       child: const MaterialApp(
         home: Scaffold(body: AdminAuditLogsTab()),
@@ -65,7 +56,7 @@ void main() {
   }
 
   group('AdminAuditLogsTab', () {
-    testWidgets('renders ledger title, readiness status, and live event entries on desktop', (tester) async {
+    testWidgets('renders ledger title, live count, and event entries on desktop', (tester) async {
       tester.view.physicalSize = const Size(1280, 900);
       tester.view.devicePixelRatio = 1.0;
       addTearDown(tester.view.resetPhysicalSize);
@@ -74,17 +65,11 @@ void main() {
       await tester.pumpWidget(buildApp());
       await tester.pumpAndSettle();
 
-      expect(find.text('System Audit Ledger'), findsOneWidget);
-      expect(find.text('Audit logging infrastructure readiness'), findsOneWidget);
-      expect(find.text('Active'), findsOneWidget);
+      expect(find.text('System Audit Trail'), findsOneWidget);
+      expect(find.text('3 audit events recorded'), findsOneWidget);
+      expect(find.text('Live data'), findsOneWidget);
 
-      // Verify table headers
-      expect(find.text('Timestamp'), findsOneWidget);
-      expect(find.text('Action'), findsOneWidget);
-      expect(find.text('Target'), findsOneWidget);
-      expect(find.text('Actor'), findsOneWidget);
-
-      // Verify log actions rendered in table
+      // Verify log actions rendered in table/cards
       expect(find.text('user_created'), findsOneWidget);
       expect(find.text('role_and_status_updated'), findsOneWidget);
       expect(find.text('account_lockout_triggered'), findsOneWidget);
@@ -99,9 +84,10 @@ void main() {
       await tester.pumpWidget(buildApp());
       await tester.pumpAndSettle();
 
-      expect(find.text('System Audit Ledger'), findsOneWidget);
-      expect(find.byType(Card), findsNWidgets(3));
+      expect(find.text('System Audit Trail'), findsOneWidget);
       expect(find.text('user_created'), findsOneWidget);
+      expect(find.text('role_and_status_updated'), findsOneWidget);
+      expect(find.text('account_lockout_triggered'), findsOneWidget);
     });
 
     testWidgets('search query filters audit logs by action or actor', (tester) async {
@@ -122,7 +108,7 @@ void main() {
       expect(find.text('role_and_status_updated'), findsNothing);
     });
 
-    testWidgets('action filter chips filter audit logs', (tester) async {
+    testWidgets('action dropdown filter filters audit logs', (tester) async {
       tester.view.physicalSize = const Size(1280, 900);
       tester.view.devicePixelRatio = 1.0;
       addTearDown(tester.view.resetPhysicalSize);
@@ -131,23 +117,19 @@ void main() {
       await tester.pumpWidget(buildApp());
       await tester.pumpAndSettle();
 
-      // Filter by Security
-      await tester.tap(find.text('Security'));
+      // Open Action dropdown
+      await tester.tap(find.text('Action: All'));
       await tester.pumpAndSettle();
 
-      expect(find.text('account_lockout_triggered'), findsOneWidget);
-      expect(find.text('user_created'), findsNothing);
-
-      // Filter by Users
-      await tester.tap(find.text('Users'));
+      // Select 'Action: user created'
+      await tester.tap(find.text('Action: user created').last);
       await tester.pumpAndSettle();
 
       expect(find.text('user_created'), findsOneWidget);
-      expect(find.text('role_and_status_updated'), findsOneWidget);
       expect(find.text('account_lockout_triggered'), findsNothing);
     });
 
-    testWidgets('tapping Inspect opens structured details modal with JSON payload', (tester) async {
+    testWidgets('tapping log entry opens structured details modal with JSON payload', (tester) async {
       tester.view.physicalSize = const Size(1280, 900);
       tester.view.devicePixelRatio = 1.0;
       addTearDown(tester.view.resetPhysicalSize);
@@ -156,21 +138,20 @@ void main() {
       await tester.pumpWidget(buildApp());
       await tester.pumpAndSettle();
 
-      // Tap first Inspect button
-      await tester.tap(find.text('Inspect').first);
+      // Tap first log row
+      await tester.tap(find.text('user_created'));
       await tester.pumpAndSettle();
 
-      expect(find.text('Audit Event Details'), findsOneWidget);
+      expect(find.text('Audit Event Detail'), findsOneWidget);
       expect(find.text('Event ID'), findsOneWidget);
       expect(find.text('log-001'), findsOneWidget);
-      expect(find.text('Event Payload & Metadata'), findsOneWidget);
+      expect(find.text('EVENT DETAILS (JSONB)'), findsOneWidget);
       expect(find.textContaining('Juan Dela Cruz'), findsOneWidget);
-      expect(find.text('Close'), findsOneWidget);
 
-      await tester.tap(find.text('Close'));
+      await tester.tap(find.byIcon(Icons.close_rounded));
       await tester.pumpAndSettle();
 
-      expect(find.text('Audit Event Details'), findsNothing);
+      expect(find.text('Audit Event Detail'), findsNothing);
     });
 
     testWidgets('empty state renders when no logs match', (tester) async {
@@ -182,7 +163,7 @@ void main() {
       await tester.pumpWidget(buildApp(logs: []));
       await tester.pumpAndSettle();
 
-      expect(find.text('No audit logs found'), findsOneWidget);
+      expect(find.text('No audit events found'), findsOneWidget);
     });
   });
 }

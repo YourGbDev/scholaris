@@ -8,6 +8,7 @@ import 'package:scholaris/features/auth/controllers/auth_controller.dart';
 import 'package:scholaris/features/profile/providers/profile_setup_provider.dart';
 import 'package:scholaris/features/profile/repositories/profile_repository.dart';
 import 'package:scholaris/features/provider/presentation/provider_home_screen.dart';
+import 'package:scholaris/features/provider/providers/provider_sub_role_provider.dart';
 import 'package:scholaris/features/scholarships/providers/scholarships_provider.dart';
 import 'package:scholaris/features/scholarships/repositories/scholarship_repository.dart';
 
@@ -20,6 +21,13 @@ void main() {
     return ProviderScope(
       overrides: [
         currentUserIdProvider.overrideWithValue('prov-1'),
+        organizationMembershipProvider.overrideWith(
+          (ref) => Future.value({
+            'user_id': 'prov-1',
+            'organization_id': 'org-1',
+            'role': 'org_admin',
+          }),
+        ),
         applicationRepositoryProvider.overrideWith(
           (ref) => ApplicationRepository(
             dataSource: FakeApplicationDataSource(),

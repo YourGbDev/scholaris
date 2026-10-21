@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:scholaris/admin/screens/reports_analytics_screen.dart';
+import 'package:scholaris/features/admin/presentation/admin_analytics_provider.dart';
 import 'package:scholaris/features/admin/presentation/admin_analytics_tab.dart';
 import 'package:scholaris/features/applications/providers/applications_provider.dart';
 import 'package:scholaris/features/applications/repositories/application_repository.dart';
@@ -9,9 +11,6 @@ import 'package:scholaris/features/profile/providers/profile_setup_provider.dart
 import 'package:scholaris/features/profile/repositories/profile_repository.dart';
 import 'package:scholaris/features/scholarships/providers/scholarships_provider.dart';
 import 'package:scholaris/features/scholarships/repositories/scholarship_repository.dart';
-
-import 'package:scholaris/features/admin/presentation/admin_analytics_provider.dart';
-import 'package:scholaris/features/applications/models/application.dart';
 
 import 'helpers/fake_application_data_source.dart';
 import 'helpers/fake_profile_data_source.dart';
@@ -95,27 +94,28 @@ void main() {
     addTearDown(tester.view.resetPhysicalSize);
     addTearDown(tester.view.resetDevicePixelRatio);
 
-    const testAnalytics = AdminAnalyticsData(
-      totalApplications: 42,
-      totalScholarships: 5,
-      activeScholarships: 3,
-      totalApplicants: 18,
-      schoolCounts: {'UP Diliman': 12, 'Ateneo de Manila': 6},
-      statusCounts: {
-        ApplicationStatus.draft: 2,
-        ApplicationStatus.submitted: 20,
-        ApplicationStatus.underReview: 10,
-        ApplicationStatus.approved: 8,
-        ApplicationStatus.rejected: 2,
+    const testAnalytics = ReportsAnalyticsData(
+      applicationStatusCounts: {
+        'draft': 2,
+        'submitted': 20,
+        'under_review': 10,
+        'approved': 8,
+        'rejected': 2,
       },
-      regionCounts: {'NCR': 15, 'Region III': 3},
-      acceptanceRate: 19.0,
+      profileRoleCounts: {
+        'student': 18,
+        'provider': 4,
+        'admin': 1,
+      },
+      totalScholarshipValue: 500000.0,
+      scholarshipCount: 3,
+      recentAuditLogs: [],
     );
 
     await tester.pumpWidget(
       ProviderScope(
         overrides: [
-          adminAnalyticsDataProvider.overrideWith((ref) => Future.value(testAnalytics)),
+          reportsAnalyticsDataProvider.overrideWith((ref) => Future.value(testAnalytics)),
         ],
         child: const MaterialApp(
           home: Scaffold(body: AdminAnalyticsTab()),
@@ -124,12 +124,12 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    expect(find.text('Platform Analytics'), findsOneWidget);
-    expect(find.text('Total applications'), findsOneWidget);
-    expect(find.text('Participating schools'), findsOneWidget);
-    expect(find.text('Institution breakdown'), findsOneWidget);
-    expect(find.text('UP Diliman'), findsOneWidget);
-    expect(find.text('Pipeline stage distribution'), findsOneWidget);
-    expect(find.text('Regional coverage'), findsOneWidget);
+    expect(find.text('Reports & Analytics'), findsOneWidget);
+    expect(find.text('Live data summaries'), findsOneWidget);
+    expect(find.text('SCHOLARSHIP COVERAGE'), findsOneWidget);
+    expect(find.text('3 Active Grants'), findsOneWidget);
+    expect(find.text('APPLICATIONS BY STATUS'), findsOneWidget);
+    expect(find.text('PROFILES BY ROLE'), findsOneWidget);
+    expect(find.text('RECENT ACTIVITY'), findsOneWidget);
   });
 }

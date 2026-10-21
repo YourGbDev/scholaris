@@ -8,12 +8,14 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../auth/controllers/auth_controller.dart';
 import '../../profile/providers/profile_setup_provider.dart';
+import 'provider_type_provider.dart';
 
 enum ProviderSubRole {
   unavailable,
   orgAdmin,
   evaluator,
   finance,
+  individualBenefactor,
 }
 
 class ProviderIdentityInfo {
@@ -34,6 +36,7 @@ class ProviderIdentityInfo {
   bool get isFinance => role == ProviderSubRole.finance;
   bool get isEvaluator => role == ProviderSubRole.evaluator;
   bool get isOrgAdmin => role == ProviderSubRole.orgAdmin;
+  bool get isIndividualBenefactor => role == ProviderSubRole.individualBenefactor;
 }
 
 final organizationMembershipProvider = FutureProvider<Map<String, dynamic>?>((ref) async {
@@ -50,24 +53,45 @@ final currentOrganizationIdProvider = Provider<String?>((ref) {
 });
 
 final providerSubRoleProvider = Provider<ProviderIdentityInfo>((ref) {
-  final profile = ref.watch(currentProfileProvider).valueOrNull;
-  final membership = ref.watch(organizationMembershipProvider).valueOrNull;
-  final role = switch (membership?['role']) {
-    'org_admin' => ProviderSubRole.orgAdmin,
-    'reviewer' => ProviderSubRole.evaluator,
-    'finance' => ProviderSubRole.finance,
-    _ => ProviderSubRole.unavailable,
-  };
+  final profileAsync = ref.watch(currentProfileProvider);
+  final membershipAsync = ref.watch(organizationMembershipProvider);
+  final providerType = ref.watch(activeProviderTypeProvider);
+
+  final profile = profileAsync.valueOrNull;
+
+  ProviderSubRole role = ProviderSubRole.unavailable;
+
+  if (providerType == 'individual') {
+    // Individual benefactor: strictly requires provider role and individual provider type
+    // If profile is loading, has error, or role != 'provider', fails closed to unavailable.
+    if (profile?.role == 'provider') {
+      role = ProviderSubRole.individualBenefactor;
+    }
+  } else {
+    // Organization provider: strictly requires successful loaded membership
+    // Loading, error, or null membership fails closed to unavailable.
+    if (membershipAsync.hasValue && membershipAsync.value != null) {
+      final membershipRole = membershipAsync.value!['role'];
+      role = switch (membershipRole) {
+        'org_admin' => ProviderSubRole.orgAdmin,
+        'reviewer' => ProviderSubRole.evaluator,
+        'finance' => ProviderSubRole.finance,
+        _ => ProviderSubRole.unavailable,
+      };
+    }
+  }
+
   final name = profile?.fullName.trim() ?? '';
   final subtitle = switch (role) {
     ProviderSubRole.orgAdmin => 'Organization Admin',
     ProviderSubRole.evaluator => 'Reviewer',
     ProviderSubRole.finance => 'Finance',
+    ProviderSubRole.individualBenefactor => 'Individual Benefactor',
     ProviderSubRole.unavailable => 'Membership unavailable',
   };
   return ProviderIdentityInfo(
     role: role,
-    name: name.isEmpty ? 'Organization member' : name,
+    name: name.isEmpty ? (role == ProviderSubRole.individualBenefactor ? 'Individual Benefactor' : 'Organization member') : name,
     initials: name.isEmpty ? '?' : name.split(RegExp(r'\s+')).take(2).map((s) => s[0]).join(),
     roleSubtitle: subtitle,
     topEyebrow: subtitle.toUpperCase(),

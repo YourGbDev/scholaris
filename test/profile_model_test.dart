@@ -112,6 +112,8 @@ void main() {
         'province': 'Metro Manila',
         'city_municipality': 'Manila',
         'gpa': 3.0,
+        'gpa_scale': null,
+        'profile_setup_step': 1,
         'year_level': 2,
         'course': 'BS Computer Science',
         'school': 'Western Leyte College of Ormoc',

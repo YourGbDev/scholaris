@@ -127,6 +127,25 @@ class ProfileRepository {
     return StudentProfile.fromJson({...row, 'id': userId});
   }
 
+  /// Fetches the linked school_id for [userId], or null if unlinked or not found.
+  Future<String?> fetchSchoolId(String userId) async {
+    final row = await _dataSource.fetchProfile(userId);
+    return row?['school_id'] as String?;
+  }
+
+  /// Updates the linked school_id and optional school name on the user's profile.
+  Future<void> updateSchoolId(
+    String userId, {
+    required String? schoolId,
+    String? schoolName,
+  }) async {
+    final updates = <String, dynamic>{'school_id': schoolId};
+    if (schoolName != null) {
+      updates['school'] = schoolName;
+    }
+    await _dataSource.updateProfile(userId, updates);
+  }
+
   /// Fetches an applicant's profile for providers via the secure view.
   Future<ApplicantProfile?> fetchApplicantProfile(String userId) async {
     final row = await _dataSource.fetchApplicantProfile(userId);

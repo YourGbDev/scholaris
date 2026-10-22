@@ -152,6 +152,18 @@ class _LoginScreenState extends State<LoginScreen>
         '[LOGIN] signInWithPassword succeeded session=${result.session != null}',
       );
     } on AuthException catch (error) {
+      if (error.message.contains('Email not confirmed') ||
+          error.message.contains('email_not_confirmed')) {
+        if (!mounted) return;
+        final email = _emailController.text.trim();
+        ScaffoldMessenger.of(context).showSnackBar(
+          _snackBar(
+            'Your email has not been confirmed yet. Enter the verification code sent to your email.',
+          ),
+        );
+        context.go('/verify-email?email=${Uri.encodeQueryComponent(email)}');
+        return;
+      }
       debugPrint(
         '[LOGIN] AuthException statusCode=${error.statusCode} code=${error.code} message=${error.message}',
       );

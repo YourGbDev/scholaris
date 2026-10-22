@@ -142,10 +142,18 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
   }
 
   String _friendlyError(AuthException error) {
-    if (error.code == 'otp_expired' || error.statusCode == '403') {
+    final msg = error.message.toLowerCase();
+    if (error.code == 'otp_expired' ||
+        error.code == 'otp_invalid' ||
+        error.statusCode == '403' ||
+        msg.contains('invalid') ||
+        msg.contains('expired')) {
       return 'That code is invalid or has expired. Try again or request a new code.';
     }
-    if (error.statusCode == '429') {
+    if (error.statusCode == '429' ||
+        error.code == 'over_email_send_rate_limit' ||
+        msg.contains('rate limit') ||
+        msg.contains('too many')) {
       return 'Too many attempts. Please wait before trying again.';
     }
     return error.message;

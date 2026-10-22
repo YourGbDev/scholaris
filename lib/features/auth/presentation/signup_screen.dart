@@ -80,8 +80,25 @@ class _SignupScreenState extends State<SignupScreen> {
       if (_schoolController.text.trim().isNotEmpty) {
         metadata['school'] = _schoolController.text.trim();
       }
-      if (_phoneController.text.trim().isNotEmpty) {
-        metadata['phone'] = '+63${_phoneController.text.trim()}';
+      final phoneRaw = _phoneController.text.trim();
+      if (phoneRaw.isNotEmpty) {
+        final phoneDigits = phoneRaw.replaceAll(RegExp(r'\D'), '');
+        String? formattedPhone;
+        if (phoneDigits.length == 10 && phoneDigits.startsWith('9')) {
+          formattedPhone = '+63$phoneDigits';
+        } else if (phoneDigits.length == 11 && phoneDigits.startsWith('09')) {
+          formattedPhone = '+63${phoneDigits.substring(1)}';
+        } else if (phoneDigits.length == 12 && phoneDigits.startsWith('639')) {
+          formattedPhone = '+$phoneDigits';
+        }
+
+        if (formattedPhone == null) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            _snackBar('Enter a valid 10-digit mobile number or leave blank.'),
+          );
+          return;
+        }
+        metadata['phone'] = formattedPhone;
       }
 
       final response = await _client.signUp(
@@ -488,9 +505,9 @@ class _SignupScreenState extends State<SignupScreen> {
                           ),
                           const SizedBox(height: 12),
 
-                          // 4. Philippine Mobile Number (TextField)
+                          // 4. Mobile number (optional) (TextField)
                           Text(
-                            'Philippine Mobile Number',
+                            'Mobile number (optional)',
                             style: poppins(
                               fontSize: 13,
                               fontWeight: FontWeight.w600,

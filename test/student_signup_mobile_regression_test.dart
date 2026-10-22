@@ -43,6 +43,7 @@ void main() {
       // Student/Provider role selector is completely removed from mobile signup
       expect(find.text('I am joining as:'), findsNothing);
       expect(find.text('Provider'), findsNothing);
+      expect(find.text('Mobile number (optional)'), findsOneWidget);
     });
 
     testWidgets(
@@ -128,10 +129,139 @@ void main() {
         final data = capturedBody!['data'] as Map<String, dynamic>;
         expect(data['role'], 'student');
         expect(data['full_name'], 'Maya Santos Dela Cruz');
+        expect(data.containsKey('phone'), isFalse);
 
         // Verify direct routing to /verify-email with encoded email query parameter
         expect(
           find.text('VerifyEmail: student@up.edu.ph'),
+          findsOneWidget,
+        );
+      },
+    );
+
+    testWidgets(
+      'submitting mobile signup with valid mobile number normalizes and includes phone metadata',
+      (tester) async {
+        await tester.binding.setSurfaceSize(const Size(440, 956));
+        addTearDown(() => tester.binding.setSurfaceSize(null));
+
+        Map<String, dynamic>? capturedBody;
+
+        final client = GoTrueClient(
+          url: 'https://example.com/auth/v1',
+          autoRefreshToken: false,
+          flowType: AuthFlowType.implicit,
+          httpClient: MockClient((request) async {
+            capturedBody = jsonDecode(request.body) as Map<String, dynamic>;
+            return http.Response(
+              jsonEncode({
+                'id': 'student-uuid-456',
+                'aud': 'authenticated',
+                'email': 'student2@up.edu.ph',
+                'created_at': '2026-10-22T00:00:00Z',
+                'user_metadata': capturedBody?['data'] ?? {},
+              }),
+              200,
+            );
+          }),
+        );
+        addTearDown(client.dispose);
+
+        final router = GoRouter(
+          initialLocation: '/signup',
+          routes: [
+            GoRoute(
+              path: '/signup',
+              builder: (_, _) => SignupScreen(client: client),
+            ),
+            GoRoute(
+              path: '/verify-email',
+              builder: (context, state) => Scaffold(
+                body: Text(
+                  'VerifyEmail: ${state.uri.queryParameters['email']}',
+                ),
+              ),
+            ),
+          ],
+        );
+
+        await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+        await tester.pumpAndSettle();
+
+        final fields = find.byType(TextFormField);
+        await tester.enterText(fields.at(0), 'Juan Dela Cruz');
+        await tester.enterText(fields.at(1), 'student2@up.edu.ph');
+        await tester.enterText(fields.at(2), 'Passw0rd!Secure');
+        await tester.enterText(fields.at(3), 'Passw0rd!Secure');
+
+        final phoneFinder = find.byWidgetPredicate(
+          (w) =>
+              w is TextField &&
+              w.decoration?.hintText?.contains('917 890 1234') == true,
+        );
+        expect(phoneFinder, findsOneWidget);
+        await tester.enterText(phoneFinder, '0917 890 1234');
+
+        final signUpBtn = find.widgetWithText(ElevatedButton, 'Sign up');
+        await tester.ensureVisible(signUpBtn);
+        await tester.tap(signUpBtn);
+        await tester.pump();
+        await tester.pump(const Duration(milliseconds: 600));
+        await tester.pumpAndSettle();
+
+        expect(capturedBody, isNotNull);
+        final data = capturedBody!['data'] as Map<String, dynamic>;
+        expect(data['role'], 'student');
+        expect(data['phone'], '+639178901234');
+      },
+    );
+
+    testWidgets(
+      'submitting mobile signup with invalid mobile number halts submission and shows SnackBar error',
+      (tester) async {
+        await tester.binding.setSurfaceSize(const Size(440, 956));
+        addTearDown(() => tester.binding.setSurfaceSize(null));
+
+        var signUpCalled = false;
+        final client = GoTrueClient(
+          url: 'https://example.com/auth/v1',
+          autoRefreshToken: false,
+          flowType: AuthFlowType.implicit,
+          httpClient: MockClient((request) async {
+            signUpCalled = true;
+            return http.Response('{}', 200);
+          }),
+        );
+        addTearDown(client.dispose);
+
+        await tester.pumpWidget(
+          MaterialApp(
+            home: SignupScreen(client: client),
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        final fields = find.byType(TextFormField);
+        await tester.enterText(fields.at(0), 'Juan Dela Cruz');
+        await tester.enterText(fields.at(1), 'student3@up.edu.ph');
+        await tester.enterText(fields.at(2), 'Passw0rd!Secure');
+        await tester.enterText(fields.at(3), 'Passw0rd!Secure');
+
+        final phoneFinder = find.byWidgetPredicate(
+          (w) =>
+              w is TextField &&
+              w.decoration?.hintText?.contains('917 890 1234') == true,
+        );
+        await tester.enterText(phoneFinder, '12345');
+
+        final signUpBtn = find.widgetWithText(ElevatedButton, 'Sign up');
+        await tester.ensureVisible(signUpBtn);
+        await tester.tap(signUpBtn);
+        await tester.pump();
+
+        expect(signUpCalled, isFalse);
+        expect(
+          find.text('Enter a valid 10-digit mobile number or leave blank.'),
           findsOneWidget,
         );
       },

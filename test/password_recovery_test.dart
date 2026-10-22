@@ -133,7 +133,7 @@ void main() {
 
       expect(find.text('Forgot Password?'), findsOneWidget);
       expect(find.text('Email'), findsOneWidget);
-      expect(find.text('Send reset link'), findsOneWidget);
+      expect(find.text('Send reset code'), findsOneWidget);
       expect(find.text('Log in'), findsOneWidget);
     });
 
@@ -142,8 +142,8 @@ void main() {
       await tester.pumpAndSettle();
 
       await tester.enterText(find.byType(TextFormField).at(0), 'not-an-email');
-      await tester.ensureVisible(find.widgetWithText(ElevatedButton, 'Send reset link'));
-      await tester.tap(find.widgetWithText(ElevatedButton, 'Send reset link'));
+      await tester.ensureVisible(find.widgetWithText(ElevatedButton, 'Send reset code'));
+      await tester.tap(find.widgetWithText(ElevatedButton, 'Send reset code'));
       await tester.pumpAndSettle();
 
       expect(find.text('Enter a valid email address.'), findsOneWidget);
@@ -153,8 +153,8 @@ void main() {
       await tester.pumpWidget(const MaterialApp(home: ForgotPasswordScreen()));
       await tester.pumpAndSettle();
 
-      await tester.ensureVisible(find.widgetWithText(ElevatedButton, 'Send reset link'));
-      await tester.tap(find.widgetWithText(ElevatedButton, 'Send reset link'));
+      await tester.ensureVisible(find.widgetWithText(ElevatedButton, 'Send reset code'));
+      await tester.tap(find.widgetWithText(ElevatedButton, 'Send reset code'));
       await tester.pumpAndSettle();
 
       expect(find.text('Enter your email.'), findsOneWidget);

@@ -9,7 +9,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 import 'package:scholaris/app/confirmation_redirect.dart';
 import 'package:scholaris/core/security/password_validator.dart';
@@ -21,7 +20,12 @@ import 'package:scholaris/shared/widgets/success_overlay.dart';
 final _emailPattern = RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$');
 
 class SignupScreen extends StatefulWidget {
-  const SignupScreen({super.key});
+  const SignupScreen({
+    super.key,
+    this.client,
+  });
+
+  final GoTrueClient? client;
 
   @override
   State<SignupScreen> createState() => _SignupScreenState();
@@ -40,7 +44,8 @@ class _SignupScreenState extends State<SignupScreen> {
   bool _obscureConfirm = true;
   bool _isLoading = false;
   bool _agreedToPrivacy = true;
-  int _selectedRoleIndex = 0; // 0: Student / Applicant, 1: Provider / LGU
+
+  GoTrueClient get _client => widget.client ?? Supabase.instance.client.auth;
 
   @override
   void dispose() {
@@ -70,6 +75,7 @@ class _SignupScreenState extends State<SignupScreen> {
     try {
       final metadata = <String, dynamic>{
         'full_name': _fullNameController.text.trim(),
+        'role': 'student',
       };
       if (_schoolController.text.trim().isNotEmpty) {
         metadata['school'] = _schoolController.text.trim();
@@ -78,7 +84,7 @@ class _SignupScreenState extends State<SignupScreen> {
         metadata['phone'] = '+63${_phoneController.text.trim()}';
       }
 
-      final response = await Supabase.instance.client.auth.signUp(
+      final response = await _client.signUp(
         email: _emailController.text.trim(),
         password: _passwordController.text,
         data: metadata,
@@ -96,7 +102,9 @@ class _SignupScreenState extends State<SignupScreen> {
         );
         return;
       }
-      context.go('/profile-setup/personal');
+      context.go(
+        '/verify-email?email=${Uri.encodeQueryComponent(_emailController.text.trim())}',
+      );
     } on AuthException catch (error) {
       if (!mounted) return;
       ScaffoldMessenger.of(context)
@@ -386,114 +394,6 @@ class _SignupScreenState extends State<SignupScreen> {
                                   style: openSans(
                                     fontSize: 11,
                                     color: Colors.white.withValues(alpha: 0.85),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          const SizedBox(height: 14),
-
-                          // Segmented Role Selector
-                          Text(
-                            'I am joining as:',
-                            style: openSans(
-                              fontSize: 12,
-                              fontWeight: FontWeight.w600,
-                              color: kTextSecondary,
-                            ),
-                          ),
-                          const SizedBox(height: 6),
-                          Container(
-                            padding: const EdgeInsets.all(4),
-                            decoration: BoxDecoration(
-                              color: const Color(0xFFE8EEFF),
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            child: Row(
-                              children: [
-                                Expanded(
-                                  child: GestureDetector(
-                                    onTap: () => setState(() => _selectedRoleIndex = 0),
-                                    child: Container(
-                                      padding: const EdgeInsets.symmetric(vertical: 8),
-                                      decoration: BoxDecoration(
-                                        color: _selectedRoleIndex == 0 ? kPrimary : Colors.transparent,
-                                        borderRadius: BorderRadius.circular(8),
-                                        boxShadow: _selectedRoleIndex == 0
-                                            ? [
-                                                BoxShadow(
-                                                  color: Colors.black.withValues(alpha: 0.08),
-                                                  blurRadius: 4,
-                                                  offset: const Offset(0, 2),
-                                                ),
-                                              ]
-                                            : null,
-                                      ),
-                                      child: Row(
-                                        mainAxisAlignment: MainAxisAlignment.center,
-                                        children: [
-                                          Icon(
-                                            Icons.school_rounded,
-                                            size: 15,
-                                            color: _selectedRoleIndex == 0 ? Colors.white : kTextSecondary,
-                                          ),
-                                          const SizedBox(width: 4),
-                                          Flexible(
-                                            child: Text(
-                                              'Student',
-                                              overflow: TextOverflow.ellipsis,
-                                              style: poppins(
-                                                fontSize: 12,
-                                                fontWeight: FontWeight.w600,
-                                                color: _selectedRoleIndex == 0 ? Colors.white : kTextSecondary,
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                const SizedBox(width: 4),
-                                Expanded(
-                                  child: GestureDetector(
-                                    onTap: () async {
-                                      final uri = Uri.parse('https://scholaris.app/#providers');
-                                      try {
-                                        await launchUrl(uri, mode: LaunchMode.externalApplication);
-                                      } catch (e) {
-                                        debugPrint('Could not launch provider portal URL: $e');
-                                      }
-                                    },
-                                    child: Container(
-                                      padding: const EdgeInsets.symmetric(vertical: 8),
-                                      decoration: BoxDecoration(
-                                        color: _selectedRoleIndex == 1 ? kPrimary : Colors.transparent,
-                                        borderRadius: BorderRadius.circular(8),
-                                      ),
-                                      child: Row(
-                                        mainAxisAlignment: MainAxisAlignment.center,
-                                        children: [
-                                          Icon(
-                                            Icons.account_balance_rounded,
-                                            size: 15,
-                                            color: _selectedRoleIndex == 1 ? Colors.white : kTextSecondary,
-                                          ),
-                                          const SizedBox(width: 4),
-                                          Flexible(
-                                            child: Text(
-                                              'Provider',
-                                              overflow: TextOverflow.ellipsis,
-                                              style: poppins(
-                                                fontSize: 12,
-                                                fontWeight: FontWeight.w600,
-                                                color: _selectedRoleIndex == 1 ? Colors.white : kTextSecondary,
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
                                   ),
                                 ),
                               ],

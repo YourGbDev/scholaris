@@ -202,7 +202,10 @@ final routerProvider = Provider<GoRouter>((ref) {
         path: '/verify-email',
         name: 'verify-email',
         builder: (context, state) =>
-            VerifyEmailScreen(email: state.uri.queryParameters['email']),
+            VerifyEmailScreen(
+              email: state.uri.queryParameters['email'],
+              recovery: state.uri.queryParameters['purpose'] == 'recovery',
+            ),
       ),
       GoRoute(
         path: '/become-provider',

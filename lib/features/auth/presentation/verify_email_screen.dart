@@ -7,21 +7,32 @@
 //
 // Preserves local validation, Supabase resend, and test suite contracts.
 
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'package:scholaris/app/confirmation_redirect.dart';
+import 'package:scholaris/app/recovery_redirect.dart';
 import 'package:scholaris/shared/theme/app_motion.dart';
 import 'package:scholaris/shared/theme/app_theme.dart';
 import 'package:scholaris/shared/widgets/mascot_pose_view.dart';
 
 class VerifyEmailScreen extends StatefulWidget {
-  const VerifyEmailScreen({super.key, this.email});
+  const VerifyEmailScreen({
+    super.key,
+    this.email,
+    this.recovery = false,
+    this.client,
+  });
 
-  /// The address the confirmation link was sent to. When null (e.g. the user
+  /// The address the confirmation code was sent to. When null (e.g. the user
   /// reached this screen without signing up) the resend action is disabled.
   final String? email;
+  final bool recovery;
+  final GoTrueClient? client;
 
   @override
   State<VerifyEmailScreen> createState() => _VerifyEmailScreenState();
@@ -30,51 +41,122 @@ class VerifyEmailScreen extends StatefulWidget {
 class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
   bool _isLoading = false;
   bool _resent = false;
+  final _formKey = GlobalKey<FormState>();
+  final _code = TextEditingController();
+  Timer? _resendTimer;
+  int _secondsLeft = 0;
+
+  GoTrueClient get _client => widget.client ?? Supabase.instance.client.auth;
+
+  @override
+  void dispose() {
+    _resendTimer?.cancel();
+    _code.dispose();
+    super.dispose();
+  }
+
+  Future<void> _onVerify() async {
+    if (_isLoading || !_formKey.currentState!.validate()) return;
+    final email = widget.email;
+    if (email == null || email.isEmpty) return;
+    setState(() => _isLoading = true);
+    try {
+      final response = await _client.verifyOTP(
+        email: email,
+        token: _code.text.trim(),
+        type: widget.recovery ? OtpType.recovery : OtpType.email,
+      );
+      if (!mounted) return;
+      if (response.session == null) {
+        throw const AuthException(
+          'Verification did not create a session. Request a new code.',
+        );
+      }
+      // The recovery event is emitted by verifyOTP before navigating.
+      context.go(widget.recovery ? '/reset-password' : '/home');
+    } on AuthException catch (error) {
+      if (mounted) {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(_snackBar(_friendlyError(error)));
+      }
+    } catch (_) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          _snackBar(
+            'Could not verify the code. Check your connection and try again.',
+          ),
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
+    }
+  }
+
+  void _startCooldown() {
+    _resendTimer?.cancel();
+    setState(() => _secondsLeft = 60);
+    _resendTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      if (!mounted) return timer.cancel();
+      setState(() => _secondsLeft--);
+      if (_secondsLeft == 0) timer.cancel();
+    });
+  }
 
   Future<void> _onResend() async {
     final email = widget.email;
-    if (email == null || email.isEmpty || _isLoading) return;
+    if (email == null || email.isEmpty || _isLoading || _secondsLeft > 0) {
+      return;
+    }
 
     setState(() => _isLoading = true);
     try {
-      await Supabase.instance.client.auth.resend(
-        type: OtpType.signup,
-        email: email,
-        emailRedirectTo: emailConfirmationRedirect,
-      );
+      if (widget.recovery) {
+        await _client.resetPasswordForEmail(
+          email,
+          redirectTo: resetPasswordRedirect,
+        );
+      } else {
+        await _client.resend(
+          type: OtpType.signup,
+          email: email,
+          emailRedirectTo: emailConfirmationRedirect,
+        );
+      }
       if (!mounted) return;
       setState(() => _resent = true);
-      ScaffoldMessenger.of(context).showSnackBar(
-        _snackBar('Verification email sent. Check your inbox.'),
-      );
+      _startCooldown();
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(_snackBar('Verification email sent. Check your inbox.'));
     } on AuthException catch (error) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        _snackBar(_friendlyError(error)),
-      );
+      ScaffoldMessenger.of(context)
+          .showSnackBar(_snackBar(_friendlyError(error)));
     } catch (_) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        _snackBar('Something went wrong. Please try again.'),
-      );
+      ScaffoldMessenger.of(context)
+          .showSnackBar(_snackBar('Something went wrong. Please try again.'));
     } finally {
       if (mounted) setState(() => _isLoading = false);
     }
   }
 
   String _friendlyError(AuthException error) {
+    if (error.code == 'otp_expired' || error.statusCode == '403') {
+      return 'That code is invalid or has expired. Try again or request a new code.';
+    }
+    if (error.statusCode == '429') {
+      return 'Too many attempts. Please wait before trying again.';
+    }
     return error.message;
   }
 
   SnackBar _snackBar(String message) => SnackBar(
-        content: Text(
-          message,
-          style: openSans(color: Colors.white, fontSize: 13),
-        ),
-        backgroundColor: const Color(0xFF161C27),
-        behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      );
+    content: Text(message, style: openSans(color: Colors.white, fontSize: 13)),
+    backgroundColor: const Color(0xFF161C27),
+    behavior: SnackBarBehavior.floating,
+    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -92,7 +174,10 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
               child: Row(
                 children: [
                   IconButton(
-                    icon: const Icon(Icons.arrow_back_rounded, color: kTextPrimary),
+                    icon: const Icon(
+                      Icons.arrow_back_rounded,
+                      color: kTextPrimary,
+                    ),
                     onPressed: () {
                       if (Navigator.of(context).canPop()) {
                         Navigator.of(context).pop();
@@ -114,7 +199,11 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
                   ),
                   const Spacer(),
                   IconButton(
-                    icon: const Icon(Icons.help_outline_rounded, size: 22, color: kTextSecondary),
+                    icon: const Icon(
+                      Icons.help_outline_rounded,
+                      size: 22,
+                      color: kTextSecondary,
+                    ),
                     tooltip: 'Help and Support',
                     onPressed: () => _showSupportSheet(context),
                   ),
@@ -161,7 +250,10 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
                         // Category Pill Badge
                         Center(
                           child: Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 12,
+                              vertical: 4,
+                            ),
                             decoration: BoxDecoration(
                               color: const Color(0xFFE8EEFF),
                               borderRadius: BorderRadius.circular(20),
@@ -195,7 +287,9 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
 
                         // Heading: Verify your email
                         Text(
-                          'Verify your email',
+                          widget.recovery
+                              ? 'Verify your recovery code'
+                              : 'Verify your email',
                           textAlign: TextAlign.center,
                           style: poppins(
                             fontSize: 26,
@@ -206,7 +300,9 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
                         ),
                         const SizedBox(height: 6),
                         Text(
-                          'We\'ve sent an official verification link to your academic or registered address:',
+                          widget.recovery
+                              ? 'If an account exists, a recovery code is on its way to:'
+                              : 'Enter the verification code sent to:',
                           textAlign: TextAlign.center,
                           style: openSans(
                             fontSize: 13,
@@ -259,7 +355,9 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
                                       ),
                                     ),
                                     Text(
-                                      hasEmail ? email : 'No email address specified',
+                                      hasEmail
+                                          ? email
+                                          : 'No email address specified',
                                       overflow: TextOverflow.ellipsis,
                                       style: poppins(
                                         fontSize: 14,
@@ -281,7 +379,10 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
                                   },
                                   borderRadius: BorderRadius.circular(8),
                                   child: Container(
-                                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 10,
+                                      vertical: 5,
+                                    ),
                                     decoration: BoxDecoration(
                                       color: const Color(0xFFE8EEFF),
                                       borderRadius: BorderRadius.circular(8),
@@ -289,7 +390,11 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
                                     child: Row(
                                       mainAxisSize: MainAxisSize.min,
                                       children: [
-                                        const Icon(Icons.edit_outlined, size: 14, color: kPrimary),
+                                        const Icon(
+                                          Icons.edit_outlined,
+                                          size: 14,
+                                          color: kPrimary,
+                                        ),
                                         const SizedBox(width: 4),
                                         Text(
                                           'Edit',
@@ -310,7 +415,7 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
 
                         // Impact Guarantee Notice
                         Text(
-                          'Tap the link in your email to authenticate your student credentials and unlock access to over 3,200+ CHED, DOST, and private Philippine scholarships.',
+                          'Use the latest code in your inbox. Check your spam folder if it has not arrived.',
                           textAlign: TextAlign.center,
                           style: openSans(
                             fontSize: 12,
@@ -320,9 +425,41 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
                         ),
                         const SizedBox(height: 20),
 
+                        Form(
+                          key: _formKey,
+                          child: TextFormField(
+                            controller: _code,
+                            enabled: hasEmail && !_isLoading,
+                            keyboardType: TextInputType.number,
+                            autofillHints: const [AutofillHints.oneTimeCode],
+                            inputFormatters: [
+                              FilteringTextInputFormatter.digitsOnly,
+                              LengthLimitingTextInputFormatter(8),
+                            ],
+                            decoration: const InputDecoration(
+                              labelText: '8-digit code',
+                              border: OutlineInputBorder(),
+                            ),
+                            validator: (value) =>
+                                RegExp(r'^\d{8}$').hasMatch(value?.trim() ?? '')
+                                ? null
+                                : 'Enter the 8-digit code from your email.',
+                            onFieldSubmitted: (_) => _onVerify(),
+                          ),
+                        ),
+                        const SizedBox(height: 12),
+                        ElevatedButton(
+                          onPressed: hasEmail && !_isLoading ? _onVerify : null,
+                          child: const Text('Verify code'),
+                        ),
+                        const SizedBox(height: 12),
+
                         // Primary Action: Resend email
                         ElevatedButton(
-                          onPressed: (hasEmail && !_isLoading) ? _onResend : null,
+                          onPressed:
+                              (hasEmail && !_isLoading && _secondsLeft == 0)
+                              ? _onResend
+                              : null,
                           style: ElevatedButton.styleFrom(
                             backgroundColor: kPrimary,
                             foregroundColor: Colors.white,
@@ -344,10 +481,15 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
                               : Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
-                                    const Icon(Icons.schedule_rounded, size: 18),
+                                    const Icon(
+                                      Icons.schedule_rounded,
+                                      size: 18,
+                                    ),
                                     const SizedBox(width: 8),
                                     Text(
-                                      'Resend email',
+                                      _secondsLeft > 0
+                                          ? 'Resend in ${_secondsLeft}s'
+                                          : 'Resend email',
                                       style: poppins(
                                         fontSize: 15,
                                         fontWeight: FontWeight.w600,
@@ -368,11 +510,15 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
                             ),
                             child: Row(
                               children: [
-                                const Icon(Icons.check_circle_rounded, color: kPrimary, size: 18),
+                                const Icon(
+                                  Icons.check_circle_rounded,
+                                  color: kPrimary,
+                                  size: 18,
+                                ),
                                 const SizedBox(width: 8),
                                 Expanded(
                                   child: Text(
-                                    'Fresh verification link sent! Check your inbox.',
+                                    'If eligible, a fresh code is on its way. Check your inbox.',
                                     style: openSans(
                                       fontSize: 12,
                                       fontWeight: FontWeight.w600,
@@ -401,7 +547,8 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
                                 width: 28,
                                 height: 28,
                                 decoration: BoxDecoration(
-                                  color: const Color(0xFFFAB928).withValues(alpha: 0.3),
+                                  color: const Color(0xFFFAB928)
+                                      .withValues(alpha: 0.3),
                                   shape: BoxShape.circle,
                                 ),
                                 child: const Icon(
@@ -447,7 +594,11 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
                             child: Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                const Icon(Icons.keyboard_backspace_rounded, size: 16, color: kPrimary),
+                                const Icon(
+                                  Icons.keyboard_backspace_rounded,
+                                  size: 16,
+                                  color: kPrimary,
+                                ),
                                 const SizedBox(width: 6),
                                 Text(
                                   'Back to login',
@@ -508,22 +659,20 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
               ),
               const SizedBox(height: 6),
               Text(
-                'Having trouble receiving your 6-digit confirmation code?',
+                'Having trouble receiving your 8-digit confirmation code?',
                 style: openSans(fontSize: 13, color: kTextSecondary),
               ),
               const SizedBox(height: 16),
               _buildSupportOption(
                 icon: Icons.mark_email_unread_outlined,
                 title: 'Check Spam or Promotions folder',
-                description:
-                    'State university email servers often route automated links to Spam or quarantine.',
+                description: 'State university email servers often route automated links to Spam or quarantine.',
               ),
               const SizedBox(height: 12),
               _buildSupportOption(
                 icon: Icons.alternate_email_rounded,
                 title: 'Entered the wrong email?',
-                description:
-                    'You can return to the registration screen to sign up with the correct address.',
+                description: 'You can return to the registration screen to sign up with the correct address.',
                 onTap: () {
                   Navigator.of(ctx).pop();
                   context.go('/signup');
@@ -533,13 +682,14 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
               _buildSupportOption(
                 icon: Icons.support_agent_rounded,
                 title: 'Contact Scholaris Support',
-                description:
-                    'Email support@scholaris.ph • Operational Mon–Fri 8:00 AM – 5:00 PM PHT.',
+                description: 'Email support@scholaris.ph • Operational Mon–Fri 8:00 AM – 5:00 PM PHT.',
                 onTap: () {
                   Navigator.of(ctx).pop();
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(
-                      content: Text('Support email copied: support@scholaris.ph'),
+                      content: Text(
+                        'Support email copied: support@scholaris.ph',
+                      ),
                       duration: Duration(seconds: 3),
                     ),
                   );
@@ -612,3 +762,4 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
     );
   }
 }
+

@@ -48,17 +48,19 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
       );
       if (!mounted) return;
       setState(() => _linkSent = true);
-      ScaffoldMessenger.of(context).showSnackBar(
-        _snackBar(
-          'If an account exists for that email, a password reset link is on '
-          'its way.',
-        ),
+      context.push(
+        '/verify-email?purpose=recovery&email=${Uri.encodeQueryComponent(_emailController.text.trim())}',
       );
-      // Give the user a moment or let them navigate
     } on AuthException catch (error) {
       if (!mounted) return;
+      ScaffoldMessenger.of(context)
+          .showSnackBar(_snackBar(_friendlyError(error)));
+    } catch (_) {
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        _snackBar(_friendlyError(error)),
+        _snackBar(
+          'Could not send the code. Check your connection and try again.',
+        ),
       );
     } finally {
       if (mounted) setState(() => _isLoading = false);
@@ -67,7 +69,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
 
   String _friendlyError(AuthException error) {
     if (error.message.contains('User not found')) {
-      return 'No account found for that email.';
+      return 'If an account exists, a recovery code will be sent. Please check your inbox.';
     }
     return error.message;
   }
@@ -251,7 +253,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                           ),
                           const SizedBox(height: 6),
                           Text(
-                            'Enter the email associated with your Scholaris account. We\'ll send you a secure link to recover your access.',
+                            'Enter the email associated with your Scholaris account. We\'ll send you a one-time code to recover your access.',
                             textAlign: TextAlign.center,
                             style: openSans(
                               fontSize: 13,
@@ -402,7 +404,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                           ),
                           const SizedBox(height: 20),
 
-                          // Primary Action Button: Send reset link
+                          // Primary Action Button: Send reset code
                           ElevatedButton(
                             onPressed: _isLoading ? null : _onSubmit,
                             style: ElevatedButton.styleFrom(
@@ -427,7 +429,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
                                       Text(
-                                        'Send reset link',
+                                        'Send reset code',
                                         style: poppins(
                                           fontSize: 15,
                                           fontWeight: FontWeight.w600,
@@ -455,7 +457,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                                   const SizedBox(width: 8),
                                   Expanded(
                                     child: Text(
-                                      'Reset link sent! Please check your inbox and spam folder.',
+                                      'Recovery code requested. Please check your inbox and spam folder.',
                                       style: openSans(
                                         fontSize: 12,
                                         fontWeight: FontWeight.w600,

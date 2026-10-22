@@ -6,11 +6,13 @@
 
 import 'dart:async';
 
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import 'package:scholaris/app/landing_config.dart';
 import 'package:scholaris/core/security/login_lockout_service.dart';
 import 'package:scholaris/features/auth/presentation/empty_stage.dart';
 import 'package:scholaris/shared/theme/app_motion.dart';
@@ -30,7 +32,14 @@ Interval _loginInterval(int beginMs, int endMs) => EntranceMotion.intervalFrom(
 );
 
 class LoginScreen extends StatefulWidget {
-  const LoginScreen({super.key});
+  const LoginScreen({
+    super.key,
+    this.showProviderCta,
+  });
+
+  /// Override for testing or explicit host configuration.
+  /// When null, defaults to [isProviderCtaVisible].
+  final bool? showProviderCta;
 
   @override
   State<LoginScreen> createState() => _LoginScreenState();
@@ -171,12 +180,22 @@ class _LoginScreenState extends State<LoginScreen>
     context.go('/forgot-password');
   }
 
+  bool get _shouldShowProviderCta =>
+      widget.showProviderCta ?? isProviderCtaVisible;
+
   Future<void> _openProviderPortal() async {
-    final uri = Uri.parse('https://scholaris.app/#providers');
-    try {
-      await launchUrl(uri, mode: LaunchMode.externalApplication);
-    } catch (e) {
-      debugPrint('Could not launch provider portal URL: $e');
+    final uri = providerLandingUri;
+    if (uri != null) {
+      try {
+        await launchUrl(uri, mode: LaunchMode.externalApplication);
+        return;
+      } catch (e) {
+        debugPrint('Could not launch provider portal URL: $e');
+      }
+    }
+    if (kIsWeb) {
+      if (!mounted) return;
+      context.push('/become-provider');
     }
   }
 
@@ -798,55 +817,57 @@ class _LoginScreenState extends State<LoginScreen>
                                 ),
                                 const SizedBox(height: 14),
 
-                                // Provider / Partner Callout
-                                InkWell(
-                                  onTap: _openProviderPortal,
-                                  borderRadius: BorderRadius.circular(12),
-                                  child: Container(
-                                    width: double.infinity,
-                                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-                                    decoration: BoxDecoration(
-                                      color: const Color(0xFFF1F3FF),
-                                      borderRadius: BorderRadius.circular(12),
-                                      border: Border.all(color: const Color(0xFFD2E4FF)),
-                                    ),
-                                    child: Column(
-                                      children: [
-                                        Text(
-                                          'Want to help students reach their dreams?',
-                                          textAlign: TextAlign.center,
-                                          style: poppins(
-                                            fontSize: 12,
-                                            fontWeight: FontWeight.bold,
-                                            color: kNavyTrust,
+                                if (_shouldShowProviderCta) ...[
+                                  // Provider / Partner Callout
+                                  InkWell(
+                                    onTap: _openProviderPortal,
+                                    borderRadius: BorderRadius.circular(12),
+                                    child: Container(
+                                      width: double.infinity,
+                                      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                                      decoration: BoxDecoration(
+                                        color: const Color(0xFFF1F3FF),
+                                        borderRadius: BorderRadius.circular(12),
+                                        border: Border.all(color: const Color(0xFFD2E4FF)),
+                                      ),
+                                      child: Column(
+                                        children: [
+                                          Text(
+                                            'Want to help students reach their dreams?',
+                                            textAlign: TextAlign.center,
+                                            style: poppins(
+                                              fontSize: 12,
+                                              fontWeight: FontWeight.bold,
+                                              color: kNavyTrust,
+                                            ),
                                           ),
-                                        ),
-                                        const SizedBox(height: 4),
-                                        FittedBox(
-                                          fit: BoxFit.scaleDown,
-                                          child: Row(
-                                            mainAxisAlignment: MainAxisAlignment.center,
-                                            mainAxisSize: MainAxisSize.min,
-                                            children: [
-                                              Text(
-                                                'Become a scholarship provider',
-                                                style: poppins(
-                                                  fontSize: 12,
-                                                  fontWeight: FontWeight.bold,
-                                                  color: kPrimary,
-                                                  decoration: TextDecoration.underline,
+                                          const SizedBox(height: 4),
+                                          FittedBox(
+                                            fit: BoxFit.scaleDown,
+                                            child: Row(
+                                              mainAxisAlignment: MainAxisAlignment.center,
+                                              mainAxisSize: MainAxisSize.min,
+                                              children: [
+                                                Text(
+                                                  'Become a scholarship provider',
+                                                  style: poppins(
+                                                    fontSize: 12,
+                                                    fontWeight: FontWeight.bold,
+                                                    color: kPrimary,
+                                                    decoration: TextDecoration.underline,
+                                                  ),
                                                 ),
-                                              ),
-                                              const SizedBox(width: 4),
-                                              const Icon(Icons.arrow_forward_rounded, size: 14, color: kPrimary),
-                                            ],
+                                                const SizedBox(width: 4),
+                                                const Icon(Icons.arrow_forward_rounded, size: 14, color: kPrimary),
+                                              ],
+                                            ),
                                           ),
-                                        ),
-                                      ],
+                                        ],
+                                      ),
                                     ),
                                   ),
-                                ),
-                                const SizedBox(height: 16),
+                                  const SizedBox(height: 16),
+                                ],
 
                                 // Divider: OR AUTHENTICATE WITH
                                 Row(

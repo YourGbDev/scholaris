@@ -71,7 +71,10 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
         _snackBar(_friendlyError(error)),
       );
     } catch (_) {
-      // In offline widget test environment
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        _snackBar('Could not update your password. Check your connection and try again.'),
+      );
     } finally {
       if (mounted) setState(() => _isLoading = false);
     }

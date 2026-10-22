@@ -72,17 +72,15 @@ void main() {
       await useLargeSurface(tester);
       await pumpSettled(tester);
 
-      // Hierarchy: headline → email → password → forgot → login →
-      // signup → provider CTA.
+      // Hierarchy: headline → email → password → forgot → login → signup.
+      // Provider CTA is hidden on mobile until public landing URL is configured.
       expect(find.text('Email'), findsOneWidget);
       expect(find.text('Password'), findsOneWidget);
       expect(find.text('Forgot password?'), findsOneWidget);
       expect(find.text('Log in'), findsOneWidget);
       expect(find.text("Don't have an account?"), findsOneWidget);
       expect(find.text('Sign up'), findsOneWidget);
-      expect(find.text('Want to help students reach their dreams?'),
-          findsOneWidget);
-      expect(find.text('Become a scholarship provider'), findsOneWidget);
+      expect(find.text('Become a scholarship provider'), findsNothing);
 
       // No generic Material card wraps the form anymore.
       expect(find.byType(Card), findsNothing);
@@ -162,7 +160,7 @@ void main() {
       expect(find.text('Email'), findsOneWidget);
       expect(find.text('Password'), findsOneWidget);
       expect(find.text('Log in'), findsOneWidget);
-      expect(find.text('Become a scholarship provider'), findsOneWidget);
+      expect(find.text('Become a scholarship provider'), findsNothing);
 
       final button = tester.widget<ElevatedButton>(
         find.widgetWithText(ElevatedButton, 'Log in'),
@@ -170,11 +168,28 @@ void main() {
       expect(button.onPressed, isNotNull);
     });
 
-    testWidgets('provider CTA renders and is tappable', (
+    testWidgets('provider CTA is hidden on mobile by default when landing URL is unconfigured', (
       tester,
     ) async {
       await useLargeSurface(tester);
       await pumpSettled(tester);
+
+      expect(find.text('Want to help students reach their dreams?'),
+          findsNothing);
+      expect(find.text('Become a scholarship provider'), findsNothing);
+    });
+
+    testWidgets('provider CTA renders and is tappable when enabled or on web', (
+      tester,
+    ) async {
+      await useLargeSurface(tester);
+      await tester.pumpWidget(
+        const MaterialApp(home: LoginScreen(showProviderCta: true)),
+      );
+      await tester.pump(
+        const Duration(milliseconds: kLoginEntranceTotalMs) +
+            const Duration(milliseconds: 100),
+      );
 
       expect(find.text('Want to help students reach their dreams?'),
           findsOneWidget);

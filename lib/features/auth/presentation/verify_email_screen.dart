@@ -16,6 +16,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'package:scholaris/app/confirmation_redirect.dart';
 import 'package:scholaris/app/recovery_redirect.dart';
+import 'package:scholaris/app/router.dart';
 import 'package:scholaris/shared/theme/app_motion.dart';
 import 'package:scholaris/shared/theme/app_theme.dart';
 import 'package:scholaris/shared/widgets/mascot_pose_view.dart';
@@ -26,6 +27,7 @@ class VerifyEmailScreen extends StatefulWidget {
     this.email,
     this.recovery = false,
     this.client,
+    this.successLocation,
   });
 
   /// The address the confirmation code was sent to. When null (e.g. the user
@@ -33,6 +35,7 @@ class VerifyEmailScreen extends StatefulWidget {
   final String? email;
   final bool recovery;
   final GoTrueClient? client;
+  final String? successLocation;
 
   @override
   State<VerifyEmailScreen> createState() => _VerifyEmailScreenState();
@@ -73,7 +76,11 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
         );
       }
       // The recovery event is emitted by verifyOTP before navigating.
-      context.go(widget.recovery ? '/reset-password' : '/home');
+      if (widget.recovery) {
+        context.go('/reset-password');
+      } else {
+        context.go(widget.successLocation ?? ProfileSetupRoute.personal);
+      }
     } on AuthException catch (error) {
       if (mounted) {
         ScaffoldMessenger.of(context)

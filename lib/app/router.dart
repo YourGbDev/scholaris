@@ -34,6 +34,7 @@ import 'package:scholaris/features/provider/presentation/provider_login_screen.d
 import 'package:scholaris/features/provider/presentation/provider_review_screen.dart';
 import 'package:scholaris/features/provider/presentation/provider_signup_screen.dart';
 import 'package:scholaris/features/splash/presentation/splash_screen.dart';
+import 'package:scholaris/shared/theme/app_theme.dart';
 import 'package:scholaris/features/auth/presentation/verify_email_screen.dart';
 import 'package:scholaris/features/intro/presentation/intro_screen.dart';
 import 'package:scholaris/features/onboarding/controllers/onboarding_controller.dart';
@@ -205,6 +206,7 @@ final routerProvider = Provider<GoRouter>((ref) {
             VerifyEmailScreen(
               email: state.uri.queryParameters['email'],
               recovery: state.uri.queryParameters['purpose'] == 'recovery',
+              successLocation: state.uri.queryParameters['redirect'],
             ),
       ),
       GoRoute(
@@ -352,7 +354,22 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/home',
         name: 'home',
-        builder: (context, state) => const HomeScreen(),
+        builder: (context, state) {
+          final profileAsync = ref.watch(profileCompleteProvider);
+          final isComplete = profileAsync.valueOrNull ?? false;
+          if (profileAsync.isLoading || !isComplete) {
+            return const Scaffold(
+              backgroundColor: kSurfaceWarm,
+              body: Center(
+                child: CircularProgressIndicator(
+                  color: kPrimary,
+                  strokeWidth: 2.5,
+                ),
+              ),
+            );
+          }
+          return const HomeScreen();
+        },
       ),
 
       // --- Saved scholarships ------------------------------------------------

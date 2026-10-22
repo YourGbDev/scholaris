@@ -50,6 +50,10 @@ void main() {
           builder: (_, _) => const Scaffold(body: Text('Verified home')),
         ),
         GoRoute(
+          path: '/profile-setup/personal',
+          builder: (_, _) => const Scaffold(body: Text('Profile setup step 1')),
+        ),
+        GoRoute(
           path: '/reset-password',
           builder: (_, _) => const Scaffold(body: Text('Choose password')),
         ),
@@ -150,7 +154,7 @@ void main() {
         );
         expect(client.currentSession?.user.id, 'student-a');
         expect(
-          find.text(recovery ? 'Choose password' : 'Verified home'),
+          find.text(recovery ? 'Choose password' : 'Profile setup step 1'),
           findsOneWidget,
         );
       },

@@ -15,6 +15,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'package:scholaris/app/router.dart';
 import 'package:scholaris/features/auth/presentation/signup_screen.dart';
+import 'package:scholaris/features/auth/presentation/verify_email_screen.dart';
 
 void main() {
   setUpAll(() {
@@ -310,5 +311,84 @@ void main() {
       );
       expect(completedProfileDecision, '/home');
     });
+
+    testWidgets(
+      'verified signup code transitions directly to profile setup step 1 and never renders the dashboard',
+      (tester) async {
+        final client = GoTrueClient(
+          url: 'https://example.com/auth/v1',
+          autoRefreshToken: false,
+          flowType: AuthFlowType.implicit,
+          httpClient: MockClient(
+            (request) async => http.Response(
+              jsonEncode({
+                'access_token': 'test-token',
+                'refresh_token': 'refresh-token',
+                'token_type': 'bearer',
+                'expires_in': 3600,
+                'user': {
+                  'id': 'student-new',
+                  'aud': 'authenticated',
+                  'email': 'newstudent@scholaris.test',
+                  'app_metadata': {},
+                  'user_metadata': {'role': 'student'},
+                  'created_at': '2026-10-22T00:00:00Z',
+                },
+              }),
+              200,
+            ),
+          ),
+        );
+        addTearDown(client.dispose);
+
+        var homeDashboardBuilt = false;
+
+        final router = GoRouter(
+          initialLocation: '/verify-email?email=newstudent@scholaris.test',
+          routes: [
+            GoRoute(
+              path: '/verify-email',
+              builder: (context, state) => VerifyEmailScreen(
+                email: state.uri.queryParameters['email'],
+                client: client,
+                recovery: false,
+              ),
+            ),
+            GoRoute(
+              path: '/home',
+              builder: (context, state) {
+                homeDashboardBuilt = true;
+                return const Scaffold(
+                  body: Center(child: Text('Student Dashboard')),
+                );
+              },
+            ),
+            GoRoute(
+              path: '/profile-setup/personal',
+              builder: (context, state) => const Scaffold(
+                body: Center(child: Text('Profile Setup Step 1: Personal')),
+              ),
+            ),
+          ],
+        );
+
+        await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+        await tester.pumpAndSettle();
+
+        expect(find.text('Verify your email'), findsOneWidget);
+
+        await tester.enterText(find.byType(TextFormField), '12345678');
+        await tester.ensureVisible(find.text('Verify code'));
+        await tester.tap(find.text('Verify code'));
+        await tester.pumpAndSettle();
+
+        // Must land directly on Profile Setup Step 1
+        expect(find.text('Profile Setup Step 1: Personal'), findsOneWidget);
+
+        // Dashboard must NEVER be rendered or visited
+        expect(homeDashboardBuilt, isFalse);
+        expect(find.text('Student Dashboard'), findsNothing);
+      },
+    );
   });
 }

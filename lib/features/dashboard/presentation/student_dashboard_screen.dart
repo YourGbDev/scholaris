@@ -605,7 +605,6 @@ class _StudentDashboardScreenState
             count: '${info.savedCount}',
             label: 'Saved',
             onTap: () {
-              ref.read(homeTabIndexProvider.notifier).selectTab(1);
               Navigator.of(context).push(
                 MaterialPageRoute(builder: (_) => const SavedScreen()),
               );
@@ -753,6 +752,7 @@ class _StudentDashboardScreenState
                 ],
                 ListView.separated(
                   shrinkWrap: true,
+                  padding: EdgeInsets.zero,
                   physics: const NeverScrollableScrollPhysics(),
                   itemCount: list.length,
                   separatorBuilder: (_, _) => const SizedBox(height: 12),
@@ -1003,6 +1003,7 @@ class _StudentDashboardScreenState
         const SizedBox(height: 10),
         ListView.separated(
           shrinkWrap: true,
+          padding: EdgeInsets.zero,
           physics: const NeverScrollableScrollPhysics(),
           itemCount: info.closingSoonScholarships.length,
           separatorBuilder: (_, _) => const SizedBox(height: 12),

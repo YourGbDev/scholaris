@@ -228,7 +228,7 @@ class ScholarshipCard extends StatelessWidget {
                 ),
 
                 Padding(
-                  padding: const EdgeInsets.fromLTRB(16, 14, 14, 14),
+                  padding: const EdgeInsets.fromLTRB(16, 14, 14, 12),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -295,11 +295,7 @@ class ScholarshipCard extends StatelessWidget {
                           ),
 
                           if (onToggleBookmark != null) ...[
-                            const SizedBox(width: 4),
-                            _BookmarkButton(
-                              isBookmarked: isBookmarked,
-                              onToggleBookmark: onToggleBookmark!,
-                            ),
+                            const SizedBox(width: 44),
                           ],
                         ],
                       ),
@@ -342,7 +338,7 @@ class ScholarshipCard extends StatelessWidget {
                           ),
                         ],
                       ),
-                      const SizedBox(height: 10),
+                      const SizedBox(height: 8),
 
                       // 4. Award Highlight Tile matching Stitch V2
                       Container(
@@ -420,7 +416,7 @@ class ScholarshipCard extends StatelessWidget {
                           ],
                         ),
                       ),
-                      const SizedBox(height: 10),
+                      const SizedBox(height: 8),
 
                       // 5. Criteria Chips
                       Wrap(
@@ -447,7 +443,7 @@ class ScholarshipCard extends StatelessWidget {
                           );
                         }).toList(),
                       ),
-                      const SizedBox(height: 10),
+                      const SizedBox(height: 8),
 
                       // 6. Requirements Snippet Row matching Stitch V2
                       Row(
@@ -600,6 +596,16 @@ class ScholarshipCard extends StatelessWidget {
                     ],
                   ),
                 ),
+                // Keep a full touch target without making the badge row taller.
+                if (onToggleBookmark != null)
+                  Positioned(
+                    top: 0,
+                    right: 8,
+                    child: _BookmarkButton(
+                      isBookmarked: isBookmarked,
+                      onToggleBookmark: onToggleBookmark!,
+                    ),
+                  ),
               ],
             ),
           ),
@@ -728,7 +734,8 @@ class _BookmarkButtonState extends State<_BookmarkButton>
       padding: const EdgeInsets.all(8),
       style: IconButton.styleFrom(
         minimumSize: const Size(44, 44),
-        tapTargetSize: MaterialTapTargetSize.padded,
+        fixedSize: const Size(44, 44),
+        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
       ),
     );
   }

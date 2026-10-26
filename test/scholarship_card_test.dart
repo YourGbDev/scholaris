@@ -40,6 +40,18 @@ Widget _wrap({required ScholarshipCard card}) =>
     MaterialApp(home: Scaffold(body: card));
 
 void main() {
+  testWidgets('card title follows badges closely without shrinking bookmark target', (tester) async {
+    tester.view.physicalSize = const Size(390, 900);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+    final scholarship = Scholarship.fromJson(_row());
+    await tester.pumpWidget(_wrap(card: ScholarshipCard(scholarship: scholarship, onToggleBookmark: () {})));
+    await tester.pumpAndSettle();
+    final gap = tester.getTopLeft(find.text(scholarship.title)).dy - tester.getBottomRight(find.text('94% Fit')).dy;
+    expect(gap, lessThanOrEqualTo(16));
+    expect(tester.getTopLeft(find.text(scholarship.title)).dy,
+      greaterThanOrEqualTo(tester.getBottomRight(find.byType(IconButton)).dy));
+  });
   setUpAll(() {
     GoogleFonts.config.allowRuntimeFetching = false;
   });

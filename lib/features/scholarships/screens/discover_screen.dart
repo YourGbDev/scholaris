@@ -671,6 +671,7 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
 
           return ListView.separated(
             shrinkWrap: true,
+            padding: EdgeInsets.zero,
             physics: const NeverScrollableScrollPhysics(),
             itemCount: matches.length,
             separatorBuilder: (_, _) => const SizedBox(height: 14),
@@ -767,6 +768,7 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
             const SizedBox(height: 12),
             ListView.separated(
               shrinkWrap: true,
+              padding: EdgeInsets.zero,
               physics: const NeverScrollableScrollPhysics(),
               itemCount: browse.length,
               separatorBuilder: (_, _) => const SizedBox(height: 14),

@@ -21,6 +21,7 @@ import 'package:scholaris/features/scholarships/presentation/scholarship_detail_
 import 'package:scholaris/features/scholarships/providers/scholarships_provider.dart';
 import 'package:scholaris/features/scholarships/repositories/scholarship_repository.dart';
 import 'package:scholaris/features/scholarships/screens/saved_screen.dart';
+import 'package:scholaris/features/scholarships/screens/discover_screen.dart';
 import 'package:scholaris/shared/widgets/scholarship_card.dart';
 
 import 'helpers/fake_application_data_source.dart';
@@ -122,6 +123,24 @@ ProviderScope _wrap({
 }
 
 void main() {
+  testWidgets('Discover lists do not repeat dock clearance between sections', (tester) async {
+    tester.view.physicalSize = const Size(440, 12000);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+    await tester.pumpWidget(_wrap(child: const MediaQuery(
+      data: MediaQueryData(padding: EdgeInsets.only(bottom: 144)),
+      child: DiscoverScreen(),
+    )));
+    await tester.pumpAndSettle();
+    final lists = find.byWidgetPredicate((w) => w is ListView && w.shrinkWrap);
+    expect(lists, findsWidgets);
+    for (final element in lists.evaluate()) {
+      final list = find.byWidget(element.widget);
+      final cards = find.descendant(of: list, matching: find.byType(ScholarshipCard));
+      expect(cards, findsWidgets);
+      expect(tester.getBottomRight(list).dy - tester.getBottomRight(cards.last).dy, closeTo(0, 1));
+    }
+  });
   setUpAll(() {
     GoogleFonts.config.allowRuntimeFetching = false;
   });
@@ -131,7 +150,7 @@ void main() {
       await tester.pumpWidget(_wrap(child: const HomeScreen()));
       await tester.pump(const Duration(milliseconds: 500));
 
-      expect(find.text('Dashboard'), findsOneWidget);
+      expect(find.text('Home'), findsOneWidget);
       expect(find.text('Discover'), findsOneWidget);
       expect(find.text('Tracker'), findsOneWidget);
       expect(find.text('Profile'), findsOneWidget);

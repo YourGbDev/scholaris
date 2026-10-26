@@ -9,12 +9,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:go_router/go_router.dart';
 
 import 'package:scholaris/features/applications/providers/applications_provider.dart';
 import 'package:scholaris/features/applications/repositories/application_repository.dart';
 import 'package:scholaris/features/auth/controllers/auth_controller.dart';
 import 'package:scholaris/features/bookmarks/providers/bookmarks_provider.dart';
 import 'package:scholaris/features/bookmarks/repositories/bookmark_repository.dart';
+import 'package:scholaris/features/home/presentation/home_screen.dart';
 import 'package:scholaris/features/scholarships/providers/scholarships_provider.dart';
 import 'package:scholaris/features/scholarships/repositories/scholarship_repository.dart';
 import 'package:scholaris/features/scholarships/screens/saved_screen.dart';
@@ -29,6 +31,7 @@ Widget _wrapSavedScreen({
   FakeScholarshipDataSource? scholarships,
   FakeApplicationDataSource? applications,
   String userId = 'user-a',
+  Widget? app,
 }) {
   return ProviderScope(
     overrides: [
@@ -51,17 +54,54 @@ Widget _wrapSavedScreen({
         ),
       ),
     ],
-    child: const MaterialApp(
-      home: Scaffold(
-        body: SavedScreen(),
-      ),
-    ),
+    child: app ?? const MaterialApp(home: SavedScreen()),
   );
 }
 
 void main() {
   setUpAll(() {
     GoogleFonts.config.allowRuntimeFetching = false;
+  });
+
+  testWidgets('Saved owns its page surface when opened as a route', (tester) async {
+    await tester.pumpWidget(_wrapSavedScreen(bookmarks: FakeBookmarkDataSource()));
+    await tester.pumpAndSettle();
+    expect(find.descendant(of: find.byType(SavedScreen), matching: find.byType(Scaffold)), findsOneWidget);
+  });
+
+  for (final discover in [false, true]) {
+    testWidgets('Saved ${discover ? 'Discover action' : 'Back'} returns to the previous route', (tester) async {
+      await tester.pumpWidget(_wrapSavedScreen(
+        bookmarks: FakeBookmarkDataSource(),
+        app: MaterialApp(home: Builder(builder: (context) => Scaffold(
+          body: TextButton(onPressed: () => Navigator.of(context).push(
+            MaterialPageRoute<void>(builder: (_) => const SavedScreen())), child: const Text('Open saved')),
+        ))),
+      ));
+      await tester.tap(find.text('Open saved'));
+      await tester.pumpAndSettle();
+      final container = ProviderScope.containerOf(tester.element(find.byType(SavedScreen)));
+      await tester.tap(discover ? find.text('Discover Scholarships') : find.byTooltip('Back'));
+      await tester.pumpAndSettle();
+      expect(find.text('Open saved'), findsOneWidget);
+      expect(find.byType(SavedScreen), findsNothing);
+      expect(container.read(homeTabIndexProvider), discover ? 1 : 0);
+      expect(tester.takeException(), isNull);
+    });
+  }
+
+  testWidgets('Saved direct link Back reaches home without a previous route', (tester) async {
+    final router = GoRouter(initialLocation: '/saved', routes: [
+      GoRoute(path: '/home', builder: (_, _) => const Scaffold(body: Text('Student home'))),
+      GoRoute(path: '/saved', builder: (_, _) => const SavedScreen()),
+    ]);
+    addTearDown(router.dispose);
+    await tester.pumpWidget(_wrapSavedScreen(bookmarks: FakeBookmarkDataSource(), app: MaterialApp.router(routerConfig: router)));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byTooltip('Back'));
+    await tester.pumpAndSettle();
+    expect(find.text('Student home'), findsOneWidget);
+    expect(tester.takeException(), isNull);
   });
 
   group('SavedScreen - Stitch V2 Empty State', () {

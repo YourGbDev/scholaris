@@ -24,6 +24,8 @@ import 'package:scholaris/features/dashboard/presentation/student_dashboard_scre
 import 'package:scholaris/features/scholarships/providers/scholarships_provider.dart';
 import 'package:scholaris/features/scholarships/repositories/scholarship_repository.dart';
 import 'package:scholaris/shared/widgets/scholarship_card.dart';
+import 'package:scholaris/features/home/presentation/home_screen.dart';
+import 'package:scholaris/features/scholarships/screens/saved_screen.dart';
 
 import 'helpers/fake_application_data_source.dart';
 import 'helpers/fake_bookmark_data_source.dart';
@@ -203,6 +205,38 @@ Finder _inClosingSoon(Finder inner) => find.descendant(
     );
 
 void main() {
+  testWidgets('Home lists do not repeat dock clearance between sections', (tester) async {
+    tester.view.physicalSize = const Size(440, 12000);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+    await tester.pumpWidget(_wrap(child: const MediaQuery(
+      data: MediaQueryData(padding: EdgeInsets.only(bottom: 144)),
+      child: StudentDashboardScreen(),
+    )));
+    await tester.pumpAndSettle();
+    final lists = find.byWidgetPredicate((w) => w is ListView && w.shrinkWrap);
+    expect(lists, findsNWidgets(2));
+    for (final element in lists.evaluate()) {
+      final list = find.byWidget(element.widget);
+      final cards = find.descendant(of: list, matching: find.byType(ScholarshipCard));
+      expect(cards, findsWidgets);
+      expect(tester.getBottomRight(list).dy - tester.getBottomRight(cards.last).dy, closeTo(0, 1));
+    }
+  });
+
+  testWidgets('Saved opened from Home returns to Home with Back', (tester) async {
+    await tester.pumpWidget(_wrap(child: const HomeScreen()));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const ValueKey('stat-chip-saved')));
+    await tester.pumpAndSettle();
+    expect(find.byType(SavedScreen), findsOneWidget);
+    await tester.tap(find.byTooltip('Back'));
+    await tester.pumpAndSettle();
+    final container = ProviderScope.containerOf(tester.element(find.byType(HomeScreen)));
+    expect(container.read(homeTabIndexProvider), 0);
+    expect(find.byKey(const ValueKey('stat-chip-saved')), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
   setUpAll(() {
     GoogleFonts.config.allowRuntimeFetching = false;
   });

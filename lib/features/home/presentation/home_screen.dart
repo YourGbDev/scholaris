@@ -68,6 +68,9 @@ const double kStudentPlusGap = 8.0;
 /// - Restrained multi-layer ambient & elevation shadows (eliminates cloudy diffuse smudge)
 const double kStudentNavGlassTintOpacity = 0.08;
 const double kStudentNavGlassBlur = 5.5;
+// Preserve finer background detail through the dock; keep '+' material unchanged.
+const double kStudentNavDockGlassBlur = 0.5;
+const double kStudentNavDockGlassTintOpacity = 0.14;
 const double kStudentNavGlassSaturation = 1.3;
 const Color kStudentNavGlassLightEdge = Color(0xB3FFFFFF); // 70% white specular top highlight
 
@@ -95,10 +98,12 @@ class DirectionalGlassRimPainter extends CustomPainter {
   const DirectionalGlassRimPainter({
     required this.borderRadius,
     this.strokeWidth = 1.0,
+    this.useCrispSingleRim = false,
   });
 
   final double borderRadius;
   final double strokeWidth;
+  final bool useCrispSingleRim;
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -116,6 +121,29 @@ class DirectionalGlassRimPainter extends CustomPainter {
       rect,
       Radius.circular(math.max(0.0, borderRadius - halfStroke)),
     );
+
+    if (useCrispSingleRim) {
+      // Tarsi-style single crisp specular rim:
+      // Razor-thin (0.75px) perimeter stroke with specular top highlight,
+      // subtle sides, and a crisp bottom white line ("the secret sauce")
+      // that defines the physical glass boundary sharply without doubling border thickness.
+      final rimPaint = Paint()
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 0.75
+        ..shader = const LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [
+            Color(0xD9FFFFFF), // 85% white top specular key light
+            Color(0x38FFFFFF), // 22% white soft ambient edge on sides
+            Color(0x8CFFFFFF), // 55% white crisp bottom edge
+          ],
+          stops: [0.0, 0.45, 1.0],
+        ).createShader(rect);
+
+      canvas.drawRRect(rrect, rimPaint);
+      return;
+    }
 
     // Keep the pale-background silhouette separate from the inset light rim.
     canvas.drawRRect(rrect, Paint()
@@ -559,6 +587,9 @@ class StudentBottomNav extends StatelessWidget {
     this.onExpand,
     this.onNavFocusChange,
     this.enableRefraction = false,
+    this.dockBlur,
+    this.dockTintOpacity,
+    this.useCrispSingleRim = false,
   });
 
   final bool enableRefraction;
@@ -568,6 +599,9 @@ class StudentBottomNav extends StatelessWidget {
   final bool isCollapsed;
   final VoidCallback? onExpand;
   final ValueChanged<bool>? onNavFocusChange;
+  final double? dockBlur;
+  final double? dockTintOpacity;
+  final bool useCrispSingleRim;
 
   @override
   Widget build(BuildContext context) => LayoutBuilder(
@@ -773,12 +807,15 @@ class StudentBottomNav extends StatelessWidget {
                 ))
               : CustomPaint(
                   foregroundPainter: DirectionalGlassRimPainter(
-                    borderRadius: pillBorderRadius, strokeWidth: 1),
+                    borderRadius: pillBorderRadius,
+                    strokeWidth: 1,
+                    useCrispSingleRim: useCrispSingleRim,
+                  ),
                   child: LiquidGlass(
                     borderRadius: pillBorderRadius,
-                    blur: kStudentNavGlassBlur,
+                    blur: dockBlur ?? kStudentNavDockGlassBlur,
                     saturation: kStudentNavGlassSaturation,
-                    tintOpacity: kStudentNavGlassTintOpacity,
+                    tintOpacity: dockTintOpacity ?? kStudentNavDockGlassTintOpacity,
                     border: kStudentNavGlassBorder,
                     showLightEdge: false,
                     preserveBlurWithReducedMotion: true,

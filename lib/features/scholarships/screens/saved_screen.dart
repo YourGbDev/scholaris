@@ -21,6 +21,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:go_router/go_router.dart';
 
 import 'package:scholaris/features/applications/models/application.dart';
 import 'package:scholaris/features/applications/providers/applications_provider.dart';
@@ -36,6 +37,16 @@ import 'package:scholaris/shared/widgets/mascot_pose_view.dart';
 import 'package:scholaris/shared/widgets/responsive_container.dart';
 import 'package:scholaris/shared/widgets/scholarship_card.dart';
 import 'package:scholaris/shared/widgets/state_views.dart';
+
+void _returnToStudentHome(BuildContext context, WidgetRef ref, {bool discover = false}) {
+  if (discover) ref.read(homeTabIndexProvider.notifier).selectTab(1);
+  final navigator = Navigator.of(context);
+  if (navigator.canPop()) {
+    navigator.pop();
+  } else {
+    GoRouter.maybeOf(context)?.go('/home');
+  }
+}
 
 class SavedScreen extends ConsumerStatefulWidget {
   const SavedScreen({super.key});
@@ -75,8 +86,10 @@ class _SavedScreenState extends ConsumerState<SavedScreen> {
 
     final savedCount = bookmarksAsync.valueOrNull?.length ?? 0;
 
-    return SafeArea(
-      child: ResponsiveContainer(
+    return Scaffold(
+      backgroundColor: kBackground,
+      body: SafeArea(
+        child: ResponsiveContainer(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -85,6 +98,12 @@ class _SavedScreenState extends ConsumerState<SavedScreen> {
               padding: const EdgeInsets.fromLTRB(20, 16, 20, 8),
               child: Row(
                 children: [
+                  IconButton(
+                    tooltip: 'Back',
+                    onPressed: () => _returnToStudentHome(context, ref),
+                    icon: const Icon(Icons.arrow_back_rounded),
+                  ),
+                  const SizedBox(width: 4),
                   Expanded(
                     child: Wrap(
                       crossAxisAlignment: WrapCrossAlignment.center,
@@ -198,6 +217,7 @@ class _SavedScreenState extends ConsumerState<SavedScreen> {
               ),
             ),
           ],
+        ),
         ),
       ),
     );
@@ -458,10 +478,7 @@ class _SavedEmptyState extends ConsumerWidget {
                   height: 46,
                   child: PressableScale(
                     child: FilledButton.icon(
-                      onPressed: () {
-                        // Navigate to Discover tab (tab 1 in home navigation)
-                        ref.read(homeTabIndexProvider.notifier).selectTab(1);
-                      },
+                      onPressed: () => _returnToStudentHome(context, ref, discover: true),
                       style: FilledButton.styleFrom(
                         backgroundColor: const Color(0xFF0F4D2E), // Stitch primary-container
                         foregroundColor: Colors.white,
@@ -628,7 +645,7 @@ class _SuggestedGrantCard extends ConsumerWidget {
             );
           } else {
             // Switch to discover tab
-            ref.read(homeTabIndexProvider.notifier).selectTab(1);
+            _returnToStudentHome(context, ref, discover: true);
           }
         },
         child: Container(

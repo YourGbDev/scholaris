@@ -1,3 +1,4 @@
+import 'package:scholaris/features/home/presentation/widgets/student_tab_entrance.dart';
 // lib/features/scholarships/screens/discover_screen.dart
 //
 // Student Core Flow — Stitch Discover Screen (scholaris_discover_filters/code.html):
@@ -96,39 +97,39 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
               ),
               children: [
                 // 1. Sticky Header
-                _buildHeader(context, ref, avatarState),
+                StudentTabReveal(order: 0, child: _buildHeader(context, ref, avatarState)),
                 const SizedBox(height: 16),
 
                 // 2. Search & Active Filter Bar
-                _buildSearchBar(context, ref),
+                StudentTabReveal(order: 1, child: _buildSearchBar(context, ref)),
                 const SizedBox(height: 12),
 
                 // 3. Filter Chips Horizontal Carousel
-                _buildFilterChipsCarousel(
+                StudentTabReveal(order: 1, child: _buildFilterChipsCarousel(
                   context,
                   ref,
                   state,
                   totalOpportunities,
-                ),
+                )),
                 const SizedBox(height: 12),
 
                 // 4. Applied Criteria Quick-Bar
-                _buildAppliedCriteriaQuickBar(context, ref, profile, state),
+                StudentTabReveal(order: 1, child: _buildAppliedCriteriaQuickBar(context, ref, profile, state)),
 
                 if (state.isActive) ...[
                   const SizedBox(height: 12),
-                  _buildActiveFilterChips(context, ref, state),
+                  StudentTabReveal(order: 1, child: _buildActiveFilterChips(context, ref, state)),
                 ],
                 const SizedBox(height: 20),
 
                 // 5. Opportunity Feed Header
-                _buildFeedHeader(
+                StudentTabReveal(order: 2, child: _buildFeedHeader(
                   context,
                   ref,
                   totalOpportunities,
                   studentName,
                   state.sort,
-                ),
+                )),
                 const SizedBox(height: 16),
 
                 // 6. Feed Cards Container
@@ -157,7 +158,7 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
                 const SizedBox(height: 28),
 
                 // 8. Editorial End-of-Feed Helper Card
-                _buildEditorialHelperCard(context),
+                StudentTabReveal(order: 6, child: _buildEditorialHelperCard(context)),
               ],
             ),
           ),
@@ -651,10 +652,7 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
     Set<String> appliedIds,
     DiscoveryFilterState state,
   ) {
-    return CrossFadeLoading(
-      isLoading: matchesAsync.isLoading,
-      skeleton: _buildDiscoverSkeleton(),
-      child: matchesAsync.when(
+    return matchesAsync.when(
         loading: _buildDiscoverSkeleton,
         error: (err, _) => ErrorView(
           message: 'Could not load your matches.',
@@ -681,8 +679,8 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
               final reasons = profile != null
                   ? matchReasonsFor(profile, scholarship)
                   : const <String>[];
-              return StaggeredListItem(
-                index: index,
+              return StudentTabReveal(
+                order: 3 + index,
                 child: ScholarshipCard(
                   scholarship: scholarship,
                   reasons: reasons,
@@ -700,8 +698,7 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
             },
           );
         },
-      ),
-    );
+      );
   }
 
   Widget _buildDiscoverSkeleton() {
@@ -761,7 +758,7 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            SectionHeader(title: 'Browse all scholarships'),
+            StudentTabReveal(order: 2, child: SectionHeader(title: 'Browse all scholarships')),
             const SizedBox(height: 4),
             Text(
               'Showing ${browse.length} scholarships',
@@ -773,8 +770,8 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
               physics: const NeverScrollableScrollPhysics(),
               itemCount: browse.length,
               separatorBuilder: (_, _) => const SizedBox(height: 14),
-              itemBuilder: (_, i) => StaggeredListItem(
-                index: i,
+              itemBuilder: (_, i) => StudentTabReveal(
+                order: 3 + i,
                 child: ScholarshipCard(
                   scholarship: browse[i],
                   isBookmarked: bookmarkIds.contains(browse[i].id),

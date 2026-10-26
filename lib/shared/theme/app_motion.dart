@@ -1127,6 +1127,16 @@ Future<T?> showAppleSpringModalBottomSheet<T>({
 }
 
 /// Custom popup route for bottom sheets powered entirely by AppleSpringDescription.sheet
+class _ClampedSpringAnimation extends Animation<double> with AnimationWithParentMixin<double> {
+  _ClampedSpringAnimation(this.parent);
+
+  @override
+  final Animation<double> parent;
+
+  @override
+  double get value => parent.value.clamp(0.0, 1.0);
+}
+
 class AppleSpringModalSheetRoute<T> extends PopupRoute<T> {
   AppleSpringModalSheetRoute({
     required this.builder,
@@ -1168,11 +1178,19 @@ class AppleSpringModalSheetRoute<T> extends PopupRoute<T> {
     return AnimationController.unbounded(
       vsync: navigator!,
       value: 0.0,
+      duration: transitionDuration,
+      reverseDuration: reverseTransitionDuration,
     );
   }
 
   /// Public accessor for the sheet's animation controller.
   AnimationController? get sheetController => controller;
+  @override
+  Animation<double> createAnimation() {
+    assert(controller != null);
+    return _ClampedSpringAnimation(controller!);
+  }
+
 
   @override
   Widget buildPage(
@@ -1445,6 +1463,7 @@ class LiquidGlass extends StatelessWidget {
     this.saturation = 1.8,
     this.border,
     this.showLightEdge = true,
+    this.preserveBlurWithReducedMotion = false,
     this.lightEdgeColor = const Color(0x66FFFFFF), // rgba(255,255,255,0.4)
     this.padding,
     this.margin,
@@ -1459,6 +1478,7 @@ class LiquidGlass extends StatelessWidget {
   final double saturation;
   final BoxBorder? border;
   final bool showLightEdge;
+  final bool preserveBlurWithReducedMotion;
   final Color lightEdgeColor;
   final EdgeInsetsGeometry? padding;
   final EdgeInsetsGeometry? margin;
@@ -1466,7 +1486,7 @@ class LiquidGlass extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (isReducedMotion(context)) {
+    if (isReducedMotion(context) && !preserveBlurWithReducedMotion) {
       Widget simpleContent = Container(
         padding: padding,
         decoration: BoxDecoration(

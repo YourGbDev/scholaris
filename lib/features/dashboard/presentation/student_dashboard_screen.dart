@@ -1,3 +1,4 @@
+import 'package:scholaris/features/home/presentation/widgets/student_tab_entrance.dart';
 // lib/features/dashboard/presentation/student_dashboard_screen.dart
 //
 // 100% Stitch V2 Student Dashboard Screen.
@@ -49,25 +50,8 @@ class StudentDashboardScreen extends ConsumerStatefulWidget {
 
 class _StudentDashboardScreenState
     extends ConsumerState<StudentDashboardScreen> {
-  bool _hasAnimated = false;
-
-  @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _hasAnimated = true;
-    });
-  }
-
-  Widget _wrapSection({required int index, required Widget child}) {
-    if (_hasAnimated) return child;
-    return StaggeredListItem(
-      index: index,
-      staggerMs: 50,
-      spring: AppleSpringDescription.pip,
-      child: child,
-    );
-  }
+  Widget _wrapSection({required int index, required Widget child}) => StudentTabReveal(
+    order: const [0, 0, 1, 1, 2, 6][index.clamp(0, 5)], child: child);
 
   @override
   Widget build(BuildContext context) {
@@ -186,7 +170,7 @@ class _StudentDashboardScreenState
 
                 // 4b. Deadline Alert & Urgency Sections (when closing soon)
                 if (info.closingSoonCount > 0) ...[
-                  _buildAdviceCard(info),
+                  StudentTabReveal(order: 2, child: _buildAdviceCard(info)),
                   const SizedBox(height: 16),
                   _buildClosingSoonSection(
                     context,
@@ -681,7 +665,7 @@ class _StudentDashboardScreenState
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Row(
+        StudentTabReveal(order: 1, child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Expanded(
@@ -731,12 +715,9 @@ class _StudentDashboardScreenState
               ),
             ),
           ],
-        ),
+        )),
         const SizedBox(height: 12),
-        CrossFadeLoading(
-          isLoading: matchesAsync.isLoading,
-          skeleton: _buildDashboardSkeleton(),
-          child: matchesAsync.when(
+        matchesAsync.when(
             loading: _buildDashboardSkeleton,
           error: (_, _) => const SizedBox.shrink(),
           data: (items) {
@@ -767,7 +748,7 @@ class _StudentDashboardScreenState
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 if (items.isNotEmpty) ...[
-                  _buildMatchRevealBanner(items.length, gender: profile?.gender),
+                  StudentTabReveal(order: 2, child: _buildMatchRevealBanner(items.length, gender: profile?.gender)),
                   const SizedBox(height: 12),
                 ],
                 ListView.separated(
@@ -780,8 +761,8 @@ class _StudentDashboardScreenState
                     final reasons = profile != null
                         ? matchReasonsFor(profile, s)
                         : const <String>[];
-                    return StaggeredListItem(
-                      index: i,
+                    return StudentTabReveal(
+                      order: 3 + i,
                       child: ScholarshipCard(
                         scholarship: s,
                         reasons: reasons,
@@ -796,7 +777,6 @@ class _StudentDashboardScreenState
             );
           },
         ),
-      ),
     ],
   );
 }
@@ -1001,7 +981,7 @@ class _StudentDashboardScreenState
       key: const ValueKey('closing-soon-section'),
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Row(
+        StudentTabReveal(order: 2, child: Row(
           children: [
             const Icon(
               Icons.hourglass_top_rounded,
@@ -1019,7 +999,7 @@ class _StudentDashboardScreenState
               ),
             ),
           ],
-        ),
+        )),
         const SizedBox(height: 10),
         ListView.separated(
           shrinkWrap: true,
@@ -1031,8 +1011,8 @@ class _StudentDashboardScreenState
             final reasons = profile != null
                 ? matchReasonsFor(profile, s)
                 : const <String>[];
-            return StaggeredListItem(
-              index: i,
+            return StudentTabReveal(
+              order: 3 + i,
               child: ScholarshipCard(
                 scholarship: s,
                 reasons: reasons,

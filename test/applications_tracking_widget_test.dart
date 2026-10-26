@@ -1,3 +1,5 @@
+import 'dart:async';
+import 'package:scholaris/features/home/presentation/widgets/student_tab_entrance.dart';
 // Widget tests for the Day 10 tracking surface.
 //
 // Covers the new first-class Applications tab, the status filter bar with live
@@ -182,6 +184,58 @@ void main() {
     GoogleFonts.config.allowRuntimeFetching = false;
   });
 
+  testWidgets('late scholarship results appear without a second loading fade', (tester) async {
+    tester.view.physicalSize = const Size(440, 1600);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+    final gate = Completer<List<Map<String, dynamic>>>();
+    await tester.pumpWidget(_wrapHomeScreen(scholarships: _DelayedScholarships(gate)));
+    await tester.pump(const Duration(milliseconds: 600));
+    gate.complete(FakeScholarshipDataSource.defaultRows);
+    for (var i = 0; i < 6; i++) { await tester.pump(); }
+    expect(find.byType(CrossFadeLoading), findsNothing,
+      reason: 'A completed visit clock must not be followed by an independent whole-list fade.');
+    final rows = find.byWidgetPredicate((w) => w is StudentTabReveal && w.order >= 3);
+    expect(rows, findsWidgets);
+    for (final element in rows.evaluate()) {
+      final fades = find.descendant(of: find.byWidget(element.widget), matching: find.byType(FadeTransition));
+      expect(tester.widget<FadeTransition>(fades.first).opacity.value, 1);
+    }
+    await tester.tap(find.byKey(const ValueKey('student-nav-discover')));
+    await tester.pumpAndSettle();
+    expect(find.byType(CrossFadeLoading), findsNothing);
+  });
+
+  testWidgets('real student tabs replay section fades without replacing their scroll views', (tester) async {
+    tester.view.physicalSize = const Size(440, 956);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+    final applications = FakeApplicationDataSource();
+    await _seedApplication(applications, 'user-a', scholarshipId: 'sch-dost', status: 'submitted');
+    await tester.pumpWidget(_wrapHomeScreen(applications: applications));
+    await tester.pumpAndSettle();
+    for (final tab in ['discover', 'tracker', 'profile', 'home']) {
+      await tester.tap(find.byKey(ValueKey('student-nav-$tab')));
+      await tester.pump();
+      final headings = find.byWidgetPredicate((w) => w is StudentTabReveal && w.order == 0);
+      final rows = find.byWidgetPredicate((w) => w is StudentTabReveal && w.order >= 3);
+      expect(headings, findsWidgets, reason: '$tab heading must join the shared visit clock');
+      expect(rows, findsWidgets, reason: '$tab content rows must have their own fade phase');
+      FadeTransition phase(Finder wrapper) => tester.widget<FadeTransition>(
+        find.descendant(of: wrapper.first, matching: find.byType(FadeTransition)).first);
+      expect(phase(headings).opacity.value, 0);
+      expect(phase(rows).opacity.value, 0);
+      final scrollState = tester.state<ScrollableState>(find.byType(Scrollable).first);
+      await tester.pump(const Duration(milliseconds: 90));
+      expect(phase(headings).opacity.value, greaterThan(0));
+      expect(phase(rows).opacity.value, 0);
+      await tester.pumpAndSettle();
+      expect(phase(rows).opacity.value, 1);
+      expect(tester.state<ScrollableState>(find.byType(Scrollable).first), same(scrollState));
+      expect(tester.takeException(), isNull);
+    }
+  });
+
   group('Applications tab navigation', () {
     testWidgets('Applications is a first-class Home tab', (tester) async {
       tester.view.physicalSize = const Size(800, 1200);
@@ -191,22 +245,22 @@ void main() {
       await tester.pumpWidget(_wrapHomeScreen());
       await tester.pump(const Duration(milliseconds: 500));
 
-      // All four destinations are present — scoped to the LiquidGlass pill,
+      // All four destinations are present — scoped to the student navigation component,
       // matching the Stitch V2 navigation architecture.
       expect(
-        find.descendant(of: find.byType(LiquidGlass), matching: find.text('Dashboard')),
+        find.descendant(of: find.byType(StudentBottomNav), matching: find.text('Home')),
         findsOneWidget,
       );
       expect(
-        find.descendant(of: find.byType(LiquidGlass), matching: find.text('Discover')),
+        find.descendant(of: find.byType(StudentBottomNav), matching: find.text('Discover')),
         findsOneWidget,
       );
       expect(
-        find.descendant(of: find.byType(LiquidGlass), matching: find.text('Tracker')),
+        find.descendant(of: find.byType(StudentBottomNav), matching: find.text('Tracker')),
         findsOneWidget,
       );
       expect(
-        find.descendant(of: find.byType(LiquidGlass), matching: find.text('Profile')),
+        find.descendant(of: find.byType(StudentBottomNav), matching: find.text('Profile')),
         findsOneWidget,
       );
 
@@ -218,7 +272,7 @@ void main() {
       expect(find.text('No applications yet'), findsOneWidget);
 
       // Dashboard still works after switching back — IndexedStack preserved.
-      await tester.tap(find.text('Dashboard'));
+      await tester.tap(find.text('Home'));
       await tester.pumpAndSettle();
       expect(find.textContaining('Maria'), findsOneWidget);
     });
@@ -493,4 +547,11 @@ void main() {
       expect(find.text('All (1)'), findsOneWidget);
     });
   });
+}
+
+class _DelayedScholarships extends FakeScholarshipDataSource {
+  _DelayedScholarships(this.gate);
+  final Completer<List<Map<String, dynamic>>> gate;
+  @override
+  Future<List<Map<String, dynamic>>> fetchScholarships() => gate.future;
 }

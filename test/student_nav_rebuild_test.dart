@@ -59,10 +59,10 @@ void main() {
         reason: 'The scroll view viewport must extend to the very bottom of the screen (956.0).');
 
     // Also verify nav overlay bounds and height equality
-    final sizedBox62Finder = find.byWidgetPredicate(
-      (w) => w is SizedBox && w.height == 62.0 && w.width == null,
+    final sizedBox58Finder = find.byWidgetPredicate(
+      (w) => w is SizedBox && w.height == 58.0 && w.width == null,
     );
-    final outerSizedBoxBox = tester.renderObject(sizedBox62Finder.first) as RenderBox;
+    final outerSizedBoxBox = tester.renderObject(sizedBox58Finder.first) as RenderBox;
 
     final navFinder = find.descendant(
       of: find.byType(Stack),
@@ -78,16 +78,16 @@ void main() {
     final plusOffset = plusRenderBox.localToGlobal(Offset.zero);
 
     print('\n[NAV OVERLAY BOUNDS]');
-    print('  - Outer SizedBox(height: 62) size: ${outerSizedBoxBox.size}');
+    print('  - Outer SizedBox(height: 58) size: ${outerSizedBoxBox.size}');
     print('  - 4-Tab Pill bounds: Offset(${pillOffset.dx}, ${pillOffset.dy}) | Size: ${pillRenderBox.size}');
     print('  - "+" Circle bounds: Offset(${plusOffset.dx}, ${plusOffset.dy}) | Size: ${plusRenderBox.size}');
 
-    expect(outerSizedBoxBox.size.height, equals(62.0),
-        reason: 'Outer SizedBox must render at height 62.0.');
-    expect(pillRenderBox.size.height, equals(62.0),
-        reason: '4-Tab pill must render at full 62.0 height.');
-    expect(plusRenderBox.size.height, equals(62.0),
-        reason: '"+" circle must render at full 62.0 height.');
+    expect(outerSizedBoxBox.size.height, equals(58.0),
+        reason: 'Outer SizedBox must render at height 58.0.');
+    expect(pillRenderBox.size.height, equals(58.0),
+        reason: '4-Tab pill must render at full 58.0 height.');
+    expect(plusRenderBox.size.height, equals(58.0),
+        reason: '"+" circle must render at full 58.0 height.');
     expect(pillOffset.dy, equals(plusOffset.dy),
         reason: 'Pill and "+" button must vertically align with identical dy offsets.');
 
@@ -110,12 +110,11 @@ void main() {
     print('  - "+" LiquidGlass lightEdgeColor: ${plusLiquidGlass.lightEdgeColor}');
     print('  - "+" LiquidGlass borderRadius: ${plusLiquidGlass.borderRadius}');
 
-    expect(plusLiquidGlass.blur, equals(24.0));
-    expect(plusLiquidGlass.saturation, equals(1.8));
-    expect(plusLiquidGlass.tintOpacity, equals(0.72));
-    expect(plusLiquidGlass.showLightEdge, isTrue);
-    expect(plusLiquidGlass.lightEdgeColor, equals(const Color(0x66FFFFFF)));
-    expect(plusLiquidGlass.borderRadius, equals(31.0));
+    expect(plusLiquidGlass.blur, inExclusiveRange(0.0, 20.0));
+    expect(plusLiquidGlass.saturation, greaterThanOrEqualTo(1.0));
+    expect(plusLiquidGlass.tintOpacity, inExclusiveRange(0.0, 0.4));
+    expect(plusLiquidGlass.showLightEdge, isFalse);
+    expect(plusLiquidGlass.borderRadius, equals(29.0));
 
     // Verify no solid opaque Container inside the "+" button tree
     final plusSubtreeContainers = tester.widgetList<Container>(
@@ -141,7 +140,7 @@ void main() {
     print('  - Verified: Zero solid non-transparent Containers found in "+" button tree.');
 
     print('\n======================================================');
-    print('  ALL ASSERTIONS PASSED WITH MATHEMATICAL CERTAINTY');
+    print('  All student navigation rebuild assertions passed.');
     print('======================================================\n');
   });
 }

@@ -1,3 +1,4 @@
+import 'package:scholaris/features/home/presentation/widgets/student_tab_entrance.dart';
 // test/features/student/bottom_nav_tab_switch_test.dart
 //
 // QA Verification Test: Student Bottom Navigation Instant Tab Switching
@@ -48,10 +49,27 @@ void main() {
       IndexedStack indexedStack = tester.widget<IndexedStack>(indexedStackFinder);
       expect(indexedStack.index, equals(0));
       expect(indexedStack.children.length, equals(4));
-      expect(indexedStack.children[0], isA<StudentDashboardScreen>());
-      expect(indexedStack.children[1], isA<DiscoverScreen>());
-      expect(indexedStack.children[2], isA<ApplicationsScreen>());
-      expect(indexedStack.children[3], isA<ProfileTabScreen>());
+
+      // Children are wrapped in NotificationListener<ScrollNotification> for active-tab scroll isolation;
+      // unwrap to verify underlying destination screens and state retention
+      Widget unwrapTab(Widget child) {
+        if (child is NotificationListener<ScrollNotification>) {
+          return unwrapTab(child.child);
+        }
+        if (child is StudentTabEntrance) return unwrapTab(child.child);
+        return child;
+      }
+
+      expect(unwrapTab(indexedStack.children[0]), isA<StudentDashboardScreen>());
+      expect(unwrapTab(indexedStack.children[1]), isA<DiscoverScreen>());
+      expect(unwrapTab(indexedStack.children[2]), isA<ApplicationsScreen>());
+      expect(unwrapTab(indexedStack.children[3]), isA<ProfileTabScreen>());
+
+      // Verify destination descendants inside IndexedStack with skipOffstage: false
+      expect(find.descendant(of: indexedStackFinder, matching: find.byType(StudentDashboardScreen, skipOffstage: false), skipOffstage: false), findsOneWidget);
+      expect(find.descendant(of: indexedStackFinder, matching: find.byType(DiscoverScreen, skipOffstage: false), skipOffstage: false), findsOneWidget);
+      expect(find.descendant(of: indexedStackFinder, matching: find.byType(ApplicationsScreen, skipOffstage: false), skipOffstage: false), findsOneWidget);
+      expect(find.descendant(of: indexedStackFinder, matching: find.byType(ProfileTabScreen, skipOffstage: false), skipOffstage: false), findsOneWidget);
 
       // All 4 tabs are kept alive in memory simultaneously
       expect(find.byType(StudentDashboardScreen, skipOffstage: false), findsOneWidget);

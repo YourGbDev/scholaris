@@ -1,3 +1,4 @@
+import 'package:scholaris/features/home/presentation/widgets/student_tab_entrance.dart';
 // lib/features/profile/presentation/profile_tab_screen.dart
 //
 // "Profile" tab — 100% Stitch V2 design fidelity:
@@ -125,19 +126,19 @@ class ProfileTabScreen extends ConsumerWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           // Stitch Top Bar
-          _buildTopBar(context),
+          StudentTabReveal(order: 0, child: _buildTopBar(context)),
           const SizedBox(height: 14),
 
           // Section Title & Settings Button
-          _buildHeader(context),
+          StudentTabReveal(order: 0, child: _buildHeader(context)),
           const SizedBox(height: 14),
 
           // Profile Hero Card
-          _buildHeroCard(context, ref, profile),
+          StudentTabReveal(order: 1, child: _buildHeroCard(context, ref, profile)),
           const SizedBox(height: 14),
 
           // Matching Power Milestone Card
-          _ProfileMilestoneCard(profile: profile),
+          StudentTabReveal(order: 2, child: _ProfileMilestoneCard(profile: profile)),
           const SizedBox(height: 18),
 
           // Verified Credentials Section (3 Stitch Cards)
@@ -145,11 +146,11 @@ class ProfileTabScreen extends ConsumerWidget {
           const SizedBox(height: 20),
 
           // Documents & Quick Actions Section
-          _buildDocumentsAndQuickActions(context),
+          StudentTabReveal(order: 6, child: _buildDocumentsAndQuickActions(context)),
           const SizedBox(height: 20),
 
           // Account & Settings Section
-          _buildAccountSection(context),
+          StudentTabReveal(order: 6, child: _buildAccountSection(context)),
         ],
       ),
     );
@@ -440,7 +441,7 @@ class ProfileTabScreen extends ConsumerWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         // Section Header
-        Builder(
+        StudentTabReveal(order: 2, child: Builder(
           builder: (context) {
             final syncedCount = (profile.course.trim().isNotEmpty ? 1 : 0) +
                 (profile.region.trim().isNotEmpty ? 1 : 0) +
@@ -475,26 +476,26 @@ class ProfileTabScreen extends ConsumerWidget {
               ),
             );
           },
-        ),
+        )),
         const SizedBox(height: 10),
 
         // Card 1: Academic Information
-        StaggeredListItem(
-          index: 0,
+        StudentTabReveal(
+          order: 3,
           child: _buildAcademicCard(context, profile),
         ),
         const SizedBox(height: 12),
 
         // Card 2: Location & Residency
-        StaggeredListItem(
-          index: 1,
+        StudentTabReveal(
+          order: 4,
           child: _buildLocationCard(context, profile),
         ),
         const SizedBox(height: 12),
 
         // Card 3: Financial Background
-        StaggeredListItem(
-          index: 2,
+        StudentTabReveal(
+          order: 5,
           child: _buildFinancialCard(context, profile),
         ),
       ],

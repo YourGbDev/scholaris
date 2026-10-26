@@ -1,7 +1,7 @@
 name: scholaris
 description: "A new Flutter project."
 publish_to: "none"
-version: 1.0.0+1
+version: 1.0.0+2
 
 environment:
   sdk: ^3.13.1
@@ -37,6 +37,8 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+  shaders:
+    - shaders/student_glass_lens.frag
   assets:
     - assets/animations/scholaris_ceremony.json
     - assets/animations/onboarding_slide1.json

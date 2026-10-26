@@ -1,3 +1,4 @@
+import 'package:scholaris/features/home/presentation/widgets/student_tab_entrance.dart';
 // lib/features/applications/presentation/applications_screen.dart
 //
 // "Application Tracker" — the student's dedicated tracking surface rebuilt to 100%
@@ -54,7 +55,7 @@ class ApplicationsScreen extends ConsumerWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Padding(
+              StudentTabReveal(order: 0, child: Padding(
                 padding: const EdgeInsets.fromLTRB(20, 16, 20, 8),
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -110,7 +111,7 @@ class ApplicationsScreen extends ConsumerWidget {
                     ),
                   ],
                 ),
-              ),
+              )),
               Expanded(child: body),
             ],
           ),
@@ -214,20 +215,20 @@ class ApplicationsScreen extends ConsumerWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const SizedBox(height: 4),
-              _PotentialAwardCard(
+              StudentTabReveal(order: 1, child: _PotentialAwardCard(
                 totalPotential: totalPotential,
                 applications: applications,
                 counts: counts,
-              ),
+              )),
               const SizedBox(height: 10),
-              _SummaryBar(applications: applications),
+              StudentTabReveal(order: 1, child: _SummaryBar(applications: applications)),
               const SizedBox(height: 10),
-              _StatusFilterBar(
+              StudentTabReveal(order: 2, child: _StatusFilterBar(
                 counts: counts,
                 selected: status,
                 onSelect: (s) =>
                     ref.read(applicationFilterProvider.notifier).select(s),
-              ),
+              )),
               const SizedBox(height: 10),
               Expanded(
                 child: RefreshIndicator(
@@ -273,18 +274,18 @@ class ApplicationsScreen extends ConsumerWidget {
                                   if (index == 0) {
                                     return Padding(
                                       padding: const EdgeInsets.only(bottom: 12),
-                                      child: _UrgentDeadlineBanner(
+                                      child: StudentTabReveal(order: 2, child: _UrgentDeadlineBanner(
                                         application: urgentApp,
                                         scholarship: urgentScholarship,
-                                      ),
+                                      )),
                                     );
                                   }
                                   index--;
                                 }
 
                                 final app = filtered[index];
-                                return StaggeredListItem(
-                                  index: index,
+                                return StudentTabReveal(
+                                  order: 3 + index,
                                   child: Padding(
                                     padding: const EdgeInsets.only(bottom: 12),
                                     child: _ApplicationCard(

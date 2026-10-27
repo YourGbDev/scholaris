@@ -23,7 +23,7 @@ void main() {
       );
       await tester.pumpWidget(host(0));
       Color ink() => tester.widget<Text>(find.text('Discover')).style!.color!;
-      const inactive = Color(0xFF1C1C1E);
+      const inactive = Color(0xFF25282B);
       await tester.pumpWidget(host(1));
       await tester.pump(const Duration(milliseconds: 70));
       final midway = ink();
@@ -213,7 +213,7 @@ void main() {
         tester
             .getSize(find.byKey(const ValueKey('student-nav-quick-action')))
             .width,
-        48,
+        56,
       );
       expect(tester.getCenter(plus), plusStart);
       final compact = find.byKey(const ValueKey('student-nav-compact-control'));

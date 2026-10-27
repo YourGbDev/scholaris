@@ -2,7 +2,7 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 
-const kStudentSelectionDuration = Duration(milliseconds: 380);
+const kStudentSelectionDuration = Duration(milliseconds: 420);
 
 /// One retained lens with a leading edge and a lagging trailing edge.
 class StudentSelectionIndicator extends StatefulWidget {
@@ -39,7 +39,7 @@ class _IndicatorState extends State<StudentSelectionIndicator>
       _edge(_fromRight, _toRight, leading: _toRight > _fromRight);
   double _edge(double from, double to, {required bool leading}) {
     final curve = leading
-        ? const Interval(0, .75, curve: Curves.easeOutCubic)
+        ? const Interval(0, .75, curve: Curves.easeOutQuart)
         : const Interval(.15, 1, curve: Curves.easeOutBack);
     return from + (to - from) * curve.transform(_clock.value);
   }
@@ -90,9 +90,9 @@ class _IndicatorState extends State<StudentSelectionIndicator>
           children: [
             Positioned(
               left: left,
-              top: 4 - bulge / 2,
+              top: 5 - bulge / 2,
               width: math.max(0, right - left),
-              height: bounds.maxHeight - 8 + bulge,
+              height: bounds.maxHeight - 10 + bulge,
               child: DecoratedBox(
                 key: const ValueKey('student-nav-moving-indicator'),
                 decoration: BoxDecoration(

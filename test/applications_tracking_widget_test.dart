@@ -227,7 +227,7 @@ void main() {
       expect(phase(headings).opacity.value, 0);
       expect(phase(rows).opacity.value, 0);
       final scrollState = tester.state<ScrollableState>(find.byType(Scrollable).first);
-      await tester.pump(const Duration(milliseconds: 100));
+      await tester.pump(const Duration(milliseconds: 30));
       expect(phase(headings).opacity.value, 0);
       await tester.pump(const Duration(milliseconds: 60));
       expect(phase(headings).opacity.value, inExclusiveRange(0, 1));
@@ -283,7 +283,7 @@ void main() {
     final banner = find.ancestor(of: find.text('1 Action Needed'), matching: find.byType(StudentTabReveal));
     expect(banner, findsOneWidget);
     expect(tester.widget<StudentTabReveal>(banner).order, 1);
-    await tester.pump(const Duration(milliseconds: 280));
+    await tester.pump(const Duration(milliseconds: 160));
     final bannerFade = find.descendant(of: banner, matching: find.byType(FadeTransition)).first;
     expect(tester.widget<FadeTransition>(bannerFade).opacity.value, greaterThan(0));
     final card = find.byWidgetPredicate((w) => w is StudentTabReveal && w.order == 2 && !w.structural);
@@ -307,7 +307,7 @@ void main() {
     expect(reveal, findsOneWidget);
     final fade = find.descendant(of: reveal, matching: find.byType(FadeTransition)).first;
     expect(tester.widget<FadeTransition>(fade).opacity.value, 0);
-    await tester.pump(const Duration(milliseconds: 200));
+    await tester.pump(const Duration(milliseconds: 100));
     expect(tester.widget<FadeTransition>(fade).opacity.value, 0);
     await tester.pumpAndSettle();
     expect(tester.widget<FadeTransition>(fade).opacity.value, 1);

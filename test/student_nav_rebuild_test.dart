@@ -60,7 +60,7 @@ void main() {
 
     // Also verify nav overlay bounds and height equality
     final sizedBox58Finder = find.byWidgetPredicate(
-      (w) => w is SizedBox && w.height == 58.0 && w.width == null,
+      (w) => w is SizedBox && w.height == 62.0 && w.width == null,
     );
     final outerSizedBoxBox = tester.renderObject(sizedBox58Finder.first) as RenderBox;
 
@@ -82,12 +82,12 @@ void main() {
     print('  - 4-Tab Pill bounds: Offset(${pillOffset.dx}, ${pillOffset.dy}) | Size: ${pillRenderBox.size}');
     print('  - "+" Circle bounds: Offset(${plusOffset.dx}, ${plusOffset.dy}) | Size: ${plusRenderBox.size}');
 
-    expect(outerSizedBoxBox.size.height, equals(58.0),
-        reason: 'Outer SizedBox must render at height 58.0.');
-    expect(pillRenderBox.size.height, equals(58.0),
-        reason: '4-Tab pill must render at full 58.0 height.');
-    expect(plusRenderBox.size.height, equals(58.0),
-        reason: '"+" circle must render at full 58.0 height.');
+    expect(outerSizedBoxBox.size.height, equals(62.0),
+        reason: 'Outer SizedBox must render at height 62.0.');
+    expect(pillRenderBox.size.height, equals(62.0),
+        reason: '4-Tab pill must render at full 62.0 height.');
+    expect(plusRenderBox.size.height, equals(62.0),
+        reason: '"+" circle must render at full 62.0 height.');
     expect(pillOffset.dy, equals(plusOffset.dy),
         reason: 'Pill and "+" button must vertically align with identical dy offsets.');
 
@@ -98,7 +98,7 @@ void main() {
 
     final plusIconWidget = tester.widget<Icon>(addIconFinder);
     print('  - "+" Icon color: ${plusIconWidget.color}');
-    expect(plusIconWidget.color, equals(const Color(0xFF141414)),
+    expect(plusIconWidget.color, equals(const Color(0xFF1C1C1E)),
         reason: '"+" icon uses the requested near-black ink.');
 
     // Trace ancestors of the "+" icon up to the LiquidGlass widget

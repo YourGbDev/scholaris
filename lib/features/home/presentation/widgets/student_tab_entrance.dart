@@ -20,7 +20,7 @@ class _StudentTabEntranceState extends State<StudentTabEntrance>
     with SingleTickerProviderStateMixin {
   late final AnimationController _animation = AnimationController(
     vsync: this,
-    duration: const Duration(milliseconds: 650),
+    duration: const Duration(milliseconds: 520),
     value: 1,
   );
   bool get _immediate =>
@@ -76,7 +76,7 @@ class _StudentVisitClock extends InheritedWidget {
       animation != oldWidget.animation;
 }
 
-/// Fade a section in place. Equal order means the same row/phase; long lists
+/// Fade and gently lift a section. Equal order means the same row/phase; long lists
 /// cap their delay so scrolling never waits for a lengthy entrance sequence.
 class StudentTabReveal extends StatelessWidget {
   const StudentTabReveal({
@@ -103,15 +103,15 @@ class StudentTabReveal extends StatelessWidget {
     // The app bar is immediate; headings/heroes lead the lower card rows.
     final isStructure = structural || order == 0;
     final rowCurve = switch (order) {
-      <= 1 => const Interval(.40, .72, curve: Curves.easeOut),
-      2 => const Interval(.55, .88, curve: Curves.easeOut),
-      _ => const Interval(.68, 1, curve: Curves.easeOut),
+      <= 1 => const Interval(.22, .65, curve: Curves.easeOutCubic),
+      2 => const Interval(.36, .82, curve: Curves.easeOutCubic),
+      _ => const Interval(.48, 1, curve: Curves.easeOutCubic),
     };
     final fade = showImmediately
         ? const AlwaysStoppedAnimation<double>(1)
         : isStructure
-        ? CurveTween(curve: const Interval(140 / 650, 260 / 650,
-            curve: Curves.easeOut)).animate(clock.animation)
+        ? CurveTween(curve: const Interval(.08, .40,
+            curve: Curves.easeOutCubic)).animate(clock.animation)
         : CurveTween(
             curve: rowCurve,
           ).animate(clock.animation);
@@ -126,7 +126,10 @@ class StudentTabReveal extends StatelessWidget {
             excluding: hidden,
             child: IgnorePointer(
               ignoring: hidden,
-              child: FadeTransition(opacity: fade, child: child),
+              child: Transform.translate(
+                offset: Offset(0, (showImmediately ? 0 : isStructure ? 6 : 8) * (1 - fade.value)),
+                child: FadeTransition(opacity: fade, child: child),
+              ),
             ),
           ),
         );

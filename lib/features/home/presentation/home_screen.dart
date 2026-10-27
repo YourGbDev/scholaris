@@ -52,13 +52,13 @@ final homeTabIndexProvider = NotifierProvider<HomeTabIndexNotifier, int>(
 );
 
 /// Base font size for student navigation tab labels.
-const double kStudentNavBaseFontSize = 11.0;
-const Color kStudentNavSelectedGreen = Color(0xFF1B6B3A);
+const double kStudentNavBaseFontSize = 10.5;
+const Color kStudentNavSelectedGreen = Color(0xFF1F6338);
 
-// Expand the fixed Cupertino glyph silhouette by .35px per side. Its font
+// Expand the fixed Cupertino glyph silhouette by .15px per side. Its font
 // has no variable weight axis, so Icon.weight would leave these strokes thin.
 List<Shadow> _studentIconStroke(Color ink) => [
-  for (final offset in const [Offset(-.35, 0), Offset(.35, 0), Offset(0, -.35), Offset(0, .35)])
+  for (final offset in const [Offset(-.15, 0), Offset(.15, 0), Offset(0, -.15), Offset(0, .15)])
     Shadow(color: ink, offset: offset),
 ];
 
@@ -199,7 +199,7 @@ bool isStudentNavAccessible(TextScaler textScaler, {double screenWidth = 440.0})
 
 /// Computes the adaptive dock height based on text scaling and screen width.
 /// Respects nonlinear TextScaler using scale(kStudentNavBaseFontSize), not scale(1.0).
-/// Standard 1-row dock: 58.0.
+/// Standard 1-row dock: 62.0.
 /// Accessible mode: total component height including the standalone '+' button (52.0),
 /// vertical gap (8.0), and full-width 2x2 pill dock height.
 double computeStudentDockHeight(dynamic scalerOrScale, {double screenWidth = 440.0}) {
@@ -213,7 +213,7 @@ double computeStudentDockHeight(dynamic scalerOrScale, {double screenWidth = 440
   }
 
   if (!isStudentNavAccessible(textScaler, screenWidth: screenWidth)) {
-    return 58.0;
+    return 62.0;
   }
 
   final scaledFontSize = textScaler.scale(kStudentNavBaseFontSize);
@@ -620,14 +620,14 @@ class StudentBottomNav extends StatelessWidget {
       navDockContent = LayoutBuilder(builder: (context, constraints) {
         // Derive every position from the material's presented width. Reversing
         // the outer animation therefore reverses the icon without a crossfade.
-        final progress = expandedPillWidth <= 52 ? 0.0 :
-            ((expandedPillWidth - constraints.maxWidth) / (expandedPillWidth - 52)).clamp(0.0, 1.0);
+        final progress = expandedPillWidth <= 56 ? 0.0 :
+            ((expandedPillWidth - constraints.maxWidth) / (expandedPillWidth - 56)).clamp(0.0, 1.0);
         if (progress >= .9999) {
           return _StudentNavCompactControl(
             key: const ValueKey('student-nav-compact-control'),
             tabIndex: tabIndex, label: activeTab.label, icon: activeTab.icon,
             selectedIcon: activeTab.selectedIcon, onExpand: onExpand ?? () {},
-            itemHeight: 52, onFocusChange: onNavFocusChange,
+            itemHeight: 56, onFocusChange: onNavFocusChange,
           );
         }
         final cellWidth = expandedPillWidth / 4;
@@ -648,7 +648,7 @@ class StudentBottomNav extends StatelessWidget {
             for (var i = 0; i < 4; i++)
               Positioned(
                 left: i == tabIndex
-                    ? i * cellWidth * (1 - progress) + (26 - cellWidth / 2) * progress
+                    ? i * cellWidth * (1 - progress) + (28 - cellWidth / 2) * progress
                     : i * cellWidth,
                 top: 0, width: cellWidth, height: constraints.maxHeight,
                 child: IgnorePointer(ignoring: effectiveCollapsed,
@@ -806,7 +806,7 @@ class StudentBottomNav extends StatelessWidget {
       dockBody = LayoutBuilder(
         builder: (context, constraints) {
           final maxPillWidth = math.max(0.0, constraints.maxWidth - dockHeight - 8.0);
-          final pillWidth = effectiveCollapsed ? 52.0 : maxPillWidth;
+          final pillWidth = effectiveCollapsed ? 56.0 : maxPillWidth;
           return SizedBox(
             height: dockHeight,
             child: Row(
@@ -819,7 +819,7 @@ class StudentBottomNav extends StatelessWidget {
                       duration: animDuration,
                       curve: Curves.easeInOutCubic,
                       width: pillWidth,
-                      height: effectiveCollapsed ? 52 : dockHeight,
+                      height: effectiveCollapsed ? 56 : dockHeight,
                       child: navDock,
                     ),
                   ),
@@ -932,7 +932,7 @@ class _StudentNavCompactControlState extends State<_StudentNavCompactControl> {
         hint: 'Restores all navigation tabs',
         onTap: widget.onExpand,
         child: SizedBox(
-          width: 52.0,
+          width: 56.0,
           height: widget.itemHeight,
           child: DecoratedBox(
             decoration: _isFocused
@@ -951,9 +951,9 @@ class _StudentNavCompactControlState extends State<_StudentNavCompactControl> {
                 child: Center(
                   child: Icon(
                     widget.selectedIcon,
-                    size: 24,
-                    color: kStudentNavSelectedGreen,
-                    shadows: _studentIconStroke(kStudentNavSelectedGreen),
+                    size: 20.5,
+                    color: const Color(0xFF1C1C1E),
+                    shadows: _studentIconStroke(const Color(0xFF1C1C1E)),
                   ),
                 ),
               ),
@@ -1018,7 +1018,7 @@ class _StudentNavItemState extends State<_StudentNavItem> with SingleTickerProvi
 
   @override
   Widget build(BuildContext context) => TweenAnimationBuilder<Color?>(
-    tween: ColorTween(end: widget.selected ? kStudentNavSelectedGreen : const Color(0xFF1C1C1E)),
+    tween: ColorTween(end: widget.selected ? kStudentNavSelectedGreen : const Color(0xFF25282B)),
     duration: isReducedMotion(context) ? Duration.zero : const Duration(milliseconds: 180),
     curve: Curves.easeOutCubic,
     builder: (context, ink, _) => _buildItem(context, ink!),
@@ -1028,6 +1028,13 @@ class _StudentNavItemState extends State<_StudentNavItem> with SingleTickerProvi
     final screenWidth = MediaQuery.sizeOf(context).width;
     final isNarrow = screenWidth < 360;
     final isVeryNarrow = screenWidth < 340;
+    final labelMetrics = TextPainter(
+      text: TextSpan(text: widget.label, style: outfit(
+        fontSize: kStudentNavBaseFontSize, fontWeight: FontWeight.w500, letterSpacing: -.1)),
+      textDirection: Directionality.of(context), textScaler: MediaQuery.textScalerOf(context),
+    )..layout();
+    final centerOffset = (labelMetrics.height + (widget.isAccessible ? 1 : 3.5)) / 2;
+    labelMetrics.dispose();
 
     return FocusableActionDetector(
       onShowFocusHighlight: (focused) => setState(() => _isFocused = focused),
@@ -1089,15 +1096,15 @@ class _StudentNavItemState extends State<_StudentNavItem> with SingleTickerProvi
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Transform.translate(
-                          offset: Offset(0, widget.collapseProgress * 8.1),
+                          offset: Offset(0, centerOffset * (widget.collapseProgress * 2).clamp(0, 1)),
                           child: Icon(
                           widget.selected ? widget.selectedIcon : widget.icon,
-                          size: widget.isAccessible ? 18.0 : 24,
-                          color: widget.selected ? ink : const Color(0xFF141414),
-                          shadows: _studentIconStroke(widget.selected ? ink : const Color(0xFF141414)),
+                          size: widget.isAccessible ? 18.0 : 20.5,
+                          color: widget.selected ? Color.lerp(ink, const Color(0xFF1C1C1E), widget.collapseProgress) : const Color(0xFF25282B),
+                          shadows: _studentIconStroke(widget.selected ? Color.lerp(ink, const Color(0xFF1C1C1E), widget.collapseProgress)! : const Color(0xFF25282B)),
                         ),
                         ),
-                        SizedBox(height: widget.isAccessible ? 1.0 : 3.0),
+                        SizedBox(height: widget.isAccessible ? 1.0 : 3.5),
                         Opacity(
                           opacity: (1 - widget.collapseProgress * 2).clamp(0.0, 1.0),
                           child: Padding(
@@ -1109,8 +1116,8 @@ class _StudentNavItemState extends State<_StudentNavItem> with SingleTickerProvi
                             softWrap: false,
                             style: outfit(
                               fontSize: kStudentNavBaseFontSize,
-                              fontWeight: FontWeight.w600,
-                              letterSpacing: -.2,
+                              fontWeight: FontWeight.w500,
+                              letterSpacing: -.1,
                               color: ink,
                             ),
                           ),
@@ -1156,9 +1163,9 @@ class _StudentQuickActionButtonState extends State<_StudentQuickActionButton> {
     Widget content = Center(
       child: Icon(
         Icons.add_rounded,
-        color: const Color(0xFF141414),
-        size: 24,
-        shadows: _studentIconStroke(const Color(0xFF141414)),
+        color: const Color(0xFF1C1C1E),
+        size: 21,
+        shadows: _studentIconStroke(const Color(0xFF1C1C1E)),
       ),
     );
 
@@ -1230,8 +1237,8 @@ class _StudentQuickActionButtonState extends State<_StudentQuickActionButton> {
                   child: AnimatedContainer(
                     duration: isReducedMotion(context) ? Duration.zero : kDurationSlow,
                     curve: Curves.easeInOutCubic,
-                    width: widget.isCollapsed ? 48 : widget.size,
-                    height: widget.isCollapsed ? 48 : widget.size,
+                    width: widget.isCollapsed ? 56 : widget.size,
+                    height: widget.isCollapsed ? 56 : widget.size,
                     child: buttonSurface,
                   ),
                 ),

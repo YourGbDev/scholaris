@@ -12,6 +12,9 @@ void main() {
       )
       .opacity
       .value;
+  double glide(WidgetTester tester, String id) => tester.widget<Transform>(
+    find.descendant(of: find.byKey(ValueKey(id)), matching: find.byType(Transform)).first,
+  ).transform.entry(1, 3);
 
   testWidgets('first active visit reveals headings then cards without replaying on rebuild', (tester) async {
     Widget host({bool reduced = false, bool accessible = false}) => MaterialApp(
@@ -29,12 +32,18 @@ void main() {
     await tester.pumpWidget(host());
     expect(opacity(tester, 'initial-heading'), 0);
     expect(opacity(tester, 'initial-card'), 0);
+    expect(glide(tester, 'initial-heading'), 6);
+    expect(glide(tester, 'initial-card'), 8);
     await tester.pump(const Duration(milliseconds: 160));
     expect(opacity(tester, 'initial-heading'), inExclusiveRange(0, 1));
-    expect(opacity(tester, 'initial-card'), 0);
+    expect(opacity(tester, 'initial-card'), inExclusiveRange(0, 1));
+    expect(glide(tester, 'initial-heading'), inExclusiveRange(0, 6));
+    expect(glide(tester, 'initial-card'), inExclusiveRange(0, 8));
     await tester.pump(const Duration(milliseconds: 120));
     expect(opacity(tester, 'initial-card'), inExclusiveRange(0, 1));
     await tester.pumpAndSettle();
+    expect(glide(tester, 'initial-heading'), 0);
+    expect(glide(tester, 'initial-card'), 0);
     await tester.pumpWidget(host());
     expect(opacity(tester, 'initial-card'), 1);
     // A new shell after another login gets its own entrance.
@@ -47,6 +56,7 @@ void main() {
       await tester.pumpWidget(host(reduced: !accessible, accessible: accessible));
       expect(opacity(tester, 'initial-heading'), 1);
       expect(opacity(tester, 'initial-card'), 1);
+      expect(glide(tester, 'initial-card'), 0);
       expect(tester.hasRunningAnimations, isFalse);
     }
   });
@@ -96,7 +106,7 @@ void main() {
     expect(opacity(tester, 'heading'), 0);
     expect(opacity(tester, 'row'), 0);
     await tester.pump(const Duration(milliseconds: 100));
-    expect(opacity(tester, 'heading'), 0);
+    expect(opacity(tester, 'heading'), inExclusiveRange(0, 1));
     await tester.pump(const Duration(milliseconds: 60));
     expect(opacity(tester, 'heading'), inExclusiveRange(0, 1));
     expect(opacity(tester, 'row'), 0);
@@ -171,21 +181,21 @@ void main() {
       await tester.pumpWidget(host(false));
       await tester.pumpWidget(host(true));
       expect(opacity(tester, 'bell'), 1);
-      await tester.pump(const Duration(milliseconds: 100));
+      await tester.pump(const Duration(milliseconds: 30));
       expect(opacity(tester, 'title'), 0);
       expect(opacity(tester, 'section'), 0);
-      await tester.pump(const Duration(milliseconds: 100));
+      await tester.pump(const Duration(milliseconds: 60));
       expect(opacity(tester, 'title'), inExclusiveRange(0, 1));
       expect(opacity(tester, 'section'), inExclusiveRange(0, 1));
       expect(opacity(tester, 'first'), 0);
-      await tester.pump(const Duration(milliseconds: 80));
-      expect(opacity(tester, 'title'), 1);
+      await tester.pump(const Duration(milliseconds: 60));
+      expect(opacity(tester, 'title'), inExclusiveRange(0, 1));
       expect(opacity(tester, 'first'), inExclusiveRange(0, 1));
       expect(opacity(tester, 'second'), 0);
-      await tester.pump(const Duration(milliseconds: 100));
+      await tester.pump(const Duration(milliseconds: 60));
       expect(opacity(tester, 'second'), inExclusiveRange(0, 1));
       expect(opacity(tester, 'third'), 0);
-      await tester.pump(const Duration(milliseconds: 90));
+      await tester.pump(const Duration(milliseconds: 140));
       expect(opacity(tester, 'third'), inExclusiveRange(0, 1));
       expect(opacity(tester, 'first'), 1);
       await tester.pumpAndSettle();

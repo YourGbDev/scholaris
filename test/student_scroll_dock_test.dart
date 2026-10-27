@@ -319,8 +319,8 @@ void main() {
 
       // The visible circle shrinks inside its fixed right-hand touch slot.
       expect(collapsedPlusRect.center, equals(expandedPlusRect.center));
-      expect(collapsedPlusRect.width, equals(48));
-      expect(collapsedPlusRect.height, equals(48));
+      expect(collapsedPlusRect.width, equals(56));
+      expect(collapsedPlusRect.height, equals(56));
     });
 
     testWidgets('9. Content clearance is 100% constant and stable between states',
@@ -349,7 +349,7 @@ void main() {
 
       // Clearance must be identical, preventing layout jumping or oscillation
       expect(clearanceCollapsed, equals(clearanceExpanded));
-      expect(clearanceExpanded, equals(16.0 + 58.0 + 16.0)); // 90.0px
+      expect(clearanceExpanded, equals(16.0 + 62.0 + 16.0)); // 90.0px
     });
 
     testWidgets('10. Keyboard focus / traversal restores all 4 tabs',

@@ -333,15 +333,15 @@ class ScholarshipCard extends StatelessWidget {
                           ),
                         ],
                       ),
-                      const SizedBox(height: 8),
+                      const SizedBox(height: 10),
 
                       // 4. Award Highlight Tile matching Stitch V2
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                         decoration: BoxDecoration(
-                          color: const Color(0xFFF1F3FF), // kSurfaceContainerLow
+                          color: const Color(0xFFF2F6F3), // Soft sage porcelain container
                           borderRadius: BorderRadius.circular(10),
-                          border: Border.all(color: const Color(0x0A161C27), width: 0.75),
+                          border: Border.all(color: const Color(0x140F4D2E), width: 0.75),
                         ),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -425,9 +425,9 @@ class ScholarshipCard extends StatelessWidget {
                               vertical: 3,
                             ),
                             decoration: BoxDecoration(
-                              color: const Color(0xFFF1F3FF),
+                              color: const Color(0xFFF4F6F4),
                               borderRadius: BorderRadius.circular(6),
-                              border: Border.all(color: const Color(0x0A161C27), width: 0.75),
+                              border: Border.all(color: const Color(0x0F161C27), width: 0.75),
                             ),
                             child: Text(
                               c,
@@ -482,7 +482,8 @@ class ScholarshipCard extends StatelessWidget {
                                       extra: scholarship,
                                     ),
                                     style: TextButton.styleFrom(
-                                      backgroundColor: const Color(0xFFE3E8F9), // kSurfaceContainerHigh
+                                      backgroundColor: const Color(0xFFF4F6F8),
+                                        side: const BorderSide(color: Color(0x0F161C27), width: 0.75),
                                       foregroundColor: const Color(0xFF161C27),
                                       shape: RoundedRectangleBorder(
                                         borderRadius: BorderRadius.circular(10),
@@ -569,7 +570,8 @@ class ScholarshipCard extends StatelessWidget {
                                 extra: scholarship,
                               ),
                               style: TextButton.styleFrom(
-                                backgroundColor: const Color(0xFFE3E8F9), // kSurfaceContainerHigh
+                                backgroundColor: const Color(0xFFF4F6F8),
+                                        side: const BorderSide(color: Color(0x0F161C27), width: 0.75),
                                 foregroundColor: const Color(0xFF161C27),
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(10),
@@ -760,12 +762,12 @@ class _DeadlineChip extends StatelessWidget {
       fg = const Color(0xFF707971);
       icon = Icons.block_rounded;
     } else if (urgent) {
-      bg = const Color(0xFFFFDAD6); // error-container
-      fg = const Color(0xFF93000A); // on-error-container
+      bg = const Color(0xFFFFF0EE);
+      fg = const Color(0xFFC62828);
       icon = Icons.hourglass_top_rounded;
     } else {
-      bg = const Color(0xFFF1F3FF); // surface-container-low
-      fg = const Color(0xFF436084); // secondary
+      bg = const Color(0xFFF4F6F8);
+      fg = const Color(0xFF436084);
       icon = Icons.event_rounded;
     }
 
@@ -774,6 +776,7 @@ class _DeadlineChip extends StatelessWidget {
       decoration: BoxDecoration(
         color: bg,
         borderRadius: BorderRadius.circular(6),
+        border: Border.all(color: urgent ? const Color(0x33FF6F59) : const Color(0x0A161C27), width: 0.75),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -802,8 +805,9 @@ class _AppliedChip extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
       decoration: BoxDecoration(
-        color: const Color(0xFFD2E4FF), // secondary-fixed
+        color: const Color(0xFFEBF3FE),
         borderRadius: BorderRadius.circular(6),
+        border: Border.all(color: const Color(0x201B3A5C), width: 0.75),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -819,7 +823,7 @@ class _AppliedChip extends StatelessWidget {
             style: outfit(
               fontSize: 10,
               fontWeight: FontWeight.bold,
-              color: const Color(0xFF001C38),
+              color: const Color(0xFF1B3A5C),
             ),
           ),
         ],

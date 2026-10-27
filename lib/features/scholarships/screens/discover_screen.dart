@@ -73,7 +73,7 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
     final totalOpportunities = matchesList.length;
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF9F9FF),
+      backgroundColor: kBackground,
       body: SafeArea(
         bottom: false,
         child: ResponsiveContainer(
@@ -819,14 +819,8 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: const Color(0xFFE2E8E5)),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.04),
-            blurRadius: 10,
-            offset: const Offset(0, 3),
-          ),
-        ],
+        border: kCardBorderCrisp,
+        boxShadow: kCardElevationCrisp,
       ),
       child: Column(
         children: [
@@ -1135,14 +1129,8 @@ class _SearchFieldState extends ConsumerState<_SearchField> {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: const Color(0xFFE2E8E5)),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.03),
-            blurRadius: 6,
-            offset: const Offset(0, 2),
-          ),
-        ],
+        border: kCardBorderCrisp,
+        boxShadow: kCardElevationCrisp,
       ),
       child: TextField(
         controller: _controller,
@@ -1202,14 +1190,8 @@ class _FilterButton extends ConsumerWidget {
             alignment: Alignment.center,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: const Color(0xFFE2E8E5)),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.03),
-                  blurRadius: 6,
-                  offset: const Offset(0, 2),
-                ),
-              ],
+              border: kCardBorderCrisp,
+        boxShadow: kCardElevationCrisp,
             ),
             child: Row(
               mainAxisSize: MainAxisSize.min,
@@ -1284,12 +1266,13 @@ class _StitchCarouselChip extends StatelessWidget {
       bg = const Color(0xFF0F4D2E); // primary-container
       fg = Colors.white;
     } else if (isUrgent) {
-      bg = const Color(0xFFFFDAD6); // error-container
-      fg = const Color(0xFF93000A);
+      bg = const Color(0xFFFFF0EE);
+      fg = const Color(0xFFC62828);
+      border = Border.all(color: const Color(0x33FF6F59), width: 0.75);
     } else {
       bg = Colors.white;
       fg = const Color(0xFF0F172A);
-      border = Border.all(color: const Color(0xFFE2E8E5));
+      border = kCardBorderCrisp;
     }
 
     return PressableScale(
@@ -1304,13 +1287,7 @@ class _StitchCarouselChip extends StatelessWidget {
               color: bg,
               borderRadius: BorderRadius.circular(20),
               border: border,
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.03),
-                  blurRadius: 4,
-                  offset: const Offset(0, 1.5),
-                ),
-              ],
+              boxShadow: isActive || isUrgent ? null : kCardElevationCrisp,
             ),
             child: Row(
               mainAxisSize: MainAxisSize.min,

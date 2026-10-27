@@ -58,16 +58,16 @@ const Color kErrorSoft = Color(0x14BA1A1A);
 const Color kPrimarySoft = Color(0x140F4D2E);
 
 // Surfaces & Neutrals
-const Color kBackground = Color(0xFFF9F9FF);
-const Color kSurface = Color(0xFFF9F9FF);
+const Color kBackground = Color(0xFFFFFFFF);
+const Color kSurface = Color(0xFFFFFFFF);
 const Color kSurfaceDim = Color(0xFFD4DAEA);
-const Color kSurfaceBright = Color(0xFFF9F9FF);
+const Color kSurfaceBright = Color(0xFFFFFFFF);
 const Color kSurfaceContainerLowest = Color(0xFFFFFFFF);
 const Color kSurfaceContainerLow = Color(0xFFF1F3FF);
 const Color kSurfaceContainer = Color(0xFFE8EEFF);
 const Color kSurfaceContainerHigh = Color(0xFFE3E8F9);
 const Color kSurfaceContainerHighest = Color(0xFFDDE2F3);
-const Color kSurfaceWarm = Color(0xFFF9F9FF);
+const Color kSurfaceWarm = Color(0xFFFFFFFF);
 const Color kSurfaceCard = Color(0xFFFFFFFF);
 
 // Content & Outlines

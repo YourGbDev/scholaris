@@ -100,7 +100,7 @@ class _StudentDashboardScreenState
     }
 
     return Scaffold(
-      backgroundColor: const Color(0xFFFAFAF8),
+      backgroundColor: kBackground,
       body: SafeArea(
         bottom: false,
         child: ResponsiveContainer(
@@ -379,16 +379,17 @@ class _StudentDashboardScreenState
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
             decoration: BoxDecoration(
-              color: bgColor.withValues(alpha: 0.35),
+              color: Colors.white,
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: bgColor),
+              border: kCardBorderCrisp,
+              boxShadow: kCardElevationCrisp,
             ),
             child: Row(
               children: [
                 Container(
                   padding: const EdgeInsets.all(6),
                   decoration: BoxDecoration(
-                    color: bgColor,
+                    color: app.status == ApplicationStatus.underReview ? const Color(0xFFFEF3D6) : bgColor.withValues(alpha: 0.25),
                     shape: BoxShape.circle,
                   ),
                   child: Icon(icon, size: 16, color: iconColor),
@@ -903,9 +904,10 @@ class _StudentDashboardScreenState
       key: const ValueKey('eli-advice-card'),
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
       decoration: BoxDecoration(
-        color: const Color(0xFFFFDAD6), // error-container
+        color: Colors.white,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: const Color(0xFFFFB4AB)),
+        border: Border.all(color: const Color(0x29BA1A1A), width: 0.75),
+        boxShadow: kCardElevationCrisp,
       ),
       child: Row(
         children: [
@@ -918,7 +920,7 @@ class _StudentDashboardScreenState
             child: const Icon(
               Icons.priority_high_rounded,
               size: 16,
-              color: Colors.white,
+              color: Color(0xFFD32F2F),
             ),
           ),
           const SizedBox(width: 12),
@@ -938,7 +940,7 @@ class _StudentDashboardScreenState
                           style: outfit(
                             fontSize: 13,
                             fontWeight: FontWeight.bold,
-                            color: const Color(0xFF93000A),
+                            color: const Color(0xFFC62828),
                           ),
                         ),
                       ),
@@ -953,7 +955,7 @@ class _StudentDashboardScreenState
                           style: outfit(
                             fontSize: 11,
                             fontWeight: FontWeight.w600,
-                            color: const Color(0xFF5D4200),
+                            color: const Color(0xFF8A5B00),
                           ),
                         ),
                       ),
@@ -1005,7 +1007,7 @@ class _StudentDashboardScreenState
               style: outfit(
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
-                color: const Color(0xFF93000A),
+                color: const Color(0xFFC62828),
                 letterSpacing: -0.32,
               ),
             ),
@@ -1154,7 +1156,7 @@ class _StatCard extends StatelessWidget {
     return PressableScale(
       child: Material(
         key: itemKey,
-        color: isUrgent ? const Color(0xFFFFF7E7) : Colors.white,
+        color: Colors.white,
         borderRadius: BorderRadius.circular(12),
         child: InkWell(
           borderRadius: BorderRadius.circular(12),
@@ -1166,9 +1168,7 @@ class _StatCard extends StatelessWidget {
             padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 8),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(12),
-              border: isUrgent
-                  ? Border.all(color: const Color(0x33F1B41E), width: 0.75)
-                  : kCardBorderCrisp,
+              border: isUrgent ? Border.all(color: const Color(0x33F1B41E), width: 0.75) : kCardBorderCrisp,
               boxShadow: kCardElevationCrisp,
             ),
             child: Column(
@@ -1181,13 +1181,13 @@ class _StatCard extends StatelessWidget {
                       width: 26,
                       height: 26,
                       decoration: BoxDecoration(
-                        color: isUrgent ? const Color(0xFFFFE8B5) : iconBg,
+                        color: isUrgent ? const Color(0xFFFEF3D6) : iconBg,
                         shape: BoxShape.circle,
                       ),
                       child: Icon(
                         icon,
                         size: 16,
-                        color: isUrgent ? const Color(0xFF785400) : iconColor,
+                        color: isUrgent ? const Color(0xFFB47800) : iconColor,
                       ),
                     ),
                     const SizedBox(width: 8),
@@ -1199,9 +1199,7 @@ class _StatCard extends StatelessWidget {
                           style: outfit(
                             fontSize: 20,
                             fontWeight: FontWeight.bold,
-                            color: isUrgent
-                                ? const Color(0xFF694A00)
-                                : const Color(0xFF161C27),
+                            color: const Color(0xFF161C27),
                           ),
                         ),
                       ),
@@ -1232,9 +1230,7 @@ class _StatCard extends StatelessWidget {
                   style: openSans(
                     fontSize: 11,
                     fontWeight: FontWeight.w600,
-                    color: isUrgent
-                        ? const Color(0xFF785400)
-                        : const Color(0xFF404942),
+                    color: isUrgent ? const Color(0xFF8A5B00) : const Color(0xFF404942),
                   ),
                 ),
               ],

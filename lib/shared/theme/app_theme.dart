@@ -101,6 +101,28 @@ const double kSpaceMd = 24.0;
 
 const Color kCardShadow = Color(0x0A1B3A5C);
 
+/// Hairline border token for crisp high-DPI surfaces (Tarsi aesthetic: 6% neutral ink)
+const BorderSide kHairlineBorderSide = BorderSide(
+  color: Color(0x0F161C27),
+  width: 0.75,
+);
+
+const Border kCardBorderCrisp = Border.fromBorderSide(kHairlineBorderSide);
+
+/// Dual-layer optical elevation: crisp resting contact shadow + soft ambient depth
+const List<BoxShadow> kCardElevationCrisp = [
+  BoxShadow(
+    color: Color(0x06161C27), // 2.5% tight contact shadow
+    blurRadius: 2,
+    offset: Offset(0, 1),
+  ),
+  BoxShadow(
+    color: Color(0x081B3A5C), // 3% diffuse ambient elevation
+    blurRadius: 10,
+    offset: Offset(0, 3),
+  ),
+];
+
 const LinearGradient kHeroSurface = LinearGradient(
   begin: Alignment.topLeft,
   end: Alignment.bottomRight,

@@ -199,14 +199,8 @@ class ScholarshipCard extends StatelessWidget {
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(kRadiusCard),
-              border: Border.all(color: const Color(0xFFE2E8E5), width: 1),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.04),
-                  blurRadius: 10,
-                  offset: const Offset(0, 3),
-                ),
-              ],
+              border: kCardBorderCrisp,
+              boxShadow: kCardElevationCrisp,
             ),
             child: Stack(
               children: [
@@ -228,7 +222,7 @@ class ScholarshipCard extends StatelessWidget {
                 ),
 
                 Padding(
-                  padding: const EdgeInsets.fromLTRB(16, 14, 14, 12),
+                  padding: const EdgeInsets.fromLTRB(16, 14, 16, 14),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -307,9 +301,10 @@ class ScholarshipCard extends StatelessWidget {
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                         style: outfit(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
+                          fontSize: 15.5,
+                          fontWeight: FontWeight.w600,
                           color: const Color(0xFF161C27),
+                          letterSpacing: -0.15,
                           height: 1.25,
                         ),
                       ),
@@ -345,7 +340,8 @@ class ScholarshipCard extends StatelessWidget {
                         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                         decoration: BoxDecoration(
                           color: const Color(0xFFF1F3FF), // kSurfaceContainerLow
-                          borderRadius: BorderRadius.circular(8),
+                          borderRadius: BorderRadius.circular(10),
+                          border: Border.all(color: const Color(0x0A161C27), width: 0.75),
                         ),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -366,10 +362,10 @@ class ScholarshipCard extends StatelessWidget {
                                     Text(
                                       amount,
                                       style: outfit(
-                                        fontSize: 18.5,
-                                        fontWeight: FontWeight.bold,
+                                        fontSize: 17,
+                                        fontWeight: FontWeight.w600,
                                         color: const Color(0xFF0F4D2E), // kPrimary
-                                        letterSpacing: -0.5,
+                                        letterSpacing: -0.2,
                                       ),
                                     ),
                                     const SizedBox(width: 4),
@@ -431,12 +427,13 @@ class ScholarshipCard extends StatelessWidget {
                             decoration: BoxDecoration(
                               color: const Color(0xFFF1F3FF),
                               borderRadius: BorderRadius.circular(6),
+                              border: Border.all(color: const Color(0x0A161C27), width: 0.75),
                             ),
                             child: Text(
                               c,
                               style: outfit(
                                 fontSize: 11,
-                                fontWeight: FontWeight.w600,
+                                fontWeight: FontWeight.w500,
                                 color: const Color(0xFF404942),
                               ),
                             ),
@@ -488,7 +485,7 @@ class ScholarshipCard extends StatelessWidget {
                                       backgroundColor: const Color(0xFFE3E8F9), // kSurfaceContainerHigh
                                       foregroundColor: const Color(0xFF161C27),
                                       shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(8),
+                                        borderRadius: BorderRadius.circular(10),
                                       ),
                                       padding: const EdgeInsets.symmetric(horizontal: 6),
                                     ),
@@ -528,7 +525,7 @@ class ScholarshipCard extends StatelessWidget {
                                       foregroundColor: Colors.white,
                                       elevation: 0,
                                       shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(8),
+                                        borderRadius: BorderRadius.circular(10),
                                       ),
                                       padding: const EdgeInsets.symmetric(horizontal: 6),
                                     ),
@@ -575,7 +572,7 @@ class ScholarshipCard extends StatelessWidget {
                                 backgroundColor: const Color(0xFFE3E8F9), // kSurfaceContainerHigh
                                 foregroundColor: const Color(0xFF161C27),
                                 shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(8),
+                                  borderRadius: BorderRadius.circular(10),
                                 ),
                                 padding: const EdgeInsets.symmetric(horizontal: 6),
                               ),

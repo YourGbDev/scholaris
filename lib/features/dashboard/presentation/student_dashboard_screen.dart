@@ -1166,19 +1166,10 @@ class _StatCard extends StatelessWidget {
             padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 8),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(
-                color: isUrgent
-                    ? const Color(0xFFE9D8AD)
-                    : const Color(0xFFE2E8F3),
-                width: 1,
-              ),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.02),
-                  blurRadius: 6,
-                  offset: const Offset(0, 2),
-                ),
-              ],
+              border: isUrgent
+                  ? Border.all(color: const Color(0x33F1B41E), width: 0.75)
+                  : kCardBorderCrisp,
+              boxShadow: kCardElevationCrisp,
             ),
             child: Column(
               mainAxisSize: MainAxisSize.min,

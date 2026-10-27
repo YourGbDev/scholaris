@@ -608,8 +608,8 @@ class _StudentDashboardScreenState
             itemKey: const ValueKey('stat-chip-saved'),
             countKey: const ValueKey('stat-count-saved'),
             icon: Icons.bookmark_rounded,
-            iconBg: const Color(0xFFF1F3FF),
-            iconColor: const Color(0xFF436084),
+            iconBg: const Color(0xFFEFF6FF),
+            iconColor: const Color(0xFF2563EB),
             count: '${info.savedCount}',
             label: 'Saved',
             onTap: () {
@@ -627,8 +627,8 @@ class _StudentDashboardScreenState
             itemKey: const ValueKey('stat-chip-applied'),
             countKey: const ValueKey('stat-count-applied'),
             icon: Icons.pending_actions_rounded,
-            iconBg: const Color(0xFFF1F3FF),
-            iconColor: const Color(0xFF436084),
+            iconBg: const Color(0xFFF3E8FF),
+            iconColor: const Color(0xFF7C3AED),
             count: '$appliedCount',
             label: 'In Progress',
             onTap: () {
@@ -644,8 +644,8 @@ class _StudentDashboardScreenState
             itemKey: const ValueKey('stat-chip-urgent'),
             countKey: const ValueKey('stat-count-closing-soon'),
             icon: Icons.notification_important_rounded,
-            iconBg: const Color(0xFFFFDAD6),
-            iconColor: const Color(0xFFBA1A1A),
+            iconBg: const Color(0xFFFEF3D6),
+            iconColor: const Color(0xFFD97706),
             count: urgentCount > 0 ? '$urgentCount Action' : '0 Action',
             rawCount: '$urgentCount',
             label: urgentCount > 0 ? 'Closing soon' : 'Up to date',
@@ -920,7 +920,7 @@ class _StudentDashboardScreenState
             child: const Icon(
               Icons.priority_high_rounded,
               size: 16,
-              color: Color(0xFFD32F2F),
+              color: Colors.white,
             ),
           ),
           const SizedBox(width: 12),
@@ -1167,8 +1167,9 @@ class _StatCard extends StatelessWidget {
           child: Container(
             padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 8),
             decoration: BoxDecoration(
+              color: Colors.white,
               borderRadius: BorderRadius.circular(12),
-              border: isUrgent ? Border.all(color: const Color(0x33F1B41E), width: 0.75) : kCardBorderCrisp,
+              border: kCardBorderCrisp,
               boxShadow: kCardElevationCrisp,
             ),
             child: Column(
@@ -1187,7 +1188,7 @@ class _StatCard extends StatelessWidget {
                       child: Icon(
                         icon,
                         size: 16,
-                        color: isUrgent ? const Color(0xFFB47800) : iconColor,
+                        color: isUrgent ? const Color(0xFFD97706) : iconColor,
                       ),
                     ),
                     const SizedBox(width: 8),

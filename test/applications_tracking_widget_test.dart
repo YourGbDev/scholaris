@@ -190,7 +190,8 @@ void main() {
     addTearDown(tester.view.reset);
     final gate = Completer<List<Map<String, dynamic>>>();
     await tester.pumpWidget(_wrapHomeScreen(scholarships: _DelayedScholarships(gate)));
-    await tester.pump(const Duration(milliseconds: 600));
+    // First login now runs the same 850ms visit clock as tab switches.
+    await tester.pump(const Duration(milliseconds: 900));
     gate.complete(FakeScholarshipDataSource.defaultRows);
     for (var i = 0; i < 6; i++) { await tester.pump(); }
     expect(find.byType(CrossFadeLoading), findsNothing,
@@ -217,7 +218,7 @@ void main() {
     for (final tab in ['discover', 'tracker', 'profile', 'home']) {
       await tester.tap(find.byKey(ValueKey('student-nav-$tab')));
       await tester.pump();
-      final headings = find.byWidgetPredicate((w) => w is StudentTabReveal && w.order == 0);
+      final headings = find.byWidgetPredicate((w) => w is StudentTabReveal && w.order == 0 && !w.immediate);
       final rows = find.byWidgetPredicate((w) => w is StudentTabReveal && w.order >= 3);
       expect(headings, findsWidgets, reason: '$tab heading must join the shared visit clock');
       expect(rows, findsWidgets, reason: '$tab content rows must have their own fade phase');
@@ -226,14 +227,55 @@ void main() {
       expect(phase(headings).opacity.value, 0);
       expect(phase(rows).opacity.value, 0);
       final scrollState = tester.state<ScrollableState>(find.byType(Scrollable).first);
-      await tester.pump(const Duration(milliseconds: 90));
-      expect(phase(headings).opacity.value, greaterThan(0));
+      await tester.pump(const Duration(milliseconds: 120));
+      expect(phase(headings).opacity.value, 0);
+      await tester.pump(const Duration(milliseconds: 240));
+      expect(phase(headings).opacity.value, 1);
       expect(phase(rows).opacity.value, 0);
+      final structuralTitles = tab == 'profile'
+          ? ['Verified Credentials', 'Documents & Quick Actions', 'Account & Settings']
+          : tab == 'discover'
+          ? ['Browse all scholarships']
+          : <String>[];
+      for (final title in structuralTitles) {
+        final text = find.text(title, skipOffstage: false);
+        if (text.evaluate().isEmpty) continue;
+        var hasStructuralReveal = false;
+        text.evaluate().first.visitAncestorElements((element) {
+          final widget = element.widget;
+          if (widget is StudentTabReveal && !widget.immediate) {
+            hasStructuralReveal = widget.structural || widget.order == 0;
+            return false;
+          }
+          return true;
+        });
+        expect(hasStructuralReveal, isTrue, reason: '$title must appear before cards');
+      }
       await tester.pumpAndSettle();
       expect(phase(rows).opacity.value, 1);
       expect(tester.state<ScrollableState>(find.byType(Scrollable).first), same(scrollState));
       expect(tester.takeException(), isNull);
     }
+  });
+
+  testWidgets('cached empty tracker waits for the tab reveal', (tester) async {
+    tester.view.physicalSize = const Size(800, 1200);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+    await tester.pumpWidget(_wrapHomeScreen());
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const ValueKey('student-nav-tracker')));
+    await tester.pump();
+    final empty = find.text('No applications yet');
+    expect(empty, findsOneWidget);
+    final reveal = find.ancestor(of: empty, matching: find.byType(StudentTabReveal));
+    expect(reveal, findsOneWidget);
+    final fade = find.descendant(of: reveal, matching: find.byType(FadeTransition)).first;
+    expect(tester.widget<FadeTransition>(fade).opacity.value, 0);
+    await tester.pump(const Duration(milliseconds: 350));
+    expect(tester.widget<FadeTransition>(fade).opacity.value, 0);
+    await tester.pumpAndSettle();
+    expect(tester.widget<FadeTransition>(fade).opacity.value, 1);
   });
 
   group('Applications tab navigation', () {

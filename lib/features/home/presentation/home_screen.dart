@@ -71,6 +71,14 @@ const double kStudentNavGlassBlur = 5.5;
 // Preserve finer background detail through the dock; keep '+' material unchanged.
 const double kStudentNavDockGlassBlur = 0.5;
 const double kStudentNavDockGlassTintOpacity = 0.14;
+// A defined silhouette over busy content, without blurring away its detail.
+const List<BoxShadow> kStudentNavDockGlassShadow = [
+  BoxShadow(color: Color(0x2417251D), blurRadius: 4, offset: Offset(0, 2)),
+  BoxShadow(color: Color(0x0C17251D), blurRadius: 12, offset: Offset(0, 4)),
+];
+const Border kStudentNavDockGlassBorder = Border.fromBorderSide(
+  BorderSide(color: Color(0x28747775), width: .75),
+);
 const double kStudentNavGlassSaturation = 1.3;
 const Color kStudentNavGlassLightEdge = Color(0xB3FFFFFF); // 70% white specular top highlight
 
@@ -816,10 +824,10 @@ class StudentBottomNav extends StatelessWidget {
                     blur: dockBlur ?? kStudentNavDockGlassBlur,
                     saturation: kStudentNavGlassSaturation,
                     tintOpacity: dockTintOpacity ?? kStudentNavDockGlassTintOpacity,
-                    border: kStudentNavGlassBorder,
+                    border: kStudentNavDockGlassBorder,
                     showLightEdge: false,
                     preserveBlurWithReducedMotion: true,
-                    boxShadow: kStudentNavGlassShadow,
+                    boxShadow: kStudentNavDockGlassShadow,
                     child: const SizedBox.expand(),
                   ),
                 ),

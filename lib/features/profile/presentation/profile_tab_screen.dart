@@ -55,21 +55,21 @@ class ProfileTabScreen extends ConsumerWidget {
         bottom: false,
         child: ResponsiveContainer(
           child: profileAsync.when(
-            loading: () => CrossFadeLoading(
+            loading: () => StudentTabReveal(order: 3, child: CrossFadeLoading(
               isLoading: true,
               skeleton: _buildProfileSkeleton(context),
               child: const SizedBox.shrink(),
-            ),
-            error: (error, stackTrace) => ErrorView(
+            )),
+            error: (error, stackTrace) => StudentTabReveal(order: 3, child: ErrorView(
               message: 'We could not load your profile.',
               onRetry: () => ref.invalidate(currentProfileProvider),
-            ),
+            )),
             data: (profile) => profile == null
-                ? const EmptyView(
+                ? const StudentTabReveal(order: 3, child: EmptyView(
                     icon: Icons.person_outline_rounded,
                     title: 'No profile yet',
                     message: 'Complete your profile to start matching.',
-                  )
+                  ))
                 : _buildProfileContent(context, ref, profile),
           ),
         ),
@@ -126,11 +126,15 @@ class ProfileTabScreen extends ConsumerWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           // Stitch Top Bar
-          StudentTabReveal(order: 0, child: _buildTopBar(context)),
+          StudentTabReveal(order: 0,
+            immediate: true,
+            child: _buildTopBar(context)),
           const SizedBox(height: 14),
 
           // Section Title & Settings Button
-          StudentTabReveal(order: 0, child: _buildHeader(context)),
+          StudentTabReveal(order: 0,
+            immediate: true,
+            child: _buildHeader(context)),
           const SizedBox(height: 14),
 
           // Profile Hero Card
@@ -146,11 +150,11 @@ class ProfileTabScreen extends ConsumerWidget {
           const SizedBox(height: 20),
 
           // Documents & Quick Actions Section
-          StudentTabReveal(order: 6, child: _buildDocumentsAndQuickActions(context)),
+          _buildDocumentsAndQuickActions(context),
           const SizedBox(height: 20),
 
           // Account & Settings Section
-          StudentTabReveal(order: 6, child: _buildAccountSection(context)),
+          _buildAccountSection(context),
         ],
       ),
     );
@@ -164,22 +168,31 @@ class ProfileTabScreen extends ConsumerWidget {
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Flexible(child: ScholarisLogo(compact: true)),
+              const Flexible(child: StudentTabReveal(
+                  order: 0,
+                  child: ScholarisLogo(compact: true),
+                )),
               const SizedBox(width: 6),
-              Text(
+              StudentTabReveal(
+                order: 0,
+                child: Text(
                 '/',
                 style: openSans(
                   fontSize: 14,
                   color: kTextSecondary.withValues(alpha: 0.5),
                 ),
               ),
+              ),
               const SizedBox(width: 6),
-              Text(
+              StudentTabReveal(
+                order: 0,
+                child: Text(
                 'Profile',
                 style: outfit(
                   fontSize: 15,
                   fontWeight: FontWeight.w600,
                   color: kOnSurface,
+                  ),
                 ),
               ),
             ],
@@ -224,7 +237,9 @@ class ProfileTabScreen extends ConsumerWidget {
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         Expanded(
-          child: Column(
+          child: StudentTabReveal(
+            order: 0,
+            child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
@@ -246,6 +261,7 @@ class ProfileTabScreen extends ConsumerWidget {
                 overflow: TextOverflow.ellipsis,
               ),
             ],
+            ),
           ),
         ),
         IconButton(
@@ -441,7 +457,7 @@ class ProfileTabScreen extends ConsumerWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         // Section Header
-        StudentTabReveal(order: 2, child: Builder(
+        StudentTabReveal(order: 2, structural: true, child: Builder(
           builder: (context) {
             final syncedCount = (profile.course.trim().isNotEmpty ? 1 : 0) +
                 (profile.region.trim().isNotEmpty ? 1 : 0) +
@@ -1065,7 +1081,7 @@ class ProfileTabScreen extends ConsumerWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Padding(
+        StudentTabReveal(order: 0, child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 2),
           child: Text(
             'Documents & Quick Actions',
@@ -1075,11 +1091,11 @@ class ProfileTabScreen extends ConsumerWidget {
               color: kOnSurface,
             ),
           ),
-        ),
+        )),
         const SizedBox(height: 10),
 
         // Download Scholaris Passport Button
-        PressableScale(
+        StudentTabReveal(order: 6, child: PressableScale(
           child: Material(
             color: kPrimaryDark,
             borderRadius: BorderRadius.circular(14),
@@ -1151,11 +1167,11 @@ class ProfileTabScreen extends ConsumerWidget {
               ),
             ),
           ),
-        ),
+        )),
         const SizedBox(height: 10),
 
         // Request Verified SUC Transcript Refresh Button
-        PressableScale(
+        StudentTabReveal(order: 6, child: PressableScale(
           child: Material(
             color: kSurfaceContainerHigh,
             borderRadius: BorderRadius.circular(14),
@@ -1204,7 +1220,7 @@ class ProfileTabScreen extends ConsumerWidget {
               ),
             ),
           ),
-        ),
+        )),
       ],
     );
   }
@@ -1213,7 +1229,7 @@ class ProfileTabScreen extends ConsumerWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Padding(
+        StudentTabReveal(order: 0, child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 2),
           child: Text(
             'Account & Settings',
@@ -1223,11 +1239,11 @@ class ProfileTabScreen extends ConsumerWidget {
               color: kOnSurface,
             ),
           ),
-        ),
+        )),
         const SizedBox(height: 10),
 
         // My Applications Navigation Card
-        _buildNavCard(
+        StudentTabReveal(order: 6, child: _buildNavCard(
           context: context,
           icon: Icons.send_outlined,
           title: 'My Applications',
@@ -1237,11 +1253,11 @@ class ProfileTabScreen extends ConsumerWidget {
               builder: (_) => const ApplicationsScreen(),
             ),
           ),
-        ),
+        )),
         const SizedBox(height: 10),
 
         // Account Settings Navigation Card
-        _buildNavCard(
+        StudentTabReveal(order: 6, child: _buildNavCard(
           context: context,
           icon: Icons.manage_accounts_outlined,
           title: 'Account Settings',
@@ -1251,11 +1267,11 @@ class ProfileTabScreen extends ConsumerWidget {
               builder: (_) => const AccountSettingsScreen(),
             ),
           ),
-        ),
+        )),
         const SizedBox(height: 16),
 
         // Action Buttons
-        PressableScale(
+        StudentTabReveal(order: 6, child: PressableScale(
           child: OutlinedButton.icon(
             onPressed: () => context.go('/profile-setup/personal'),
             icon: const Icon(Icons.edit_outlined, size: 18),
@@ -1272,9 +1288,9 @@ class ProfileTabScreen extends ConsumerWidget {
               ),
             ),
           ),
-        ),
+        )),
         const SizedBox(height: 10),
-        PressableScale(
+        StudentTabReveal(order: 6, child: PressableScale(
           child: OutlinedButton.icon(
             key: const ValueKey('profile-logout-button'),
             onPressed: () async {
@@ -1299,7 +1315,7 @@ class ProfileTabScreen extends ConsumerWidget {
               ),
             ),
           ),
-        ),
+        )),
       ],
     );
   }

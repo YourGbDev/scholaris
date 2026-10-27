@@ -55,14 +55,18 @@ class ApplicationsScreen extends ConsumerWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              StudentTabReveal(order: 0, child: Padding(
+              StudentTabReveal(order: 0,
+                immediate: true,
+                child: Padding(
                 padding: const EdgeInsets.fromLTRB(20, 16, 20, 8),
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Expanded(
-                      child: Column(
+                        child: StudentTabReveal(
+                          order: 0,
+                          child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
@@ -94,6 +98,7 @@ class ApplicationsScreen extends ConsumerWidget {
                           ),
                         ],
                       ),
+                    ),
                     ),
                     const SizedBox(width: 8),
                     Container(
@@ -155,16 +160,16 @@ class ApplicationsScreen extends ConsumerWidget {
     final filteredAsync = ref.watch(filteredApplicationsProvider);
 
     return applicationsAsync.when(
-      loading: () => CrossFadeLoading(
+      loading: () => StudentTabReveal(order: 3, child: CrossFadeLoading(
         key: const Key('loading-indicator'),
         isLoading: true,
         skeleton: _buildTrackerSkeleton(),
         child: const SizedBox.shrink(),
-      ),
-      error: (_, _) => ErrorView(
+      )),
+      error: (_, _) => StudentTabReveal(order: 3, child: ErrorView(
         message: 'Could not load your applications.',
         onRetry: () => ref.invalidate(applicationsProvider),
-      ),
+      )),
       data: (applications) {
         if (applications.isEmpty) {
           return RefreshIndicator(
@@ -174,7 +179,7 @@ class ApplicationsScreen extends ConsumerWidget {
               ref.invalidate(scholarshipsProvider);
               await ref.read(applicationsProvider.future);
             },
-            child: const _EmptyApplicationsState(),
+            child: const StudentTabReveal(order: 3, child: _EmptyApplicationsState()),
           );
         }
 
@@ -223,7 +228,8 @@ class ApplicationsScreen extends ConsumerWidget {
               const SizedBox(height: 10),
               StudentTabReveal(order: 1, child: _SummaryBar(applications: applications)),
               const SizedBox(height: 10),
-              StudentTabReveal(order: 2, child: _StatusFilterBar(
+              StudentTabReveal(order: 2,
+                structural: true, child: _StatusFilterBar(
                 counts: counts,
                 selected: status,
                 onSelect: (s) =>
@@ -246,16 +252,16 @@ class ApplicationsScreen extends ConsumerWidget {
                           children: [
                             SizedBox(
                               height: 360,
-                              child: _buildFilteredEmpty(context, ref, status),
+                              child: StudentTabReveal(order: 3, child: _buildFilteredEmpty(context, ref, status)),
                             ),
                           ],
                         )
                       : scholarshipsAsync.when(
-                          loading: () => const LoadingView(),
-                          error: (_, _) => ErrorView(
+                          loading: () => const StudentTabReveal(order: 3, child: LoadingView()),
+                          error: (_, _) => StudentTabReveal(order: 3, child: ErrorView(
                             message: 'Could not load scholarship details.',
                             onRetry: () => ref.invalidate(scholarshipsProvider),
-                          ),
+                          )),
                           data: (_) {
                             return ListView.builder(
                               physics: const AlwaysScrollableScrollPhysics(

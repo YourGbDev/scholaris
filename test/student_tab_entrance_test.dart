@@ -13,6 +13,44 @@ void main() {
       .opacity
       .value;
 
+  testWidgets('first active visit reveals headings then cards without replaying on rebuild', (tester) async {
+    Widget host({bool reduced = false, bool accessible = false}) => MaterialApp(
+      home: MediaQuery(
+        data: MediaQueryData(disableAnimations: reduced, accessibleNavigation: accessible),
+        child: const StudentTabEntrance(
+          active: true,
+          child: Column(children: [
+            StudentTabReveal(key: ValueKey('initial-heading'), order: 0, child: Text('Welcome')),
+            StudentTabReveal(key: ValueKey('initial-card'), order: 1, child: Text('Your scholarships')),
+          ]),
+        ),
+      ),
+    );
+    await tester.pumpWidget(host());
+    expect(opacity(tester, 'initial-heading'), 0);
+    expect(opacity(tester, 'initial-card'), 0);
+    await tester.pump(const Duration(milliseconds: 360));
+    expect(opacity(tester, 'initial-heading'), 1);
+    expect(opacity(tester, 'initial-card'), 0);
+    await tester.pump(const Duration(milliseconds: 60));
+    expect(opacity(tester, 'initial-card'), inExclusiveRange(0, 1));
+    await tester.pumpAndSettle();
+    await tester.pumpWidget(host());
+    expect(opacity(tester, 'initial-card'), 1);
+    // A new shell after another login gets its own entrance.
+    await tester.pumpWidget(const SizedBox());
+    await tester.pumpWidget(host());
+    expect(opacity(tester, 'initial-card'), 0);
+    await tester.pumpAndSettle();
+    for (final accessible in [false, true]) {
+      await tester.pumpWidget(const SizedBox());
+      await tester.pumpWidget(host(reduced: !accessible, accessible: accessible));
+      expect(opacity(tester, 'initial-heading'), 1);
+      expect(opacity(tester, 'initial-card'), 1);
+      expect(tester.hasRunningAnimations, isFalse);
+    }
+  });
+
   testWidgets('heading leads rows in place; revisit retains state and scroll', (
     tester,
   ) async {
@@ -58,7 +96,9 @@ void main() {
     expect(opacity(tester, 'heading'), 0);
     expect(opacity(tester, 'row'), 0);
     await tester.pump(const Duration(milliseconds: 120));
-    expect(opacity(tester, 'heading'), greaterThan(0));
+    expect(opacity(tester, 'heading'), 0);
+    await tester.pump(const Duration(milliseconds: 240));
+    expect(opacity(tester, 'heading'), 1);
     expect(opacity(tester, 'row'), 0);
     expect(scroll.offset, 140);
     expect(
@@ -87,6 +127,64 @@ void main() {
       expect(initializations, 1);
     }
   });
+
+  testWidgets(
+    'structure snaps together before card rows; actions stay available',
+    (tester) async {
+      Widget host(bool active) => MaterialApp(
+        home: StudentTabEntrance(
+          active: active,
+          child: const Column(
+            children: [
+              StudentTabReveal(
+                key: ValueKey('title'),
+                order: 0,
+                child: Text('Title'),
+              ),
+              StudentTabReveal(
+                key: ValueKey('section'),
+                order: 5,
+                structural: true,
+                child: Text('Section'),
+              ),
+              StudentTabReveal(
+                key: ValueKey('first'),
+                order: 1,
+                child: Text('First card'),
+              ),
+              StudentTabReveal(
+                key: ValueKey('second'),
+                order: 2,
+                child: Text('Second card'),
+              ),
+              StudentTabReveal(
+                key: ValueKey('bell'),
+                order: 0,
+                immediate: true,
+                child: Text('Bell'),
+              ),
+            ],
+          ),
+        ),
+      );
+      await tester.pumpWidget(host(false));
+      await tester.pumpWidget(host(true));
+      expect(opacity(tester, 'bell'), 1);
+      await tester.pump(const Duration(milliseconds: 340));
+      expect(opacity(tester, 'title'), 0);
+      expect(opacity(tester, 'section'), 0);
+      await tester.pump(const Duration(milliseconds: 20));
+      expect(opacity(tester, 'title'), 1);
+      expect(opacity(tester, 'section'), 1);
+      expect(opacity(tester, 'first'), 0);
+      await tester.pump(const Duration(milliseconds: 60));
+      expect(opacity(tester, 'first'), inExclusiveRange(0, 1));
+      expect(opacity(tester, 'second'), 0);
+      await tester.pump(const Duration(milliseconds: 50));
+      expect(opacity(tester, 'second'), inExclusiveRange(0, 1));
+      await tester.pumpAndSettle();
+    },
+  );
 
   testWidgets(
     'invisible sections cannot activate; late content and standalone views are immediate',

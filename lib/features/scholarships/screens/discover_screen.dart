@@ -97,15 +97,21 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
               ),
               children: [
                 // 1. Sticky Header
-                StudentTabReveal(order: 0, child: _buildHeader(context, ref, avatarState)),
+                StudentTabReveal(order: 0,
+                  immediate: true,
+                  child: _buildHeader(context, ref, avatarState)),
                 const SizedBox(height: 16),
 
                 // 2. Search & Active Filter Bar
-                StudentTabReveal(order: 1, child: _buildSearchBar(context, ref)),
+                StudentTabReveal(order: 1,
+                  structural: true,
+                  child: _buildSearchBar(context, ref)),
                 const SizedBox(height: 12),
 
                 // 3. Filter Chips Horizontal Carousel
-                StudentTabReveal(order: 1, child: _buildFilterChipsCarousel(
+                StudentTabReveal(order: 1,
+                  structural: true,
+                  child: _buildFilterChipsCarousel(
                   context,
                   ref,
                   state,
@@ -114,16 +120,22 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
                 const SizedBox(height: 12),
 
                 // 4. Applied Criteria Quick-Bar
-                StudentTabReveal(order: 1, child: _buildAppliedCriteriaQuickBar(context, ref, profile, state)),
+                StudentTabReveal(order: 1,
+                  structural: true,
+                  child: _buildAppliedCriteriaQuickBar(context, ref, profile, state)),
 
                 if (state.isActive) ...[
                   const SizedBox(height: 12),
-                  StudentTabReveal(order: 1, child: _buildActiveFilterChips(context, ref, state)),
+                  StudentTabReveal(order: 1,
+                    structural: true,
+                    child: _buildActiveFilterChips(context, ref, state)),
                 ],
                 const SizedBox(height: 20),
 
                 // 5. Opportunity Feed Header
-                StudentTabReveal(order: 2, child: _buildFeedHeader(
+                StudentTabReveal(order: 2,
+                  structural: true,
+                  child: _buildFeedHeader(
                   context,
                   ref,
                   totalOpportunities,
@@ -177,7 +189,9 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         // Scholaris Brand Logo
-        Row(
+        StudentTabReveal(
+          order: 0,
+          child: Row(
           children: [
             Container(
               width: 36,
@@ -212,6 +226,7 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
               ),
             ),
           ],
+          ),
         ),
 
         // Notifications Bell & Profile Avatar
@@ -653,18 +668,18 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
     DiscoveryFilterState state,
   ) {
     return matchesAsync.when(
-        loading: _buildDiscoverSkeleton,
-        error: (err, _) => ErrorView(
+        loading: () => StudentTabReveal(order: 3, child: _buildDiscoverSkeleton()),
+        error: (err, _) => StudentTabReveal(order: 3, child: ErrorView(
           message: 'Could not load your matches.',
           onRetry: () => ref.invalidate(matchesProvider),
-        ),
+        )),
         data: (matches) {
           final browse = browseAsync.valueOrNull ?? const <Scholarship>[];
           if (matches.isEmpty && browse.isEmpty) {
-            return _buildNoResultsEmptyState(context, ref);
+            return StudentTabReveal(order: 3, child: _buildNoResultsEmptyState(context, ref));
           }
           if (matches.isEmpty) {
-            return _buildMatchesEmptyNote(context, ref, state);
+            return StudentTabReveal(order: 3, child: _buildMatchesEmptyNote(context, ref, state));
           }
 
           final profile = ref.watch(currentProfileProvider).valueOrNull;
@@ -749,22 +764,24 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
   ) {
     return browseAsync.when(
       loading: () => const SizedBox.shrink(),
-      error: (err, _) => ErrorView(
+      error: (err, _) => StudentTabReveal(order: 3, child: ErrorView(
         message: 'Could not load the scholarship catalog.',
         onRetry: () => ref.invalidate(scholarshipsProvider),
-      ),
+      )),
       data: (browse) {
         if (browse.isEmpty) return const SizedBox.shrink();
 
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            StudentTabReveal(order: 2, child: SectionHeader(title: 'Browse all scholarships')),
+            StudentTabReveal(order: 2,
+              structural: true,
+              child: SectionHeader(title: 'Browse all scholarships')),
             const SizedBox(height: 4),
-            Text(
+            StudentTabReveal(order: 0, child: Text(
               'Showing ${browse.length} scholarships',
               style: openSans(fontSize: 13, color: const Color(0xFF404942)),
-            ),
+            )),
             const SizedBox(height: 12),
             ListView.separated(
               shrinkWrap: true,

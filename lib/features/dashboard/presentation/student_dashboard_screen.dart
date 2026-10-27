@@ -51,7 +51,9 @@ class StudentDashboardScreen extends ConsumerStatefulWidget {
 class _StudentDashboardScreenState
     extends ConsumerState<StudentDashboardScreen> {
   Widget _wrapSection({required int index, required Widget child}) => StudentTabReveal(
-    order: const [0, 0, 1, 1, 2, 6][index.clamp(0, 5)], child: child);
+    order: const [0, 0, 1, 1, 2, 6][index.clamp(0, 5)],
+        immediate: index == 0,
+        child: child);
 
   @override
   Widget build(BuildContext context) {
@@ -218,7 +220,9 @@ class _StudentDashboardScreenState
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         // Scholaris Brand Logo
-        Row(
+        StudentTabReveal(
+          order: 0,
+          child: Row(
           children: [
             Container(
               width: 36,
@@ -253,6 +257,7 @@ class _StudentDashboardScreenState
               ),
             ),
           ],
+          ),
         ),
 
         // Action Buttons: Notifications Bell & Profile Avatar
@@ -664,7 +669,9 @@ class _StudentDashboardScreenState
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        StudentTabReveal(order: 1, child: Row(
+        StudentTabReveal(order: 1,
+          structural: true,
+          child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Expanded(
@@ -717,14 +724,14 @@ class _StudentDashboardScreenState
         )),
         const SizedBox(height: 12),
         matchesAsync.when(
-            loading: _buildDashboardSkeleton,
+            loading: () => StudentTabReveal(order: 3, child: _buildDashboardSkeleton()),
           error: (_, _) => const SizedBox.shrink(),
           data: (items) {
             final list = items.isNotEmpty
                 ? items.take(3).toList()
                 : (ref.watch(scholarshipsProvider).valueOrNull ?? const <Scholarship>[]).take(3).toList();
             if (list.isEmpty) {
-              return Container(
+              return StudentTabReveal(order: 3, child: Container(
                 padding: const EdgeInsets.all(24),
                 decoration: BoxDecoration(
                   color: Colors.white,
@@ -741,7 +748,7 @@ class _StudentDashboardScreenState
                     ),
                   ),
                 ),
-              );
+              ));
             }
             return Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -981,7 +988,9 @@ class _StudentDashboardScreenState
       key: const ValueKey('closing-soon-section'),
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        StudentTabReveal(order: 2, child: Row(
+        StudentTabReveal(order: 2,
+          structural: true,
+          child: Row(
           children: [
             const Icon(
               Icons.hourglass_top_rounded,

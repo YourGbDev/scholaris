@@ -20,15 +20,20 @@ class _StudentTabEntranceState extends State<StudentTabEntrance>
     with SingleTickerProviderStateMixin {
   late final AnimationController _animation = AnimationController(
     vsync: this,
-    duration: const Duration(milliseconds: 480),
+    duration: const Duration(milliseconds: 850),
     value: 1,
   );
   bool get _immediate =>
       isReducedMotion(context) || MediaQuery.accessibleNavigationOf(context);
+  bool _initialized = false;
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
+    if (!_initialized) {
+      _initialized = true;
+      if (widget.active && !_immediate) _animation.forward(from: 0);
+    }
     if (_immediate) {
       _animation.stop();
       _animation.value = 1;
@@ -74,23 +79,41 @@ class _StudentVisitClock extends InheritedWidget {
 /// Fade a section in place. Equal order means the same row/phase; long lists
 /// cap their delay so scrolling never waits for a lengthy entrance sequence.
 class StudentTabReveal extends StatelessWidget {
-  const StudentTabReveal({super.key, required this.order, required this.child})
-    : assert(order >= 0);
+  const StudentTabReveal({
+    super.key,
+    required this.order,
+    required this.child,
+    this.structural = false,
+    this.immediate = false,
+  }) : assert(order >= 0);
   final int order;
   final Widget child;
+  final bool structural;
+  final bool immediate;
 
   @override
   Widget build(BuildContext context) {
     final clock = context
         .dependOnInheritedWidgetOfExactType<_StudentVisitClock>();
     if (clock == null) return child;
-    final immediate =
-        isReducedMotion(context) || MediaQuery.accessibleNavigationOf(context);
-    final start = order.clamp(0, 6) * .07;
-    final fade = immediate
+    final showImmediately =
+        immediate ||
+        isReducedMotion(context) ||
+        MediaQuery.accessibleNavigationOf(context);
+    // Let the 350ms dock travel finish, then reveal structure sharply and
+    // fade whole card rows in place. One clock also handles interrupted visits.
+    final isStructure = structural || order == 0;
+    final start = (390 + (order.clamp(1, 6) - 1) * 45) / 850;
+    final fade = showImmediately
         ? const AlwaysStoppedAnimation<double>(1)
+        : isStructure
+        ? CurveTween(curve: const Threshold(350 / 850)).animate(clock.animation)
         : CurveTween(
-            curve: Interval(start, start + .5, curve: Curves.easeOutCubic),
+            curve: Interval(
+              start,
+              start + 200 / 850,
+              curve: Curves.easeOutCubic,
+            ),
           ).animate(clock.animation);
     return AnimatedBuilder(
       animation: fade,

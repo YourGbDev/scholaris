@@ -13,9 +13,12 @@ void main() {
   vec2 q = abs(p - halfSize) - halfSize + vec2(radius);
   float distanceToEdge = length(max(q, vec2(0.0))) + min(max(q.x, q.y), 0.0) - radius;
   // Restrict bending to the inner perimeter; the center stays readable.
-  float edge = 1.0 - smoothstep(0.0, 12.0, -distanceToEdge);
-  vec2 normal = normalize((p - halfSize) / max(halfSize, vec2(1.0)) + vec2(0.0001));
-  vec2 uv = (p - normal * edge * uStrength) / uInputSize;
+  float edge = 1.0 - smoothstep(0.0, uStrength * 2.0, -distanceToEdge);
+  // A localized vertical magnification matrix stretches the actual backdrop
+  // in the 10 logical-pixel rim while leaving the core coordinates unchanged.
+  vec2 samplePoint = p;
+  samplePoint.y = halfSize.y + (p.y - halfSize.y) / (1.0 + 0.10 * edge);
+  vec2 uv = samplePoint / uInputSize;
   #ifdef IMPELLER_TARGET_OPENGLES
   uv.y = 1.0 - uv.y;
   #endif

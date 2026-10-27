@@ -220,13 +220,13 @@ class ApplicationsScreen extends ConsumerWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const SizedBox(height: 4),
-              StudentTabReveal(order: 1, child: _PotentialAwardCard(
+              StudentTabReveal(order: 1, structural: true, child: _PotentialAwardCard(
                 totalPotential: totalPotential,
                 applications: applications,
                 counts: counts,
               )),
               const SizedBox(height: 10),
-              StudentTabReveal(order: 1, child: _SummaryBar(applications: applications)),
+              StudentTabReveal(order: 1, structural: true, child: _SummaryBar(applications: applications)),
               const SizedBox(height: 10),
               StudentTabReveal(order: 2,
                 structural: true, child: _StatusFilterBar(
@@ -275,12 +275,13 @@ class ApplicationsScreen extends ConsumerWidget {
                               itemCount: filtered.length +
                                   (urgentApp != null ? 1 : 0),
                               itemBuilder: (context, index) {
+                                final revealOrder = index + 1;
                                 // If urgent banner exists, render it at index 0
                                 if (urgentApp != null && urgentScholarship != null) {
                                   if (index == 0) {
                                     return Padding(
                                       padding: const EdgeInsets.only(bottom: 12),
-                                      child: StudentTabReveal(order: 2, child: _UrgentDeadlineBanner(
+                                      child: StudentTabReveal(order: revealOrder, child: _UrgentDeadlineBanner(
                                         application: urgentApp,
                                         scholarship: urgentScholarship,
                                       )),
@@ -291,7 +292,7 @@ class ApplicationsScreen extends ConsumerWidget {
 
                                 final app = filtered[index];
                                 return StudentTabReveal(
-                                  order: 3 + index,
+                                  order: revealOrder,
                                   child: Padding(
                                     padding: const EdgeInsets.only(bottom: 12),
                                     child: _ApplicationCard(

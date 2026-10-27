@@ -190,7 +190,7 @@ void main() {
     addTearDown(tester.view.reset);
     final gate = Completer<List<Map<String, dynamic>>>();
     await tester.pumpWidget(_wrapHomeScreen(scholarships: _DelayedScholarships(gate)));
-    // First login now runs the same 850ms visit clock as tab switches.
+    // Wait beyond the shared entrance before releasing deliberately late data.
     await tester.pump(const Duration(milliseconds: 900));
     gate.complete(FakeScholarshipDataSource.defaultRows);
     for (var i = 0; i < 6; i++) { await tester.pump(); }
@@ -218,8 +218,8 @@ void main() {
     for (final tab in ['discover', 'tracker', 'profile', 'home']) {
       await tester.tap(find.byKey(ValueKey('student-nav-$tab')));
       await tester.pump();
-      final headings = find.byWidgetPredicate((w) => w is StudentTabReveal && w.order == 0 && !w.immediate);
-      final rows = find.byWidgetPredicate((w) => w is StudentTabReveal && w.order >= 3);
+      final headings = find.byWidgetPredicate((w) => w is StudentTabReveal && (w.order == 0 || w.structural) && !w.immediate);
+      final rows = find.byWidgetPredicate((w) => w is StudentTabReveal && w.order > 0 && !w.structural && !w.immediate);
       expect(headings, findsWidgets, reason: '$tab heading must join the shared visit clock');
       expect(rows, findsWidgets, reason: '$tab content rows must have their own fade phase');
       FadeTransition phase(Finder wrapper) => tester.widget<FadeTransition>(
@@ -227,10 +227,10 @@ void main() {
       expect(phase(headings).opacity.value, 0);
       expect(phase(rows).opacity.value, 0);
       final scrollState = tester.state<ScrollableState>(find.byType(Scrollable).first);
-      await tester.pump(const Duration(milliseconds: 120));
+      await tester.pump(const Duration(milliseconds: 100));
       expect(phase(headings).opacity.value, 0);
-      await tester.pump(const Duration(milliseconds: 240));
-      expect(phase(headings).opacity.value, 1);
+      await tester.pump(const Duration(milliseconds: 60));
+      expect(phase(headings).opacity.value, inExclusiveRange(0, 1));
       expect(phase(rows).opacity.value, 0);
       final structuralTitles = tab == 'profile'
           ? ['Verified Credentials', 'Documents & Quick Actions', 'Account & Settings']
@@ -251,11 +251,46 @@ void main() {
         });
         expect(hasStructuralReveal, isTrue, reason: '$title must appear before cards');
       }
+      await tester.pump(const Duration(milliseconds: 120));
+      expect(phase(headings).opacity.value, 1);
+      expect(phase(rows).opacity.value, greaterThan(0), reason: '$tab first lower row starts at 260ms');
       await tester.pumpAndSettle();
       expect(phase(rows).opacity.value, 1);
       expect(tester.state<ScrollableState>(find.byType(Scrollable).first), same(scrollState));
+      await tester.tap(find.byKey(ValueKey('student-nav-$tab')));
+      await tester.pump();
+      expect(phase(headings).opacity.value, 0, reason: 'Tapping the selected $tab replays its entrance');
+      expect(phase(rows).opacity.value, 0);
+      await tester.pumpAndSettle();
       expect(tester.takeException(), isNull);
     }
+  });
+
+  testWidgets('urgent tracker banner reveals before the application below it', (tester) async {
+    tester.view.physicalSize = const Size(800, 1400);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+    final applications = FakeApplicationDataSource();
+    await _seedApplication(applications, 'user-a', scholarshipId: 'sch-dost', status: 'draft');
+    final scholarships = FakeScholarshipDataSource([
+      {...FakeScholarshipDataSource.defaultRows.first,
+       'deadline': DateTime.now().add(const Duration(days: 2)).toIso8601String()},
+    ]);
+    await tester.pumpWidget(_wrapHomeScreen(applications: applications, scholarships: scholarships));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const ValueKey('student-nav-tracker')));
+    await tester.pump();
+    final banner = find.ancestor(of: find.text('1 Action Needed'), matching: find.byType(StudentTabReveal));
+    expect(banner, findsOneWidget);
+    expect(tester.widget<StudentTabReveal>(banner).order, 1);
+    await tester.pump(const Duration(milliseconds: 280));
+    final bannerFade = find.descendant(of: banner, matching: find.byType(FadeTransition)).first;
+    expect(tester.widget<FadeTransition>(bannerFade).opacity.value, greaterThan(0));
+    final card = find.byWidgetPredicate((w) => w is StudentTabReveal && w.order == 2 && !w.structural);
+    expect(card, findsOneWidget);
+    final cardFade = find.descendant(of: card, matching: find.byType(FadeTransition)).first;
+    expect(tester.widget<FadeTransition>(cardFade).opacity.value, 0);
+    await tester.pumpAndSettle();
   });
 
   testWidgets('cached empty tracker waits for the tab reveal', (tester) async {
@@ -272,7 +307,7 @@ void main() {
     expect(reveal, findsOneWidget);
     final fade = find.descendant(of: reveal, matching: find.byType(FadeTransition)).first;
     expect(tester.widget<FadeTransition>(fade).opacity.value, 0);
-    await tester.pump(const Duration(milliseconds: 350));
+    await tester.pump(const Duration(milliseconds: 200));
     expect(tester.widget<FadeTransition>(fade).opacity.value, 0);
     await tester.pumpAndSettle();
     expect(tester.widget<FadeTransition>(fade).opacity.value, 1);

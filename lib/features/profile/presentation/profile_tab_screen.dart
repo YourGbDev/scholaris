@@ -138,11 +138,11 @@ class ProfileTabScreen extends ConsumerWidget {
           const SizedBox(height: 14),
 
           // Profile Hero Card
-          StudentTabReveal(order: 1, child: _buildHeroCard(context, ref, profile)),
+          StudentTabReveal(order: 1, structural: true, child: _buildHeroCard(context, ref, profile)),
           const SizedBox(height: 14),
 
           // Matching Power Milestone Card
-          StudentTabReveal(order: 2, child: _ProfileMilestoneCard(profile: profile)),
+          StudentTabReveal(order: 2, structural: true, child: _ProfileMilestoneCard(profile: profile)),
           const SizedBox(height: 18),
 
           // Verified Credentials Section (3 Stitch Cards)
@@ -169,12 +169,12 @@ class ProfileTabScreen extends ConsumerWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               const Flexible(child: StudentTabReveal(
-                  order: 0,
+                  order: 0, immediate: true,
                   child: ScholarisLogo(compact: true),
                 )),
               const SizedBox(width: 6),
               StudentTabReveal(
-                order: 0,
+                order: 0, immediate: true,
                 child: Text(
                 '/',
                 style: openSans(
@@ -185,7 +185,7 @@ class ProfileTabScreen extends ConsumerWidget {
               ),
               const SizedBox(width: 6),
               StudentTabReveal(
-                order: 0,
+                order: 0, immediate: true,
                 child: Text(
                 'Profile',
                 style: outfit(
@@ -497,21 +497,21 @@ class ProfileTabScreen extends ConsumerWidget {
 
         // Card 1: Academic Information
         StudentTabReveal(
-          order: 3,
+          order: 1,
           child: _buildAcademicCard(context, profile),
         ),
         const SizedBox(height: 12),
 
         // Card 2: Location & Residency
         StudentTabReveal(
-          order: 4,
+          order: 2,
           child: _buildLocationCard(context, profile),
         ),
         const SizedBox(height: 12),
 
         // Card 3: Financial Background
         StudentTabReveal(
-          order: 5,
+          order: 3,
           child: _buildFinancialCard(context, profile),
         ),
       ],

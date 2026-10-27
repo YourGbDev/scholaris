@@ -11,10 +11,11 @@
 // NOTE: "LiquidGlass" in this Flutter codebase is a cross-platform custom BackdropFilter
 // shader simulation, not Apple's proprietary native Liquid Glass OS compositor material.
 //
-// IndexedStack preserves page state; StudentTabEntrance supplies visit feedback.
+// Retained offstage pages preserve state; StudentTabEntrance animates each visit.
 
 import 'dart:math' as math;
 import 'widgets/student_selection_indicator.dart';
+import 'widgets/liquid_glass_pill.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart' show CupertinoIcons;
 import 'package:flutter/rendering.dart' show ScrollDirection;
@@ -51,8 +52,15 @@ final homeTabIndexProvider = NotifierProvider<HomeTabIndexNotifier, int>(
 );
 
 /// Base font size for student navigation tab labels.
-const double kStudentNavBaseFontSize = 10.0;
-const Color kStudentNavSelectedGreen = Color(0xFF327348);
+const double kStudentNavBaseFontSize = 11.0;
+const Color kStudentNavSelectedGreen = Color(0xFF1B6B3A);
+
+// Expand the fixed Cupertino glyph silhouette by .35px per side. Its font
+// has no variable weight axis, so Icon.weight would leave these strokes thin.
+List<Shadow> _studentIconStroke(Color ink) => [
+  for (final offset in const [Offset(-.35, 0), Offset(.35, 0), Offset(0, -.35), Offset(0, .35)])
+    Shadow(color: ink, offset: offset),
+];
 
 /// Size of the standalone Quick Action '+' button in accessible layout.
 const double kStudentPlusButtonSize = 52.0;
@@ -62,55 +70,42 @@ const double kStudentPlusGap = 8.0;
 
 /// Local visual tuning parameters for StudentBottomNav LiquidGlass material
 /// Grounded in Apple HIG Materials & Depth & Apple Design Section 12 (WWDC craft standards):
-/// - A light neutral veil over pale content, with background color still visible.
-/// - A tighter blur avoids a wide gray haze around text beneath the dock.
-/// - Directional specular rim highlight (brighter at TOP-LEFT and BOTTOM-RIGHT, softer elsewhere)
-/// - Restrained multi-layer ambient & elevation shadows (eliminates cloudy diffuse smudge)
-const double kStudentNavGlassTintOpacity = 0.08;
-const double kStudentNavGlassBlur = 5.5;
-// Preserve finer background detail through the dock; keep '+' material unchanged.
-const double kStudentNavDockGlassBlur = 0.5;
-const double kStudentNavDockGlassTintOpacity = 0.14;
-// A defined silhouette over busy content, without blurring away its detail.
+/// Diffuse underlying text while allowing broad background color through.
+/// A single diagonal rim and ambient shadow define the functional surface.
+const double kStudentNavGlassTintOpacity = 0.44;
+const double kStudentNavGlassBlur = 6.5;
+const double kStudentNavDockGlassBlur = kStudentNavGlassBlur;
+const double kStudentNavDockGlassTintOpacity = kStudentNavGlassTintOpacity;
 const List<BoxShadow> kStudentNavDockGlassShadow = [
-  BoxShadow(color: Color(0x2417251D), blurRadius: 4, offset: Offset(0, 2)),
-  BoxShadow(color: Color(0x0C17251D), blurRadius: 12, offset: Offset(0, 4)),
+  BoxShadow(color: Color(0x14000000), blurRadius: 24, offset: Offset(0, 8)),
 ];
 const Border kStudentNavDockGlassBorder = Border.fromBorderSide(
-  BorderSide(color: Color(0x28747775), width: .75),
+  BorderSide.none,
 );
-const double kStudentNavGlassSaturation = 1.3;
+const double kStudentNavGlassSaturation = 1;
 const Color kStudentNavGlassLightEdge = Color(0xB3FFFFFF); // 70% white specular top highlight
 
-// Directional specular rim gradient colors from Alignment.topLeft to Alignment.bottomRight
-const Color kStudentNavGlassRimTopLeft = Color(0xD9FFFFFF); // 85% white specular key light
-const Color kStudentNavGlassRimSoft = Color(0x2EFFFFFF); // 18% white soft ambient edge
-const Color kStudentNavGlassRimBottomRight = Color(0x73FFFFFF); // 45% white ground bounce rim
-
 const Border kStudentNavGlassBorder = Border.fromBorderSide(
-  BorderSide(color: Color(0x10747775), width: 0.5), // A light seal rather than an outlined toolbar
+  BorderSide.none, // The foreground painter owns the single specular rim.
 );
 
-// The dock needs a crisp rim, not an outer glow.
+// Match the separate quick action to the dock's ambient elevation.
 const List<BoxShadow> kStudentNavGlassShadow = [
-  BoxShadow(color: Color(0x0A17251D), blurRadius: 3, offset: Offset(0, 1)),
+  BoxShadow(color: Color(0x14000000), blurRadius: 24, offset: Offset(0, 8)),
 ];
 
 /// Directional specular rim painter for LiquidGlass navigation components.
-/// Draws a rounded-rectangle stroke with directional illumination:
-/// - Top-Left: Bright specular key-light highlight (85% white)
-/// - Bottom-Right: Ground bounce rim highlight (45% white)
-/// - Top-Right / Bottom-Left: Soft ambient transition (18% white)
-/// Grounded in Apple Design Section 12 (Materials & Depth) and liquid-glass.md.
+/// Draws one diagonal specular stroke without a second inset outline.
 class DirectionalGlassRimPainter extends CustomPainter {
   const DirectionalGlassRimPainter({
     required this.borderRadius,
-    this.strokeWidth = 1.0,
+    this.strokeWidth = 1.2,
     this.useCrispSingleRim = false,
   });
 
   final double borderRadius;
   final double strokeWidth;
+  // Retained for existing local preview callers; every variant now uses one rim.
   final bool useCrispSingleRim;
 
   @override
@@ -130,52 +125,22 @@ class DirectionalGlassRimPainter extends CustomPainter {
       Radius.circular(math.max(0.0, borderRadius - halfStroke)),
     );
 
-    if (useCrispSingleRim) {
-      // Tarsi-style single crisp specular rim:
-      // Razor-thin (0.75px) perimeter stroke with specular top highlight,
-      // subtle sides, and a crisp bottom white line ("the secret sauce")
-      // that defines the physical glass boundary sharply without doubling border thickness.
-      final rimPaint = Paint()
-        ..style = PaintingStyle.stroke
-        ..strokeWidth = 0.75
-        ..shader = const LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: [
-            Color(0xD9FFFFFF), // 85% white top specular key light
-            Color(0x38FFFFFF), // 22% white soft ambient edge on sides
-            Color(0x8CFFFFFF), // 55% white crisp bottom edge
-          ],
-          stops: [0.0, 0.45, 1.0],
-        ).createShader(rect);
-
-      canvas.drawRRect(rrect, rimPaint);
-      return;
-    }
-
-    // Keep the pale-background silhouette separate from the inset light rim.
-    canvas.drawRRect(rrect, Paint()
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = strokeWidth
-      ..color = const Color(0x14535D57));
-
     final paint = Paint()
       ..style = PaintingStyle.stroke
-      ..strokeWidth = .7
+      ..strokeWidth = strokeWidth
       ..shader = const LinearGradient(
         begin: Alignment.topLeft,
         end: Alignment.bottomRight,
         colors: [
-          kStudentNavGlassRimTopLeft,
-          kStudentNavGlassRimSoft,
-          kStudentNavGlassRimSoft,
-          kStudentNavGlassRimBottomRight,
+          Color(0xF2FFFFFF),
+          Color(0x0F000000),
+          Color(0x0F000000),
+          Color(0xF2FFFFFF),
         ],
         stops: [0.0, 0.35, 0.65, 1.0],
       ).createShader(rect);
 
-    canvas.drawRRect(RRect.fromRectAndRadius(rect.deflate(.8),
-      Radius.circular(math.max(0, borderRadius - halfStroke - .8))), paint);
+    canvas.drawRRect(rrect, paint);
   }
 
   @override
@@ -488,6 +453,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
   late final StudentScrollDockController _controller;
   int _lastTabIndex = 0;
+  int _tabVisit = 0;
 
   @override
   void initState() {
@@ -536,15 +502,20 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   bottom: contentClearance,
                 ),
               ),
-              child: IndexedStack(
-                index: tabIndex,
+              child: Stack(
+                fit: StackFit.expand,
                 children: [
                   for (int i = 0; i < _tabs.length; i++)
-                    NotificationListener<ScrollNotification>(
+                    Offstage(
+                      offstage: tabIndex != i,
+                      child: TickerMode(enabled: tabIndex == i,
+                      child: NotificationListener<ScrollNotification>(
+                      key: ValueKey('student-tab-scroll-$i'),
                       onNotification: (n) => tabIndex == i
                           ? _controller.handleScrollNotification(n)
                           : false,
-                      child: StudentTabEntrance(active: tabIndex == i, child: _tabs[i]),
+                      child: StudentTabEntrance(active: tabIndex == i, visit: _tabVisit, child: _tabs[i]),
+                    )),
                     ),
                 ],
               ),
@@ -558,6 +529,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               child: StudentBottomNav(
                 tabIndex: tabIndex,
                 onSelectTab: (index) {
+                  setState(() => _tabVisit++);
                   ref.read(homeTabIndexProvider.notifier).selectTab(index);
                   _controller.expand();
                 },
@@ -670,7 +642,7 @@ class StudentBottomNav extends StatelessWidget {
           children: [
             Positioned(left: 0, top: 0, width: expandedPillWidth, height: constraints.maxHeight,
               child: Opacity(opacity: fading, child: StudentSelectionIndicator(
-                index: tabIndex, duration: animDuration,
+                index: tabIndex, duration: isReducedMotion(context) ? Duration.zero : kStudentSelectionDuration,
               )),
             ),
             for (var i = 0; i < 4; i++)
@@ -813,23 +785,10 @@ class StudentBottomNav extends StatelessWidget {
                     color: isHighContrast ? const Color(0xFF1C1C1E) : const Color(0x30747775),
                     width: isHighContrast ? 1.5 : .7),
                 ))
-              : CustomPaint(
-                  foregroundPainter: DirectionalGlassRimPainter(
-                    borderRadius: pillBorderRadius,
-                    strokeWidth: 1,
-                    useCrispSingleRim: useCrispSingleRim,
-                  ),
-                  child: LiquidGlass(
-                    borderRadius: pillBorderRadius,
-                    blur: dockBlur ?? kStudentNavDockGlassBlur,
-                    saturation: kStudentNavGlassSaturation,
+              : LiquidGlassPill(
+                    coreBlur: dockBlur ?? kStudentNavDockGlassBlur,
                     tintOpacity: dockTintOpacity ?? kStudentNavDockGlassTintOpacity,
-                    border: kStudentNavDockGlassBorder,
-                    showLightEdge: false,
-                    preserveBlurWithReducedMotion: true,
-                    boxShadow: kStudentNavDockGlassShadow,
                     child: const SizedBox.expand(),
-                  ),
                 ),
         ),
         navDockContent,
@@ -994,6 +953,7 @@ class _StudentNavCompactControlState extends State<_StudentNavCompactControl> {
                     widget.selectedIcon,
                     size: 24,
                     color: kStudentNavSelectedGreen,
+                    shadows: _studentIconStroke(kStudentNavSelectedGreen),
                   ),
                 ),
               ),
@@ -1033,8 +993,28 @@ class _StudentNavItem extends StatefulWidget {
   State<_StudentNavItem> createState() => _StudentNavItemState();
 }
 
-class _StudentNavItemState extends State<_StudentNavItem> {
+class _StudentNavItemState extends State<_StudentNavItem> with SingleTickerProviderStateMixin {
   bool _isFocused = false;
+  late final AnimationController _selection = AnimationController(
+    vsync: this, duration: kStudentSelectionDuration, value: 1,
+  );
+
+  @override
+  void didUpdateWidget(_StudentNavItem oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.selected && !oldWidget.selected && !isReducedMotion(context)) {
+      _selection.forward(from: 0);
+    } else if (!widget.selected || isReducedMotion(context)) {
+      _selection.stop();
+      _selection.value = 1;
+    }
+  }
+
+  @override
+  void dispose() {
+    _selection.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) => TweenAnimationBuilder<Color?>(
@@ -1094,27 +1074,30 @@ class _StudentNavItemState extends State<_StudentNavItem> {
                       vertical: widget.isAccessible ? 1.0 : 4.0,
                     ),
                     decoration: BoxDecoration(
-                      color: widget.selected && widget.isAccessible ? const Color(0xFFE7ECE8) : Colors.transparent,
+                      color: widget.selected && widget.isAccessible ? const Color(0x1C1E4D2B) : Colors.transparent,
                       borderRadius: BorderRadius.circular(16),
                     ),
-                    child: Column(
+                    child: AnimatedBuilder(
+                      animation: _selection,
+                      builder: (context, child) => Transform.scale(
+                        scale: isReducedMotion(context) || !widget.selected || widget.isAccessible
+                            ? 1 : 1 + .06 * math.sin(math.pi * _selection.value),
+                        child: child,
+                      ),
+                      child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Transform.translate(
-                          offset: Offset(0, widget.collapseProgress * 7.3),
-                          child: AnimatedScale(
-                            duration: isReducedMotion(context) ? Duration.zero : const Duration(milliseconds: 220),
-                            curve: Curves.easeOutCubic,
-                            scale: isReducedMotion(context) || !widget.selected ? 1 : 1.04,
-                            child: Icon(
+                          offset: Offset(0, widget.collapseProgress * 8.1),
+                          child: Icon(
                           widget.selected ? widget.selectedIcon : widget.icon,
-                          size: widget.isAccessible ? 18.0 : 21.0 + 3 * widget.collapseProgress,
-                          color: ink,
+                          size: widget.isAccessible ? 18.0 : 24,
+                          color: widget.selected ? ink : const Color(0xFF141414),
+                          shadows: _studentIconStroke(widget.selected ? ink : const Color(0xFF141414)),
                         ),
                         ),
-                        ),
-                        SizedBox(height: widget.isAccessible ? 1.0 : 2.0),
+                        SizedBox(height: widget.isAccessible ? 1.0 : 3.0),
                         Opacity(
                           opacity: (1 - widget.collapseProgress * 2).clamp(0.0, 1.0),
                           child: Padding(
@@ -1126,14 +1109,15 @@ class _StudentNavItemState extends State<_StudentNavItem> {
                             softWrap: false,
                             style: outfit(
                               fontSize: kStudentNavBaseFontSize,
-                              fontWeight: widget.selected ? FontWeight.w600 : FontWeight.w500,
+                              fontWeight: FontWeight.w600,
+                              letterSpacing: -.2,
                               color: ink,
                             ),
                           ),
                         ),
                         ),
                       ],
-                    ),
+                    )),
                   ),
                 ),
               ),
@@ -1169,11 +1153,12 @@ class _StudentQuickActionButtonState extends State<_StudentQuickActionButton> {
 
   @override
   Widget build(BuildContext context) {
-    Widget content = const Center(
+    Widget content = Center(
       child: Icon(
         Icons.add_rounded,
-        color: Color(0xFF161C27),
-        size: 23,
+        color: const Color(0xFF141414),
+        size: 24,
+        shadows: _studentIconStroke(const Color(0xFF141414)),
       ),
     );
 
@@ -1197,23 +1182,10 @@ class _StudentQuickActionButtonState extends State<_StudentQuickActionButton> {
             ),
             child: content,
           )
-        : CustomPaint(
-            foregroundPainter: DirectionalGlassRimPainter(
-              borderRadius: widget.size / 2,
-              strokeWidth: 1.0,
-            ),
-            child: LiquidGlass(
+        : LiquidGlassPill(
               key: const ValueKey('student-nav-quick-action'),
-              borderRadius: widget.size / 2,
-              blur: kStudentNavGlassBlur,
-              saturation: kStudentNavGlassSaturation,
               tintOpacity: kStudentNavGlassTintOpacity,
-              border: kStudentNavGlassBorder,
-              showLightEdge: false,
-                    preserveBlurWithReducedMotion: true,
-              boxShadow: kStudentNavGlassShadow,
               child: content,
-            ),
           );
 
     return FocusableActionDetector(

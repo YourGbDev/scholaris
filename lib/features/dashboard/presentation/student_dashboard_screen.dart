@@ -52,6 +52,7 @@ class _StudentDashboardScreenState
     extends ConsumerState<StudentDashboardScreen> {
   Widget _wrapSection({required int index, required Widget child}) => StudentTabReveal(
     order: const [0, 0, 1, 1, 2, 6][index.clamp(0, 5)],
+        structural: index < 5,
         immediate: index == 0,
         child: child);
 
@@ -172,7 +173,7 @@ class _StudentDashboardScreenState
 
                 // 4b. Deadline Alert & Urgency Sections (when closing soon)
                 if (info.closingSoonCount > 0) ...[
-                  StudentTabReveal(order: 2, child: _buildAdviceCard(info)),
+                  StudentTabReveal(order: 2, structural: true, child: _buildAdviceCard(info)),
                   const SizedBox(height: 16),
                   _buildClosingSoonSection(
                     context,
@@ -222,6 +223,7 @@ class _StudentDashboardScreenState
         // Scholaris Brand Logo
         StudentTabReveal(
           order: 0,
+          immediate: true,
           child: Row(
           children: [
             Container(
@@ -754,7 +756,7 @@ class _StudentDashboardScreenState
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 if (items.isNotEmpty) ...[
-                  StudentTabReveal(order: 2, child: _buildMatchRevealBanner(items.length, gender: profile?.gender)),
+                  StudentTabReveal(order: 2, structural: true, child: _buildMatchRevealBanner(items.length, gender: profile?.gender)),
                   const SizedBox(height: 12),
                 ],
                 ListView.separated(
@@ -769,7 +771,7 @@ class _StudentDashboardScreenState
                         ? matchReasonsFor(profile, s)
                         : const <String>[];
                     return StudentTabReveal(
-                      order: 3 + i,
+                      order: 1 + i,
                       child: ScholarshipCard(
                         scholarship: s,
                         reasons: reasons,
@@ -1022,7 +1024,7 @@ class _StudentDashboardScreenState
                 ? matchReasonsFor(profile, s)
                 : const <String>[];
             return StudentTabReveal(
-              order: 3 + i,
+              order: 1 + i,
               child: ScholarshipCard(
                 scholarship: s,
                 reasons: reasons,

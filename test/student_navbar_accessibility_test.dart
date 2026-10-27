@@ -1,3 +1,4 @@
+import 'package:scholaris/features/home/presentation/widgets/liquid_glass_pill.dart';
 // test/student_navbar_accessibility_test.dart
 //
 // QA Automated Regression & Accessibility Test Suite
@@ -20,7 +21,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:scholaris/features/home/presentation/home_screen.dart';
-import 'package:scholaris/shared/theme/app_motion.dart';
 
 void main() {
   group('Student Navbar Refinements & Accessibility Suite', () {
@@ -106,7 +106,7 @@ void main() {
       // In high contrast mode, LiquidGlass must NOT be rendered in the nav dock
       final liquidGlassInStack = find.descendant(
         of: find.byType(Stack),
-        matching: find.byType(LiquidGlass),
+        matching: find.byType(LiquidGlassPill),
       );
       expect(liquidGlassInStack, findsNothing,
           reason: 'High-contrast mode must disable LiquidGlass in favor of solid opaque container.');
@@ -140,12 +140,12 @@ void main() {
       // Reduced motion preserves glass (distinguished from high contrast transparency removal)
       final liquidGlassInStack = find.descendant(
         of: find.byType(Stack),
-        matching: find.byType(LiquidGlass),
+        matching: find.byType(LiquidGlassPill),
       );
       expect(liquidGlassInStack, findsWidgets,
           reason: 'Reduced motion preserves static glass material while disabling spring motion.');
       expect(find.descendant(of: liquidGlassInStack, matching: find.byType(BackdropFilter)),
-          findsNWidgets(2), reason: 'Static glass must retain its blur, not only its wrapper.');
+          findsNWidgets(4), reason: 'Each static surface retains both rim and core blur.');
     });
 
     testWidgets('4. Dynamic Type 2.0x and 3.0x scaling: verifies genuine MediaQuery textScaler on base font, adaptive 2-row dock, and touch targets',

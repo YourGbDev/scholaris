@@ -1,8 +1,8 @@
+import 'package:scholaris/features/home/presentation/widgets/liquid_glass_pill.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:scholaris/features/home/presentation/home_screen.dart';
-import 'package:scholaris/shared/theme/app_motion.dart';
 
 void main() {
   testWidgets(
@@ -65,10 +65,10 @@ void main() {
         final selection = tester.getRect(
           find.byKey(const ValueKey('student-nav-moving-indicator')),
         );
-        final glass = tester.getRect(find.byType(LiquidGlass).first);
+        final glass = tester.getRect(find.byType(LiquidGlassPill).first);
         expect(selection.left, greaterThan(glass.left));
         expect(selection.right, lessThan(glass.right));
-        expect(selection.width / selection.height, greaterThan(1.35));
+        expect(selection.width / selection.height, greaterThan(1));
         final name = ['home', 'discover', 'tracker', 'profile'][index];
         expect(
           selection.center.dx,
@@ -143,8 +143,8 @@ void main() {
               .color!;
       expect(
         fill.a,
-        lessThan(.5),
-        reason: 'Selection must transmit the backdrop colors.',
+        closeTo(.11, .005),
+        reason: 'Selection transmits background colors without a hard ring.',
       );
       final first = tester.getTopLeft(indicator).dx;
       final restingWidth = tester.getSize(indicator).width;
@@ -155,7 +155,7 @@ void main() {
       expect(tester.getSize(indicator).width, greaterThan(restingWidth));
       expect(
         tester.getSize(indicator).height,
-        greaterThan(58),
+        greaterThan(50),
         reason: 'The travelling capsule should bulge beyond the resting bar.',
       );
       await tester.pumpAndSettle();

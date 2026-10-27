@@ -20,7 +20,7 @@ class _StudentTabEntranceState extends State<StudentTabEntrance>
     with SingleTickerProviderStateMixin {
   late final AnimationController _animation = AnimationController(
     vsync: this,
-    duration: const Duration(milliseconds: 850),
+    duration: const Duration(milliseconds: 650),
     value: 1,
   );
   bool get _immediate =>
@@ -100,20 +100,20 @@ class StudentTabReveal extends StatelessWidget {
         immediate ||
         isReducedMotion(context) ||
         MediaQuery.accessibleNavigationOf(context);
-    // Let the 350ms dock travel finish, then reveal structure sharply and
-    // fade whole card rows in place. One clock also handles interrupted visits.
+    // The app bar is immediate; headings/heroes lead the lower card rows.
     final isStructure = structural || order == 0;
-    final start = (390 + (order.clamp(1, 6) - 1) * 45) / 850;
+    final rowCurve = switch (order) {
+      <= 1 => const Interval(.40, .72, curve: Curves.easeOut),
+      2 => const Interval(.55, .88, curve: Curves.easeOut),
+      _ => const Interval(.68, 1, curve: Curves.easeOut),
+    };
     final fade = showImmediately
         ? const AlwaysStoppedAnimation<double>(1)
         : isStructure
-        ? CurveTween(curve: const Threshold(350 / 850)).animate(clock.animation)
+        ? CurveTween(curve: const Interval(140 / 650, 260 / 650,
+            curve: Curves.easeOut)).animate(clock.animation)
         : CurveTween(
-            curve: Interval(
-              start,
-              start + 200 / 850,
-              curve: Curves.easeOutCubic,
-            ),
+            curve: rowCurve,
           ).animate(clock.animation);
     return AnimatedBuilder(
       animation: fade,

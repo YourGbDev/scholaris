@@ -29,10 +29,10 @@ void main() {
     await tester.pumpWidget(host());
     expect(opacity(tester, 'initial-heading'), 0);
     expect(opacity(tester, 'initial-card'), 0);
-    await tester.pump(const Duration(milliseconds: 360));
-    expect(opacity(tester, 'initial-heading'), 1);
+    await tester.pump(const Duration(milliseconds: 160));
+    expect(opacity(tester, 'initial-heading'), inExclusiveRange(0, 1));
     expect(opacity(tester, 'initial-card'), 0);
-    await tester.pump(const Duration(milliseconds: 60));
+    await tester.pump(const Duration(milliseconds: 120));
     expect(opacity(tester, 'initial-card'), inExclusiveRange(0, 1));
     await tester.pumpAndSettle();
     await tester.pumpWidget(host());
@@ -95,17 +95,17 @@ void main() {
     await tester.pumpWidget(host(true));
     expect(opacity(tester, 'heading'), 0);
     expect(opacity(tester, 'row'), 0);
-    await tester.pump(const Duration(milliseconds: 120));
+    await tester.pump(const Duration(milliseconds: 100));
     expect(opacity(tester, 'heading'), 0);
-    await tester.pump(const Duration(milliseconds: 240));
-    expect(opacity(tester, 'heading'), 1);
+    await tester.pump(const Duration(milliseconds: 60));
+    expect(opacity(tester, 'heading'), inExclusiveRange(0, 1));
     expect(opacity(tester, 'row'), 0);
     expect(scroll.offset, 140);
     expect(
       tester.getSize(find.byKey(const ValueKey('row'))),
       initialBounds.size,
     );
-    await tester.pump(const Duration(milliseconds: 100));
+    await tester.pump(const Duration(milliseconds: 240));
     expect(opacity(tester, 'heading'), greaterThan(opacity(tester, 'row')));
     await tester.pumpAndSettle();
     expect(opacity(tester, 'row'), 1);
@@ -129,7 +129,7 @@ void main() {
   });
 
   testWidgets(
-    'structure snaps together before card rows; actions stay available',
+    'structure fades before staggered card rows; actions stay available',
     (tester) async {
       Widget host(bool active) => MaterialApp(
         home: StudentTabEntrance(
@@ -157,6 +157,7 @@ void main() {
                 order: 2,
                 child: Text('Second card'),
               ),
+              StudentTabReveal(key: ValueKey('third'), order: 3, child: Text('Third card')),
               StudentTabReveal(
                 key: ValueKey('bell'),
                 order: 0,
@@ -170,18 +171,23 @@ void main() {
       await tester.pumpWidget(host(false));
       await tester.pumpWidget(host(true));
       expect(opacity(tester, 'bell'), 1);
-      await tester.pump(const Duration(milliseconds: 340));
+      await tester.pump(const Duration(milliseconds: 100));
       expect(opacity(tester, 'title'), 0);
       expect(opacity(tester, 'section'), 0);
-      await tester.pump(const Duration(milliseconds: 20));
-      expect(opacity(tester, 'title'), 1);
-      expect(opacity(tester, 'section'), 1);
+      await tester.pump(const Duration(milliseconds: 100));
+      expect(opacity(tester, 'title'), inExclusiveRange(0, 1));
+      expect(opacity(tester, 'section'), inExclusiveRange(0, 1));
       expect(opacity(tester, 'first'), 0);
-      await tester.pump(const Duration(milliseconds: 60));
+      await tester.pump(const Duration(milliseconds: 80));
+      expect(opacity(tester, 'title'), 1);
       expect(opacity(tester, 'first'), inExclusiveRange(0, 1));
       expect(opacity(tester, 'second'), 0);
-      await tester.pump(const Duration(milliseconds: 50));
+      await tester.pump(const Duration(milliseconds: 100));
       expect(opacity(tester, 'second'), inExclusiveRange(0, 1));
+      expect(opacity(tester, 'third'), 0);
+      await tester.pump(const Duration(milliseconds: 90));
+      expect(opacity(tester, 'third'), inExclusiveRange(0, 1));
+      expect(opacity(tester, 'first'), 1);
       await tester.pumpAndSettle();
     },
   );

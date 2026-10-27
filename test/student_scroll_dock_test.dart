@@ -543,10 +543,13 @@ void main() {
       // Active tab is Tab 0 (Home). Dock starts expanded.
       expect(find.byKey(const ValueKey('student-nav-expanded-row')), findsOneWidget);
 
-      // Find per-tab NotificationListeners inside IndexedStack
+      // Find retained tab listeners, including offstage destinations.
       final tabListeners = find.descendant(
-        of: find.byType(IndexedStack),
-        matching: find.byType(NotificationListener<ScrollNotification>),
+        of: find.byType(HomeScreen),
+        matching: find.byWidgetPredicate((w) => w is NotificationListener<ScrollNotification> &&
+            w.key is ValueKey<String> && (w.key! as ValueKey<String>).value.startsWith('student-tab-scroll-'),
+            skipOffstage: false),
+        skipOffstage: false,
       );
       expect(tabListeners, findsNWidgets(4));
 

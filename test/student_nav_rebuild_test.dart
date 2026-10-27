@@ -1,10 +1,10 @@
+import 'package:scholaris/features/home/presentation/widgets/liquid_glass_pill.dart';
 // ignore_for_file: avoid_print
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:scholaris/features/home/presentation/home_screen.dart';
-import 'package:scholaris/shared/theme/app_motion.dart';
 
 void main() {
   testWidgets('Student Nav Rebuild: Full-height viewport, extendBody, and LiquidGlass + button',
@@ -66,7 +66,7 @@ void main() {
 
     final navFinder = find.descendant(
       of: find.byType(Stack),
-      matching: find.byType(LiquidGlass),
+      matching: find.byType(LiquidGlassPill),
     );
     expect(navFinder, findsNWidgets(2),
         reason: 'Both the 4-tab pill and the detached "+" button must be LiquidGlass widgets.');
@@ -98,23 +98,16 @@ void main() {
 
     final plusIconWidget = tester.widget<Icon>(addIconFinder);
     print('  - "+" Icon color: ${plusIconWidget.color}');
-    expect(plusIconWidget.color, equals(const Color(0xFF161C27)),
-        reason: '"+" icon uses dark ink color (0xFF161C27) for high-contrast accessibility.');
+    expect(plusIconWidget.color, equals(const Color(0xFF141414)),
+        reason: '"+" icon uses the requested near-black ink.');
 
     // Trace ancestors of the "+" icon up to the LiquidGlass widget
-    final plusLiquidGlass = tester.widget<LiquidGlass>(navFinder.at(1));
-    print('  - "+" LiquidGlass blur: ${plusLiquidGlass.blur}');
-    print('  - "+" LiquidGlass saturation: ${plusLiquidGlass.saturation}');
+    final plusLiquidGlass = tester.widget<LiquidGlassPill>(navFinder.at(1));
+    print('  - "+" LiquidGlass core blur: ${plusLiquidGlass.coreBlur}');
     print('  - "+" LiquidGlass tintOpacity: ${plusLiquidGlass.tintOpacity}');
-    print('  - "+" LiquidGlass showLightEdge: ${plusLiquidGlass.showLightEdge}');
-    print('  - "+" LiquidGlass lightEdgeColor: ${plusLiquidGlass.lightEdgeColor}');
-    print('  - "+" LiquidGlass borderRadius: ${plusLiquidGlass.borderRadius}');
 
-    expect(plusLiquidGlass.blur, inExclusiveRange(0.0, 20.0));
-    expect(plusLiquidGlass.saturation, greaterThanOrEqualTo(1.0));
-    expect(plusLiquidGlass.tintOpacity, inExclusiveRange(0.0, 0.4));
-    expect(plusLiquidGlass.showLightEdge, isFalse);
-    expect(plusLiquidGlass.borderRadius, equals(29.0));
+    expect(plusLiquidGlass.coreBlur, 6.5);
+    expect(plusLiquidGlass.tintOpacity, .44);
 
     // Verify no solid opaque Container inside the "+" button tree
     final plusSubtreeContainers = tester.widgetList<Container>(

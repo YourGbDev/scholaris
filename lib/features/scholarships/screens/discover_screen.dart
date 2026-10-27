@@ -191,6 +191,7 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
         // Scholaris Brand Logo
         StudentTabReveal(
           order: 0,
+          immediate: true,
           child: Row(
           children: [
             Container(
@@ -696,7 +697,7 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
                   ? matchReasonsFor(profile, scholarship)
                   : const <String>[];
               return StudentTabReveal(
-                order: 3 + index,
+                order: 1 + index,
                 child: ScholarshipCard(
                   scholarship: scholarship,
                   reasons: reasons,
@@ -790,7 +791,7 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
               itemCount: browse.length,
               separatorBuilder: (_, _) => const SizedBox(height: 14),
               itemBuilder: (_, i) => StudentTabReveal(
-                order: 3 + i,
+                order: 1 + i,
                 child: ScholarshipCard(
                   scholarship: browse[i],
                   isBookmarked: bookmarkIds.contains(browse[i].id),

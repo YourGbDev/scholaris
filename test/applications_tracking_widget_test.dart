@@ -536,6 +536,41 @@ void main() {
   });
 
   group('Responsive rendering', () {
+    testWidgets('populated tracker fits a narrow phone with larger text',
+        (tester) async {
+      tester.view.physicalSize = const Size(320, 720);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.reset);
+      final applications = FakeApplicationDataSource();
+      await _seedApplication(applications, 'user-a',
+          scholarshipId: 'sch-dost', status: 'submitted');
+      await tester.pumpWidget(MediaQuery(
+        data: const MediaQueryData(textScaler: TextScaler.linear(1.3)),
+        child: _wrap(applications: applications),
+      ));
+      await tester.pumpAndSettle();
+      expect(find.text('All (1)'), findsOneWidget);
+      await tester.ensureVisible(find.text('Draft (0)'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Draft (0)'));
+      await tester.pumpAndSettle();
+      expect(find.text('No draft applications'), findsOneWidget);
+    });
+
+    testWidgets('empty tracker fits a narrow phone with larger text',
+        (tester) async {
+      tester.view.physicalSize = const Size(320, 720);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.reset);
+
+      await tester.pumpWidget(MediaQuery(
+        data: const MediaQueryData(textScaler: TextScaler.linear(1.4)),
+        child: _wrap(applications: FakeApplicationDataSource()),
+      ));
+      await tester.pumpAndSettle();
+      expect(find.text('No applications yet'), findsOneWidget);
+    });
+
     testWidgets('filter bar and summary render cleanly on a 360px screen',
         (tester) async {
       tester.view.physicalSize = const Size(360, 720);

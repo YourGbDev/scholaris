@@ -174,7 +174,7 @@ Future<void> _pumpDiscover(WidgetTester tester) async {
   await tester.pumpWidget(_wrap());
   await tester.pump(const Duration(milliseconds: 500));
   await tester.tap(find.text('Discover'));
-  await tester.pump(const Duration(milliseconds: 500));
+  await tester.pumpAndSettle();
 }
 
 Finder _inSheet(Finder inner) =>
@@ -211,6 +211,22 @@ Future<void> _typeSearch(WidgetTester tester, String query) async {
 void main() {
   setUpAll(() {
     GoogleFonts.config.allowRuntimeFetching = false;
+  });
+
+  testWidgets('narrow enlarged-text feed keeps its summary readable and controls tappable', (tester) async {
+    await _pumpDiscover(tester);
+    tester.view.physicalSize = const Size(320, 640);
+    tester.platformDispatcher.textScaleFactorTestValue = 1.4;
+    addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
+    await tester.pumpAndSettle();
+    final summary = find.textContaining('targeted opportunities for');
+    expect(tester.widget<Text>(summary).overflow, isNot(TextOverflow.ellipsis));
+    final sort = find.byTooltip('Sort scholarships');
+    expect(tester.getTopLeft(sort).dy, greaterThanOrEqualTo(tester.getBottomRight(summary).dy));
+    expect(tester.getSize(sort).height, greaterThanOrEqualTo(44));
+    final edit = find.widgetWithText(InkWell, 'Edit').first;
+    expect(tester.getSize(edit).shortestSide, greaterThanOrEqualTo(44));
+    expect(tester.takeException(), isNull);
   });
 
   group('search field', () {

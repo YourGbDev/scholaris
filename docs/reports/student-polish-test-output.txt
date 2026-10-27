@@ -1,0 +1,168 @@
+00:00 +0: loading C:/scholaris/test/application_detail_screen_test.dart
+00:00 +0: C:/scholaris/test/application_detail_screen_test.dart: (setUpAll)
+00:00 +0: C:/scholaris/test/application_detail_screen_test.dart: Opening the application detail tapping an application card opens the application detail
+00:03 +1: C:/scholaris/test/application_detail_screen_test.dart: Opening the application detail tapping an application card opens the application detail
+00:03 +2: C:/scholaris/test/applications_screen_test.dart: Entry point from Profile tab Profile tab exposes a My Applications entry
+00:03 +3: C:/scholaris/test/applications_screen_test.dart: Entry point from Profile tab Profile tab exposes a My Applications entry
+00:04 +4: C:/scholaris/test/applications_tracking_widget_test.dart: late scholarship results appear without a second loading fade
+00:05 +5: C:/scholaris/test/applications_tracking_widget_test.dart: late scholarship results appear without a second loading fade
+00:05 +6: C:/scholaris/test/profile_tab_screen_test.dart: tapping the entry opens AccountSettingsScreen
+00:05 +7: C:/scholaris/test/applications_screen_test.dart: Entry point from Profile tab tapping My Applications opens the tracking screen
+00:05 +8: C:/scholaris/test/applications_screen_test.dart: Entry point from Profile tab tapping My Applications opens the tracking screen
+00:05 +9: C:/scholaris/test/applications_screen_test.dart: Entry point from Profile tab tapping My Applications opens the tracking screen
+00:06 +10: C:/scholaris/test/applications_tracking_widget_test.dart: real student tabs replay section fades without replacing their scroll views
+00:06 +11: C:/scholaris/test/applications_tracking_widget_test.dart: real student tabs replay section fades without replacing their scroll views
+00:06 +12: C:/scholaris/test/applications_tracking_widget_test.dart: real student tabs replay section fades without replacing their scroll views
+00:07 +13: C:/scholaris/test/applications_tracking_widget_test.dart: real student tabs replay section fades without replacing their scroll views
+00:07 +14: C:/scholaris/test/applications_tracking_widget_test.dart: real student tabs replay section fades without replacing their scroll views
+00:07 +15: C:/scholaris/test/applications_tracking_widget_test.dart: real student tabs replay section fades without replacing their scroll views
+00:07 +16: C:/scholaris/test/applications_tracking_widget_test.dart: real student tabs replay section fades without replacing their scroll views
+00:07 +17: C:/scholaris/test/applications_tracking_widget_test.dart: real student tabs replay section fades without replacing their scroll views
+00:07 +18: C:/scholaris/test/applications_tracking_widget_test.dart: real student tabs replay section fades without replacing their scroll views
+00:07 +19: C:/scholaris/test/applications_tracking_widget_test.dart: real student tabs replay section fades without replacing their scroll views
+00:08 +20: C:/scholaris/test/applications_tracking_widget_test.dart: real student tabs replay section fades without replacing their scroll views
+00:08 +21: C:/scholaris/test/applications_tracking_widget_test.dart: real student tabs replay section fades without replacing their scroll views
+00:08 +22: C:/scholaris/test/applications_tracking_widget_test.dart: real student tabs replay section fades without replacing their scroll views
+00:08 +23: C:/scholaris/test/application_detail_screen_test.dart: Notes editing saving empty notes clears the notes
+00:08 +24: C:/scholaris/test/application_detail_screen_test.dart: Notes editing saving empty notes clears the notes
+00:08 +25: C:/scholaris/test/applications_tracking_widget_test.dart: urgent tracker banner reveals before the application below it
+00:09 +26: C:/scholaris/test/applications_tracking_widget_test.dart: urgent tracker banner reveals before the application below it
+00:09 +27: C:/scholaris/test/applications_tracking_widget_test.dart: urgent tracker banner reveals before the application below it
+00:09 +28: C:/scholaris/test/application_detail_screen_test.dart: Withdrawal confirmation cancel leaves the application unchanged
+00:09 +29: C:/scholaris/test/application_detail_screen_test.dart: Withdrawal confirmation cancel leaves the application unchanged
+00:09 +30: C:/scholaris/test/applications_tracking_widget_test.dart: cached empty tracker waits for the tab reveal
+00:10 +31: C:/scholaris/test/applications_tracking_widget_test.dart: cached empty tracker waits for the tab reveal
+00:10 +32: C:/scholaris/test/application_detail_screen_test.dart: Withdrawal confirmation confirm withdraws the application
+00:10 +33: C:/scholaris/test/scholarship_card_test.dart: card title follows badges closely without shrinking bookmark target
+00:11 +34: C:/scholaris/test/scholarship_card_test.dart: card title follows badges closely without shrinking bookmark target
+00:11 +35: C:/scholaris/test/scholarship_card_test.dart: card title follows badges closely without shrinking bookmark target
+00:12 +36: C:/scholaris/test/application_detail_screen_test.dart: Reactive updates after withdrawal the tracking summary reflects the new withdrawn state
+00:12 +37: C:/scholaris/test/applications_tracking_widget_test.dart: Applications tab navigation Applications tab shows the filtered tracking surface
+00:12 +38: C:/scholaris/test/applications_tracking_widget_test.dart: Applications tab navigation Applications tab shows the filtered tracking surface
+00:12 +39: C:/scholaris/test/application_detail_screen_test.dart: Reactive updates after withdrawal the withdrawn filter surfaces withdrawn applications
+00:12 +40: C:/scholaris/test/application_detail_screen_test.dart: Reactive updates after withdrawal the withdrawn filter surfaces withdrawn applications
+00:12 +41: C:/scholaris/test/application_detail_screen_test.dart: Reactive updates after withdrawal the withdrawn filter surfaces withdrawn applications
+00:12 +42: C:/scholaris/test/application_detail_screen_test.dart: Reactive updates after withdrawal the withdrawn filter surfaces withdrawn applications
+00:12 +43: C:/scholaris/test/application_detail_screen_test.dart: Reactive updates after withdrawal the withdrawn filter surfaces withdrawn applications
+00:13 +44: C:/scholaris/test/application_detail_screen_test.dart: Reactive updates after withdrawal the withdrawn filter surfaces withdrawn applications
+00:13 +45: C:/scholaris/test/application_detail_screen_test.dart: Reactive updates after withdrawal the withdrawn filter surfaces withdrawn applications
+00:13 +46: C:/scholaris/test/application_detail_screen_test.dart: Reactive updates after withdrawal the withdrawn filter surfaces withdrawn applications
+00:13 +47: C:/scholaris/test/application_detail_screen_test.dart: Reactive updates after withdrawal the withdrawn filter surfaces withdrawn applications
+00:13 +48: C:/scholaris/test/application_detail_screen_test.dart: Reactive updates after withdrawal the withdrawn filter surfaces withdrawn applications
+00:13 +49: C:/scholaris/test/application_detail_screen_test.dart: Reactive updates after withdrawal the withdrawn filter surfaces withdrawn applications
+00:13 +50: C:/scholaris/test/application_detail_screen_test.dart: Reactive updates after withdrawal the withdrawn filter surfaces withdrawn applications
+00:13 +51: C:/scholaris/test/application_detail_screen_test.dart: Reactive updates after withdrawal the withdrawn filter surfaces withdrawn applications
+00:13 +52: C:/scholaris/test/application_detail_screen_test.dart: Reactive updates after withdrawal the withdrawn filter surfaces withdrawn applications
+00:13 +53: C:/scholaris/test/application_detail_screen_test.dart: Reactive updates after withdrawal the withdrawn filter surfaces withdrawn applications
+00:13 +54: C:/scholaris/test/application_detail_screen_test.dart: Reactive updates after withdrawal the withdrawn filter surfaces withdrawn applications
+00:13 +55: C:/scholaris/test/application_detail_screen_test.dart: Reactive updates after withdrawal the withdrawn filter surfaces withdrawn applications
+00:13 +56: C:/scholaris/test/application_detail_screen_test.dart: Reactive updates after withdrawal the withdrawn filter surfaces withdrawn applications
+00:13 +57: C:/scholaris/test/application_detail_screen_test.dart: Reactive updates after withdrawal the withdrawn filter surfaces withdrawn applications
+00:13 +58: C:/scholaris/test/application_detail_screen_test.dart: Reactive updates after withdrawal the withdrawn filter surfaces withdrawn applications
+00:13 +59: C:/scholaris/test/application_detail_screen_test.dart: Reactive updates after withdrawal the withdrawn filter surfaces withdrawn applications
+00:14 +60: C:/scholaris/test/application_detail_screen_test.dart: Reactive updates after withdrawal the withdrawn filter surfaces withdrawn applications
+00:14 +61: C:/scholaris/test/application_detail_screen_test.dart: Reactive updates after withdrawal the withdrawn filter surfaces withdrawn applications
+00:14 +62: C:/scholaris/test/application_detail_screen_test.dart: Reactive updates after withdrawal the withdrawn filter surfaces withdrawn applications
+00:14 +63: C:/scholaris/test/discovery_widget_test.dart: Discover lists do not repeat dock clearance between sections
+00:14 +64: C:/scholaris/test/discovery_widget_test.dart: Discover lists do not repeat dock clearance between sections
+00:14 +65: C:/scholaris/test/discovery_widget_test.dart: Discover lists do not repeat dock clearance between sections
+00:15 +66: C:/scholaris/test/discovery_widget_test.dart: Discover lists do not repeat dock clearance between sections
+00:15 +67: C:/scholaris/test/discovery_widget_test.dart: Discover lists do not repeat dock clearance between sections
+00:15 +68: C:/scholaris/test/discovery_widget_test.dart: Discover lists do not repeat dock clearance between sections
+00:15 +69: C:/scholaris/test/discovery_widget_test.dart: Discover lists do not repeat dock clearance between sections
+00:15 +70: C:/scholaris/test/discovery_widget_test.dart: Discover lists do not repeat dock clearance between sections
+00:15 +71: C:/scholaris/test/application_detail_screen_test.dart: Discover/Saved applied-state a pending application still reads as "Applied" on Discover
+00:16 +72: C:/scholaris/test/application_detail_screen_test.dart: Discover/Saved applied-state a pending application still reads as "Applied" on Discover
+00:16 +73: C:/scholaris/test/discovery_widget_test.dart: HomeScreen shell renders Stitch V2 navigation tabs
+00:17 +74: C:/scholaris/test/discovery_search_widget_test.dart: narrow enlarged-text feed keeps its summary readable and controls tappable
+00:18 +75: C:/scholaris/test/discovery_search_widget_test.dart: narrow enlarged-text feed keeps its summary readable and controls tappable
+00:18 +76: C:/scholaris/test/discovery_search_widget_test.dart: narrow enlarged-text feed keeps its summary readable and controls tappable
+00:18 +77: C:/scholaris/test/discovery_search_widget_test.dart: narrow enlarged-text feed keeps its summary readable and controls tappable
+00:18 +78: C:/scholaris/test/discovery_search_widget_test.dart: narrow enlarged-text feed keeps its summary readable and controls tappable
+00:18 +79: C:/scholaris/test/discovery_search_widget_test.dart: narrow enlarged-text feed keeps its summary readable and controls tappable
+00:18 +80: C:/scholaris/test/discovery_search_widget_test.dart: narrow enlarged-text feed keeps its summary readable and controls tappable
+00:18 +81: C:/scholaris/test/discovery_search_widget_test.dart: narrow enlarged-text feed keeps its summary readable and controls tappable
+00:18 +82: C:/scholaris/test/discovery_search_widget_test.dart: narrow enlarged-text feed keeps its summary readable and controls tappable
+00:18 +83: C:/scholaris/test/discovery_search_widget_test.dart: narrow enlarged-text feed keeps its summary readable and controls tappable
+00:18 +84: C:/scholaris/test/discovery_search_widget_test.dart: narrow enlarged-text feed keeps its summary readable and controls tappable
+00:18 +85: C:/scholaris/test/discovery_search_widget_test.dart: narrow enlarged-text feed keeps its summary readable and controls tappable
+00:18 +86: C:/scholaris/test/discovery_search_widget_test.dart: narrow enlarged-text feed keeps its summary readable and controls tappable
+00:18 +87: C:/scholaris/test/discovery_search_widget_test.dart: narrow enlarged-text feed keeps its summary readable and controls tappable
+00:18 +88: C:/scholaris/test/discovery_search_widget_test.dart: narrow enlarged-text feed keeps its summary readable and controls tappable
+00:18 +89: C:/scholaris/test/discovery_search_widget_test.dart: narrow enlarged-text feed keeps its summary readable and controls tappable
+00:18 +90: C:/scholaris/test/discovery_search_widget_test.dart: narrow enlarged-text feed keeps its summary readable and controls tappable
+00:18 +91: C:/scholaris/test/discovery_search_widget_test.dart: narrow enlarged-text feed keeps its summary readable and controls tappable
+00:18 +92: C:/scholaris/test/discovery_search_widget_test.dart: narrow enlarged-text feed keeps its summary readable and controls tappable
+00:18 +93: C:/scholaris/test/discovery_search_widget_test.dart: narrow enlarged-text feed keeps its summary readable and controls tappable
+00:18 +94: C:/scholaris/test/discovery_search_widget_test.dart: narrow enlarged-text feed keeps its summary readable and controls tappable
+00:18 +95: C:/scholaris/test/discovery_search_widget_test.dart: narrow enlarged-text feed keeps its summary readable and controls tappable
+00:18 +96: C:/scholaris/test/discovery_search_widget_test.dart: narrow enlarged-text feed keeps its summary readable and controls tappable
+00:18 +97: C:/scholaris/test/discovery_search_widget_test.dart: narrow enlarged-text feed keeps its summary readable and controls tappable
+00:18 +98: C:/scholaris/test/discovery_search_widget_test.dart: narrow enlarged-text feed keeps its summary readable and controls tappable
+00:18 +99: C:/scholaris/test/discovery_search_widget_test.dart: narrow enlarged-text feed keeps its summary readable and controls tappable
+00:18 +100: C:/scholaris/test/discovery_search_widget_test.dart: narrow enlarged-text feed keeps its summary readable and controls tappable
+00:19 +101: C:/scholaris/test/discovery_search_widget_test.dart: narrow enlarged-text feed keeps its summary readable and controls tappable
+00:20 +102: C:/scholaris/test/discovery_search_widget_test.dart: narrow enlarged-text feed keeps its summary readable and controls tappable
+00:21 +103: C:/scholaris/test/discovery_search_widget_test.dart: narrow enlarged-text feed keeps its summary readable and controls tappable
+00:21 +104: C:/scholaris/test/discovery_search_widget_test.dart: narrow enlarged-text feed keeps its summary readable and controls tappable
+00:21 +105: C:/scholaris/test/discovery_search_widget_test.dart: narrow enlarged-text feed keeps its summary readable and controls tappable
+00:22 +106: C:/scholaris/test/discovery_search_widget_test.dart: narrow enlarged-text feed keeps its summary readable and controls tappable
+00:22 +107: C:/scholaris/test/discovery_search_widget_test.dart: narrow enlarged-text feed keeps its summary readable and controls tappable
+00:22 +108: C:/scholaris/test/discovery_search_widget_test.dart: narrow enlarged-text feed keeps its summary readable and controls tappable
+00:22 +109: C:/scholaris/test/saved_screen_test.dart: Saved Discover action returns to the previous route
+00:22 +110: C:/scholaris/test/student_notifications_sheet_test.dart: StudentNotificationsSheet renders profile completion notice when GPA is missing
+00:22 +111: C:/scholaris/test/discovery_widget_test.dart: ScholarshipDetailScreen bookmark action saves the scholarship
+00:22 +112: C:/scholaris/test/discovery_widget_test.dart: ScholarshipDetailScreen bookmark action saves the scholarship
+00:22 +113: C:/scholaris/test/discovery_widget_test.dart: ScholarshipDetailScreen bookmark action saves the scholarship
+00:22 +114: C:/scholaris/test/discovery_search_widget_test.dart: search field renders the search field and filter button
+00:23 +115: C:/scholaris/test/discovery_search_widget_test.dart: search field renders the search field and filter button
+00:23 +116: C:/scholaris/test/discovery_search_widget_test.dart: search field renders the search field and filter button
+00:23 +117: C:/scholaris/test/discovery_search_widget_test.dart: search field renders the search field and filter button
+00:23 +118: C:/scholaris/test/discovery_search_widget_test.dart: search field renders the search field and filter button
+00:23 +119: C:/scholaris/test/saved_screen_test.dart: SavedScreen - Stitch V2 Empty State bookmarking a suggested grant adds it to the bookmark list and shows toast
+00:23 +120: C:/scholaris/test/discovery_widget_test.dart: ScholarshipDetailScreen hides match reasons when no profile is set up
+00:23 +121: C:/scholaris/test/discovery_search_widget_test.dart: search field typing narrows matches and browse
+00:24 +122: C:/scholaris/test/discovery_search_widget_test.dart: search field typing narrows matches and browse
+00:25 +123: C:/scholaris/test/discovery_search_widget_test.dart: search field typing narrows matches and browse
+00:25 +124: C:/scholaris/test/discovery_search_widget_test.dart: search field typing narrows matches and browse
+00:26 +125: C:/scholaris/test/discovery_widget_test.dart: Card bookmark interactions previously saved scholarships show a filled bookmark
+00:26 +126: C:/scholaris/test/features/student/bottom_nav_tab_switch_test.dart: tab switches show the destination immediately and retain every page
+00:26 +127: C:/scholaris/test/features/student/bottom_nav_tab_switch_test.dart: tab switches show the destination immediately and retain every page
+00:26 +128: C:/scholaris/test/features/student/bottom_nav_tab_switch_test.dart: tab switches show the destination immediately and retain every page
+00:26 +129: C:/scholaris/test/features/student/bottom_nav_tab_switch_test.dart: tab switches show the destination immediately and retain every page
+00:27 +130: C:/scholaris/test/features/student/bottom_nav_tab_switch_test.dart: tab switches show the destination immediately and retain every page
+00:27 +131: C:/scholaris/test/features/student/bottom_nav_tab_switch_test.dart: tab switches show the destination immediately and retain every page
+00:27 +132: C:/scholaris/test/features/student/bottom_nav_tab_switch_test.dart: tab switches show the destination immediately and retain every page
+00:28 +133: C:/scholaris/test/features/student/bottom_nav_tab_switch_test.dart: tab switches show the destination immediately and retain every page
+00:29 +134: C:/scholaris/test/features/student/bottom_nav_tab_switch_test.dart: tab switches show the destination immediately and retain every page
+00:30 +135: C:/scholaris/test/student_navbar_accessibility_test.dart: Student Navbar Refinements & Accessibility Suite 1. Tab 0 is Home, tab switching works, and Scholaris green is applied to selected state
+00:31 +136: C:/scholaris/test/student_navbar_accessibility_test.dart: Student Navbar Refinements & Accessibility Suite 1. Tab 0 is Home, tab switching works, and Scholaris green is applied to selected state
+00:31 +137: C:/scholaris/test/student_navbar_accessibility_test.dart: Student Navbar Refinements & Accessibility Suite 1. Tab 0 is Home, tab switching works, and Scholaris green is applied to selected state
+00:33 +138: C:/scholaris/test/student_navbar_accessibility_test.dart: Student Navbar Refinements & Accessibility Suite 1. Tab 0 is Home, tab switching works, and Scholaris green is applied to selected state
+00:33 +139: C:/scholaris/test/student_nav_indicator_motion_test.dart: tab tint eases from its current color and Reduced Motion snaps immediately
+00:33 +140: C:/scholaris/test/discovery_search_widget_test.dart: filter sheet renders removable active filter chips
+00:34 +141: C:/scholaris/test/discovery_search_widget_test.dart: filter sheet renders removable active filter chips
+00:34 +142: C:/scholaris/test/discovery_search_widget_test.dart: filter sheet renders removable active filter chips
+00:34 +143: C:/scholaris/test/discovery_search_widget_test.dart: filter sheet renders removable active filter chips
+00:34 +144: C:/scholaris/test/discovery_search_widget_test.dart: filter sheet renders removable active filter chips
+00:34 +145: C:/scholaris/test/discovery_search_widget_test.dart: filter sheet renders removable active filter chips
+00:35 +146: C:/scholaris/test/student_nav_indicator_motion_test.dart: selected icon travels left during collapse, plus stays anchored, reversal is continuous
+00:35 +147: C:/scholaris/test/student_nav_indicator_motion_test.dart: selected icon travels left during collapse, plus stays anchored, reversal is continuous
+00:35 +148: C:/scholaris/test/student_nav_indicator_motion_test.dart: selected icon travels left during collapse, plus stays anchored, reversal is continuous
+00:35 +149: C:/scholaris/test/discovery_search_widget_test.dart: filter sheet removing an individual chip restores results
+00:35 +150: C:/scholaris/test/discovery_search_widget_test.dart: filter sheet removing an individual chip restores results
+00:36 +151: C:/scholaris/test/discovery_search_widget_test.dart: filter sheet removing an individual chip restores results
+00:36 +152: C:/scholaris/test/student_navbar_accessibility_test.dart: Student Navbar Refinements & Accessibility Suite 8. Accessibility semantics tree exposes button roles, labels, and onTap action
+00:36 +153: C:/scholaris/test/discovery_search_widget_test.dart: filter sheet clear-all resets every active filter
+00:37 +154: C:/scholaris/test/discovery_search_widget_test.dart: filter sheet clear-all resets every active filter
+00:37 +155: C:/scholaris/test/discovery_search_widget_test.dart: filter sheet clear-all resets every active filter
+00:37 +156: C:/scholaris/test/discovery_search_widget_test.dart: filter sheet clear-all resets every active filter
+00:38 +157: C:/scholaris/test/discovery_search_widget_test.dart: counts and dedup match count updates to the filtered count
+00:39 +158: C:/scholaris/test/discovery_search_widget_test.dart: counts and dedup browse count caption updates
+00:40 +159: C:/scholaris/test/discovery_search_widget_test.dart: counts and dedup browse stays deduplicated from matches
+00:41 +160: C:/scholaris/test/discovery_search_widget_test.dart: counts and dedup filtered matches preserve fit badge and requirements
+00:41 +161: C:/scholaris/test/discovery_search_widget_test.dart: empty states shows the full empty state when everything is filtered out
+00:42 +162: C:/scholaris/test/discovery_search_widget_test.dart: empty states clears from the empty state
+00:43 +163: C:/scholaris/test/discovery_search_widget_test.dart: empty states matches empty but browse nonempty shows an inline note
+00:43 +164: C:/scholaris/test/discovery_search_widget_test.dart: (tearDownAll)
+00:44 +164: All tests passed!

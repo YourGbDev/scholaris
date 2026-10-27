@@ -16,6 +16,10 @@ import '../../../scholarships/presentation/scholarship_qr_scanner_screen.dart';
 Future<void> showStudentActionSheet(BuildContext context) {
   return showAppleSpringModalBottomSheet<void>(
     context: context,
+    backgroundColor: Colors.white,
+    shape: const RoundedRectangleBorder(
+      borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+    ),
     builder: (ctx) => const StudentActionSheet(),
   );
 }
@@ -31,7 +35,7 @@ class StudentActionSheet extends StatelessWidget {
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
       padding: const EdgeInsets.fromLTRB(20, 16, 20, 28),
-      child: Column(
+      child: SingleChildScrollView(child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -62,6 +66,7 @@ class StudentActionSheet extends StatelessWidget {
                 ),
               ),
               IconButton(
+                tooltip: 'Close quick actions',
                 icon: const Icon(Icons.close_rounded, size: 20, color: Color(0xFF707971)),
                 onPressed: () => Navigator.of(context).pop(),
               ),
@@ -258,7 +263,7 @@ class StudentActionSheet extends StatelessWidget {
             ),
           ),
         ],
-      ),
+      )),
     );
   }
 }

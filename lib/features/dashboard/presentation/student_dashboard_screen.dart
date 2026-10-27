@@ -221,10 +221,11 @@ class _StudentDashboardScreenState
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         // Scholaris Brand Logo
-        StudentTabReveal(
+        Expanded(child: StudentTabReveal(
           order: 0,
           immediate: true,
-          child: Row(
+          child: FittedBox(fit: BoxFit.scaleDown, alignment: Alignment.centerLeft, child: Row(
+          mainAxisSize: MainAxisSize.min,
           children: [
             Container(
               width: 36,
@@ -259,8 +260,8 @@ class _StudentDashboardScreenState
               ),
             ),
           ],
-          ),
-        ),
+          )),
+        )),
 
         // Action Buttons: Notifications Bell & Profile Avatar
         Row(

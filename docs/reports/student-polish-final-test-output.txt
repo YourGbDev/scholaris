@@ -1,0 +1,59 @@
+00:00 +0: loading C:/scholaris/test/scholarship_card_test.dart
+00:00 +0: C:/scholaris/test/scholarship_card_test.dart: (setUpAll)
+00:00 +0: C:/scholaris/test/scholarship_card_test.dart: award amount stays readable on narrow enlarged-text cards
+00:12 +1: C:/scholaris/test/discovery_search_widget_test.dart: narrow enlarged-text feed keeps its summary readable and controls tappable
+00:13 +2: C:/scholaris/test/discovery_search_widget_test.dart: narrow enlarged-text feed keeps its summary readable and controls tappable
+00:14 +3: C:/scholaris/test/discovery_search_widget_test.dart: narrow enlarged-text feed keeps its summary readable and controls tappable
+00:14 +4: C:/scholaris/test/discovery_search_widget_test.dart: narrow enlarged-text feed keeps its summary readable and controls tappable
+00:15 +5: C:/scholaris/test/discovery_search_widget_test.dart: narrow enlarged-text feed keeps its summary readable and controls tappable
+00:15 +6: C:/scholaris/test/discovery_search_widget_test.dart: narrow enlarged-text feed keeps its summary readable and controls tappable
+00:15 +7: C:/scholaris/test/discovery_search_widget_test.dart: narrow enlarged-text feed keeps its summary readable and controls tappable
+00:16 +8: C:/scholaris/test/discovery_search_widget_test.dart: narrow enlarged-text feed keeps its summary readable and controls tappable
+00:16 +9: C:/scholaris/test/discovery_search_widget_test.dart: narrow enlarged-text feed keeps its summary readable and controls tappable
+00:16 +10: C:/scholaris/test/discovery_search_widget_test.dart: narrow enlarged-text feed keeps its summary readable and controls tappable
+00:16 +11: C:/scholaris/test/discovery_search_widget_test.dart: narrow enlarged-text feed keeps its summary readable and controls tappable
+00:16 +12: C:/scholaris/test/discovery_search_widget_test.dart: narrow enlarged-text feed keeps its summary readable and controls tappable
+00:17 +13: C:/scholaris/test/discovery_search_widget_test.dart: narrow enlarged-text feed keeps its summary readable and controls tappable
+00:17 +14: C:/scholaris/test/discovery_search_widget_test.dart: narrow enlarged-text feed keeps its summary readable and controls tappable
+00:17 +15: C:/scholaris/test/discovery_search_widget_test.dart: narrow enlarged-text feed keeps its summary readable and controls tappable
+00:18 +16: C:/scholaris/test/discovery_search_widget_test.dart: narrow enlarged-text feed keeps its summary readable and controls tappable
+00:18 +17: C:/scholaris/test/discovery_search_widget_test.dart: narrow enlarged-text feed keeps its summary readable and controls tappable
+00:18 +18: C:/scholaris/test/discovery_search_widget_test.dart: narrow enlarged-text feed keeps its summary readable and controls tappable
+00:19 +19: C:/scholaris/test/discovery_search_widget_test.dart: narrow enlarged-text feed keeps its summary readable and controls tappable
+00:19 +20: C:/scholaris/test/discovery_search_widget_test.dart: narrow enlarged-text feed keeps its summary readable and controls tappable
+00:20 +21: C:/scholaris/test/discovery_search_widget_test.dart: narrow enlarged-text feed keeps its summary readable and controls tappable
+00:21 +22: C:/scholaris/test/discovery_search_widget_test.dart: narrow enlarged-text feed keeps its summary readable and controls tappable
+00:21 +23: C:/scholaris/test/discovery_search_widget_test.dart: narrow enlarged-text feed keeps its summary readable and controls tappable
+00:21 +24: C:/scholaris/test/discovery_search_widget_test.dart: narrow enlarged-text feed keeps its summary readable and controls tappable
+00:21 +25: C:/scholaris/test/discovery_search_widget_test.dart: narrow enlarged-text feed keeps its summary readable and controls tappable
+00:22 +26: C:/scholaris/test/discovery_search_widget_test.dart: narrow enlarged-text feed keeps its summary readable and controls tappable
+00:22 +27: C:/scholaris/test/discovery_search_widget_test.dart: narrow enlarged-text feed keeps its summary readable and controls tappable
+00:22 +28: C:/scholaris/test/discovery_search_widget_test.dart: narrow enlarged-text feed keeps its summary readable and controls tappable
+00:22 +29: C:/scholaris/test/discovery_search_widget_test.dart: narrow enlarged-text feed keeps its summary readable and controls tappable
+00:22 +30: C:/scholaris/test/discovery_search_widget_test.dart: narrow enlarged-text feed keeps its summary readable and controls tappable
+00:22 +31: C:/scholaris/test/discovery_search_widget_test.dart: narrow enlarged-text feed keeps its summary readable and controls tappable
+00:23 +32: C:/scholaris/test/discovery_search_widget_test.dart: narrow enlarged-text feed keeps its summary readable and controls tappable
+00:24 +33: C:/scholaris/test/discovery_search_widget_test.dart: narrow enlarged-text feed keeps its summary readable and controls tappable
+00:25 +34: C:/scholaris/test/discovery_search_widget_test.dart: narrow enlarged-text feed keeps its summary readable and controls tappable
+00:26 +35: C:/scholaris/test/discovery_search_widget_test.dart: narrow enlarged-text feed keeps its summary readable and controls tappable
+00:26 +36: C:/scholaris/test/discovery_search_widget_test.dart: narrow enlarged-text feed keeps its summary readable and controls tappable
+00:27 +37: C:/scholaris/test/discovery_search_widget_test.dart: narrow enlarged-text feed keeps its summary readable and controls tappable
+00:31 +38: C:/scholaris/test/student_quick_actions_polish_test.dart: quick actions have normal sheet typography and scroll on short enlarged-text phones
+00:34 +39: C:/scholaris/test/student_quick_actions_polish_test.dart: quick actions have normal sheet typography and scroll on short enlarged-text phones
+00:34 +40: C:/scholaris/test/discovery_search_widget_test.dart: search field typing narrows matches and browse
+00:38 +41: C:/scholaris/test/discovery_search_widget_test.dart: search field clearing the search restores both sections
+00:42 +42: C:/scholaris/test/discovery_search_widget_test.dart: filter sheet opens the filter bottom sheet
+00:47 +43: C:/scholaris/test/discovery_search_widget_test.dart: filter sheet selecting a filter narrows matches
+00:52 +44: C:/scholaris/test/discovery_search_widget_test.dart: filter sheet shows an active filter badge
+00:55 +45: C:/scholaris/test/discovery_search_widget_test.dart: filter sheet renders removable active filter chips
+00:59 +46: C:/scholaris/test/discovery_search_widget_test.dart: filter sheet removing an individual chip restores results
+01:02 +47: C:/scholaris/test/discovery_search_widget_test.dart: filter sheet clear-all resets every active filter
+01:05 +48: C:/scholaris/test/discovery_search_widget_test.dart: counts and dedup match count updates to the filtered count
+01:08 +49: C:/scholaris/test/discovery_search_widget_test.dart: counts and dedup browse count caption updates
+01:11 +50: C:/scholaris/test/discovery_search_widget_test.dart: counts and dedup browse stays deduplicated from matches
+01:13 +51: C:/scholaris/test/discovery_search_widget_test.dart: counts and dedup filtered matches preserve fit badge and requirements
+01:14 +52: C:/scholaris/test/discovery_search_widget_test.dart: empty states shows the full empty state when everything is filtered out
+01:16 +53: C:/scholaris/test/discovery_search_widget_test.dart: empty states clears from the empty state
+01:19 +54: C:/scholaris/test/discovery_search_widget_test.dart: empty states matches empty but browse nonempty shows an inline note
+01:20 +55: C:/scholaris/test/discovery_search_widget_test.dart: (tearDownAll)
+01:21 +55: All tests passed!

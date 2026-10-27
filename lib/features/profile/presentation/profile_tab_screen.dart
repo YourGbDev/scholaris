@@ -257,7 +257,7 @@ class ProfileTabScreen extends ConsumerWidget {
                   fontSize: 12,
                   color: kOnSurfaceVariant,
                 ),
-                maxLines: 1,
+                maxLines: 2,
                 overflow: TextOverflow.ellipsis,
               ),
             ],
@@ -480,12 +480,15 @@ class ProfileTabScreen extends ConsumerWidget {
                     ),
                   ),
                   const SizedBox(width: 8),
-                  Text(
-                    syncedCount > 0 ? '$syncedCount Categories Synced' : 'Pending Profile Setup',
-                    style: outfit(
-                      fontSize: 11,
-                      fontWeight: FontWeight.w600,
-                      color: syncedCount > 0 ? kPrimary : kOnSurfaceVariant,
+                  Flexible(
+                    child: Text(
+                      syncedCount > 0 ? '$syncedCount Categories Synced' : 'Pending Profile Setup',
+                      textAlign: TextAlign.end,
+                      style: outfit(
+                        fontSize: 11,
+                        fontWeight: FontWeight.w600,
+                        color: syncedCount > 0 ? kPrimary : kOnSurfaceVariant,
+                      ),
                     ),
                   ),
                 ],
@@ -1352,8 +1355,8 @@ class ProfileTabScreen extends ConsumerWidget {
           const SizedBox(height: 2),
           Text(
             subtitle,
-            style: openSans(fontSize: 10, color: kOnSurfaceVariant),
-            maxLines: 1,
+            style: openSans(fontSize: 11, color: kOnSurfaceVariant),
+            maxLines: 2,
             overflow: TextOverflow.ellipsis,
           ),
         ],

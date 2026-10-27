@@ -214,7 +214,77 @@ class ApplicationsScreen extends ConsumerWidget {
           }
         }
 
-        return Padding(
+        final compactTextLayout = MediaQuery.sizeOf(context).width < 380 &&
+            MediaQuery.textScalerOf(context).scale(14) > 16;
+        if (compactTextLayout) {
+          return RefreshIndicator(
+            color: kPrimary,
+            onRefresh: () async {
+              ref.invalidate(applicationsProvider);
+              ref.invalidate(scholarshipsProvider);
+              await ref.read(applicationsProvider.future);
+            },
+            child: CustomScrollView(
+              physics: const AlwaysScrollableScrollPhysics(parent: AppleBouncingScrollPhysics()),
+              slivers: [
+                SliverPadding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  sliver: SliverToBoxAdapter(child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const SizedBox(height: 4),
+                      StudentTabReveal(order: 1, structural: true, child: _PotentialAwardCard(
+                        totalPotential: totalPotential, applications: applications, counts: counts,
+                      )),
+                      const SizedBox(height: 10),
+                      StudentTabReveal(order: 1, structural: true, child: _SummaryBar(applications: applications)),
+                      const SizedBox(height: 10),
+                      StudentTabReveal(order: 2, structural: true, child: _StatusFilterBar(
+                        counts: counts, selected: status,
+                        onSelect: (s) => ref.read(applicationFilterProvider.notifier).select(s),
+                      )),
+                      const SizedBox(height: 10),
+                    ],
+                  )),
+                ),
+                SliverPadding(
+                  padding: EdgeInsets.fromLTRB(20, 0, 20, MediaQuery.of(context).padding.bottom + 80),
+                  sliver: filtered.isEmpty
+                      ? SliverToBoxAdapter(child: StudentTabReveal(order: 3, child: _buildFilteredEmpty(context, ref, status)))
+                      : scholarshipsAsync.when(
+                          loading: () => const SliverToBoxAdapter(child: StudentTabReveal(order: 3, child: LoadingView())),
+                          error: (_, _) => SliverToBoxAdapter(child: StudentTabReveal(order: 3, child: ErrorView(
+                            message: 'Could not load scholarship details.',
+                            onRetry: () => ref.invalidate(scholarshipsProvider),
+                          ))),
+                          data: (_) => SliverList.builder(
+                            itemCount: filtered.length + (urgentApp != null ? 1 : 0),
+                            itemBuilder: (context, index) {
+                              final order = index + 1;
+                              if (urgentApp != null && urgentScholarship != null) {
+                                if (index == 0) {
+                                  return Padding(
+                                    padding: const EdgeInsets.only(bottom: 12),
+                                    child: StudentTabReveal(order: order, child: _UrgentDeadlineBanner(
+                                      application: urgentApp, scholarship: urgentScholarship,
+                                    )),
+                                  );
+                                }
+                                index--;
+                              }
+                              return StudentTabReveal(order: order, child: Padding(
+                                padding: const EdgeInsets.only(bottom: 12),
+                                child: _ApplicationCard(application: filtered[index], scholarship: byId[filtered[index].scholarshipId]),
+                              ));
+                            },
+                          ),
+                        ),
+                ),
+              ],
+            ),
+          );
+        }
+        final trackingContent = Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -310,6 +380,7 @@ class ApplicationsScreen extends ConsumerWidget {
             ],
           ),
         );
+        return trackingContent;
       },
     );
   }
@@ -337,7 +408,7 @@ class ApplicationsScreen extends ConsumerWidget {
   }
 
   Widget _buildTrackerSkeleton() {
-    return Padding(
+    return SingleChildScrollView(
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -345,12 +416,12 @@ class ApplicationsScreen extends ConsumerWidget {
           SizedBox(height: 4),
           SkeletonBand(height: 104, borderRadius: 16),
           SizedBox(height: 10),
-          Row(
+          Wrap(
+            spacing: 6,
+            runSpacing: 6,
             children: [
               SkeletonBand(width: 80, height: 28, borderRadius: 20),
-              SizedBox(width: 6),
               SkeletonBand(width: 90, height: 28, borderRadius: 20),
-              SizedBox(width: 6),
               SkeletonBand(width: 100, height: 28, borderRadius: 20),
             ],
           ),
@@ -459,13 +530,11 @@ class _PotentialAwardCard extends StatelessWidget {
                             ),
                           ),
                           const SizedBox(height: 4),
-                          Row(
-                            mainAxisSize: MainAxisSize.min,
-                            crossAxisAlignment: CrossAxisAlignment.baseline,
-                            textBaseline: TextBaseline.alphabetic,
+                          Wrap(
+                            spacing: 4,
+                            crossAxisAlignment: WrapCrossAlignment.center,
                             children: [
-                              Flexible(
-                                child: CountUpAnimation(
+                              CountUpAnimation(
                                   targetValue: totalPotential.toInt(),
                                   prefix: '₱',
                                   style: outfit(
@@ -474,9 +543,7 @@ class _PotentialAwardCard extends StatelessWidget {
                                     color: Colors.white,
                                     letterSpacing: -0.5,
                                   ),
-                                ),
                               ),
-                              const SizedBox(width: 4),
                               Text(
                                 'applied value',
                                 style: openSans(
@@ -1578,12 +1645,14 @@ class _MetaChip extends StatelessWidget {
         children: [
           Icon(icon, size: 12.5, color: kPrimary),
           const SizedBox(width: 4.5),
-          Text(
-            label,
-            style: openSans(
-              fontSize: 11,
-              fontWeight: FontWeight.w600,
-              color: kPrimary,
+          Flexible(
+            child: Text(
+              label,
+              style: openSans(
+                fontSize: 11,
+                fontWeight: FontWeight.w600,
+                color: kPrimary,
+              ),
             ),
           ),
         ],
@@ -1678,8 +1747,9 @@ class _EmptyApplicationsState extends ConsumerWidget {
                         ),
                         elevation: 0,
                       ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
+                      child: Wrap(
+                        alignment: WrapAlignment.center,
+                        crossAxisAlignment: WrapCrossAlignment.center,
                         children: [
                           Text(
                             'Start applying',
@@ -1696,8 +1766,9 @@ class _EmptyApplicationsState extends ConsumerWidget {
                   ),
                 ),
                 const SizedBox(height: 12),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
+                Wrap(
+                  alignment: WrapAlignment.center,
+                  crossAxisAlignment: WrapCrossAlignment.center,
                   children: [
                     const Icon(Icons.verified_rounded, size: 16, color: Color(0xFF0F4D2E)),
                     const SizedBox(width: 6),
@@ -1720,12 +1791,14 @@ class _EmptyApplicationsState extends ConsumerWidget {
             children: [
               const Icon(Icons.flag_rounded, size: 20, color: Color(0xFF0F4D2E)),
               const SizedBox(width: 8),
-              Text(
-                'What happens when you apply',
-                style: outfit(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w700,
-                  color: const Color(0xFF161C27),
+              Expanded(
+                child: Text(
+                  'What happens when you apply',
+                  style: outfit(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w700,
+                    color: const Color(0xFF161C27),
+                  ),
                 ),
               ),
             ],
@@ -1841,8 +1914,10 @@ class _EmptyApplicationsState extends ConsumerWidget {
           ),
           const SizedBox(height: 20),
           // Suggested For You Preview Card (Stitch lines 135-164)
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          Wrap(
+            spacing: 12,
+            runSpacing: 4,
+            alignment: WrapAlignment.spaceBetween,
             children: [
               Text(
                 'Suggested For You',
@@ -1885,8 +1960,11 @@ class _EmptyApplicationsState extends ConsumerWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                Wrap(
+                  spacing: 12,
+                  runSpacing: 8,
+                  alignment: WrapAlignment.spaceBetween,
+                  crossAxisAlignment: WrapCrossAlignment.center,
                   children: [
                     Text.rich(
                       TextSpan(
@@ -1956,19 +2034,25 @@ class _EmptyApplicationsState extends ConsumerWidget {
                   ),
                 ),
                 const SizedBox(height: 12),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                Wrap(
+                  spacing: 12,
+                  runSpacing: 8,
+                  alignment: WrapAlignment.spaceBetween,
+                  crossAxisAlignment: WrapCrossAlignment.center,
                   children: [
                     Row(
+                      mainAxisSize: MainAxisSize.min,
                       children: [
                         const Icon(Icons.schedule_rounded, size: 14, color: Color(0xFFBA1A1A)),
                         const SizedBox(width: 4),
-                        Text(
-                          'Closes in 6 days',
-                          style: outfit(
-                            fontSize: 11.5,
-                            fontWeight: FontWeight.w600,
-                            color: const Color(0xFFBA1A1A),
+                        Flexible(
+                          child: Text(
+                            'Closes in 6 days',
+                            style: outfit(
+                              fontSize: 11.5,
+                              fontWeight: FontWeight.w600,
+                              color: const Color(0xFFBA1A1A),
+                            ),
                           ),
                         ),
                       ],

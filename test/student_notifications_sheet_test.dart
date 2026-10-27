@@ -40,6 +40,21 @@ void main() {
   }
 
   group('StudentNotificationsSheet', () {
+    testWidgets('long notification titles remain readable at 320px with larger text', (tester) async {
+      tester.view.physicalSize = const Size(320, 640);
+      tester.view.devicePixelRatio = 1;
+      tester.platformDispatcher.textScaleFactorTestValue = 1.4;
+      addTearDown(tester.view.reset);
+      addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
+      const title = 'Additional academic documentation required for your scholarship';
+      await tester.pumpWidget(buildTestSubject(applications: [], scholarships: [], profile: null,
+        notifications: [{'id': 'long-title', 'title': title, 'message': 'Review the requested documents.', 'is_read': false}],
+      ));
+      await tester.pumpAndSettle();
+      expect(tester.widget<Text>(find.text(title)).maxLines, isNull);
+      expect(tester.widget<Text>(find.text(title)).overflow, isNot(TextOverflow.ellipsis));
+      expect(tester.takeException(), isNull);
+    });
     testWidgets('renders all caught up empty state when profile is complete and no active apps', (tester) async {
       final completeProfile = StudentProfile(
         id: 'std_1',

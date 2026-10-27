@@ -87,6 +87,20 @@ void main() {
     GoogleFonts.config.allowRuntimeFetching = false;
   });
 
+  testWidgets('profile remains readable on a narrow phone with larger text',
+      (tester) async {
+    tester.view.physicalSize = const Size(320, 800);
+    tester.view.devicePixelRatio = 1.0;
+    addTearDown(tester.view.reset);
+
+    await tester.pumpWidget(MediaQuery(
+      data: const MediaQueryData(textScaler: TextScaler.linear(1.3)),
+      child: _harness(profileFactory: () async => _profile()),
+    ));
+    await tester.pumpAndSettle();
+    expect(find.text('Maria Santos'), findsOneWidget);
+  });
+
   testWidgets('renders the Account Settings entry', (tester) async {
     tester.view.physicalSize = const Size(800, 1200);
     tester.view.devicePixelRatio = 1.0;

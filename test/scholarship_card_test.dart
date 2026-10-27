@@ -40,6 +40,20 @@ Widget _wrap({required ScholarshipCard card}) =>
     MaterialApp(home: Scaffold(body: card));
 
 void main() {
+  testWidgets('award amount stays readable on narrow enlarged-text cards', (tester) async {
+    tester.view.physicalSize = const Size(320, 700);
+    tester.view.devicePixelRatio = 1;
+    tester.platformDispatcher.textScaleFactorTestValue = 1.4;
+    addTearDown(tester.view.reset);
+    addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
+    await tester.pumpWidget(MaterialApp(home: Scaffold(body: SingleChildScrollView(
+      child: ScholarshipCard(scholarship: _scholarship()),
+    ))));
+    await tester.pumpAndSettle();
+    final amount = find.text('₱50,000');
+    expect(tester.getBottomRight(amount).dy - tester.getTopLeft(amount).dy, greaterThanOrEqualTo(18));
+    expect(tester.takeException(), isNull);
+  });
   testWidgets('card title follows badges closely without shrinking bookmark target', (tester) async {
     tester.view.physicalSize = const Size(390, 900);
     tester.view.devicePixelRatio = 1;
@@ -114,6 +128,18 @@ void main() {
     final size = tester.getSize(button);
     expect(size.width, greaterThanOrEqualTo(44));
     expect(size.height, greaterThanOrEqualTo(44));
+  });
+
+  testWidgets('card actions provide a comfortable 44px touch target',
+      (tester) async {
+    await tester.pumpWidget(_wrap(
+      card: ScholarshipCard(scholarship: _scholarship()),
+    ));
+
+    expect(tester.getSize(find.widgetWithText(TextButton, 'View Details')).height,
+        greaterThanOrEqualTo(44));
+    expect(tester.getSize(find.widgetWithText(ElevatedButton, 'Apply Now')).height,
+        greaterThanOrEqualTo(44));
   });
 
   group('applied indicator', () {

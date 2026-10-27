@@ -189,10 +189,11 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         // Scholaris Brand Logo
-        StudentTabReveal(
+        Expanded(child: StudentTabReveal(
           order: 0,
           immediate: true,
-          child: Row(
+          child: FittedBox(fit: BoxFit.scaleDown, alignment: Alignment.centerLeft, child: Row(
+          mainAxisSize: MainAxisSize.min,
           children: [
             Container(
               width: 36,
@@ -227,8 +228,8 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
               ),
             ),
           ],
-          ),
-        ),
+          )),
+        )),
 
         // Notifications Bell & Profile Avatar
         Row(
@@ -468,13 +469,16 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
             onTap: () => showDiscoveryFilterSheet(context),
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
-              child: Text(
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(minWidth: 44, minHeight: 44),
+                child: Center(child: Text(
                 'Edit',
                 style: outfit(
                   fontSize: 12,
                   fontWeight: FontWeight.bold,
                   color: const Color(0xFF436084),
                 ),
+              )),
               ),
             ),
           ),
@@ -567,13 +571,9 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
     final sortLabel = currentSort == DiscoverySort.highestAmount
         ? 'Highest Amount'
         : 'Highest Match %';
-
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      crossAxisAlignment: CrossAxisAlignment.end,
-      children: [
-        Expanded(
-          child: Column(
+    final stacked = MediaQuery.sizeOf(context).width < 380 ||
+        MediaQuery.textScalerOf(context).scale(12) > 14;
+    final heading = Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
@@ -588,18 +588,16 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
               const SizedBox(height: 2),
               Text(
                 'Showing $count targeted opportunities for $studentName',
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
+                maxLines: stacked ? null : 1,
+                overflow: stacked ? TextOverflow.visible : TextOverflow.ellipsis,
                 style: openSans(
                   fontSize: 12,
                   color: const Color(0xFF404942),
                 ),
               ),
             ],
-          ),
-        ),
-        const SizedBox(width: 8),
-        PopupMenuButton<DiscoverySort>(
+          );
+    final sortButton = PopupMenuButton<DiscoverySort>(
           tooltip: 'Sort scholarships',
           initialValue: currentSort,
           onSelected: (sort) {
@@ -617,6 +615,7 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
             ),
           ],
           child: Container(
+            constraints: const BoxConstraints(minHeight: 44),
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
             decoration: BoxDecoration(
               color: Colors.white,
@@ -653,9 +652,14 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
               ),
             ),
           ),
-        ),
-      ],
-    );
+        );
+    return stacked
+        ? Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            heading, const SizedBox(height: 8), sortButton,
+          ])
+        : Row(crossAxisAlignment: CrossAxisAlignment.end, children: [
+            Expanded(child: heading), const SizedBox(width: 8), sortButton,
+          ]);
   }
 
   // --- 6. Feed Cards Container ---

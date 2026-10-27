@@ -404,22 +404,20 @@ class StudentNotificationsSheet extends ConsumerWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Row(
+                      Wrap(
+                        spacing: 6,
+                        runSpacing: 4,
+                        crossAxisAlignment: WrapCrossAlignment.center,
                         children: [
-                          Expanded(
-                            child: Text(
+                          Text(
                               item.title,
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
                               style: outfit(
                                 fontSize: 13.5,
                                 fontWeight: FontWeight.w700,
                                 color: const Color(0xFF161C27),
                               ),
-                            ),
                           ),
                           if (item.badgeText != null) ...[
-                            const SizedBox(width: 6),
                             Container(
                               padding: const EdgeInsets.symmetric(
                                 horizontal: 6,

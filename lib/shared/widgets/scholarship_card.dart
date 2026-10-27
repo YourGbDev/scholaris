@@ -160,6 +160,8 @@ class ScholarshipCard extends StatelessWidget {
     final accentColor = providerTypeColor(scholarship.provider);
     final matchPct = _effectiveMatchPercentage();
     final amount = formatScholarshipAmount(scholarship);
+    final stackAward = MediaQuery.sizeOf(context).width < 350 ||
+        MediaQuery.textScalerOf(context).scale(12) > 14;
     final benefit = formatScholarshipBenefit(scholarship);
     final reqSnippet = formatScholarshipRequirements(scholarship);
 
@@ -266,7 +268,7 @@ class ScholarshipCard extends StatelessWidget {
                                         '$matchPct% Fit',
                                         style: outfit(
                                           fontSize: 11.5,
-                                          fontWeight: FontWeight.bold,
+                                          fontWeight: FontWeight.w600,
                                           color: matchPct >= 90
                                               ? Colors.white
                                               : const Color(0xFF161C27),
@@ -301,8 +303,8 @@ class ScholarshipCard extends StatelessWidget {
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                         style: outfit(
-                          fontSize: 15.5,
-                          fontWeight: FontWeight.w600,
+                          fontSize: 16,
+                          fontWeight: FontWeight.w700,
                           color: const Color(0xFF161C27),
                           letterSpacing: -0.15,
                           height: 1.25,
@@ -337,17 +339,31 @@ class ScholarshipCard extends StatelessWidget {
 
                       // 4. Award Highlight Tile matching Stitch V2
                       Container(
+                        width: double.infinity,
                         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                         decoration: BoxDecoration(
                           color: const Color(0xFFF2F6F3), // Soft sage porcelain container
                           borderRadius: BorderRadius.circular(10),
                           border: Border.all(color: const Color(0x140F4D2E), width: 0.75),
                         ),
-                        child: Row(
+                        child: Flex(
+                          direction: stackAward ? Axis.vertical : Axis.horizontal,
+                          crossAxisAlignment: stackAward ? CrossAxisAlignment.start : CrossAxisAlignment.center,
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Expanded(
-                              child: FittedBox(
+                            Flexible(
+                              flex: stackAward ? 0 : 1,
+                              child: stackAward
+                                  ? Wrap(spacing: 4, runSpacing: 2,
+                                      crossAxisAlignment: WrapCrossAlignment.center,
+                                      children: [
+                                        const Icon(Icons.stars_rounded, size: 19, color: Color(0xFFFABC28)),
+                                        Text(amount, style: outfit(fontSize: 17, fontWeight: FontWeight.w600,
+                                          color: kPrimary, letterSpacing: -0.2)),
+                                        Text(scholarship.formattedFrequency, style: openSans(fontSize: 11.5,
+                                          color: const Color(0xFF404942), fontWeight: FontWeight.w500)),
+                                      ])
+                                  : FittedBox(
                                 fit: BoxFit.scaleDown,
                                 alignment: Alignment.centerLeft,
                                 child: Row(
@@ -381,7 +397,7 @@ class ScholarshipCard extends StatelessWidget {
                                 ),
                               ),
                             ),
-                            const SizedBox(width: 8),
+                            const SizedBox(width: 8, height: 8),
                             ConstrainedBox(
                               constraints: const BoxConstraints(maxWidth: 140),
                               child: Container(
@@ -475,7 +491,7 @@ class ScholarshipCard extends StatelessWidget {
                             Expanded(
                               child: PressableScale(
                                 child: SizedBox(
-                                  height: 42,
+                                  height: 44,
                                   child: TextButton(
                                     onPressed: () => context.push(
                                       '/scholarship/${scholarship.id}',
@@ -509,7 +525,7 @@ class ScholarshipCard extends StatelessWidget {
                             Expanded(
                               child: PressableScale(
                                 child: SizedBox(
-                                  height: 42,
+                                  height: 44,
                                   child: ElevatedButton(
                                     onPressed: () {
                                       if (onQuickApply != null) {
@@ -563,7 +579,7 @@ class ScholarshipCard extends StatelessWidget {
                         PressableScale(
                           child: SizedBox(
                             width: double.infinity,
-                            height: 42,
+                            height: 44,
                             child: TextButton(
                               onPressed: () => context.push(
                                 '/scholarship/${scholarship.id}',
@@ -783,14 +799,14 @@ class _DeadlineChip extends StatelessWidget {
         children: [
           Icon(icon, size: 12, color: fg),
           const SizedBox(width: 3.5),
-          Text(
+          Flexible(child: Text(
             label,
             style: outfit(
               fontSize: 10.5,
               fontWeight: FontWeight.bold,
               color: fg,
             ),
-          ),
+          )),
         ],
       ),
     );

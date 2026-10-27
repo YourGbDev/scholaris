@@ -3,7 +3,7 @@
 // Covers the entry point (Profile tab), the populated list with status chips,
 // empty / loading / error+retry states, status rendering for every supported
 // status, authenticated-user isolation, logout/login transitions, responsive
-// narrow-screen rendering, and that the existing three-tab navigation contract
+// narrow-screen rendering, and that the existing four-tab navigation contract
 // is preserved.
 
 import 'dart:async';
@@ -27,7 +27,6 @@ import 'package:scholaris/features/profile/repositories/profile_repository.dart'
 import 'package:scholaris/features/scholarships/providers/scholarships_provider.dart';
 import 'package:scholaris/features/scholarships/repositories/scholarship_repository.dart';
 
-import 'package:scholaris/shared/theme/app_motion.dart';
 import 'helpers/fake_application_data_source.dart';
 import 'helpers/fake_bookmark_data_source.dart';
 import 'helpers/fake_profile_data_source.dart';
@@ -133,9 +132,9 @@ Widget _wrap({
   );
 }
 
-/// Wires the real HomeScreen shell (three tabs) with all feature providers,
+/// Wires the real HomeScreen shell (four tabs) with all feature providers,
 /// mirroring the production dependency graph. Used by the entry-point and
-/// three-tab navigation tests.
+/// four-tab navigation tests.
 Widget _wrapHomeScreen() {
   final profileSource = FakeProfileDataSource();
   profileSource.upsertProfile('user-a', _student().toDbRow());
@@ -273,24 +272,24 @@ void main() {
       await tester.pump(const Duration(milliseconds: 500));
 
       expect(
-        find.descendant(of: find.byType(LiquidGlass), matching: find.text('Dashboard')),
+        find.descendant(of: find.byType(StudentBottomNav), matching: find.text('Home')),
         findsOneWidget,
       );
       expect(
-        find.descendant(of: find.byType(LiquidGlass), matching: find.text('Discover')),
+        find.descendant(of: find.byType(StudentBottomNav), matching: find.text('Discover')),
         findsOneWidget,
       );
       expect(
-        find.descendant(of: find.byType(LiquidGlass), matching: find.text('Tracker')),
+        find.descendant(of: find.byType(StudentBottomNav), matching: find.text('Tracker')),
         findsOneWidget,
       );
       expect(
-        find.descendant(of: find.byType(LiquidGlass), matching: find.text('Profile')),
+        find.descendant(of: find.byType(StudentBottomNav), matching: find.text('Profile')),
         findsOneWidget,
       );
 
       await tester.tap(
-        find.descendant(of: find.byType(LiquidGlass), matching: find.text('Tracker')),
+        find.descendant(of: find.byType(StudentBottomNav), matching: find.text('Tracker')),
       );
       await tester.pump(const Duration(milliseconds: 500));
       expect(find.text('My Applications'), findsOneWidget);

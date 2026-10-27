@@ -422,6 +422,9 @@ void main() {
       await tester.pump(const Duration(milliseconds: 500));
 
       await tester.tap(find.text('Tracker'));
+      // Build the newly active tab and start its entrance ticker before
+      // advancing the clock; one timed pump only starts the animation.
+      await tester.pump();
       await tester.pump(const Duration(milliseconds: 500));
 
       expect(find.text('Withdrawn (1)'), findsOneWidget);

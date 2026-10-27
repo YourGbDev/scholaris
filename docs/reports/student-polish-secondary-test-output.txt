@@ -1,0 +1,36 @@
+00:00 +0: loading C:/scholaris/test/student_quick_actions_polish_test.dart
+00:00 +0: C:/scholaris/test/student_quick_actions_polish_test.dart: quick actions have normal sheet typography and scroll on short enlarged-text phones
+00:02 +1: C:/scholaris/test/student_navbar_accessibility_test.dart: Student Navbar Refinements & Accessibility Suite 1. Tab 0 is Home, tab switching works, and Scholaris green is applied to selected state
+00:05 +2: C:/scholaris/test/student_scroll_dock_test.dart: Student Scroll Dock Suite (student-scroll-dock-2026-10-26) 1. Scroll down > 24px collapses dock into active tab compact control at left
+00:06 +3: C:/scholaris/test/student_navbar_accessibility_test.dart: Student Navbar Refinements & Accessibility Suite 2. High-contrast mode activates solid opaque fallback without blur
+00:06 +4: C:/scholaris/test/student_scroll_dock_test.dart: Student Scroll Dock Suite (student-scroll-dock-2026-10-26) 2. Scroll down < 20px does not collapse dock (hysteresis verification)
+00:06 +5: C:/scholaris/test/student_navbar_accessibility_test.dart: Student Navbar Refinements & Accessibility Suite 3. Reduced-motion mode preserves static glass with animations disabled
+00:07 +6: C:/scholaris/test/student_scroll_dock_test.dart: Student Scroll Dock Suite (student-scroll-dock-2026-10-26) 3. Scroll up > 16px restores all 4 tabs
+00:07 +7: C:/scholaris/test/student_scroll_dock_test.dart: Student Scroll Dock Suite (student-scroll-dock-2026-10-26) 3. Scroll up > 16px restores all 4 tabs
+00:07 +8: C:/scholaris/test/student_scroll_dock_test.dart: Student Scroll Dock Suite (student-scroll-dock-2026-10-26) 3. Scroll up > 16px restores all 4 tabs
+00:07 +9: C:/scholaris/test/student_navbar_accessibility_test.dart: Student Navbar Refinements & Accessibility Suite 6. Touch targets meet minimum 44x44 pt requirements and outer dock is 58px
+00:07 +10: C:/scholaris/test/student_scroll_dock_test.dart: Student Scroll Dock Suite (student-scroll-dock-2026-10-26) 4. Tapping compact control restores all 4 tabs
+00:08 +11: C:/scholaris/test/student_scroll_dock_test.dart: Student Scroll Dock Suite (student-scroll-dock-2026-10-26) 4. Tapping compact control restores all 4 tabs
+00:08 +12: C:/scholaris/test/student_navbar_accessibility_test.dart: Student Navbar Refinements & Accessibility Suite 8. Accessibility semantics tree exposes button roles, labels, and onTap action
+00:08 +13: C:/scholaris/test/student_scroll_dock_test.dart: Student Scroll Dock Suite (student-scroll-dock-2026-10-26) 5. Scroll to top (pixels <= 12.0) restores all 4 tabs
+00:09 +14: C:/scholaris/test/student_scroll_dock_test.dart: Student Scroll Dock Suite (student-scroll-dock-2026-10-26) 5. Scroll to top (pixels <= 12.0) restores all 4 tabs
+00:09 +15: C:/scholaris/test/student_navbar_accessibility_test.dart: Student Navbar Refinements & Accessibility Suite 10. Quick action "+" button opens Student Action Sheet on pointer tap
+00:10 +16: C:/scholaris/test/student_scroll_dock_test.dart: Student Scroll Dock Suite (student-scroll-dock-2026-10-26) 6. Tab change restores all 4 tabs and updates compact active tab icon/label
+00:10 +17: C:/scholaris/test/student_scroll_dock_test.dart: Student Scroll Dock Suite (student-scroll-dock-2026-10-26) 6. Tab change restores all 4 tabs and updates compact active tab icon/label
+00:10 +18: C:/scholaris/test/student_scroll_dock_test.dart: Student Scroll Dock Suite (student-scroll-dock-2026-10-26) 7. Horizontal scroll does not trigger collapse
+00:10 +19: C:/scholaris/test/student_scroll_dock_test.dart: Student Scroll Dock Suite (student-scroll-dock-2026-10-26) 8. Quick action "+" button remains at right in both collapsed and expanded states
+00:11 +20: C:/scholaris/test/student_scroll_dock_test.dart: Student Scroll Dock Suite (student-scroll-dock-2026-10-26) 9. Content clearance is 100% constant and stable between states
+00:11 +21: C:/scholaris/test/student_scroll_dock_test.dart: Student Scroll Dock Suite (student-scroll-dock-2026-10-26) 10. Keyboard focus / traversal restores all 4 tabs
+00:12 +22: C:/scholaris/test/student_scroll_dock_test.dart: Student Scroll Dock Suite (student-scroll-dock-2026-10-26) 11. accessibleNavigation: true completely disables collapse
+00:13 +23: C:/scholaris/test/student_scroll_dock_test.dart: Student Scroll Dock Suite (student-scroll-dock-2026-10-26) 12. Large dynamic type (isStudentNavAccessible: true) completely disables collapse
+00:13 +24: C:/scholaris/test/student_scroll_dock_test.dart: Student Scroll Dock Suite (student-scroll-dock-2026-10-26) 13. Reduced motion sets transition duration to Duration.zero
+00:13 +25: C:/scholaris/test/student_scroll_dock_test.dart: Student Scroll Dock Suite (student-scroll-dock-2026-10-26) 14. Programmatic scroll rejection: animateTo() or jumpTo() does not trigger dock collapse
+00:13 +26: C:/scholaris/test/student_scroll_dock_test.dart: Student Scroll Dock Suite (student-scroll-dock-2026-10-26) 15. Inactive tab isolation: scrolling inactive tab in IndexedStack does not trigger collapse on active tab
+00:14 +27: C:/scholaris/test/student_scroll_dock_test.dart: Student Scroll Dock Suite (student-scroll-dock-2026-10-26) 16. Small-increment upward accumulation: multiple small upward scrolls accumulate and expand dock at >=16px
+00:14 +28: C:/scholaris/test/student_scroll_dock_test.dart: Student Scroll Dock Suite (student-scroll-dock-2026-10-26) 17. Nav focus lock: when any tab or "+" has keyboard focus, downward scroll does not collapse dock
+00:15 +29: C:/scholaris/test/student_scroll_dock_test.dart: Student Scroll Dock Suite (student-scroll-dock-2026-10-26) 18. Quick action tap from collapsed: tapping "+" while collapsed expands dock and opens sheet
+00:16 +30: C:/scholaris/test/student_scroll_dock_test.dart: Student Scroll Dock Suite (student-scroll-dock-2026-10-26) 19. PointerScrollEvent (wheel) >= 24px collapses dock
+00:16 +31: C:/scholaris/test/student_scroll_dock_test.dart: Student Scroll Dock Suite (student-scroll-dock-2026-10-26) 20. PointerScrollEvent (wheel) <= -16px expands dock
+00:17 +32: C:/scholaris/test/student_scroll_dock_test.dart: Student Scroll Dock Suite (student-scroll-dock-2026-10-26) 21. Multi-notch small wheel accumulation: 3x 10px accumulates across pulses and collapses dock
+00:17 +33: C:/scholaris/test/student_scroll_dock_test.dart: Student Scroll Dock Suite (student-scroll-dock-2026-10-26) 22. Out-of-order ScrollUpdateNotification before UserScrollNotification is buffered and rescued upon UserScrollNotification
+00:18 +34: All tests passed!

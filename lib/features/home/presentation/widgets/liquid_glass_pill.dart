@@ -23,7 +23,12 @@ class LiquidGlassPill extends StatelessWidget {
       borderRadius: BorderRadius.circular(999),
       boxShadow: const [
         BoxShadow(
-          color: Color(0x0F000000),
+          color: Color(0x0A000000), // tight contact anchor shadow
+          blurRadius: 3,
+          offset: Offset(0, 1.5),
+        ),
+        BoxShadow(
+          color: Color(0x0D000000), // ambient depth
           blurRadius: 18,
           offset: Offset(0, 6),
         ),

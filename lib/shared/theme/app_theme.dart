@@ -58,7 +58,7 @@ const Color kErrorSoft = Color(0x14BA1A1A);
 const Color kPrimarySoft = Color(0x140F4D2E);
 
 // Surfaces & Neutrals
-const Color kBackground = Color(0xFFFFFFFF);
+const Color kBackground = Color(0xFFF8FAF8);
 const Color kSurface = Color(0xFFFFFFFF);
 const Color kSurfaceDim = Color(0xFFD4DAEA);
 const Color kSurfaceBright = Color(0xFFFFFFFF);
@@ -104,7 +104,7 @@ const Color kCardShadow = Color(0x0A1B3A5C);
 /// Hairline border token for crisp high-DPI surfaces (Tarsi aesthetic: 6% neutral ink)
 const BorderSide kHairlineBorderSide = BorderSide(
   color: Color(0x0F161C27),
-  width: 0.75,
+  width: 0.5,
 );
 
 const Border kCardBorderCrisp = Border.fromBorderSide(kHairlineBorderSide);
@@ -112,14 +112,14 @@ const Border kCardBorderCrisp = Border.fromBorderSide(kHairlineBorderSide);
 /// Dual-layer optical elevation: crisp resting contact shadow + soft ambient depth
 const List<BoxShadow> kCardElevationCrisp = [
   BoxShadow(
-    color: Color(0x06161C27), // 2.5% tight contact shadow
+    color: Color(0x08161C27), // 3.1% tight contact anchor shadow
     blurRadius: 2,
     offset: Offset(0, 1),
   ),
   BoxShadow(
-    color: Color(0x081B3A5C), // 3% diffuse ambient elevation
-    blurRadius: 10,
-    offset: Offset(0, 3),
+    color: Color(0x051B3A5C), // 2% diffuse ambient elevation
+    blurRadius: 16,
+    offset: Offset(0, 6),
   ),
 ];
 

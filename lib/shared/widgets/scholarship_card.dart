@@ -306,7 +306,7 @@ class ScholarshipCard extends StatelessWidget {
                           fontSize: 16,
                           fontWeight: FontWeight.w700,
                           color: const Color(0xFF161C27),
-                          letterSpacing: -0.15,
+                          letterSpacing: -0.25,
                           height: 1.25,
                         ),
                       ),
@@ -359,7 +359,7 @@ class ScholarshipCard extends StatelessWidget {
                                       children: [
                                         const Icon(Icons.stars_rounded, size: 19, color: Color(0xFFFABC28)),
                                         Text(amount, style: outfit(fontSize: 17, fontWeight: FontWeight.w600,
-                                          color: kPrimary, letterSpacing: -0.2)),
+                                          color: kPrimary, letterSpacing: -0.4)),
                                         Text(scholarship.formattedFrequency, style: openSans(fontSize: 11.5,
                                           color: const Color(0xFF404942), fontWeight: FontWeight.w500)),
                                       ])
@@ -381,7 +381,7 @@ class ScholarshipCard extends StatelessWidget {
                                         fontSize: 17,
                                         fontWeight: FontWeight.w600,
                                         color: const Color(0xFF0F4D2E), // kPrimary
-                                        letterSpacing: -0.2,
+                                        letterSpacing: -0.4,
                                       ),
                                     ),
                                     const SizedBox(width: 4),
@@ -499,7 +499,7 @@ class ScholarshipCard extends StatelessWidget {
                                     ),
                                     style: TextButton.styleFrom(
                                       backgroundColor: const Color(0xFFF4F6F8),
-                                        side: const BorderSide(color: Color(0x0F161C27), width: 0.75),
+                                        side: const BorderSide(color: Color(0x0F161C27), width: 0.5),
                                       foregroundColor: const Color(0xFF161C27),
                                       shape: RoundedRectangleBorder(
                                         borderRadius: BorderRadius.circular(10),

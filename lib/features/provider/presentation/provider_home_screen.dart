@@ -18,7 +18,7 @@ class ProviderHomeScreen extends ConsumerWidget {
   final bool autoOpenDrawer;
   const ProviderHomeScreen({
     super.key,
-    this.initialTab = 0,
+    this.initialTab = 8,
     this.autoOpenDrawer = false,
   });
 

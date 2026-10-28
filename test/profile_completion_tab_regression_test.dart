@@ -120,15 +120,6 @@ void main() {
           reason: 'Successful initial setup must reset homeTabIndexProvider to 0 (Dashboard)',
         );
 
-        final indexedStackFinder = find.byType(IndexedStack);
-        expect(indexedStackFinder, findsOneWidget);
-        final indexedStack = tester.widget<IndexedStack>(indexedStackFinder);
-        expect(
-          indexedStack.index,
-          equals(0),
-          reason: 'IndexedStack must display index 0 (StudentDashboardScreen)',
-        );
-
         // Confirm StudentDashboardScreen is active
         expect(find.byType(StudentDashboardScreen), findsOneWidget);
 

@@ -4,7 +4,7 @@ import 'package:scholaris/features/home/presentation/widgets/student_tab_entranc
 // "Profile" tab — 100% Stitch V2 design fidelity:
 // - Top bar with Scholaris logo, breadcrumb, notifications, and profile avatar indicator
 // - Section header with "My Profile", "Academic standing & grant eligibility", and settings gear
-// - Profile Hero card with Iskolar avatar, UP CRS SSO Verified badge, full name, university,
+// - Profile Hero card with Iskolar avatar, Student profile badge, full name, university,
 //   course & year, and student ID / SUC metadata chip
 // - Grant Engine Matching Power milestone card (key: ValueKey('profile-milestone-card'))
 //   with progress bar, unlocks stat, metric breakdown chips, and advice banner
@@ -13,8 +13,8 @@ import 'package:scholaris/features/home/presentation/widgets/student_tab_entranc
 //   2. Location & Residency (Permanent Address, Residency Duration, LGU grant banner)
 //   3. Financial Background (RA 10173 privacy shield, Income Tier, Beneficiary status)
 // - Documents & Quick Actions:
-//   * Download Scholaris Passport (Official PDF with verified digital seal)
-//   * Request Verified SUC Transcript Refresh
+//   * Download Scholaris Passport (Coming soon)
+//   * University transcript sync • Coming soon
 // - Account & Settings navigation cards:
 //   * My Applications
 //   * Account Settings (Email, verification and password)
@@ -351,7 +351,7 @@ class ProfileTabScreen extends ConsumerWidget {
                           const SizedBox(width: 4),
                           Flexible(
                             child: Text(
-                              'UP CRS SSO Verified',
+                              'Student profile',
                               style: outfit(
                                 fontSize: 11,
                                 fontWeight: FontWeight.w700,
@@ -469,7 +469,7 @@ class ProfileTabScreen extends ConsumerWidget {
                 children: [
                   Expanded(
                     child: Text(
-                      'Verified Credentials',
+                      'Profile details',
                       style: outfit(
                         fontSize: 17,
                         fontWeight: FontWeight.w700,
@@ -482,7 +482,7 @@ class ProfileTabScreen extends ConsumerWidget {
                   const SizedBox(width: 8),
                   Flexible(
                     child: Text(
-                      syncedCount > 0 ? '$syncedCount Categories Synced' : 'Pending Profile Setup',
+                      syncedCount > 0 ? '$syncedCount Categories Provided' : 'Pending Profile Setup',
                       textAlign: TextAlign.end,
                       style: outfit(
                         fontSize: 11,
@@ -662,7 +662,7 @@ class ProfileTabScreen extends ConsumerWidget {
                 Expanded(
                   child: Text(
                     (profile.school != null && profile.school!.trim().isNotEmpty)
-                        ? 'Enrolled institution self-declared • Verified via COR/ID'
+                        ? 'Institution provided on your profile'
                         : 'Institution not declared on profile',
                     style: openSans(
                       fontSize: 12,
@@ -874,7 +874,7 @@ class ProfileTabScreen extends ConsumerWidget {
                 Expanded(
                   child: Text(
                     (profile.region.isNotEmpty && profile.setupComplete)
-                        ? 'Eligible for LGU Tertiary Grant ✓'
+                        ? 'Residency information added to your profile'
                         : 'LGU Grant Matching: Set residency to unlock local grants',
                     style: openSans(
                       fontSize: 12,
@@ -1110,7 +1110,7 @@ class ProfileTabScreen extends ConsumerWidget {
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
                     content: Text(
-                      'Generating your Scholaris Passport PDF with digital seal...',
+                      'Scholaris Passport is not available yet.',
                       style: openSans(fontSize: 13, color: Colors.white),
                     ),
                     behavior: SnackBarBehavior.floating,
@@ -1151,7 +1151,7 @@ class ProfileTabScreen extends ConsumerWidget {
                           ),
                           const SizedBox(height: 2),
                           Text(
-                            'Official PDF with verified digital seal',
+                            'Coming soon',
                             style: openSans(
                               fontSize: 12,
                               color: kPrimaryFixedDim,
@@ -1173,7 +1173,7 @@ class ProfileTabScreen extends ConsumerWidget {
         )),
         const SizedBox(height: 10),
 
-        // Request Verified SUC Transcript Refresh Button
+        // University transcript sync • Coming soon Button
         StudentTabReveal(order: 6, child: PressableScale(
           child: Material(
             color: kSurfaceContainerHigh,
@@ -1184,7 +1184,7 @@ class ProfileTabScreen extends ConsumerWidget {
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
                     content: Text(
-                      'Transcript refresh request submitted to university registrar.',
+                      'University transcript sync is not available yet.',
                       style: openSans(fontSize: 13, color: Colors.white),
                     ),
                     behavior: SnackBarBehavior.floating,
@@ -1205,7 +1205,7 @@ class ProfileTabScreen extends ConsumerWidget {
                     const SizedBox(width: 12),
                     Expanded(
                       child: Text(
-                        'Request Verified SUC Transcript Refresh',
+                        'University transcript sync • Coming soon',
                         style: outfit(
                           fontSize: 13,
                           fontWeight: FontWeight.w600,
@@ -1669,7 +1669,7 @@ class _ProfileMilestoneCard extends StatelessWidget {
                     Expanded(
                       child: _buildMetricChip(
                         label: 'Financials',
-                        status: profile.monthlyFamilyIncome != null ? 'Verified' : 'General',
+                        status: profile.monthlyFamilyIncome != null ? 'Provided' : 'General',
                         valueColor: const Color(0xFF436084),
                       ),
                     ),

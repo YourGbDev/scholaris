@@ -119,6 +119,47 @@ void main() {
 
       expect(find.text('SECURITY GUIDELINES'), findsOneWidget);
       expect(find.text('At least 8 characters long'), findsOneWidget);
+
+      final confirmField = find.byType(TextFormField).at(1);
+      await tester.ensureVisible(confirmField);
+      await tester.enterText(confirmField, 'Pass123!');
+      await tester.pump(const Duration(milliseconds: 300));
+
+      expect(find.text('Passwords match'), findsOneWidget);
+      expect(
+        find.text(
+          'This action attempts to sign out active sessions on other devices for your security. Existing sessions remain valid until their token expires.',
+        ),
+        findsOneWidget,
+      );
+    });
+
+    testWidgets('ResetPasswordScreen at 440x956 with 2.0x large text and matching passwords', (tester) async {
+      setViewport(tester, 440, 956);
+      tester.platformDispatcher.textScaleFactorTestValue = 2.0;
+      addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
+
+      await tester.pumpWidget(const MaterialApp(home: ResetPasswordScreen()));
+      await tester.pump(const Duration(milliseconds: 300));
+
+      final pwdField = find.byType(TextFormField).at(0);
+      await tester.ensureVisible(pwdField);
+      await tester.enterText(pwdField, 'Pass123!');
+      await tester.pump(const Duration(milliseconds: 300));
+
+      final confirmField = find.byType(TextFormField).at(1);
+      await tester.ensureVisible(confirmField);
+      await tester.enterText(confirmField, 'Pass123!');
+      await tester.pump(const Duration(milliseconds: 300));
+
+      expect(find.text('Passwords match'), findsOneWidget);
+      expect(
+        find.text(
+          'This action attempts to sign out active sessions on other devices for your security. Existing sessions remain valid until their token expires.',
+        ),
+        findsOneWidget,
+      );
+      expect(tester.takeException(), isNull);
     });
 
     testWidgets('ResetPasswordScreen at 360x800 with strength gauge & guidelines', (tester) async {
@@ -133,10 +174,65 @@ void main() {
 
       expect(find.text('SECURITY GUIDELINES'), findsOneWidget);
       expect(find.text('At least 8 characters long'), findsOneWidget);
+
+      final confirmField = find.byType(TextFormField).at(1);
+      await tester.ensureVisible(confirmField);
+      await tester.enterText(confirmField, 'Pass123!');
+      await tester.pump(const Duration(milliseconds: 300));
+
+      expect(find.text('Passwords match'), findsOneWidget);
+      expect(
+        find.text(
+          'This action attempts to sign out active sessions on other devices for your security. Existing sessions remain valid until their token expires.',
+        ),
+        findsOneWidget,
+      );
+    });
+
+    testWidgets('ResetPasswordScreen at 360x800 with 2.0x large text and matching passwords', (tester) async {
+      setViewport(tester, 360, 800);
+      tester.platformDispatcher.textScaleFactorTestValue = 2.0;
+      addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
+
+      await tester.pumpWidget(const MaterialApp(home: ResetPasswordScreen()));
+      await tester.pump(const Duration(milliseconds: 300));
+
+      final pwdField = find.byType(TextFormField).at(0);
+      await tester.ensureVisible(pwdField);
+      await tester.enterText(pwdField, 'Pass123!');
+      await tester.pump(const Duration(milliseconds: 300));
+
+      final confirmField = find.byType(TextFormField).at(1);
+      await tester.ensureVisible(confirmField);
+      await tester.enterText(confirmField, 'Pass123!');
+      await tester.pump(const Duration(milliseconds: 300));
+
+      expect(find.text('Passwords match'), findsOneWidget);
+      expect(
+        find.text(
+          'This action attempts to sign out active sessions on other devices for your security. Existing sessions remain valid until their token expires.',
+        ),
+        findsOneWidget,
+      );
+      expect(tester.takeException(), isNull);
     });
 
     testWidgets('ProviderSignupScreen at 440x956 with password complexity', (tester) async {
       setViewport(tester, 440, 956);
+      await tester.pumpWidget(const MaterialApp(home: ProviderSignupScreen(initialType: 'individual')));
+      await tester.pump(const Duration(milliseconds: 300));
+
+      final pwdField = find.byType(TextFormField).at(3);
+      await tester.ensureVisible(pwdField);
+      await tester.enterText(pwdField, 'PartnerOrg2026#');
+      await tester.pump(const Duration(milliseconds: 300));
+
+      expect(find.text('Password Complexity'), findsOneWidget);
+      expect(find.text('Strong'), findsOneWidget);
+    });
+
+    testWidgets('ProviderSignupScreen at 360x800 with password complexity', (tester) async {
+      setViewport(tester, 360, 800);
       await tester.pumpWidget(const MaterialApp(home: ProviderSignupScreen(initialType: 'individual')));
       await tester.pump(const Duration(milliseconds: 300));
 

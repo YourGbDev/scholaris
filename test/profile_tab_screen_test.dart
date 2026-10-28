@@ -225,7 +225,7 @@ void main() {
           findsOneWidget);
     });
 
-    testWidgets('renders Stitch V2 verified credentials and quick actions',
+    testWidgets('renders profile details and labels unavailable actions',
         (tester) async {
       tester.view.physicalSize = const Size(800, 2000);
       tester.view.devicePixelRatio = 1.0;
@@ -237,16 +237,16 @@ void main() {
       // Top bar & Header
       expect(find.text('My Profile'), findsOneWidget);
       expect(find.text('Academic standing & grant eligibility'), findsOneWidget);
-      expect(find.text('UP CRS SSO Verified'), findsOneWidget);
+      expect(find.text('Student profile'), findsOneWidget);
       expect(find.text('Student ID / SUC:'), findsOneWidget);
 
       // Verified Credentials section
-      expect(find.text('Verified Credentials'), findsOneWidget);
-      expect(find.text('3 Categories Synced'), findsOneWidget);
+      expect(find.text('Profile details'), findsOneWidget);
+      expect(find.text('3 Categories Provided'), findsOneWidget);
       expect(find.text('Academic Information'), findsOneWidget);
       expect(find.text('Institution not declared on profile'), findsOneWidget);
       expect(find.text('Location & Residency'), findsOneWidget);
-      expect(find.text('Eligible for LGU Tertiary Grant ✓'), findsOneWidget);
+      expect(find.text('Residency information added to your profile'), findsOneWidget);
       expect(find.text('Financial Background'), findsOneWidget);
       expect(find.text('Specific salary shielded per RA 10173 (Data Privacy)'),
           findsOneWidget);
@@ -254,13 +254,13 @@ void main() {
       // Documents & Quick Actions
       expect(find.text('Documents & Quick Actions'), findsOneWidget);
       expect(find.text('Download Scholaris Passport'), findsOneWidget);
-      expect(find.text('Request Verified SUC Transcript Refresh'),
+      expect(find.text('University transcript sync • Coming soon'),
           findsOneWidget);
 
       // Tap Download Scholaris Passport
       await tester.tap(find.text('Download Scholaris Passport'));
       await tester.pump();
-      expect(find.text('Generating your Scholaris Passport PDF with digital seal...'),
+      expect(find.text('Scholaris Passport is not available yet.'),
           findsOneWidget);
     });
 

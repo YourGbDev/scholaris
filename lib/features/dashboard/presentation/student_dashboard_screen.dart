@@ -51,9 +51,9 @@ class StudentDashboardScreen extends ConsumerStatefulWidget {
 class _StudentDashboardScreenState
     extends ConsumerState<StudentDashboardScreen> {
   Widget _wrapSection({required int index, required Widget child}) => StudentTabReveal(
-    order: const [0, 0, 1, 1, 2, 6][index.clamp(0, 5)],
+    order: const [0, 1, 2, 3, 4, 5][index.clamp(0, 5)],
         structural: index < 5,
-        immediate: index == 0,
+        immediate: index <= 2,
         child: child);
 
   @override
@@ -144,7 +144,8 @@ class _StudentDashboardScreenState
                   index: 2,
                   child: _buildMascotHeroSection(
                     profile: profile,
-                    matchCount: info.matchCount > 0 ? info.matchCount : matches.length,
+                    matchCount: matchesAsync.hasError ? null : matchesAsync.valueOrNull?.length,
+                    matchesFailed: matchesAsync.hasError,
                   ),
                 ),
                 const SizedBox(height: 16),
@@ -173,8 +174,6 @@ class _StudentDashboardScreenState
 
                 // 4b. Deadline Alert & Urgency Sections (when closing soon)
                 if (info.closingSoonCount > 0) ...[
-                  StudentTabReveal(order: 2, structural: true, child: _buildAdviceCard(info)),
-                  const SizedBox(height: 16),
                   _buildClosingSoonSection(
                     context,
                     ref,
@@ -511,7 +510,8 @@ class _StudentDashboardScreenState
   // --- 3. Pixel-Perfect Free-Floating Mascot Hero & "Your Next Chapter" Banner ---
   Widget _buildMascotHeroSection({
     required StudentProfile? profile,
-    required int matchCount,
+    required int? matchCount,
+    required bool matchesFailed,
   }) {
     // Reserve the artwork's space without guessing a gender before hydration.
     if (profile == null) {
@@ -528,61 +528,96 @@ class _StudentDashboardScreenState
     }
     final isFemale = profile.gender?.trim().toLowerCase() == 'female';
     final bannerAsset = isFemale
+        ? 'assets/images/mascot_female.png'
+        : 'assets/images/mascot_male.png';
+    final illustratedAsset = isFemale
         ? 'assets/images/hero_banner_female.png'
         : 'assets/images/hero_banner_exact.png';
+
+    // Preserve the illustrated scene while replacing its printed count with
+    // real, accessible content. Larger text uses the flexible layout below.
+    if (MediaQuery.textScalerOf(context).scale(14) <= 17) {
+      return Center(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 440),
+          child: AspectRatio(
+            aspectRatio: 853 / 520,
+            child: LayoutBuilder(builder: (context, box) {
+              return Stack(children: [
+                Positioned.fill(child: Image.asset(illustratedAsset, fit: BoxFit.fill, excludeFromSemantics: true)),
+                Positioned(
+                  left: box.maxWidth * .485,
+                  top: box.maxHeight * .37,
+                  width: box.maxWidth * .395,
+                  height: box.maxHeight * .29,
+                  child: Container(
+                    color: Colors.white,
+                    alignment: Alignment.centerLeft,
+                    child: FittedBox(fit: BoxFit.scaleDown, alignment: Alignment.centerLeft, child:
+                      Text(matchesFailed ? 'Matches unavailable' : matchCount == null ? 'Finding matches…' : '$matchCount ${matchCount == 1 ? 'match' : 'matches'}',
+                        key: const ValueKey('stat-count-matches'),
+                        style: TextStyle(fontFamily: 'Georgia', fontSize: box.maxWidth * .075, fontWeight: FontWeight.bold, color: const Color(0xFF0F4D2E)),
+                      )),
+                  ),
+                ),
+                Positioned(
+                  left: box.maxWidth * .49,
+                  top: box.maxHeight * .74,
+                  width: box.maxWidth * .35,
+                  height: 48,
+                  child: Semantics(button: true, label: 'Explore matches', child: Material(
+                    color: Colors.transparent,
+                    child: InkWell(onTap: () { HapticFeedback.lightImpact(); ref.read(homeTabIndexProvider.notifier).selectTab(1); }),
+                  )),
+                ),
+              ]);
+            }),
+          ),
+        ),
+      );
+    }
 
     return Center(
       child: ConstrainedBox(
         constraints: const BoxConstraints(maxWidth: 440),
-        child: AspectRatio(
-          aspectRatio: 853 / 520, // Exact aspect ratio of the hero artwork
-          child: Stack(
-            clipBehavior: Clip.none,
+        child: Container(
+          padding: const EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            color: const Color(0xFFF0F7F0),
+            borderRadius: BorderRadius.circular(20),
+          ),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.end,
             children: [
-              // 1. The High-Definition Exact Illustration (Mascot, Background, Stacked Cards, Flag)
-              Positioned.fill(
-                child: Image.asset(
-                  bannerAsset,
-                  fit: BoxFit.contain,
-                  alignment: Alignment.center,
-                  errorBuilder: (context, error, stackTrace) {
-                    debugPrint('[HERO BANNER ERROR] $error');
-                    return const SizedBox();
-                  },
-                ),
-              ),
-
-              // 2. Interactive Tap Target over "Explore matches →" CTA button
-              // In the 853x520 image, the green pill button is located at:
-              // X: ~58% to ~97%, Y: ~75% to ~89%
-              Positioned(
-                right: 12,
-                bottom: 22,
-                width: 175,
-                height: 48,
-                child: PressableScale(
-                  onTap: () {
-                    HapticFeedback.lightImpact();
-                    ref.read(homeTabIndexProvider.notifier).selectTab(1);
-                  },
-                  child: Container(
-                    color: Colors.transparent, // Invisible tactile hit area
+              Expanded(flex: 4, child: Image.asset(bannerAsset, height: 190, fit: BoxFit.contain, excludeFromSemantics: true)),
+              const SizedBox(width: 6),
+              Expanded(
+                flex: 6,
+                child: Container(
+                  padding: const EdgeInsets.all(14),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(18),
+                    border: Border.all(color: const Color(0xFFD6E6DA)),
+                    boxShadow: const [BoxShadow(color: Color(0xFFFFF1C9), offset: Offset(5, 6))],
                   ),
-                ),
-              ),
-
-              // 3. Semantic key for widget tests to maintain zero regressions
-              Positioned(
-                left: 0.0,
-                top: 0.0,
-                child: SizedBox(
-                  height: 0.0,
-                  width: 0.0,
-                  child: Text(
-                    '$matchCount',
-                    key: const ValueKey('stat-count-matches'),
-                    style: const TextStyle(fontSize: 0, color: Colors.transparent),
-                  ),
+                  child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                    Text('YOUR NEXT CHAPTER', style: outfit(fontSize: 10, fontWeight: FontWeight.w700, color: const Color(0xFF0F4D2E))),
+                    const SizedBox(height: 8),
+                    Text(
+                      matchesFailed ? 'Matches unavailable' : matchCount == null ? 'Finding matches…' : '$matchCount ${matchCount == 1 ? 'match' : 'matches'}',
+                      key: const ValueKey('stat-count-matches'),
+                      style: outfit(fontSize: 22, fontWeight: FontWeight.w700, color: const Color(0xFF0F4D2E)),
+                    ),
+                    const SizedBox(height: 6),
+                    Text(matchesFailed ? 'Please try again.' : 'A step closer to your future.', style: outfit(fontSize: 12, color: const Color(0xFF505A53))),
+                    const SizedBox(height: 10),
+                    FilledButton(
+                      onPressed: () { HapticFeedback.lightImpact(); ref.read(homeTabIndexProvider.notifier).selectTab(1); },
+                      style: FilledButton.styleFrom(backgroundColor: const Color(0xFF0F4D2E), foregroundColor: Colors.white, padding: const EdgeInsets.symmetric(horizontal: 12), minimumSize: const Size(0, 44)),
+                      child: const Text('Explore matches'),
+                    ),
+                  ]),
                 ),
               ),
             ],
@@ -776,6 +811,7 @@ class _StudentDashboardScreenState
                       order: 1 + i,
                       child: ScholarshipCard(
                         scholarship: s,
+                        studentProfile: profile,
                         reasons: reasons,
                         isBookmarked: bookmarkIds.contains(s.id),
                         isApplied: appliedIds.contains(s.id),
@@ -877,7 +913,7 @@ class _StudentDashboardScreenState
                 ),
                 const SizedBox(height: 2),
                 Text(
-                  'Found $count verified grant${count > 1 ? 's' : ''} matching your credentials!',
+                  'Found $count scholarship${count > 1 ? 's' : ''} matching your profile!',
                   style: openSans(
                     fontSize: 12.5,
                     fontWeight: FontWeight.w500,
@@ -895,88 +931,6 @@ class _StudentDashboardScreenState
 
   void _toggleBookmark(WidgetRef ref, String scholarshipId) {
     ref.read(bookmarksProvider.notifier).toggle(scholarshipId);
-  }
-
-  // --- 4b. Advice Card & Urgency Surface ---
-  Widget _buildAdviceCard(DashboardInfo info) {
-    if (info.closingSoonCount == 0) return const SizedBox.shrink();
-
-    return Container(
-      key: const ValueKey('eli-advice-card'),
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: const Color(0x29BA1A1A), width: 0.75),
-        boxShadow: kCardElevationCrisp,
-      ),
-      child: Row(
-        children: [
-          Container(
-            padding: const EdgeInsets.all(8),
-            decoration: const BoxDecoration(
-              color: Color(0xFFBA1A1A),
-              shape: BoxShape.circle,
-            ),
-            child: const Icon(
-              Icons.priority_high_rounded,
-              size: 16,
-              color: Colors.white,
-            ),
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Flexible(
-                      child: FittedBox(
-                        fit: BoxFit.scaleDown,
-                        alignment: Alignment.centerLeft,
-                        child: Text(
-                          'Deadline Alert!',
-                          style: outfit(
-                            fontSize: 13,
-                            fontWeight: FontWeight.bold,
-                            color: const Color(0xFFC62828),
-                          ),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    Flexible(
-                      child: FittedBox(
-                        fit: BoxFit.scaleDown,
-                        alignment: Alignment.centerRight,
-                        child: Text(
-                          'Scholaris Guide',
-                          style: outfit(
-                            fontSize: 11,
-                            fontWeight: FontWeight.w600,
-                            color: const Color(0xFF8A5B00),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 2),
-                Text(
-                  "You have ${info.closingSoonCount} scholarship${info.closingSoonCount == 1 ? '' : 's'} with approaching deadlines.",
-                  style: openSans(
-                    fontSize: 11.5,
-                    color: const Color(0xFF404942),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
   }
 
   Widget _buildClosingSoonSection(
@@ -1030,6 +984,7 @@ class _StudentDashboardScreenState
               order: 1 + i,
               child: ScholarshipCard(
                 scholarship: s,
+                studentProfile: profile,
                 reasons: reasons,
                 isBookmarked: bookmarkIds.contains(s.id),
                 isApplied: appliedIds.contains(s.id),

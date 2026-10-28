@@ -6,6 +6,8 @@ import 'package:flutter_test/flutter_test.dart';
 
 import 'package:scholaris/features/scholarships/models/scholarship.dart';
 import 'package:scholaris/features/scholarships/services/discovery_filters.dart';
+import 'package:scholaris/features/scholarships/services/match_reasons.dart';
+import 'package:scholaris/features/profile/models/student_profile.dart';
 
 DateTime _inDays(int days) => DateTime(2026, 1, 1).add(Duration(days: days));
 
@@ -19,6 +21,7 @@ Scholarship _s({
   double? maxMonthlyIncome,
   DateTime? deadline,
   int? slots,
+  double amount = 0,
 }) =>
     Scholarship(
       id: id,
@@ -33,6 +36,7 @@ Scholarship _s({
       forPwd: false,
       forIndigenous: false,
       slots: slots,
+      amount: amount,
       deadline: deadline ?? _inDays(30),
       isActive: true,
     );
@@ -40,6 +44,11 @@ Scholarship _s({
 List<String> _ids(List<Scholarship> items) => items.map((s) => s.id).toList();
 
 void main() {
+  test('match reasons respect the Philippine GPA scale', () {
+    final scholarship = Scholarship(id: 'gpa', title: 'Grant', minGpa: 1.75, deadline: _inDays(30), isActive: true);
+    const student = StudentProfile(id: 'student', fullName: 'Student', gpa: 1.5);
+    expect(matchReasonsFor(student, scholarship), contains('Your GPA qualifies'));
+  });
   group('search', () {
     test('matches the title field', () {
       final items = [
@@ -238,9 +247,9 @@ void main() {
 
   group('sorting', () {
     final items = [
-      _s(id: 'lateBig', deadline: _inDays(20)),
-      _s(id: 'soonSmall', deadline: _inDays(5)),
-      _s(id: 'soonBig', deadline: _inDays(5)),
+      _s(id: 'lateBig', deadline: _inDays(20), amount: 100000),
+      _s(id: 'soonSmall', deadline: _inDays(5), amount: 20000),
+      _s(id: 'soonBig', deadline: _inDays(5), amount: 100000),
     ];
 
     test('default sorts by soonest deadline', () {
@@ -248,10 +257,17 @@ void main() {
       expect(_ids(sorted), ['soonSmall', 'soonBig', 'lateBig']);
     });
 
-    test('highest amount sorts by soonest deadline', () {
+    test('highest amount sorts by amount, then deadline', () {
       final sorted = DiscoveryFilters.sort(items, DiscoverySort.highestAmount);
-      expect(_ids(sorted), ['soonSmall', 'soonBig', 'lateBig']);
+      expect(_ids(sorted), ['soonBig', 'lateBig', 'soonSmall']);
     });
+  });
+
+  test('high-fit filtering uses the supplied displayed-score decision', () {
+    final items = [_s(id: 'high'), _s(id: 'low')];
+    const state = DiscoveryFilterState(highFitOnly: true);
+    expect(_ids(DiscoveryFilters.applyAll(items, state, isHighFit: (s) => s.id == 'high')), ['high']);
+    expect(DiscoveryFilters.applyAll(items, state), isEmpty);
   });
 
   group('state mutation', () {

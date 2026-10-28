@@ -15,16 +15,20 @@ import 'package:scholaris/features/profile/models/applicant_profile.dart';
 import 'package:scholaris/features/scholarships/models/scholarship.dart';
 import 'package:scholaris/shared/widgets/logout_confirmation_dialog.dart';
 import 'package:scholaris/shared/widgets/scholaris_logo.dart';
+
 import '../../providers/provider_scholarships_provider.dart';
 import '../../providers/provider_sub_role_provider.dart';
 import '../scholarship_form_screen.dart';
 import '../widgets/applicant_review_drawer.dart';
 import '../widgets/provider_verification_banner.dart';
+import '../widgets/provider_overview_panel.dart';
 import 'org_activity_log_view.dart';
 import 'org_analytics_tab.dart';
+import 'org_review_analytics_tab.dart';
 import 'org_disbursements_tab.dart';
 import 'org_incoming_applications_tab.dart';
 import 'org_provider_theme.dart';
+import '../widgets/org_workspace_transition.dart';
 import 'org_scholarships_tab.dart';
 import 'org_settings_tab.dart';
 import 'org_team_view.dart';
@@ -34,7 +38,7 @@ import '../../../../shared/theme/app_motion.dart';
 class OrgProviderShell extends ConsumerStatefulWidget {
   const OrgProviderShell({
     super.key,
-    this.initialTab = 0,
+    this.initialTab = 8,
     this.autoOpenDrawer = false,
   });
 
@@ -47,7 +51,9 @@ class OrgProviderShell extends ConsumerStatefulWidget {
 
 class _OrgProviderShellState extends ConsumerState<OrgProviderShell> {
   late int _selectedTab;
+  String? _applicationScholarshipId;
   bool _drawerOpened = false;
+  final _metricMotionBucket = PageStorageBucket();
 
   @override
   void initState() {
@@ -64,8 +70,10 @@ class _OrgProviderShellState extends ConsumerState<OrgProviderShell> {
     final apps = await ref.read(incomingApplicationsProvider.future);
     if (apps.isEmpty || !mounted) return;
     final app = apps.first;
-    final profiles = ref.read(providerApplicantProfilesProvider).valueOrNull ?? {};
-    final scholarships = ref.read(providerScholarshipsProvider).valueOrNull ?? [];
+    final profiles =
+        ref.read(providerApplicantProfilesProvider).valueOrNull ?? {};
+    final scholarships =
+        ref.read(providerScholarshipsProvider).valueOrNull ?? [];
     final scholarshipsMap = {for (final s in scholarships) s.id: s};
     if (!mounted) return;
     ApplicantReviewDrawer.show(
@@ -128,11 +136,22 @@ class _OrgProviderShellState extends ConsumerState<OrgProviderShell> {
     if (identity.role == ProviderSubRole.unavailable) {
       return Scaffold(
         appBar: AppBar(title: const Text('Organization access')),
-        body: Center(child: Column(mainAxisSize: MainAxisSize.min, children: [
-          const Text('Organization membership is unavailable.'),
-          TextButton(onPressed: () => ref.invalidate(organizationMembershipProvider), child: const Text('Retry')),
-          TextButton(onPressed: () => _handleSignOut(context), child: const Text('Sign out')),
-        ])),
+        body: Center(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Text('Organization membership is unavailable.'),
+              TextButton(
+                onPressed: () => ref.invalidate(organizationMembershipProvider),
+                child: const Text('Retry'),
+              ),
+              TextButton(
+                onPressed: () => _handleSignOut(context),
+                child: const Text('Sign out'),
+              ),
+            ],
+          ),
+        ),
       );
     }
     final isDesktop = MediaQuery.sizeOf(context).width >= 768;
@@ -143,12 +162,19 @@ class _OrgProviderShellState extends ConsumerState<OrgProviderShell> {
     // Org Admin controls (Team at 6, Activity Log at 7) are strictly reserved for Org Admin.
     if (identity.isFinance && (_selectedTab < 3 || _selectedTab >= 6)) {
       _selectedTab = 4;
-    } else if (identity.isEvaluator && (_selectedTab == 2 || _selectedTab == 3 || _selectedTab == 4 || _selectedTab >= 6)) {
+    } else if (identity.isEvaluator &&
+        (_selectedTab == 2 ||
+            _selectedTab == 3 ||
+            _selectedTab == 4 ||
+            _selectedTab >= 6)) {
       _selectedTab = 0;
     }
 
     final tabs = [
-      const OrgIncomingApplicationsTab(key: ValueKey('org_applications_tab')),
+      OrgIncomingApplicationsTab(
+        key: const ValueKey('org_applications_tab'),
+        initialScholarshipId: _applicationScholarshipId,
+      ),
       const OrgIncomingApplicationsTab(
         key: ValueKey('org_decisioning_tab'),
         isDecisioningMode: true,
@@ -156,14 +182,31 @@ class _OrgProviderShellState extends ConsumerState<OrgProviderShell> {
       OrgScholarshipsTab(
         key: const ValueKey('org_scholarships_tab'),
         onViewApplicationsForScholarship: (scholarshipId) {
-          setState(() => _selectedTab = 0);
+          setState(() {
+            _applicationScholarshipId = scholarshipId.isEmpty
+                ? null
+                : scholarshipId;
+            _selectedTab = 0;
+          });
         },
       ),
-      const OrgAnalyticsTab(key: ValueKey('org_analytics_tab')),
+      identity.isOrgAdmin
+          ? const OrgReviewAnalyticsTab(
+              key: ValueKey('org_review_analytics_tab'),
+            )
+          : const OrgAnalyticsTab(key: ValueKey('org_analytics_tab')),
       const OrgDisbursementsTab(key: ValueKey('org_disbursements_tab')),
       const OrgSettingsTab(key: ValueKey('org_settings_tab')),
       const OrgTeamView(key: ValueKey('org_team_view')),
       const OrgActivityLogView(key: ValueKey('org_activity_log_view')),
+      ProviderOverview(
+        individual: false,
+        onApplications: () => setState(() => _selectedTab = 0),
+        onScholarships: () => setState(() => _selectedTab = 2),
+        onTeam: () => setState(() => _selectedTab = 6),
+        onActivity: () => setState(() => _selectedTab = 7),
+        onAnalytics: () => setState(() => _selectedTab = 3),
+      ),
     ];
 
     final shellScaffold = isDesktop
@@ -173,8 +216,12 @@ class _OrgProviderShellState extends ConsumerState<OrgProviderShell> {
               children: [
                 // Persistent 256px Apple Light Sidebar
                 SizedBox(
-                  width: 256,
-                  child: _buildSidebarContent(context, identity, isDrawer: false),
+                  width: 240,
+                  child: _buildSidebarContent(
+                    context,
+                    identity,
+                    isDrawer: false,
+                  ),
                 ),
 
                 // Main Workspace (Top Bar + Active Tab Surface)
@@ -185,7 +232,7 @@ class _OrgProviderShellState extends ConsumerState<OrgProviderShell> {
                       _buildTopBar(context, identity),
                       const ProviderVerificationBanner(),
                       Expanded(
-                        child: TabContentCrossFade(
+                        child: OrgWorkspaceTransition(
                           activeKey: ValueKey<int>(_selectedTab),
                           child: tabs[_selectedTab],
                         ),
@@ -214,7 +261,11 @@ class _OrgProviderShellState extends ConsumerState<OrgProviderShell> {
               title: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const ScholarisLogo(compact: true, showWordmark: false, badgeSize: 26),
+                  const ScholarisLogo(
+                    compact: true,
+                    showWordmark: false,
+                    badgeSize: 26,
+                  ),
                   const SizedBox(width: 8),
                   Flexible(
                     child: Text(
@@ -233,12 +284,20 @@ class _OrgProviderShellState extends ConsumerState<OrgProviderShell> {
               actions: [
                 IconButton(
                   tooltip: 'Search (⌘K)',
-                  icon: const Icon(Icons.search_rounded, color: kOrgTextPrimary, size: 20),
+                  icon: const Icon(
+                    Icons.search_rounded,
+                    color: kOrgTextPrimary,
+                    size: 20,
+                  ),
                   onPressed: () => _openCommandPalette(context),
                 ),
                 IconButton(
                   tooltip: 'Sign out',
-                  icon: const Icon(Icons.logout_rounded, color: kOrgError, size: 20),
+                  icon: const Icon(
+                    Icons.logout_rounded,
+                    color: kOrgError,
+                    size: 20,
+                  ),
                   onPressed: () => _handleSignOut(context),
                 ),
               ],
@@ -254,7 +313,7 @@ class _OrgProviderShellState extends ConsumerState<OrgProviderShell> {
               children: [
                 const ProviderVerificationBanner(),
                 Expanded(
-                  child: TabContentCrossFade(
+                  child: OrgWorkspaceTransition(
                     activeKey: ValueKey<int>(_selectedTab),
                     child: tabs[_selectedTab],
                   ),
@@ -275,7 +334,7 @@ class _OrgProviderShellState extends ConsumerState<OrgProviderShell> {
         }
         return KeyEventResult.ignored;
       },
-      child: shellScaffold,
+      child: PageStorage(bucket: _metricMotionBucket, child: shellScaffold),
     );
   }
 
@@ -286,9 +345,7 @@ class _OrgProviderShellState extends ConsumerState<OrgProviderShell> {
       padding: const EdgeInsets.symmetric(horizontal: 20),
       decoration: const BoxDecoration(
         color: Colors.white,
-        border: Border(
-          bottom: BorderSide(color: kOrgHairline, width: 1),
-        ),
+        border: Border(bottom: BorderSide(color: kOrgHairline, width: 1)),
       ),
       child: Row(
         children: [
@@ -316,7 +373,11 @@ class _OrgProviderShellState extends ConsumerState<OrgProviderShell> {
                       ),
                       child: Row(
                         children: [
-                          const Icon(Icons.search_rounded, size: 18, color: kOrgTextSecondary),
+                          const Icon(
+                            Icons.search_rounded,
+                            size: 18,
+                            color: kOrgTextSecondary,
+                          ),
                           const SizedBox(width: 8),
                           Expanded(
                             child: Text(
@@ -360,7 +421,9 @@ class _OrgProviderShellState extends ConsumerState<OrgProviderShell> {
                       ? Icons.account_balance_wallet_rounded
                       : Icons.verified_user_rounded,
                   size: 13,
-                  color: identity.isFinance ? const Color(0xFF0F4D2E) : kOrgPrimary,
+                  color: identity.isFinance
+                      ? const Color(0xFF0F4D2E)
+                      : kOrgPrimary,
                 ),
                 const SizedBox(width: 6),
                 Text(
@@ -368,7 +431,9 @@ class _OrgProviderShellState extends ConsumerState<OrgProviderShell> {
                   style: orgLabel(
                     fontSize: 11,
                     fontWeight: FontWeight.w700,
-                    color: identity.isFinance ? const Color(0xFF0F4D2E) : kOrgTextPrimary,
+                    color: identity.isFinance
+                        ? const Color(0xFF0F4D2E)
+                        : kOrgTextPrimary,
                     letterSpacing: 0.3,
                   ),
                 ),
@@ -382,7 +447,11 @@ class _OrgProviderShellState extends ConsumerState<OrgProviderShell> {
               onPressed: () {
                 setState(() => _selectedTab = 2);
               },
-              icon: const Icon(Icons.add_rounded, size: 16, color: Colors.white),
+              icon: const Icon(
+                Icons.add_rounded,
+                size: 16,
+                color: Colors.white,
+              ),
               label: Text(
                 'New Grant',
                 style: orgLabel(
@@ -395,7 +464,10 @@ class _OrgProviderShellState extends ConsumerState<OrgProviderShell> {
                 backgroundColor: kOrgPrimary,
                 elevation: 0,
                 minimumSize: const Size(0, 36),
-                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 14,
+                  vertical: 8,
+                ),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(8),
                 ),
@@ -407,7 +479,11 @@ class _OrgProviderShellState extends ConsumerState<OrgProviderShell> {
               onPressed: () {
                 setState(() => _selectedTab = 4);
               },
-              icon: const Icon(Icons.payments_rounded, size: 16, color: Colors.white),
+              icon: const Icon(
+                Icons.payments_rounded,
+                size: 16,
+                color: Colors.white,
+              ),
               label: Text(
                 'Disbursements',
                 style: orgLabel(
@@ -420,7 +496,10 @@ class _OrgProviderShellState extends ConsumerState<OrgProviderShell> {
                 backgroundColor: const Color(0xFF0F4D2E),
                 elevation: 0,
                 minimumSize: const Size(0, 36),
-                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 14,
+                  vertical: 8,
+                ),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(8),
                 ),
@@ -463,9 +542,7 @@ class _OrgProviderShellState extends ConsumerState<OrgProviderShell> {
         color: kOrgSidebarLight,
         border: isDrawer
             ? null
-            : const Border(
-                right: BorderSide(color: kOrgHairline, width: 1),
-              ),
+            : const Border(right: BorderSide(color: kOrgHairline, width: 1)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -485,18 +562,21 @@ class _OrgProviderShellState extends ConsumerState<OrgProviderShell> {
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text(
-                    'Provider Console',
+                    'Scholaris',
                     style: orgHeadline(
                       fontSize: 15.5,
                       fontWeight: FontWeight.w700,
-                      color: kOrgTextPrimary,
+                      color: kOrgPrimary,
                     ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
                 ),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2.5),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 6,
+                    vertical: 2.5,
+                  ),
                   decoration: BoxDecoration(
                     color: identity.isFinance
                         ? const Color(0xFFE8F5E9)
@@ -509,7 +589,11 @@ class _OrgProviderShellState extends ConsumerState<OrgProviderShell> {
                     ),
                   ),
                   child: Text(
-                    identity.isOrgAdmin ? 'ORG ADMIN' : identity.isEvaluator ? 'REVIEWER' : 'FINANCE',
+                    identity.isOrgAdmin
+                        ? 'ORG ADMIN'
+                        : identity.isEvaluator
+                        ? 'REVIEWER'
+                        : 'FINANCE',
                     style: orgLabel(
                       fontSize: 8.5,
                       fontWeight: FontWeight.w700,
@@ -522,8 +606,11 @@ class _OrgProviderShellState extends ConsumerState<OrgProviderShell> {
                 if (isDrawer) ...[
                   const SizedBox(width: 4),
                   IconButton(
-                    icon: const Icon(Icons.close_rounded,
-                        size: 18, color: kOrgTextSecondary),
+                    icon: const Icon(
+                      Icons.close_rounded,
+                      size: 18,
+                      color: kOrgTextSecondary,
+                    ),
                     onPressed: () => Navigator.of(context).pop(),
                   ),
                 ],
@@ -540,6 +627,14 @@ class _OrgProviderShellState extends ConsumerState<OrgProviderShell> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  if (identity.isOrgAdmin)
+                    _buildNavItem(
+                      index: 8,
+                      icon: Icons.home_outlined,
+                      activeIcon: Icons.home_rounded,
+                      label: 'Overview',
+                      isDrawer: isDrawer,
+                    ),
                   if (identity.isEvaluator || identity.isOrgAdmin) ...[
                     _sectionHeader('Academic & Intake'),
                     _buildNavItem(
@@ -556,13 +651,14 @@ class _OrgProviderShellState extends ConsumerState<OrgProviderShell> {
                       label: 'Decisioning',
                       isDrawer: isDrawer,
                     ),
-                    if (identity.isOrgAdmin) _buildNavItem(
-                      index: 2,
-                      icon: Icons.folder_special_outlined,
-                      activeIcon: Icons.folder_special_rounded,
-                      label: 'My Scholarships',
-                      isDrawer: isDrawer,
-                    ),
+                    if (identity.isOrgAdmin)
+                      _buildNavItem(
+                        index: 2,
+                        icon: Icons.folder_special_outlined,
+                        activeIcon: Icons.folder_special_rounded,
+                        label: 'My Scholarships',
+                        isDrawer: isDrawer,
+                      ),
                   ] else if (identity.isFinance) ...[
                     _sectionHeader('Treasury & Operations'),
                     _buildNavItem(
@@ -583,6 +679,13 @@ class _OrgProviderShellState extends ConsumerState<OrgProviderShell> {
                   if (identity.isOrgAdmin) ...[
                     const SizedBox(height: 12),
                     _sectionHeader('Organization Controls'),
+                    _buildNavItem(
+                      index: 3,
+                      icon: Icons.insights_outlined,
+                      activeIcon: Icons.insights_rounded,
+                      label: 'Analytics',
+                      isDrawer: isDrawer,
+                    ),
                     _buildNavItem(
                       index: 6,
                       icon: Icons.groups_outlined,
@@ -617,9 +720,7 @@ class _OrgProviderShellState extends ConsumerState<OrgProviderShell> {
             padding: const EdgeInsets.all(12),
             decoration: const BoxDecoration(
               color: Colors.white,
-              border: Border(
-                top: BorderSide(color: kOrgHairline, width: 1),
-              ),
+              border: Border(top: BorderSide(color: kOrgHairline, width: 1)),
             ),
             child: Column(
               mainAxisSize: MainAxisSize.min,
@@ -683,11 +784,18 @@ class _OrgProviderShellState extends ConsumerState<OrgProviderShell> {
                           if (isDrawer) Navigator.of(context).pop();
                         },
                         child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 4,
+                            vertical: 4,
+                          ),
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              const Icon(Icons.settings_outlined, size: 14, color: kOrgTextSecondary),
+                              const Icon(
+                                Icons.settings_outlined,
+                                size: 14,
+                                color: kOrgTextSecondary,
+                              ),
                               const SizedBox(width: 4),
                               Flexible(
                                 child: Text(
@@ -711,11 +819,18 @@ class _OrgProviderShellState extends ConsumerState<OrgProviderShell> {
                         borderRadius: BorderRadius.circular(6),
                         onTap: () => _handleSignOut(context),
                         child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 4,
+                            vertical: 4,
+                          ),
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              const Icon(Icons.logout_rounded, size: 14, color: kOrgError),
+                              const Icon(
+                                Icons.logout_rounded,
+                                size: 14,
+                                color: kOrgError,
+                              ),
                               const SizedBox(width: 4),
                               Flexible(
                                 child: Text(
@@ -777,15 +892,19 @@ class _OrgProviderShellState extends ConsumerState<OrgProviderShell> {
           child: InkWell(
             borderRadius: BorderRadius.circular(10),
             splashColor: Colors.transparent,
-            highlightColor: Colors.transparent,
-            focusColor: Colors.transparent,
-            hoverColor: isSelected ? Colors.transparent : const Color(0xFFE9E7ED),
+            highlightColor: kOrgPrimary.withValues(alpha: 0.10),
+            focusColor: kOrgPrimary.withValues(alpha: 0.16),
+            hoverColor: isSelected
+                ? Colors.transparent
+                : const Color(0xFFE9E7ED),
             onTap: () {
               setState(() => _selectedTab = index);
               if (isDrawer) Navigator.of(context).pop();
             },
             child: AnimatedContainer(
-              duration: kDurationStandard,
+              duration: isReducedMotion(context)
+                  ? Duration.zero
+                  : kDurationStandard,
               curve: kEaseInOut,
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 9),
               decoration: BoxDecoration(
@@ -807,10 +926,14 @@ class _OrgProviderShellState extends ConsumerState<OrgProviderShell> {
               child: Row(
                 children: [
                   TweenAnimationBuilder<Color?>(
-                    duration: kDurationStandard,
+                    duration: isReducedMotion(context)
+                        ? Duration.zero
+                        : kDurationStandard,
                     curve: kEaseInOut,
                     tween: ColorTween(
-                      begin: isSelected ? const Color(0xFF5E6D66) : kOrgActiveNavText,
+                      begin: isSelected
+                          ? const Color(0xFF5E6D66)
+                          : kOrgActiveNavText,
                       end: isSelected
                           ? kOrgActiveNavText
                           : const Color(0xFF5E6D66),
@@ -826,12 +949,15 @@ class _OrgProviderShellState extends ConsumerState<OrgProviderShell> {
                   const SizedBox(width: 12),
                   Expanded(
                     child: AnimatedDefaultTextStyle(
-                      duration: kDurationStandard,
+                      duration: isReducedMotion(context)
+                          ? Duration.zero
+                          : kDurationStandard,
                       curve: kEaseInOut,
                       style: orgBody(
                         fontSize: 13.5,
-                        fontWeight:
-                            isSelected ? FontWeight.w600 : FontWeight.w500,
+                        fontWeight: isSelected
+                            ? FontWeight.w600
+                            : FontWeight.w500,
                         color: isSelected
                             ? kOrgActiveNavText
                             : kOrgInactiveNavText,
@@ -866,7 +992,8 @@ class _OrgCommandPaletteDialog extends ConsumerStatefulWidget {
     Application app,
     Scholarship? scholarship,
     ApplicantProfile? profile,
-  ) onSelectApplication;
+  )
+  onSelectApplication;
 
   @override
   ConsumerState<_OrgCommandPaletteDialog> createState() =>
@@ -922,86 +1049,95 @@ class _OrgCommandPaletteDialogState
         title: 'Incoming Applications',
         subtitle: 'Review & triage applicant dossiers',
         icon: Icons.inbox_outlined,
-        action: () => widget.onSelectTab(0)
+        action: () => widget.onSelectTab(0),
       ),
       (
         title: 'Decisioning Pool',
         subtitle: 'Deliberate & finalize grant awards',
         icon: Icons.rate_review_outlined,
-        action: () => widget.onSelectTab(1)
+        action: () => widget.onSelectTab(1),
       ),
       (
         title: 'My Scholarships',
         subtitle: 'Portfolio of endowments and criteria',
         icon: Icons.folder_special_outlined,
-        action: () => widget.onSelectTab(2)
+        action: () => widget.onSelectTab(2),
       ),
       (
         title: 'Create New Grant',
         subtitle: 'Configure new scholarship endowment',
         icon: Icons.add_circle_outline_rounded,
-        action: widget.onOpenNewGrant
+        action: widget.onOpenNewGrant,
       ),
       (
         title: 'Analytics & Impact',
         subtitle: 'Demographics, GWA and social mobility',
         icon: Icons.insights_outlined,
-        action: () => widget.onSelectTab(3)
+        action: () => widget.onSelectTab(3),
       ),
       (
         title: 'Disbursements',
         subtitle: 'CHED tranche payouts & liquidation ledger',
         icon: Icons.payments_outlined,
-        action: () => widget.onSelectTab(4)
+        action: () => widget.onSelectTab(4),
       ),
       (
         title: 'Settings & Profile',
         subtitle: 'Organization details & credentials',
         icon: Icons.manage_accounts_outlined,
-        action: () => widget.onSelectTab(5)
+        action: () => widget.onSelectTab(5),
       ),
       (
         title: 'Team & Reviewers',
         subtitle: 'Staff roster, evaluators & assignment quotas',
         icon: Icons.groups_outlined,
-        action: () => widget.onSelectTab(6)
+        action: () => widget.onSelectTab(6),
       ),
       (
         title: 'Organization Activity Log',
         subtitle: 'Immutable audit trail & deliberation ledger',
         icon: Icons.history_edu_outlined,
-        action: () => widget.onSelectTab(7)
+        action: () => widget.onSelectTab(7),
       ),
     ];
 
     final matchingNav = q.isEmpty
         ? allNavItems
         : allNavItems
-            .where((item) =>
-                item.title.toLowerCase().contains(q) ||
-                item.subtitle.toLowerCase().contains(q))
-            .toList();
+              .where(
+                (item) =>
+                    item.title.toLowerCase().contains(q) ||
+                    item.subtitle.toLowerCase().contains(q),
+              )
+              .toList();
 
     // 2. Matching Scholarships
     final matchingScholarships = q.isEmpty
         ? <Scholarship>[]
         : scholarships
-            .where((s) =>
-                s.title.toLowerCase().contains(q) ||
-                (s.description?.toLowerCase().contains(q) ?? false))
-            .take(4)
-            .toList();
+              .where(
+                (s) =>
+                    s.title.toLowerCase().contains(q) ||
+                    (s.description?.toLowerCase().contains(q) ?? false),
+              )
+              .take(4)
+              .toList();
 
     // 3. Matching Applications
     final matchingApps = q.isEmpty
         ? <Application>[]
-        : apps.where((a) {
-            final p = profiles[a.userId];
-            final name = p?.fullName.toLowerCase() ?? '';
-            final school = p?.school?.toLowerCase() ?? '';
-            final course = p?.course.toLowerCase() ?? '';
-            return name.contains(q) || school.contains(q) || course.contains(q);
-          }).take(4).toList();
+        : apps
+              .where((a) {
+                final p = profiles[a.userId];
+                final name = p?.fullName.toLowerCase() ?? '';
+                final school = p?.school?.toLowerCase() ?? '';
+                final course = p?.course.toLowerCase() ?? '';
+                return name.contains(q) ||
+                    school.contains(q) ||
+                    course.contains(q);
+              })
+              .take(4)
+              .toList();
 
     // Assemble flattened action list for keyboard arrow navigation
     final flatItems = <_PaletteActionItem>[];
@@ -1010,37 +1146,47 @@ class _OrgCommandPaletteDialogState
     for (final app in matchingApps) {
       final p = profiles[app.userId];
       final s = scholarshipsMap[app.scholarshipId];
-      final name = p?.fullName.trim().isNotEmpty == true ? p!.fullName : 'Applicant';
-      flatItems.add(_PaletteActionItem(
-        title: name,
-        subtitle: '${p?.course ?? "Undergraduate"} • ${p?.school ?? "Accredited University"}',
-        icon: Icons.person_outline_rounded,
-        trailingBadge: s?.title,
-        section: 'APPLICANTS',
-        onSelect: () => widget.onSelectApplication(app, s, p),
-      ));
+      final name = p?.fullName.trim().isNotEmpty == true
+          ? p!.fullName
+          : 'Applicant';
+      flatItems.add(
+        _PaletteActionItem(
+          title: name,
+          subtitle:
+              '${p?.course ?? "Undergraduate"} • ${p?.school ?? "Accredited University"}',
+          icon: Icons.person_outline_rounded,
+          trailingBadge: s?.title,
+          section: 'APPLICANTS',
+          onSelect: () => widget.onSelectApplication(app, s, p),
+        ),
+      );
     }
 
     // 2. Matching Scholarships
     for (final s in matchingScholarships) {
-      flatItems.add(_PaletteActionItem(
-        title: s.title,
-        subtitle: '₱${s.awardAmount} / scholar • ${s.slots != null ? "${s.slots} slots" : "Uncapped"}',
-        icon: Icons.school_outlined,
-        section: 'GRANT PROGRAMS',
-        onSelect: () => widget.onSelectTab(2),
-      ));
+      flatItems.add(
+        _PaletteActionItem(
+          title: s.title,
+          subtitle:
+              '₱${s.awardAmount} / scholar • ${s.slots != null ? "${s.slots} slots" : "Uncapped"}',
+          icon: Icons.school_outlined,
+          section: 'GRANT PROGRAMS',
+          onSelect: () => widget.onSelectTab(2),
+        ),
+      );
     }
 
     // 3. Navigation / Commands
     for (final item in matchingNav) {
-      flatItems.add(_PaletteActionItem(
-        title: item.title,
-        subtitle: item.subtitle,
-        icon: item.icon,
-        section: q.isEmpty ? 'QUICK NAVIGATION' : 'COMMANDS',
-        onSelect: item.action,
-      ));
+      flatItems.add(
+        _PaletteActionItem(
+          title: item.title,
+          subtitle: item.subtitle,
+          icon: item.icon,
+          section: q.isEmpty ? 'QUICK NAVIGATION' : 'COMMANDS',
+          onSelect: item.action,
+        ),
+      );
     }
 
     final safeHighlight = flatItems.isEmpty
@@ -1084,223 +1230,295 @@ class _OrgCommandPaletteDialogState
           focusNode: _focusNode,
           onKeyEvent: handleKeyEvent,
           child: Container(
-          width: 580,
-          constraints: const BoxConstraints(maxHeight: 520),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: kOrgHairline),
-            boxShadow: const [
-              BoxShadow(
-                color: Color(0x1A000000),
-                blurRadius: 32,
-                offset: Offset(0, 16),
-              ),
-            ],
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              // Search Input Header
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                decoration: const BoxDecoration(
-                  border: Border(bottom: BorderSide(color: kOrgHairline)),
+            width: 580,
+            constraints: const BoxConstraints(maxHeight: 520),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(color: kOrgHairline),
+              boxShadow: const [
+                BoxShadow(
+                  color: Color(0x1A000000),
+                  blurRadius: 32,
+                  offset: Offset(0, 16),
                 ),
-                child: Row(
-                  children: [
-                    const Icon(Icons.search_rounded, size: 20, color: kOrgPrimary),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: TextField(
-                        controller: _searchController,
-                        autofocus: true,
-                        onChanged: (val) => setState(() {
-                          _query = val;
-                          _highlightedIndex = 0;
-                        }),
-                        onSubmitted: (_) {
-                          if (flatItems.isNotEmpty &&
-                              safeHighlight < flatItems.length) {
-                            Navigator.of(context).pop();
-                            flatItems[safeHighlight].onSelect();
-                          }
-                        },
-                        style: orgBody(fontSize: 14),
-                        decoration: InputDecoration(
-                          hintText: 'Search grants, applicants, or jump to page...',
-                          hintStyle: orgBody(fontSize: 14, color: kOrgTextMuted),
-                          border: InputBorder.none,
-                          isDense: true,
-                          contentPadding: EdgeInsets.zero,
-                        ),
-                      ),
-                    ),
-                    if (_query.isNotEmpty)
-                      IconButton(
-                        icon: const Icon(Icons.clear_rounded, size: 16, color: kOrgTextSecondary),
-                        onPressed: () {
-                          _searchController.clear();
-                          setState(() => _query = '');
-                        },
-                        padding: EdgeInsets.zero,
-                        constraints: const BoxConstraints(),
-                      ),
-                    const SizedBox(width: 8),
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
-                      decoration: BoxDecoration(
-                        color: const Color(0xFFF4F3F8),
-                        borderRadius: BorderRadius.circular(6),
-                        border: Border.all(color: kOrgHairline),
-                      ),
-                      child: Text(
-                        'ESC',
-                        style: orgLabel(
-                          fontSize: 10,
-                          fontWeight: FontWeight.w600,
-                          color: kOrgTextSecondary,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-
-              // Scrollable Search Results
-              Flexible(
-                child: SingleChildScrollView(
-                  padding: const EdgeInsets.symmetric(vertical: 8),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+              ],
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // Search Input Header
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 12,
+                  ),
+                  decoration: const BoxDecoration(
+                    border: Border(bottom: BorderSide(color: kOrgHairline)),
+                  ),
+                  child: Row(
                     children: [
-                      if (flatItems.isNotEmpty) ...[
-                        Builder(builder: (ctx) {
-                          String? currentSection;
-                          final tiles = <Widget>[];
-                          for (int i = 0; i < flatItems.length; i++) {
-                            final item = flatItems[i];
-                            if (item.section != currentSection) {
-                              currentSection = item.section;
-                              tiles.add(_buildSectionHeader(currentSection));
+                      const Icon(
+                        Icons.search_rounded,
+                        size: 20,
+                        color: kOrgPrimary,
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: TextField(
+                          controller: _searchController,
+                          autofocus: true,
+                          onChanged: (val) => setState(() {
+                            _query = val;
+                            _highlightedIndex = 0;
+                          }),
+                          onSubmitted: (_) {
+                            if (flatItems.isNotEmpty &&
+                                safeHighlight < flatItems.length) {
+                              Navigator.of(context).pop();
+                              flatItems[safeHighlight].onSelect();
                             }
-                            tiles.add(_buildResultTile(
-                              title: item.title,
-                              subtitle: item.subtitle,
-                              icon: item.icon,
-                              trailingBadge: item.trailingBadge,
-                              isSelected: safeHighlight == i,
-                              onHover: () {
-                                if (_highlightedIndex != i) {
-                                  setState(() => _highlightedIndex = i);
-                                }
-                              },
-                              onTap: () {
-                                Navigator.of(context).pop();
-                                item.onSelect();
-                              },
-                            ));
-                          }
-                          return Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: tiles,
-                          );
-                        }),
-                      ] else ...[
-                        Padding(
-                          padding: const EdgeInsets.symmetric(
-                              vertical: 36, horizontal: 24),
-                          child: Center(
-                            child: Column(
-                              children: [
-                                const Icon(Icons.search_off_rounded,
-                                    size: 36, color: kOrgTextSecondary),
-                                const SizedBox(height: 8),
-                                Text(
-                                  'No results for "$_query"',
-                                  style: orgHeadline(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w600,
-                                    color: kOrgTextPrimary,
-                                  ),
-                                ),
-                                const SizedBox(height: 4),
-                                Text(
-                                  'Try searching for applicant names, grant titles, or navigation tabs.',
-                                  style: orgBody(
-                                    fontSize: 12,
-                                    color: kOrgTextSecondary,
-                                  ),
-                                  textAlign: TextAlign.center,
-                                ),
-                              ],
+                          },
+                          style: orgBody(fontSize: 14),
+                          decoration: InputDecoration(
+                            hintText:
+                                'Search grants, applicants, or jump to page...',
+                            hintStyle: orgBody(
+                              fontSize: 14,
+                              color: kOrgTextMuted,
                             ),
+                            border: InputBorder.none,
+                            isDense: true,
+                            contentPadding: EdgeInsets.zero,
                           ),
                         ),
-                      ],
+                      ),
+                      if (_query.isNotEmpty)
+                        IconButton(
+                          icon: const Icon(
+                            Icons.clear_rounded,
+                            size: 16,
+                            color: kOrgTextSecondary,
+                          ),
+                          onPressed: () {
+                            _searchController.clear();
+                            setState(() => _query = '');
+                          },
+                          padding: EdgeInsets.zero,
+                          constraints: const BoxConstraints(),
+                        ),
+                      const SizedBox(width: 8),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 6,
+                          vertical: 3,
+                        ),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFF4F3F8),
+                          borderRadius: BorderRadius.circular(6),
+                          border: Border.all(color: kOrgHairline),
+                        ),
+                        child: Text(
+                          'ESC',
+                          style: orgLabel(
+                            fontSize: 10,
+                            fontWeight: FontWeight.w600,
+                            color: kOrgTextSecondary,
+                          ),
+                        ),
+                      ),
                     ],
                   ),
                 ),
-              ),
 
-              // Bottom Shortcut Strip
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-                decoration: const BoxDecoration(
-                  color: Color(0xFFFAF9FD),
-                  borderRadius:
-                      BorderRadius.vertical(bottom: Radius.circular(16)),
-                  border: Border(top: BorderSide(color: kOrgHairline)),
+                // Scrollable Search Results
+                Flexible(
+                  child: SingleChildScrollView(
+                    padding: const EdgeInsets.symmetric(vertical: 8),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        if (flatItems.isNotEmpty) ...[
+                          Builder(
+                            builder: (ctx) {
+                              String? currentSection;
+                              final tiles = <Widget>[];
+                              for (int i = 0; i < flatItems.length; i++) {
+                                final item = flatItems[i];
+                                if (item.section != currentSection) {
+                                  currentSection = item.section;
+                                  tiles.add(
+                                    _buildSectionHeader(currentSection),
+                                  );
+                                }
+                                tiles.add(
+                                  _buildResultTile(
+                                    title: item.title,
+                                    subtitle: item.subtitle,
+                                    icon: item.icon,
+                                    trailingBadge: item.trailingBadge,
+                                    isSelected: safeHighlight == i,
+                                    onHover: () {
+                                      if (_highlightedIndex != i) {
+                                        setState(() => _highlightedIndex = i);
+                                      }
+                                    },
+                                    onTap: () {
+                                      Navigator.of(context).pop();
+                                      item.onSelect();
+                                    },
+                                  ),
+                                );
+                              }
+                              return Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: tiles,
+                              );
+                            },
+                          ),
+                        ] else ...[
+                          Padding(
+                            padding: const EdgeInsets.symmetric(
+                              vertical: 36,
+                              horizontal: 24,
+                            ),
+                            child: Center(
+                              child: Column(
+                                children: [
+                                  const Icon(
+                                    Icons.search_off_rounded,
+                                    size: 36,
+                                    color: kOrgTextSecondary,
+                                  ),
+                                  const SizedBox(height: 8),
+                                  Text(
+                                    'No results for "$_query"',
+                                    style: orgHeadline(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w600,
+                                      color: kOrgTextPrimary,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    'Try searching for applicant names, grant titles, or navigation tabs.',
+                                    style: orgBody(
+                                      fontSize: 12,
+                                      color: kOrgTextSecondary,
+                                    ),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
+                      ],
+                    ),
+                  ),
                 ),
-                child: Row(
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 1.5),
-                      decoration: BoxDecoration(
-                        color: const Color(0xFFEEEDF3),
-                        borderRadius: BorderRadius.circular(4),
-                      ),
-                      child: Text('↑↓', style: orgLabel(fontSize: 10, fontWeight: FontWeight.w700, color: kOrgTextPrimary)),
+
+                // Bottom Shortcut Strip
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 10,
+                  ),
+                  decoration: const BoxDecoration(
+                    color: Color(0xFFFAF9FD),
+                    borderRadius: BorderRadius.vertical(
+                      bottom: Radius.circular(16),
                     ),
-                    const SizedBox(width: 4),
-                    Text('navigate', style: orgLabel(fontSize: 11, color: kOrgTextSecondary)),
-                    const SizedBox(width: 10),
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 1.5),
-                      decoration: BoxDecoration(
-                        color: const Color(0xFFEEEDF3),
-                        borderRadius: BorderRadius.circular(4),
+                    border: Border(top: BorderSide(color: kOrgHairline)),
+                  ),
+                  child: Row(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 5,
+                          vertical: 1.5,
+                        ),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFEEEDF3),
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                        child: Text(
+                          '↑↓',
+                          style: orgLabel(
+                            fontSize: 10,
+                            fontWeight: FontWeight.w700,
+                            color: kOrgTextPrimary,
+                          ),
+                        ),
                       ),
-                      child: Text('↵', style: orgLabel(fontSize: 10, fontWeight: FontWeight.w700, color: kOrgTextPrimary)),
-                    ),
-                    const SizedBox(width: 4),
-                    Text('select', style: orgLabel(fontSize: 11, color: kOrgTextSecondary)),
-                    const SizedBox(width: 10),
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 1.5),
-                      decoration: BoxDecoration(
-                        color: const Color(0xFFEEEDF3),
-                        borderRadius: BorderRadius.circular(4),
+                      const SizedBox(width: 4),
+                      Text(
+                        'navigate',
+                        style: orgLabel(fontSize: 11, color: kOrgTextSecondary),
                       ),
-                      child: Text('ESC', style: orgLabel(fontSize: 10, fontWeight: FontWeight.w700, color: kOrgTextSecondary)),
-                    ),
-                    const SizedBox(width: 4),
-                    Text('dismiss', style: orgLabel(fontSize: 11, color: kOrgTextSecondary)),
-                    const Spacer(),
-                    Text(
-                      'Provider Command Center',
-                      style: orgLabel(
-                        fontSize: 11,
-                        fontWeight: FontWeight.w600,
-                        color: kOrgPrimary,
+                      const SizedBox(width: 10),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 5,
+                          vertical: 1.5,
+                        ),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFEEEDF3),
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                        child: Text(
+                          '↵',
+                          style: orgLabel(
+                            fontSize: 10,
+                            fontWeight: FontWeight.w700,
+                            color: kOrgTextPrimary,
+                          ),
+                        ),
                       ),
-                    ),
-                  ],
+                      const SizedBox(width: 4),
+                      Text(
+                        'select',
+                        style: orgLabel(fontSize: 11, color: kOrgTextSecondary),
+                      ),
+                      const SizedBox(width: 10),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 5,
+                          vertical: 1.5,
+                        ),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFEEEDF3),
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                        child: Text(
+                          'ESC',
+                          style: orgLabel(
+                            fontSize: 10,
+                            fontWeight: FontWeight.w700,
+                            color: kOrgTextSecondary,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 4),
+                      Text(
+                        'dismiss',
+                        style: orgLabel(fontSize: 11, color: kOrgTextSecondary),
+                      ),
+                      const Spacer(),
+                      Text(
+                        'Provider Command Center',
+                        style: orgLabel(
+                          fontSize: 11,
+                          fontWeight: FontWeight.w600,
+                          color: kOrgPrimary,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
-        ),
         ),
       ),
     );
@@ -1373,8 +1591,9 @@ class _OrgCommandPaletteDialogState
                         title,
                         style: orgHeadline(
                           fontSize: 13,
-                          fontWeight:
-                              isSelected ? FontWeight.w700 : FontWeight.w600,
+                          fontWeight: isSelected
+                              ? FontWeight.w700
+                              : FontWeight.w600,
                           color: isSelected ? kOrgPrimary : kOrgTextPrimary,
                         ),
                         maxLines: 1,
@@ -1382,7 +1601,10 @@ class _OrgCommandPaletteDialogState
                       ),
                       Text(
                         subtitle,
-                        style: orgBody(fontSize: 11.5, color: kOrgTextSecondary),
+                        style: orgBody(
+                          fontSize: 11.5,
+                          color: kOrgTextSecondary,
+                        ),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                       ),
@@ -1394,8 +1616,10 @@ class _OrgCommandPaletteDialogState
                   ConstrainedBox(
                     constraints: const BoxConstraints(maxWidth: 160),
                     child: Container(
-                      padding:
-                          const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 6,
+                        vertical: 2,
+                      ),
                       decoration: BoxDecoration(
                         color: const Color(0xFFEEEDF3),
                         borderRadius: BorderRadius.circular(6),

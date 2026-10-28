@@ -9,6 +9,7 @@ import 'app/router.dart';
 import 'app/supabase_config.dart';
 import 'core/auth/tab_scoped_local_storage.dart';
 import 'core/security/login_lockout_service.dart';
+import 'core/security/inactivity_guard.dart';
 import 'shared/theme/app_motion.dart';
 import 'shared/theme/app_theme.dart';
 
@@ -69,6 +70,7 @@ class ScholarisApp extends ConsumerWidget {
       debugShowCheckedModeBanner: false,
       theme: scholarisTheme(),
       scrollBehavior: const ScholarisSmoothScrollBehavior(),
+      builder: (context, child) => InactivityGuard(child: child!),
       routerConfig: router,
     );
   }

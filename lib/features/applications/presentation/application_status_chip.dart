@@ -112,13 +112,15 @@ class ApplicationStatusChip extends StatelessWidget {
               Icon(ui.icon, size: 13, color: ui.foreground),
               const SizedBox(width: 4),
             ],
-            Text(
-              ui.label,
-              style: GoogleFonts.outfit(
-                fontSize: 11,
-                fontWeight: FontWeight.w700,
-                letterSpacing: 0.1,
-                color: ui.foreground,
+            Flexible(
+              child: Text(
+                ui.label,
+                style: GoogleFonts.outfit(
+                  fontSize: 11,
+                  fontWeight: FontWeight.w700,
+                  letterSpacing: 0.1,
+                  color: ui.foreground,
+                ),
               ),
             ),
           ],

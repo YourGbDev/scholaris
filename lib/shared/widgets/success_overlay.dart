@@ -13,6 +13,8 @@ import 'package:scholaris/shared/theme/app_motion.dart';
 import 'package:scholaris/shared/theme/app_theme.dart';
 import 'package:scholaris/shared/widgets/mascot_pose_view.dart';
 
+export 'package:scholaris/shared/widgets/mascot_pose_view.dart';
+
 /// Shows the success confirmation overlay as a full-screen modal and returns
 /// when it auto-dismisses.
 ///
@@ -27,7 +29,13 @@ class SuccessOverlay {
   static const _duration = Duration(milliseconds: 1600);
   static const _reducedDuration = Duration(milliseconds: 1000);
 
-  static Future<void> show(BuildContext context) {
+  static Future<void> show(
+    BuildContext context, {
+    String title = 'Finding your scholarship matches...',
+    String? subtitle =
+        'Analyzing university grants, DOST, and private subsidies tailored to you.',
+    MascotPose pose = MascotPose.searching,
+  }) {
     final reduceMotion = MediaQuery.maybeOf(context)?.disableAnimations ?? false;
 
     return showGeneralDialog(
@@ -38,16 +46,29 @@ class SuccessOverlay {
           ? const Duration(milliseconds: 80)
           : const Duration(milliseconds: 200),
       pageBuilder: (context, animation, secondaryAnimation) {
-        return _SuccessPage(reduceMotion: reduceMotion);
+        return _SuccessPage(
+          reduceMotion: reduceMotion,
+          title: title,
+          subtitle: subtitle,
+          pose: pose,
+        );
       },
     );
   }
 }
 
 class _SuccessPage extends StatefulWidget {
-  const _SuccessPage({required this.reduceMotion});
+  const _SuccessPage({
+    required this.reduceMotion,
+    required this.title,
+    this.subtitle,
+    required this.pose,
+  });
 
   final bool reduceMotion;
+  final String title;
+  final String? subtitle;
+  final MascotPose pose;
 
   @override
   State<_SuccessPage> createState() => _SuccessPageState();
@@ -120,13 +141,13 @@ class _SuccessPageState extends State<_SuccessPage>
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const MascotPoseView(
-            pose: MascotPose.searching,
+          MascotPoseView(
+            pose: widget.pose,
             height: 110,
           ),
           const SizedBox(height: 14),
           Text(
-            'Finding your scholarship matches...',
+            widget.title,
             textAlign: TextAlign.center,
             style: outfit(
               fontSize: 17,
@@ -134,16 +155,18 @@ class _SuccessPageState extends State<_SuccessPage>
               color: const Color(0xFF161C27),
             ),
           ),
-          const SizedBox(height: 6),
-          Text(
-            'Analyzing university grants, DOST, and private subsidies tailored to you.',
-            textAlign: TextAlign.center,
-            style: openSans(
-              fontSize: 12.5,
-              color: const Color(0xFF404942),
-              height: 1.35,
+          if (widget.subtitle != null) ...[
+            const SizedBox(height: 6),
+            Text(
+              widget.subtitle!,
+              textAlign: TextAlign.center,
+              style: openSans(
+                fontSize: 12.5,
+                color: const Color(0xFF404942),
+                height: 1.35,
+              ),
             ),
-          ),
+          ],
         ],
       ),
     );

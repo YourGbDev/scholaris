@@ -14,13 +14,14 @@ import 'package:url_launcher/url_launcher.dart';
 
 import 'package:scholaris/app/landing_config.dart';
 import 'package:scholaris/core/security/login_lockout_service.dart';
+import 'package:scholaris/core/security/captcha_challenge.dart';
 import 'package:scholaris/features/auth/presentation/empty_stage.dart';
 import 'package:scholaris/shared/theme/app_motion.dart';
 import 'package:scholaris/shared/theme/app_theme.dart';
 import 'package:scholaris/shared/widgets/entrance.dart';
 import 'package:scholaris/shared/widgets/scholaris_logo.dart';
 
-const int kLoginEntranceTotalMs = 2200;
+const int kLoginEntranceTotalMs = 1450;
 
 final _emailPattern = RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$');
 
@@ -139,9 +140,12 @@ class _LoginScreenState extends State<LoginScreen>
     setState(() => _isLoading = true);
     debugPrint('[LOGIN] calling signInWithPassword');
     try {
+      final captcha = await acquireCaptcha(context);
+      if (!mounted || !captcha.allowed) return;
       final result = await Supabase.instance.client.auth.signInWithPassword(
         email: email,
         password: _passwordController.text,
+        captchaToken: captcha.token,
       );
       LoginLockoutService.instance.recordSuccessfulLogin(email);
       _lockoutTimer?.cancel();
@@ -183,6 +187,8 @@ class _LoginScreenState extends State<LoginScreen>
               : _friendlyError(error);
       ScaffoldMessenger.of(context)
           .showSnackBar(_snackBar(msg));
+    } catch (_) {
+      if (mounted) ScaffoldMessenger.of(context).showSnackBar(_snackBar('Could not complete the security check. Please try again.'));
     } finally {
       if (mounted) setState(() => _isLoading = false);
     }
@@ -374,13 +380,18 @@ class _LoginScreenState extends State<LoginScreen>
     );
   }
 
+  Widget _revealLogin(int index, Widget child) => KeyedSubtree(
+    key: ValueKey('login-reveal-$index'),
+    child: entranceItem(
+      index: index,
+      interval: _loginInterval(index * 140, index * 140 + 650),
+      offset: const Offset(0, 0.035),
+      child: child,
+    ),
+  );
+
   @override
   Widget build(BuildContext context) {
-    final animation = CurvedAnimation(
-      parent: entranceController,
-      curve: _loginInterval(200, 1800),
-    );
-
     return Scaffold(
       backgroundColor: const Color(0xFFFAFAF8),
       body: Listener(
@@ -486,9 +497,8 @@ class _LoginScreenState extends State<LoginScreen>
                 ),
                 // Form & Scrollable Content
                 Expanded(
-                  child: FadeTransition(
-                    opacity: animation,
-                    child: SingleChildScrollView(
+                  child: SingleChildScrollView(
+                      keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
                       physics: const AppleBouncingScrollPhysics(),
                       padding: const EdgeInsets.fromLTRB(20, 0, 20, 8),
                       child: Center(
@@ -499,6 +509,7 @@ class _LoginScreenState extends State<LoginScreen>
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
+                                _revealLogin(0, Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                                 // Hero Section: Free-floating waving couple mascot
                                 Center(
                                   child: Image.asset(
@@ -515,6 +526,8 @@ class _LoginScreenState extends State<LoginScreen>
                                 ),
                                 const SizedBox(height: 8),
 
+                                ])),
+                                _revealLogin(1, Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                                 // Padayon, Iskolar badge
                                 Container(
                                   padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 2.5),
@@ -585,6 +598,8 @@ class _LoginScreenState extends State<LoginScreen>
                                 // Lockout Banner / Countdown
                                 _buildLockoutBanner(),
 
+                                ])),
+                                _revealLogin(2, Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                                 // Email Field
                                 Text(
                                   'Email',
@@ -598,6 +613,8 @@ class _LoginScreenState extends State<LoginScreen>
                                 TextFormField(
                                   controller: _emailController,
                                   keyboardType: TextInputType.emailAddress,
+                                  textInputAction: TextInputAction.next,
+                                  autofillHints: const [AutofillHints.username, AutofillHints.email],
                                   validator: _validateEmail,
                                   style: openSans(fontSize: 14),
                                   decoration: InputDecoration(
@@ -623,6 +640,8 @@ class _LoginScreenState extends State<LoginScreen>
                                 ),
                                 const SizedBox(height: 6),
 
+                                ])),
+                                _revealLogin(3, Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                                 // Password Field Header
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -660,6 +679,7 @@ class _LoginScreenState extends State<LoginScreen>
                                 const SizedBox(height: 6),
                                 TextFormField(
                                   controller: _passwordController,
+                                  autofillHints: const [AutofillHints.password],
                                   obscureText: _obscurePassword,
                                   onFieldSubmitted: (_) =>
                                       (_isLoading || (_lockoutStatus?.isLocked ?? false))
@@ -698,6 +718,8 @@ class _LoginScreenState extends State<LoginScreen>
                                 ),
                                 const SizedBox(height: 8),
 
+                                ])),
+                                _revealLogin(4, Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                                 // Remember Me Checkbox
                                 Row(
                                   children: [
@@ -755,7 +777,7 @@ class _LoginScreenState extends State<LoginScreen>
                                       foregroundColor: Colors.white,
                                       disabledBackgroundColor: (_lockoutStatus?.isLocked ?? false)
                                           ? const Color(0xFFE2A0A0)
-                                          : null,
+                                          : _isLoading ? kPrimary : null,
                                       disabledForegroundColor: (_lockoutStatus?.isLocked ?? false)
                                           ? Colors.white.withValues(alpha: 0.8)
                                           : null,
@@ -795,6 +817,8 @@ class _LoginScreenState extends State<LoginScreen>
                                 ),
                                 const SizedBox(height: 14),
 
+                                ])),
+                                _revealLogin(5, Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                                 // Sign Up Navigation Link
                                 Center(
                                   child: Wrap(
@@ -902,7 +926,7 @@ class _LoginScreenState extends State<LoginScreen>
                                 ),
                                 const SizedBox(height: 12),
 
-                                // Institutional Student SSO
+                                // Institutional Student SSO • Coming soon
                                 Container(
                                   width: double.infinity,
                                   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
@@ -928,11 +952,11 @@ class _LoginScreenState extends State<LoginScreen>
                                           crossAxisAlignment: CrossAxisAlignment.start,
                                           children: [
                                             Text(
-                                              'Institutional Student SSO',
+                                              'Institutional Student SSO • Coming soon',
                                               style: poppins(fontSize: 12, fontWeight: FontWeight.bold),
                                             ),
                                             Text(
-                                              'UP, PUP, UST, DLSU, Ateneo & State Colleges',
+                                              'Institutional sign-in is not available yet',
                                               style: openSans(fontSize: 10, color: const Color(0xFF404942)),
                                               maxLines: 1,
                                               overflow: TextOverflow.ellipsis,
@@ -951,7 +975,7 @@ class _LoginScreenState extends State<LoginScreen>
                                   width: double.infinity,
                                   height: 40,
                                   child: OutlinedButton(
-                                    onPressed: () {},
+                                    onPressed: null,
                                     style: OutlinedButton.styleFrom(
                                       backgroundColor: const Color(0xFFF1F3FF),
                                       side: const BorderSide(color: Color(0xFFE2E8E5)),
@@ -965,7 +989,7 @@ class _LoginScreenState extends State<LoginScreen>
                                         const SizedBox(width: 6),
                                         Flexible(
                                           child: Text(
-                                            'Sign in with Google Workspace for Education',
+                                            'Google sign-in • Coming soon',
                                             style: poppins(fontSize: 11, fontWeight: FontWeight.w600),
                                             overflow: TextOverflow.ellipsis,
                                           ),
@@ -988,7 +1012,7 @@ class _LoginScreenState extends State<LoginScreen>
                                             const Icon(Icons.verified_user_outlined, size: 14, color: kPrimary),
                                             const SizedBox(width: 4),
                                             Text(
-                                              'Philippine Academic Trust Network',
+                                              'Scholaris student access',
                                               style: poppins(
                                                 fontSize: 11,
                                                 fontWeight: FontWeight.w700,
@@ -1000,20 +1024,20 @@ class _LoginScreenState extends State<LoginScreen>
                                       ),
                                       const SizedBox(height: 3),
                                       Text(
-                                        'Interfacing with DOST-SEI & CHED UniFAST. Protected under the Philippine Data Privacy Act of 2012 with 256-bit encryption.',
+                                        'Sign in with your Scholaris account to continue.',
                                         textAlign: TextAlign.center,
                                         style: openSans(fontSize: 10, color: const Color(0xFF707971)),
                                       ),
                                     ],
                                   ),
                                 ),
+                                ])),
                               ],
                             ),
                           ),
                         ),
                       ),
                     ),
-                  ),
                 ),
               ],
             ),

@@ -7,8 +7,11 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../auth/controllers/auth_controller.dart';
+import '../../profile/providers/profile_setup_provider.dart';
 import '../models/scholarship.dart';
+import '../services/application_readiness.dart';
 import '../services/discovery_filters.dart';
+import '../services/match_reasons.dart';
 import 'scholarships_provider.dart';
 
 /// The single discovery search/filter/sort state. Auto-disposed and keyed on
@@ -72,8 +75,11 @@ final discoveryActiveFilterCountProvider = Provider<int>((ref) {
 final filteredMatchesProvider = Provider<AsyncValue<List<Scholarship>>>((ref) {
   final matchesAsync = ref.watch(matchesProvider);
   final state = ref.watch(discoveryFilterProvider);
+  final profile = ref.watch(currentProfileProvider).valueOrNull;
   return matchesAsync.whenData(
-    (matches) => DiscoveryFilters.applyAll(matches, state),
+    (matches) => DiscoveryFilters.applyAll(matches, state, isHighFit: (s) =>
+      profile != null && evaluateApplicationReadiness(profile: profile, scholarship: s, referenceNow: DateTime.now()).canApply &&
+      placeholderMatchPercentage(matchReasonsFor(profile, s).length) > 90),
   );
 });
 
@@ -83,6 +89,7 @@ final filteredBrowseProvider = Provider<AsyncValue<List<Scholarship>>>((ref) {
   final allAsync = ref.watch(scholarshipsProvider);
   final matchesAsync = ref.watch(matchesProvider);
   final state = ref.watch(discoveryFilterProvider);
+  final profile = ref.watch(currentProfileProvider).valueOrNull;
   final matchIds = (matchesAsync.valueOrNull ?? const <Scholarship>[])
       .map((s) => s.id)
       .toSet();
@@ -90,6 +97,9 @@ final filteredBrowseProvider = Provider<AsyncValue<List<Scholarship>>>((ref) {
     (all) => DiscoveryFilters.applyAll(
       all.where((s) => !matchIds.contains(s.id)).toList(),
       state,
+      isHighFit: (s) => profile != null &&
+        evaluateApplicationReadiness(profile: profile, scholarship: s, referenceNow: DateTime.now()).canApply &&
+        placeholderMatchPercentage(matchReasonsFor(profile, s).length) > 90,
     ),
   );
 });

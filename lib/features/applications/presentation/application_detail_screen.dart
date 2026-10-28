@@ -1,3 +1,5 @@
+import 'student_support_concerns.dart';
+import 'student_support_receipts.dart';
 // lib/features/applications/presentation/application_detail_screen.dart
 //
 // First-class application-level detail surface. Reached by tapping an
@@ -18,7 +20,9 @@ import 'package:scholaris/features/applications/providers/application_document_p
 import 'package:scholaris/features/applications/presentation/widgets/document_upload_sheet.dart';
 import 'package:scholaris/features/applications/providers/applications_provider.dart';
 import 'package:scholaris/features/applications/repositories/application_repository.dart';
+
 import 'application_decision_letter.dart';
+
 import 'package:scholaris/features/profile/providers/profile_setup_provider.dart';
 import 'package:scholaris/features/scholarships/models/scholarship.dart';
 import 'package:scholaris/features/scholarships/presentation/scholarship_detail_screen.dart';
@@ -64,9 +68,8 @@ class ApplicationDetailScreen extends ConsumerWidget {
         onRetry: () => ref.invalidate(applicationsProvider),
       ),
       data: (applications) {
-        final application = applications
-                .where((a) => a.id == applicationId)
-                .firstOrNull ??
+        final application =
+            applications.where((a) => a.id == applicationId).firstOrNull ??
             initial;
         if (application == null) {
           return const EmptyView(
@@ -90,7 +93,10 @@ class ApplicationDetailScreen extends ConsumerWidget {
                 break;
               }
             }
-            return _DetailBody(application: application, scholarship: scholarship);
+            return _DetailBody(
+              application: application,
+              scholarship: scholarship,
+            );
           },
         );
       },
@@ -116,8 +122,9 @@ class _DetailBodyState extends ConsumerState<_DetailBody> {
   @override
   void initState() {
     super.initState();
-    _notesController =
-        TextEditingController(text: widget.application.notes ?? '');
+    _notesController = TextEditingController(
+      text: widget.application.notes ?? '',
+    );
   }
 
   @override
@@ -134,9 +141,8 @@ class _DetailBodyState extends ConsumerState<_DetailBody> {
           .read(applicationsProvider.notifier)
           .updateNotes(widget.application.id, notes);
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Notes saved.')),
-      );
+      ScaffoldMessenger.of(context)
+          .showSnackBar(const SnackBar(content: Text('Notes saved.')));
     } on ApplicationNotAuthenticatedException {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
@@ -190,9 +196,9 @@ class _DetailBodyState extends ConsumerState<_DetailBody> {
           .read(applicationsProvider.notifier)
           .withdraw(widget.application.id);
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Application withdrawn.')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Application withdrawn.')));
     } on ApplicationWithdrawalException {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
@@ -209,12 +215,12 @@ class _DetailBodyState extends ConsumerState<_DetailBody> {
       debugPrint('[WITHDRAW ERROR] $e\n$st');
       if (!mounted) return;
       final errorStr = e.toString().toLowerCase();
-      final msg = errorStr.contains('check constraint') || errorStr.contains('applications_status_check')
+      final msg =
+          errorStr.contains('check constraint') ||
+              errorStr.contains('applications_status_check')
           ? 'Database migration pending for withdrawal status.'
           : 'Could not withdraw your application. Try again.';
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(msg)),
-      );
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(msg)));
     } finally {
       if (mounted) setState(() => _withdrawing = false);
     }
@@ -276,7 +282,10 @@ class _DetailBodyState extends ConsumerState<_DetailBody> {
                       padding: const EdgeInsets.all(16),
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(16),
-                        border: Border.all(color: const Color(0xFFE2E8E5), width: 1.0),
+                        border: Border.all(
+                          color: const Color(0xFFE2E8E5),
+                          width: 1.0,
+                        ),
                         boxShadow: const [
                           BoxShadow(
                             color: Color(0x081B3A5C),
@@ -303,7 +312,8 @@ class _DetailBodyState extends ConsumerState<_DetailBody> {
                                 ),
                                 const SizedBox(height: 3),
                                 Text(
-                                  scholarship.provider ?? 'Scholarship provider',
+                                  scholarship.provider ??
+                                      'Scholarship provider',
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
                                   style: openSans(
@@ -370,7 +380,11 @@ class _DetailBodyState extends ConsumerState<_DetailBody> {
           index: 2,
           child: _StatusSection(application: application),
         ),
-        if (application.status == ApplicationStatus.draft && scholarshipKnown) ...[
+        if (application.status == ApplicationStatus.approved ||
+            application.status == ApplicationStatus.awarded)
+          StudentSupportReceipts(applicationId: application.id),
+        if (application.status == ApplicationStatus.draft &&
+            scholarshipKnown) ...[
           const SizedBox(height: 14),
           StaggeredListItem(
             index: 3,
@@ -400,9 +414,14 @@ class _DetailBodyState extends ConsumerState<_DetailBody> {
         StaggeredListItem(
           index: 7,
           child: application.status.isPending
-              ? _WithdrawCard(withdrawing: _withdrawing, onWithdraw: _confirmWithdraw)
+              ? _WithdrawCard(
+                  withdrawing: _withdrawing,
+                  onWithdraw: _confirmWithdraw,
+                )
               : _TerminalNote(application: application),
         ),
+        if (application.status != ApplicationStatus.draft)
+          StudentSupportConcerns(applicationId: application.id),
       ],
     );
   }
@@ -416,7 +435,8 @@ class _StatusSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final ui = ApplicationStatusUi.of(application.status);
-    final isCelebratory = application.status == ApplicationStatus.approved ||
+    final isCelebratory =
+        application.status == ApplicationStatus.approved ||
         application.status == ApplicationStatus.awarded;
 
     return Container(
@@ -609,10 +629,7 @@ class _DecisionLetterCard extends StatelessWidget {
 }
 
 class _RejectedConsolingBanner extends StatelessWidget {
-  const _RejectedConsolingBanner({
-    required this.programName,
-    this.reason,
-  });
+  const _RejectedConsolingBanner({required this.programName, this.reason});
 
   final String programName;
   final String? reason;
@@ -635,10 +652,7 @@ class _RejectedConsolingBanner extends StatelessWidget {
       ),
       child: Column(
         children: [
-          const MascotPoseView(
-            pose: MascotPose.consoling,
-            height: 120,
-          ),
+          const MascotPoseView(pose: MascotPose.consoling, height: 120),
           const SizedBox(height: 14),
           Text(
             '"Hindi ito ang katapusan."',
@@ -707,10 +721,7 @@ class _RejectedConsolingBanner extends StatelessWidget {
                 child: Text(
                   'See other scholarships you may qualify for',
                   textAlign: TextAlign.center,
-                  style: outfit(
-                    fontSize: 13.5,
-                    fontWeight: FontWeight.w600,
-                  ),
+                  style: outfit(fontSize: 13.5, fontWeight: FontWeight.w600),
                 ),
               ),
             ),
@@ -735,10 +746,12 @@ class _FactsCard extends StatelessWidget {
       if (scholarship != null)
         (Icons.event_rounded, deadlineLabel(scholarship!.deadline)),
       if (scholarship != null)
-        (Icons.account_balance_wallet_outlined,
-            scholarship!.slots == null
-                ? 'Slots not specified'
-                : '${scholarship!.slots} slot(s)'),
+        (
+          Icons.account_balance_wallet_outlined,
+          scholarship!.slots == null
+              ? 'Slots not specified'
+              : '${scholarship!.slots} slot(s)',
+        ),
     ];
 
     return Container(
@@ -792,8 +805,18 @@ class _FactsCard extends StatelessWidget {
 
   String _formatDate(DateTime date) {
     const months = [
-      'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec',
     ];
     return '${months[date.month - 1]} ${date.day}, ${date.year}';
   }
@@ -851,14 +874,14 @@ class _SubmittedDocumentsCard extends ConsumerWidget {
                   icon: const Icon(Icons.add_rounded, size: 15),
                   label: Text(
                     'Upload',
-                    style: outfit(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w600,
-                    ),
+                    style: outfit(fontSize: 12, fontWeight: FontWeight.w600),
                   ),
                   style: TextButton.styleFrom(
                     foregroundColor: kPrimary,
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 2,
+                    ),
                     visualDensity: VisualDensity.compact,
                   ),
                 ),
@@ -881,10 +904,7 @@ class _SubmittedDocumentsCard extends ConsumerWidget {
               padding: const EdgeInsets.symmetric(vertical: 4),
               child: Text(
                 'Could not load attached documents.',
-                style: openSans(
-                  fontSize: 12.5,
-                  color: kError,
-                ),
+                style: openSans(fontSize: 12.5, color: kError),
               ),
             ),
             data: (docs) {
@@ -953,7 +973,11 @@ class _SubmittedDocumentsCard extends ConsumerWidget {
                       ),
                     ),
                     if (i < docs.length - 1)
-                      const Divider(height: 12, thickness: 0.5, color: Color(0xFFE2E8E5)),
+                      const Divider(
+                        height: 12,
+                        thickness: 0.5,
+                        color: Color(0xFFE2E8E5),
+                      ),
                   ],
                 ],
               );
@@ -1018,7 +1042,10 @@ class _NotesCard extends StatelessWidget {
             style: openSans(fontSize: 13.5, color: const Color(0xFF161C27)),
             decoration: InputDecoration(
               hintText: 'Add notes about this application…',
-              hintStyle: openSans(fontSize: 13.5, color: const Color(0xFF707971)),
+              hintStyle: openSans(
+                fontSize: 13.5,
+                color: const Color(0xFF707971),
+              ),
               filled: true,
               fillColor: const Color(0xFFF1F3FF),
               contentPadding: const EdgeInsets.all(12),
@@ -1120,12 +1147,15 @@ class _TerminalNote extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final message = switch (application.status) {
-      ApplicationStatus.approved => 'This application has been approved. No '
-          'further action is available.',
-      ApplicationStatus.rejected => 'This application was not approved. '
-          'It is kept here for your records.',
-      ApplicationStatus.withdrawn => 'You withdrew this application. It is '
-          'kept in your history for your records.',
+      ApplicationStatus.approved =>
+        'This application has been approved. No '
+            'further action is available.',
+      ApplicationStatus.rejected =>
+        'This application was not approved. '
+            'It is kept here for your records.',
+      ApplicationStatus.withdrawn =>
+        'You withdrew this application. It is '
+            'kept in your history for your records.',
       _ => '',
     };
     return Container(
@@ -1177,7 +1207,11 @@ class _ContinueApplicationCard extends StatelessWidget {
         children: [
           Row(
             children: [
-              const Icon(Icons.edit_note_rounded, size: 20, color: kPrimaryContainer),
+              const Icon(
+                Icons.edit_note_rounded,
+                size: 20,
+                color: kPrimaryContainer,
+              ),
               const SizedBox(width: 8),
               Text(
                 'Draft In Progress',
@@ -1216,10 +1250,7 @@ class _ContinueApplicationCard extends StatelessWidget {
                 icon: const Icon(Icons.arrow_forward_rounded, size: 18),
                 label: Text(
                   'Continue Application',
-                  style: poppins(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                  ),
+                  style: poppins(fontSize: 14, fontWeight: FontWeight.w600),
                 ),
               ),
             ),

@@ -13,7 +13,7 @@ enum DiscoverySort {
   /// Soonest deadline first.
   defaultSort,
 
-  /// Soonest deadline first (amount sort removed; no amount field in schema).
+  /// Highest award amount first, breaking ties by deadline.
   highestAmount,
 }
 
@@ -136,11 +136,12 @@ class DiscoveryFilters {
     Scholarship s,
     DiscoveryFilterState state, {
     DateTime? now,
+    bool Function(Scholarship)? isHighFit,
   }) {
     if (!_matchesIncome(s, state.incomeBracket)) return false;
     if (!_matchesRegions(s, state.regions)) return false;
     if (!_matchesDeadline(s, state.closingSoonOnly, now: now)) return false;
-    if (state.highFitOnly && s.minGpa > 2.0) return false;
+    if (state.highFitOnly && !(isHighFit?.call(s) ?? false)) return false;
     if (state.minAmount != null && s.amount < state.minAmount!) return false;
     return true;
   }
@@ -149,8 +150,9 @@ class DiscoveryFilters {
     List<Scholarship> items,
     DiscoveryFilterState state, {
     DateTime? now,
+    bool Function(Scholarship)? isHighFit,
   }) {
-    return items.where((s) => matchesFilters(s, state, now: now)).toList();
+    return items.where((s) => matchesFilters(s, state, now: now, isHighFit: isHighFit)).toList();
   }
 
   /// Maps the selected income bracket to a numeric threshold. A scholarship
@@ -205,7 +207,8 @@ class DiscoveryFilters {
       case DiscoverySort.defaultSort:
         return a.deadline.compareTo(b.deadline);
       case DiscoverySort.highestAmount:
-        return a.deadline.compareTo(b.deadline);
+        final amountOrder = b.amount.compareTo(a.amount);
+        return amountOrder != 0 ? amountOrder : a.deadline.compareTo(b.deadline);
     }
   }
 
@@ -223,9 +226,10 @@ class DiscoveryFilters {
     List<Scholarship> items,
     DiscoveryFilterState state, {
     DateTime? now,
+    bool Function(Scholarship)? isHighFit,
   }) {
     return sort(
-      applyFilters(applySearch(items, state.query), state, now: now),
+      applyFilters(applySearch(items, state.query), state, now: now, isHighFit: isHighFit),
       state.sort,
     );
   }

@@ -227,7 +227,7 @@ void main() {
     await tester.pump(const Duration(milliseconds: 500));
 
     // ---- Step 6: Discover/Saved applied-state updates --------------------
-    await tester.tap(find.text('Dashboard'));
+    await tester.tap(find.byKey(const ValueKey('student-nav-home')));
     await tester.pump(const Duration(milliseconds: 500));
     await tester.pump(const Duration(milliseconds: 500));
 

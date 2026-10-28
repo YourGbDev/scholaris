@@ -330,7 +330,7 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
 
           // Match >90% Chip with green dot
           _StitchCarouselChip(
-            label: 'Match >90%',
+            label: 'Match >90% • Demo',
             hasDot: true,
             isActive: state.highFitOnly,
             onTap: () {
@@ -570,14 +570,14 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
   ) {
     final sortLabel = currentSort == DiscoverySort.highestAmount
         ? 'Highest Amount'
-        : 'Highest Match %';
+        : 'Soonest Deadline';
     final stacked = MediaQuery.sizeOf(context).width < 380 ||
         MediaQuery.textScalerOf(context).scale(12) > 14;
     final heading = Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Verified Matches',
+                'Matched for you',
                 style: outfit(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
@@ -607,7 +607,7 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
           itemBuilder: (_) => [
             const PopupMenuItem(
               value: DiscoverySort.defaultSort,
-              child: Text('Highest Match %'),
+              child: Text('Soonest Deadline'),
             ),
             const PopupMenuItem(
               value: DiscoverySort.highestAmount,
@@ -704,13 +704,14 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
                 order: 1 + index,
                 child: ScholarshipCard(
                   scholarship: scholarship,
+                  studentProfile: profile,
                   reasons: reasons,
                   isBookmarked: bookmarkIds.contains(scholarship.id),
                   isApplied: appliedIds.contains(scholarship.id),
                   onToggleBookmark: () => _toggleBookmark(ref, scholarship.id),
                   onQuickApply: () {
                     context.push(
-                      '/scholarship/${scholarship.id}',
+                      '/scholarship/${scholarship.id}?apply=1',
                       extra: scholarship,
                     );
                   },
@@ -798,12 +799,16 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
                 order: 1 + i,
                 child: ScholarshipCard(
                   scholarship: browse[i],
+                  studentProfile: ref.watch(currentProfileProvider).valueOrNull,
+                  reasons: ref.watch(currentProfileProvider).valueOrNull == null
+                      ? const []
+                      : matchReasonsFor(ref.watch(currentProfileProvider).valueOrNull!, browse[i]),
                   isBookmarked: bookmarkIds.contains(browse[i].id),
                   isApplied: appliedIds.contains(browse[i].id),
                   onToggleBookmark: () => _toggleBookmark(ref, browse[i].id),
                   onQuickApply: () {
                     context.push(
-                      '/scholarship/${browse[i].id}',
+                      '/scholarship/${browse[i].id}?apply=1',
                       extra: browse[i],
                     );
                   },

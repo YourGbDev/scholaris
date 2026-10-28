@@ -8,9 +8,11 @@ class StudentTabEntrance extends StatefulWidget {
     required this.active,
     required this.child,
     this.visit = 0,
+    this.firstArrivalDuration = const Duration(milliseconds: 520),
   });
   final bool active;
   final int visit;
+  final Duration firstArrivalDuration;
   final Widget child;
   @override
   State<StudentTabEntrance> createState() => _StudentTabEntranceState();
@@ -20,7 +22,7 @@ class _StudentTabEntranceState extends State<StudentTabEntrance>
     with SingleTickerProviderStateMixin {
   late final AnimationController _animation = AnimationController(
     vsync: this,
-    duration: const Duration(milliseconds: 520),
+    duration: widget.visit == 0 ? widget.firstArrivalDuration : const Duration(milliseconds: 520),
     value: 1,
   );
   bool get _immediate =>
@@ -46,6 +48,7 @@ class _StudentTabEntranceState extends State<StudentTabEntrance>
     if (!widget.active) {
       _animation.stop();
     } else if (!oldWidget.active || widget.visit != oldWidget.visit) {
+      _animation.duration = const Duration(milliseconds: 520);
       if (_immediate) {
         _animation.stop();
         _animation.value = 1;
@@ -63,17 +66,23 @@ class _StudentTabEntranceState extends State<StudentTabEntrance>
 
   @override
   Widget build(BuildContext context) =>
-      _StudentVisitClock(animation: _animation, child: widget.child);
+      Listener(
+        onPointerDown: (_) {
+          if (widget.visit == 0 && _animation.isAnimating) _animation.value = 1;
+        },
+        child: _StudentVisitClock(animation: _animation, firstArrival: widget.visit == 0 && widget.firstArrivalDuration.inMilliseconds > 520, child: widget.child),
+      );
 }
 
 // The scope itself does not notify on ticks: only reveal layers rebuild, not
 // the page's providers, lists or retained children.
 class _StudentVisitClock extends InheritedWidget {
-  const _StudentVisitClock({required this.animation, required super.child});
+  const _StudentVisitClock({required this.animation, required this.firstArrival, required super.child});
   final Animation<double> animation;
+  final bool firstArrival;
   @override
   bool updateShouldNotify(_StudentVisitClock oldWidget) =>
-      animation != oldWidget.animation;
+      animation != oldWidget.animation || firstArrival != oldWidget.firstArrival;
 }
 
 /// Fade and gently lift a section. Equal order means the same row/phase; long lists
@@ -97,7 +106,7 @@ class StudentTabReveal extends StatelessWidget {
         .dependOnInheritedWidgetOfExactType<_StudentVisitClock>();
     if (clock == null) return child;
     final showImmediately =
-        immediate ||
+        (immediate && !clock.firstArrival) ||
         isReducedMotion(context) ||
         MediaQuery.accessibleNavigationOf(context);
     // The app bar is immediate; headings/heroes lead the lower card rows.
@@ -107,8 +116,11 @@ class StudentTabReveal extends StatelessWidget {
       2 => const Interval(.36, .82, curve: Curves.easeOutCubic),
       _ => const Interval(.48, 1, curve: Curves.easeOutCubic),
     };
+    final phase = order.clamp(0, 5);
     final fade = showImmediately
         ? const AlwaysStoppedAnimation<double>(1)
+        : clock.firstArrival
+        ? CurveTween(curve: Interval(phase * .1, (phase * .1 + .45).clamp(0.0, 1.0), curve: Curves.easeOutCubic)).animate(clock.animation)
         : isStructure
         ? CurveTween(curve: const Interval(.08, .40,
             curve: Curves.easeOutCubic)).animate(clock.animation)

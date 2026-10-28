@@ -12,6 +12,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'package:scholaris/app/confirmation_redirect.dart';
 import 'package:scholaris/core/security/password_validator.dart';
+import 'package:scholaris/core/security/captcha_challenge.dart';
 import 'package:scholaris/shared/theme/app_motion.dart';
 import 'package:scholaris/shared/theme/app_theme.dart';
 import 'package:scholaris/shared/widgets/scholaris_logo.dart';
@@ -73,6 +74,8 @@ class _SignupScreenState extends State<SignupScreen> {
 
     setState(() => _isLoading = true);
     try {
+      final captcha = await acquireCaptcha(context);
+      if (!mounted || !captcha.allowed) return;
       final metadata = <String, dynamic>{
         'full_name': _fullNameController.text.trim(),
         'role': 'student',
@@ -106,6 +109,7 @@ class _SignupScreenState extends State<SignupScreen> {
         password: _passwordController.text,
         data: metadata,
         emailRedirectTo: emailConfirmationRedirect,
+        captchaToken: captcha.token,
       );
 
       if (!mounted) return;
@@ -126,6 +130,8 @@ class _SignupScreenState extends State<SignupScreen> {
       if (!mounted) return;
       ScaffoldMessenger.of(context)
           .showSnackBar(_snackBar(_friendlyError(error)));
+    } catch (_) {
+      if (mounted) ScaffoldMessenger.of(context).showSnackBar(_snackBar('Could not complete the security check. Please try again.'));
     } finally {
       if (mounted) setState(() => _isLoading = false);
     }

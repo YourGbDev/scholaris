@@ -284,7 +284,7 @@ void main() {
                 .widget<Text>(
                   find.byKey(ValueKey('stat-count-$statKey')),
                 )
-                .data!,
+                .data!.split(' ').first,
           );
 
       expect(countOf('matches'), 2);
@@ -403,13 +403,13 @@ void main() {
   });
 
   group('Dashboard advice card', () {
-    testWidgets('renders Deadline Alert when scholarships are closing soon',
+    testWidgets('shows closing scholarships without a repeated alert',
         (tester) async {
       await _pumpDiscover(tester);
 
-      expect(find.byKey(const ValueKey('eli-advice-card')), findsOneWidget);
-      expect(find.text('Deadline Alert!'), findsOneWidget);
-      expect(find.text('Scholaris Guide'), findsOneWidget);
+      expect(find.byKey(const ValueKey('eli-advice-card')), findsNothing);
+      expect(find.text('Deadline Alert!'), findsNothing);
+      expect(find.text('Closing Soon (2)'), findsOneWidget);
     });
   });
 }

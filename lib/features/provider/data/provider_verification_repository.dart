@@ -135,19 +135,68 @@ class ProviderVerificationRepository {
     return list;
   }
 
-  /// Admin approval or rejection of a verification request.
-  /// Server-side trigger writes audit log and sets reviewed_by / reviewed_at.
-  Future<void> updateVerificationStatus({
+  /// Admin approval, rejection, or changes_requested decision via atomic RPC.
+  /// Locks row for update, validates expected status, writes audit log, and returns persisted row.
+  Future<ProviderVerification> reviewVerification({
     required String userId,
-    required String status, // 'approved' | 'rejected'
-    required String adminId,
+    required String status, // 'approved' | 'rejected' | 'changes_requested'
+    String? expectedStatus,
     String? reviewNote,
   }) async {
-    await _client.from('provider_verifications').update({
-      'status': status,
-      'reviewed_by': adminId,
-      'reviewed_at': DateTime.now().toIso8601String(),
-      'review_note': reviewNote,
-    }).eq('user_id', userId);
+    final params = <String, dynamic>{
+      'p_user_id': userId,
+      'p_status': status,
+    };
+    if (reviewNote != null) {
+      params['p_note'] = reviewNote.trim();
+    }
+    if (expectedStatus != null) {
+      params['p_expected_status'] = expectedStatus;
+    }
+
+    final res = await _client.rpc(
+      'review_provider_verification',
+      params: params,
+    );
+
+    if (res == null) {
+      throw const PostgrestException(
+        message: 'Failed to record provider review decision',
+      );
+    }
+
+    return ProviderVerification.fromJson(res as Map<String, dynamic>);
+  }
+
+  /// Admin approval or rejection of a verification request (compatibility bridge).
+  Future<ProviderVerification> updateVerificationStatus({
+    required String userId,
+    required String status,
+    required String adminId,
+    String? expectedStatus,
+    String? reviewNote,
+  }) async {
+    return reviewVerification(
+      userId: userId,
+      status: status,
+      expectedStatus: expectedStatus,
+      reviewNote: reviewNote,
+    );
+  }
+
+  /// Resubmits provider verification from changes_requested/rejected back to pending.
+  Future<ProviderVerification> resubmitVerification(
+    Map<String, dynamic> payload,
+  ) async {
+    final res = await _client.rpc(
+      'resubmit_provider_verification',
+      params: {'p_payload': payload},
+    );
+
+    if (res == null) {
+      throw const PostgrestException(message: 'Failed to resubmit verification');
+    }
+
+    return ProviderVerification.fromJson(res as Map<String, dynamic>);
   }
 }

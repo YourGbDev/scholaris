@@ -45,8 +45,30 @@ class _TestAuthNotifier extends AuthSessionNotifier {
       );
 }
 
+class _FakeRevocationFailureRepository extends AccountRepository {
+  _FakeRevocationFailureRepository({
+    required super.dataSource,
+    required super.currentUserId,
+    required super.currentUserEmail,
+  });
+
+  @override
+  Future<bool> changePassword({
+    required String currentPassword,
+    required String newPassword,
+    String? captchaToken,
+  }) async {
+    await super.changePassword(
+      currentPassword: currentPassword,
+      newPassword: newPassword,
+      captchaToken: captchaToken,
+    );
+    return false;
+  }
+}
+
 class _Harness {
-  _Harness({bool emailConfirmed = true, String? email = 'a@b.com'})
+  _Harness({bool emailConfirmed = true, String? email = 'a@b.com', bool revocationSucceeds = true})
       : auth = _TestAuthNotifier(
           userId: 'user-a',
           email: email,
@@ -57,7 +79,12 @@ class _Harness {
       overrides: [
         authSessionProvider.overrideWith(() => auth),
         accountRepositoryProvider.overrideWithValue(
-          AccountRepository(
+          revocationSucceeds
+              ? AccountRepository(
+            dataSource: dataSource,
+            currentUserId: () => 'user-a',
+            currentUserEmail: () => email,
+          ) : _FakeRevocationFailureRepository(
             dataSource: dataSource,
             currentUserId: () => 'user-a',
             currentUserEmail: () => email,
@@ -108,6 +135,12 @@ void main() {
   });
 
   group('account display', () {
+    testWidgets('offers an email change from account settings', (tester) async {
+      final h = _Harness();
+      addTearDown(h.dispose);
+      await _pump(tester, h);
+      expect(find.text('Change email'), findsOneWidget);
+    });
     testWidgets('authenticated email is displayed', (tester) async {
       final h = _Harness();
       addTearDown(h.dispose);
@@ -153,6 +186,51 @@ void main() {
 
       expect(find.text('Unknown'), findsOneWidget);
     });
+  });
+
+  testWidgets('email change reauthenticates and waits for both confirmations', (tester) async {
+    final h = _Harness();
+    addTearDown(h.dispose);
+    await _pump(tester, h);
+    await tester.tap(find.text('Change email'));
+    await tester.pumpAndSettle();
+    await tester.enterText(find.widgetWithText(TextField, 'New email address'), 'new@example.com');
+    await tester.enterText(find.widgetWithText(TextField, 'Current password'), 'old-pass');
+    await tester.tap(find.text('Send codes'));
+    await tester.pumpAndSettle();
+    expect(h.dataSource.calls, ['reauthenticate', 'requestEmailChange']);
+    expect(h.dataSource.requestedEmails, ['new@example.com']);
+    expect(find.text('Your new email address has been confirmed.'), findsNothing);
+
+    h.dataSource.emailAfterVerification = 'a@b.com';
+    await tester.enterText(find.widgetWithText(TextField, '8-digit confirmation code'), '12345678');
+    await tester.tap(find.text('Verify code'));
+    await tester.pumpAndSettle();
+    expect(h.dataSource.verifiedEmails, ['a@b.com']);
+    expect(find.text('Your new email address has been confirmed.'), findsNothing);
+
+    h.dataSource.emailAfterVerification = 'new@example.com';
+    await tester.enterText(find.widgetWithText(TextField, '8-digit confirmation code'), '87654321');
+    await tester.tap(find.text('Verify code'));
+    await tester.pumpAndSettle();
+    expect(h.dataSource.verifiedEmails, ['a@b.com', 'new@example.com']);
+    expect(find.text('Your new email address has been confirmed.'), findsOneWidget);
+  });
+
+  testWidgets('email change does not send codes if reauthentication fails', (tester) async {
+    final h = _Harness();
+    addTearDown(h.dispose);
+    h.dataSource.reauthenticateError = const AuthException('Invalid login credentials');
+    await _pump(tester, h);
+    await tester.tap(find.text('Change email'));
+    await tester.pumpAndSettle();
+    await tester.enterText(find.widgetWithText(TextField, 'New email address'), 'new@example.com');
+    await tester.enterText(find.widgetWithText(TextField, 'Current password'), 'wrong-pass');
+    await tester.tap(find.text('Send codes'));
+    await tester.pumpAndSettle();
+    expect(h.dataSource.calls, ['reauthenticate']);
+    expect(h.dataSource.requestedEmails, isEmpty);
+    expect(find.text('Could not request the change. Check your password and try again.'), findsOneWidget);
   });
 
   group('resend verification', () {
@@ -214,6 +292,19 @@ void main() {
   });
 
   group('password change — validation', () {
+    testWidgets('rejects a password missing required character types',
+        (tester) async {
+      final h = _Harness();
+      addTearDown(h.dispose);
+      await _pump(tester, h);
+      await tester.enterText(_field('Current Password'), 'old-password');
+      await tester.enterText(_field('New Password'), 'onlylowercase');
+      await tester.enterText(_field('Confirm New Password'), 'onlylowercase');
+      await _tapUpdatePassword(tester);
+      await tester.pumpAndSettle();
+      expect(find.text('Password must include uppercase, lowercase, number, and special character.'), findsOneWidget);
+      expect(h.dataSource.calls, isEmpty);
+    });
     testWidgets('empty form surfaces field errors and does not call the repo',
         (tester) async {
       final h = _Harness();
@@ -297,14 +388,36 @@ void main() {
 
       await _pump(tester, h);
       await tester.enterText(_field('Current Password'), 'old-pass');
-      await tester.enterText(_field('New Password'), 'new-password');
+      await tester.enterText(_field('New Password'), 'NewPassword1!');
       await tester.enterText(_field('Confirm New Password'),
-          'new-password');
+          'NewPassword1!');
       await _tapUpdatePassword(tester);
       await tester.pumpAndSettle();
 
       expect(h.dataSource.calls, ['reauthenticate', 'updatePassword']);
       expect(find.text('Password updated successfully.'), findsOneWidget);
+    });
+
+    testWidgets(
+        'successful change shows operation-specific password overlay copy',
+        (tester) async {
+      final h = _Harness();
+      addTearDown(h.dispose);
+
+      await _pump(tester, h);
+      await tester.enterText(_field('Current Password'), 'old-pass');
+      await tester.enterText(_field('New Password'), 'NewPassword1!');
+      await tester.enterText(_field('Confirm New Password'), 'NewPassword1!');
+      await _tapUpdatePassword(tester);
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 300));
+
+      expect(find.text('Password Changed Successfully'), findsOneWidget);
+      expect(
+        find.text('Your account credentials have been updated securely.'),
+        findsOneWidget,
+      );
+      await tester.pumpAndSettle();
     });
 
     testWidgets('sensitive fields are cleared after success', (tester) async {
@@ -313,9 +426,9 @@ void main() {
 
       await _pump(tester, h);
       await tester.enterText(_field('Current Password'), 'old-pass');
-      await tester.enterText(_field('New Password'), 'new-password');
+      await tester.enterText(_field('New Password'), 'NewPassword1!');
       await tester.enterText(_field('Confirm New Password'),
-          'new-password');
+          'NewPassword1!');
       await _tapUpdatePassword(tester);
       await tester.pumpAndSettle();
 
@@ -335,9 +448,9 @@ void main() {
 
       await _pump(tester, h);
       await tester.enterText(_field('Current Password'), 'wrong-pass');
-      await tester.enterText(_field('New Password'), 'new-password');
+      await tester.enterText(_field('New Password'), 'NewPassword1!');
       await tester.enterText(_field('Confirm New Password'),
-          'new-password');
+          'NewPassword1!');
       await _tapUpdatePassword(tester);
       await tester.pumpAndSettle();
 
@@ -358,9 +471,9 @@ void main() {
 
       await _pump(tester, h);
       await tester.enterText(_field('Current Password'), 'old-pass');
-      await tester.enterText(_field('New Password'), 'new-password');
+      await tester.enterText(_field('New Password'), 'NewPassword1!');
       await tester.enterText(_field('Confirm New Password'),
-          'new-password');
+          'NewPassword1!');
       await _tapUpdatePassword(tester);
       await tester.pumpAndSettle();
 
@@ -381,9 +494,9 @@ void main() {
 
       await _pump(tester, h);
       await tester.enterText(_field('Current Password'), 'old-pass');
-      await tester.enterText(_field('New Password'), 'new-password');
+      await tester.enterText(_field('New Password'), 'NewPassword1!');
       await tester.enterText(_field('Confirm New Password'),
-          'new-password');
+          'NewPassword1!');
       await _tapUpdatePassword(tester);
       await tester.pumpAndSettle();
 
@@ -408,9 +521,9 @@ void main() {
 
       await _pump(tester, h);
       await tester.enterText(_field('Current Password'), 'old-pass');
-      await tester.enterText(_field('New Password'), 'new-password');
+      await tester.enterText(_field('New Password'), 'NewPassword1!');
       await tester.enterText(_field('Confirm New Password'),
-          'new-password');
+          'NewPassword1!');
       await _tapUpdatePassword(tester);
       await tester.pump();
 
@@ -434,8 +547,8 @@ void main() {
 
       await _pump(tester, h);
       await tester.enterText(_field('Current Password'), 'old-pass');
-      await tester.enterText(_field('New Password'), 'new-password');
-      await tester.enterText(_field('Confirm New Password'), 'new-password');
+      await tester.enterText(_field('New Password'), 'NewPassword1!');
+      await tester.enterText(_field('Confirm New Password'), 'NewPassword1!');
       await _tapUpdatePassword(tester);
       await tester.pumpAndSettle();
 
@@ -446,6 +559,29 @@ void main() {
       expect(sessionAfter!.userId, 'user-a');
       expect(sessionAfter.email, 'a@b.com');
       expect(sessionAfter.emailConfirmed, isTrue);
+    });
+
+    testWidgets('password change shows revocation warning SnackBar when revocation fails',
+        (tester) async {
+      final h = _Harness(revocationSucceeds: false);
+      addTearDown(h.dispose);
+
+      await _pump(tester, h);
+      await tester.enterText(_field('Current Password'), 'old-pass');
+      await tester.enterText(_field('New Password'), 'NewPassword1!');
+      await tester.enterText(_field('Confirm New Password'), 'NewPassword1!');
+      await _tapUpdatePassword(tester);
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 2000));
+      await tester.pump(const Duration(milliseconds: 300));
+
+      expect(find.text('Password updated successfully.'), findsOneWidget);
+      expect(
+        find.text(
+          'Password changed successfully. Other active sessions could not be verified signed out.',
+        ),
+        findsOneWidget,
+      );
     });
   });
 }

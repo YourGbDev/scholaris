@@ -60,6 +60,8 @@ void main() {
         'id': 'sch-1',
         'title': 'Ayala Future Leaders STEM Grant 2026',
         'description': 'Test description',
+        'min_gpa': 2.0,
+        'amount': 50000,
         'award_amount': 50000,
         'deadline': '2026-12-31T00:00:00Z',
         'tags': ['STEM'],
@@ -107,12 +109,23 @@ void main() {
     await tester.pumpAndSettle();
 
     // Top bar and workspace
+    expect(find.text('Organization overview'), findsOneWidget, reason: tester.widgetList<Text>(find.byType(Text)).map((t) => t.data).join(' | '));
+    await tester.tap(find.text('Applications').first);
+    await tester.pumpAndSettle();
     expect(find.text('Incoming Applications'), findsOneWidget);
+    await tester.tap(find.byTooltip('Additional application tools'));
+    await tester.pumpAndSettle();
+    expect(find.text('Export CSV — not available'), findsOneWidget);
+    expect(tester.widget<PopupMenuItem<String>>(find.ancestor(of: find.text('Export CSV — not available'), matching: find.byType(PopupMenuItem<String>))).enabled, isFalse);
+    await tester.tapAt(const Offset(280, 500));
+    await tester.pumpAndSettle();
     expect(find.text('ORG ADMIN'), findsOneWidget);
     expect(find.text('New Grant'), findsOneWidget);
     expect(find.byIcon(Icons.logout_rounded), findsNWidgets(2));
 
     // KPI cards
+    await tester.tap(find.text('Application summary'));
+    await tester.pumpAndSettle();
     expect(find.text('Total Intake'), findsOneWidget);
     expect(find.text('Under Review'), findsNWidgets(2));
     expect(find.text('Confirmed Awardees'), findsOneWidget);
@@ -120,6 +133,10 @@ void main() {
     // Applicant data
     expect(find.text('Sofia Cruz'), findsOneWidget);
     expect(find.text('Review Dossier'), findsOneWidget);
+    await tester.tap(find.text('Analytics').first);
+    await tester.pumpAndSettle();
+    expect(find.text('Application analytics'), findsOneWidget);
+    expect(find.text('Copy report (CSV)'), findsOneWidget);
   });
 
   testWidgets('OrgProviderShell renders at 1366x768 common laptop desktop width', (tester) async {
@@ -130,6 +147,9 @@ void main() {
     await tester.pumpWidget(buildApp());
     await tester.pumpAndSettle();
 
+    expect(find.text('Organization overview'), findsOneWidget, reason: tester.widgetList<Text>(find.byType(Text)).map((t) => t.data).join(' | '));
+    await tester.tap(find.text('Applications').first);
+    await tester.pumpAndSettle();
     expect(find.text('Incoming Applications'), findsOneWidget);
     expect(find.text('ORG ADMIN'), findsOneWidget);
     expect(find.text('New Grant'), findsOneWidget);

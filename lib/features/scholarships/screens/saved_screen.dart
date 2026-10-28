@@ -20,6 +20,8 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:scholaris/features/profile/providers/profile_setup_provider.dart';
+import 'package:scholaris/features/scholarships/services/match_reasons.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:go_router/go_router.dart';
 
@@ -350,6 +352,10 @@ class _SavedScreenState extends ConsumerState<SavedScreen> {
               index: i,
               child: ScholarshipCard(
                 scholarship: filtered[i],
+                studentProfile: ref.watch(currentProfileProvider).valueOrNull,
+                reasons: ref.watch(currentProfileProvider).valueOrNull == null
+                    ? const []
+                    : matchReasonsFor(ref.watch(currentProfileProvider).valueOrNull!, filtered[i]),
                 isBookmarked: true,
                 isApplied: appliedIds.contains(filtered[i].id),
                 onToggleBookmark: () => _toggleBookmark(ref, filtered[i].id),

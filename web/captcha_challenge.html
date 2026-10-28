@@ -1,0 +1,22 @@
+<!doctype html>
+<html><head><meta name="viewport" content="width=device-width,initial-scale=1">
+<script src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit" async defer></script></head>
+<body><div id="challenge"></div><script>
+const params = new URLSearchParams(location.search);
+const key = params.get('key') || '';
+const nonce = params.get('nonce') || '';
+function send(token, error) {
+  const message = JSON.stringify({nonce, token, error});
+  if (window.ScholarisCaptcha) window.ScholarisCaptcha.postMessage(message);
+  else window.parent.postMessage(message, location.origin);
+}
+let finished = false;
+const timeout = setTimeout(() => { finished = true; send(null, true); }, 15000);
+function start() {
+  if (finished) return;
+  if (!/^[A-Za-z0-9_-]+$/.test(key) || !/^[a-f0-9]{32}$/.test(nonce)) return send(null, true);
+  if (!window.turnstile) return setTimeout(start, 100);
+  turnstile.render('#challenge', {sitekey: key, callback: token => { clearTimeout(timeout); send(token, false); }, 'error-callback': () => { clearTimeout(timeout); send(null, true); }, 'expired-callback': () => send(null, true)});
+}
+start();
+</script></body></html>

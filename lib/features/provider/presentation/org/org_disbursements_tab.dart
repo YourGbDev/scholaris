@@ -23,6 +23,7 @@ import '../../../scholarships/models/scholarship.dart';
 import '../../../scholarships/providers/scholarships_provider.dart';
 import '../../providers/provider_scholarships_provider.dart';
 import 'org_provider_theme.dart';
+import '../widgets/org_metric_count.dart';
 import '../../../../shared/theme/app_motion.dart';
 
 class OrgDisbursementsTab extends ConsumerStatefulWidget {
@@ -1354,7 +1355,7 @@ class _OrgDisbursementsTabState extends ConsumerState<OrgDisbursementsTab> {
             fit: BoxFit.scaleDown,
             alignment: Alignment.centerLeft,
             child: numericValue != null
-                ? CountUpAnimation(
+                ? OrgMetricCount(motionId: 'disbursements.$title',
                     targetValue: numericValue,
                     prefix: prefix ?? '',
                     style: orgTabularFigures(inter(

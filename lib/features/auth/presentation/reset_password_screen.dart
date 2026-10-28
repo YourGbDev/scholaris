@@ -58,13 +58,33 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
     if (!_formKey.currentState!.validate()) return;
 
     setState(() => _isLoading = true);
+    bool othersRevoked = true;
     try {
       await Supabase.instance.client.auth.updateUser(
         UserAttributes(password: _passwordController.text),
       );
+      try {
+        await Supabase.instance.client.auth.signOut(scope: SignOutScope.others);
+      } catch (_) {
+        // Non-fatal: session revocation failure does not invalidate local password update
+        othersRevoked = false;
+      }
       if (!mounted) return;
 
-      await SuccessOverlay.show(context);
+      await SuccessOverlay.show(
+        context,
+        title: 'Password Reset Successfully',
+        subtitle: 'Your new password is set. Please sign in with your new credentials.',
+        pose: MascotPose.celebrating,
+      );
+      if (!mounted) return;
+      if (!othersRevoked) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          _snackBar(
+            'Password reset successfully. Other active sessions could not be signed out; please verify other devices.',
+          ),
+        );
+      }
     } on AuthException catch (error) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
@@ -145,13 +165,18 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                     },
                   ),
                   const Spacer(),
-                  Text(
-                    'Scholaris',
-                    style: poppins(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w700,
-                      color: kPrimary,
-                      letterSpacing: -0.5,
+                  Flexible(
+                    child: FittedBox(
+                      fit: BoxFit.scaleDown,
+                      child: Text(
+                        'Scholaris',
+                        style: poppins(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w700,
+                          color: kPrimary,
+                          letterSpacing: -0.5,
+                        ),
+                      ),
                     ),
                   ),
                   const Spacer(),
@@ -212,13 +237,18 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                                     ),
                                   ),
                                   const SizedBox(width: 6),
-                                  Text(
-                                    'CREDENTIAL UPDATE',
-                                    style: poppins(
-                                      fontSize: 11,
-                                      fontWeight: FontWeight.w700,
-                                      color: kPrimary,
-                                      letterSpacing: 0.8,
+                                  Flexible(
+                                    child: FittedBox(
+                                      fit: BoxFit.scaleDown,
+                                      child: Text(
+                                        'CREDENTIAL UPDATE',
+                                        style: poppins(
+                                          fontSize: 11,
+                                          fontWeight: FontWeight.w700,
+                                          color: kPrimary,
+                                          letterSpacing: 0.8,
+                                        ),
+                                      ),
                                     ),
                                   ),
                                 ],
@@ -318,8 +348,11 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                           const SizedBox(height: 16),
 
                           // Field 0: New Password
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          Wrap(
+                            alignment: WrapAlignment.spaceBetween,
+                            crossAxisAlignment: WrapCrossAlignment.center,
+                            spacing: 8,
+                            runSpacing: 4,
                             children: [
                               Text(
                                 'New Password',
@@ -431,8 +464,11 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                           const SizedBox(height: 14),
 
                           // Field 1: Confirm New Password
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          Wrap(
+                            alignment: WrapAlignment.spaceBetween,
+                            crossAxisAlignment: WrapCrossAlignment.center,
+                            spacing: 8,
+                            runSpacing: 4,
                             children: [
                               Text(
                                 'Confirm New Password',
@@ -444,15 +480,21 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                               ),
                               if (passwordsMatch)
                                 Row(
+                                  mainAxisSize: MainAxisSize.min,
                                   children: [
                                     const Icon(Icons.check_circle_rounded, size: 14, color: kPrimary),
                                     const SizedBox(width: 4),
-                                    Text(
-                                      'Passwords match',
-                                      style: openSans(
-                                        fontSize: 11,
-                                        fontWeight: FontWeight.w600,
-                                        color: kPrimary,
+                                    Flexible(
+                                      child: FittedBox(
+                                        fit: BoxFit.scaleDown,
+                                        child: Text(
+                                          'Passwords match',
+                                          style: openSans(
+                                            fontSize: 11,
+                                            fontWeight: FontWeight.w600,
+                                            color: kPrimary,
+                                          ),
+                                        ),
                                       ),
                                     ),
                                   ],
@@ -503,13 +545,19 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                                   )
                                 : Row(
                                     mainAxisAlignment: MainAxisAlignment.center,
+                                    mainAxisSize: MainAxisSize.min,
                                     children: [
-                                      Text(
-                                        'Reset Password',
-                                        style: poppins(
-                                          fontSize: 15,
-                                          fontWeight: FontWeight.w600,
-                                          color: Colors.white,
+                                      Flexible(
+                                        child: FittedBox(
+                                          fit: BoxFit.scaleDown,
+                                          child: Text(
+                                            'Reset Password',
+                                            style: poppins(
+                                              fontSize: 15,
+                                              fontWeight: FontWeight.w600,
+                                              color: Colors.white,
+                                            ),
+                                          ),
                                         ),
                                       ),
                                       const SizedBox(width: 6),
@@ -560,7 +608,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                                 const SizedBox(width: 8),
                                 Expanded(
                                   child: Text(
-                                    'This action will revoke active sessions on unfamiliar devices for your academic security and protection.',
+                                    'This action attempts to sign out active sessions on other devices for your security. Existing sessions remain valid until their token expires.',
                                     style: openSans(
                                       fontSize: 11,
                                       color: kTextSecondary,

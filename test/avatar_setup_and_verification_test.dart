@@ -274,7 +274,7 @@ final applyBtn = find.byKey(const ValueKey('apply-now'));
       // Verify user was NOT advanced to pre-apply review dialog
       expect(find.text('Apply to this scholarship?'), findsNothing);
       expect(
-        find.textContaining('A verified real photo is required to submit your scholarship application'),
+        find.textContaining('A profile photo is required to submit your application'),
         findsOneWidget,
       );
     });

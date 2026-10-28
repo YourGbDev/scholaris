@@ -42,6 +42,18 @@ void main() {
   }
 
   group('LoginScreen composition', () {
+    testWidgets('login form enters smoothly and settles', (tester) async {
+      await useLargeSurface(tester);
+      await tester.pumpWidget(const MaterialApp(home: LoginScreen()));
+      await tester.pump(const Duration(milliseconds: 350));
+      double reveal(int index) => tester.widget<FadeTransition>(find.descendant(
+        of: find.byKey(ValueKey('login-reveal-$index')), matching: find.byType(FadeTransition),
+      ).first).opacity.value;
+      expect(reveal(0), greaterThan(reveal(2)));
+      expect(reveal(4), 0);
+      await tester.pumpAndSettle();
+      expect(reveal(4), 1);
+    });
     testWidgets('renders EmptyStage behind the form', (tester) async {
       await useLargeSurface(tester);
       await pumpSettled(tester);

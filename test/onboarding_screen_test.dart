@@ -51,11 +51,11 @@ void main() {
 
     expect(find.text('Find Your Scholarship'), findsOneWidget);
     expect(
-      find.textContaining('Discover thousands of verified grants'),
+      find.textContaining('Discover scholarships suited'),
       findsOneWidget,
     );
     expect(find.text('SIMULAN ANG PANGARAP'), findsOneWidget);
-    expect(find.text('₱480M+ Active Funds'), findsOneWidget);
+    expect(find.text('Explore scholarship opportunities'), findsOneWidget);
 
     // Dots: one active pill + two inactive dots.
     expect(find.byType(AnimatedContainer), findsNWidgets(3));

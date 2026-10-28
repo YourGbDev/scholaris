@@ -53,11 +53,11 @@ void main() {
   }
 
   group('ProviderHomeScreen', () {
-    testWidgets('renders Provider Console title in AppBar', (tester) async {
+    testWidgets('renders Scholaris branding in the provider sidebar', (tester) async {
       await tester.pumpWidget(buildApp());
       await tester.pumpAndSettle();
 
-      expect(find.text('Provider Console'), findsOneWidget);
+      expect(find.text('Scholaris'), findsOneWidget);
     });
 
     testWidgets('renders Sign out button with logout icon and tooltip', (tester) async {
@@ -79,7 +79,10 @@ void main() {
       expect(find.text('Applications'), findsWidgets);
       expect(find.text('My Scholarships'), findsOneWidget);
 
-      // Initially shows Incoming Applications
+      // Opens the overview, while preserving application navigation
+      expect(find.text('Organization overview'), findsOneWidget);
+      await tester.tap(find.text('Applications').first);
+      await tester.pumpAndSettle();
       expect(find.text('Incoming Applications'), findsOneWidget);
 
       // Tap on Scholarships tab
@@ -87,7 +90,7 @@ void main() {
       await tester.pumpAndSettle();
 
       // Now shows My Scholarships & Grant Programs
-      expect(find.text('My Scholarships & Grant Programs'), findsOneWidget);
+      expect(find.text('Scholarship programs'), findsOneWidget);
     });
   });
 }

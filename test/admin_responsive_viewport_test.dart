@@ -306,10 +306,10 @@ void main() {
       expect(find.byType(Drawer), findsNothing);
 
       // Sidebar is persistent
-      expect(find.text('Operations'), findsOneWidget);
-      expect(find.text('Management'), findsOneWidget);
-      expect(find.text('Intelligence'), findsOneWidget);
-      expect(find.text('Console active'), findsOneWidget);
+      expect(find.text('Review & oversight'), findsOneWidget);
+      expect(find.text('Platform records'), findsOneWidget);
+      expect(find.text('Activity & settings'), findsOneWidget);
+      expect(find.text('Platform administration'), findsWidgets);
 
       // Switch to Users tab
       await tester.tap(find.text('Users'));

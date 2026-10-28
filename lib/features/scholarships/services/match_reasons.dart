@@ -1,5 +1,10 @@
 import '../../profile/models/student_profile.dart';
 import '../models/scholarship.dart';
+import 'matching_engine.dart';
+
+/// Temporary demo score; this is not an eligibility or award probability.
+int placeholderMatchPercentage(int reasonCount) =>
+    reasonCount == 0 ? 94 : (85 + reasonCount * 3).clamp(88, 98);
 
 /// Returns a list of short reason labels explaining why [scholarship] is
 /// eligible for [student]. Each label is at most ~25 characters and is derived
@@ -8,7 +13,7 @@ import '../models/scholarship.dart';
 List<String> matchReasonsFor(StudentProfile student, Scholarship scholarship) {
   final reasons = <String>[];
 
-  if (student.gpa >= scholarship.minGpa) {
+  if (MatchingEngine.isGpaEligible(student.gpa, scholarship.minGpa)) {
     reasons.add('Your GPA qualifies');
   }
 

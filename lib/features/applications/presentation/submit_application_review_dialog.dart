@@ -12,15 +12,18 @@
 // 6. Pinned final submit action (with loading state) & exit-intent draft protection
 
 import 'package:flutter/material.dart';
+
 import '../providers/applications_provider.dart';
 import '../providers/application_document_provider.dart';
 import 'widgets/document_upload_sheet.dart';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import 'package:scholaris/features/profile/models/student_profile.dart';
 import 'package:scholaris/features/profile/providers/profile_setup_provider.dart';
 import 'package:scholaris/features/scholarships/models/scholarship.dart';
+import 'package:scholaris/shared/theme/app_motion.dart';
 import 'package:scholaris/shared/theme/app_theme.dart';
 import 'package:scholaris/shared/utils/constants.dart';
 import 'package:scholaris/shared/widgets/save_draft_dialog.dart';
@@ -44,6 +47,9 @@ class SubmitApplicationReviewDialog extends ConsumerStatefulWidget {
   }) {
     return showDialog<bool>(
       context: context,
+      animationStyle: isReducedMotion(context)
+          ? AnimationStyle.noAnimation
+          : null,
       barrierDismissible: false,
       builder: (dialogContext) => PopScope(
         canPop: false,
@@ -62,7 +68,10 @@ class SubmitApplicationReviewDialog extends ConsumerStatefulWidget {
           }
         },
         child: Dialog(
-          insetPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
+          insetPadding: const EdgeInsets.symmetric(
+            horizontal: 16,
+            vertical: 24,
+          ),
           backgroundColor: Colors.transparent,
           child: SubmitApplicationReviewDialog(
             scholarship: scholarship,
@@ -129,7 +138,8 @@ class _SubmitApplicationReviewDialogState
   @override
   Widget build(BuildContext context) {
     final profile = ref.watch(currentProfileProvider).valueOrNull;
-    final studentName = (profile?.fullName != null && profile!.fullName.trim().isNotEmpty)
+    final studentName =
+        (profile?.fullName != null && profile!.fullName.trim().isNotEmpty)
         ? profile.fullName.trim()
         : 'Student';
 
@@ -218,7 +228,10 @@ class _SubmitApplicationReviewDialogState
                   children: [
                     // Pill: Final Step • Review
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 3,
+                      ),
                       decoration: BoxDecoration(
                         color: kSurfaceContainer,
                         borderRadius: BorderRadius.circular(20),
@@ -238,7 +251,7 @@ class _SubmitApplicationReviewDialogState
                           Flexible(
                             child: Text(
                               'Final Step • Review',
-                              maxLines: 1,
+
                               overflow: TextOverflow.ellipsis,
                               style: GoogleFonts.outfit(
                                 fontSize: 11,
@@ -274,7 +287,7 @@ class _SubmitApplicationReviewDialogState
                     const SizedBox(height: 2),
                     Text(
                       '${widget.scholarship.title} • ${widget.scholarship.provider ?? "National Science Endowment"}',
-                      maxLines: 1,
+
                       overflow: TextOverflow.ellipsis,
                       style: GoogleFonts.openSans(
                         fontSize: 12,
@@ -314,7 +327,7 @@ class _SubmitApplicationReviewDialogState
               Flexible(
                 child: Text(
                   'Review & Submit',
-                  maxLines: 1,
+
                   overflow: TextOverflow.ellipsis,
                   style: GoogleFonts.outfit(
                     fontSize: 12,
@@ -327,7 +340,7 @@ class _SubmitApplicationReviewDialogState
               Flexible(
                 child: Text(
                   'Review Required',
-                  maxLines: 1,
+
                   overflow: TextOverflow.ellipsis,
                   style: GoogleFonts.outfit(
                     fontSize: 12,
@@ -502,7 +515,10 @@ class _SubmitApplicationReviewDialogState
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 4,
+                      ),
                       decoration: BoxDecoration(
                         color: kPrimaryFixed,
                         borderRadius: BorderRadius.circular(20),
@@ -553,7 +569,10 @@ class _SubmitApplicationReviewDialogState
             children: [
               Expanded(
                 child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 8,
+                  ),
                   decoration: BoxDecoration(
                     color: kSurfaceContainerLow,
                     borderRadius: BorderRadius.circular(10),
@@ -590,7 +609,7 @@ class _SubmitApplicationReviewDialogState
                               daysLeft > 0
                                   ? '${deadlineLabel(widget.scholarship.deadline)} ($daysLeft Days)'
                                   : deadlineLabel(widget.scholarship.deadline),
-                              maxLines: 1,
+
                               overflow: TextOverflow.ellipsis,
                               style: GoogleFonts.outfit(
                                 fontSize: 12,
@@ -608,7 +627,10 @@ class _SubmitApplicationReviewDialogState
               const SizedBox(width: 8),
               Expanded(
                 child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 8,
+                  ),
                   decoration: BoxDecoration(
                     color: kSurfaceContainerLow,
                     borderRadius: BorderRadius.circular(10),
@@ -643,7 +665,7 @@ class _SubmitApplicationReviewDialogState
                             ),
                             Text(
                               'UP Diliman',
-                              maxLines: 1,
+
                               overflow: TextOverflow.ellipsis,
                               style: GoogleFonts.outfit(
                                 fontSize: 12,
@@ -667,42 +689,94 @@ class _SubmitApplicationReviewDialogState
 
   // --- CARD 3: Application Packet Card -------------------------------------
   Widget _buildPacketCard({required StudentProfile? profile}) {
-    final application = ref.watch(applicationsProvider).valueOrNull
-        ?.where((a) => a.scholarshipId == widget.scholarship.id).firstOrNull;
-    final documents = application == null ? null
+    final application = ref
+        .watch(applicationsProvider)
+        .valueOrNull
+        ?.where((a) => a.scholarshipId == widget.scholarship.id)
+        .firstOrNull;
+    final documents = application == null
+        ? null
         : ref.watch(applicationDocumentsProvider(application.id));
     return Container(
       padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(16)),
-      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Text('Application Packet', style: GoogleFonts.outfit(fontSize: 16, fontWeight: FontWeight.bold)),
-        const SizedBox(height: 8),
-        Text('Academic profile: ${profile?.school ?? 'School not recorded'}. Information is self-reported and awaits review.'),
-        const SizedBox(height: 8),
-        if (documents == null) const Text('No supporting documents attached yet.'),
-        if (_packetError != null) Text(_packetError!, style: const TextStyle(color: Colors.red)),
-        if (documents != null) documents.when(
-          loading: () => const CircularProgressIndicator(),
-          error: (_, _) => const Text('Could not load attachments. Please retry before submitting.'),
-          data: (docs) => Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Text(docs.isEmpty ? 'No supporting documents attached yet.' : 'Uploaded attachments (awaiting review):'),
-            for (final doc in docs) Text('${doc.humanType}: ${doc.fileName}'),
-          ]),
-        ),
-        TextButton.icon(
-          onPressed: _isSavingDraft ? null : () async {
-            setState(() { _isSavingDraft = true; _packetError = null; });
-            try {
-              final draft = application ?? await ref.read(applicationsProvider.notifier).saveDraft(widget.scholarship.id);
-              if (!mounted) return;
-              await showDocumentUploadSheet(context, preselectedApplicationId: draft.id);
-            } catch (_) {
-              if (mounted) setState(() => _packetError = 'Could not prepare document upload. Please retry.');
-            } finally { if (mounted) setState(() => _isSavingDraft = false); }
-          },
-          icon: const Icon(Icons.upload_file), label: const Text('Upload supporting document'),
-        ),
-      ]),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Application Packet',
+            style: GoogleFonts.outfit(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            'Academic profile: ${profile?.school ?? 'School not recorded'}. Information is self-reported and awaits review.',
+          ),
+          const SizedBox(height: 8),
+          if (documents == null)
+            const Text('No supporting documents attached yet.'),
+          if (_packetError != null)
+            Text(_packetError!, style: const TextStyle(color: Colors.red)),
+          if (documents != null)
+            documents.when(
+              loading: () => const CircularProgressIndicator(),
+              error: (_, _) => const Text(
+                'Could not load attachments. Please retry before submitting.',
+              ),
+              data: (docs) => Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    docs.isEmpty
+                        ? 'No supporting documents attached yet.'
+                        : 'Uploaded attachments (awaiting review):',
+                  ),
+                  for (final doc in docs)
+                    Text('${doc.humanType}: ${doc.fileName}'),
+                ],
+              ),
+            ),
+          TextButton.icon(
+            onPressed: _isSavingDraft
+                ? null
+                : () async {
+                    setState(() {
+                      _isSavingDraft = true;
+                      _packetError = null;
+                    });
+                    try {
+                      final draft =
+                          application ??
+                          await ref
+                              .read(applicationsProvider.notifier)
+                              .saveDraft(widget.scholarship.id);
+                      if (!mounted) return;
+                      await showDocumentUploadSheet(
+                        context,
+                        preselectedApplicationId: draft.id,
+                      );
+                    } catch (_) {
+                      if (mounted) {
+                        setState(
+                          () => _packetError = 'Could not prepare document upload. Please retry.',
+                        );
+                      }
+                    } finally {
+                      if (mounted) {
+                        setState(() => _isSavingDraft = false);
+                      }
+                    }
+                  },
+            icon: const Icon(Icons.upload_file),
+            label: const Text('Upload supporting document'),
+          ),
+        ],
+      ),
     );
   }
 
@@ -735,7 +809,7 @@ class _SubmitApplicationReviewDialogState
               Expanded(
                 child: Text(
                   'Affirmations & Honor Code',
-                  maxLines: 1,
+
                   overflow: TextOverflow.ellipsis,
                   style: GoogleFonts.outfit(
                     fontSize: 16,
@@ -752,8 +826,7 @@ class _SubmitApplicationReviewDialogState
           _buildCheckboxItem(
             value: _cert1,
             onChanged: (v) => setState(() => _cert1 = v ?? false),
-            text:
-                'I confirm that the application information I am submitting is accurate.',
+            text: 'I confirm that the application information I am submitting is accurate.',
           ),
           const SizedBox(height: 8),
 
@@ -761,8 +834,7 @@ class _SubmitApplicationReviewDialogState
           _buildCheckboxItem(
             value: _cert2,
             onChanged: (v) => setState(() => _cert2 = v ?? false),
-            text:
-                'I understand that authorized staff of the scholarship organization can review my submitted information and attachments.',
+            text: 'I understand that authorized staff of the scholarship organization can review my submitted information and attachments.',
           ),
           const SizedBox(height: 8),
 
@@ -770,8 +842,7 @@ class _SubmitApplicationReviewDialogState
           _buildCheckboxItem(
             value: _cert3,
             onChanged: (v) => setState(() => _cert3 = v ?? false),
-            text:
-                'I understand that submitting an application does not guarantee a scholarship.',
+            text: 'I understand that submitting an application does not guarantee a scholarship.',
           ),
         ],
       ),
@@ -907,7 +978,7 @@ class _SubmitApplicationReviewDialogState
                           const SizedBox(height: 2),
                           Text(
                             studentName,
-                            maxLines: 1,
+
                             overflow: TextOverflow.ellipsis,
                             style: GoogleFonts.outfit(
                               fontSize: 22,
@@ -934,7 +1005,7 @@ class _SubmitApplicationReviewDialogState
                     Expanded(
                       child: Text(
                         'Submission time is saved after successful submission.',
-                        maxLines: 1,
+
                         overflow: TextOverflow.ellipsis,
                         style: GoogleFonts.openSans(
                           fontSize: 10,
@@ -966,11 +1037,7 @@ class _SubmitApplicationReviewDialogState
             ),
             child: Row(
               children: [
-                const Icon(
-                  Icons.shield_outlined,
-                  size: 16,
-                  color: kSecondary,
-                ),
+                const Icon(Icons.shield_outlined, size: 16, color: kSecondary),
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text(
@@ -1010,19 +1077,27 @@ class _SubmitApplicationReviewDialogState
         children: [
           // Primary Submit Button
           ConstrainedBox(
-            constraints: const BoxConstraints(minWidth: double.infinity, minHeight: 46),
+            constraints: const BoxConstraints(
+              minWidth: double.infinity,
+              minHeight: 46,
+            ),
             child: FilledButton(
               key: const ValueKey('apply-confirm'),
               style: FilledButton.styleFrom(
                 backgroundColor: kPrimaryContainer,
                 foregroundColor: Colors.white,
-                disabledBackgroundColor: kPrimaryContainer.withValues(alpha: 0.5),
+                disabledBackgroundColor: kPrimaryContainer.withValues(
+                  alpha: 0.5,
+                ),
                 disabledForegroundColor: Colors.white70,
                 elevation: 2,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 12,
+                ),
               ),
               onPressed: _allAffirmationsChecked && !_isSavingDraft
                   ? () => Navigator.of(context).pop(true)
@@ -1094,7 +1169,7 @@ class _SubmitApplicationReviewDialogState
           Text(
             'Once submitted, your application is locked and transmitted to the review committee. You will receive an official timestamp receipt via your UP Diliman email.',
             textAlign: TextAlign.center,
-            maxLines: 2,
+
             overflow: TextOverflow.ellipsis,
             style: GoogleFonts.openSans(
               fontSize: 10,

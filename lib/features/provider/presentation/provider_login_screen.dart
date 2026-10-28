@@ -13,6 +13,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'package:scholaris/core/security/login_lockout_service.dart';
+import 'package:scholaris/core/security/captcha_challenge.dart';
 import 'package:scholaris/shared/widgets/scholaris_logo.dart';
 import '../providers/provider_type_provider.dart';
 
@@ -123,10 +124,13 @@ class _ProviderLoginScreenState extends ConsumerState<ProviderLoginScreen> {
 
     setState(() => _isLoading = true);
     try {
+      final captcha = await acquireCaptcha(context);
+      if (!mounted || !captcha.allowed) return;
       final client = Supabase.instance.client;
       final authResponse = await client.auth.signInWithPassword(
         email: email,
         password: _passwordController.text,
+        captchaToken: captcha.token,
       );
 
       final user = authResponse.user;

@@ -11,6 +11,7 @@ import 'package:go_router/go_router.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'package:scholaris/app/recovery_redirect.dart';
+import 'package:scholaris/core/security/captcha_challenge.dart';
 import 'package:scholaris/shared/theme/app_motion.dart';
 import 'package:scholaris/shared/theme/app_theme.dart';
 import 'package:scholaris/shared/widgets/scholaris_logo.dart';
@@ -42,9 +43,12 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
 
     setState(() => _isLoading = true);
     try {
+      final captcha = await acquireCaptcha(context);
+      if (!mounted || !captcha.allowed) return;
       await Supabase.instance.client.auth.resetPasswordForEmail(
         _emailController.text.trim(),
         redirectTo: resetPasswordRedirect,
+        captchaToken: captcha.token,
       );
       if (!mounted) return;
       setState(() => _linkSent = true);

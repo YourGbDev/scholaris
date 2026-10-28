@@ -19,7 +19,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import 'package:scholaris/core/security/password_validator.dart';
+import 'package:scholaris/core/security/captcha_challenge.dart';
 import 'package:scholaris/features/account/providers/account_provider.dart';
+import 'package:scholaris/features/account/presentation/change_email_dialog.dart';
 import 'package:scholaris/features/account/repositories/account_repository.dart';
 import 'package:scholaris/features/auth/controllers/auth_controller.dart';
 import 'package:scholaris/shared/theme/app_theme.dart';
@@ -106,7 +109,9 @@ class _AccountSettingsScreenState extends ConsumerState<AccountSettingsScreen> {
       _resendSuccess = null;
     });
     try {
-      await ref.read(accountRepositoryProvider).resendVerificationEmail();
+      final captcha = await acquireCaptcha(context);
+      if (!mounted || !captcha.allowed) return;
+      await ref.read(accountRepositoryProvider).resendVerificationEmail(captchaToken: captcha.token);
       if (!mounted) return;
       setState(() => _resendSuccess = 'Verification email sent. '
           'Check your inbox.');
@@ -140,9 +145,13 @@ class _AccountSettingsScreenState extends ConsumerState<AccountSettingsScreen> {
 
     setState(() => _isSubmitting = true);
     try {
-      await ref.read(accountRepositoryProvider).changePassword(
+      final captcha = await acquireCaptcha(context);
+      if (!mounted) return;
+      if (!captcha.allowed) { setState(() => _isSubmitting = false); return; }
+      final othersRevoked = await ref.read(accountRepositoryProvider).changePassword(
             currentPassword: _currentPasswordController.text,
             newPassword: _newPasswordController.text,
+            captchaToken: captcha.token,
           );
       if (!mounted) return;
       setState(() {
@@ -153,7 +162,23 @@ class _AccountSettingsScreenState extends ConsumerState<AccountSettingsScreen> {
         _newPasswordController.clear();
         _confirmPasswordController.clear();
       });
-      await SuccessOverlay.show(context);
+      await SuccessOverlay.show(
+        context,
+        title: 'Password Changed Successfully',
+        subtitle: 'Your account credentials have been updated securely.',
+        pose: MascotPose.celebrating,
+      );
+      if (!mounted) return;
+      if (!othersRevoked) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text(
+              'Password changed successfully. Other active sessions could not be verified signed out.',
+            ),
+            duration: Duration(seconds: 4),
+          ),
+        );
+      }
     } on AccountNotAuthenticatedException {
       if (!mounted) return;
       setState(() {
@@ -205,12 +230,10 @@ class _AccountSettingsScreenState extends ConsumerState<AccountSettingsScreen> {
   }
 
   String? _validateNewPassword(String? value) {
-    if (value == null || value.isEmpty) return 'Enter a new password.';
-    if (value.length < 8) return 'Password must be at least 8 characters.';
-    if (value == _currentPasswordController.text) {
+    if (value != null && value.isNotEmpty && value == _currentPasswordController.text) {
       return 'New password must be different from your current password.';
     }
-    return null;
+    return PasswordValidator.validatePassword(value, emptyMessage: 'Enter a new password.');
   }
 
   String? _validateConfirmPassword(String? value) {
@@ -419,6 +442,14 @@ class _AccountSettingsScreenState extends ConsumerState<AccountSettingsScreen> {
             ),
             overflow: TextOverflow.ellipsis,
           ),
+          if (email != null && email.isNotEmpty)
+            TextButton(
+              onPressed: () => showDialog<void>(
+                context: context,
+                builder: (_) => ChangeEmailDialog(currentEmail: email),
+              ),
+              child: const Text('Change email'),
+            ),
           if (!emailConfirmed) ...[
             const SizedBox(height: 8),
             Row(
@@ -498,7 +529,7 @@ class _AccountSettingsScreenState extends ConsumerState<AccountSettingsScreen> {
                   const Icon(Icons.lock_outline_rounded, size: 14, color: kPrimary),
                   const SizedBox(width: 4),
                   Text(
-                    '2FA Active',
+                    'Password protection',
                     style: outfit(fontSize: 11, fontWeight: FontWeight.w600, color: kPrimary),
                   ),
                 ],
@@ -508,6 +539,11 @@ class _AccountSettingsScreenState extends ConsumerState<AccountSettingsScreen> {
           const SizedBox(height: 2),
           Text(
             'Confirm your current password to set a new one.',
+            style: openSans(fontSize: 12, color: kTextSecondary),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            'Use at least 8 characters, including uppercase, lowercase, a number, and a special character.',
             style: openSans(fontSize: 12, color: kTextSecondary),
           ),
           const SizedBox(height: 14),
@@ -739,7 +775,7 @@ class _AccountSettingsScreenState extends ConsumerState<AccountSettingsScreen> {
                     const SizedBox(width: 6),
                     Flexible(
                       child: Text(
-                        'UP Diliman (CRS SSO Connected)',
+                        'Not connected • Coming soon',
                         style: outfit(fontSize: 14, fontWeight: FontWeight.w600, color: kTextPrimary),
                         overflow: TextOverflow.ellipsis,
                       ),
@@ -748,19 +784,19 @@ class _AccountSettingsScreenState extends ConsumerState<AccountSettingsScreen> {
                 ),
                 const SizedBox(height: 2),
                 Text(
-                  'Last synced today at 08:30 AM',
+                  'University record sync is not available yet.',
                   style: openSans(fontSize: 11, color: kTextSecondary),
                 ),
               ],
             ),
           ),
           IconButton(
-            tooltip: 'Sync with University Records',
+            tooltip: 'University record sync information',
             icon: const Icon(Icons.sync_rounded, color: Color(0xFF707971), size: 20),
             onPressed: () {
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(
-                  content: Text('Academic records up to date with UP CRS.'),
+                  content: Text('University record sync is not available yet.'),
                   duration: Duration(seconds: 2),
                 ),
               );

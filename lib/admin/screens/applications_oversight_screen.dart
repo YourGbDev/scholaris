@@ -418,7 +418,7 @@ class _ApplicationsOversightScreenState
               ),
               const SizedBox(width: 6),
               Text(
-                'Live data',
+                'STUDENT SCHOLARSHIP INTAKE',
                 style: seqLabelSm(
                   color: kSeqOnSurfaceVariant,
                   fontWeight: FontWeight.w600,
@@ -438,7 +438,7 @@ class _ApplicationsOversightScreenState
 
         // Subtitle: strictly live database count
         Text(
-          '$totalCount applications on platform',
+          '$totalCount student applications across listed scholarships',
           style: seqBodyMd(color: kSeqOnSurfaceVariant),
         ),
       ],

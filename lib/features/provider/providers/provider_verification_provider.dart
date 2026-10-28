@@ -39,35 +39,57 @@ class AdminProviderVerificationsNotifier
     return repo.fetchAllVerifications();
   }
 
-  Future<void> approveVerification({
+  Future<ProviderVerification> approveVerification({
     required String userId,
     required String adminId,
     String? note,
+    String? expectedStatus,
   }) async {
     final repo = ref.read(providerVerificationRepositoryProvider);
-    await repo.updateVerificationStatus(
+    final updated = await repo.reviewVerification(
       userId: userId,
       status: 'approved',
-      adminId: adminId,
+      expectedStatus: expectedStatus,
       reviewNote: note,
     );
     ref.invalidateSelf();
     ref.invalidate(currentUserVerificationProvider);
+    return updated;
   }
 
-  Future<void> rejectVerification({
+  Future<ProviderVerification> rejectVerification({
     required String userId,
     required String adminId,
     required String note,
+    String? expectedStatus,
   }) async {
     final repo = ref.read(providerVerificationRepositoryProvider);
-    await repo.updateVerificationStatus(
+    final updated = await repo.reviewVerification(
       userId: userId,
       status: 'rejected',
-      adminId: adminId,
+      expectedStatus: expectedStatus,
       reviewNote: note,
     );
     ref.invalidateSelf();
     ref.invalidate(currentUserVerificationProvider);
+    return updated;
+  }
+
+  Future<ProviderVerification> requestChangesVerification({
+    required String userId,
+    required String adminId,
+    required String note,
+    String? expectedStatus,
+  }) async {
+    final repo = ref.read(providerVerificationRepositoryProvider);
+    final updated = await repo.reviewVerification(
+      userId: userId,
+      status: 'changes_requested',
+      expectedStatus: expectedStatus,
+      reviewNote: note,
+    );
+    ref.invalidateSelf();
+    ref.invalidate(currentUserVerificationProvider);
+    return updated;
   }
 }

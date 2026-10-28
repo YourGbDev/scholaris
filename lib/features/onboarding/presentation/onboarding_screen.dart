@@ -307,7 +307,7 @@ class _Slide1Ecosystem extends StatelessWidget {
                       const SizedBox(height: 5),
                       // Narrative
                       Text(
-                        'Discover thousands of verified grants and endowments tailored specifically to your academic background, region, and financial need.',
+                        'Discover scholarships suited to your academic background, region, and financial needs.',
                         style: GoogleFonts.openSans(
                           fontSize: 13,
                           color: const Color(0xFF404942),
@@ -348,7 +348,7 @@ class _Slide1Ecosystem extends StatelessWidget {
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
                                   Text(
-                                    '₱480M+ Active Funds',
+                                    'Explore scholarship opportunities',
                                     style: GoogleFonts.outfit(
                                       fontSize: 13.5,
                                       fontWeight: FontWeight.bold,
@@ -527,7 +527,7 @@ class _Slide2Matching extends StatelessWidget {
                       const SizedBox(height: 5),
                       // Narrative
                       Text(
-                        'Say goodbye to endless scrolling through dead ends. Scholaris cross-examines your academic standing, LGU jurisdiction, and financial bracket to highlight funds you actually qualify for.',
+                        'Spend less time searching. Scholaris compares your profile with scholarship criteria to highlight opportunities that may suit you.',
                         style: GoogleFonts.openSans(
                           fontSize: 13,
                           color: const Color(0xFF404942),
@@ -556,12 +556,12 @@ class _Slide2Matching extends StatelessWidget {
                         child: const Column(
                           children: [
                             _FeatureCheckRow(
-                              text: 'Zero guesswork algorithmic accuracy',
+                              text: 'Matches based on your profile',
                             ),
                             SizedBox(height: 5),
                             _FeatureCheckRow(
                               text:
-                                  'Pre-filtered by GWA cutoff & Barangay indigency',
+                                  'Compare academic and financial criteria',
                             ),
                           ],
                         ),
@@ -721,7 +721,7 @@ class _Slide3AuditTrail extends StatelessWidget {
                       const SizedBox(height: 5),
                       // Narrative
                       Text(
-                        'Follow your application from draft to submission to final decision with real-time status updates, deadline alerts, and verified digital receipts.',
+                        'Follow your application from draft and submission through to a decision.',
                         style: GoogleFonts.openSans(
                           fontSize: 13,
                           color: const Color(0xFF404942),
@@ -758,7 +758,7 @@ class _Slide3AuditTrail extends StatelessWidget {
                                   children: [
                                     const TextSpan(
                                       text:
-                                          'Never miss an announcement or deadline again ',
+                                          'Keep track of deadlines and updates ',
                                     ),
                                     TextSpan(
                                       text: '• 100% Free for Students',
@@ -1074,7 +1074,7 @@ class _VerifiedGrantsBadge extends StatelessWidget {
                 ),
                 const SizedBox(width: 4),
                 Text(
-                  'VERIFIED GRANTS',
+                  'SCHOLARSHIP DISCOVERY',
                   style: GoogleFonts.outfit(
                     fontSize: 9.5,
                     fontWeight: FontWeight.w700,
@@ -1266,14 +1266,14 @@ class _PrecisionMatchingCanvas extends StatelessWidget {
             text: 'UP Diliman / SUC',
           ),
         ),
-        // Metadata Badge 3: ITR Verified (mid/bottom-left)
+        // Metadata Badge 3: Income information (mid/bottom-left)
         const Positioned(
           bottom: 46,
           left: 6,
           child: _MatrixBadge(
             icon: Icons.verified_user_rounded,
             iconColor: Color(0xFF436084),
-            text: 'ITR Verified',
+            text: 'Income information',
           ),
         ),
         // Metadata Badge 4: BS STEM Priority (mid/bottom-right)
@@ -1618,7 +1618,7 @@ class _AuditTrailCanvas extends StatelessWidget {
                     const SizedBox(width: 4),
                     Flexible(
                       child: Text(
-                        'End-to-End Audit Trail',
+                        'Application progress',
                         style: GoogleFonts.outfit(
                           fontSize: 12,
                           fontWeight: FontWeight.bold,
@@ -1650,7 +1650,7 @@ class _AuditTrailCanvas extends StatelessWidget {
                     ),
                     const SizedBox(width: 4),
                     Text(
-                      'Live sync',
+                      'Status updates',
                       style: GoogleFonts.outfit(
                         fontSize: 9.5,
                         fontWeight: FontWeight.w600,
@@ -1696,10 +1696,10 @@ class _AuditTrailCanvas extends StatelessWidget {
                       icon: Icons.check,
                       iconBg: Color(0xFF0F4D2E),
                       iconColor: Colors.white,
-                      step: '1. Draft & Verified',
-                      chip: 'TCG / BIR 2316',
-                      subtitle: 'Biometric ID & credential hash verified',
-                      badge: 'PASSED',
+                      step: '1. Prepare your draft',
+                      chip: 'PROFILE',
+                      subtitle: 'Review your details before applying',
+                      badge: 'DRAFT',
                       badgeBg: Color(0xFFF1F3FF),
                       badgeColor: Color(0xFF404942),
                     ),
@@ -1708,17 +1708,17 @@ class _AuditTrailCanvas extends StatelessWidget {
                       iconBg: Color(0xFF436084),
                       iconColor: Colors.white,
                       step: '2. Timestamped',
-                      chip: 'SHA-256',
-                      subtitle: 'Immutable digital vault receipt sealed',
-                      badge: 'SEALED',
+                      chip: 'APPLICATION',
+                      subtitle: 'Application submitted for review',
+                      badge: 'SUBMITTED',
                       badgeBg: Color(0xFFD2E4FF),
                       badgeColor: Color(0xFF001C38),
                     ),
                     _AuditStepRow(
                       isCurrent: true,
                       step: '3. Committee Review',
-                      subtitle: 'Deliberation batch in progress',
-                      badge: '4d left',
+                      subtitle: 'Await the provider’s review',
+                      badge: 'IN REVIEW',
                       badgeBg: Color(0xFFFFDAD6),
                       badgeColor: Color(0xFF93000A),
                     ),
@@ -1726,9 +1726,9 @@ class _AuditTrailCanvas extends StatelessWidget {
                       icon: Icons.stars_rounded,
                       iconBg: Color(0xFFDDE2F3),
                       iconColor: Color(0xFFF1B41E),
-                      step: '4. Direct Grant Payout',
-                      chip: 'PHP 60,000',
-                      subtitle: 'Automated release via LandBank / DBP',
+                      step: '4. Award decision',
+                      chip: 'DECISION',
+                      subtitle: 'Check your application for updates',
                     ),
                   ],
                 ),

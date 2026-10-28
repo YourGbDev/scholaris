@@ -17,6 +17,9 @@ import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../features/scholarships/models/scholarship.dart';
+import '../../features/profile/models/student_profile.dart';
+import '../../features/scholarships/services/application_readiness.dart';
+import '../../features/scholarships/services/match_reasons.dart';
 import '../theme/app_motion.dart';
 import '../theme/app_theme.dart';
 import '../utils/constants.dart';
@@ -120,6 +123,7 @@ class ScholarshipCard extends StatelessWidget {
     required this.scholarship,
     this.reasons = const [],
     this.matchPercentage,
+    this.studentProfile,
     this.isBookmarked = false,
     this.isApplied = false,
     this.onToggleBookmark,
@@ -129,6 +133,7 @@ class ScholarshipCard extends StatelessWidget {
   final Scholarship scholarship;
   final List<String> reasons;
   final int? matchPercentage;
+  final StudentProfile? studentProfile;
 
   /// Whether this scholarship is in the signed-in user's saved set.
   final bool isBookmarked;
@@ -145,10 +150,7 @@ class ScholarshipCard extends StatelessWidget {
 
   int _effectiveMatchPercentage() {
     if (matchPercentage != null) return matchPercentage!;
-    if (reasons.isNotEmpty) {
-      return (85 + (reasons.length * 3)).clamp(88, 98);
-    }
-    return 94;
+    return placeholderMatchPercentage(reasons.length);
   }
 
   @override
@@ -157,13 +159,17 @@ class ScholarshipCard extends StatelessWidget {
     final expired = isDeadlinePassed(scholarship.deadline, now: now);
     final closing = !expired &&
         isClosingSoon(scholarship.deadline.difference(now).inDays);
-    final accentColor = providerTypeColor(scholarship.provider);
-    final matchPct = _effectiveMatchPercentage();
+    final readiness = evaluateApplicationReadiness(
+      profile: studentProfile, scholarship: scholarship, referenceNow: now,
+    );
+    // Placeholder score only; replace with a real scoring model when available.
+    final rawMatchPct = _effectiveMatchPercentage();
+    final matchPct = readiness.state == ApplicationReadinessState.notEligible && rawMatchPct > 69
+        ? 69 : rawMatchPct;
     final amount = formatScholarshipAmount(scholarship);
-    final stackAward = MediaQuery.sizeOf(context).width < 350 ||
-        MediaQuery.textScalerOf(context).scale(12) > 14;
     final benefit = formatScholarshipBenefit(scholarship);
-    final reqSnippet = formatScholarshipRequirements(scholarship);
+    final requirements = formatScholarshipRequirements(scholarship);
+    final canShowApply = matchPct >= 90 && !isApplied && readiness.canApply;
 
     // Collect criteria chips
     final criteriaChips = <String>[];
@@ -190,9 +196,9 @@ class ScholarshipCard extends StatelessWidget {
       child: PressableScale(
         child: Material(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(kRadiusCard),
+          borderRadius: BorderRadius.circular(26),
           child: InkWell(
-            borderRadius: BorderRadius.circular(kRadiusCard),
+            borderRadius: BorderRadius.circular(26),
             onTap: () => context.push(
               '/scholarship/${scholarship.id}',
               extra: scholarship,
@@ -200,31 +206,14 @@ class ScholarshipCard extends StatelessWidget {
             child: Container(
             decoration: BoxDecoration(
               color: Colors.white,
-              borderRadius: BorderRadius.circular(kRadiusCard),
-              border: kCardBorderCrisp,
-              boxShadow: kCardElevationCrisp,
+              borderRadius: BorderRadius.circular(26),
+              border: Border.all(color: const Color(0x1214532D)),
+              boxShadow: const [BoxShadow(color: Color(0x0A0F172A), blurRadius: 20, offset: Offset(0, 6))],
             ),
             child: Stack(
               children: [
-                // Left-edge accent bar
-                Positioned(
-                  top: 0,
-                  bottom: 0,
-                  left: 0,
-                  child: Container(
-                    width: 4.5,
-                    decoration: BoxDecoration(
-                      color: accentColor,
-                      borderRadius: const BorderRadius.only(
-                        topLeft: Radius.circular(kRadiusCard),
-                        bottomLeft: Radius.circular(kRadiusCard),
-                      ),
-                    ),
-                  ),
-                ),
-
                 Padding(
-                  padding: const EdgeInsets.fromLTRB(16, 14, 16, 14),
+                  padding: const EdgeInsets.fromLTRB(20, 16, 20, 16),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -297,144 +286,60 @@ class ScholarshipCard extends StatelessWidget {
                       ),
                       const SizedBox(height: 10),
 
-                      // 2. Title
-                      Text(
-                        scholarship.title,
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                        style: outfit(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w700,
-                          color: const Color(0xFF161C27),
-                          letterSpacing: -0.25,
-                          height: 1.25,
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-
-                      // 3. Verified Provider Row
-                      Row(
-                        children: [
-                          const Icon(
-                            Icons.verified_rounded,
-                            size: 15,
-                            color: Color(0xFF436084), // Slate Navy
-                          ),
-                          const SizedBox(width: 4.5),
-                          Expanded(
-                            child: Text(
-                              scholarship.provider ?? 'Scholarship Provider',
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: openSans(
-                                fontSize: 12.5,
-                                color: const Color(0xFF404942),
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 10),
-
-                      // 4. Award Highlight Tile matching Stitch V2
-                      Container(
-                        width: double.infinity,
-                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                        decoration: BoxDecoration(
-                          color: const Color(0xFFF2F6F3), // Soft sage porcelain container
-                          borderRadius: BorderRadius.circular(10),
-                          border: Border.all(color: const Color(0x140F4D2E), width: 0.75),
-                        ),
-                        child: Flex(
-                          direction: stackAward ? Axis.vertical : Axis.horizontal,
-                          crossAxisAlignment: stackAward ? CrossAxisAlignment.start : CrossAxisAlignment.center,
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      // Keep the award beside the title only when both can breathe.
+                      LayoutBuilder(builder: (context, constraints) {
+                        final sideBySide = constraints.maxWidth >= 420 &&
+                            MediaQuery.textScalerOf(context).scale(12) <= 14;
+                        final heading = Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Flexible(
-                              flex: stackAward ? 0 : 1,
-                              child: stackAward
-                                  ? Wrap(spacing: 4, runSpacing: 2,
-                                      crossAxisAlignment: WrapCrossAlignment.center,
-                                      children: [
-                                        const Icon(Icons.stars_rounded, size: 19, color: Color(0xFFFABC28)),
-                                        Text(amount, style: outfit(fontSize: 17, fontWeight: FontWeight.w600,
-                                          color: kPrimary, letterSpacing: -0.4)),
-                                        Text(scholarship.formattedFrequency, style: openSans(fontSize: 11.5,
-                                          color: const Color(0xFF404942), fontWeight: FontWeight.w500)),
-                                      ])
-                                  : FittedBox(
-                                fit: BoxFit.scaleDown,
-                                alignment: Alignment.centerLeft,
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    const Icon(
-                                      Icons.stars_rounded,
-                                      size: 19,
-                                      color: Color(0xFFFABC28), // kTertiaryFixedDim
-                                    ),
-                                    const SizedBox(width: 6),
-                                    Text(
-                                      amount,
-                                      style: outfit(
-                                        fontSize: 17,
-                                        fontWeight: FontWeight.w600,
-                                        color: const Color(0xFF0F4D2E), // kPrimary
-                                        letterSpacing: -0.4,
-                                      ),
-                                    ),
-                                    const SizedBox(width: 4),
-                                    Text(
-                                      scholarship.formattedFrequency,
-                                      style: openSans(
-                                        fontSize: 11.5,
-                                        color: const Color(0xFF404942),
-                                        fontWeight: FontWeight.w500,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                            const SizedBox(width: 8, height: 8),
-                            ConstrainedBox(
-                              constraints: const BoxConstraints(maxWidth: 140),
-                              child: Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2.5),
-                                decoration: BoxDecoration(
-                                  color: benefit.isRenewable
-                                      ? const Color(0xFFB3F1C6) // kPrimaryFixed
-                                      : const Color(0xFFFFDEA3), // kTertiaryFixed
-                                  borderRadius: BorderRadius.circular(4),
-                                ),
-                                child: FittedBox(
-                                  fit: BoxFit.scaleDown,
-                                  child: Text(
-                                    benefit.text,
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                    style: outfit(
-                                      fontSize: 10.5,
-                                      fontWeight: FontWeight.w600,
-                                      color: benefit.isRenewable
-                                          ? const Color(0xFF145131) // kOnPrimaryFixedVariant
-                                          : const Color(0xFF5D4200), // kOnTertiaryFixedVariant
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
+                            Text(scholarship.title, maxLines: 2, overflow: TextOverflow.ellipsis,
+                              style: outfit(fontSize: 16, fontWeight: FontWeight.w700,
+                                color: const Color(0xFF161C27), letterSpacing: -0.25, height: 1.25)),
+                            const SizedBox(height: 4),
+                            Row(children: [
+                              Icon(Icons.account_balance_outlined, size: 15, color: providerTypeColor(scholarship.provider)),
+                              const SizedBox(width: 5),
+                              Expanded(child: Text(scholarship.provider ?? 'Scholarship Provider',
+                                maxLines: 1, overflow: TextOverflow.ellipsis,
+                                style: openSans(fontSize: 12.5, color: const Color(0xFF404942), fontWeight: FontWeight.w500))),
+                            ]),
                           ],
+                        );
+                        final amountText = Text(amount, style: outfit(fontSize: 18, fontWeight: FontWeight.w700,
+                          color: kPrimary, letterSpacing: -0.4));
+                        final frequencyText = Text(scholarship.formattedFrequency, style: openSans(fontSize: 11.5,
+                          color: const Color(0xFF404942), fontWeight: FontWeight.w500));
+                        final award = sideBySide
+                            ? Column(crossAxisAlignment: CrossAxisAlignment.end, mainAxisSize: MainAxisSize.min,
+                                children: [amountText, frequencyText])
+                            : Wrap(spacing: 6, runSpacing: 2, crossAxisAlignment: WrapCrossAlignment.center,
+                                children: [const Icon(Icons.stars_rounded, size: 17, color: Color(0xFFF1B41E)), amountText, frequencyText]);
+                        if (sideBySide) {
+                          return Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                            Expanded(child: heading),
+                            const SizedBox(width: 14),
+                            Flexible(child: award),
+                          ]);
+                        }
+                        return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                          heading,
+                          const SizedBox(height: 10),
+                          award,
+                        ]);
+                      }),
+                      const SizedBox(height: 10),
+                      Wrap(spacing: 5, runSpacing: 5, children: [
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 4),
+                          decoration: BoxDecoration(
+                            color: benefit.isRenewable ? const Color(0xFFE7F5EA) : const Color(0xFFFFF1D5),
+                            borderRadius: BorderRadius.circular(999),
+                          ),
+                          child: Text(benefit.text, style: outfit(fontSize: 11, fontWeight: FontWeight.w600,
+                            color: benefit.isRenewable ? const Color(0xFF145131) : const Color(0xFF5D4200))),
                         ),
-                      ),
-                      const SizedBox(height: 8),
-
-                      // 5. Criteria Chips
-                      Wrap(
-                        spacing: 5,
-                        runSpacing: 5,
-                        children: criteriaChips.map((c) {
+                        ...criteriaChips.map((c) {
                           return Container(
                             padding: const EdgeInsets.symmetric(
                               horizontal: 8,
@@ -442,8 +347,7 @@ class ScholarshipCard extends StatelessWidget {
                             ),
                             decoration: BoxDecoration(
                               color: const Color(0xFFF4F6F4),
-                              borderRadius: BorderRadius.circular(6),
-                              border: Border.all(color: const Color(0x0F161C27), width: 0.75),
+                              borderRadius: BorderRadius.circular(999),
                             ),
                             child: Text(
                               c,
@@ -454,160 +358,54 @@ class ScholarshipCard extends StatelessWidget {
                               ),
                             ),
                           );
-                        }).toList(),
-                      ),
+                        }),
+                      ]),
                       const SizedBox(height: 8),
 
-                      // 6. Requirements Snippet Row matching Stitch V2
-                      Row(
-                        children: [
-                          Icon(
-                            reqSnippet.icon,
-                            size: 15,
-                            color: const Color(0xFF404942),
-                          ),
-                          const SizedBox(width: 6),
-                          Expanded(
-                            child: Text(
-                              reqSnippet.text,
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: openSans(
-                                fontSize: 11.5,
-                                color: const Color(0xFF404942),
-                                fontWeight: FontWeight.w400,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
+                      Row(children: [
+                        Icon(requirements.icon, size: 15, color: const Color(0xFF404942)),
+                        const SizedBox(width: 6),
+                        Expanded(child: Text(requirements.text, maxLines: 1, overflow: TextOverflow.ellipsis,
+                          style: openSans(fontSize: 11.5, color: const Color(0xFF404942)))),
+                      ]),
                       const SizedBox(height: 12),
-
-                      // 7. Actions Row: View Details (secondary) + Apply Now (primary) if matchPct >= 90,
-                      // or single full-width View Details if matchPct < 90
-                      if (matchPct >= 90)
-                        Row(
-                          children: [
-                            Expanded(
-                              child: PressableScale(
-                                child: SizedBox(
-                                  height: 44,
-                                  child: TextButton(
-                                    onPressed: () => context.push(
-                                      '/scholarship/${scholarship.id}',
-                                      extra: scholarship,
-                                    ),
-                                    style: TextButton.styleFrom(
-                                      backgroundColor: const Color(0xFFF4F6F8),
-                                        side: const BorderSide(color: Color(0x0F161C27), width: 0.5),
-                                      foregroundColor: const Color(0xFF161C27),
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(10),
-                                      ),
-                                      padding: const EdgeInsets.symmetric(horizontal: 6),
-                                    ),
-                                    child: FittedBox(
-                                      fit: BoxFit.scaleDown,
-                                      child: Text(
-                                        'View Details',
-                                        style: outfit(
-                                          fontSize: 13,
-                                          fontWeight: FontWeight.w600,
-                                          color: const Color(0xFF161C27),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ),
+                      Row(children: [
+                        Expanded(child: PressableScale(
+                          child: SizedBox(height: 44, child: TextButton(
+                            onPressed: () => context.push(
+                              '/scholarship/${scholarship.id}',
+                              extra: scholarship,
+                            ),
+                            style: TextButton.styleFrom(
+                              backgroundColor: const Color(0xFFF4F6F8),
+                              foregroundColor: const Color(0xFF161C27),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(16),
                               ),
                             ),
-                            const SizedBox(width: 8),
-                            Expanded(
-                              child: PressableScale(
-                                child: SizedBox(
-                                  height: 44,
-                                  child: ElevatedButton(
-                                    onPressed: () {
-                                      if (onQuickApply != null) {
-                                        onQuickApply!();
-                                      } else {
-                                        context.push(
-                                          '/scholarship/${scholarship.id}',
-                                          extra: scholarship,
-                                        );
-                                      }
-                                    },
-                                    style: ElevatedButton.styleFrom(
-                                      backgroundColor: const Color(0xFF0F4D2E), // kPrimaryContainer
-                                      foregroundColor: Colors.white,
-                                      elevation: 0,
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(10),
-                                      ),
-                                      padding: const EdgeInsets.symmetric(horizontal: 6),
-                                    ),
-                                    child: FittedBox(
-                                      fit: BoxFit.scaleDown,
-                                      child: Row(
-                                        mainAxisSize: MainAxisSize.min,
-                                        mainAxisAlignment: MainAxisAlignment.center,
-                                        children: [
-                                          Text(
-                                            'Apply Now',
-                                            style: outfit(
-                                              fontSize: 13,
-                                              fontWeight: FontWeight.w600,
-                                              color: Colors.white,
-                                            ),
-                                          ),
-                                          const SizedBox(width: 4),
-                                          const Icon(
-                                            Icons.arrow_forward_rounded,
-                                            size: 15,
-                                            color: Colors.white,
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
+                            child: Text(
+                              'View Details',
+                              style: outfit(fontSize: 13, fontWeight: FontWeight.w600),
                             ),
-                          ],
-                        )
-                      else
-                        PressableScale(
-                          child: SizedBox(
-                            width: double.infinity,
-                            height: 44,
-                            child: TextButton(
-                              onPressed: () => context.push(
-                                '/scholarship/${scholarship.id}',
-                                extra: scholarship,
-                              ),
-                              style: TextButton.styleFrom(
-                                backgroundColor: const Color(0xFFF4F6F8),
-                                        side: const BorderSide(color: Color(0x0F161C27), width: 0.75),
-                                foregroundColor: const Color(0xFF161C27),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                                padding: const EdgeInsets.symmetric(horizontal: 6),
-                              ),
-                              child: FittedBox(
-                                fit: BoxFit.scaleDown,
-                                child: Text(
-                                  'View Details',
-                                  style: outfit(
-                                    fontSize: 13,
-                                    fontWeight: FontWeight.w600,
-                                    color: const Color(0xFF161C27),
-                                  ),
-                                ),
-                              ),
+                          )),
+                        )),
+                        if (canShowApply) ...[
+                          const SizedBox(width: 8),
+                          Expanded(child: PressableScale(child: SizedBox(height: 44, child: ElevatedButton(
+                            onPressed: onQuickApply ?? () => context.push('/scholarship/${scholarship.id}?apply=1', extra: scholarship),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: const Color(0xFF0F4D2E), foregroundColor: Colors.white,
+                              elevation: 0, padding: const EdgeInsets.symmetric(horizontal: 6),
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
                             ),
-                          ),
-                        ),
+                            child: FittedBox(child: Row(mainAxisSize: MainAxisSize.min, children: [
+                              Text('Apply Now', style: outfit(fontSize: 13, fontWeight: FontWeight.w600, color: Colors.white)),
+                              const SizedBox(width: 4),
+                              const Icon(Icons.arrow_forward_rounded, size: 15),
+                            ])),
+                          )))),
+                        ],
+                      ]),
                     ],
                   ),
                 ),

@@ -266,7 +266,10 @@ final routerProvider = Provider<GoRouter>((ref) {
           final tabStr = state.uri.queryParameters['tab'];
           final openDrawer = state.uri.queryParameters['drawer'] == 'open' ||
               state.uri.queryParameters['drawer'] == 'true';
-          int initialTab = 0;
+          int initialTab = openDrawer ? 0 : 8;
+          if (tabStr == 'applications' || tabStr == '0') {
+            initialTab = 0;
+          }
           if (tabStr == 'disbursements' || tabStr == '4') {
             initialTab = 4;
           } else if (tabStr == 'analytics' || tabStr == '3') {
@@ -335,7 +338,7 @@ final routerProvider = Provider<GoRouter>((ref) {
         path: '/onboarding',
         name: 'onboarding',
         pageBuilder: (context, state) =>
-            _fadeRisePage(state, child: const OnboardingScreen()),
+            _fadeRisePage(state, child: const OnboardingScreen(), outgoingEnd: 0.8),
       ),
 
       // --- Root / splash -----------------------------------------------------
@@ -391,6 +394,7 @@ final routerProvider = Provider<GoRouter>((ref) {
             child: ScholarshipDetailScreen(
               scholarshipId: state.pathParameters['id']!,
               initial: scholarship,
+              startApplication: state.uri.queryParameters['apply'] == '1',
             ),
           );
         },
@@ -590,6 +594,7 @@ CustomTransitionPage<void> _fadeRisePage(
   GoRouterState state, {
   required Widget child,
   bool pureFade = false,
+  double outgoingEnd = 0.15,
 }) {
   return CustomTransitionPage<void>(
     key: state.pageKey,
@@ -597,9 +602,10 @@ CustomTransitionPage<void> _fadeRisePage(
     transitionDuration: const Duration(milliseconds: 350),
     transitionsBuilder: (context, animation, secondaryAnimation, child) {
       final curved = CurvedAnimation(parent: animation, curve: kAppleSpringCurve);
+      if (MediaQuery.of(context).disableAnimations) return child;
       final outgoingFade = CurvedAnimation(
         parent: secondaryAnimation,
-        curve: const Interval(0.0, 0.15, curve: kAppleSpringCurve),
+        curve: Interval(0.0, outgoingEnd, curve: kAppleSpringCurve),
       );
 
       if (pureFade) {

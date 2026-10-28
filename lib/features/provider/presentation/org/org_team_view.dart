@@ -9,10 +9,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:scholaris/features/scholarships/models/scholarship.dart';
 import 'package:scholaris/shared/theme/app_motion.dart';
+
 import '../../providers/provider_scholarships_provider.dart';
 import '../../models/organization_team_member.dart';
 import '../../providers/organization_team_provider.dart';
 import 'org_provider_theme.dart';
+import '../widgets/org_summary_disclosure.dart';
+import '../widgets/org_metric_count.dart';
 import 'widgets/assign_reviewer_dialog.dart';
 
 class OrgTeamView extends ConsumerStatefulWidget {
@@ -26,15 +29,15 @@ class _OrgTeamViewState extends ConsumerState<OrgTeamView> {
   String _searchQuery = '';
   String? _selectedRoleFilter;
 
-  Future<void> _openScholarshipAssignmentPicker(OrganizationTeamMember reviewer) async {
+  Future<void> _openScholarshipAssignmentPicker(
+    OrganizationTeamMember reviewer,
+  ) async {
     final scholarships = await ref.read(providerScholarshipsProvider.future);
     if (!mounted) return;
 
     if (scholarships.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('No scholarships available to assign.'),
-        ),
+        const SnackBar(content: Text('No scholarships available to assign.')),
       );
       return;
     }
@@ -44,7 +47,9 @@ class _OrgTeamViewState extends ConsumerState<OrgTeamView> {
       barrierColor: const Color(0x33000000),
       builder: (ctx) {
         return AlertDialog(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
           title: Text(
             'Select Grant Program for ${reviewer.fullName}',
             style: orgHeadline(fontSize: 16, fontWeight: FontWeight.w700),
@@ -60,16 +65,25 @@ class _OrgTeamViewState extends ConsumerState<OrgTeamView> {
                 final s = scholarships[i];
                 return ListTile(
                   contentPadding: EdgeInsets.zero,
-                  leading: const Icon(Icons.school_outlined, color: kOrgPrimary),
+                  leading: const Icon(
+                    Icons.school_outlined,
+                    color: kOrgPrimary,
+                  ),
                   title: Text(
                     s.title,
-                    style: orgHeadline(fontSize: 13, fontWeight: FontWeight.w600),
+                    style: orgHeadline(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
                   subtitle: Text(
                     '₱${s.awardAmount} / yr',
                     style: orgBody(fontSize: 11.5, color: kOrgTextSecondary),
                   ),
-                  trailing: const Icon(Icons.arrow_forward_ios_rounded, size: 14),
+                  trailing: const Icon(
+                    Icons.arrow_forward_ios_rounded,
+                    size: 14,
+                  ),
                   onTap: () {
                     Navigator.of(ctx).pop();
                     AssignReviewerDialog.show(context, s);
@@ -134,8 +148,11 @@ class _OrgTeamViewState extends ConsumerState<OrgTeamView> {
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        const Icon(Icons.error_outline_rounded,
-                            size: 36, color: kOrgError),
+                        const Icon(
+                          Icons.error_outline_rounded,
+                          size: 36,
+                          color: kOrgError,
+                        ),
                         const SizedBox(height: 10),
                         Text(
                           'Could not load team roster',
@@ -147,9 +164,17 @@ class _OrgTeamViewState extends ConsumerState<OrgTeamView> {
                         ),
                         const SizedBox(height: 4),
                         Text(
-                          err.toString(),
-                          style: orgBody(fontSize: 12, color: kOrgTextSecondary),
+                          'Check your connection and try again.',
+                          style: orgBody(
+                            fontSize: 12,
+                            color: kOrgTextSecondary,
+                          ),
                           textAlign: TextAlign.center,
+                        ),
+                        TextButton(
+                          onPressed: () =>
+                              ref.invalidate(organizationRosterProvider),
+                          child: const Text('Retry'),
                         ),
                       ],
                     ),
@@ -157,12 +182,15 @@ class _OrgTeamViewState extends ConsumerState<OrgTeamView> {
                 ),
                 data: (roster) {
                   final totalMembers = roster.length;
-                  final reviewersCount =
-                      roster.where((m) => m.isReviewer && m.active).length;
-                  final financeCount =
-                      roster.where((m) => m.isFinance && m.active).length;
-                  final adminCount =
-                      roster.where((m) => m.isOrgAdmin && m.active).length;
+                  final reviewersCount = roster
+                      .where((m) => m.isReviewer && m.active)
+                      .length;
+                  final financeCount = roster
+                      .where((m) => m.isFinance && m.active)
+                      .length;
+                  final adminCount = roster
+                      .where((m) => m.isOrgAdmin && m.active)
+                      .length;
 
                   var filtered = roster;
                   if (_selectedRoleFilter != null) {
@@ -183,12 +211,17 @@ class _OrgTeamViewState extends ConsumerState<OrgTeamView> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       // Bento Summary Cards
-                      _buildBentoRow(
-                        totalMembers: totalMembers,
-                        reviewersCount: reviewersCount,
-                        financeCount: financeCount,
-                        adminCount: adminCount,
-                        isDesktop: isDesktop,
+                      OrgSummaryDisclosure(
+                        title: 'Team summary',
+                        summary:
+                            '$totalMembers members · $reviewersCount active reviewers',
+                        child: _buildBentoRow(
+                          totalMembers: totalMembers,
+                          reviewersCount: reviewersCount,
+                          financeCount: financeCount,
+                          adminCount: adminCount,
+                          isDesktop: isDesktop,
+                        ),
                       ),
                       const SizedBox(height: 24),
 
@@ -253,18 +286,15 @@ class _OrgTeamViewState extends ConsumerState<OrgTeamView> {
         Text(
           'Team & Reviewers',
           style: orgHeadline(
-            fontSize: isDesktop ? 24 : 20,
+            fontSize: isDesktop ? 32 : 26,
             fontWeight: FontWeight.w700,
             color: kOrgTextPrimary,
           ),
         ),
         const SizedBox(height: 4),
         Text(
-          'Manage staff members, role boundaries, and scholarship evaluation assignments.',
-          style: orgBody(
-            fontSize: 13,
-            color: kOrgTextSecondary,
-          ),
+          'Manage your team and scholarship review assignments.',
+          style: orgBody(fontSize: 13, color: kOrgTextSecondary),
         ),
       ],
     );
@@ -388,8 +418,9 @@ class _OrgTeamViewState extends ConsumerState<OrgTeamView> {
             ],
           ),
           const SizedBox(height: 8),
-          Text(
-            value,
+          OrgMetricCount(
+            motionId: 'team.$title',
+            targetValue: int.parse(value),
             style: orgHeadline(
               fontSize: 22,
               fontWeight: FontWeight.w700,
@@ -445,11 +476,16 @@ class _OrgTeamViewState extends ConsumerState<OrgTeamView> {
               decoration: InputDecoration(
                 hintText: 'Search staff by name or role...',
                 hintStyle: orgBody(fontSize: 12.5, color: kOrgTextSecondary),
-                prefixIcon: const Icon(Icons.search_rounded,
-                    size: 18, color: kOrgTextSecondary),
+                prefixIcon: const Icon(
+                  Icons.search_rounded,
+                  size: 18,
+                  color: kOrgTextSecondary,
+                ),
                 border: InputBorder.none,
-                contentPadding:
-                    const EdgeInsets.symmetric(horizontal: 12, vertical: 9),
+                contentPadding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 9,
+                ),
                 isDense: true,
               ),
             ),
@@ -467,7 +503,9 @@ class _OrgTeamViewState extends ConsumerState<OrgTeamView> {
                       opt.label,
                       style: orgLabel(
                         fontSize: 11.5,
-                        fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+                        fontWeight: isSelected
+                            ? FontWeight.w600
+                            : FontWeight.w500,
                         color: isSelected ? Colors.white : kOrgTextPrimary,
                       ),
                     ),
@@ -506,8 +544,11 @@ class _OrgTeamViewState extends ConsumerState<OrgTeamView> {
       child: Center(
         child: Column(
           children: [
-            const Icon(Icons.group_off_rounded,
-                size: 42, color: kOrgTextSecondary),
+            const Icon(
+              Icons.group_off_rounded,
+              size: 42,
+              color: kOrgTextSecondary,
+            ),
             const SizedBox(height: 12),
             Text(
               'No Members Found',
@@ -529,7 +570,10 @@ class _OrgTeamViewState extends ConsumerState<OrgTeamView> {
     );
   }
 
-  Widget _buildRosterList(List<OrganizationTeamMember> members, {required bool isDesktop}) {
+  Widget _buildRosterList(
+    List<OrganizationTeamMember> members, {
+    required bool isDesktop,
+  }) {
     return Container(
       decoration: BoxDecoration(
         color: kOrgSurfaceWhite,
@@ -584,7 +628,9 @@ class _OrgTeamViewState extends ConsumerState<OrgTeamView> {
                       borderRadius: BorderRadius.circular(8),
                     ),
                     padding: const EdgeInsets.symmetric(
-                        horizontal: 10, vertical: 6),
+                      horizontal: 10,
+                      vertical: 6,
+                    ),
                   ),
                 )
               : null;
@@ -599,8 +645,8 @@ class _OrgTeamViewState extends ConsumerState<OrgTeamView> {
                   backgroundColor: member.isOrgAdmin
                       ? kOrgPrimary
                       : member.isFinance
-                          ? const Color(0xFF0F4D2E)
-                          : const Color(0xFF0058BC),
+                      ? const Color(0xFF0F4D2E)
+                      : const Color(0xFF0058BC),
                   child: Text(
                     member.fullName.isNotEmpty
                         ? member.fullName[0].toUpperCase()
@@ -632,7 +678,9 @@ class _OrgTeamViewState extends ConsumerState<OrgTeamView> {
                           ),
                           Container(
                             padding: const EdgeInsets.symmetric(
-                                horizontal: 6, vertical: 2),
+                              horizontal: 6,
+                              vertical: 2,
+                            ),
                             decoration: BoxDecoration(
                               color: roleBadgeBg,
                               borderRadius: BorderRadius.circular(6),
@@ -648,7 +696,9 @@ class _OrgTeamViewState extends ConsumerState<OrgTeamView> {
                           ),
                           Container(
                             padding: const EdgeInsets.symmetric(
-                                horizontal: 6, vertical: 2),
+                              horizontal: 6,
+                              vertical: 2,
+                            ),
                             decoration: BoxDecoration(
                               color: member.active
                                   ? const Color(0xFFE8F5E9)
@@ -661,8 +711,8 @@ class _OrgTeamViewState extends ConsumerState<OrgTeamView> {
                                 fontSize: 9,
                                 fontWeight: FontWeight.w700,
                                 color: member.active
-                                  ? const Color(0xFF0F4D2E)
-                                  : kOrgError,
+                                    ? const Color(0xFF0F4D2E)
+                                    : kOrgError,
                               ),
                             ),
                           ),

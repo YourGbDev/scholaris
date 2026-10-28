@@ -30,6 +30,7 @@ import 'package:scholaris/features/bookmarks/providers/bookmarks_provider.dart';
 import 'package:scholaris/features/profile/providers/avatar_provider.dart';
 import 'package:scholaris/features/profile/providers/profile_setup_provider.dart';
 import 'package:scholaris/features/provider/presentation/widgets/scholarship_qr_dialog.dart';
+import 'package:scholaris/features/safety/presentation/student_safety_report.dart';
 import 'package:scholaris/features/scholarships/models/scholarship.dart';
 import 'package:scholaris/features/scholarships/models/scholarship_capacity.dart';
 import 'package:scholaris/features/scholarships/presentation/widgets/identity_photo_dialog.dart';
@@ -56,7 +57,7 @@ final scholarshipEligibleSchoolsProvider =
         .maybeSingle();
     if (res == null) return null;
     final list = res['eligible_school_ids'] as List<dynamic>?;
-    return list?.map((e) => e.toString()).toList();
+    return list?.map((e) => e.toString()).toList() ?? <String>[];
   } catch (_) {
     return null;
   }
@@ -86,10 +87,12 @@ class ScholarshipDetailScreen extends ConsumerStatefulWidget {
     super.key,
     required this.scholarshipId,
     this.initial,
+    this.startApplication = false,
   });
 
   final String scholarshipId;
   final Scholarship? initial;
+  final bool startApplication;
 
   @override
   ConsumerState<ScholarshipDetailScreen> createState() =>
@@ -204,6 +207,11 @@ class _ScholarshipDetailScreenState
               color: saved ? kAccent : kOnSurface,
             ),
           ),
+          StudentSafetyReportButton(
+            scholarshipId: widget.scholarshipId,
+            scholarshipTitle: widget.initial?.title ?? 'Scholarship',
+            isIconOnly: true,
+          ),
           const SizedBox(width: 4),
         ],
       ),
@@ -219,6 +227,7 @@ class _ScholarshipDetailScreenState
         saved: saved,
         checklistKey: _checklistKey,
         onScrollToChecklist: _scrollToChecklist,
+        startApplication: widget.startApplication,
       );
     }
 
@@ -240,6 +249,7 @@ class _ScholarshipDetailScreenState
                   saved: saved,
                   checklistKey: _checklistKey,
                   onScrollToChecklist: _scrollToChecklist,
+                  startApplication: widget.startApplication,
                 ),
         );
   }
@@ -285,12 +295,14 @@ class _DetailContent extends ConsumerWidget {
     required this.saved,
     required this.checklistKey,
     required this.onScrollToChecklist,
+    required this.startApplication,
   });
 
   final Scholarship scholarship;
   final bool saved;
   final GlobalKey checklistKey;
   final VoidCallback onScrollToChecklist;
+  final bool startApplication;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -305,10 +317,10 @@ class _DetailContent extends ConsumerWidget {
       physics: const AppleBouncingScrollPhysics(),
       padding: const EdgeInsets.fromLTRB(20, 4, 20, 48),
       children: [
-        // Internal Navigation Breadcrumb (Stitch scholaris_scholarship_detail_eligibility)
-        const _BreadcrumbRow(),
-        const SizedBox(height: 6),
-
+        if (startApplication) ...[
+          _ApplySection(scholarship: scholarship, onScrollToChecklist: onScrollToChecklist, startApplication: true),
+          const SizedBox(height: 14),
+        ],
         // 1. Hero Card
         StaggeredListItem(
           index: 0,
@@ -336,14 +348,14 @@ class _DetailContent extends ConsumerWidget {
         const SizedBox(height: 14),
 
         // 2. Application Readiness & CTA / Banner
-        StaggeredListItem(
+        if (!startApplication) StaggeredListItem(
           index: 3,
           child: _ApplySection(
             scholarship: scholarship,
             onScrollToChecklist: onScrollToChecklist,
           ),
         ),
-        const SizedBox(height: 14),
+        if (!startApplication) const SizedBox(height: 14),
 
         // 3. Algorithmic Fit & Criteria Checklist
         if (reasons.isNotEmpty) ...[
@@ -386,6 +398,14 @@ class _DetailContent extends ConsumerWidget {
           index: 8,
           child: _ProviderTrustCard(scholarship: scholarship),
         ),
+        const SizedBox(height: 20),
+        Builder(builder: (context) => OutlinedButton.icon(
+          onPressed: () {
+            Scrollable.of(context).position.animateTo(0, duration: kDurationSlow, curve: kAppleSpringCurve);
+          },
+          icon: const Icon(Icons.arrow_upward_rounded),
+          label: const Text('Back to top'),
+        )),
       ],
     );
   }
@@ -401,49 +421,6 @@ class _DetailContent extends ConsumerWidget {
       return const [];
     }
     return matchReasonsFor(profile!, scholarship);
-  }
-}
-
-/// Internal Navigation Breadcrumb matching Stitch mockup:
-/// "<- Back to Discover" on the left.
-class _BreadcrumbRow extends StatelessWidget {
-  const _BreadcrumbRow();
-
-  @override
-  Widget build(BuildContext context) {
-    return Align(
-      alignment: Alignment.centerLeft,
-      child: PressableScale(
-        child: InkWell(
-          borderRadius: BorderRadius.circular(6),
-          onTap: () {
-            if (context.canPop()) {
-              context.pop();
-            } else {
-              context.go('/discover');
-            }
-          },
-          child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 2),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const Icon(Icons.arrow_back_rounded, size: 18, color: kSecondary),
-                const SizedBox(width: 4),
-                Text(
-                  'Back to Discover',
-                  style: outfit(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w600,
-                    color: kSecondary,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
   }
 }
 
@@ -516,12 +493,6 @@ class _HeroCard extends ConsumerWidget {
                           color: kSecondary,
                         ),
                       ),
-                    ),
-                    const SizedBox(width: 4),
-                    const Icon(
-                      Icons.verified_rounded,
-                      size: 16,
-                      color: kPrimaryContainer,
                     ),
                   ],
                 ),
@@ -1233,7 +1204,7 @@ class _AlgorithmicFitCard extends ConsumerWidget {
                         ),
                         const SizedBox(height: 2),
                         CountUpAnimation(
-                          targetValue: 98,
+                          targetValue: placeholderMatchPercentage(reasons.length),
                           suffix: '% Match',
                           style: outfit(
                             fontSize: 22,
@@ -1243,7 +1214,7 @@ class _AlgorithmicFitCard extends ConsumerWidget {
                         ),
                       const SizedBox(height: 2),
                       Text(
-                        'Calibrated against $userName\'s verified profile',
+                        'Demo score • Based on $userName\'s profile',
                         style: openSans(
                           fontSize: 11,
                           fontWeight: FontWeight.w500,
@@ -1261,7 +1232,7 @@ class _AlgorithmicFitCard extends ConsumerWidget {
                     children: [
                       CustomPaint(
                         size: const Size(56, 56),
-                        painter: _FitGaugePainter(),
+                        painter: _FitGaugePainter(placeholderMatchPercentage(reasons.length)),
                       ),
                       const Icon(
                         Icons.verified_rounded,
@@ -1433,21 +1404,23 @@ class _AlgorithmicFitCard extends ConsumerWidget {
   String? _deriveCriterionSubtitle(String reason) {
     final lower = reason.toLowerCase();
     if (lower.contains('gpa') || lower.contains('gwa')) {
-      return 'Eligible: Verified academic transcript matches requirement';
+      return 'Based on the academic information in your profile';
     } else if (lower.contains('course') || lower.contains('major') || lower.contains('track')) {
-      return 'Perfect Match: Priority STEM curriculum';
+      return 'Based on the course in your profile';
     } else if (lower.contains('year') || lower.contains('level')) {
-      return 'Verified via Student Information System SSO';
+      return 'Based on the year level in your profile';
     } else if (lower.contains('citizen') || lower.contains('resident') || lower.contains('region')) {
-      return 'PSA Birth Certificate & LGU residency verified';
+      return 'Based on the information in your profile';
     } else if (lower.contains('income')) {
-      return 'BIR Form 2316 / Certificate of Indigency Qualified';
+      return 'Based on the income information in your profile';
     }
     return null;
   }
 }
 
 class _FitGaugePainter extends CustomPainter {
+  _FitGaugePainter(this.percentage);
+  final int percentage;
   @override
   void paint(Canvas canvas, Size size) {
     final center = Offset(size.width / 2, size.height / 2);
@@ -1476,23 +1449,18 @@ class _FitGaugePainter extends CustomPainter {
     canvas.drawArc(
       Rect.fromCircle(center: center, radius: radius),
       -math.pi / 2,
-      2 * math.pi * 0.94,
+      2 * math.pi * percentage / 100,
       false,
       primaryPaint,
     );
 
-    // Yellow accent accentuating top tier
-    canvas.drawArc(
-      Rect.fromCircle(center: center, radius: radius),
-      -math.pi / 2 + 2 * math.pi * 0.94,
-      2 * math.pi * 0.04,
-      false,
-      accentPaint,
-    );
+    canvas.drawArc(Rect.fromCircle(center: center, radius: radius),
+      -math.pi / 2 + 2 * math.pi * percentage / 100 - 0.05,
+      0.05, false, accentPaint);
   }
 
   @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
+  bool shouldRepaint(covariant _FitGaugePainter oldDelegate) => oldDelegate.percentage != percentage;
 }
 
 /// 4. Award Overview & Impact Card: 3-column metrics grid, description ('About'),
@@ -2116,7 +2084,7 @@ class _ApplicationMaterialsCardState
                     borderRadius: BorderRadius.circular(4),
                   ),
                   child: Text(
-                    hasTranscript ? 'Verified' : 'Incomplete',
+                    hasTranscript ? 'Uploaded' : 'Incomplete',
                     style: outfit(
                       fontSize: 10,
                       fontWeight: FontWeight.w600,
@@ -2277,14 +2245,14 @@ class _ApplicationMaterialsCardState
                                   children: [
                                     const Icon(Icons.add_circle_outline_rounded, size: 14, color: kSecondary),
                                     const SizedBox(width: 4),
-                                    Text(
+                                    Flexible(child: Text(
                                       'Add Recommender Email',
                                       style: outfit(
                                         fontSize: 11.5,
                                         fontWeight: FontWeight.w600,
                                         color: kSecondary,
                                       ),
-                                    ),
+                                    )),
                                   ],
                                 ),
                               ),
@@ -2304,7 +2272,7 @@ class _ApplicationMaterialsCardState
   }
 }
 
-/// 7. Institutional Provider Trust Card matching Stitch code.html.
+/// Provider information supplied with the scholarship.
 class _ProviderTrustCard extends StatelessWidget {
   const _ProviderTrustCard({required this.scholarship});
 
@@ -2313,138 +2281,21 @@ class _ProviderTrustCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
+      padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(color: const Color(0xFFE2E8F3)),
-        boxShadow: const [
-          BoxShadow(
-            color: kCardShadow,
-            blurRadius: 16,
-            offset: Offset(0, 6),
-          ),
-        ],
       ),
-      padding: const EdgeInsets.all(18),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Container(
-                width: 36,
-                height: 36,
-                decoration: BoxDecoration(
-                  color: kSecondary,
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: const Icon(
-                  Icons.verified_user_rounded,
-                  size: 20,
-                  color: Colors.white,
-                ),
-              ),
-              const SizedBox(width: 10),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Verified Endowment',
-                      style: outfit(
-                        fontSize: 15,
-                        fontWeight: FontWeight.bold,
-                        color: kSecondary,
-                      ),
-                    ),
-                    Text(
-                      'SEC / CHED Institutional Registry ID: #84-1920841',
-                      style: openSans(
-                        fontSize: 11,
-                        color: kOnSurfaceVariant,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 12),
-          Container(
-            padding: const EdgeInsets.all(10),
-            decoration: BoxDecoration(
-              color: kSurfaceContainerLow,
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: Row(
-              children: [
-                Container(
-                  width: 36,
-                  height: 36,
-                  decoration: const BoxDecoration(
-                    color: Color(0xFFD2E4FF),
-                    shape: BoxShape.circle,
-                  ),
-                  child: const Icon(Icons.person_rounded, size: 20, color: kSecondary),
-                ),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Dr. Aris Thorne',
-                        style: outfit(
-                          fontSize: 13,
-                          fontWeight: FontWeight.w600,
-                          color: kOnSurface,
-                        ),
-                      ),
-                      Text(
-                        'Grant Officer • Avg reply: < 24 hrs',
-                        style: openSans(
-                          fontSize: 10,
-                          color: kOnSurfaceVariant,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                InkWell(
-                  borderRadius: BorderRadius.circular(8),
-                  onTap: () {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Message composer opened.')),
-                    );
-                  },
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                    decoration: BoxDecoration(
-                      color: kSurfaceContainer,
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        const Icon(Icons.chat_bubble_outline_rounded, size: 14, color: kSecondary),
-                        const SizedBox(width: 4),
-                        Text(
-                          'Message',
-                          style: outfit(
-                            fontSize: 11,
-                            fontWeight: FontWeight.w600,
-                            color: kSecondary,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
+      child: Row(children: [
+        const Icon(Icons.account_balance_outlined, color: kSecondary),
+        const SizedBox(width: 12),
+        Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Text('Scholarship provider', style: outfit(fontSize: 15, fontWeight: FontWeight.bold, color: kSecondary)),
+          const SizedBox(height: 4),
+          Text(scholarship.provider ?? 'Scholarship Provider', style: openSans(fontSize: 12, color: kOnSurfaceVariant)),
+        ])),
+      ]),
     );
   }
 }
@@ -2455,10 +2306,12 @@ class _ApplySection extends ConsumerStatefulWidget {
   const _ApplySection({
     required this.scholarship,
     required this.onScrollToChecklist,
+    this.startApplication = false,
   });
 
   final Scholarship scholarship;
   final VoidCallback onScrollToChecklist;
+  final bool startApplication;
 
   @override
   ConsumerState<_ApplySection> createState() => _ApplySectionState();
@@ -2466,6 +2319,8 @@ class _ApplySection extends ConsumerStatefulWidget {
 
 class _ApplySectionState extends ConsumerState<_ApplySection> {
   bool _isApplying = false;
+  bool _openingApplication = false;
+  bool _autoStartConsumed = false;
 
   /// Pre-apply confirmation dialog (Stitch scholaris_submit_application_review).
   Future<bool> _confirmApply() async {
@@ -2533,8 +2388,16 @@ class _ApplySectionState extends ConsumerState<_ApplySection> {
   }
 
   Future<void> _apply() async {
-    if (_isApplying) return;
+    if (_isApplying || _openingApplication) return;
+    _openingApplication = true;
+    try {
+      await _runApply();
+    } finally {
+      _openingApplication = false;
+    }
+  }
 
+  Future<void> _runApply() async {
     final userId = ref.read(currentUserIdProvider);
     if (userId != null) {
       final avatarState = ref.read(avatarProvider(userId));
@@ -2549,7 +2412,7 @@ class _ApplySectionState extends ConsumerState<_ApplySection> {
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(
                 content: Text(
-                  'A verified real photo is required to submit your scholarship application. Providers cannot deliberate applications with placeholder avatars.',
+                  'A profile photo is required to submit your application.',
                 ),
                 backgroundColor: Color(0xFFBA1A1A),
               ),
@@ -2562,7 +2425,7 @@ class _ApplySectionState extends ConsumerState<_ApplySection> {
         if (updatedAvatarState.isRealPhoto) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
-              content: Text('Identity photo verified! Proceeding with application...'),
+              content: Text('Profile photo added. Proceeding with application...'),
               backgroundColor: Color(0xFF145131),
               duration: Duration(seconds: 2),
             ),
@@ -2691,7 +2554,43 @@ class _ApplySectionState extends ConsumerState<_ApplySection> {
 
   @override
   Widget build(BuildContext context) {
-    ref.watch(applicationsProvider);
+    final applicationsAsync = ref.watch(applicationsProvider);
+    if (widget.startApplication && !_autoStartConsumed) {
+      final userId = ref.watch(currentUserIdProvider);
+      final profile = userId == null ? null : ref.watch(currentProfileProvider);
+      final schools = ref.watch(scholarshipEligibleSchoolsProvider(widget.scholarship.id));
+      final school = userId == null ? null : ref.watch(studentProfileSchoolIdProvider(userId));
+      final capacity = ref.watch(scholarshipCapacityProvider(widget.scholarship.id));
+      if (applicationsAsync.isLoading || profile?.isLoading == true || schools.isLoading || school?.isLoading == true || capacity.isLoading) {
+        return const Center(child: CircularProgressIndicator());
+      }
+      if (applicationsAsync.hasError || profile?.hasError == true || schools.hasError || schools.valueOrNull == null || school?.hasError == true || capacity.hasError || capacity.valueOrNull == null) {
+        return _ReadinessNotice(
+          icon: Icons.info_outline_rounded,
+          title: 'Unable to check application options',
+          message: 'We could not check your eligibility or available slots. Please try again.',
+          actionLabel: 'Try again',
+          onAction: () {
+            ref.invalidate(applicationsProvider);
+            ref.invalidate(currentProfileProvider);
+            ref.invalidate(scholarshipEligibleSchoolsProvider(widget.scholarship.id));
+            ref.invalidate(scholarshipCapacityProvider(widget.scholarship.id));
+            if (userId != null) ref.invalidate(studentProfileSchoolIdProvider(userId));
+          },
+        );
+      }
+      final existing = ref.read(applicationsProvider.notifier).applicationFor(widget.scholarship.id);
+      final readiness = evaluateApplicationReadiness(profile: profile?.valueOrNull, scholarship: widget.scholarship, referenceNow: DateTime.now());
+      final eligibleSchools = schools.valueOrNull!;
+      final schoolEligible = eligibleSchools.isEmpty || (school?.valueOrNull != null && eligibleSchools.contains(school!.valueOrNull));
+      _autoStartConsumed = true;
+      final alreadyApplied = ref.read(applicationsProvider.notifier).hasApplied(widget.scholarship.id);
+      if (userId != null && readiness.canApply && schoolEligible && !capacity.valueOrNull!.isFull && (!alreadyApplied || existing?.status == ApplicationStatus.draft) && (existing == null || existing.status == ApplicationStatus.draft)) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (mounted) _apply();
+        });
+      }
+    }
     final existingApp =
         ref.read(applicationsProvider.notifier).applicationFor(widget.scholarship.id);
 

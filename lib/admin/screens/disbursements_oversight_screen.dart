@@ -7,7 +7,6 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:scholaris/features/admin/presentation/admin_theme.dart';
 import 'package:scholaris/shared/theme/app_motion.dart';
 import 'package:scholaris/shared/widgets/state_views.dart';
@@ -332,11 +331,9 @@ class _DisbursementsOversightScreenState
         const SizedBox(height: 8),
         Text(
           'Disbursements Oversight',
-          style: GoogleFonts.newsreader(
-            fontSize: 32,
+          style: seqHeadlineLg(
             fontWeight: FontWeight.w700,
             color: kSeqOnSurface,
-            letterSpacing: -0.5,
           ),
         ),
         const SizedBox(height: 4),

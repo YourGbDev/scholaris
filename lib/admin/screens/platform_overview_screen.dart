@@ -12,6 +12,9 @@ import 'package:scholaris/features/admin/presentation/admin_theme.dart';
 import 'package:scholaris/shared/theme/app_motion.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../widgets/admin_review_priorities.dart';
+import '../../features/provider/presentation/widgets/org_summary_disclosure.dart';
+
 // =============================================================================
 // 1. Domain Model: PlatformOverviewData
 // =============================================================================
@@ -42,13 +45,17 @@ class PlatformOverviewData {
 // 2. Data Provider
 // =============================================================================
 
-final platformOverviewDataProvider =
-    FutureProvider<PlatformOverviewData>((ref) async {
+final platformOverviewDataProvider = FutureProvider<PlatformOverviewData>((
+  ref,
+) async {
   final supabase = Supabase.instance.client;
 
   Future<int> fetchCount(String table) async {
     try {
-      final res = await supabase.from(table).select('id').count(CountOption.exact);
+      final res = await supabase
+          .from(table)
+          .select('id')
+          .count(CountOption.exact);
       return res.count;
     } catch (_) {
       final res = await supabase.from(table).select('id');
@@ -90,93 +97,77 @@ final platformOverviewDataProvider =
 // =============================================================================
 
 class PlatformOverviewScreen extends ConsumerWidget {
-  const PlatformOverviewScreen({super.key});
+  const PlatformOverviewScreen({super.key, this.onProviders, this.onReports});
+  final VoidCallback? onProviders;
+  final VoidCallback? onReports;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final overviewAsync = ref.watch(platformOverviewDataProvider);
-
     return Scaffold(
       backgroundColor: kSeqSurface,
-      body: CrossFadeLoading(
-        isLoading: overviewAsync.isLoading,
-        skeleton: _buildSkeletonLoader(context),
-        child: overviewAsync.when(
-          loading: () => _buildSkeletonLoader(context),
-          error: (err, _) => Center(
-            child: Padding(
-              padding: const EdgeInsets.all(24),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
+      body: ListView(
+        padding: const EdgeInsets.all(24),
+        children: [
+          _buildHeaderBar(context),
+          const SizedBox(height: 24),
+          AdminReviewPriorities(
+            onProviders: onProviders ?? () {},
+            onReports: onReports ?? () {},
+          ),
+          const SizedBox(height: 24),
+          OrgSummaryDisclosure(
+            title: 'Platform statistics',
+            summary: 'Account, program and activity totals',
+            child: overviewAsync.when(
+              skipLoadingOnRefresh: false,
+              loading: () =>
+                  SizedBox(height: 200, child: _buildSkeletonLoader(context)),
+              error: (_, _) => Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Icon(Icons.error_outline, size: 48, color: kSeqError),
-                  const SizedBox(height: 12),
-                  Text(
-                    'Failed to load platform statistics',
-                    style: seqHeadlineSm(color: kSeqOnSurface),
+                  const Text(
+                    'Platform statistics unavailable. Your review queues are available above.',
                   ),
-                  const SizedBox(height: 4),
-                  Text(
-                    err.toString(),
-                    style: seqBodyMd(color: kSeqOnSurfaceVariant),
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: 16),
-                  ElevatedButton.icon(
-                    onPressed: () => ref.invalidate(platformOverviewDataProvider),
-                    icon: const Icon(Icons.refresh),
-                    label: const Text('Retry'),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: kSeqPrimary,
-                      foregroundColor: kSeqOnPrimary,
-                    ),
+                  TextButton(
+                    onPressed: () =>
+                        ref.invalidate(platformOverviewDataProvider),
+                    child: const Text('Retry statistics'),
                   ),
                 ],
               ),
+              data: (data) => LayoutBuilder(
+                builder: (context, constraints) {
+                  final width = MediaQuery.textScalerOf(context).scale(1) >= 1.5
+                      ? 500.0
+                      : constraints.maxWidth;
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _buildSectionHeader('CORE PLATFORM SCALE'),
+                      const SizedBox(height: 12),
+                      _buildHeroGrid(context, data: data, width: width),
+                      const SizedBox(height: 24),
+                      _buildSectionHeader('APPLICATION & PROVIDER RECORDS'),
+                      const SizedBox(height: 12),
+                      _buildSecondaryGrid(context, data: data, width: width),
+                      const SizedBox(height: 24),
+                      _buildSectionHeader('RECORDED ACTIVITY'),
+                      const SizedBox(height: 12),
+                      _buildSystemActivityGrid(
+                        context,
+                        data: data,
+                        width: width,
+                      ),
+                      const SizedBox(height: 24),
+                      _buildBottomNote(context),
+                    ],
+                  );
+                },
+              ),
             ),
           ),
-          data: (data) {
-          final width = MediaQuery.sizeOf(context).width;
-
-          return RefreshIndicator(
-            color: kSeqPrimaryContainer,
-            onRefresh: () async {
-              ref.invalidate(platformOverviewDataProvider);
-              await ref.read(platformOverviewDataProvider.future);
-            },
-            child: ListView(
-              physics: const AppleBouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
-              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
-              children: [
-                _buildHeaderBar(context),
-                const SizedBox(height: 24),
-
-                // 1. Top Hero Section (3 cards)
-                _buildSectionHeader('CORE PLATFORM SCALE'),
-                const SizedBox(height: 12),
-                _buildHeroGrid(context, data: data, width: width),
-                const SizedBox(height: 32),
-
-                // 2. Secondary Section (2 cards)
-                _buildSectionHeader('APPLICATION & INSTITUTION WORKFLOW'),
-                const SizedBox(height: 12),
-                _buildSecondaryGrid(context, data: data, width: width),
-                const SizedBox(height: 32),
-
-                // 3. System Activity Section (3 muted cards)
-                _buildSectionHeader('SYSTEM INTEGRITY & EVENT TELEMETRY'),
-                const SizedBox(height: 12),
-                _buildSystemActivityGrid(context, data: data, width: width),
-                const SizedBox(height: 32),
-
-                // Bottom Note
-                _buildBottomNote(context),
-                const SizedBox(height: 24),
-              ],
-            ),
-          );
-        },
-        ),
+        ],
       ),
     );
   }
@@ -257,7 +248,7 @@ class PlatformOverviewScreen extends ConsumerWidget {
               ),
               const SizedBox(width: 6),
               Text(
-                'Live data',
+                'SUPER ADMIN',
                 style: seqLabelSm(
                   color: kSeqOnSurfaceVariant,
                   fontWeight: FontWeight.w600,
@@ -270,7 +261,7 @@ class PlatformOverviewScreen extends ConsumerWidget {
 
         // Title
         Text(
-          'Platform Overview',
+          'Platform overview',
           style: seqHeadlineLg(
             fontWeight: FontWeight.w700,
             color: kSeqOnSurface,
@@ -280,7 +271,7 @@ class PlatformOverviewScreen extends ConsumerWidget {
 
         // Subtitle
         Text(
-          'Live platform statistics',
+          'Provider approvals, student safety and platform oversight.',
           style: seqBodyMd(color: kSeqOnSurfaceVariant),
         ),
       ],
@@ -301,25 +292,25 @@ class PlatformOverviewScreen extends ConsumerWidget {
         icon: Icons.people_alt_outlined,
         accentColor: kSeqPrimaryContainer,
         containerBg: kSeqPrimaryFixed.withValues(alpha: 0.4),
-        subtitle: 'Verified students, providers & administrators',
+        subtitle: 'Registered platform accounts',
         isCurrency: false,
       ),
       _HeroCardItem(
-        label: 'ACTIVE SCHOLARSHIPS',
+        label: 'LISTED SCHOLARSHIPS',
         targetValue: data.activeScholarships,
         icon: Icons.school_outlined,
         accentColor: kSeqSecondary,
         containerBg: kSeqSecondaryFixed.withValues(alpha: 0.4),
-        subtitle: 'Open programs actively accepting applications',
+        subtitle: 'All program records, including closed listings',
         isCurrency: false,
       ),
       _HeroCardItem(
-        label: 'TOTAL SCHOLARSHIP VALUE',
+        label: 'LISTED AWARD VALUE',
         targetValue: data.totalScholarshipValue.round(),
         icon: Icons.payments_outlined,
         accentColor: const Color(0xFF1B5E20),
         containerBg: const Color(0xFFD4EBD9),
-        subtitle: 'Cumulative declared financial grant coverage',
+        subtitle: 'Sum of listed amounts; not funding held or money sent',
         isCurrency: true,
       ),
     ];
@@ -357,7 +348,7 @@ class PlatformOverviewScreen extends ConsumerWidget {
 
   Widget _buildHeroCard(BuildContext context, {required _HeroCardItem item}) {
     return Container(
-      padding: const EdgeInsets.all(24),
+      padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         color: kSeqSurfaceContainerLowest,
         borderRadius: BorderRadius.circular(16),
@@ -397,11 +388,7 @@ class PlatformOverviewScreen extends ConsumerWidget {
                   color: item.containerBg,
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: Icon(
-                  item.icon,
-                  size: 22,
-                  color: item.accentColor,
-                ),
+                child: Icon(item.icon, size: 22, color: item.accentColor),
               ),
             ],
           ),
@@ -413,24 +400,28 @@ class PlatformOverviewScreen extends ConsumerWidget {
                   children: [
                     Text(
                       '₱',
-                      style: seqTabularFigures(GoogleFonts.inter(
-                        fontSize: 26,
-                        fontWeight: FontWeight.w700,
-                        color: kSeqOnSurface,
-                      )),
+                      style: seqTabularFigures(
+                        GoogleFonts.inter(
+                          fontSize: 26,
+                          fontWeight: FontWeight.w700,
+                          color: kSeqOnSurface,
+                        ),
+                      ),
                     ),
                     const SizedBox(width: 2),
                     Expanded(
                       child: CountUpAnimation(
                         targetValue: item.targetValue,
                         duration: const Duration(milliseconds: 800),
-                        style: seqTabularFigures(GoogleFonts.inter(
-                          fontSize: 36,
-                          fontWeight: FontWeight.w800,
-                          height: 1.0,
-                          color: kSeqOnSurface,
-                          letterSpacing: -0.5,
-                        )),
+                        style: seqTabularFigures(
+                          GoogleFonts.inter(
+                            fontSize: 36,
+                            fontWeight: FontWeight.w800,
+                            height: 1.0,
+                            color: kSeqOnSurface,
+                            letterSpacing: -0.5,
+                          ),
+                        ),
                       ),
                     ),
                   ],
@@ -438,13 +429,15 @@ class PlatformOverviewScreen extends ConsumerWidget {
               : CountUpAnimation(
                   targetValue: item.targetValue,
                   duration: const Duration(milliseconds: 800),
-                  style: seqTabularFigures(GoogleFonts.inter(
-                    fontSize: 38,
-                    fontWeight: FontWeight.w800,
-                    height: 1.0,
-                    color: kSeqOnSurface,
-                    letterSpacing: -0.5,
-                  )),
+                  style: seqTabularFigures(
+                    GoogleFonts.inter(
+                      fontSize: 38,
+                      fontWeight: FontWeight.w800,
+                      height: 1.0,
+                      color: kSeqOnSurface,
+                      letterSpacing: -0.5,
+                    ),
+                  ),
                 ),
           const SizedBox(height: 10),
           Text(
@@ -480,7 +473,7 @@ class PlatformOverviewScreen extends ConsumerWidget {
         icon: Icons.verified_user_outlined,
         accentColor: const Color(0xFF2E6B4E),
         containerBg: const Color(0xFFD4EBD9),
-        subtitle: 'Verified organizations funding education',
+        subtitle: 'Organization and individual submissions across all statuses',
       ),
     ];
 
@@ -515,7 +508,10 @@ class PlatformOverviewScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildSecondaryCard(BuildContext context, {required _SecondaryCardItem item}) {
+  Widget _buildSecondaryCard(
+    BuildContext context, {
+    required _SecondaryCardItem item,
+  }) {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
@@ -542,11 +538,7 @@ class PlatformOverviewScreen extends ConsumerWidget {
               color: item.containerBg,
               borderRadius: BorderRadius.circular(12),
             ),
-            child: Icon(
-              item.icon,
-              size: 24,
-              color: item.accentColor,
-            ),
+            child: Icon(item.icon, size: 24, color: item.accentColor),
           ),
           const SizedBox(width: 16),
           Expanded(
@@ -566,12 +558,14 @@ class PlatformOverviewScreen extends ConsumerWidget {
                 CountUpAnimation(
                   targetValue: item.count,
                   duration: const Duration(milliseconds: 800),
-                  style: seqTabularFigures(GoogleFonts.inter(
-                    fontSize: 28,
-                    fontWeight: FontWeight.w700,
-                    height: 1.1,
-                    color: kSeqOnSurface,
-                  )),
+                  style: seqTabularFigures(
+                    GoogleFonts.inter(
+                      fontSize: 28,
+                      fontWeight: FontWeight.w700,
+                      height: 1.1,
+                      color: kSeqOnSurface,
+                    ),
+                  ),
                 ),
                 const SizedBox(height: 4),
                 Text(
@@ -650,7 +644,10 @@ class PlatformOverviewScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildSystemCard(BuildContext context, {required _SystemCardItem item}) {
+  Widget _buildSystemCard(
+    BuildContext context, {
+    required _SystemCardItem item,
+  }) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
       decoration: BoxDecoration(
@@ -661,8 +658,8 @@ class PlatformOverviewScreen extends ConsumerWidget {
           width: 1,
         ),
       ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
@@ -673,30 +670,31 @@ class PlatformOverviewScreen extends ConsumerWidget {
                   color: item.containerBg,
                   borderRadius: BorderRadius.circular(8),
                 ),
-                child: Icon(
-                  item.icon,
-                  size: 16,
-                  color: item.accentColor,
-                ),
+                child: Icon(item.icon, size: 16, color: item.accentColor),
               ),
               const SizedBox(width: 12),
-              Text(
-                item.label,
-                style: seqLabelSm(
-                  color: kSeqOutline,
-                  fontWeight: FontWeight.w600,
-                ).copyWith(letterSpacing: 0.5),
+              Expanded(
+                child: Text(
+                  item.label,
+                  style: seqLabelSm(
+                    color: kSeqOutline,
+                    fontWeight: FontWeight.w600,
+                  ).copyWith(letterSpacing: 0.5),
+                ),
               ),
             ],
           ),
+          const SizedBox(height: 8),
           CountUpAnimation(
             targetValue: item.count,
             duration: const Duration(milliseconds: 800),
-            style: seqTabularFigures(GoogleFonts.inter(
-              fontSize: 20,
-              fontWeight: FontWeight.w700,
-              color: kSeqOnSurface,
-            )),
+            style: seqTabularFigures(
+              GoogleFonts.inter(
+                fontSize: 20,
+                fontWeight: FontWeight.w700,
+                color: kSeqOnSurface,
+              ),
+            ),
           ),
         ],
       ),
@@ -711,17 +709,11 @@ class PlatformOverviewScreen extends ConsumerWidget {
       decoration: BoxDecoration(
         color: kSeqSurfaceContainerLow,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: kSeqOutlineVariant.withValues(alpha: 0.4),
-        ),
+        border: Border.all(color: kSeqOutlineVariant.withValues(alpha: 0.4)),
       ),
       child: Row(
         children: [
-          const Icon(
-            Icons.info_outline_rounded,
-            size: 18,
-            color: kSeqOutline,
-          ),
+          const Icon(Icons.info_outline_rounded, size: 18, color: kSeqOutline),
           const SizedBox(width: 10),
           Expanded(
             child: Text(
@@ -788,4 +780,3 @@ class _SystemCardItem {
   final Color accentColor;
   final Color containerBg;
 }
-

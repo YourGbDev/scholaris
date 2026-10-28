@@ -1,15 +1,29 @@
+import 'dart:convert';
+import 'dart:math';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:scholaris/app/supabase_config.dart';
 import 'package:scholaris/core/security/login_lockout_service.dart';
+import 'package:scholaris/features/auth/controllers/auth_controller.dart';
 import 'package:scholaris/features/profile/models/student_profile.dart';
 import 'package:scholaris/features/profile/providers/profile_setup_provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'admin_audit_logs_provider.dart';
 
-final adminUsersProvider = FutureProvider<List<StudentProfile>>((ref) async {
+final FutureProvider<List<StudentProfile>> adminUsersProvider =
+    FutureProvider<List<StudentProfile>>((ref) async {
+  final userId = ref.watch(currentUserIdProvider);
+  if (userId == null) return const [];
+
   final repository = ref.watch(profileRepositoryProvider);
-  return repository.fetchAllProfiles();
+  final profiles = await repository.fetchAllProfiles();
+
+  // Guard against in-flight stale completion (e.g. sign-out or account switch while fetching)
+  if (ref.read(currentUserIdProvider) != userId) {
+    return const [];
+  }
+
+  return profiles;
 });
 
 final adminUserSearchQueryProvider =
@@ -17,6 +31,24 @@ final adminUserSearchQueryProvider =
 
 final adminUserRoleFilterProvider =
     StateProvider.autoDispose<String>((ref) => 'all'); // 'all', 'student', 'provider', 'admin'
+
+typedef AdminSignup = Future<String> Function({required String email, required String fullName, required String role, String? captchaToken});
+
+final adminSignupProvider = Provider<AdminSignup>((ref) => ({required email, required fullName, required role, captchaToken}) async {
+  final client = SupabaseClient(SupabaseConfig.url, SupabaseConfig.anonKey,
+      authOptions: const AuthClientOptions(autoRefreshToken: false));
+  final random = Random.secure();
+  final password = 'Sc!1${base64UrlEncode(List.generate(24, (_) => random.nextInt(256)))}';
+  final response = await client.auth.signUp(
+    email: email,
+    password: password,
+    data: {'full_name': fullName, 'role': role},
+    captchaToken: captchaToken,
+  );
+  final id = response.user?.id;
+  if (id == null) throw StateError('Account creation could not be confirmed.');
+  return id;
+});
 
 Future<void> logAdminAuditEvent({
   required String action,
@@ -57,31 +89,10 @@ class AdminUsersController {
     String region = 'NCR',
     String? school,
     String? course,
+    String? captchaToken,
   }) async {
     final repo = ref.read(profileRepositoryProvider);
-    String? createdUserId;
-
-    try {
-      final isolatedClient = SupabaseClient(
-        SupabaseConfig.url,
-        SupabaseConfig.anonKey,
-        authOptions: const AuthClientOptions(autoRefreshToken: false),
-      );
-      final res = await isolatedClient.auth.signUp(
-        email: email,
-        password: 'ScholarisUser${DateTime.now().millisecondsSinceEpoch}!',
-        data: {
-          'full_name': fullName,
-          'role': role,
-        },
-      );
-      createdUserId = res.user?.id;
-    } catch (_) {
-      // In mock/test environments or offline, fall back to simulated ID
-      createdUserId = 'usr-${DateTime.now().millisecondsSinceEpoch}';
-    }
-
-    final newId = createdUserId ?? 'usr-${DateTime.now().millisecondsSinceEpoch}';
+    final newId = await ref.read(adminSignupProvider)(email: email, fullName: fullName, role: role, captchaToken: captchaToken);
     final data = {
       'id': newId,
       'full_name': fullName,
@@ -94,10 +105,10 @@ class AdminUsersController {
       'setup_complete': true,
     };
 
-    try {
-      await repo.adminUpdateProfile(newId, data);
-    } catch (_) {
-      await repo.adminUpsertProfile(newId, data);
+    await repo.adminUpdateProfile(newId, data);
+    final saved = await repo.fetchProfileById(newId);
+    if (saved == null || saved.role != role || saved.status != status) {
+      throw StateError('Account creation could not be confirmed.');
     }
 
     await logAdminAuditEvent(

@@ -14,6 +14,9 @@ class FakeAccountDataSource implements AccountDataSource {
   final List<String> reauthenticatePasswords = [];
   final List<String> updatePasswords = [];
   final List<String> resendEmails = [];
+  final List<String> requestedEmails = [];
+  final List<String> verifiedEmails = [];
+  String? emailAfterVerification;
 
   /// The user id [reauthenticate] reports as validated. Change it to simulate
   /// a session that swapped identity mid-flow (the repository must refuse).
@@ -31,6 +34,7 @@ class FakeAccountDataSource implements AccountDataSource {
   Future<String> reauthenticate({
     required String email,
     required String password,
+    String? captchaToken,
   }) async {
     calls.add('reauthenticate');
     reauthenticateEmails.add(email);
@@ -53,12 +57,25 @@ class FakeAccountDataSource implements AccountDataSource {
   }
 
   @override
-  Future<void> resendVerificationEmail({required String email}) async {
+  Future<void> resendVerificationEmail({required String email, String? captchaToken}) async {
     calls.add('resendVerificationEmail');
     resendEmails.add(email);
     final gate = resendGate;
     if (gate != null) await gate.future;
     final error = resendError;
     if (error != null) throw error;
+  }
+
+  @override
+  Future<void> requestEmailChange({required String newEmail}) async {
+    calls.add('requestEmailChange');
+    requestedEmails.add(newEmail);
+  }
+
+  @override
+  Future<String?> verifyEmailChangeCode({required String email, required String code, String? captchaToken}) async {
+    calls.add('verifyEmailChangeCode');
+    verifiedEmails.add(email);
+    return emailAfterVerification;
   }
 }

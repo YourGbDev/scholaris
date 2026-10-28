@@ -33,8 +33,18 @@ class _OrgActivityLogViewState extends ConsumerState<OrgActivityLogView> {
     if (diff.inDays < 7) return '${diff.inDays}d ago';
 
     final monthNames = [
-      'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec',
     ];
     final m = monthNames[dt.month - 1];
     final hour = dt.hour % 12 == 0 ? 12 : dt.hour % 12;
@@ -54,7 +64,7 @@ class _OrgActivityLogViewState extends ConsumerState<OrgActivityLogView> {
     if (a.contains('endorse')) {
       return (Icons.rate_review_outlined, const Color(0xFF0058BC));
     }
-    if (a.contains('assign')) {
+    if (a.contains('assign') && !a.contains('unassign')) {
       return (Icons.assignment_ind_outlined, const Color(0xFF00796B));
     }
     if (a.contains('unassign')) {
@@ -115,8 +125,11 @@ class _OrgActivityLogViewState extends ConsumerState<OrgActivityLogView> {
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        const Icon(Icons.error_outline_rounded,
-                            size: 36, color: kOrgError),
+                        const Icon(
+                          Icons.error_outline_rounded,
+                          size: 36,
+                          color: kOrgError,
+                        ),
                         const SizedBox(height: 10),
                         Text(
                           'Could not load activity logs',
@@ -128,9 +141,17 @@ class _OrgActivityLogViewState extends ConsumerState<OrgActivityLogView> {
                         ),
                         const SizedBox(height: 4),
                         Text(
-                          err.toString(),
-                          style: orgBody(fontSize: 12, color: kOrgTextSecondary),
+                          'Check your connection and try again.',
+                          style: orgBody(
+                            fontSize: 12,
+                            color: kOrgTextSecondary,
+                          ),
                           textAlign: TextAlign.center,
+                        ),
+                        TextButton(
+                          onPressed: () =>
+                              ref.invalidate(organizationActivityLogsProvider),
+                          child: const Text('Retry'),
                         ),
                       ],
                     ),
@@ -141,18 +162,30 @@ class _OrgActivityLogViewState extends ConsumerState<OrgActivityLogView> {
                   if (_selectedActionFilter != null) {
                     final target = _selectedActionFilter!.toLowerCase();
                     filtered = filtered
-                        .where((log) => log.action.toLowerCase().contains(target))
+                        .where(
+                          (log) => log.action.toLowerCase().contains(target),
+                        )
                         .toList();
                   }
 
                   if (_searchQuery.trim().isNotEmpty) {
                     final q = _searchQuery.trim().toLowerCase();
                     filtered = filtered.where((log) {
-                      final matchActor = log.actorName.toLowerCase().contains(q);
+                      final matchActor = log.actorName.toLowerCase().contains(
+                        q,
+                      );
                       final matchAction = log.action.toLowerCase().contains(q);
-                      final matchTarget = log.targetType.toLowerCase().contains(q);
-                      final matchDetails = log.details.toString().toLowerCase().contains(q);
-                      return matchActor || matchAction || matchTarget || matchDetails;
+                      final matchTarget = log.targetType.toLowerCase().contains(
+                        q,
+                      );
+                      final matchDetails = log.details
+                          .toString()
+                          .toLowerCase()
+                          .contains(q);
+                      return matchActor ||
+                          matchAction ||
+                          matchTarget ||
+                          matchDetails;
                     }).toList();
                   }
 
@@ -211,18 +244,15 @@ class _OrgActivityLogViewState extends ConsumerState<OrgActivityLogView> {
         Text(
           'Organization Activity Log',
           style: orgHeadline(
-            fontSize: isDesktop ? 24 : 20,
+            fontSize: isDesktop ? 32 : 26,
             fontWeight: FontWeight.w700,
             color: kOrgTextPrimary,
           ),
         ),
         const SizedBox(height: 4),
         Text(
-          'Immutable chronological record of administrative deliberations, endorsements, approvals, and reviewer assignments.',
-          style: orgBody(
-            fontSize: 13,
-            color: kOrgTextSecondary,
-          ),
+          'Review recorded decisions, endorsements, and reviewer assignments.',
+          style: orgBody(fontSize: 13, color: kOrgTextSecondary),
         ),
       ],
     );
@@ -269,12 +299,20 @@ class _OrgActivityLogViewState extends ConsumerState<OrgActivityLogView> {
                     style: orgBody(fontSize: 13, color: kOrgTextPrimary),
                     decoration: InputDecoration(
                       hintText: 'Search by staff name, action, or target ID...',
-                      hintStyle: orgBody(fontSize: 12.5, color: kOrgTextSecondary),
-                      prefixIcon: const Icon(Icons.search_rounded,
-                          size: 18, color: kOrgTextSecondary),
+                      hintStyle: orgBody(
+                        fontSize: 12.5,
+                        color: kOrgTextSecondary,
+                      ),
+                      prefixIcon: const Icon(
+                        Icons.search_rounded,
+                        size: 18,
+                        color: kOrgTextSecondary,
+                      ),
                       border: InputBorder.none,
-                      contentPadding:
-                          const EdgeInsets.symmetric(horizontal: 12, vertical: 9),
+                      contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 9,
+                      ),
                       isDense: true,
                     ),
                   ),
@@ -297,7 +335,9 @@ class _OrgActivityLogViewState extends ConsumerState<OrgActivityLogView> {
                       opt.label,
                       style: orgLabel(
                         fontSize: 11.5,
-                        fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+                        fontWeight: isSelected
+                            ? FontWeight.w600
+                            : FontWeight.w500,
                         color: isSelected ? Colors.white : kOrgTextPrimary,
                       ),
                     ),
@@ -336,8 +376,11 @@ class _OrgActivityLogViewState extends ConsumerState<OrgActivityLogView> {
       child: Center(
         child: Column(
           children: [
-            const Icon(Icons.receipt_long_outlined,
-                size: 42, color: kOrgTextSecondary),
+            const Icon(
+              Icons.receipt_long_outlined,
+              size: 42,
+              color: kOrgTextSecondary,
+            ),
             const SizedBox(height: 12),
             Text(
               'No Activity Recorded',
@@ -429,7 +472,9 @@ class _OrgActivityLogViewState extends ConsumerState<OrgActivityLogView> {
                                 ),
                                 Container(
                                   padding: const EdgeInsets.symmetric(
-                                      horizontal: 6, vertical: 2),
+                                    horizontal: 6,
+                                    vertical: 2,
+                                  ),
                                   decoration: BoxDecoration(
                                     color: actionColor.withValues(alpha: 0.1),
                                     borderRadius: BorderRadius.circular(6),
@@ -459,16 +504,15 @@ class _OrgActivityLogViewState extends ConsumerState<OrgActivityLogView> {
                       const SizedBox(height: 3),
                       Text(
                         'Target: ${log.targetType}${log.targetId != null ? " • #${log.targetId!.substring(0, log.targetId!.length > 8 ? 8 : log.targetId!.length)}" : ""}',
-                        style: orgBody(
-                          fontSize: 12,
-                          color: kOrgTextSecondary,
-                        ),
+                        style: orgBody(fontSize: 12, color: kOrgTextSecondary),
                       ),
                       if (log.details.isNotEmpty) ...[
                         const SizedBox(height: 6),
                         Container(
                           padding: const EdgeInsets.symmetric(
-                              horizontal: 10, vertical: 6),
+                            horizontal: 10,
+                            vertical: 6,
+                          ),
                           decoration: BoxDecoration(
                             color: const Color(0xFFF4F3F8),
                             borderRadius: BorderRadius.circular(8),

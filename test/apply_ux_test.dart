@@ -24,6 +24,9 @@ import 'package:scholaris/features/profile/providers/avatar_provider.dart';
 import 'package:scholaris/features/profile/providers/profile_setup_provider.dart';
 import 'package:scholaris/features/profile/repositories/profile_repository.dart';
 import 'package:scholaris/features/scholarships/models/scholarship.dart';
+import 'package:scholaris/features/scholarships/models/scholarship_capacity.dart';
+import 'package:scholaris/features/scholarships/providers/scholarship_capacity_provider.dart';
+import 'package:scholaris/features/scholarships/services/match_reasons.dart';
 import 'package:scholaris/features/scholarships/presentation/scholarship_detail_screen.dart';
 import 'package:scholaris/features/scholarships/providers/scholarships_provider.dart';
 import 'package:scholaris/features/scholarships/repositories/scholarship_repository.dart';
@@ -111,6 +114,9 @@ Widget _wrap({
   StudentProfile? profile,
   FakeApplicationDataSource? applications,
   FakeBookmarkDataSource? bookmarks,
+  bool startApplication = false,
+  bool full = false,
+  List<String>? eligibleSchools = const [],
 }) {
   final profileSource = FakeProfileDataSource();
   if (userId != null) {
@@ -122,6 +128,9 @@ Widget _wrap({
 
   return ProviderScope(
     overrides: [
+      scholarshipEligibleSchoolsProvider(scholarship.id).overrideWith((ref) async => eligibleSchools),
+      studentProfileSchoolIdProvider('user-a').overrideWith((ref) async => null),
+      scholarshipCapacityProvider(scholarship.id).overrideWith((ref) async => ScholarshipCapacity(scholarshipId: scholarship.id, totalSlots: 1, occupiedSlots: full ? 1 : 0, remainingSlots: full ? 0 : 1, isUncapped: false)),
       currentUserIdProvider.overrideWithValue(userId),
       if (userId != null)
         avatarProvider(userId).overrideWith(
@@ -161,6 +170,7 @@ Widget _wrap({
       home: ScholarshipDetailScreen(
         scholarshipId: scholarship.id,
         initial: scholarship,
+        startApplication: startApplication,
       ),
     ),
   );
@@ -192,6 +202,40 @@ void main() {
   });
 
   group('Apply action rendering', () {
+    testWidgets('detail uses the same placeholder score as matching cards', (tester) async {
+      final scholarship = _scholarship();
+      final expected = placeholderMatchPercentage(matchReasonsFor(_student(), scholarship).length);
+      await tester.pumpWidget(_wrap(scholarship: scholarship));
+      await tester.pumpAndSettle();
+      expect(find.text('$expected% Match'), findsOneWidget);
+    });
+    testWidgets('quick apply opens review without submitting', (tester) async {
+      final applications = FakeApplicationDataSource();
+      await tester.pumpWidget(_wrap(scholarship: _scholarship(), applications: applications, startApplication: true));
+      await tester.pumpAndSettle();
+      expect(find.byType(Dialog), findsOneWidget);
+      expect(find.text('Application submitted'), findsNothing);
+      expect(await applications.fetchApplications('user-a'), isEmpty);
+    });
+    testWidgets('quick apply does not bypass full capacity', (tester) async {
+      await tester.pumpWidget(_wrap(scholarship: _scholarship(), startApplication: true, full: true));
+      await tester.pumpAndSettle();
+      expect(find.byType(Dialog), findsNothing);
+      expect(find.text('Scholarship capacity reached'), findsOneWidget);
+    });
+    testWidgets('quick apply does not bypass school restrictions', (tester) async {
+      await tester.pumpWidget(_wrap(scholarship: _scholarship(), startApplication: true, eligibleSchools: ['other-school']));
+      await tester.pumpAndSettle();
+      expect(find.byType(Dialog), findsNothing);
+      expect(find.text('Profile update required'), findsOneWidget);
+    });
+    testWidgets('quick apply stops if school eligibility cannot be checked', (tester) async {
+      await tester.pumpWidget(_wrap(scholarship: _scholarship(), startApplication: true, eligibleSchools: null));
+      await tester.pumpAndSettle();
+      expect(find.byType(Dialog), findsNothing);
+      expect(find.text('Unable to check application options'), findsOneWidget);
+      expect(find.text('Try again'), findsOneWidget);
+    });
     testWidgets('eligible student sees the enabled Apply action',
         (tester) async {
       await tester.pumpWidget(_wrap(scholarship: _scholarship()));

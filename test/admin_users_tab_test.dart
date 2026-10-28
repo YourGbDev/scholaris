@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:scholaris/core/security/login_lockout_service.dart';
 import 'package:scholaris/features/admin/presentation/admin_users_tab.dart';
+import 'package:scholaris/features/admin/presentation/admin_users_provider.dart';
 import 'package:scholaris/features/auth/controllers/auth_controller.dart';
 import 'package:scholaris/features/profile/providers/profile_setup_provider.dart';
 import 'package:scholaris/features/profile/repositories/profile_repository.dart';
@@ -14,10 +15,14 @@ void main() {
     LoginLockoutService.instance.resetState();
   });
 
-  Widget buildApp(FakeProfileDataSource fakeProfileDs) {
+  Widget buildApp(FakeProfileDataSource fakeProfileDs, {bool failSignup = false}) {
     return ProviderScope(
       overrides: [
         currentUserIdProvider.overrideWithValue('admin-1'),
+        adminSignupProvider.overrideWithValue(({required email, required fullName, required role, captchaToken}) async {
+          if (failSignup) throw StateError('signup failed');
+          return '10000000-0000-0000-0000-000000000099';
+        }),
         profileRepositoryProvider.overrideWith(
           (ref) => ProfileRepository(
             dataSource: fakeProfileDs,
@@ -155,6 +160,25 @@ void main() {
     // Verify audit log was recorded
     final logs = LoginLockoutService.instance.inMemoryAuditLogs;
     expect(logs.any((l) => l['action'] == 'user_created' && l['target_type'] == 'user'), isTrue);
+  });
+
+  testWidgets('a failed signup cannot create a simulated user or show success', (tester) async {
+    tester.view.physicalSize = const Size(1280, 900);
+    tester.view.devicePixelRatio = 1.0;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+    final fakeProfileDs = makeSampleDataSource();
+    await tester.pumpWidget(buildApp(fakeProfileDs, failSignup: true));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Provision Identity'));
+    await tester.pumpAndSettle();
+    await tester.enterText(find.widgetWithText(TextFormField, 'Full Name *'), 'Test Person');
+    await tester.enterText(find.widgetWithText(TextFormField, 'Email Address *'), 'person@example.test');
+    await tester.tap(find.widgetWithText(FilledButton, 'Create Account'));
+    await tester.pumpAndSettle();
+    expect(fakeProfileDs.rows.length, 3);
+    expect(find.text('User account created successfully.'), findsNothing);
+    expect(find.textContaining('could not be confirmed'), findsOneWidget);
   });
 
   testWidgets('AdminUsersTab edits role and status with audit event logging', (tester) async {

@@ -12,8 +12,10 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'package:scholaris/features/profile/providers/profile_setup_provider.dart';
+import 'package:scholaris/features/auth/controllers/auth_controller.dart';
 import 'package:scholaris/features/scholarships/models/scholarship.dart';
 import 'package:scholaris/shared/widgets/logout_confirmation_dialog.dart';
+
 import '../../providers/provider_scholarships_provider.dart';
 import '../../providers/provider_type_provider.dart';
 import '../../../../core/auth/landing_redirect.dart';
@@ -77,7 +79,9 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
 
   void _initFields(String fullName, String? email, String? phone) {
     if (!_initialized) {
-      _legalEntityNameController.text = fullName.isNotEmpty ? fullName : 'Ayala Foundation Partner';
+      _legalEntityNameController.text = fullName.isNotEmpty
+          ? fullName
+          : 'Organization';
       // Real database fields for demo provider are unrecorded / null
       // We leave unrecorded registration/address fields empty with honest hints (kOrgTextMuted #545D56 passes 4.5:1 contrast)
       _secRegController.text = '';
@@ -87,7 +91,7 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
       _missionController.text = '';
       _repNameController.text = '';
       _repTitleController.text = '';
-      _emailController.text = email ?? 'demo_provider@scholaris.test';
+      _emailController.text = email ?? '';
       _phoneController.text = phone ?? '';
       _initialized = true;
     }
@@ -96,16 +100,16 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
   void _resetFields() {
     final profile = ref.read(currentProfileProvider).valueOrNull;
     setState(() {
-      _legalEntityNameController.text = profile?.fullName ?? 'Ayala Foundation Partner';
+      _legalEntityNameController.text = profile?.fullName ?? 'Organization';
       _secRegController.text = '';
       _tinController.text = '';
       _websiteController.text = '';
       _addressController.text = '';
       _missionController.text = '';
       _repNameController.text = '';
-      final authUser = Supabase.instance.client.auth.currentUser;
-      _emailController.text = authUser?.email ?? 'demo_provider@scholaris.test';
-      _phoneController.text = authUser?.phone ?? '';
+      _emailController.text =
+          ref.read(currentUserEmailProvider) ?? profile?.email ?? '';
+      _phoneController.text = '';
       _alertGwa150 = true;
       _weeklyDigest = true;
       _duplicateLrnAlert = true;
@@ -125,20 +129,33 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
   }
 
   Future<void> _handleSave() async {
+    if (_legalEntityNameController.text.trim().isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Enter an organization name before saving.'),
+        ),
+      );
+      return;
+    }
     setState(() => _isSaving = true);
     try {
       final client = Supabase.instance.client;
       final user = client.auth.currentUser;
-      if (user != null) {
+      if (user == null) {
+        throw StateError('Please sign in to save your profile.');
+      }
+      {
         // Save verified available fields to Supabase profiles table
         final updates = <String, dynamic>{
           'full_name': _legalEntityNameController.text.trim(),
         };
-        if (_phoneController.text.trim().isNotEmpty) {
-          updates['phone'] = _phoneController.text.trim();
-        }
 
-        await client.from('profiles').update(updates).eq('id', user.id);
+        await client
+            .from('profiles')
+            .update(updates)
+            .eq('id', user.id)
+            .select('id')
+            .single();
         ref.invalidate(currentProfileProvider);
       }
 
@@ -149,11 +166,19 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
           backgroundColor: kOrgPrimary,
           content: Row(
             children: [
-              const Icon(Icons.check_circle_rounded, color: Colors.white, size: 18),
+              const Icon(
+                Icons.check_circle_rounded,
+                color: Colors.white,
+                size: 18,
+              ),
               const SizedBox(width: 10),
               Text(
-                'Organization profile and preferences updated successfully.',
-                style: inter(fontSize: 13, color: Colors.white, fontWeight: FontWeight.w500),
+                'Organization name saved.',
+                style: inter(
+                  fontSize: 13,
+                  color: Colors.white,
+                  fontWeight: FontWeight.w500,
+                ),
               ),
             ],
           ),
@@ -165,8 +190,10 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
         SnackBar(
           behavior: SnackBarBehavior.floating,
           backgroundColor: kOrgError,
-          content: Text('Failed to update organization profile: $e',
-              style: inter(fontSize: 13, color: Colors.white)),
+          content: Text(
+            'Could not save the organization name. Your changes are still here; try again.',
+            style: inter(fontSize: 13, color: Colors.white),
+          ),
         ),
       );
     } finally {
@@ -176,76 +203,18 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
 
   void _scrollToSection(int index) {
     setState(() => _selectedSegment = index);
-    final key = [
-      _profileKey,
-      _repKey,
-      _notificationsKey,
-      _securityKey,
-    ][index];
+    final key = [_profileKey, _repKey, _notificationsKey, _securityKey][index];
 
     final context = key.currentContext;
     if (context != null) {
       Scrollable.ensureVisible(
         context,
-        duration: const Duration(milliseconds: 350),
+        duration: isReducedMotion(context)
+            ? Duration.zero
+            : const Duration(milliseconds: 350),
         curve: Curves.easeInOutCubic,
       );
     }
-  }
-
-  void _showArchiveAccountDialog() {
-    showDialog(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        backgroundColor: kOrgSurfaceWhite,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: Row(
-          children: [
-            Container(
-              width: 36,
-              height: 36,
-              decoration: BoxDecoration(
-                color: kOrgError.withValues(alpha: 0.12),
-                shape: BoxShape.circle,
-              ),
-              child: const Icon(Icons.warning_amber_rounded, color: kOrgError, size: 22),
-            ),
-            const SizedBox(width: 12),
-            Text(
-              'Archive Organization Account',
-              style: inter(fontSize: 16, fontWeight: FontWeight.w700, color: kOrgTextPrimary),
-            ),
-          ],
-        ),
-        content: Text(
-          'Are you sure you want to archive your grantor account? This will pause all active scholarship application cycles and freeze pending disbursements. Awarded scholar historical records will remain retained under statutory compliance.',
-          style: inter(fontSize: 13, color: kOrgTextSecondary, height: 1.4),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(ctx).pop(),
-            child: Text('Cancel', style: inter(fontSize: 13, color: kOrgTextSecondary)),
-          ),
-          FilledButton(
-            style: FilledButton.styleFrom(
-              backgroundColor: kOrgError,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-            ),
-            onPressed: () {
-              Navigator.of(ctx).pop();
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  behavior: SnackBarBehavior.floating,
-                  backgroundColor: kOrgTextPrimary,
-                  content: Text('Account archiving is disabled in evaluation demo mode.'),
-                ),
-              );
-            },
-            child: Text('Archive Account', style: inter(fontSize: 13, color: Colors.white)),
-          ),
-        ],
-      ),
-    );
   }
 
   @override
@@ -254,23 +223,28 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
     final myScholarshipsAsync = ref.watch(providerScholarshipsProvider);
     final isDesktop = MediaQuery.sizeOf(context).width >= 1024;
 
-    final authUser = Supabase.instance.client.auth.currentUser;
-    final userEmail = authUser?.email ?? 'demo_provider@scholaris.test';
-    final userPhone = authUser?.phone ?? '';
-
     final profile = profileAsync.valueOrNull;
-    _initFields(profile?.fullName ?? '', userEmail, userPhone);
+    final userEmail =
+        ref.watch(currentUserEmailProvider) ?? profile?.email ?? '';
+    if (profileAsync.hasValue) {
+      _initFields(profile?.fullName ?? '', userEmail, null);
+    }
 
     final orgName = (profile?.fullName.trim().isNotEmpty == true)
         ? profile!.fullName.trim()
-        : 'Ayala Foundation Partner';
+        : 'Organization';
 
-    final initials = orgName.length >= 2 ? orgName.substring(0, 2).toUpperCase() : 'AF';
+    final initials = orgName.length >= 2
+        ? orgName.substring(0, 2).toUpperCase()
+        : 'AF';
 
     // Compute live endowment budget from the provider's active scholarships
     final scholarships = myScholarshipsAsync.valueOrNull ?? [];
-    final activeBudget = scholarships.fold<int>(0, (sum, s) => sum + s.awardAmount);
-    final displayBudget = activeBudget > 0 ? activeBudget : 50000;
+    final activeBudget = scholarships.fold<int>(
+      0,
+      (sum, s) => sum + s.awardAmount,
+    );
+    final displayBudget = activeBudget;
 
     return Container(
       color: kOrgCanvas,
@@ -300,7 +274,11 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
                 children: [
                   Expanded(
                     flex: 8,
-                    child: _buildLeftColumn(orgName: orgName, initials: initials, email: profile?.email),
+                    child: _buildLeftColumn(
+                      orgName: orgName,
+                      initials: initials,
+                      email: profile?.email,
+                    ),
                   ),
                   const SizedBox(width: 24),
                   SizedBox(
@@ -313,7 +291,11 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  _buildLeftColumn(orgName: orgName, initials: initials, email: profile?.email),
+                  _buildLeftColumn(
+                    orgName: orgName,
+                    initials: initials,
+                    email: profile?.email,
+                  ),
                   const SizedBox(height: 24),
                   _buildRightSidebar(displayBudget: displayBudget),
                 ],
@@ -390,24 +372,19 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
         ),
         const SizedBox(height: 8),
         Text(
-          'Organization Settings & Profile',
+          'Organization settings',
           style: inter(
-            fontSize: isDesktop ? 26 : 21,
+            fontSize: isDesktop ? 32 : 26,
             fontWeight: FontWeight.w700,
             color: kOrgTextPrimary,
-
           ),
         ),
         const SizedBox(height: 4),
         ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 680),
           child: Text(
-            'Manage your organization profile, authorized representative credentials, notification preferences, and grant documentation templates.',
-            style: inter(
-              fontSize: 13,
-              color: kOrgTextSecondary,
-              height: 1.35,
-            ),
+            'Save your organization name. Other profile fields, contact phone and notification preferences are not available yet.',
+            style: inter(fontSize: 13, color: kOrgTextSecondary, height: 1.35),
           ),
         ),
       ],
@@ -420,66 +397,75 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
         // Discard Draft Button
         PressableScale(
           scale: 0.97,
-          child:
-        Material(
-          color: const Color(0xFFEEEDF3),
-          borderRadius: BorderRadius.circular(12),
-          child: InkWell(
+          child: Material(
+            color: const Color(0xFFEEEDF3),
             borderRadius: BorderRadius.circular(12),
-            onTap: _resetFields,
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-              child: Text(
-                'Discard Draft',
-                style: inter(
-                  fontSize: 13,
-                  fontWeight: FontWeight.w600,
-                  color: kOrgTextPrimary,
+            child: InkWell(
+              borderRadius: BorderRadius.circular(12),
+              onTap: _resetFields,
+              child: Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 10,
+                ),
+                child: Text(
+                  'Discard Draft',
+                  style: inter(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w600,
+                    color: kOrgTextPrimary,
+                  ),
                 ),
               ),
             ),
           ),
         ),
 
-        ),
-
         // Save Changes Button
         PressableScale(
           scale: 0.97,
-          child:
-        Material(
-          color: kOrgPrimary,
-          borderRadius: BorderRadius.circular(12),
-          child: InkWell(
+          child: Material(
+            color: kOrgPrimary,
             borderRadius: BorderRadius.circular(12),
-            onTap: _isSaving ? null : _handleSave,
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  if (_isSaving)
-                    const SizedBox(
-                      width: 16,
-                      height: 16,
-                      child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
-                    )
-                  else
-                    const Icon(Icons.check_circle_rounded, size: 18, color: Colors.white),
-                  const SizedBox(width: 8),
-                  Text(
-                    _isSaving ? 'Saving...' : 'Save Changes',
-                    style: inter(
-                      fontSize: 13,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.white,
+            child: InkWell(
+              borderRadius: BorderRadius.circular(12),
+              onTap: _isSaving || !_initialized ? null : _handleSave,
+              child: Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 18,
+                  vertical: 10,
+                ),
+                child: Wrap(
+                  children: [
+                    if (_isSaving)
+                      const SizedBox(
+                        width: 16,
+                        height: 16,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: Colors.white,
+                        ),
+                      )
+                    else
+                      const Icon(
+                        Icons.check_circle_rounded,
+                        size: 18,
+                        color: Colors.white,
+                      ),
+                    const SizedBox(width: 8),
+                    Text(
+                      _isSaving ? 'Saving...' : 'Save organization name',
+                      style: inter(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.white,
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ),
-        ),
         ),
       ],
     );
@@ -497,11 +483,7 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
     } else {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          titleAndSubtitle,
-          const SizedBox(height: 16),
-          actions,
-        ],
+        children: [titleAndSubtitle, const SizedBox(height: 16), actions],
       );
     }
   }
@@ -536,33 +518,44 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
                     child: PressableScale(
                       scale: 0.97,
                       child: InkWell(
-                      borderRadius: BorderRadius.circular(8),
-                      onTap: () => _scrollToSection(i),
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-                        decoration: BoxDecoration(
-                          color: isSelected ? Colors.white : Colors.transparent,
-                          borderRadius: BorderRadius.circular(8),
-                          boxShadow: isSelected
-                              ? [
-                                  BoxShadow(
-                                    color: Colors.black.withValues(alpha: 0.06),
-                                    offset: const Offset(0, 1),
-                                    blurRadius: 3,
-                                  ),
-                                ]
-                              : null,
-                        ),
-                        child: Text(
-                          segments[i],
-                          style: inter(
-                            fontSize: 12,
-                            fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
-                            color: isSelected ? kOrgTextPrimary : kOrgTextSecondary,
+                        borderRadius: BorderRadius.circular(8),
+                        onTap: () => _scrollToSection(i),
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 14,
+                            vertical: 8,
+                          ),
+                          decoration: BoxDecoration(
+                            color: isSelected
+                                ? Colors.white
+                                : Colors.transparent,
+                            borderRadius: BorderRadius.circular(8),
+                            boxShadow: isSelected
+                                ? [
+                                    BoxShadow(
+                                      color: Colors.black.withValues(
+                                        alpha: 0.06,
+                                      ),
+                                      offset: const Offset(0, 1),
+                                      blurRadius: 3,
+                                    ),
+                                  ]
+                                : null,
+                          ),
+                          child: Text(
+                            segments[i],
+                            style: inter(
+                              fontSize: 12,
+                              fontWeight: isSelected
+                                  ? FontWeight.w600
+                                  : FontWeight.w500,
+                              color: isSelected
+                                  ? kOrgTextPrimary
+                                  : kOrgTextSecondary,
+                            ),
                           ),
                         ),
                       ),
-                    ),
                     ),
                   );
                 }),
@@ -577,34 +570,38 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
                 child: PressableScale(
                   scale: 0.97,
                   child: InkWell(
-                  borderRadius: BorderRadius.circular(8),
-                  onTap: () => _scrollToSection(i),
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(vertical: 8),
-                    alignment: Alignment.center,
-                    decoration: BoxDecoration(
-                      color: isSelected ? Colors.white : Colors.transparent,
-                      borderRadius: BorderRadius.circular(8),
-                      boxShadow: isSelected
-                          ? [
-                              BoxShadow(
-                                color: Colors.black.withValues(alpha: 0.06),
-                                offset: const Offset(0, 1),
-                                blurRadius: 3,
-                              ),
-                            ]
-                          : null,
-                    ),
-                    child: Text(
-                      segments[i],
-                      style: inter(
-                        fontSize: 12,
-                        fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
-                        color: isSelected ? kOrgTextPrimary : kOrgTextSecondary,
+                    borderRadius: BorderRadius.circular(8),
+                    onTap: () => _scrollToSection(i),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(vertical: 8),
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                        color: isSelected ? Colors.white : Colors.transparent,
+                        borderRadius: BorderRadius.circular(8),
+                        boxShadow: isSelected
+                            ? [
+                                BoxShadow(
+                                  color: Colors.black.withValues(alpha: 0.06),
+                                  offset: const Offset(0, 1),
+                                  blurRadius: 3,
+                                ),
+                              ]
+                            : null,
+                      ),
+                      child: Text(
+                        segments[i],
+                        style: inter(
+                          fontSize: 12,
+                          fontWeight: isSelected
+                              ? FontWeight.w600
+                              : FontWeight.w500,
+                          color: isSelected
+                              ? kOrgTextPrimary
+                              : kOrgTextSecondary,
+                        ),
                       ),
                     ),
                   ),
-                ),
                 ),
               );
             }),
@@ -634,10 +631,7 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
         const SizedBox(height: 24),
 
         // SECTION 2: Authorized Representative Contact
-        _buildAuthorizedRepresentativeCard(
-          key: _repKey,
-          email: email,
-        ),
+        _buildAuthorizedRepresentativeCard(key: _repKey, email: email),
         const SizedBox(height: 24),
 
         // SECTION 3: Grant Notification & Intake Preferences
@@ -734,7 +728,10 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
                     ),
                   ),
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 7,
+                      vertical: 2,
+                    ),
                     decoration: BoxDecoration(
                       color: const Color(0xFFFEF7E6),
                       borderRadius: BorderRadius.circular(8),
@@ -754,28 +751,28 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
               const SizedBox(height: 4),
               Text(
                 'PNG, SVG or WEBP vector format. Recommended 800x800px. Appears on formal Grant Offer Letters and Certifications.',
-                style: inter(fontSize: 11.5, color: kOrgTextSecondary, height: 1.35),
+                style: inter(
+                  fontSize: 11.5,
+                  color: kOrgTextSecondary,
+                  height: 1.35,
+                ),
               ),
               const SizedBox(height: 10),
-              Row(
+              Wrap(
                 children: [
                   Material(
                     color: const Color(0xFFE3E2E7),
                     borderRadius: BorderRadius.circular(8),
                     child: InkWell(
                       borderRadius: BorderRadius.circular(8),
-                      onTap: () {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            behavior: SnackBarBehavior.floating,
-                            content: Text('File upload dialog: Institutional asset replacement ready.'),
-                          ),
-                        );
-                      },
+                      onTap: null,
                       child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 6,
+                        ),
                         child: Text(
-                          'Upload New',
+                          'Upload unavailable',
                           style: inter(
                             fontSize: 11.5,
                             fontWeight: FontWeight.w600,
@@ -791,18 +788,14 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
                     borderRadius: BorderRadius.circular(8),
                     child: InkWell(
                       borderRadius: BorderRadius.circular(8),
-                      onTap: () {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            behavior: SnackBarBehavior.floating,
-                            content: Text('Logo reset to default foundation initials.'),
-                          ),
-                        );
-                      },
+                      onTap: null,
                       child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 10,
+                          vertical: 6,
+                        ),
                         child: Text(
-                          'Remove',
+                          'Remove unavailable',
                           style: inter(
                             fontSize: 11.5,
                             fontWeight: FontWeight.w600,
@@ -849,6 +842,7 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
               const SizedBox(height: 6),
               TextFormField(
                 controller: _secRegController,
+                enabled: false,
                 style: inter(fontSize: 13, color: kOrgTextPrimary),
                 decoration: InputDecoration(
                   isDense: true,
@@ -856,7 +850,10 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
                   fillColor: const Color(0xFFF7F6FB),
                   hintText: 'Not yet registered / Incomplete',
                   hintStyle: inter(fontSize: 12, color: kOrgTextMuted),
-                  contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                  contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 14,
+                    vertical: 12,
+                  ),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10),
                     borderSide: BorderSide.none,
@@ -873,6 +870,7 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
               const SizedBox(height: 6),
               TextFormField(
                 controller: _tinController,
+                enabled: false,
                 style: inter(fontSize: 13, color: kOrgTextPrimary),
                 decoration: InputDecoration(
                   isDense: true,
@@ -880,7 +878,10 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
                   fillColor: const Color(0xFFF7F6FB),
                   hintText: 'Not yet provided',
                   hintStyle: inter(fontSize: 12, color: kOrgTextMuted),
-                  contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                  contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 14,
+                    vertical: 12,
+                  ),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10),
                     borderSide: BorderSide.none,
@@ -893,11 +894,7 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
           final secAndTinRow = isNarrow
               ? Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    secField,
-                    const SizedBox(height: 16),
-                    tinField,
-                  ],
+                  children: [secField, const SizedBox(height: 16), tinField],
                 )
               : Row(
                   children: [
@@ -911,10 +908,11 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // Header
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              Wrap(
+                runSpacing: 8,
+                spacing: 12,
                 children: [
-                  Row(
+                  Wrap(
                     children: [
                       Container(
                         width: 36,
@@ -923,7 +921,11 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
                           color: const Color(0xFFEEEDF3),
                           borderRadius: BorderRadius.circular(10),
                         ),
-                        child: const Icon(Icons.corporate_fare_rounded, color: kOrgPrimary, size: 20),
+                        child: const Icon(
+                          Icons.corporate_fare_rounded,
+                          color: kOrgPrimary,
+                          size: 20,
+                        ),
                       ),
                       const SizedBox(width: 12),
                       Column(
@@ -939,20 +941,26 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
                           ),
                           Text(
                             'Public identity visible to scholarship applicants & partner universities',
-                            style: inter(fontSize: 12, color: kOrgTextSecondary),
+                            style: inter(
+                              fontSize: 12,
+                              color: kOrgTextSecondary,
+                            ),
                           ),
                         ],
                       ),
                     ],
                   ),
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 10,
+                      vertical: 4,
+                    ),
                     decoration: BoxDecoration(
                       color: const Color(0xFFEEEDF3),
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Text(
-                      'AY 2024–2025',
+                      'Recorded profile',
                       style: inter(
                         fontSize: 11,
                         fontWeight: FontWeight.w600,
@@ -971,13 +979,24 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
               const SizedBox(height: 6),
               TextFormField(
                 controller: _legalEntityNameController,
-                style: inter(fontSize: 13, fontWeight: FontWeight.w500, color: kOrgTextPrimary),
+                style: inter(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w500,
+                  color: kOrgTextPrimary,
+                ),
                 decoration: InputDecoration(
                   isDense: true,
                   filled: true,
                   fillColor: const Color(0xFFF7F6FB),
-                  contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-                  suffixIcon: const Icon(Icons.verified_rounded, size: 18, color: kOrgPrimary),
+                  contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 14,
+                    vertical: 12,
+                  ),
+                  suffixIcon: const Icon(
+                    Icons.verified_rounded,
+                    size: 18,
+                    color: kOrgPrimary,
+                  ),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10),
                     borderSide: BorderSide.none,
@@ -992,7 +1011,10 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
               _buildInputLabel('OFFICIAL ORGANIZATION WEBSITE'),
               const SizedBox(height: 6),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 4),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 14,
+                  vertical: 4,
+                ),
                 decoration: BoxDecoration(
                   color: const Color(0xFFF7F6FB),
                   borderRadius: BorderRadius.circular(10),
@@ -1001,22 +1023,33 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
                   children: [
                     Text(
                       'https://',
-                      style: inter(fontSize: 13, color: kOrgTextSecondary, fontWeight: FontWeight.w500),
+                      style: inter(
+                        fontSize: 13,
+                        color: kOrgTextSecondary,
+                        fontWeight: FontWeight.w500,
+                      ),
                     ),
                     Expanded(
                       child: TextField(
                         controller: _websiteController,
+                        enabled: false,
                         style: inter(fontSize: 13, color: kOrgTextPrimary),
                         decoration: InputDecoration(
                           isDense: true,
                           hintText: 'example.org (Not yet provided)',
                           hintStyle: inter(fontSize: 12, color: kOrgTextMuted),
                           border: InputBorder.none,
-                          contentPadding: const EdgeInsets.symmetric(vertical: 8),
+                          contentPadding: const EdgeInsets.symmetric(
+                            vertical: 8,
+                          ),
                         ),
                       ),
                     ),
-                    const Icon(Icons.open_in_new_rounded, size: 16, color: kOrgTextMuted),
+                    const Icon(
+                      Icons.open_in_new_rounded,
+                      size: 16,
+                      color: kOrgTextMuted,
+                    ),
                   ],
                 ),
               ),
@@ -1027,6 +1060,7 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
               const SizedBox(height: 6),
               TextFormField(
                 controller: _addressController,
+                enabled: false,
                 maxLines: 2,
                 style: inter(fontSize: 13, color: kOrgTextPrimary),
                 decoration: InputDecoration(
@@ -1037,9 +1071,16 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
                   hintStyle: inter(fontSize: 12, color: kOrgTextMuted),
                   suffixIcon: const Padding(
                     padding: EdgeInsets.only(bottom: 18),
-                    child: Icon(Icons.location_on_outlined, size: 18, color: kOrgTextMuted),
+                    child: Icon(
+                      Icons.location_on_outlined,
+                      size: 18,
+                      color: kOrgTextMuted,
+                    ),
                   ),
-                  contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                  contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 14,
+                    vertical: 12,
+                  ),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10),
                     borderSide: BorderSide.none,
@@ -1049,8 +1090,7 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
               const SizedBox(height: 16),
 
               // Mission Statement & Granting Mandate
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              Wrap(
                 children: [
                   _buildInputLabel('MISSION STATEMENT & GRANTING MANDATE'),
                   Text(
@@ -1062,6 +1102,7 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
               const SizedBox(height: 6),
               TextFormField(
                 controller: _missionController,
+                enabled: false,
                 maxLines: 4,
                 onChanged: (_) => setState(() {}),
                 style: inter(fontSize: 13, height: 1.4, color: kOrgTextPrimary),
@@ -1071,7 +1112,10 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
                   fillColor: const Color(0xFFF7F6FB),
                   hintText: 'Enter your organization\'s mission statement and granting mandate for Filipino scholars (up to 500 characters)...',
                   hintStyle: inter(fontSize: 12, color: kOrgTextMuted),
-                  contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                  contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 14,
+                    vertical: 12,
+                  ),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10),
                     borderSide: BorderSide.none,
@@ -1118,6 +1162,7 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
               const SizedBox(height: 6),
               TextFormField(
                 controller: _repNameController,
+                enabled: false,
                 style: inter(fontSize: 13, color: kOrgTextPrimary),
                 decoration: InputDecoration(
                   isDense: true,
@@ -1125,7 +1170,10 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
                   fillColor: const Color(0xFFF7F6FB),
                   hintText: 'Lead Administrator (Not yet specified)',
                   hintStyle: inter(fontSize: 12, color: kOrgTextMuted),
-                  contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                  contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 14,
+                    vertical: 12,
+                  ),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10),
                     borderSide: BorderSide.none,
@@ -1142,6 +1190,7 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
               const SizedBox(height: 6),
               TextFormField(
                 controller: _repTitleController,
+                enabled: false,
                 style: inter(fontSize: 13, color: kOrgTextPrimary),
                 decoration: InputDecoration(
                   isDense: true,
@@ -1149,7 +1198,10 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
                   fillColor: const Color(0xFFF7F6FB),
                   hintText: 'Lead Grant Administrator',
                   hintStyle: inter(fontSize: 12, color: kOrgTextMuted),
-                  contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                  contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 14,
+                    vertical: 12,
+                  ),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10),
                     borderSide: BorderSide.none,
@@ -1179,13 +1231,16 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
           final emailField = Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              Wrap(
                 children: [
                   _buildInputLabel('WORK EMAIL ADDRESS'),
                   Row(
                     children: [
-                      const Icon(Icons.check_circle_rounded, size: 12, color: kOrgPrimary),
+                      const Icon(
+                        Icons.check_circle_rounded,
+                        size: 12,
+                        color: kOrgPrimary,
+                      ),
                       const SizedBox(width: 4),
                       Text(
                         'Verified',
@@ -1208,8 +1263,15 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
                   isDense: true,
                   filled: true,
                   fillColor: const Color(0xFFF7F6FB),
-                  suffixIcon: const Icon(Icons.alternate_email_rounded, size: 16, color: kOrgTextMuted),
-                  contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                  suffixIcon: const Icon(
+                    Icons.alternate_email_rounded,
+                    size: 16,
+                    color: kOrgTextMuted,
+                  ),
+                  contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 14,
+                    vertical: 12,
+                  ),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10),
                     borderSide: BorderSide.none,
@@ -1226,6 +1288,7 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
               const SizedBox(height: 6),
               TextFormField(
                 controller: _phoneController,
+                enabled: false,
                 style: inter(fontSize: 13, color: kOrgTextPrimary),
                 decoration: InputDecoration(
                   isDense: true,
@@ -1233,8 +1296,15 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
                   fillColor: const Color(0xFFF7F6FB),
                   hintText: 'Not yet provided',
                   hintStyle: inter(fontSize: 12, color: kOrgTextMuted),
-                  suffixIcon: const Icon(Icons.call_outlined, size: 16, color: kOrgTextMuted),
-                  contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                  suffixIcon: const Icon(
+                    Icons.call_outlined,
+                    size: 16,
+                    color: kOrgTextMuted,
+                  ),
+                  contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 14,
+                    vertical: 12,
+                  ),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10),
                     borderSide: BorderSide.none,
@@ -1280,7 +1350,11 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
                               color: const Color(0xFFE3E2E7),
                               borderRadius: BorderRadius.circular(10),
                             ),
-                            child: const Icon(Icons.draw_rounded, color: kOrgPrimary, size: 20),
+                            child: const Icon(
+                              Icons.draw_rounded,
+                              color: kOrgPrimary,
+                              size: 20,
+                            ),
                           ),
                           const SizedBox(width: 12),
                           Expanded(
@@ -1306,18 +1380,14 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
                         borderRadius: BorderRadius.circular(8),
                         child: InkWell(
                           borderRadius: BorderRadius.circular(8),
-                          onTap: () {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                behavior: SnackBarBehavior.floating,
-                                content: Text('PNPKI integration desk: Official certificate enrollment workflow.'),
-                              ),
-                            );
-                          },
+                          onTap: null,
                           child: Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 14,
+                              vertical: 8,
+                            ),
                             child: Text(
-                              'Register Key',
+                              'Registration unavailable',
                               style: inter(
                                 fontSize: 11.5,
                                 fontWeight: FontWeight.w600,
@@ -1338,7 +1408,11 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
                           color: const Color(0xFFE3E2E7),
                           borderRadius: BorderRadius.circular(10),
                         ),
-                        child: const Icon(Icons.draw_rounded, color: kOrgPrimary, size: 20),
+                        child: const Icon(
+                          Icons.draw_rounded,
+                          color: kOrgPrimary,
+                          size: 20,
+                        ),
                       ),
                       const SizedBox(width: 14),
                       Expanded(
@@ -1355,7 +1429,10 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
                             ),
                             Text(
                               'Digital Signature: Not enrolled with PNPKI • Pending Administrative Registration',
-                              style: inter(fontSize: 11.5, color: kOrgTextSecondary),
+                              style: inter(
+                                fontSize: 11.5,
+                                color: kOrgTextSecondary,
+                              ),
                             ),
                           ],
                         ),
@@ -1366,18 +1443,14 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
                         borderRadius: BorderRadius.circular(8),
                         child: InkWell(
                           borderRadius: BorderRadius.circular(8),
-                          onTap: () {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                behavior: SnackBarBehavior.floating,
-                                content: Text('PNPKI integration desk: Official certificate enrollment workflow.'),
-                              ),
-                            );
-                          },
+                          onTap: null,
                           child: Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 12,
+                              vertical: 7,
+                            ),
                             child: Text(
-                              'Register Key',
+                              'Registration unavailable',
                               style: inter(
                                 fontSize: 11.5,
                                 fontWeight: FontWeight.w600,
@@ -1395,10 +1468,11 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // Header
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              Wrap(
+                runSpacing: 8,
+                spacing: 12,
                 children: [
-                  Row(
+                  Wrap(
                     children: [
                       Container(
                         width: 36,
@@ -1407,7 +1481,11 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
                           color: const Color(0xFFEEEDF3),
                           borderRadius: BorderRadius.circular(10),
                         ),
-                        child: const Icon(Icons.badge_outlined, color: kOrgPrimary, size: 20),
+                        child: const Icon(
+                          Icons.badge_outlined,
+                          color: kOrgPrimary,
+                          size: 20,
+                        ),
                       ),
                       const SizedBox(width: 12),
                       Column(
@@ -1423,14 +1501,20 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
                           ),
                           Text(
                             'Signatory credentials for statutory grant clearance and legal disbursements',
-                            style: inter(fontSize: 12, color: kOrgTextSecondary),
+                            style: inter(
+                              fontSize: 12,
+                              color: kOrgTextSecondary,
+                            ),
                           ),
                         ],
                       ),
                     ],
                   ),
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 4,
+                    ),
                     decoration: BoxDecoration(
                       color: const Color(0xFFB3F1C6),
                       borderRadius: BorderRadius.circular(12),
@@ -1438,7 +1522,11 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        const Icon(Icons.shield_outlined, size: 14, color: Color(0xFF00351C)),
+                        const Icon(
+                          Icons.shield_outlined,
+                          size: 14,
+                          color: Color(0xFF00351C),
+                        ),
                         const SizedBox(width: 4),
                         Text(
                           'Primary Signatory',
@@ -1489,10 +1577,11 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Header
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          Wrap(
+            runSpacing: 8,
+            spacing: 12,
             children: [
-              Row(
+              Wrap(
                 children: [
                   Container(
                     width: 36,
@@ -1501,7 +1590,11 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
                       color: const Color(0xFFEEEDF3),
                       borderRadius: BorderRadius.circular(10),
                     ),
-                    child: const Icon(Icons.notifications_active_outlined, color: kOrgPrimary, size: 20),
+                    child: const Icon(
+                      Icons.notifications_active_outlined,
+                      color: kOrgPrimary,
+                      size: 20,
+                    ),
                   ),
                   const SizedBox(width: 12),
                   Column(
@@ -1516,7 +1609,7 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
                         ),
                       ),
                       Text(
-                        'Control real-time algorithmic triggers and automated intake reporting',
+                        'Notification preferences are not available yet.',
                         style: inter(fontSize: 12, color: kOrgTextSecondary),
                       ),
                     ],
@@ -1524,7 +1617,7 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
                 ],
               ),
               Text(
-                'AUTOMATION ACTIVE',
+                'NOT AVAILABLE',
                 style: GoogleFonts.jetBrainsMono(
                   fontSize: 10,
                   fontWeight: FontWeight.w600,
@@ -1618,7 +1711,7 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
             activeThumbColor: Colors.white,
             inactiveTrackColor: const Color(0xFFE3E2E7),
             inactiveThumbColor: Colors.white,
-            onChanged: onChanged,
+            onChanged: null,
           ),
         ],
       ),
@@ -1635,12 +1728,7 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
       decoration: BoxDecoration(
         color: kOrgSurfaceWhite,
         borderRadius: BorderRadius.circular(16),
-        border: const Border(
-          left: BorderSide(color: kOrgError, width: 4),
-          top: BorderSide(color: kOrgBorder),
-          right: BorderSide(color: kOrgBorder),
-          bottom: BorderSide(color: kOrgBorder),
-        ),
+        border: Border.all(color: kOrgError),
         boxShadow: const [
           BoxShadow(
             color: Color(0x06000000),
@@ -1653,7 +1741,7 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Header
-          Row(
+          Wrap(
             children: [
               Container(
                 width: 36,
@@ -1662,7 +1750,11 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
                   color: kOrgError.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(10),
                 ),
-                child: const Icon(Icons.warning_amber_rounded, color: kOrgError, size: 20),
+                child: const Icon(
+                  Icons.warning_amber_rounded,
+                  color: kOrgError,
+                  size: 20,
+                ),
               ),
               const SizedBox(width: 12),
               Column(
@@ -1687,11 +1779,7 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
           const SizedBox(height: 14),
           Text(
             'Archiving your grantor account pauses all active intake scholarship cycles, revokes open public application URLs, and freezes pending payment authorizations. Existing awarded scholar dossiers remain archived under regulatory retention standards.',
-            style: inter(
-              fontSize: 12,
-              color: kOrgTextSecondary,
-              height: 1.4,
-            ),
+            style: inter(fontSize: 12, color: kOrgTextSecondary, height: 1.4),
           ),
           const SizedBox(height: 18),
           Wrap(
@@ -1705,17 +1793,25 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
                 child: InkWell(
                   borderRadius: BorderRadius.circular(10),
                   onTap: () async {
-                    final confirmed = await showLogoutConfirmationDialog(context);
+                    final confirmed = await showLogoutConfirmationDialog(
+                      context,
+                    );
                     if (confirmed) {
                       await handleProviderSignOut();
                     }
                   },
                   child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 9),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 14,
+                      vertical: 9,
+                    ),
+                    child: Wrap(
                       children: [
-                        const Icon(Icons.logout_rounded, size: 16, color: kOrgTextPrimary),
+                        const Icon(
+                          Icons.logout_rounded,
+                          size: 16,
+                          color: kOrgTextPrimary,
+                        ),
                         const SizedBox(width: 6),
                         Text(
                           'Sign Out of All Active Consoles',
@@ -1737,16 +1833,22 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
                 borderRadius: BorderRadius.circular(10),
                 child: InkWell(
                   borderRadius: BorderRadius.circular(10),
-                  onTap: _showArchiveAccountDialog,
+                  onTap: null,
                   child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 9),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 14,
+                      vertical: 9,
+                    ),
+                    child: Wrap(
                       children: [
-                        const Icon(Icons.archive_outlined, size: 16, color: Colors.white),
+                        const Icon(
+                          Icons.archive_outlined,
+                          size: 16,
+                          color: Colors.white,
+                        ),
                         const SizedBox(width: 6),
                         Text(
-                          'Archive Organization Account',
+                          'Account archiving unavailable',
                           style: inter(
                             fontSize: 12,
                             fontWeight: FontWeight.w600,
@@ -1797,155 +1899,38 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
   // ---------------------------------------------------------------------------
   // Right Sidebar Card 1: Accreditation Status
   // ---------------------------------------------------------------------------
-  Widget _buildAccreditationStatusCard() {
-    return Container(
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: kOrgSurfaceWhite,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: kOrgBorder),
-        boxShadow: const [
-          BoxShadow(
-            color: Color(0x06000000),
-            blurRadius: 8,
-            offset: Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              const Icon(Icons.verified_user_outlined, size: 16, color: kOrgPrimary),
-              const SizedBox(width: 6),
-              Text(
-                'ACCREDITATION STATUS',
-                style: inter(
-                  fontSize: 10.5,
-                  fontWeight: FontWeight.w700,
-                  color: kOrgPrimary,
-                  letterSpacing: 0.6,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 8),
-          Text(
-            'Coursework Evaluation Account',
-            style: inter(
-              fontSize: 15,
-              fontWeight: FontWeight.w700,
-              color: kOrgTextPrimary,
-            ),
-          ),
-          const SizedBox(height: 2),
-          Text(
-            'Institutional Verification Incomplete',
-            style: inter(fontSize: 11.5, color: kOrgTextSecondary),
-          ),
-          const SizedBox(height: 14),
-
-          // Progress Meter: Honest 25% for unverified demo account
-          Container(
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: const Color(0xFFF7F6FB),
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      'Compliance Readiness',
-                      style: inter(fontSize: 11.5, fontWeight: FontWeight.w500, color: kOrgTextPrimary),
-                    ),
-                    Text(
-                      '25%',
-                      style: inter(fontSize: 11.5, fontWeight: FontWeight.w700, color: kOrgPrimary),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 6),
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(4),
-                  child: LinearProgressIndicator(
-                    value: 0.25,
-                    minHeight: 6,
-                    backgroundColor: const Color(0xFFE3E2E7),
-                    valueColor: const AlwaysStoppedAnimation<Color>(kOrgPrimary),
-                  ),
-                ),
-                const SizedBox(height: 6),
-                Text(
-                  'Pending formal Philippine SEC / BIR accreditation submission',
-                  style: inter(fontSize: 10.5, color: kOrgTextMuted),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 14),
-
-          // Document Checklist
-          _buildChecklistItem(
-            label: 'Articles of Incorporation',
-            status: 'Pending Submission',
-            isComplete: false,
-          ),
-          const SizedBox(height: 8),
-          _buildChecklistItem(
-            label: 'BIR Tax Exemption Cert.',
-            status: 'Pending Submission',
-            isComplete: false,
-          ),
-          const SizedBox(height: 8),
-          _buildChecklistItem(
-            label: 'PCNC Seal of Good Governance',
-            status: 'Not Enrolled',
-            isComplete: false,
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildChecklistItem({
-    required String label,
-    required String status,
-    required bool isComplete,
-  }) {
-    return Row(
+  Widget _buildAccreditationStatusCard() => Container(
+    padding: const EdgeInsets.all(20),
+    decoration: BoxDecoration(
+      color: kOrgSurfaceWhite,
+      borderRadius: BorderRadius.circular(16),
+      border: Border.all(color: kOrgBorder),
+    ),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Icon(
-          isComplete ? Icons.check_circle_rounded : Icons.pending_outlined,
-          size: 16,
-          color: isComplete ? kOrgPrimary : kOrgTextMuted,
-        ),
-        const SizedBox(width: 8),
-        Expanded(
-          child: Text(
-            label,
-            style: inter(fontSize: 11.5, color: kOrgTextPrimary),
-          ),
-        ),
         Text(
-          status,
+          'ORGANIZATION VERIFICATION',
           style: inter(
-            fontSize: 10.5,
-            fontWeight: FontWeight.w500,
-            color: isComplete ? kOrgPrimary : kOrgTextMuted,
+            fontSize: 11,
+            fontWeight: FontWeight.w700,
+            color: kOrgPrimary,
           ),
+        ),
+        const SizedBox(height: 10),
+        Text(
+          'Verification not recorded',
+          style: inter(fontSize: 15, fontWeight: FontWeight.w600),
+        ),
+        const SizedBox(height: 8),
+        Text(
+          'Registration and accreditation documents cannot be uploaded in this workspace yet.',
+          style: inter(fontSize: 12, color: kOrgTextSecondary),
         ),
       ],
-    );
-  }
+    ),
+  );
 
-  // ---------------------------------------------------------------------------
-  // Right Sidebar Card 2: Registered Headquarters
-  // ---------------------------------------------------------------------------
   Widget _buildHeadquartersCard() {
     return Container(
       padding: const EdgeInsets.all(20),
@@ -1976,7 +1961,11 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
                   letterSpacing: 0.6,
                 ),
               ),
-              const Icon(Icons.apartment_rounded, size: 16, color: kOrgTextMuted),
+              const Icon(
+                Icons.apartment_rounded,
+                size: 16,
+                color: kOrgTextMuted,
+              ),
             ],
           ),
           const SizedBox(height: 12),
@@ -1994,13 +1983,12 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
               alignment: Alignment.center,
               children: [
                 // Abstract grid lines
-                Positioned.fill(
-                  child: CustomPaint(
-                    painter: _MapGridPainter(),
-                  ),
-                ),
+                Positioned.fill(child: CustomPaint(painter: _MapGridPainter())),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 5,
+                  ),
                   decoration: BoxDecoration(
                     color: Colors.white.withValues(alpha: 0.95),
                     borderRadius: BorderRadius.circular(8),
@@ -2012,10 +2000,13 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
                       ),
                     ],
                   ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
+                  child: Wrap(
                     children: [
-                      const Icon(Icons.location_on_rounded, size: 14, color: kOrgPrimary),
+                      const Icon(
+                        Icons.location_on_rounded,
+                        size: 14,
+                        color: kOrgPrimary,
+                      ),
                       const SizedBox(width: 4),
                       Text(
                         'Location Not Specified',
@@ -2034,7 +2025,11 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
           const SizedBox(height: 12),
           Text(
             'Philippine Regional Hub',
-            style: inter(fontSize: 13, fontWeight: FontWeight.w600, color: kOrgTextPrimary),
+            style: inter(
+              fontSize: 13,
+              fontWeight: FontWeight.w600,
+              color: kOrgTextPrimary,
+            ),
           ),
           const SizedBox(height: 2),
           Text(
@@ -2049,130 +2044,30 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
   // ---------------------------------------------------------------------------
   // Right Sidebar Card 3: Active Fund Envelope
   // ---------------------------------------------------------------------------
-  Widget _buildFundEnvelopeCard({required int displayBudget}) {
-    // Format amount into Philippine Pesos (e.g. ₱50,000)
-    final formatted = displayBudget >= 1000000
-        ? '₱${(displayBudget / 1000000).toStringAsFixed(1)}M'
-        : '₱${displayBudget.toString().replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (m) => '${m[1]},')}';
-
-    return Container(
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: kOrgSurfaceWhite,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: kOrgBorder),
-        boxShadow: const [
-          BoxShadow(
-            color: Color(0x06000000),
-            blurRadius: 8,
-            offset: Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                'ACTIVE FUND ENVELOPE',
-                style: inter(
-                  fontSize: 10.5,
-                  fontWeight: FontWeight.w700,
-                  color: kOrgTextSecondary,
-                  letterSpacing: 0.6,
-                ),
-              ),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
-                decoration: BoxDecoration(
-                  color: const Color(0xFFEEEDF3),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Text(
-                  'AY 2024–25',
-                  style: inter(fontSize: 10, fontWeight: FontWeight.w600, color: kOrgTextSecondary),
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 10),
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.baseline,
-            textBaseline: TextBaseline.alphabetic,
-            children: [
-              Text(
-                formatted,
-                style: inter(
-                  fontSize: 26,
-                  fontWeight: FontWeight.w800,
-                  color: kOrgPrimary,
-                  letterSpacing: -0.5,
-                ),
-              ),
-              const SizedBox(width: 8),
-              Text(
-                '1 Active Grant',
-                style: inter(
-                  fontSize: 11.5,
-                  fontWeight: FontWeight.w600,
-                  color: const Color(0xFF306948),
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 14),
-
-          // Mini monthly bar visualizer
-          SizedBox(
-            height: 48,
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                _buildBar(heightRatio: 0.35, isPrimary: false),
-                _buildBar(heightRatio: 0.42, isPrimary: false),
-                _buildBar(heightRatio: 0.30, isPrimary: false),
-                _buildBar(heightRatio: 0.48, isPrimary: false),
-                _buildBar(heightRatio: 0.40, isPrimary: false),
-                _buildBar(heightRatio: 0.52, isPrimary: true),
-                _buildBar(heightRatio: 0.45, isPrimary: true),
-                _buildBar(heightRatio: 0.55, isPrimary: true),
-                _buildBar(heightRatio: 0.70, isPrimary: true, isPeak: true),
-              ],
-            ),
-          ),
-          const SizedBox(height: 6),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text('OCT', style: GoogleFonts.jetBrainsMono(fontSize: 9.5, color: kOrgTextMuted)),
-              Text('NOV', style: GoogleFonts.jetBrainsMono(fontSize: 9.5, color: kOrgTextMuted)),
-              Text('DEC', style: GoogleFonts.jetBrainsMono(fontSize: 9.5, color: kOrgTextMuted)),
-              Text('JAN', style: GoogleFonts.jetBrainsMono(fontSize: 9.5, color: kOrgTextMuted)),
-              Text('ACTIVE', style: GoogleFonts.jetBrainsMono(fontSize: 9.5, color: kOrgPrimary, fontWeight: FontWeight.w700)),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildBar({required double heightRatio, required bool isPrimary, bool isPeak = false}) {
-    return Container(
-      width: 14,
-      height: 48 * heightRatio,
-      decoration: BoxDecoration(
-        color: isPeak
-            ? const Color(0xFF306948)
-            : isPrimary
-                ? kOrgPrimary
-                : const Color(0xFFE3E2E7),
-        borderRadius: BorderRadius.circular(3),
-      ),
-    );
-  }
+  Widget _buildFundEnvelopeCard({required int displayBudget}) => Container(
+    padding: const EdgeInsets.all(20),
+    decoration: BoxDecoration(
+      color: kOrgSurfaceWhite,
+      borderRadius: BorderRadius.circular(16),
+      border: Border.all(color: kOrgBorder),
+    ),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'PROGRAM AWARD AMOUNTS',
+          style: inter(fontSize: 11, fontWeight: FontWeight.w700),
+        ),
+        const SizedBox(height: 10),
+        Text('₱$displayBudget', style: inter(fontSize: 26, color: kOrgPrimary)),
+        const SizedBox(height: 8),
+        Text(
+          'Sum of listed program award amounts. This is not a fund balance or payment history.',
+          style: inter(fontSize: 12, color: kOrgTextSecondary),
+        ),
+      ],
+    ),
+  );
 
   // ---------------------------------------------------------------------------
   // Right Sidebar Card 4: Institutional Desk
@@ -2200,7 +2095,11 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
                 ),
               ],
             ),
-            child: const Icon(Icons.support_agent_rounded, size: 20, color: kOrgPrimary),
+            child: const Icon(
+              Icons.support_agent_rounded,
+              size: 20,
+              color: kOrgPrimary,
+            ),
           ),
           const SizedBox(width: 10),
           Expanded(
@@ -2223,12 +2122,18 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
             ),
           ),
           IconButton(
-            icon: const Icon(Icons.chevron_right_rounded, size: 18, color: kOrgTextSecondary),
+            icon: const Icon(
+              Icons.chevron_right_rounded,
+              size: 18,
+              color: kOrgTextSecondary,
+            ),
             onPressed: () {
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(
                   behavior: SnackBarBehavior.floating,
-                  content: Text('Contact institutional support at support@scholaris.ph'),
+                  content: Text(
+                    'Contact institutional support at support@scholaris.ph',
+                  ),
                 ),
               );
             },
@@ -2256,7 +2161,11 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
         children: [
           Row(
             children: [
-              const Icon(Icons.swap_horiz_rounded, size: 18, color: kOrgPrimary),
+              const Icon(
+                Icons.swap_horiz_rounded,
+                size: 18,
+                color: kOrgPrimary,
+              ),
               const SizedBox(width: 6),
               Text(
                 'Provider View Mode',
@@ -2281,12 +2190,19 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
                   onTap: () => setProviderType(ref, 'organization'),
                   borderRadius: BorderRadius.circular(8),
                   child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 10,
+                      vertical: 8,
+                    ),
                     decoration: BoxDecoration(
-                      color: activeType == 'organization' ? kOrgPrimary : const Color(0xFFF7F6FB),
+                      color: activeType == 'organization'
+                          ? kOrgPrimary
+                          : const Color(0xFFF7F6FB),
                       borderRadius: BorderRadius.circular(8),
                       border: Border.all(
-                        color: activeType == 'organization' ? kOrgPrimary : kOrgBorder,
+                        color: activeType == 'organization'
+                            ? kOrgPrimary
+                            : kOrgBorder,
                       ),
                     ),
                     child: Text(
@@ -2295,7 +2211,9 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
                       style: inter(
                         fontSize: 11,
                         fontWeight: FontWeight.w600,
-                        color: activeType == 'organization' ? Colors.white : kOrgTextSecondary,
+                        color: activeType == 'organization'
+                            ? Colors.white
+                            : kOrgTextSecondary,
                       ),
                     ),
                   ),
@@ -2307,12 +2225,19 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
                   onTap: () => setProviderType(ref, 'individual'),
                   borderRadius: BorderRadius.circular(8),
                   child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 10,
+                      vertical: 8,
+                    ),
                     decoration: BoxDecoration(
-                      color: activeType == 'individual' ? kOrgPrimary : const Color(0xFFF7F6FB),
+                      color: activeType == 'individual'
+                          ? kOrgPrimary
+                          : const Color(0xFFF7F6FB),
                       borderRadius: BorderRadius.circular(8),
                       border: Border.all(
-                        color: activeType == 'individual' ? kOrgPrimary : kOrgBorder,
+                        color: activeType == 'individual'
+                            ? kOrgPrimary
+                            : kOrgBorder,
                       ),
                     ),
                     child: Text(
@@ -2321,7 +2246,9 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
                       style: inter(
                         fontSize: 11,
                         fontWeight: FontWeight.w600,
-                        color: activeType == 'individual' ? Colors.white : kOrgTextSecondary,
+                        color: activeType == 'individual'
+                            ? Colors.white
+                            : kOrgTextSecondary,
                       ),
                     ),
                   ),

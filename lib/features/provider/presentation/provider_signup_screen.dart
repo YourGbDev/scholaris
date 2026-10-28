@@ -10,8 +10,10 @@
 // TODO(SMS-OTP): Integrate Telco SMS Gateway (e.g. Semaphore/Twilio) for live OTP verification.
 
 import 'dart:typed_data';
+
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:scholaris/core/security/captcha_challenge.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -19,6 +21,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'package:scholaris/core/security/password_validator.dart';
 import 'package:scholaris/shared/widgets/scholaris_logo.dart';
+
 import '../data/provider_verification_repository.dart';
 import '../models/provider_verification.dart';
 import '../providers/provider_type_provider.dart';
@@ -60,7 +63,8 @@ class _ProviderSignupScreenState extends ConsumerState<ProviderSignupScreen> {
   String? _indivSelfieFileName;
 
   // Organization Form Controllers & State
-  int _orgCurrentStep = 1; // 1: Org Details, 2: Rep Details, 3: Docs, 4: Review, 5: Confirmation
+  int _orgCurrentStep =
+      1; // 1: Org Details, 2: Rep Details, 3: Docs, 4: Review, 5: Confirmation
   final _orgNameCtrl = TextEditingController();
   String _orgType = 'Foundation';
   final _orgRegNumberCtrl = TextEditingController();
@@ -177,7 +181,9 @@ class _ProviderSignupScreenState extends ConsumerState<ProviderSignupScreen> {
       }
     } catch (e) {
       debugPrint('[PROVIDER SIGNUP FILE PICKER] $e');
-      _showError('File selection cancelled or failed. Please select a valid document.');
+      _showError(
+        'File selection cancelled or failed. Please select a valid document.',
+      );
     }
   }
 
@@ -228,9 +234,13 @@ class _ProviderSignupScreenState extends ConsumerState<ProviderSignupScreen> {
         userId = currentUser.id;
       } else {
         try {
+          final captcha = await acquireCaptcha(context);
+          if (!mounted) return;
+          if (!captcha.allowed) { setState(() => _isSubmitting = false); return; }
           final authRes = await client.auth.signUp(
             email: email,
             password: password,
+            captchaToken: captcha.token,
             data: {
               'full_name': fullName,
               'role': 'provider',
@@ -248,13 +258,16 @@ class _ProviderSignupScreenState extends ConsumerState<ProviderSignupScreen> {
           }
           final user = authRes.user;
           if (user == null) {
-            throw const AuthException('Could not create provider account. Please verify credentials.');
+            throw const AuthException(
+              'Could not create provider account. Please verify credentials.',
+            );
           }
           userId = user.id;
         } on AuthException catch (e) {
           if (e.message.toLowerCase().contains('already registered')) {
             throw const AuthException(
-                'This email is already registered. Please sign in or use another email.');
+              'This email is already registered. Please sign in or use another email.',
+            );
           }
           rethrow;
         }
@@ -317,7 +330,9 @@ class _ProviderSignupScreenState extends ConsumerState<ProviderSignupScreen> {
     } catch (e) {
       setState(() => _isSubmitting = false);
       debugPrint('[PROVIDER SIGNUP EXCEPTION] Type: ${e.runtimeType}');
-      _showError('Submission could not be completed. Please verify your information and retry.');
+      _showError(
+        'Submission could not be completed. Please verify your information and retry.',
+      );
     }
   }
 
@@ -352,9 +367,13 @@ class _ProviderSignupScreenState extends ConsumerState<ProviderSignupScreen> {
         userId = currentUser.id;
       } else {
         try {
+          final captcha = await acquireCaptcha(context);
+          if (!mounted) return;
+          if (!captcha.allowed) { setState(() => _isSubmitting = false); return; }
           final authRes = await client.auth.signUp(
             email: email,
             password: password,
+            captchaToken: captcha.token,
             data: {
               'full_name': orgName,
               'role': 'provider',
@@ -373,13 +392,16 @@ class _ProviderSignupScreenState extends ConsumerState<ProviderSignupScreen> {
           }
           final user = authRes.user;
           if (user == null) {
-            throw const AuthException('Could not create provider account. Please verify credentials.');
+            throw const AuthException(
+              'Could not create provider account. Please verify credentials.',
+            );
           }
           userId = user.id;
         } on AuthException catch (e) {
           if (e.message.toLowerCase().contains('already registered')) {
             throw const AuthException(
-                'This representative email is already registered. Please sign in or use another email.');
+              'This representative email is already registered. Please sign in or use another email.',
+            );
           }
           rethrow;
         }
@@ -451,7 +473,9 @@ class _ProviderSignupScreenState extends ConsumerState<ProviderSignupScreen> {
     } catch (e) {
       setState(() => _isSubmitting = false);
       debugPrint('[PROVIDER ORG SIGNUP EXCEPTION] Type: ${e.runtimeType}');
-      _showError('Submission could not be completed. Please verify your information and retry.');
+      _showError(
+        'Submission could not be completed. Please verify your information and retry.',
+      );
     }
   }
 
@@ -502,26 +526,34 @@ class _ProviderSignupScreenState extends ConsumerState<ProviderSignupScreen> {
                         ),
                       ],
                     ),
-                    padding: const EdgeInsets.all(28),
+                    padding: EdgeInsets.all(
+                      MediaQuery.sizeOf(context).width < 400 ? 18 : 28,
+                    ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
                         if (_errorMessage != null) ...[
                           Container(
                             padding: const EdgeInsets.symmetric(
-                                horizontal: 14, vertical: 10),
+                              horizontal: 14,
+                              vertical: 10,
+                            ),
                             margin: const EdgeInsets.only(bottom: 16),
                             decoration: BoxDecoration(
                               color: const Color(0xFFFFDAD6),
                               borderRadius: BorderRadius.circular(10),
                               border: Border.all(
-                                  color: const Color(0xFFBA1A1A)
-                                      .withValues(alpha: 0.3)),
+                                color: const Color(0xFFBA1A1A)
+                                    .withValues(alpha: 0.3),
+                              ),
                             ),
                             child: Row(
                               children: [
-                                const Icon(Icons.error_outline_rounded,
-                                    color: Color(0xFFBA1A1A), size: 18),
+                                const Icon(
+                                  Icons.error_outline_rounded,
+                                  color: Color(0xFFBA1A1A),
+                                  size: 18,
+                                ),
                                 const SizedBox(width: 8),
                                 Expanded(
                                   child: Text(
@@ -563,29 +595,46 @@ class _ProviderSignupScreenState extends ConsumerState<ProviderSignupScreen> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Flexible(
+        Expanded(
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const ScholarisLogo(badgeSize: 28, fontSize: 18, compact: true),
-              const SizedBox(width: 8),
               Flexible(
+                flex: 3,
+                child: FittedBox(
+                  fit: BoxFit.scaleDown,
+                  alignment: Alignment.centerLeft,
+                  child: const ScholarisLogo(
+                    badgeSize: 26,
+                    fontSize: 17,
+                    compact: true,
+                  ),
+                ),
+              ),
+              const SizedBox(width: 6),
+              Flexible(
+                flex: 2,
                 child: Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 6,
+                    vertical: 2.5,
+                  ),
                   decoration: BoxDecoration(
                     color: const Color(0xFFB3F1C6).withValues(alpha: 0.35),
                     borderRadius: BorderRadius.circular(100),
                   ),
-                  child: Text(
-                    'PROVIDER REGISTRATION',
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: GoogleFonts.inter(
-                      fontSize: 9.5,
-                      fontWeight: FontWeight.w700,
-                      color: const Color(0xFF00351C),
-                      letterSpacing: 0.5,
+                  child: FittedBox(
+                    fit: BoxFit.scaleDown,
+                    child: Text(
+                      'PROVIDER REGISTRATION',
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: GoogleFonts.inter(
+                        fontSize: 9,
+                        fontWeight: FontWeight.w700,
+                        color: const Color(0xFF00351C),
+                        letterSpacing: 0.4,
+                      ),
                     ),
                   ),
                 ),
@@ -606,6 +655,8 @@ class _ProviderSignupScreenState extends ConsumerState<ProviderSignupScreen> {
           ),
           style: TextButton.styleFrom(
             foregroundColor: const Color(0xFF0F4D2E),
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+            minimumSize: const Size(0, 36),
           ),
         ),
       ],
@@ -665,8 +716,12 @@ class _ProviderSignupScreenState extends ConsumerState<ProviderSignupScreen> {
                           maxLines: 1,
                           style: GoogleFonts.inter(
                             fontSize: 12,
-                            fontWeight: isOrg ? FontWeight.w600 : FontWeight.w500,
-                            color: isOrg ? Colors.white : const Color(0xFF404942),
+                            fontWeight: isOrg
+                                ? FontWeight.w600
+                                : FontWeight.w500,
+                            color: isOrg
+                                ? Colors.white
+                                : const Color(0xFF404942),
                           ),
                         ),
                       ),
@@ -719,8 +774,12 @@ class _ProviderSignupScreenState extends ConsumerState<ProviderSignupScreen> {
                           maxLines: 1,
                           style: GoogleFonts.inter(
                             fontSize: 12,
-                            fontWeight: !isOrg ? FontWeight.w600 : FontWeight.w500,
-                            color: !isOrg ? Colors.white : const Color(0xFF404942),
+                            fontWeight: !isOrg
+                                ? FontWeight.w600
+                                : FontWeight.w500,
+                            color: !isOrg
+                                ? Colors.white
+                                : const Color(0xFF404942),
                           ),
                         ),
                       ),
@@ -762,8 +821,7 @@ class _ProviderSignupScreenState extends ConsumerState<ProviderSignupScreen> {
             currentStep: 1,
             totalSteps: 2,
             stepTitle: 'Step 1 — Account Setup',
-            subtitle:
-                'Set up your personal benefactor credentials. You will use this email to sign in.',
+            subtitle: 'Set up your personal benefactor credentials. You will use this email to sign in.',
           ),
           const SizedBox(height: 20),
 
@@ -773,8 +831,9 @@ class _ProviderSignupScreenState extends ConsumerState<ProviderSignupScreen> {
           TextFormField(
             controller: _indivLegalNameCtrl,
             style: GoogleFonts.inter(fontSize: 14),
-            validator: (v) =>
-                (v == null || v.trim().isEmpty) ? 'Enter your full legal name.' : null,
+            validator: (v) => (v == null || v.trim().isEmpty)
+                ? 'Enter your full legal name.'
+                : null,
             decoration: _inputDecoration(
               hint: 'e.g. Juan P. Dela Cruz',
               prefixIcon: Icons.badge_outlined,
@@ -925,8 +984,7 @@ class _ProviderSignupScreenState extends ConsumerState<ProviderSignupScreen> {
             currentStep: 2,
             totalSteps: 2,
             stepTitle: 'Step 2 — Identity & Financial Verification',
-            subtitle:
-                'Complies with Philippine AMLC & Data Privacy regulations (RA 10173).',
+            subtitle: 'Complies with Philippine AMLC & Data Privacy regulations (RA 10173).',
           ),
           const SizedBox(height: 20),
 
@@ -939,17 +997,21 @@ class _ProviderSignupScreenState extends ConsumerState<ProviderSignupScreen> {
             decoration: _inputDecoration(prefixIcon: Icons.badge_outlined),
             items: const [
               DropdownMenuItem(
-                  value: 'PhilSys National ID',
-                  child: Text('PhilSys National ID')),
+                value: 'PhilSys National ID',
+                child: Text('PhilSys National ID'),
+              ),
               DropdownMenuItem(
-                  value: 'Philippine Passport',
-                  child: Text('Philippine Passport')),
+                value: 'Philippine Passport',
+                child: Text('Philippine Passport'),
+              ),
               DropdownMenuItem(
-                  value: "Driver's License",
-                  child: Text("Driver's License (LTO)")),
+                value: "Driver's License",
+                child: Text("Driver's License (LTO)"),
+              ),
               DropdownMenuItem(
-                  value: 'UMID',
-                  child: Text('UMID (Unified Multi-Purpose ID)')),
+                value: 'UMID',
+                child: Text('UMID (Unified Multi-Purpose ID)'),
+              ),
             ],
             onChanged: (val) {
               if (val != null) setState(() => _indivIdType = val);
@@ -977,7 +1039,9 @@ class _ProviderSignupScreenState extends ConsumerState<ProviderSignupScreen> {
           _buildFieldLabel('Government ID Photo (Front)', isRequired: true),
           const SizedBox(height: 6),
           _buildFileUploadBox(
-            title: _indivIdFrontFileName ?? 'Click to select ID photo (JPG, PNG, PDF)',
+            title:
+                _indivIdFrontFileName ??
+                'Click to select ID photo (JPG, PNG, PDF)',
             isUploaded: _indivIdFrontBytes != null,
             onTap: () => _pickFile(
               onPicked: (bytes, name) {
@@ -992,7 +1056,8 @@ class _ProviderSignupScreenState extends ConsumerState<ProviderSignupScreen> {
           _buildFieldLabel('Selfie with ID (Optional)', isRequired: false),
           const SizedBox(height: 6),
           _buildFileUploadBox(
-            title: _indivSelfieFileName ??
+            title:
+                _indivSelfieFileName ??
                 'Click to select selfie with ID (Optional, speeds up review)',
             isUploaded: _indivSelfieBytes != null,
             onTap: () => _pickFile(
@@ -1010,17 +1075,26 @@ class _ProviderSignupScreenState extends ConsumerState<ProviderSignupScreen> {
           DropdownButtonFormField<String>(
             isExpanded: true,
             initialValue: _indivSourceOfFunds,
-            decoration:
-                _inputDecoration(prefixIcon: Icons.account_balance_wallet_outlined),
+            decoration: _inputDecoration(
+              prefixIcon: Icons.account_balance_wallet_outlined,
+            ),
             items: const [
               DropdownMenuItem(
-                  value: 'Employment Income', child: Text('Employment Income')),
+                value: 'Employment Income',
+                child: Text('Employment Income'),
+              ),
               DropdownMenuItem(
-                  value: 'Business Income', child: Text('Business Income')),
+                value: 'Business Income',
+                child: Text('Business Income'),
+              ),
               DropdownMenuItem(
-                  value: 'Personal Savings', child: Text('Personal Savings')),
+                value: 'Personal Savings',
+                child: Text('Personal Savings'),
+              ),
               DropdownMenuItem(
-                  value: 'Inheritance', child: Text('Inheritance')),
+                value: 'Inheritance',
+                child: Text('Inheritance'),
+              ),
               DropdownMenuItem(value: 'Other', child: Text('Other')),
             ],
             onChanged: (val) {
@@ -1038,11 +1112,14 @@ class _ProviderSignupScreenState extends ConsumerState<ProviderSignupScreen> {
             decoration: _inputDecoration(prefixIcon: Icons.payments_outlined),
             items: const [
               DropdownMenuItem(
-                  value: '₱500-2k', child: Text('₱500 – ₱2,000 / month')),
+                value: '₱500-2k',
+                child: Text('₱500 – ₱2,000 / month'),
+              ),
               DropdownMenuItem(
-                  value: '₱2k-10k', child: Text('₱2,000 – ₱10,000 / month')),
-              DropdownMenuItem(
-                  value: '₱10k+', child: Text('₱10,000+ / month')),
+                value: '₱2k-10k',
+                child: Text('₱2,000 – ₱10,000 / month'),
+              ),
+              DropdownMenuItem(value: '₱10k+', child: Text('₱10,000+ / month')),
             ],
             onChanged: (val) {
               if (val != null) setState(() => _indivGivingBudget = val);
@@ -1051,8 +1128,10 @@ class _ProviderSignupScreenState extends ConsumerState<ProviderSignupScreen> {
           const SizedBox(height: 16),
 
           // TIN (Optional)
-          _buildFieldLabel('Tax Identification Number (TIN, Optional)',
-              isRequired: false),
+          _buildFieldLabel(
+            'Tax Identification Number (TIN, Optional)',
+            isRequired: false,
+          ),
           const SizedBox(height: 6),
           TextFormField(
             controller: _indivTinCtrl,
@@ -1075,7 +1154,8 @@ class _ProviderSignupScreenState extends ConsumerState<ProviderSignupScreen> {
                   value: _indivConsent,
                   activeColor: const Color(0xFF0F4D2E),
                   shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(4)),
+                    borderRadius: BorderRadius.circular(4),
+                  ),
                   onChanged: (v) => setState(() => _indivConsent = v ?? false),
                 ),
               ),
@@ -1105,9 +1185,12 @@ class _ProviderSignupScreenState extends ConsumerState<ProviderSignupScreen> {
                   foregroundColor: const Color(0xFF404942),
                   side: const BorderSide(color: Color(0xFFC0C9C0)),
                   shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10)),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
                   padding: const EdgeInsets.symmetric(
-                      horizontal: 16, vertical: 12),
+                    horizontal: 16,
+                    vertical: 12,
+                  ),
                 ),
                 child: const Text('← Back'),
               ),
@@ -1271,8 +1354,7 @@ class _ProviderSignupScreenState extends ConsumerState<ProviderSignupScreen> {
             currentStep: 1,
             totalSteps: 4,
             stepTitle: 'Step 1 — Organization Details',
-            subtitle:
-                'Institutional identity and Philippine regulatory registration numbers.',
+            subtitle: 'Institutional identity and Philippine regulatory registration numbers.',
           ),
           const SizedBox(height: 20),
 
@@ -1301,20 +1383,25 @@ class _ProviderSignupScreenState extends ConsumerState<ProviderSignupScreen> {
             decoration: _inputDecoration(prefixIcon: Icons.category_outlined),
             items: const [
               DropdownMenuItem(
-                  value: 'Foundation',
-                  child: Text('Foundation (Non-Stock Non-Profit)')),
+                value: 'Foundation',
+                child: Text('Foundation (Non-Stock Non-Profit)'),
+              ),
               DropdownMenuItem(
-                  value: 'Corporate',
-                  child: Text('Corporate (CSR / Endowment)')),
+                value: 'Corporate',
+                child: Text('Corporate (CSR / Endowment)'),
+              ),
               DropdownMenuItem(
-                  value: 'SUC/State College',
-                  child: Text('SUC / State College')),
+                value: 'SUC/State College',
+                child: Text('SUC / State College'),
+              ),
               DropdownMenuItem(
-                  value: 'LGU',
-                  child: Text('LGU (Local Government Unit)')),
+                value: 'LGU',
+                child: Text('LGU (Local Government Unit)'),
+              ),
               DropdownMenuItem(
-                  value: 'NGO',
-                  child: Text('NGO (Non-Governmental Organization)')),
+                value: 'NGO',
+                child: Text('NGO (Non-Governmental Organization)'),
+              ),
               DropdownMenuItem(value: 'Other', child: Text('Other')),
             ],
             onChanged: (val) {
@@ -1395,8 +1482,7 @@ class _ProviderSignupScreenState extends ConsumerState<ProviderSignupScreen> {
             currentStep: 2,
             totalSteps: 4,
             stepTitle: 'Step 2 — Authorized Representative',
-            subtitle:
-                'The representative work email and password will be used to log in to the workstation.',
+            subtitle: 'The representative work email and password will be used to log in to the workstation.',
           ),
           const SizedBox(height: 20),
 
@@ -1531,9 +1617,12 @@ class _ProviderSignupScreenState extends ConsumerState<ProviderSignupScreen> {
                   foregroundColor: const Color(0xFF404942),
                   side: const BorderSide(color: Color(0xFFC0C9C0)),
                   shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10)),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
                   padding: const EdgeInsets.symmetric(
-                      horizontal: 16, vertical: 12),
+                    horizontal: 16,
+                    vertical: 12,
+                  ),
                 ),
                 child: const Text('← Back'),
               ),
@@ -1590,8 +1679,7 @@ class _ProviderSignupScreenState extends ConsumerState<ProviderSignupScreen> {
           currentStep: 3,
           totalSteps: 4,
           stepTitle: 'Step 3 — Document Uploads',
-          subtitle:
-              'Upload SEC Registration, BIR 2303, and Board Resolution (PDF, JPG, PNG up to 5 MB).',
+          subtitle: 'Upload SEC Registration, BIR 2303, and Board Resolution (PDF, JPG, PNG up to 5 MB).',
         ),
         const SizedBox(height: 20),
 
@@ -1611,8 +1699,10 @@ class _ProviderSignupScreenState extends ConsumerState<ProviderSignupScreen> {
         const SizedBox(height: 16),
 
         // BIR 2303
-        _buildFieldLabel('BIR Certificate of Registration (Form 2303)',
-            isRequired: true),
+        _buildFieldLabel(
+          'BIR Certificate of Registration (Form 2303)',
+          isRequired: true,
+        ),
         const SizedBox(height: 6),
         _buildFileUploadBox(
           title: _orgBirFileName ?? 'Select BIR 2303 (PDF/JPG/PNG)',
@@ -1628,11 +1718,13 @@ class _ProviderSignupScreenState extends ConsumerState<ProviderSignupScreen> {
 
         // Board Resolution
         _buildFieldLabel(
-            'Board Resolution / Secretary Certificate (Authorized Signatory)',
-            isRequired: false),
+          'Board Resolution / Secretary Certificate (Authorized Signatory)',
+          isRequired: false,
+        ),
         const SizedBox(height: 6),
         _buildFileUploadBox(
-          title: _orgBoardFileName ??
+          title:
+              _orgBoardFileName ??
               'Select Board Resolution (Optional, speeds up review)',
           isUploaded: _orgBoardBytes != null,
           onTap: () => _pickFile(
@@ -1653,9 +1745,12 @@ class _ProviderSignupScreenState extends ConsumerState<ProviderSignupScreen> {
                 foregroundColor: const Color(0xFF404942),
                 side: const BorderSide(color: Color(0xFFC0C9C0)),
                 shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10)),
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 12,
+                ),
               ),
               child: const Text('← Back'),
             ),
@@ -1665,7 +1760,8 @@ class _ProviderSignupScreenState extends ConsumerState<ProviderSignupScreen> {
                 onPressed: () {
                   if (_orgSecBytes == null || _orgBirBytes == null) {
                     _showError(
-                        'Please upload both your SEC Certificate and BIR 2303 before continuing.');
+                      'Please upload both your SEC Certificate and BIR 2303 before continuing.',
+                    );
                     return;
                   }
                   setState(() => _orgCurrentStep = 4);
@@ -1714,8 +1810,7 @@ class _ProviderSignupScreenState extends ConsumerState<ProviderSignupScreen> {
           currentStep: 4,
           totalSteps: 4,
           stepTitle: 'Step 4 — Review & Accreditation Submission',
-          subtitle:
-              'Verify all institutional details. You may edit any section before final submission.',
+          subtitle: 'Verify all institutional details. You may edit any section before final submission.',
         ),
         const SizedBox(height: 20),
 
@@ -1726,7 +1821,10 @@ class _ProviderSignupScreenState extends ConsumerState<ProviderSignupScreen> {
           items: [
             MapEntry('Legal Entity Name', _orgNameCtrl.text.trim()),
             MapEntry('Entity Type', _orgType),
-            MapEntry('Registration No.', _maskValue(_orgRegNumberCtrl.text.trim())),
+            MapEntry(
+              'Registration No.',
+              _maskValue(_orgRegNumberCtrl.text.trim()),
+            ),
           ],
         ),
         const SizedBox(height: 14),
@@ -1767,7 +1865,8 @@ class _ProviderSignupScreenState extends ConsumerState<ProviderSignupScreen> {
                 value: _orgConsent,
                 activeColor: const Color(0xFF0F4D2E),
                 shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(4)),
+                  borderRadius: BorderRadius.circular(4),
+                ),
                 onChanged: (v) => setState(() => _orgConsent = v ?? false),
               ),
             ),
@@ -1797,9 +1896,12 @@ class _ProviderSignupScreenState extends ConsumerState<ProviderSignupScreen> {
                 foregroundColor: const Color(0xFF404942),
                 side: const BorderSide(color: Color(0xFFC0C9C0)),
                 shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10)),
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 12,
+                ),
               ),
               child: const Text('← Back'),
             ),
@@ -2127,8 +2229,8 @@ class _ProviderSignupScreenState extends ConsumerState<ProviderSignupScreen> {
                 decoration: BoxDecoration(
                   color: active
                       ? (passwordStrength >= 3
-                          ? const Color(0xFF0F4D2E)
-                          : const Color(0xFFF99A00))
+                            ? const Color(0xFF0F4D2E)
+                            : const Color(0xFFF99A00))
                       : const Color(0xFFEEEDF3),
                   borderRadius: BorderRadius.circular(2),
                 ),
@@ -2137,8 +2239,11 @@ class _ProviderSignupScreenState extends ConsumerState<ProviderSignupScreen> {
           }),
         ),
         const SizedBox(height: 6),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        Wrap(
+          alignment: WrapAlignment.spaceBetween,
+          crossAxisAlignment: WrapCrossAlignment.center,
+          spacing: 8,
+          runSpacing: 4,
           children: [
             Text(
               'Password Complexity',
@@ -2155,8 +2260,8 @@ class _ProviderSignupScreenState extends ConsumerState<ProviderSignupScreen> {
                 color: passwordStrength >= 3
                     ? const Color(0xFF0F4D2E)
                     : (passwordStrength >= 2
-                        ? const Color(0xFFF99A00)
-                        : const Color(0xFFBA1A1A)),
+                          ? const Color(0xFFF99A00)
+                          : const Color(0xFFBA1A1A)),
               ),
             ),
           ],
@@ -2211,9 +2316,7 @@ class _ProviderSignupScreenState extends ConsumerState<ProviderSignupScreen> {
               text,
               style: GoogleFonts.inter(
                 fontSize: 11,
-                color: met
-                    ? const Color(0xFF1A1B1F)
-                    : const Color(0xFF707971),
+                color: met ? const Color(0xFF1A1B1F) : const Color(0xFF707971),
               ),
             ),
           ),
@@ -2391,8 +2494,11 @@ class _ProviderSignupScreenState extends ConsumerState<ProviderSignupScreen> {
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(Icons.shield_outlined,
-                size: 13, color: Color(0xFF0F4D2E)),
+            const Icon(
+              Icons.shield_outlined,
+              size: 13,
+              color: Color(0xFF0F4D2E),
+            ),
             const SizedBox(width: 5),
             Flexible(
               child: Text(

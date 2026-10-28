@@ -8,6 +8,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:scholaris/core/security/captcha_challenge.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:scholaris/features/profile/models/student_profile.dart';
 import 'package:scholaris/features/provider/models/provider_verification.dart';
@@ -2184,8 +2185,11 @@ class _AdminUsersTabState extends ConsumerState<AdminUsersTab> {
               ),
               onPressed: () async {
                 if (formKey.currentState?.validate() ?? false) {
-                  Navigator.of(dialogContext).pop();
-                  await ref.read(adminUsersControllerProvider).createUser(
+                  try {
+                    final captcha = await acquireCaptcha(dialogContext);
+                    if (!dialogContext.mounted || !captcha.allowed) return;
+                    Navigator.of(dialogContext).pop();
+                    await ref.read(adminUsersControllerProvider).createUser(
                         fullName: nameCtrl.text.trim(),
                         email: emailCtrl.text.trim().toLowerCase(),
                         role: role,
@@ -2193,14 +2197,22 @@ class _AdminUsersTabState extends ConsumerState<AdminUsersTab> {
                         region: region,
                         school: schoolCtrl.text.trim(),
                         course: courseCtrl.text.trim(),
+                        captchaToken: captcha.token,
                       );
                   if (context.mounted) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
-                        content: Text('User account created successfully.'),
+                        content: Text('User account created. The user must verify their email and reset their password before signing in.'),
                         backgroundColor: kSeqPrimaryContainer,
                       ),
                     );
+                  }
+                  } catch (_) {
+                    if (context.mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('Account creation could not be confirmed. Please check the account before retrying.')),
+                      );
+                    }
                   }
                 }
               },

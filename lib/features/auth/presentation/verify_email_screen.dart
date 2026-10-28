@@ -17,6 +17,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:scholaris/app/confirmation_redirect.dart';
 import 'package:scholaris/app/recovery_redirect.dart';
 import 'package:scholaris/app/router.dart';
+import 'package:scholaris/core/security/captcha_challenge.dart';
 import 'package:scholaris/shared/theme/app_motion.dart';
 import 'package:scholaris/shared/theme/app_theme.dart';
 import 'package:scholaris/shared/widgets/mascot_pose_view.dart';
@@ -64,10 +65,13 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
     if (email == null || email.isEmpty) return;
     setState(() => _isLoading = true);
     try {
+      final captcha = await acquireCaptcha(context);
+      if (!mounted || !captcha.allowed) return;
       final response = await _client.verifyOTP(
         email: email,
         token: _code.text.trim(),
         type: widget.recovery ? OtpType.recovery : OtpType.email,
+        captchaToken: captcha.token,
       );
       if (!mounted) return;
       if (response.session == null) {
@@ -117,16 +121,20 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
 
     setState(() => _isLoading = true);
     try {
+      final captcha = await acquireCaptcha(context);
+      if (!mounted || !captcha.allowed) return;
       if (widget.recovery) {
         await _client.resetPasswordForEmail(
           email,
           redirectTo: resetPasswordRedirect,
+          captchaToken: captcha.token,
         );
       } else {
         await _client.resend(
           type: OtpType.signup,
           email: email,
           emailRedirectTo: emailConfirmationRedirect,
+          captchaToken: captcha.token,
         );
       }
       if (!mounted) return;

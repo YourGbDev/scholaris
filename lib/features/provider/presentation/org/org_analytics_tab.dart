@@ -20,6 +20,7 @@ import '../../../profile/models/applicant_profile.dart';
 import '../../providers/provider_scholarships_provider.dart';
 import 'package:scholaris/shared/theme/app_motion.dart';
 import 'org_provider_theme.dart';
+import '../widgets/org_metric_count.dart';
 
 class OrgAnalyticsTab extends ConsumerStatefulWidget {
   const OrgAnalyticsTab({super.key});
@@ -882,7 +883,7 @@ class _OrgAnalyticsTabState extends ConsumerState<OrgAnalyticsTab> {
             textBaseline: TextBaseline.alphabetic,
             children: [
               numericValue != null
-                  ? CountUpAnimation(
+                  ? OrgMetricCount(motionId: 'legacy-analytics.$title',
                       targetValue: numericValue,
                       style: inter(
                         fontSize: 26,

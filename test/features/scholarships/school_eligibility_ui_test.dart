@@ -103,6 +103,41 @@ void main() {
   }
 
   group('School Eligibility & Capacity UI Suite', () {
+    testWidgets('application action remains on the page without a duplicate shortcut', (tester) async {
+      tester.view.physicalSize = const Size(360, 800);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.resetPhysicalSize);
+      await tester.pumpWidget(createWidget(
+        scholarship: baseScholarship,
+        profile: const StudentProfile(id: 'student-1', fullName: 'Juan', gpa: 1.5, setupComplete: true),
+        capacity: const ScholarshipCapacity(scholarshipId: 'sch-stem-101', totalSlots: 25, occupiedSlots: 1, remainingSlots: 24, isUncapped: false),
+      ));
+      await tester.pumpAndSettle();
+      await tester.scrollUntilVisible(find.text('Start Application'), 200, scrollable: find.byType(Scrollable).first);
+      expect(find.text('Start Application'), findsOneWidget);
+      expect(find.text('View application options'), findsNothing);
+      expect(tester.takeException(), isNull);
+    });
+    testWidgets('detail page returns to the top from the bottom', (tester) async {
+      tester.view.physicalSize = const Size(360, 800);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.resetPhysicalSize);
+      await tester.pumpWidget(createWidget(
+        scholarship: baseScholarship,
+        profile: const StudentProfile(id: 'student-1', fullName: 'Juan', gpa: 1.5, setupComplete: true),
+        eligibleSchoolIds: null,
+        capacity: const ScholarshipCapacity(scholarshipId: 'sch-stem-101', totalSlots: 25, occupiedSlots: 1, remainingSlots: 24, isUncapped: false),
+      ));
+      await tester.pumpAndSettle();
+      final returnButton = find.text('Back to top');
+      await tester.scrollUntilVisible(returnButton, 300, scrollable: find.byType(Scrollable).first);
+      await tester.ensureVisible(returnButton);
+      await tester.pumpAndSettle();
+      await tester.tap(returnButton);
+      await tester.pumpAndSettle();
+      expect(find.text('Back to top'), findsNothing);
+      expect(tester.takeException(), isNull);
+    });
     testWidgets('Open to all schools: Renders open banner and verification disclosure note', (tester) async {
       tester.view.physicalSize = const Size(1280, 800);
       tester.view.devicePixelRatio = 1.0;

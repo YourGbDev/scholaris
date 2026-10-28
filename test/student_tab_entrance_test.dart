@@ -3,6 +3,21 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:scholaris/features/home/presentation/widgets/student_tab_entrance.dart';
 
 void main() {
+  testWidgets('first arrival reveals top to bottom and a tap settles it', (tester) async {
+    await tester.pumpWidget(const MaterialApp(home: StudentTabEntrance(
+      active: true, firstArrivalDuration: Duration(milliseconds: 1250),
+      child: Column(children: [
+        StudentTabReveal(order: 0, child: Text('Top')),
+        StudentTabReveal(order: 4, child: Text('Bottom')),
+      ]),
+    )));
+    await tester.pump(const Duration(milliseconds: 250));
+    final fades = tester.widgetList<FadeTransition>(find.byType(FadeTransition)).toList();
+    expect(fades.first.opacity.value, greaterThan(fades.last.opacity.value));
+    await tester.tap(find.text('Top'));
+    await tester.pump();
+    expect(fades.last.opacity.value, 1);
+  });
   double opacity(WidgetTester tester, String id) => tester
       .widget<FadeTransition>(
         find.descendant(

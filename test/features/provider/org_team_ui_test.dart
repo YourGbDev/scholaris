@@ -95,6 +95,8 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.text('Team & Reviewers'), findsOneWidget);
+      await tester.tap(find.text('Team summary'));
+      await tester.pumpAndSettle();
       expect(find.text('TOTAL STAFF'), findsOneWidget);
       expect(find.text('EVALUATORS'), findsOneWidget);
       expect(find.text('DISBURSING'), findsOneWidget);

@@ -191,7 +191,7 @@ void main() {
     final gate = Completer<List<Map<String, dynamic>>>();
     await tester.pumpWidget(_wrapHomeScreen(scholarships: _DelayedScholarships(gate)));
     // Wait beyond the shared entrance before releasing deliberately late data.
-    await tester.pump(const Duration(milliseconds: 900));
+    await tester.pump(const Duration(milliseconds: 1300));
     gate.complete(FakeScholarshipDataSource.defaultRows);
     for (var i = 0; i < 6; i++) { await tester.pump(); }
     expect(find.byType(CrossFadeLoading), findsNothing,

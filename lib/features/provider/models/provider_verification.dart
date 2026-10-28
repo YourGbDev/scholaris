@@ -87,6 +87,8 @@ class ProviderVerification {
   bool get isPending => status.toLowerCase() == 'pending';
   bool get isApproved => status.toLowerCase() == 'approved';
   bool get isRejected => status.toLowerCase() == 'rejected';
+  bool get isChangesRequested =>
+      status.toLowerCase() == 'changes_requested';
 
   /// Masked ID number showing only the last 4 characters for security & privacy.
   /// Never reveals the full ID number or TIN in logs/UI.

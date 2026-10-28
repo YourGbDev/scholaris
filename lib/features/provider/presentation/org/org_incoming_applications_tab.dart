@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:scholaris/features/profile/providers/profile_setup_provider.dart';
+
 import '../../../applications/models/application.dart';
 import '../../../applications/providers/applications_provider.dart';
 import '../../../profile/models/applicant_profile.dart';
@@ -19,15 +20,19 @@ import '../../providers/organization_team_provider.dart';
 import '../../providers/provider_scholarships_provider.dart';
 import '../widgets/applicant_review_drawer.dart';
 import 'org_provider_theme.dart';
+import '../widgets/org_metric_count.dart';
+import '../widgets/org_summary_disclosure.dart';
 import '../../../../shared/theme/app_motion.dart';
 
 class OrgIncomingApplicationsTab extends ConsumerStatefulWidget {
   const OrgIncomingApplicationsTab({
     super.key,
     this.isDecisioningMode = false,
+    this.initialScholarshipId,
   });
 
   final bool isDecisioningMode;
+  final String? initialScholarshipId;
 
   @override
   ConsumerState<OrgIncomingApplicationsTab> createState() =>
@@ -37,24 +42,31 @@ class OrgIncomingApplicationsTab extends ConsumerStatefulWidget {
 class _OrgIncomingApplicationsTabState
     extends ConsumerState<OrgIncomingApplicationsTab> {
   final Set<String> _expandedAppIds = <String>{};
-  int _selectedSegment = 0; // 0: All, 1: Pending, 2: Interview, 3: Approved, 4: Rejected
+  int _selectedSegment =
+      0; // 0: All, 1: Pending, 2: Interview, 3: Approved, 4: Rejected
   String _searchQuery = '';
   String? _selectedScholarshipId;
   String? _selectedHei;
-  String _selectedGwaRange = 'All'; // 'All', '1.00 - 1.50', '1.51 - 2.00', '2.01 - 3.00'
+  String _selectedGwaRange =
+      'All'; // 'All', '1.00 - 1.50', '1.51 - 2.00', '2.01 - 3.00'
   bool _assignedToMe = false;
 
   @override
   void initState() {
     super.initState();
+    _selectedScholarshipId = widget.initialScholarshipId;
     if (widget.isDecisioningMode) {
-      _selectedSegment = 1; // Default to Pending / Under Review in Decisioning mode
+      _selectedSegment =
+          1; // Default to Pending / Under Review in Decisioning mode
     }
   }
 
   @override
   void didUpdateWidget(OrgIncomingApplicationsTab oldWidget) {
     super.didUpdateWidget(oldWidget);
+    if (oldWidget.initialScholarshipId != widget.initialScholarshipId) {
+      _selectedScholarshipId = widget.initialScholarshipId;
+    }
     if (widget.isDecisioningMode != oldWidget.isDecisioningMode) {
       if (widget.isDecisioningMode) {
         _selectedSegment = 1;
@@ -105,21 +117,30 @@ class _OrgIncomingApplicationsTabState
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Icon(Icons.error_outline_rounded,
-                    size: 40, color: kOrgError),
+                const Icon(
+                  Icons.error_outline_rounded,
+                  size: 40,
+                  color: kOrgError,
+                ),
                 const SizedBox(height: 12),
-                Text('Error loading incoming applications',
-                    style: orgHeadline(fontSize: 16)),
+                Text(
+                  'Error loading incoming applications',
+                  style: orgHeadline(fontSize: 16),
+                ),
                 const SizedBox(height: 6),
-                Text('${incomingAppsAsync.error}',
-                    style: orgBody(fontSize: 12, color: kOrgTextSecondary)),
+                Text(
+                  '${incomingAppsAsync.error}',
+                  style: orgBody(fontSize: 12, color: kOrgTextSecondary),
+                ),
                 const SizedBox(height: 16),
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(backgroundColor: kOrgPrimary),
                   onPressed: () =>
                       ref.refresh(incomingApplicationsProvider.future),
-                  child: const Text('Retry',
-                      style: TextStyle(color: Colors.white)),
+                  child: const Text(
+                    'Retry',
+                    style: TextStyle(color: Colors.white),
+                  ),
                 ),
               ],
             ),
@@ -129,225 +150,247 @@ class _OrgIncomingApplicationsTabState
     }
 
     final apps = incomingAppsAsync.valueOrNull ?? <Application>[];
-    final isLoading = incomingAppsAsync.isLoading && incomingAppsAsync.valueOrNull == null;
+    final isLoading =
+        incomingAppsAsync.isLoading && incomingAppsAsync.valueOrNull == null;
     final profiles =
         ref.watch(providerApplicantProfilesProvider).valueOrNull ??
-            <String, ApplicantProfile>{};
+        <String, ApplicantProfile>{};
 
-          final scholarships = scholarshipsAsync.valueOrNull ?? <Scholarship>[];
-          final scholarshipsMap = <String, Scholarship>{
-            for (final s in scholarships) s.id: s
-          };
+    final scholarships = scholarshipsAsync.valueOrNull ?? <Scholarship>[];
+    final scholarshipsMap = <String, Scholarship>{
+      for (final s in scholarships) s.id: s,
+    };
 
-          // Categorized Counts for 4 KPIs & Segment tabs
-          final totalIntake = apps.length;
+    // Categorized Counts for 4 KPIs & Segment tabs
+    final totalIntake = apps.length;
 
-          final underReviewApps = apps.where((a) =>
-              a.status == ApplicationStatus.underReview).toList();
+    final underReviewApps = apps
+        .where((a) => a.status == ApplicationStatus.underReview)
+        .toList();
 
-          final pendingCategorizationApps = apps.where((a) =>
+    final pendingCategorizationApps = apps
+        .where(
+          (a) =>
               a.status == ApplicationStatus.submitted ||
-              a.status == ApplicationStatus.draft).toList();
+              a.status == ApplicationStatus.draft,
+        )
+        .toList();
 
-          final approvedApps = apps.where((a) =>
+    final approvedApps = apps
+        .where(
+          (a) =>
               a.status == ApplicationStatus.approved ||
-              a.status == ApplicationStatus.awarded).toList();
+              a.status == ApplicationStatus.awarded,
+        )
+        .toList();
 
-          final rejectedApps = apps.where((a) =>
+    final rejectedApps = apps
+        .where(
+          (a) =>
               a.status == ApplicationStatus.rejected ||
-              a.status == ApplicationStatus.withdrawn).toList();
+              a.status == ApplicationStatus.withdrawn,
+        )
+        .toList();
 
-          // Financial metrics for KPI 4
-          final totalCommitted = scholarships.fold<int>(
-            0,
-            (sum, s) => sum + ((s.slots ?? 0) * s.awardAmount),
-          );
-          final allocatedCapital = approvedApps.fold<int>(
-            0,
-            (sum, a) => sum + (scholarshipsMap[a.scholarshipId]?.awardAmount ?? 50000),
-          );
-          final budgetPercent = totalCommitted > 0
-              ? ((allocatedCapital / totalCommitted) * 100).toInt()
-              : 0;
+    // Listing values are estimates, not immutable commitments or payments.
+    final missingAwardValues = approvedApps
+        .where((a) => !scholarshipsMap.containsKey(a.scholarshipId))
+        .length;
+    final allocatedCapital = approvedApps.fold<int>(
+      0,
+      (sum, a) => sum + (scholarshipsMap[a.scholarshipId]?.awardAmount ?? 0),
+    );
 
-          // Segment filtering
-          List<Application> segmentApps;
-          switch (_selectedSegment) {
-            case 1:
-              segmentApps = underReviewApps;
-              break;
-            case 2:
-              segmentApps = pendingCategorizationApps;
-              break;
-            case 3:
-              segmentApps = approvedApps;
-              break;
-            case 4:
-              segmentApps = rejectedApps;
-              break;
-            case 0:
-            default:
-              segmentApps = apps;
-              break;
-          }
+    // Segment filtering
+    List<Application> segmentApps;
+    switch (_selectedSegment) {
+      case 1:
+        segmentApps = underReviewApps;
+        break;
+      case 2:
+        segmentApps = pendingCategorizationApps;
+        break;
+      case 3:
+        segmentApps = approvedApps;
+        break;
+      case 4:
+        segmentApps = rejectedApps;
+        break;
+      case 0:
+      default:
+        segmentApps = apps;
+        break;
+    }
 
-          final currentUserId = ref.watch(currentUserIdProvider);
-          final assignedScholarshipIds = <String>{};
-          if (_assignedToMe && currentUserId != null) {
-            for (final s in scholarships) {
-              final assignments = ref
-                      .watch(scholarshipReviewerAssignmentsProvider(s.id))
-                      .valueOrNull ??
-                  [];
-              if (assignments.any((a) => a.reviewerId == currentUserId)) {
-                assignedScholarshipIds.add(s.id);
-              }
-            }
-          }
+    final currentUserId = ref.watch(currentUserIdProvider);
+    final assignedScholarshipIds = <String>{};
+    if (_assignedToMe && currentUserId != null) {
+      for (final s in scholarships) {
+        final assignments =
+            ref
+                .watch(scholarshipReviewerAssignmentsProvider(s.id))
+                .valueOrNull ??
+            [];
+        if (assignments.any((a) => a.reviewerId == currentUserId)) {
+          assignedScholarshipIds.add(s.id);
+        }
+      }
+    }
 
-          // Parameter Filtering (Search, Scholarship, HEI, GWA, Assigned to Me)
-          final displayApps = segmentApps.where((app) {
-            final prof = profiles[app.userId];
-            final sch = scholarshipsMap[app.scholarshipId];
+    // Parameter Filtering (Search, Scholarship, HEI, GWA, Assigned to Me)
+    final displayApps = segmentApps.where((app) {
+      final prof = profiles[app.userId];
+      final sch = scholarshipsMap[app.scholarshipId];
 
-            // 1. Search Query
-            if (_searchQuery.isNotEmpty) {
-              final q = _searchQuery.toLowerCase();
-              final nameMatch = prof?.fullName.toLowerCase().contains(q) ?? false;
-              final schoolMatch = prof?.school?.toLowerCase().contains(q) ?? false;
-              final courseMatch = prof?.course.toLowerCase().contains(q) ?? false;
-              final schMatch = sch?.title.toLowerCase().contains(q) ?? false;
-              if (!nameMatch && !schoolMatch && !courseMatch && !schMatch) {
-                return false;
-              }
-            }
+      // 1. Search Query
+      if (_searchQuery.isNotEmpty) {
+        final q = _searchQuery.toLowerCase();
+        final nameMatch = prof?.fullName.toLowerCase().contains(q) ?? false;
+        final schoolMatch = prof?.school?.toLowerCase().contains(q) ?? false;
+        final courseMatch = prof?.course.toLowerCase().contains(q) ?? false;
+        final schMatch = sch?.title.toLowerCase().contains(q) ?? false;
+        if (!nameMatch && !schoolMatch && !courseMatch && !schMatch) {
+          return false;
+        }
+      }
 
-            // 2. Scholarship Dropdown
-            if (_selectedScholarshipId != null &&
-                app.scholarshipId != _selectedScholarshipId) {
-              return false;
-            }
+      // 2. Scholarship Dropdown
+      if (_selectedScholarshipId != null &&
+          app.scholarshipId != _selectedScholarshipId) {
+        return false;
+      }
 
-            // 3. HEI Dropdown
-            if (_selectedHei != null && _selectedHei != 'All') {
-              if (prof?.school != _selectedHei) return false;
-            }
+      // 3. HEI Dropdown
+      if (_selectedHei != null && _selectedHei != 'All') {
+        if (prof?.school != _selectedHei) return false;
+      }
 
-            // 4. GWA Range
-            if (_selectedGwaRange != 'All') {
-              final gwa = prof?.gpa ?? 1.5;
-              if (_selectedGwaRange == '1.00 - 1.50' && (gwa < 1.00 || gwa > 1.50)) {
-                return false;
-              }
-              if (_selectedGwaRange == '1.51 - 2.00' && (gwa <= 1.50 || gwa > 2.00)) {
-                return false;
-              }
-              if (_selectedGwaRange == '2.01 - 3.00' && (gwa <= 2.00 || gwa > 3.00)) {
-                return false;
-              }
-            }
+      // 4. GWA Range
+      if (_selectedGwaRange != 'All') {
+        final gwa = prof?.gpa ?? 1.5;
+        if (_selectedGwaRange == '1.00 - 1.50' && (gwa < 1.00 || gwa > 1.50)) {
+          return false;
+        }
+        if (_selectedGwaRange == '1.51 - 2.00' && (gwa <= 1.50 || gwa > 2.00)) {
+          return false;
+        }
+        if (_selectedGwaRange == '2.01 - 3.00' && (gwa <= 2.00 || gwa > 3.00)) {
+          return false;
+        }
+      }
 
-            // 5. Assigned to Me Filter
-            if (_assignedToMe && currentUserId != null) {
-              if (!assignedScholarshipIds.contains(app.scholarshipId)) {
-                return false;
-              }
-            }
+      // 5. Assigned to Me Filter
+      if (_assignedToMe && currentUserId != null) {
+        if (!assignedScholarshipIds.contains(app.scholarshipId)) {
+          return false;
+        }
+      }
 
-            return true;
-          }).toList();
+      return true;
+    }).toList();
 
-          return Container(
-            color: kOrgCanvas,
-            child: CrossFadeLoading(
-              isLoading: isLoading,
-              skeleton: _buildSkeleton(isDesktop: isDesktop),
-              child: LayoutBuilder(
-                builder: (context, constraints) {
-                  final isDesktop = constraints.maxWidth >= 768;
+    return Container(
+      color: kOrgCanvas,
+      child: CrossFadeLoading(
+        isLoading: isLoading,
+        skeleton: _buildSkeleton(isDesktop: isDesktop),
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            final isDesktop = constraints.maxWidth >= 768;
 
-                  return RefreshIndicator(
-                    color: kOrgPrimary,
-                    onRefresh: () async {
-                      ref.invalidate(incomingApplicationsProvider);
-                    },
-                    child: SingleChildScrollView(
-                      physics: const AppleBouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
-                      padding: EdgeInsets.symmetric(
-                        horizontal: isDesktop ? 32 : 16,
-                        vertical: isDesktop ? 28 : 20,
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          // 1. Header Segment
-                          _buildHeaderSection(context, orgName, isDesktop),
+            return RefreshIndicator(
+              color: kOrgPrimary,
+              onRefresh: () async {
+                ref.invalidate(incomingApplicationsProvider);
+              },
+              child: SingleChildScrollView(
+                physics: const AppleBouncingScrollPhysics(
+                  parent: AlwaysScrollableScrollPhysics(),
+                ),
+                padding: EdgeInsets.symmetric(
+                  horizontal: isDesktop ? 32 : 16,
+                  vertical: isDesktop ? 28 : 20,
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // 1. Header Segment
+                    _buildHeaderSection(context, orgName, isDesktop),
 
-                          const SizedBox(height: 24),
+                    const SizedBox(height: 24),
 
-                          // 2. 4-KPI Bento Strip
-                          _buildKpiBentoStrip(
-                            constraints: constraints,
-                            totalIntake: totalIntake,
-                            underReviewCount: underReviewApps.length,
-                            pendingCategorizationCount: pendingCategorizationApps.length,
-                            confirmedCount: approvedApps.length,
-                            budgetPercent: budgetPercent,
-                            allocatedCapital: allocatedCapital,
-                            totalCommitted: totalCommitted,
-                          ),
-
-                          const SizedBox(height: 24),
-
-                          // 3. Segment Filter Tabs & Multifunction Toolbar
-                          _buildFilterAndToolbar(
-                            allCount: totalIntake,
-                            pendingCount: underReviewApps.length,
-                            interviewCount: pendingCategorizationApps.length,
-                            approvedCount: approvedApps.length,
-                            rejectedCount: rejectedApps.length,
-                            scholarships: scholarships,
-                            profiles: profiles,
-                            isDesktop: isDesktop,
-                          ),
-
-                          const SizedBox(height: 18),
-
-                          // 4. Dossier Squircle Cards List
-                          if (displayApps.isEmpty)
-                            _buildEmptyState()
-                          else
-                            _buildDossierList(
-                              apps: displayApps,
-                              profiles: profiles,
-                              scholarshipsMap: scholarshipsMap,
-                              isDesktop: isDesktop,
-                            ),
-
-                          const SizedBox(height: 24),
-
-                          // 5. Bottom Regulatory Compliance Notice & Pagination
-                          _buildFooterAndPagination(
-                            displayCount: displayApps.length,
-                            totalCount: totalIntake,
-                            isDesktop: isDesktop,
-                          ),
-
-                          const SizedBox(height: 24),
-                        ],
+                    // 2. 4-KPI Bento Strip
+                    OrgSummaryDisclosure(
+                      title: 'Application summary',
+                      summary:
+                          '$totalIntake ${totalIntake == 1 ? 'application' : 'applications'} · ${underReviewApps.length} under review',
+                      child: _buildKpiBentoStrip(
+                        constraints: constraints,
+                        totalIntake: totalIntake,
+                        underReviewCount: underReviewApps.length,
+                        pendingCategorizationCount:
+                            pendingCategorizationApps.length,
+                        confirmedCount: approvedApps.length,
+                        missingAwardValues: missingAwardValues,
+                        allocatedCapital: allocatedCapital,
                       ),
                     ),
-                  );
-                },
+
+                    const SizedBox(height: 24),
+
+                    // 3. Segment Filter Tabs & Multifunction Toolbar
+                    _buildFilterAndToolbar(
+                      allCount: totalIntake,
+                      pendingCount: underReviewApps.length,
+                      interviewCount: pendingCategorizationApps.length,
+                      approvedCount: approvedApps.length,
+                      rejectedCount: rejectedApps.length,
+                      scholarships: scholarships,
+                      profiles: profiles,
+                      isDesktop: isDesktop,
+                    ),
+
+                    const SizedBox(height: 18),
+
+                    // 4. Dossier Squircle Cards List
+                    if (displayApps.isEmpty)
+                      _buildEmptyState()
+                    else
+                      _buildDossierList(
+                        apps: displayApps,
+                        profiles: profiles,
+                        scholarshipsMap: scholarshipsMap,
+                        isDesktop: isDesktop,
+                      ),
+
+                    const SizedBox(height: 24),
+
+                    // 5. Bottom Regulatory Compliance Notice & Pagination
+                    _buildFooterAndPagination(
+                      displayCount: displayApps.length,
+                      totalCount: totalIntake,
+                      isDesktop: isDesktop,
+                    ),
+
+                    const SizedBox(height: 24),
+                  ],
+                ),
               ),
-            ),
-          );
+            );
+          },
+        ),
+      ),
+    );
   }
 
   // ===========================================================================
   // SECTION 1: Top Context & Header Row
   // ===========================================================================
-  Widget _buildHeaderSection(BuildContext context, String orgName, bool isDesktop) {
+  Widget _buildHeaderSection(
+    BuildContext context,
+    String orgName,
+    bool isDesktop,
+  ) {
     final contextBadge = SingleChildScrollView(
       scrollDirection: Axis.horizontal,
       child: Row(
@@ -355,8 +398,8 @@ class _OrgIncomingApplicationsTabState
         children: [
           Text(
             widget.isDecisioningMode
-                ? 'Selection Pool • AY 2024–2025'.toUpperCase()
-                : '$orgName • AY 2024–2025 Intake'.toUpperCase(),
+                ? 'Application decisions'.toUpperCase()
+                : orgName.toUpperCase(),
             style: orgLabel(
               fontSize: 11,
               fontWeight: FontWeight.w600,
@@ -366,8 +409,10 @@ class _OrgIncomingApplicationsTabState
           ),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 6),
-            child: Text('•',
-                style: orgLabel(fontSize: 11, color: const Color(0xFFC0C9C0))),
+            child: Text(
+              '•',
+              style: orgLabel(fontSize: 11, color: const Color(0xFFC0C9C0)),
+            ),
           ),
           Row(
             mainAxisSize: MainAxisSize.min,
@@ -383,8 +428,8 @@ class _OrgIncomingApplicationsTabState
               const SizedBox(width: 5),
               Text(
                 widget.isDecisioningMode
-                    ? 'Decisioning Pool Active'
-                    : 'Live Screening Sync',
+                    ? 'Under review'
+                    : 'Application intake',
                 style: orgLabel(
                   fontSize: 11,
                   fontWeight: FontWeight.w500,
@@ -407,7 +452,7 @@ class _OrgIncomingApplicationsTabState
               ? 'Grant Intake & Decisioning'
               : 'Incoming Applications',
           style: orgHeadline(
-            fontSize: isDesktop ? 26 : 21,
+            fontSize: isDesktop ? 32 : 26,
             fontWeight: FontWeight.w700,
             color: kOrgTextPrimary,
           ),
@@ -417,122 +462,29 @@ class _OrgIncomingApplicationsTabState
           constraints: const BoxConstraints(maxWidth: 680),
           child: Text(
             widget.isDecisioningMode
-                ? 'Review, screen, and deliberate candidate applications across active foundation scholarship selection pools.'
-                : 'Review, screen, and triage candidate applications across all active foundation scholarship programs.',
+                ? 'Review applications and record selection decisions.'
+                : 'Find applicants, review requirements, and manage application status.',
             style: orgBody(fontSize: 13.5, color: kOrgTextSecondary),
           ),
         ),
       ],
     );
 
-    final actionButtons = Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        // Export Dossiers (CSV)
-        Material(
-          color: const Color(0xFFF4F3F8),
-          borderRadius: BorderRadius.circular(12),
-          child: InkWell(
-            borderRadius: BorderRadius.circular(12),
-            onTap: () {
-              showScholarisToast(
-                context,
-                message: 'Applicant dossiers exported to CSV successfully.',
-                icon: Icons.download_done_rounded,
-              );
-            },
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: const Color(0xFFE5E7EB)),
-              ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const Icon(Icons.download_rounded,
-                      size: 16, color: kOrgTextPrimary),
-                  const SizedBox(width: 8),
-                  Text(
-                    'Export Dossiers (CSV)',
-                    style: orgLabel(fontSize: 12.5, color: kOrgTextPrimary),
-                  ),
-                ],
-              ),
-            ),
-          ),
+    final actionButtons = PopupMenuButton<String>(
+      tooltip: 'Additional application tools',
+      icon: const Icon(Icons.more_horiz_rounded, color: kOrgTextSecondary),
+      itemBuilder: (_) => const [
+        PopupMenuItem<String>(
+          enabled: false,
+          child: Text('Export CSV — not available'),
         ),
-        const SizedBox(width: 10),
-        // Batch Assignment
-        Material(
-          color: const Color(0xFFF4F3F8),
-          borderRadius: BorderRadius.circular(12),
-          child: InkWell(
-            borderRadius: BorderRadius.circular(12),
-            onTap: () {
-              showScholarisToast(
-                context,
-                message: 'Batch assignment panel opened.',
-                icon: Icons.tune_rounded,
-              );
-            },
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: const Color(0xFFE5E7EB)),
-              ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const Icon(Icons.tune_rounded,
-                      size: 16, color: kOrgTextPrimary),
-                  const SizedBox(width: 8),
-                  Text(
-                    'Batch Assignment',
-                    style: orgLabel(fontSize: 12.5, color: kOrgTextPrimary),
-                  ),
-                ],
-              ),
-            ),
-          ),
+        PopupMenuItem<String>(
+          enabled: false,
+          child: Text('Batch assignment — not available'),
         ),
-        const SizedBox(width: 10),
-        // + Bulk Action
-        Material(
-          color: kOrgPrimary,
-          borderRadius: BorderRadius.circular(12),
-          elevation: 1,
-          child: InkWell(
-            borderRadius: BorderRadius.circular(12),
-            onTap: () {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('Bulk action tools active.'),
-                  duration: Duration(seconds: 2),
-                ),
-              );
-            },
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const Icon(Icons.tune_rounded,
-                      size: 17, color: Colors.white),
-                  const SizedBox(width: 6),
-                  Text(
-                    '+ Bulk Action',
-                    style: orgLabel(
-                      fontSize: 12.5,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.white,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
+        PopupMenuItem<String>(
+          enabled: false,
+          child: Text('Bulk actions — not available'),
         ),
       ],
     );
@@ -571,9 +523,8 @@ class _OrgIncomingApplicationsTabState
     required int underReviewCount,
     required int pendingCategorizationCount,
     required int confirmedCount,
-    required int budgetPercent,
+    required int missingAwardValues,
     required int allocatedCapital,
-    required int totalCommitted,
   }) {
     final underReviewRatio = totalIntake > 0
         ? (underReviewCount / totalIntake).clamp(0.0, 1.0)
@@ -641,7 +592,8 @@ class _OrgIncomingApplicationsTabState
         progressValue: pendingRatio,
         progressColor: const Color(0xFF0070EB),
         isSelected: _selectedSegment == 2,
-        tooltip: 'Filter to pending categorization ($pendingCategorizationCount)',
+        tooltip:
+            'Filter to pending categorization ($pendingCategorizationCount)',
         onTap: () => setState(() => _selectedSegment = 2),
       ),
     );
@@ -654,13 +606,12 @@ class _OrgIncomingApplicationsTabState
         value: '$confirmedCount',
         numericValue: confirmedCount,
         badgeWidget: Text(
-          '$budgetPercent% grant budget',
+          'Listing estimate only',
           style: orgLabel(fontSize: 11, color: kOrgPrimary),
         ),
         subtitle:
-            '${_formatCurrency(allocatedCapital)} allocated of ${_formatCurrency(totalCommitted)} pool',
-        progressValue:
-            totalCommitted > 0 ? (allocatedCapital / totalCommitted).clamp(0.0, 1.0) : 0.0,
+            '${_formatCurrency(allocatedCapital)} known award estimate · ${missingAwardValues > 0 ? '$missingAwardValues award value unavailable' : 'Not a payment total'}',
+        progressValue: 0.0,
         progressColor: kOrgPrimary,
         isSelected: _selectedSegment == 3,
         tooltip: 'Filter to approved / awarded ($confirmedCount)',
@@ -729,7 +680,7 @@ class _OrgIncomingApplicationsTabState
     String? tooltip,
   }) {
     final cardContent = AnimatedContainer(
-      duration: kDurationFast,
+      duration: isReducedMotion(context) ? Duration.zero : kDurationFast,
       curve: kEaseOut,
       padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
@@ -788,29 +739,34 @@ class _OrgIncomingApplicationsTabState
             ],
           ),
           const SizedBox(height: 10),
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.baseline,
-            textBaseline: TextBaseline.alphabetic,
+          Wrap(
+            spacing: 8,
+            runSpacing: 4,
+            crossAxisAlignment: WrapCrossAlignment.center,
             children: [
               numericValue != null
-                  ? CountUpAnimation(
+                  ? OrgMetricCount(
+                      motionId: 'applications.$title',
                       targetValue: numericValue,
-                      style: orgTabularFigures(orgHeadline(
-                        fontSize: 24,
-                        fontWeight: FontWeight.w700,
-                        color: kOrgTextPrimary,
-                      )),
+                      style: orgTabularFigures(
+                        orgHeadline(
+                          fontSize: 24,
+                          fontWeight: FontWeight.w700,
+                          color: kOrgTextPrimary,
+                        ),
+                      ),
                     )
                   : Text(
                       value,
-                      style: orgTabularFigures(orgHeadline(
-                        fontSize: 24,
-                        fontWeight: FontWeight.w700,
-                        color: kOrgTextPrimary,
-                      )),
+                      style: orgTabularFigures(
+                        orgHeadline(
+                          fontSize: 24,
+                          fontWeight: FontWeight.w700,
+                          color: kOrgTextPrimary,
+                        ),
+                      ),
                     ),
               if (badgeWidget != null) ...[
-                const SizedBox(width: 8),
                 badgeWidget,
               ],
             ],
@@ -819,8 +775,6 @@ class _OrgIncomingApplicationsTabState
           Text(
             subtitle,
             style: orgBody(fontSize: 11.5, color: kOrgTextSecondary),
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
           ),
           const SizedBox(height: 12),
           ClipRRect(
@@ -893,59 +847,79 @@ class _OrgIncomingApplicationsTabState
           children: List.generate(segmentTabs.length, (idx) {
             final isSelected = _selectedSegment == idx;
             final item = segmentTabs[idx];
-            return PressableScale(
-              scale: 0.97,
-              child: GestureDetector(
-                onTap: () => setState(() => _selectedSegment = idx),
-                child: AnimatedContainer(
-                  duration: kDurationStandard,
-                  curve: kEaseInOut,
-                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-                  margin: const EdgeInsets.symmetric(horizontal: 2),
-                  decoration: BoxDecoration(
-                    color: isSelected ? kOrgSurfaceWhite : Colors.transparent,
-                    borderRadius: BorderRadius.circular(12),
-                    boxShadow: isSelected
-                        ? const [
-                            BoxShadow(
-                              color: Color(0x0A000000),
-                              blurRadius: 4,
-                              offset: Offset(0, 1),
-                            ),
-                          ]
-                        : null,
+            return Semantics(
+              selected: isSelected,
+              child: PressableScale(
+                scale: 0.97,
+                child: TextButton(
+                  style: TextButton.styleFrom(
+                    padding: EdgeInsets.zero,
+                    minimumSize: Size.zero,
+                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                   ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        item['label'] as String,
-                        style: orgLabel(
-                          fontSize: 12,
-                          fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
-                          color: isSelected ? kOrgTextPrimary : kOrgTextSecondary,
-                        ),
-                      ),
-                      const SizedBox(width: 6),
-                      Container(
-                        padding:
-                            const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                        decoration: BoxDecoration(
-                          color: isSelected
-                              ? const Color(0xFFEEEDF3)
-                              : const Color(0xFFE9E7ED).withValues(alpha: 0.6),
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: Text(
-                          '${item['count']}',
+                  onPressed: () => setState(() => _selectedSegment = idx),
+                  child: AnimatedContainer(
+                    duration: isReducedMotion(context)
+                        ? Duration.zero
+                        : kDurationStandard,
+                    curve: kEaseInOut,
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 14,
+                      vertical: 8,
+                    ),
+                    margin: const EdgeInsets.symmetric(horizontal: 2),
+                    decoration: BoxDecoration(
+                      color: isSelected ? kOrgSurfaceWhite : Colors.transparent,
+                      borderRadius: BorderRadius.circular(12),
+                      boxShadow: isSelected
+                          ? const [
+                              BoxShadow(
+                                color: Color(0x0A000000),
+                                blurRadius: 4,
+                                offset: Offset(0, 1),
+                              ),
+                            ]
+                          : null,
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          item['label'] as String,
                           style: orgLabel(
-                            fontSize: 10.5,
-                            fontWeight: FontWeight.w600,
-                            color: kOrgTextSecondary,
+                            fontSize: 12,
+                            fontWeight: isSelected
+                                ? FontWeight.w600
+                                : FontWeight.w500,
+                            color: isSelected
+                                ? kOrgTextPrimary
+                                : kOrgTextSecondary,
                           ),
                         ),
-                      ),
-                    ],
+                        const SizedBox(width: 6),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 6,
+                            vertical: 2,
+                          ),
+                          decoration: BoxDecoration(
+                            color: isSelected
+                                ? const Color(0xFFEEEDF3)
+                                : const Color(0xFFE9E7ED)
+                                      .withValues(alpha: 0.6),
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: Text(
+                            '${item['count']}',
+                            style: orgLabel(
+                              fontSize: 10.5,
+                              fontWeight: FontWeight.w600,
+                              color: kOrgTextSecondary,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
@@ -983,281 +957,327 @@ class _OrgIncomingApplicationsTabState
           final isWide = isDesktop && toolbarConstraints.maxWidth >= 1180;
           return isWide
               ? Row(
-              children: [
-                // Search Field
-                Expanded(
-                  flex: 3,
-                  child: Container(
-                    height: 38,
-                    padding: const EdgeInsets.symmetric(horizontal: 10),
-                    decoration: BoxDecoration(
-                      color: const Color(0xFFF4F3F8),
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: TextField(
-                      onChanged: (val) => setState(() => _searchQuery = val.trim()),
-                      style: orgBody(fontSize: 12.5),
-                      decoration: InputDecoration(
-                        isDense: true,
-                        hintText:
-                            'Filter by student name, LRN, university, or program...',
-                        hintStyle:
-                            orgBody(fontSize: 12, color: kOrgTextMuted),
-                        prefixIcon: const Icon(Icons.search_rounded,
-                            size: 18, color: kOrgTextSecondary),
-                        prefixIconConstraints:
-                            const BoxConstraints(minWidth: 28, maxHeight: 20),
-                        contentPadding: const EdgeInsets.symmetric(vertical: 10),
-                        border: InputBorder.none,
-                      ),
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 10),
-                // Dropdown 1: Scholarship
-                _buildFilterDropdown(
-                  label: 'Scholarship',
-                  valueText: _selectedScholarshipId == null
-                      ? 'All (${scholarships.length} Active)'
-                      : (scholarships
-                              .firstWhere(
-                                (s) => s.id == _selectedScholarshipId,
-                                orElse: () => scholarships.first,
-                              )
-                              .title),
-                  items: [
-                    const PopupMenuItem<String?>(
-                      value: null,
-                      child: Text('All Scholarships'),
-                    ),
-                    for (final s in scholarships)
-                      PopupMenuItem<String?>(
-                        value: s.id,
-                        child: Text(s.title),
-                      ),
-                  ],
-                  onSelected: (val) =>
-                      setState(() => _selectedScholarshipId = val),
-                ),
-                const SizedBox(width: 8),
-                // Dropdown 2: Target HEI
-                _buildFilterDropdown(
-                  label: 'Target HEI',
-                  valueText: _selectedHei ?? 'All Universities',
-                  items: [
-                    const PopupMenuItem<String?>(
-                      value: 'All',
-                      child: Text('All Universities'),
-                    ),
-                    for (final sch in schools)
-                      PopupMenuItem<String?>(
-                        value: sch,
-                        child: Text(sch),
-                      ),
-                  ],
-                  onSelected: (val) => setState(() => _selectedHei = val),
-                ),
-                const SizedBox(width: 8),
-                // Dropdown 3: GWA Range
-                _buildFilterDropdown(
-                  label: 'GWA Range',
-                  valueText: _selectedGwaRange,
-                  items: const [
-                    PopupMenuItem(value: 'All', child: Text('All GWA')),
-                    PopupMenuItem(
-                        value: '1.00 - 1.50',
-                        child: Text('1.00 – 1.50 (President/Dean’s)')),
-                    PopupMenuItem(
-                        value: '1.51 - 2.00', child: Text('1.51 – 2.00 (Honor)')),
-                    PopupMenuItem(
-                        value: '2.01 - 3.00', child: Text('2.01 – 3.00 (Pass)')),
-                  ],
-                  onSelected: (val) => setState(() => _selectedGwaRange = val),
-                ),
-                const SizedBox(width: 8),
-                // Assigned to Me Filter Chip
-                FilterChip(
-                  avatar: Icon(
-                    Icons.assignment_ind_rounded,
-                    size: 14,
-                    color: _assignedToMe ? Colors.white : kOrgPrimary,
-                  ),
-                  label: Text(
-                    'Assigned to Me',
-                    style: orgLabel(
-                      fontSize: 11.5,
-                      fontWeight: _assignedToMe ? FontWeight.w600 : FontWeight.w500,
-                      color: _assignedToMe ? Colors.white : kOrgTextPrimary,
-                    ),
-                  ),
-                  selected: _assignedToMe,
-                  selectedColor: kOrgPrimary,
-                  backgroundColor: const Color(0xFFF4F3F8),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
-                    side: BorderSide(
-                      color: _assignedToMe ? kOrgPrimary : const Color(0xFFE5E7EB),
-                    ),
-                  ),
-                  onSelected: (val) => setState(() => _assignedToMe = val),
-                ),
-                const SizedBox(width: 8),
-                // Reset Button
-                IconButton(
-                  tooltip: 'Reset Filters',
-                  icon: const Icon(Icons.restart_alt_rounded,
-                      size: 20, color: kOrgTextSecondary),
-                  onPressed: () {
-                    setState(() {
-                      _searchQuery = '';
-                      _selectedScholarshipId = null;
-                      _selectedHei = null;
-                      _selectedGwaRange = 'All';
-                      _assignedToMe = false;
-                    });
-                  },
-                ),
-              ],
-            )
-          : Column(
-              children: [
-                Container(
-                  height: 38,
-                  padding: const EdgeInsets.symmetric(horizontal: 10),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFFF4F3F8),
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: TextField(
-                    onChanged: (val) => setState(() => _searchQuery = val.trim()),
-                    style: orgBody(fontSize: 12.5),
-                    decoration: InputDecoration(
-                      isDense: true,
-                      hintText: 'Filter applicants...',
-                      hintStyle: orgBody(fontSize: 12, color: kOrgTextMuted),
-                      prefixIcon: const Icon(Icons.search_rounded,
-                          size: 18, color: kOrgTextSecondary),
-                      prefixIconConstraints:
-                          const BoxConstraints(minWidth: 28, maxHeight: 20),
-                      contentPadding: const EdgeInsets.symmetric(vertical: 10),
-                      border: InputBorder.none,
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 8),
-                SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: Row(
-                    children: [
-                      _buildFilterDropdown(
-                        label: 'Scholarship',
-                        valueText: _selectedScholarshipId == null
-                            ? 'All Scholarships'
-                            : 'Filtered',
-                        items: [
-                          const PopupMenuItem<String?>(
-                            value: null,
-                            child: Text('All Scholarships'),
-                          ),
-                          for (final s in scholarships)
-                            PopupMenuItem<String?>(
-                              value: s.id,
-                              child: Text(s.title),
+                  children: [
+                    // Search Field
+                    Expanded(
+                      flex: 3,
+                      child: Container(
+                        height: 38,
+                        padding: const EdgeInsets.symmetric(horizontal: 10),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFF4F3F8),
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: TextField(
+                          onChanged: (val) =>
+                              setState(() => _searchQuery = val.trim()),
+                          style: orgBody(fontSize: 12.5),
+                          decoration: InputDecoration(
+                            isDense: true,
+                            hintText: 'Filter by student name, LRN, university, or program...',
+                            hintStyle: orgBody(
+                              fontSize: 12,
+                              color: kOrgTextMuted,
                             ),
-                        ],
-                        onSelected: (val) =>
-                            setState(() => _selectedScholarshipId = val),
-                      ),
-                      const SizedBox(width: 8),
-                      _buildFilterDropdown(
-                        label: 'HEI',
-                        valueText: _selectedHei ?? 'All',
-                        items: [
-                          const PopupMenuItem<String?>(
-                            value: 'All',
-                            child: Text('All Universities'),
-                          ),
-                          for (final sch in schools)
-                            PopupMenuItem<String?>(
-                              value: sch,
-                              child: Text(sch),
+                            prefixIcon: const Icon(
+                              Icons.search_rounded,
+                              size: 18,
+                              color: kOrgTextSecondary,
                             ),
-                        ],
-                        onSelected: (val) => setState(() => _selectedHei = val),
-                      ),
-                      const SizedBox(width: 8),
-                      _buildFilterDropdown(
-                        label: 'GWA',
-                        valueText: _selectedGwaRange,
-                        items: const [
-                          PopupMenuItem(value: 'All', child: Text('All GWA')),
-                          PopupMenuItem(
-                              value: '1.00 - 1.50', child: Text('1.00 – 1.50')),
-                          PopupMenuItem(
-                              value: '1.51 - 2.00', child: Text('1.51 – 2.00')),
-                          PopupMenuItem(
-                              value: '2.01 - 3.00', child: Text('2.01 – 3.00')),
-                        ],
-                        onSelected: (val) =>
-                            setState(() => _selectedGwaRange = val),
-                      ),
-                      const SizedBox(width: 8),
-                      FilterChip(
-                        avatar: Icon(
-                          Icons.assignment_ind_rounded,
-                          size: 14,
-                          color: _assignedToMe ? Colors.white : kOrgPrimary,
-                        ),
-                        label: Text(
-                          'Assigned to Me',
-                          style: orgLabel(
-                            fontSize: 11.5,
-                            fontWeight: _assignedToMe ? FontWeight.w600 : FontWeight.w500,
-                            color: _assignedToMe ? Colors.white : kOrgTextPrimary,
+                            prefixIconConstraints: const BoxConstraints(
+                              minWidth: 28,
+                              maxHeight: 20,
+                            ),
+                            contentPadding: const EdgeInsets.symmetric(
+                              vertical: 10,
+                            ),
+                            border: InputBorder.none,
                           ),
                         ),
-                        selected: _assignedToMe,
-                        selectedColor: kOrgPrimary,
-                        backgroundColor: const Color(0xFFF4F3F8),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          side: BorderSide(
-                            color: _assignedToMe ? kOrgPrimary : const Color(0xFFE5E7EB),
-                          ),
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+                    // Dropdown 1: Scholarship
+                    _buildFilterDropdown(
+                      label: 'Scholarship',
+                      valueText: _selectedScholarshipId == null
+                          ? 'All (${scholarships.length} Active)'
+                          : (scholarships
+                                .firstWhere(
+                                  (s) => s.id == _selectedScholarshipId,
+                                  orElse: () => scholarships.first,
+                                )
+                                .title),
+                      items: [
+                        const PopupMenuItem<String?>(
+                          value: null,
+                          child: Text('All Scholarships'),
                         ),
-                        onSelected: (val) => setState(() => _assignedToMe = val),
+                        for (final s in scholarships)
+                          PopupMenuItem<String?>(
+                            value: s.id,
+                            child: Text(s.title),
+                          ),
+                      ],
+                      onSelected: (val) =>
+                          setState(() => _selectedScholarshipId = val),
+                    ),
+                    const SizedBox(width: 8),
+                    // Dropdown 2: Target HEI
+                    _buildFilterDropdown(
+                      label: 'Target HEI',
+                      valueText: _selectedHei ?? 'All Universities',
+                      items: [
+                        const PopupMenuItem<String?>(
+                          value: 'All',
+                          child: Text('All Universities'),
+                        ),
+                        for (final sch in schools)
+                          PopupMenuItem<String?>(value: sch, child: Text(sch)),
+                      ],
+                      onSelected: (val) => setState(() => _selectedHei = val),
+                    ),
+                    const SizedBox(width: 8),
+                    // Dropdown 3: GWA Range
+                    _buildFilterDropdown(
+                      label: 'GWA Range',
+                      valueText: _selectedGwaRange,
+                      items: const [
+                        PopupMenuItem(value: 'All', child: Text('All GWA')),
+                        PopupMenuItem(
+                          value: '1.00 - 1.50',
+                          child: Text('1.00 – 1.50 (President/Dean’s)'),
+                        ),
+                        PopupMenuItem(
+                          value: '1.51 - 2.00',
+                          child: Text('1.51 – 2.00 (Honor)'),
+                        ),
+                        PopupMenuItem(
+                          value: '2.01 - 3.00',
+                          child: Text('2.01 – 3.00 (Pass)'),
+                        ),
+                      ],
+                      onSelected: (val) =>
+                          setState(() => _selectedGwaRange = val),
+                    ),
+                    const SizedBox(width: 8),
+                    // Assigned to Me Filter Chip
+                    FilterChip(
+                      avatar: Icon(
+                        Icons.assignment_ind_rounded,
+                        size: 14,
+                        color: _assignedToMe ? Colors.white : kOrgPrimary,
                       ),
-                      const SizedBox(width: 4),
-                      IconButton(
-                        tooltip: 'Reset Filters',
-                        icon: const Icon(Icons.restart_alt_rounded,
-                            size: 18, color: kOrgTextSecondary),
-                        onPressed: () {
-                          setState(() {
-                            _searchQuery = '';
-                            _selectedScholarshipId = null;
-                            _selectedHei = null;
-                            _selectedGwaRange = 'All';
-                            _assignedToMe = false;
-                          });
-                        },
+                      label: Text(
+                        'Assigned to Me',
+                        style: orgLabel(
+                          fontSize: 11.5,
+                          fontWeight: _assignedToMe
+                              ? FontWeight.w600
+                              : FontWeight.w500,
+                          color: _assignedToMe ? Colors.white : kOrgTextPrimary,
+                        ),
                       ),
-                    ],
-                  ),
-                ),
-              ],
-            );
+                      selected: _assignedToMe,
+                      selectedColor: kOrgPrimary,
+                      backgroundColor: const Color(0xFFF4F3F8),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                        side: BorderSide(
+                          color: _assignedToMe
+                              ? kOrgPrimary
+                              : const Color(0xFFE5E7EB),
+                        ),
+                      ),
+                      onSelected: (val) => setState(() => _assignedToMe = val),
+                    ),
+                    const SizedBox(width: 8),
+                    // Reset Button
+                    IconButton(
+                      tooltip: 'Reset Filters',
+                      icon: const Icon(
+                        Icons.restart_alt_rounded,
+                        size: 20,
+                        color: kOrgTextSecondary,
+                      ),
+                      onPressed: () {
+                        setState(() {
+                          _searchQuery = '';
+                          _selectedScholarshipId = null;
+                          _selectedHei = null;
+                          _selectedGwaRange = 'All';
+                          _assignedToMe = false;
+                        });
+                      },
+                    ),
+                  ],
+                )
+              : Column(
+                  children: [
+                    Container(
+                      height: 38,
+                      padding: const EdgeInsets.symmetric(horizontal: 10),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFF4F3F8),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: TextField(
+                        onChanged: (val) =>
+                            setState(() => _searchQuery = val.trim()),
+                        style: orgBody(fontSize: 12.5),
+                        decoration: InputDecoration(
+                          isDense: true,
+                          hintText: 'Filter applicants...',
+                          hintStyle: orgBody(
+                            fontSize: 12,
+                            color: kOrgTextMuted,
+                          ),
+                          prefixIcon: const Icon(
+                            Icons.search_rounded,
+                            size: 18,
+                            color: kOrgTextSecondary,
+                          ),
+                          prefixIconConstraints: const BoxConstraints(
+                            minWidth: 28,
+                            maxHeight: 20,
+                          ),
+                          contentPadding: const EdgeInsets.symmetric(
+                            vertical: 10,
+                          ),
+                          border: InputBorder.none,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: Row(
+                        children: [
+                          _buildFilterDropdown(
+                            label: 'Scholarship',
+                            valueText: _selectedScholarshipId == null
+                                ? 'All Scholarships'
+                                : 'Filtered',
+                            items: [
+                              const PopupMenuItem<String?>(
+                                value: null,
+                                child: Text('All Scholarships'),
+                              ),
+                              for (final s in scholarships)
+                                PopupMenuItem<String?>(
+                                  value: s.id,
+                                  child: Text(s.title),
+                                ),
+                            ],
+                            onSelected: (val) =>
+                                setState(() => _selectedScholarshipId = val),
+                          ),
+                          const SizedBox(width: 8),
+                          _buildFilterDropdown(
+                            label: 'HEI',
+                            valueText: _selectedHei ?? 'All',
+                            items: [
+                              const PopupMenuItem<String?>(
+                                value: 'All',
+                                child: Text('All Universities'),
+                              ),
+                              for (final sch in schools)
+                                PopupMenuItem<String?>(
+                                  value: sch,
+                                  child: Text(sch),
+                                ),
+                            ],
+                            onSelected: (val) =>
+                                setState(() => _selectedHei = val),
+                          ),
+                          const SizedBox(width: 8),
+                          _buildFilterDropdown(
+                            label: 'GWA',
+                            valueText: _selectedGwaRange,
+                            items: const [
+                              PopupMenuItem(
+                                value: 'All',
+                                child: Text('All GWA'),
+                              ),
+                              PopupMenuItem(
+                                value: '1.00 - 1.50',
+                                child: Text('1.00 – 1.50'),
+                              ),
+                              PopupMenuItem(
+                                value: '1.51 - 2.00',
+                                child: Text('1.51 – 2.00'),
+                              ),
+                              PopupMenuItem(
+                                value: '2.01 - 3.00',
+                                child: Text('2.01 – 3.00'),
+                              ),
+                            ],
+                            onSelected: (val) =>
+                                setState(() => _selectedGwaRange = val),
+                          ),
+                          const SizedBox(width: 8),
+                          FilterChip(
+                            avatar: Icon(
+                              Icons.assignment_ind_rounded,
+                              size: 14,
+                              color: _assignedToMe ? Colors.white : kOrgPrimary,
+                            ),
+                            label: Text(
+                              'Assigned to Me',
+                              style: orgLabel(
+                                fontSize: 11.5,
+                                fontWeight: _assignedToMe
+                                    ? FontWeight.w600
+                                    : FontWeight.w500,
+                                color: _assignedToMe
+                                    ? Colors.white
+                                    : kOrgTextPrimary,
+                              ),
+                            ),
+                            selected: _assignedToMe,
+                            selectedColor: kOrgPrimary,
+                            backgroundColor: const Color(0xFFF4F3F8),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              side: BorderSide(
+                                color: _assignedToMe
+                                    ? kOrgPrimary
+                                    : const Color(0xFFE5E7EB),
+                              ),
+                            ),
+                            onSelected: (val) =>
+                                setState(() => _assignedToMe = val),
+                          ),
+                          const SizedBox(width: 4),
+                          IconButton(
+                            tooltip: 'Reset Filters',
+                            icon: const Icon(
+                              Icons.restart_alt_rounded,
+                              size: 18,
+                              color: kOrgTextSecondary,
+                            ),
+                            onPressed: () {
+                              setState(() {
+                                _searchQuery = '';
+                                _selectedScholarshipId = null;
+                                _selectedHei = null;
+                                _selectedGwaRange = 'All';
+                                _assignedToMe = false;
+                              });
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                );
         },
       ),
     );
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        segmentCapsule,
-        const SizedBox(height: 12),
-        toolbar,
-      ],
+      children: [segmentCapsule, const SizedBox(height: 12), toolbar],
     );
   }
 
@@ -1281,8 +1301,10 @@ class _OrgIncomingApplicationsTabState
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text('$label: ',
-                style: orgLabel(fontSize: 11.5, color: kOrgTextSecondary)),
+            Text(
+              '$label: ',
+              style: orgLabel(fontSize: 11.5, color: kOrgTextSecondary),
+            ),
             ConstrainedBox(
               constraints: const BoxConstraints(maxWidth: 140),
               child: Text(
@@ -1297,8 +1319,11 @@ class _OrgIncomingApplicationsTabState
               ),
             ),
             const SizedBox(width: 4),
-            const Icon(Icons.expand_more_rounded,
-                size: 16, color: kOrgTextSecondary),
+            const Icon(
+              Icons.expand_more_rounded,
+              size: 16,
+              color: kOrgTextSecondary,
+            ),
           ],
         ),
       ),
@@ -1350,19 +1375,33 @@ class _OrgIncomingApplicationsTabState
 
     final initials = fullName.length >= 2
         ? fullName
-            .split(' ')
-            .where((w) => w.isNotEmpty)
-            .take(2)
-            .map((w) => w[0].toUpperCase())
-            .join()
+              .split(' ')
+              .where((w) => w.isNotEmpty)
+              .take(2)
+              .map((w) => w[0].toUpperCase())
+              .join()
         : 'AP';
 
-    final double? gwa = (profile != null && profile.gpa > 0) ? profile.gpa : null;
-    final String honorStanding = gwa != null ? _getHonorStanding(gwa) : 'GWA Pending';
-    final course = profile?.course.isNotEmpty == true ? profile!.course : 'Academic Track Pending';
-    final school = profile?.school?.isNotEmpty == true ? profile!.school! : 'Institution Unspecified';
-    final location = profile?.cityMunicipality ?? profile?.province ?? profile?.region ?? 'Location Unlisted';
-    final int? monthlyIncome = (profile?.monthlyFamilyIncome != null && profile!.monthlyFamilyIncome! > 0)
+    final double? gwa = (profile != null && profile.gpa > 0)
+        ? profile.gpa
+        : null;
+    final String honorStanding = gwa != null
+        ? _getHonorStanding(gwa)
+        : 'GWA Pending';
+    final course = profile?.course.isNotEmpty == true
+        ? profile!.course
+        : 'Academic Track Pending';
+    final school = profile?.school?.isNotEmpty == true
+        ? profile!.school!
+        : 'Institution Unspecified';
+    final location =
+        profile?.cityMunicipality ??
+        profile?.province ??
+        profile?.region ??
+        'Location Unlisted';
+    final int? monthlyIncome =
+        (profile?.monthlyFamilyIncome != null &&
+            profile!.monthlyFamilyIncome! > 0)
         ? profile.monthlyFamilyIncome!.toInt()
         : null;
     final int? annualIncome = monthlyIncome != null ? monthlyIncome * 12 : null;
@@ -1376,7 +1415,9 @@ class _OrgIncomingApplicationsTabState
 
     if (app.status == ApplicationStatus.approved ||
         app.status == ApplicationStatus.awarded) {
-      statusTitle = app.status == ApplicationStatus.awarded ? 'Awarded' : 'Approved';
+      statusTitle = app.status == ApplicationStatus.awarded
+          ? 'Awarded'
+          : 'Approved';
       statusBg = const Color(0xFFB3F1C6);
       statusTextColor = const Color(0xFF00351C);
       statusIcon = Icons.verified_rounded;
@@ -1387,7 +1428,9 @@ class _OrgIncomingApplicationsTabState
       statusIcon = Icons.calendar_month_rounded;
     } else if (app.status == ApplicationStatus.rejected ||
         app.status == ApplicationStatus.withdrawn) {
-      statusTitle = app.status == ApplicationStatus.withdrawn ? 'Withdrawn' : 'Rejected';
+      statusTitle = app.status == ApplicationStatus.withdrawn
+          ? 'Withdrawn'
+          : 'Rejected';
       statusBg = const Color(0xFFFFDAD6);
       statusTextColor = const Color(0xFF93000A);
     } else {
@@ -1465,7 +1508,11 @@ class _OrgIncomingApplicationsTabState
                 color: kOrgTextPrimary,
               ),
             ),
-            orgIdPill(app.id.length >= 8 ? 'APP-${app.id.substring(0, 8).toUpperCase()}' : 'APP-${app.id}'),
+            orgIdPill(
+              app.id.length >= 8
+                  ? 'APP-${app.id.substring(0, 8).toUpperCase()}'
+                  : 'APP-${app.id}',
+            ),
             if (gwa != null)
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
@@ -1504,16 +1551,35 @@ class _OrgIncomingApplicationsTabState
           spacing: 6,
           runSpacing: 2,
           children: [
-            Text(course, style: orgHeadline(fontSize: 12.5, fontWeight: FontWeight.w600)),
-            Text('•', style: orgLabel(fontSize: 11, color: const Color(0xFFC0C9C0))),
-            Text(school, style: orgBody(fontSize: 12.5, color: kOrgTextSecondary)),
-            Text('•', style: orgLabel(fontSize: 11, color: const Color(0xFFC0C9C0))),
+            Text(
+              course,
+              style: orgHeadline(fontSize: 12.5, fontWeight: FontWeight.w600),
+            ),
+            Text(
+              '•',
+              style: orgLabel(fontSize: 11, color: const Color(0xFFC0C9C0)),
+            ),
+            Text(
+              school,
+              style: orgBody(fontSize: 12.5, color: kOrgTextSecondary),
+            ),
+            Text(
+              '•',
+              style: orgLabel(fontSize: 11, color: const Color(0xFFC0C9C0)),
+            ),
             Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Icon(Icons.location_on_outlined, size: 13, color: kOrgTextSecondary),
+                const Icon(
+                  Icons.location_on_outlined,
+                  size: 13,
+                  color: kOrgTextSecondary,
+                ),
                 const SizedBox(width: 2),
-                Text(location, style: orgBody(fontSize: 12, color: kOrgTextSecondary)),
+                Text(
+                  location,
+                  style: orgBody(fontSize: 12, color: kOrgTextSecondary),
+                ),
               ],
             ),
           ],
@@ -1539,14 +1605,15 @@ class _OrgIncomingApplicationsTabState
                   scholarship: scholarship,
                   applicantProfile: profile,
                   onStatusChanged: () {
-                    ref
-                        .read(incomingApplicationsProvider.notifier)
-                        .refresh();
+                    ref.read(incomingApplicationsProvider.notifier).refresh();
                   },
                 );
               },
               child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8.5),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 14,
+                  vertical: 8.5,
+                ),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
@@ -1559,8 +1626,11 @@ class _OrgIncomingApplicationsTabState
                       ),
                     ),
                     const SizedBox(width: 6),
-                    const Icon(Icons.arrow_forward_rounded,
-                        size: 15, color: Colors.white),
+                    const Icon(
+                      Icons.arrow_forward_rounded,
+                      size: 15,
+                      color: Colors.white,
+                    ),
                   ],
                 ),
               ),
@@ -1569,10 +1639,14 @@ class _OrgIncomingApplicationsTabState
         ),
         const SizedBox(width: 4),
         PopupMenuButton<String>(
-          icon: const Icon(Icons.more_vert_rounded,
-              size: 20, color: kOrgTextSecondary),
+          icon: const Icon(
+            Icons.more_vert_rounded,
+            size: 20,
+            color: kOrgTextSecondary,
+          ),
           shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12)),
+            borderRadius: BorderRadius.circular(12),
+          ),
           itemBuilder: (ctx) => [
             const PopupMenuItem(
               value: 'dossier',
@@ -1580,7 +1654,8 @@ class _OrgIncomingApplicationsTabState
             ),
             const PopupMenuItem(
               value: 'export',
-              child: Text('Export Candidate Record'),
+              enabled: false,
+              child: Text('Export candidate record — not available'),
             ),
           ],
           onSelected: (val) {
@@ -1591,9 +1666,7 @@ class _OrgIncomingApplicationsTabState
                 scholarship: scholarship,
                 applicantProfile: profile,
                 onStatusChanged: () {
-                  ref
-                      .read(incomingApplicationsProvider.notifier)
-                      .refresh();
+                  ref.read(incomingApplicationsProvider.notifier).refresh();
                 },
               );
             }
@@ -1602,169 +1675,211 @@ class _OrgIncomingApplicationsTabState
       ],
     );
 
-    final metricsRow = Row(
+    final grantTrackCol = Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // 1. Grant Track
-        Expanded(
-          flex: 3,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text('GRANT TRACK',
-                  style: orgLabel(
-                      fontSize: 10,
-                      fontWeight: FontWeight.w600,
-                      color: kOrgTextSecondary,
-                      letterSpacing: 0.5)),
-              const SizedBox(height: 3),
-              Text(
-                scholarship?.title ?? 'Grant Intake Track',
-                style: orgHeadline(
-                    fontSize: 13,
-                    fontWeight: FontWeight.w600,
-                    color: kOrgTextPrimary),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-              ),
-              Text(
-                scholarship?.awardAmount != null
-                    ? '${_formatCurrency(scholarship!.awardAmount)} / yr Grant'
-                    : 'Grant Value Declared',
-                style: orgTabularFigures(orgBody(fontSize: 11, color: kOrgPrimary)),
-              ),
-            ],
+        Text(
+          'GRANT TRACK',
+          style: orgLabel(
+            fontSize: 10,
+            fontWeight: FontWeight.w600,
+            color: kOrgTextSecondary,
+            letterSpacing: 0.5,
           ),
         ),
-        const SizedBox(width: 16),
-        // 2. Cumulative GWA
-        Expanded(
-          flex: 2,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text('CUMULATIVE GWA',
-                  style: orgLabel(
-                      fontSize: 10,
-                      fontWeight: FontWeight.w600,
-                      color: kOrgTextSecondary,
-                      letterSpacing: 0.5)),
-              const SizedBox(height: 3),
-              Row(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.baseline,
-                textBaseline: TextBaseline.alphabetic,
-                children: [
-                  Text(
-                    gwa != null ? gwa.toStringAsFixed(2) : '—',
-                    style: orgTabularFigures(orgHeadline(fontSize: 16, fontWeight: FontWeight.w700)),
-                  ),
-                  if (gwa != null)
-                    Text(' / 1.00 Max',
-                        style: orgBody(fontSize: 11, color: kOrgTextSecondary)),
-                ],
-              ),
-              Text(
-                gwa != null ? honorStanding : 'Pending Verification',
-                style: orgLabel(fontSize: 11, color: gwa != null ? kOrgPrimary : kOrgTextSecondary),
-              ),
-            ],
+        const SizedBox(height: 3),
+        Text(
+          scholarship?.title ?? 'Grant Intake Track',
+          style: orgHeadline(
+            fontSize: 13,
+            fontWeight: FontWeight.w600,
+            color: kOrgTextPrimary,
+          ),
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+        ),
+        Text(
+          scholarship?.awardAmount != null
+              ? '${_formatCurrency(scholarship!.awardAmount)} / yr Grant'
+              : 'Grant Value Declared',
+          style: orgTabularFigures(orgBody(fontSize: 11, color: kOrgPrimary)),
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+        ),
+      ],
+    );
+
+    final gwaCol = Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'CUMULATIVE GWA',
+          style: orgLabel(
+            fontSize: 10,
+            fontWeight: FontWeight.w600,
+            color: kOrgTextSecondary,
+            letterSpacing: 0.5,
           ),
         ),
-        const SizedBox(width: 16),
-        // 3. Socioeconomic Need
-        Expanded(
-          flex: 2,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text('SOCIOECONOMIC NEED',
-                  style: orgLabel(
-                      fontSize: 10,
-                      fontWeight: FontWeight.w600,
-                      color: kOrgTextSecondary,
-                      letterSpacing: 0.5)),
-              const SizedBox(height: 3),
-              Text(
-                annualIncome != null ? '${_formatCurrency(annualIncome)} / yr' : '—',
-                style: orgTabularFigures(orgHeadline(
-                    fontSize: 13,
-                    fontWeight: FontWeight.w600,
-                    color: kOrgTextPrimary)),
-              ),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 1.5),
-                decoration: BoxDecoration(
-                  color: const Color(0xFFEEEDF3),
-                  borderRadius: BorderRadius.circular(8),
-                ),
+        const SizedBox(height: 3),
+        Row(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.baseline,
+          textBaseline: TextBaseline.alphabetic,
+          children: [
+            Text(
+              gwa != null ? gwa.toStringAsFixed(2) : '—',
+              style: orgTabularFigures(orgHeadline(fontSize: 16, fontWeight: FontWeight.w700)),
+            ),
+            if (gwa != null)
+              Flexible(
                 child: Text(
-                  annualIncome != null ? 'Self-Declared Income' : 'Income Not Declared',
-                  style: orgLabel(fontSize: 10, color: kOrgTextSecondary),
+                  ' / 1.00 Max',
+                  style: orgBody(fontSize: 11, color: kOrgTextSecondary),
+                  overflow: TextOverflow.ellipsis,
                 ),
               ),
-            ],
+          ],
+        ),
+        Text(
+          gwa != null ? honorStanding : 'Pending Verification',
+          style: orgLabel(fontSize: 11, color: gwa != null ? kOrgPrimary : kOrgTextSecondary),
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+        ),
+      ],
+    );
+
+    final needCol = Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'SOCIOECONOMIC NEED',
+          style: orgLabel(
+            fontSize: 10,
+            fontWeight: FontWeight.w600,
+            color: kOrgTextSecondary,
+            letterSpacing: 0.5,
           ),
         ),
-        const SizedBox(width: 16),
-        // 4. Application Status
-        Expanded(
-          flex: 2,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text('APPLICATION STATUS',
+        const SizedBox(height: 3),
+        Text(
+          annualIncome != null ? '${_formatCurrency(annualIncome)} / yr' : '—',
+          style: orgTabularFigures(orgHeadline(
+            fontSize: 13,
+            fontWeight: FontWeight.w600,
+            color: kOrgTextPrimary,
+          )),
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+        ),
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 1.5),
+          decoration: BoxDecoration(
+            color: const Color(0xFFEEEDF3),
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: Text(
+            annualIncome != null ? 'Self-Declared Income' : 'Income Not Declared',
+            style: orgLabel(fontSize: 10, color: kOrgTextSecondary),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
+        ),
+      ],
+    );
+
+    final statusCol = Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'APPLICATION STATUS',
+          style: orgLabel(
+            fontSize: 10,
+            fontWeight: FontWeight.w600,
+            color: kOrgTextSecondary,
+            letterSpacing: 0.5,
+          ),
+        ),
+        const SizedBox(height: 3),
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+          decoration: BoxDecoration(
+            color: statusBg,
+            borderRadius: BorderRadius.circular(20),
+          ),
+          child: FittedBox(
+            fit: BoxFit.scaleDown,
+            alignment: Alignment.centerLeft,
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                if (pulseDot) ...[
+                  Container(
+                    width: 6,
+                    height: 6,
+                    decoration: const BoxDecoration(
+                      color: kOrgPrimary,
+                      shape: BoxShape.circle,
+                    ),
+                  ),
+                  const SizedBox(width: 5),
+                ] else if (statusIcon != null) ...[
+                  Icon(statusIcon, size: 13, color: statusTextColor),
+                  const SizedBox(width: 4),
+                ],
+                Text(
+                  statusTitle,
                   style: orgLabel(
-                      fontSize: 10,
-                      fontWeight: FontWeight.w600,
-                      color: kOrgTextSecondary,
-                      letterSpacing: 0.5)),
-              const SizedBox(height: 3),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                decoration: BoxDecoration(
-                  color: statusBg,
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: FittedBox(
-                  fit: BoxFit.scaleDown,
-                  alignment: Alignment.centerLeft,
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      if (pulseDot) ...[
-                        Container(
-                          width: 6,
-                          height: 6,
-                          decoration: const BoxDecoration(
-                            color: kOrgPrimary,
-                            shape: BoxShape.circle,
-                          ),
-                        ),
-                        const SizedBox(width: 5),
-                      ] else if (statusIcon != null) ...[
-                        Icon(statusIcon, size: 13, color: statusTextColor),
-                        const SizedBox(width: 4),
-                      ],
-                      Text(
-                        statusTitle,
-                        style: orgLabel(
-                          fontSize: 11,
-                          fontWeight: FontWeight.w600,
-                          color: statusTextColor,
-                        ),
-                      ),
-                    ],
+                    fontSize: 11,
+                    fontWeight: FontWeight.w600,
+                    color: statusTextColor,
                   ),
                 ),
-              ),
-              const SizedBox(height: 2),
-              Text(
-                'Updated recently',
-                style: orgBody(fontSize: 10.5, color: kOrgTextSecondary),
-              ),
-            ],
+              ],
+            ),
           ),
+        ),
+        const SizedBox(height: 2),
+        Text(
+          'Updated recently',
+          style: orgBody(fontSize: 10.5, color: kOrgTextSecondary),
+        ),
+      ],
+    );
+
+    final metricsDesktop = Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Expanded(flex: 3, child: grantTrackCol),
+        const SizedBox(width: 16),
+        Expanded(flex: 2, child: gwaCol),
+        const SizedBox(width: 16),
+        Expanded(flex: 2, child: needCol),
+        const SizedBox(width: 16),
+        Expanded(flex: 2, child: statusCol),
+      ],
+    );
+
+    final metricsMobile = Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(child: grantTrackCol),
+            const SizedBox(width: 16),
+            Expanded(child: gwaCol),
+          ],
+        ),
+        const SizedBox(height: 12),
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(child: needCol),
+            const SizedBox(width: 16),
+            Expanded(child: statusCol),
+          ],
         ),
       ],
     );
@@ -1786,20 +1901,36 @@ class _OrgIncomingApplicationsTabState
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              avatar,
-              const SizedBox(width: 14),
-              Expanded(child: candidateInfo),
-              const SizedBox(width: 14),
-              actionCta,
-            ],
-          ),
+          if (isDesktop)
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                avatar,
+                const SizedBox(width: 14),
+                Expanded(child: candidateInfo),
+                const SizedBox(width: 14),
+                actionCta,
+              ],
+            )
+          else ...[
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                avatar,
+                const SizedBox(width: 14),
+                Expanded(child: candidateInfo),
+              ],
+            ),
+            const SizedBox(height: 12),
+            Align(
+              alignment: Alignment.centerRight,
+              child: actionCta,
+            ),
+          ],
           const SizedBox(height: 16),
           const Divider(height: 1, color: Color(0xFFEEEDF3)),
           const SizedBox(height: 14),
-          metricsRow,
+          if (isDesktop) metricsDesktop else metricsMobile,
           const SizedBox(height: 10),
           InkWell(
             borderRadius: BorderRadius.circular(8),
@@ -1856,11 +1987,18 @@ class _OrgIncomingApplicationsTabState
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text('SUBMISSION TIMELINE',
-                              style: orgLabel(fontSize: 9.5, color: kOrgTextSecondary)),
+                          Text(
+                            'SUBMISSION TIMELINE',
+                            style: orgLabel(
+                              fontSize: 9.5,
+                              color: kOrgTextSecondary,
+                            ),
+                          ),
                           const SizedBox(height: 2),
-                          Text('Verified Intake Dossier • LRN: Not on file',
-                              style: orgBody(fontSize: 11.5)),
+                          Text(
+                            'Verified Intake Dossier • LRN: Not on file',
+                            style: orgBody(fontSize: 11.5),
+                          ),
                         ],
                       ),
                     ),
@@ -1869,16 +2007,22 @@ class _OrgIncomingApplicationsTabState
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text('FAMILY CONTEXT',
-                              style: orgLabel(fontSize: 9.5, color: kOrgTextSecondary)),
+                          Text(
+                            'FAMILY CONTEXT',
+                            style: orgLabel(
+                              fontSize: 9.5,
+                              color: kOrgTextSecondary,
+                            ),
+                          ),
                           const SizedBox(height: 2),
                           Text(
-                              annualIncome != null
-                                  ? 'Declared ₱$monthlyIncome/mo (₱${(annualIncome / 1000).toStringAsFixed(0)}k/yr)'
-                                  : (monthlyIncome != null
+                            annualIncome != null
+                                ? 'Declared ₱$monthlyIncome/mo (₱${(annualIncome / 1000).toStringAsFixed(0)}k/yr)'
+                                : (monthlyIncome != null
                                       ? 'Declared ₱$monthlyIncome/mo'
                                       : 'Family income not declared'),
-                              style: orgBody(fontSize: 11.5)),
+                            style: orgBody(fontSize: 11.5),
+                          ),
                         ],
                       ),
                     ),
@@ -1909,12 +2053,15 @@ class _OrgIncomingApplicationsTabState
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const Icon(Icons.account_balance_rounded,
-              size: 17, color: kOrgPrimary),
+          const Icon(
+            Icons.account_balance_rounded,
+            size: 17,
+            color: kOrgPrimary,
+          ),
           const SizedBox(width: 8),
           Flexible(
             child: Text(
-              'Philippine CHED Memorandum Order No. 08 compliant • Institutional Scholarship Review Board AY 2024–2025',
+              'Review submitted information against your recorded program criteria.',
               style: orgBody(fontSize: 12, color: kOrgTextSecondary),
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
@@ -1940,8 +2087,11 @@ class _OrgIncomingApplicationsTabState
             borderRadius: BorderRadius.circular(8),
           ),
           child: const Center(
-            child: Icon(Icons.chevron_left_rounded,
-                size: 18, color: kOrgTextSecondary),
+            child: Icon(
+              Icons.chevron_left_rounded,
+              size: 18,
+              color: kOrgTextSecondary,
+            ),
           ),
         ),
         const SizedBox(width: 4),
@@ -1972,8 +2122,11 @@ class _OrgIncomingApplicationsTabState
             borderRadius: BorderRadius.circular(8),
           ),
           child: const Center(
-            child: Icon(Icons.chevron_right_rounded,
-                size: 18, color: kOrgTextSecondary),
+            child: Icon(
+              Icons.chevron_right_rounded,
+              size: 18,
+              color: kOrgTextSecondary,
+            ),
           ),
         ),
       ],
@@ -1991,11 +2144,7 @@ class _OrgIncomingApplicationsTabState
     } else {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          regulatoryBadge,
-          const SizedBox(height: 12),
-          pagination,
-        ],
+        children: [regulatoryBadge, const SizedBox(height: 12), pagination],
       );
     }
   }
@@ -2023,13 +2172,18 @@ class _OrgIncomingApplicationsTabState
               borderRadius: BorderRadius.circular(16),
             ),
             child: const Center(
-              child: Icon(Icons.inbox_outlined,
-                  size: 28, color: kOrgTextSecondary),
+              child: Icon(
+                Icons.inbox_outlined,
+                size: 28,
+                color: kOrgTextSecondary,
+              ),
             ),
           ),
           const SizedBox(height: 14),
-          Text('No Applications in this View',
-              style: orgHeadline(fontSize: 16, fontWeight: FontWeight.w700)),
+          Text(
+            'No Applications in this View',
+            style: orgHeadline(fontSize: 16, fontWeight: FontWeight.w700),
+          ),
           const SizedBox(height: 6),
           ConstrainedBox(
             constraints: const BoxConstraints(maxWidth: 420),
@@ -2107,15 +2261,25 @@ class _OrgIncomingApplicationsTabState
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                Flexible(child: SkeletonBand(width: 80, height: 12)),
+                                Flexible(
+                                  child: SkeletonBand(width: 80, height: 12),
+                                ),
                                 SizedBox(width: 4),
-                                SkeletonBand(width: 28, height: 28, borderRadius: 14),
+                                SkeletonBand(
+                                  width: 28,
+                                  height: 28,
+                                  borderRadius: 14,
+                                ),
                               ],
                             ),
                             SizedBox(height: 12),
                             SkeletonBand(width: 60, height: 28),
                             SizedBox(height: 12),
-                            SkeletonBand(width: double.infinity, height: 6, borderRadius: 3),
+                            SkeletonBand(
+                              width: double.infinity,
+                              height: 6,
+                              borderRadius: 3,
+                            ),
                           ],
                         ),
                       ),
@@ -2140,15 +2304,25 @@ class _OrgIncomingApplicationsTabState
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Flexible(child: SkeletonBand(width: 80, height: 12)),
+                              Flexible(
+                                child: SkeletonBand(width: 80, height: 12),
+                              ),
                               SizedBox(width: 4),
-                              SkeletonBand(width: 28, height: 28, borderRadius: 14),
+                              SkeletonBand(
+                                width: 28,
+                                height: 28,
+                                borderRadius: 14,
+                              ),
                             ],
                           ),
                           SizedBox(height: 12),
                           SkeletonBand(width: 60, height: 28),
                           SizedBox(height: 12),
-                          SkeletonBand(width: double.infinity, height: 6, borderRadius: 3),
+                          SkeletonBand(
+                            width: double.infinity,
+                            height: 6,
+                            borderRadius: 3,
+                          ),
                         ],
                       ),
                     ),
@@ -2159,7 +2333,13 @@ class _OrgIncomingApplicationsTabState
               if (isWide)
                 Row(
                   children: const [
-                    Flexible(child: SkeletonBand(width: 320, height: 36, borderRadius: 12)),
+                    Flexible(
+                      child: SkeletonBand(
+                        width: 320,
+                        height: 36,
+                        borderRadius: 12,
+                      ),
+                    ),
                     SizedBox(width: 12),
                     SkeletonBand(width: 220, height: 36, borderRadius: 10),
                   ],
@@ -2168,7 +2348,11 @@ class _OrgIncomingApplicationsTabState
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: const [
-                    SkeletonBand(width: double.infinity, height: 36, borderRadius: 12),
+                    SkeletonBand(
+                      width: double.infinity,
+                      height: 36,
+                      borderRadius: 12,
+                    ),
                     SizedBox(height: 8),
                     SkeletonBand(width: 200, height: 36, borderRadius: 10),
                   ],
@@ -2188,7 +2372,11 @@ class _OrgIncomingApplicationsTabState
                   child: isWide
                       ? Row(
                           children: [
-                            const SkeletonBand(width: 48, height: 48, borderRadius: 16),
+                            const SkeletonBand(
+                              width: 48,
+                              height: 48,
+                              borderRadius: 16,
+                            ),
                             const SizedBox(width: 14),
                             Expanded(
                               child: Column(
@@ -2201,9 +2389,17 @@ class _OrgIncomingApplicationsTabState
                               ),
                             ),
                             const SizedBox(width: 16),
-                            const SkeletonBand(width: 120, height: 32, borderRadius: 12),
+                            const SkeletonBand(
+                              width: 120,
+                              height: 32,
+                              borderRadius: 12,
+                            ),
                             const SizedBox(width: 12),
-                            const SkeletonBand(width: 110, height: 36, borderRadius: 12),
+                            const SkeletonBand(
+                              width: 110,
+                              height: 36,
+                              borderRadius: 12,
+                            ),
                           ],
                         )
                       : Column(
@@ -2211,11 +2407,16 @@ class _OrgIncomingApplicationsTabState
                           children: [
                             Row(
                               children: [
-                                const SkeletonBand(width: 44, height: 44, borderRadius: 14),
+                                const SkeletonBand(
+                                  width: 44,
+                                  height: 44,
+                                  borderRadius: 14,
+                                ),
                                 const SizedBox(width: 12),
                                 Expanded(
                                   child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: const [
                                       SkeletonBand(width: 140, height: 16),
                                       SizedBox(height: 6),
@@ -2229,8 +2430,16 @@ class _OrgIncomingApplicationsTabState
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: const [
-                                SkeletonBand(width: 100, height: 24, borderRadius: 12),
-                                SkeletonBand(width: 90, height: 32, borderRadius: 10),
+                                SkeletonBand(
+                                  width: 100,
+                                  height: 24,
+                                  borderRadius: 12,
+                                ),
+                                SkeletonBand(
+                                  width: 90,
+                                  height: 32,
+                                  borderRadius: 10,
+                                ),
                               ],
                             ),
                           ],

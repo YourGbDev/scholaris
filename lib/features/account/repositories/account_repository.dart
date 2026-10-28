@@ -18,6 +18,7 @@
 // (reauthenticate → update password), the identity guard, and error paths
 // without a real Supabase client.
 
+import 'package:flutter/foundation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'package:scholaris/app/confirmation_redirect.dart';
@@ -47,6 +48,7 @@ abstract class AccountDataSource {
   Future<String> reauthenticate({
     required String email,
     required String password,
+    String? captchaToken,
   });
 
   /// Updates the signed-in user's password to [newPassword].
@@ -55,21 +57,35 @@ abstract class AccountDataSource {
   /// Resends the signup-confirmation email to [email], returning the user to
   /// the app through the platform-aware verification redirect (Day 13
   /// contract, shared with the signup/verify-email flows).
-  Future<void> resendVerificationEmail({required String email});
+  Future<void> resendVerificationEmail({required String email, String? captchaToken});
+
+  /// Requests an email change; the backend sends confirmation codes.
+  Future<void> requestEmailChange({required String newEmail});
+
+  /// Verifies one email-change code and returns the server's current email.
+  Future<String?> verifyEmailChangeCode({required String email, required String code, String? captchaToken});
 }
 
 /// Production implementation backed by the shared Supabase client.
 class SupabaseAccountDataSource implements AccountDataSource {
   SupabaseClient get _client => Supabase.instance.client;
 
+  bool _lastRevocationSucceeded = true;
+
+  /// Whether other active device sessions were confirmed revoked during the last
+  /// password update.
+  bool get lastRevocationSucceeded => _lastRevocationSucceeded;
+
   @override
   Future<String> reauthenticate({
     required String email,
     required String password,
+    String? captchaToken,
   }) async {
     final response = await _client.auth.signInWithPassword(
       email: email,
       password: password,
+      captchaToken: captchaToken,
     );
     final userId = response.session?.user.id;
     if (userId == null) {
@@ -79,16 +95,38 @@ class SupabaseAccountDataSource implements AccountDataSource {
   }
 
   @override
-  Future<void> updatePassword({required String newPassword}) =>
-      _client.auth.updateUser(UserAttributes(password: newPassword));
+  Future<void> updatePassword({required String newPassword}) async {
+    await _client.auth.updateUser(UserAttributes(password: newPassword));
+    try {
+      await _client.auth.signOut(scope: SignOutScope.others);
+      _lastRevocationSucceeded = true;
+    } catch (e) {
+      _lastRevocationSucceeded = false;
+      // Non-fatal: failure to invalidate other sessions must not report
+      // a false password update failure to the user.
+      debugPrint('[AUTH] Notice: Password updated; other sessions could not be verified signed out: $e');
+    }
+  }
 
   @override
-  Future<void> resendVerificationEmail({required String email}) =>
+  Future<void> resendVerificationEmail({required String email, String? captchaToken}) =>
       _client.auth.resend(
         type: OtpType.signup,
         email: email,
         emailRedirectTo: emailConfirmationRedirect,
+        captchaToken: captchaToken,
       );
+
+  @override
+  Future<void> requestEmailChange({required String newEmail}) async {
+    await _client.auth.updateUser(UserAttributes(email: newEmail));
+  }
+
+  @override
+  Future<String?> verifyEmailChangeCode({required String email, required String code, String? captchaToken}) async {
+    await _client.auth.verifyOTP(type: OtpType.emailChange, email: email, token: code, captchaToken: captchaToken);
+    return (await _client.auth.getUser()).user?.email;
+  }
 }
 
 class AccountRepository {
@@ -109,6 +147,15 @@ class AccountRepository {
   String? get currentUserId => _currentUserId();
   String? get currentUserEmail => _currentUserEmail();
 
+  /// Whether other device sessions were confirmed revoked during the last password change.
+  bool get lastRevocationSucceeded {
+    final ds = _dataSource;
+    if (ds is SupabaseAccountDataSource) {
+      return ds.lastRevocationSucceeded;
+    }
+    return true;
+  }
+
   /// Changes the signed-in user's password. Sequencing is deliberate:
   ///
   ///   1. re-authenticate with the current password (validates ownership),
@@ -117,9 +164,14 @@ class AccountRepository {
   ///
   /// A failed re-authentication never reaches the password update, and the
   /// operation never touches the auth session boundary's written state.
-  Future<void> changePassword({
+  ///
+  /// Returns [bool] indicating whether remote session revocation was confirmed.
+  /// Password update success is strictly preserved even if remote revocation
+  /// could not be confirmed.
+  Future<bool> changePassword({
     required String currentPassword,
     required String newPassword,
+    String? captchaToken,
   }) async {
     final userId = _currentUserId();
     final email = _currentUserEmail();
@@ -130,20 +182,47 @@ class AccountRepository {
     final verifiedUserId = await _dataSource.reauthenticate(
       email: email,
       password: currentPassword,
+      captchaToken: captchaToken,
     );
     if (verifiedUserId != userId) {
       throw const AccountSessionChangedException();
     }
 
     await _dataSource.updatePassword(newPassword: newPassword);
+    final revoked = lastRevocationSucceeded;
+    if (!revoked) {
+      debugPrint('[ACCOUNT] Notice: Password updated; other sessions revocation unconfirmed.');
+    }
+    return revoked;
   }
 
   /// Resends the verification email for the signed-in user's own address.
-  Future<void> resendVerificationEmail() async {
+  Future<void> resendVerificationEmail({String? captchaToken}) async {
     final email = _currentUserEmail();
     if (email == null || email.isEmpty) {
       throw const AccountNotAuthenticatedException();
     }
-    await _dataSource.resendVerificationEmail(email: email);
+    await _dataSource.resendVerificationEmail(email: email, captchaToken: captchaToken);
+  }
+
+  Future<void> requestEmailChange({required String currentPassword, required String newEmail, String? captchaToken}) async {
+    final userId = _currentUserId();
+    final currentEmail = _currentUserEmail();
+    if (userId == null || currentEmail == null || currentEmail.isEmpty) {
+      throw const AccountNotAuthenticatedException();
+    }
+    final verifiedUser = await _dataSource.reauthenticate(email: currentEmail, password: currentPassword, captchaToken: captchaToken);
+    if (verifiedUser != userId || _currentUserId() != userId) {
+      throw const AccountSessionChangedException();
+    }
+    await _dataSource.requestEmailChange(newEmail: newEmail.trim());
+  }
+
+  Future<String?> verifyEmailChangeCode({required String email, required String code, String? captchaToken}) async {
+    final userId = _currentUserId();
+    if (userId == null) throw const AccountNotAuthenticatedException();
+    final currentEmail = await _dataSource.verifyEmailChangeCode(email: email, code: code, captchaToken: captchaToken);
+    if (_currentUserId() != userId) throw const AccountSessionChangedException();
+    return currentEmail;
   }
 }

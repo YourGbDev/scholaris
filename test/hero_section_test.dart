@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -14,6 +15,7 @@ import 'package:scholaris/features/profile/models/student_profile.dart';
 import 'package:scholaris/features/profile/providers/profile_setup_provider.dart';
 import 'package:scholaris/features/profile/repositories/profile_repository.dart';
 import 'package:scholaris/features/scholarships/providers/scholarships_provider.dart';
+import 'package:scholaris/features/scholarships/models/scholarship.dart';
 import 'package:scholaris/features/scholarships/repositories/scholarship_repository.dart';
 
 import 'helpers/fake_application_data_source.dart';
@@ -24,6 +26,9 @@ import 'helpers/fake_scholarship_data_source.dart';
 Widget _buildTestApp({
   StudentProfile? profile,
   Widget? child,
+  List<Scholarship>? matches,
+  bool matchesError = false,
+  Future<List<Scholarship>>? pendingMatches,
 }) {
   final profileData = FakeProfileDataSource();
   if (profile != null) {
@@ -43,6 +48,9 @@ Widget _buildTestApp({
 
   return ProviderScope(
     overrides: [
+      if (pendingMatches != null) matchesProvider.overrideWith((ref) => pendingMatches)
+      else if (matchesError) matchesProvider.overrideWith((ref) async => throw StateError('offline'))
+      else if (matches != null) matchesProvider.overrideWith((ref) async => matches),
       currentUserIdProvider.overrideWith((ref) => 'test-user'),
       profileRepositoryProvider.overrideWith(
         (ref) => ProfileRepository(
@@ -80,6 +88,45 @@ void main() {
   });
 
   group('Student Dashboard Hero Section', () {
+    testWidgets('hero shows loading until matches arrive', (tester) async {
+      final pending = Completer<List<Scholarship>>();
+      await tester.pumpWidget(_buildTestApp(pendingMatches: pending.future));
+      await tester.pump();
+      expect(find.text('Finding matches…'), findsOneWidget);
+      pending.complete(const []);
+      await tester.pumpAndSettle();
+      expect(find.text('0 matches'), findsOneWidget);
+    });
+    testWidgets('hero does not show a fake zero when matches fail', (tester) async {
+      await tester.pumpWidget(_buildTestApp(matchesError: true));
+      await tester.pumpAndSettle();
+      expect(find.text('Matches unavailable'), findsOneWidget);
+      expect(find.text('0 matches'), findsNothing);
+    });
+    for (final size in [const Size(360, 800), const Size(440, 956)]) {
+      testWidgets('live hero remains readable with large text at $size', (tester) async {
+        tester.view.physicalSize = size;
+        tester.view.devicePixelRatio = 1;
+        tester.platformDispatcher.textScaleFactorTestValue = 2;
+        addTearDown(tester.view.resetPhysicalSize);
+        addTearDown(tester.view.resetDevicePixelRatio);
+        addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
+        await tester.pumpWidget(_buildTestApp(matches: const []));
+        await tester.pumpAndSettle();
+        expect(find.text('0 matches'), findsOneWidget);
+        expect(tester.takeException(), isNull);
+      });
+    }
+    testWidgets('hero displays the actual match count, including zero', (tester) async {
+      await tester.pumpWidget(_buildTestApp(matches: const []));
+      await tester.pumpAndSettle();
+      expect(find.text('0 matches'), findsOneWidget);
+      final oneMatch = Scholarship(id: 'live-match', title: 'Sample', minGpa: 2, deadline: DateTime(2099));
+      await tester.pumpWidget(const SizedBox.shrink());
+      await tester.pumpWidget(_buildTestApp(matches: [oneMatch]));
+      await tester.pumpAndSettle();
+      expect(find.text('1 match'), findsOneWidget);
+    });
     testWidgets('displays male mascot by default or when gender is male',
         (tester) async {
       await tester.pumpWidget(_buildTestApp(
@@ -131,7 +178,7 @@ void main() {
       ));
       await tester.pump(const Duration(milliseconds: 300));
 
-      expect(find.text('Dashboard'), findsWidgets);
+      expect(find.text('Home'), findsOneWidget);
       expect(find.text('Discover'), findsOneWidget);
       expect(find.text('Tracker'), findsOneWidget);
       expect(find.text('Profile'), findsOneWidget);

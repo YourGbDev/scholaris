@@ -13,7 +13,9 @@ import '../../../scholarships/models/scholarship.dart';
 import '../../providers/provider_scholarships_provider.dart';
 import '../org/org_provider_theme.dart';
 import '../scholarship_form_screen.dart';
+
 import 'package:scholaris/shared/theme/app_motion.dart';
+
 import '../widgets/scholarship_qr_dialog.dart';
 
 class IndividualGrantTab extends ConsumerWidget {
@@ -21,9 +23,7 @@ class IndividualGrantTab extends ConsumerWidget {
 
   void _openCreateScreen(BuildContext context) {
     Navigator.of(context).push(
-      MaterialPageRoute<bool>(
-        builder: (_) => const ScholarshipFormScreen(),
-      ),
+      MaterialPageRoute<bool>(builder: (_) => const ScholarshipFormScreen()),
     );
   }
 
@@ -50,270 +50,382 @@ class IndividualGrantTab extends ConsumerWidget {
         skeleton: _buildSkeletonLoader(),
         child: scholarshipsAsync.when(
           loading: () => _buildSkeletonLoader(),
-        error: (err, _) => Center(
-          child: Text('Error loading grants: $err',
-              style: orgBody(color: kOrgError)),
-        ),
-        data: (scholarships) {
-          final apps = incomingAppsAsync.valueOrNull ?? [];
-
-          return RefreshIndicator(
-            color: kOrgPrimary,
-            onRefresh: () async {
-              ref.invalidate(providerScholarshipsProvider);
-            },
-            child: ListView(
-              physics: const AppleBouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
-              padding: const EdgeInsets.fromLTRB(16, 16, 16, 24),
+          error: (err, _) => Center(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
               children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text('My Sponsored Grants',
-                              style: orgHeadline(fontSize: 18)),
-                          const SizedBox(height: 2),
-                          Text(
-                            'Your active personal scholarship funds and student quota.',
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
-                            style: orgBody(fontSize: 12, color: kOrgTextSecondary),
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    PressableScale(
-                      scale: 0.95,
-                      child: IconButton(
-                        icon: const Icon(Icons.add_circle_rounded,
-                            color: kOrgPrimary, size: 28),
-                        tooltip: 'Sponsor Another Grant',
-                        onPressed: () => _openCreateScreen(context),
-                      ),
-                    ),
-                  ],
+                const Text('Your scholarships could not load.'),
+                TextButton(
+                  onPressed: () => ref.invalidate(providerScholarshipsProvider),
+                  child: const Text('Try again'),
                 ),
+              ],
+            ),
+          ),
+          data: (scholarships) {
+            final apps = incomingAppsAsync.valueOrNull ?? [];
 
-                const SizedBox(height: 16),
-
-                if (scholarships.isEmpty)
-                  Container(
-                    padding: const EdgeInsets.all(32),
-                    decoration: BoxDecoration(
-                      color: kOrgSurfaceWhite,
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: kOrgBorder),
-                    ),
-                    child: Column(
-                      children: [
-                        const Icon(Icons.school_outlined,
-                            size: 40, color: kOrgTextMuted),
-                        const SizedBox(height: 8),
-                        Text('No grants published yet',
-                            style: orgHeadline(fontSize: 15)),
-                        const SizedBox(height: 4),
-                        Text(
-                          'Publish your first student grant opportunity to begin supporting scholars.',
-                          style: orgBody(
-                              fontSize: 12, color: kOrgTextSecondary),
-                          textAlign: TextAlign.center,
-                        ),
-                        const SizedBox(height: 16),
-                        PressableScale(
-                          scale: 0.98,
-                          child: FilledButton.icon(
-                            style: FilledButton.styleFrom(
-                              backgroundColor: kOrgPrimary,
-                              foregroundColor: Colors.white,
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 20, vertical: 14),
-                              minimumSize: const Size(180, 44),
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(8)),
-                            ),
-                            onPressed: () => _openCreateScreen(context),
-                            icon: const Icon(Icons.add_rounded, size: 16),
-                            label: const Text('Create Grant Opportunity'),
-                          ),
-                        ),
-                      ],
-                    ),
-                  )
-                else
-                  ...scholarships.asMap().entries.map((entry) {
-                    final index = entry.key;
-                    final s = entry.value;
-                    final targetApps =
-                        apps.where((a) => a.scholarshipId == s.id).toList();
-                    final approvedCount = targetApps
-                        .where((a) =>
-                            a.status == ApplicationStatus.approved ||
-                            a.status == ApplicationStatus.awarded)
-                        .length;
-                    final totalSlots = s.slots ?? 1;
-                    final fillRatio = totalSlots > 0
-                        ? (approvedCount / totalSlots).clamp(0.0, 1.0)
-                        : 0.0;
-
-                    final daysLeft = s.deadline.difference(DateTime.now()).inDays;
-
-                    return StaggeredListItem(
-                      index: index,
-                      child: Container(
-                        margin: const EdgeInsets.only(bottom: 14),
-                        padding: const EdgeInsets.all(16),
-                        decoration: BoxDecoration(
-                          color: kOrgSurfaceWhite,
-                          borderRadius: BorderRadius.circular(12),
-                          border: Border.all(color: kOrgBorder),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withValues(alpha: 0.02),
-                              offset: const Offset(0, 2),
-                              blurRadius: 4,
-                            ),
-                          ],
-                        ),
+            return RefreshIndicator(
+              color: kOrgPrimary,
+              onRefresh: () async {
+                ref.invalidate(providerScholarshipsProvider);
+                ref.invalidate(incomingApplicationsProvider);
+                try {
+                  await Future.wait([
+                    ref.read(providerScholarshipsProvider.future),
+                    ref.read(incomingApplicationsProvider.future),
+                  ]);
+                } catch (_) {
+                  // Scholarship and capacity failures have inline retries.
+                }
+              },
+              child: ListView(
+                physics: const AppleBouncingScrollPhysics(
+                  parent: AlwaysScrollableScrollPhysics(),
+                ),
+                padding: const EdgeInsets.fromLTRB(16, 16, 16, 24),
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Container(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 8, vertical: 4),
-                                  decoration: BoxDecoration(
-                                    color: kOrgBadgeApprovedBg,
-                                    borderRadius: BorderRadius.circular(4),
-                                  ),
-                                  child: Text('Active Grant',
-                                      style: orgLabel(
-                                          fontSize: 10,
-                                          color: kOrgBadgeApprovedText)),
-                                ),
-                                Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    PressableScale(
-                                      scale: 0.95,
-                                      child: IconButton(
-                                        icon: const Icon(Icons.qr_code_rounded,
-                                            size: 18, color: kOrgPrimary),
-                                        tooltip: 'Show QR Code',
-                                        onPressed: () =>
-                                            showScholarshipQrDialog(context, s),
-                                      ),
-                                    ),
-                                    PressableScale(
-                                      scale: 0.95,
-                                      child: IconButton(
-                                        icon: const Icon(Icons.edit_outlined,
-                                            size: 16, color: kOrgTextMuted),
-                                        tooltip: 'Edit Grant',
-                                        onPressed: () =>
-                                            _openEditScreen(context, s),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ],
+                            Text(
+                              'My scholarships',
+                              style: orgHeadline(fontSize: 28),
                             ),
-                            const SizedBox(height: 6),
-                            Text(s.title, style: orgHeadline(fontSize: 16)),
                             const SizedBox(height: 2),
                             Text(
-                              s.description ?? '',
+                              'Manage your scholarships, requirements, and available places.',
                               maxLines: 2,
                               overflow: TextOverflow.ellipsis,
                               style: orgBody(
-                                  fontSize: 12, color: kOrgTextSecondary),
-                            ),
-                            const SizedBox(height: 12),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text('GRANT STIPEND',
-                                        style: orgLabel(
-                                            fontSize: 9, color: kOrgTextMuted)),
-                                    Text(
-                                      '${s.formattedAmount} ${s.formattedFrequency}',
-                                      style: orgHeadline(
-                                          fontSize: 16, color: kOrgPrimary),
-                                    ),
-                                  ],
-                                ),
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.end,
-                                  children: [
-                                    Text('SCHOLAR CAPACITY',
-                                        style: orgLabel(
-                                            fontSize: 9, color: kOrgTextMuted)),
-                                    Row(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        CountUpAnimation(
-                                          targetValue: approvedCount,
-                                          style: orgHeadline(fontSize: 14),
-                                        ),
-                                        Text(
-                                          ' / $totalSlots Slot${totalSlots == 1 ? '' : 's'}',
-                                          style: orgHeadline(fontSize: 14),
-                                        ),
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
-                            const SizedBox(height: 8),
-                            ClipRRect(
-                              borderRadius: BorderRadius.circular(4),
-                              child: LinearProgressIndicator(
-                                value: fillRatio,
-                                minHeight: 6,
-                                backgroundColor: kOrgCanvas,
-                                valueColor: const AlwaysStoppedAnimation<Color>(
-                                    kOrgPrimary),
+                                fontSize: 14,
+                                color: kOrgTextSecondary,
                               ),
-                            ),
-                            const SizedBox(height: 12),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(
-                                  'GWA ≤ ${s.minGpa.toStringAsFixed(2)} requirement',
-                                  style: orgBody(
-                                      fontSize: 11, color: kOrgTextSecondary),
-                                ),
-                                if (daysLeft >= 0)
-                                  Text(
-                                    '$daysLeft days left',
-                                    style: orgLabel(
-                                        fontSize: 10, color: kOrgPrimary),
-                                  ),
-                              ],
                             ),
                           ],
                         ),
                       ),
-                    );
-                  }),
-              ],
-            ),
-          );
-        },
+                      const SizedBox(width: 8),
+                      PressableScale(
+                        scale: 0.95,
+                        child: IconButton(
+                          icon: const Icon(
+                            Icons.add_circle_rounded,
+                            color: kOrgPrimary,
+                            size: 28,
+                          ),
+                          tooltip: 'Sponsor Another Grant',
+                          onPressed: () => _openCreateScreen(context),
+                        ),
+                      ),
+                    ],
+                  ),
+
+                  const SizedBox(height: 16),
+
+                  if (scholarships.isEmpty)
+                    Container(
+                      padding: const EdgeInsets.all(32),
+                      decoration: BoxDecoration(
+                        color: kOrgSurfaceWhite,
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(color: kOrgBorder),
+                      ),
+                      child: Column(
+                        children: [
+                          const Icon(
+                            Icons.school_outlined,
+                            size: 40,
+                            color: kOrgTextMuted,
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            'No grants published yet',
+                            style: orgHeadline(fontSize: 15),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            'Publish your first student grant opportunity to begin supporting scholars.',
+                            style: orgBody(
+                              fontSize: 12,
+                              color: kOrgTextSecondary,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                          const SizedBox(height: 16),
+                          PressableScale(
+                            scale: 0.98,
+                            child: FilledButton.icon(
+                              style: FilledButton.styleFrom(
+                                backgroundColor: kOrgPrimary,
+                                foregroundColor: Colors.white,
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 20,
+                                  vertical: 14,
+                                ),
+                                minimumSize: const Size(180, 44),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                              ),
+                              onPressed: () => _openCreateScreen(context),
+                              icon: const Icon(Icons.add_rounded, size: 16),
+                              label: const Text('Create Grant Opportunity'),
+                            ),
+                          ),
+                        ],
+                      ),
+                    )
+                  else
+                    ...scholarships.asMap().entries.map((entry) {
+                      final index = entry.key;
+                      final s = entry.value;
+                      final targetApps = apps
+                          .where((a) => a.scholarshipId == s.id)
+                          .toList();
+                      final approvedCount = targetApps
+                          .where(
+                            (a) =>
+                                a.status == ApplicationStatus.approved ||
+                                a.status == ApplicationStatus.awarded,
+                          )
+                          .length;
+                      final totalSlots = s.slots;
+                      final fillRatio = totalSlots != null && totalSlots > 0
+                          ? (approvedCount / totalSlots).clamp(0.0, 1.0)
+                          : 0.0;
+
+                      final daysLeft = s.deadline
+                          .difference(DateTime.now())
+                          .inDays;
+                      final status = !s.isActive
+                          ? 'Closed'
+                          : s.deadline.isBefore(DateTime.now())
+                          ? 'Expired'
+                          : 'Active Grant';
+
+                      return StaggeredListItem(
+                        index: index,
+                        child: Container(
+                          margin: const EdgeInsets.only(bottom: 14),
+                          padding: const EdgeInsets.all(16),
+                          decoration: BoxDecoration(
+                            color: kOrgSurfaceWhite,
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(color: kOrgBorder),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withValues(alpha: 0.02),
+                                offset: const Offset(0, 2),
+                                blurRadius: 4,
+                              ),
+                            ],
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Wrap(
+                                alignment: WrapAlignment.spaceBetween,
+                                spacing: 24,
+                                runSpacing: 16,
+                                children: [
+                                  Container(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 8,
+                                      vertical: 4,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: kOrgBadgeApprovedBg,
+                                      borderRadius: BorderRadius.circular(4),
+                                    ),
+                                    child: Text(
+                                      status,
+                                      style: orgLabel(
+                                        fontSize: 10,
+                                        color: kOrgBadgeApprovedText,
+                                      ),
+                                    ),
+                                  ),
+                                  Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      PressableScale(
+                                        scale: 0.95,
+                                        child: IconButton(
+                                          icon: const Icon(
+                                            Icons.qr_code_rounded,
+                                            size: 18,
+                                            color: kOrgPrimary,
+                                          ),
+                                          tooltip: 'Show QR Code',
+                                          onPressed: () =>
+                                              showScholarshipQrDialog(
+                                                context,
+                                                s,
+                                              ),
+                                        ),
+                                      ),
+                                      PressableScale(
+                                        scale: 0.95,
+                                        child: IconButton(
+                                          icon: const Icon(
+                                            Icons.edit_outlined,
+                                            size: 16,
+                                            color: kOrgTextMuted,
+                                          ),
+                                          tooltip: 'Edit Grant',
+                                          onPressed: () =>
+                                              _openEditScreen(context, s),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 6),
+                              Text(s.title, style: orgHeadline(fontSize: 16)),
+                              const SizedBox(height: 2),
+                              Text(
+                                s.description ?? '',
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                                style: orgBody(
+                                  fontSize: 12,
+                                  color: kOrgTextSecondary,
+                                ),
+                              ),
+                              const SizedBox(height: 12),
+                              Wrap(
+                                alignment: WrapAlignment.spaceBetween,
+                                spacing: 24,
+                                runSpacing: 16,
+                                children: [
+                                  Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        'GRANT STIPEND',
+                                        style: orgLabel(
+                                          fontSize: 9,
+                                          color: kOrgTextMuted,
+                                        ),
+                                      ),
+                                      Text(
+                                        '${s.formattedAmount} ${s.formattedFrequency}',
+                                        style: orgHeadline(
+                                          fontSize: 16,
+                                          color: kOrgPrimary,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  Column(
+                                    crossAxisAlignment: CrossAxisAlignment.end,
+                                    children: [
+                                      Text(
+                                        'SCHOLAR CAPACITY',
+                                        style: orgLabel(
+                                          fontSize: 9,
+                                          color: kOrgTextMuted,
+                                        ),
+                                      ),
+                                      if (incomingAppsAsync.isLoading)
+                                        const Text('Checking capacity…')
+                                      else if (incomingAppsAsync.hasError)
+                                        Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.end,
+                                          children: [
+                                            const Text('Capacity unavailable'),
+                                            TextButton(
+                                              onPressed: () => ref.invalidate(
+                                                incomingApplicationsProvider,
+                                              ),
+                                              child: const Text(
+                                                'Retry capacity',
+                                              ),
+                                            ),
+                                          ],
+                                        )
+                                      else if (totalSlots == null)
+                                        Text(
+                                          '$approvedCount approved · Capacity not set',
+                                        )
+                                      else
+                                        Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            Text(
+                                              '$approvedCount',
+                                              style: orgHeadline(fontSize: 14),
+                                            ),
+                                            Text(
+                                              ' / $totalSlots Slot${totalSlots == 1 ? '' : 's'}',
+                                              style: orgHeadline(fontSize: 14),
+                                            ),
+                                          ],
+                                        ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 8),
+                              if (!incomingAppsAsync.isLoading &&
+                                  !incomingAppsAsync.hasError &&
+                                  totalSlots != null)
+                                ClipRRect(
+                                  borderRadius: BorderRadius.circular(4),
+                                  child: LinearProgressIndicator(
+                                    value: fillRatio,
+                                    minHeight: 6,
+                                    backgroundColor: kOrgBorder,
+                                    valueColor:
+                                        const AlwaysStoppedAnimation<Color>(
+                                          kOrgPrimary,
+                                        ),
+                                  ),
+                                ),
+                              const SizedBox(height: 12),
+                              Wrap(
+                                alignment: WrapAlignment.spaceBetween,
+                                spacing: 16,
+                                runSpacing: 8,
+                                children: [
+                                  Text(
+                                    'GWA ≤ ${s.minGpa.toStringAsFixed(2)} requirement',
+                                    style: orgBody(
+                                      fontSize: 11,
+                                      color: kOrgTextSecondary,
+                                    ),
+                                  ),
+                                  if (status == 'Active Grant' && daysLeft >= 0)
+                                    Text(
+                                      '$daysLeft days left',
+                                      style: orgLabel(
+                                        fontSize: 10,
+                                        color: kOrgPrimary,
+                                      ),
+                                    ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    }),
+                ],
+              ),
+            );
+          },
+        ),
       ),
-    ),
-  );
-}
+    );
+  }
 
   Widget _buildSkeletonLoader() {
     return ListView(
@@ -328,27 +440,30 @@ class IndividualGrantTab extends ConsumerWidget {
           ],
         ),
         const SizedBox(height: 16),
-        ...List.generate(3, (i) => Container(
-          margin: const EdgeInsets.only(bottom: 14),
-          padding: const EdgeInsets.all(16),
-          decoration: BoxDecoration(
-            color: kOrgSurfaceWhite,
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: kOrgBorder),
+        ...List.generate(
+          3,
+          (i) => Container(
+            margin: const EdgeInsets.only(bottom: 14),
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: kOrgSurfaceWhite,
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: kOrgBorder),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: const [
+                SkeletonBand(width: 80, height: 16),
+                SizedBox(height: 10),
+                SkeletonBand(width: 220, height: 20),
+                SizedBox(height: 6),
+                SkeletonBand(width: 300, height: 14),
+                SizedBox(height: 16),
+                SkeletonBand(height: 6),
+              ],
+            ),
           ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: const [
-              SkeletonBand(width: 80, height: 16),
-              SizedBox(height: 10),
-              SkeletonBand(width: 220, height: 20),
-              SizedBox(height: 6),
-              SkeletonBand(width: 300, height: 14),
-              SizedBox(height: 16),
-              SkeletonBand(height: 6),
-            ],
-          ),
-        )),
+        ),
       ],
     );
   }

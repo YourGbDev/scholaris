@@ -5,6 +5,8 @@
 // friendliness of failures, and that no operation proceeds without a signed-in
 // session. No network and no live Supabase involved.
 
+import 'dart:async';
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -191,5 +193,20 @@ void main() {
         throwsA(isA<AuthException>()),
       );
     });
+  });
+
+  test('email change stops if the signed-in identity changes during reauthentication', () async {
+    final source = FakeAccountDataSource()..reauthenticateGate = Completer<void>();
+    var userId = 'user-a';
+    final repository = AccountRepository(
+      dataSource: source,
+      currentUserId: () => userId,
+      currentUserEmail: () => 'a@b.com',
+    );
+    final pending = repository.requestEmailChange(currentPassword: 'password', newEmail: 'new@example.com');
+    userId = 'user-b';
+    source.reauthenticateGate!.complete();
+    await expectLater(pending, throwsA(isA<AccountSessionChangedException>()));
+    expect(source.requestedEmails, isEmpty);
   });
 }

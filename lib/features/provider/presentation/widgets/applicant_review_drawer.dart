@@ -1,3 +1,5 @@
+import '../../repositories/support_repository.dart';
+import '../../models/support_ledger.dart';
 // lib/features/provider/presentation/widgets/applicant_review_drawer.dart
 //
 // Institutional Reviewer Decisioning Drawer based on Stitch mockup:
@@ -12,9 +14,13 @@
 // - Trust Badges: Removed fake DepEd/PhilSys badges -> shows honest system states (Profile Complete, External ID: Pending, Income: Self-Declared).
 
 import 'package:flutter/material.dart';
+
+import '../../../../shared/widgets/workspace_smooth_scroll.dart';
+
 import 'package:flutter/physics.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:url_launcher/url_launcher.dart';
+
 import '../../../applications/providers/application_document_provider.dart';
 import '../../../applications/repositories/application_document_repository.dart';
 
@@ -79,7 +85,9 @@ class ApplicantReviewDrawer extends ConsumerStatefulWidget {
                 heightFactor: 0.92,
                 child: Material(
                   color: kOrgSurfaceWhite,
-                  borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+                  borderRadius: const BorderRadius.vertical(
+                    top: Radius.circular(20),
+                  ),
                   clipBehavior: Clip.antiAlias,
                   child: ApplicantReviewDrawer(
                     application: application,
@@ -97,7 +105,8 @@ class ApplicantReviewDrawer extends ConsumerStatefulWidget {
   }
 
   @override
-  ConsumerState<ApplicantReviewDrawer> createState() => _ApplicantReviewDrawerState();
+  ConsumerState<ApplicantReviewDrawer> createState() =>
+      _ApplicantReviewDrawerState();
 }
 
 /// Spring-driven interruptible animation controller for the Reviewer Decisioning Drawer.
@@ -194,10 +203,7 @@ class _ReviewerDrawerRoute<T> extends PopupRoute<T> {
     Widget child,
   ) {
     if (isReducedMotion(context)) {
-      return FadeTransition(
-        opacity: animation,
-        child: child,
-      );
+      return FadeTransition(opacity: animation, child: child);
     }
 
     final offsetTween = isDesktop
@@ -213,11 +219,12 @@ class _ReviewerDrawerRoute<T> extends PopupRoute<T> {
 
 class _ApplicantReviewDrawerState extends ConsumerState<ApplicantReviewDrawer> {
   late final TextEditingController _notesController;
-  late final ScrollController _scrollController;
+  late final SmoothWheelScrollController _scrollController;
   _ReviewerDrawerAnimationController? _routeController;
   bool _isDragActive = false;
   double _rawOvershootPx = 0.0;
   bool _isProcessing = false;
+  bool _decisionPromptOpen = false;
   bool _isRubricExpanded = true;
 
   bool get _isScrolledToTop =>
@@ -235,7 +242,7 @@ class _ApplicantReviewDrawerState extends ConsumerState<ApplicantReviewDrawer> {
   @override
   void initState() {
     super.initState();
-    _scrollController = ScrollController();
+    _scrollController = SmoothWheelScrollController();
     _notesController = TextEditingController();
   }
 
@@ -260,12 +267,17 @@ class _ApplicantReviewDrawerState extends ConsumerState<ApplicantReviewDrawer> {
     final canDecide = targetStatus == ApplicationStatus.underReview
         ? identity.isEvaluator
         : (identity.isOrgAdmin || identity.isIndividualBenefactor);
-    if (_isProcessing || !canDecide) { return; }
+    if (_isProcessing || _decisionPromptOpen || !canDecide) {
+      return;
+    }
+    setState(() => _decisionPromptOpen = true);
     final actionLabel = targetStatus == ApplicationStatus.approved
         ? 'Approve Application'
         : targetStatus == ApplicationStatus.rejected
-            ? 'Mark Ineligible'
-            : 'Endorse to Org Admin';
+        ? (identity.isIndividualBenefactor
+              ? 'Decline application'
+              : 'Mark Ineligible')
+        : 'Endorse to Org Admin';
 
     final isDestructive = targetStatus == ApplicationStatus.rejected;
 
@@ -273,9 +285,29 @@ class _ApplicantReviewDrawerState extends ConsumerState<ApplicantReviewDrawer> {
         ? widget.applicantProfile!.fullName
         : "Applicant #${widget.application.userId.length >= 8 ? widget.application.userId.substring(0, 8) : widget.application.userId}";
 
+    String? budgetImpact;
+    if (identity.isIndividualBenefactor &&
+        targetStatus == ApplicationStatus.approved) {
+      try {
+        final ledger = await ref.read(supportLedgerProvider.future);
+        final program = widget.scholarship;
+        final remaining = ledger.unallocated(widget.application.scholarshipId);
+        if (program != null && remaining != null) {
+          final after = remaining - (program.amount * 100).round();
+          budgetImpact =
+              'This approval commits ${supportMoney((program.amount * 100).round())}. ${after < 0 ? 'It exceeds your remaining allocation by ${supportMoney(-after)}.' : 'Unallocated budget afterwards: ${supportMoney(after)}.'} No money will be sent.';
+        } else {
+          budgetImpact = 'No cycle budget is set. Check Budget & support before making further commitments. Approval does not send money.';
+        }
+      } catch (_) {
+        budgetImpact = 'Budget impact could not be checked. Review your funding before confirming. Approval does not send money.';
+      }
+      if (!mounted) return;
+    }
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (dialogCtx) => AlertDialog(
+        scrollable: true,
         backgroundColor: Colors.white,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         title: Row(
@@ -284,8 +316,8 @@ class _ApplicantReviewDrawerState extends ConsumerState<ApplicantReviewDrawer> {
               isDestructive
                   ? Icons.warning_amber_rounded
                   : targetStatus == ApplicationStatus.approved
-                      ? Icons.verified_rounded
-                      : Icons.help_outline_rounded,
+                  ? Icons.verified_rounded
+                  : Icons.help_outline_rounded,
               color: isDestructive ? kOrgError : kOrgPrimary,
               size: 22,
             ),
@@ -306,13 +338,23 @@ class _ApplicantReviewDrawerState extends ConsumerState<ApplicantReviewDrawer> {
               'Are you sure you want to $actionLabel for $candidateName?',
               style: orgBody(fontSize: 13, color: const Color(0xFF161C27)),
             ),
+            if (budgetImpact != null)
+              Padding(
+                padding: const EdgeInsets.only(top: 12),
+                child: Text(
+                  budgetImpact,
+                  style: orgBody(fontSize: 13, color: kOrgPrimary),
+                ),
+              ),
             const SizedBox(height: 8),
             Text(
               targetStatus == ApplicationStatus.approved
                   ? 'The final approval and student notification will be saved together.'
                   : isDestructive
-                      ? 'The application will be marked as ineligible in the institutional roster.'
-                      : 'The rubric evaluation will be saved and sent to the organization admin for a final decision.',
+                  ? (identity.isIndividualBenefactor
+                        ? 'The student will receive your decision. This does not judge their eligibility for other scholarships.'
+                        : 'The application will be marked as ineligible in the institutional roster.')
+                  : 'The rubric evaluation will be saved and sent to the organization admin for a final decision.',
               style: orgBody(fontSize: 12, color: const Color(0xFF707971)),
             ),
           ],
@@ -323,7 +365,10 @@ class _ApplicantReviewDrawerState extends ConsumerState<ApplicantReviewDrawer> {
               onPressed: () => Navigator.of(dialogCtx).pop(false),
               style: TextButton.styleFrom(
                 minimumSize: const Size(44, 44),
-                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 14,
+                  vertical: 8,
+                ),
               ),
               child: Text(
                 'Cancel',
@@ -340,8 +385,13 @@ class _ApplicantReviewDrawerState extends ConsumerState<ApplicantReviewDrawer> {
               style: FilledButton.styleFrom(
                 minimumSize: const Size(44, 44),
                 backgroundColor: isDestructive ? kOrgError : kOrgPrimary,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 10,
+                ),
               ),
               onPressed: () => Navigator.of(dialogCtx).pop(true),
               child: Text(
@@ -358,6 +408,7 @@ class _ApplicantReviewDrawerState extends ConsumerState<ApplicantReviewDrawer> {
       ),
     );
 
+    if (mounted) setState(() => _decisionPromptOpen = false);
     if (confirmed != true || !mounted) return;
 
     setState(() => _isProcessing = true);
@@ -377,29 +428,38 @@ class _ApplicantReviewDrawerState extends ConsumerState<ApplicantReviewDrawer> {
         expectedStatus: widget.application.status,
         action: targetStatus == ApplicationStatus.underReview
             ? 'endorse'
-            : targetStatus == ApplicationStatus.approved ? 'approve' : 'reject',
-        scores: targetStatus == ApplicationStatus.underReview ? {
-          'academic': _score1,
-          'financial': _score2,
-          'leadership': _score3,
-          'vision': _score4,
-        } : null,
+            : targetStatus == ApplicationStatus.approved
+            ? 'approve'
+            : 'reject',
+        scores: targetStatus == ApplicationStatus.underReview
+            ? {
+                'academic': _score1,
+                'financial': _score2,
+                'leadership': _score3,
+                'vision': _score4,
+              }
+            : null,
         notes: deliberationNotes,
       );
 
       container.invalidate(incomingApplicationsProvider);
+      container.invalidate(supportLedgerProvider);
       widget.onStatusChanged?.call();
       if (navigator.mounted && route?.isCurrent == true) navigator.pop();
       if (!messenger.mounted) return;
       messenger.showSnackBar(
         SnackBar(
           behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
           backgroundColor: isDestructive ? kOrgError : kOrgPrimary,
           content: Row(
             children: [
               Icon(
-                isDestructive ? Icons.cancel_outlined : Icons.check_circle_rounded,
+                isDestructive
+                    ? Icons.cancel_outlined
+                    : Icons.check_circle_rounded,
                 color: Colors.white,
                 size: 20,
               ),
@@ -409,8 +469,8 @@ class _ApplicantReviewDrawerState extends ConsumerState<ApplicantReviewDrawer> {
                   targetStatus == ApplicationStatus.approved
                       ? 'Application approved. Student notification saved.'
                       : targetStatus == ApplicationStatus.rejected
-                          ? 'Application marked as ineligible.'
-                          : 'Evaluation saved and endorsed to the organization admin.',
+                      ? 'Application marked as ineligible.'
+                      : 'Evaluation saved and endorsed to the organization admin.',
                   style: orgBody(
                     color: Colors.white,
                     fontSize: 13,
@@ -428,15 +488,21 @@ class _ApplicantReviewDrawerState extends ConsumerState<ApplicantReviewDrawer> {
       messenger.showSnackBar(
         SnackBar(
           behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
           backgroundColor: kOrgError,
           content: Row(
             children: [
-              const Icon(Icons.error_outline_rounded, color: Colors.white, size: 20),
+              const Icon(
+                Icons.error_outline_rounded,
+                color: Colors.white,
+                size: 20,
+              ),
               const SizedBox(width: 10),
               Expanded(
                 child: Text(
-                  'Could not record deliberation decision. Please check your network connection and try again.',
+                  'Could not save the decision. Check your connection, refresh the application, and try again.',
                   style: orgBody(
                     color: Colors.white,
                     fontSize: 13,
@@ -455,8 +521,11 @@ class _ApplicantReviewDrawerState extends ConsumerState<ApplicantReviewDrawer> {
 
   @override
   Widget build(BuildContext context) {
+    _scrollController.reducedMotion = isReducedMotion(context);
     if (widget.application.endorsedBy != null) {
-      final evaluation = ref.watch(endorsedEvaluationProvider(widget.application.id)).valueOrNull;
+      final evaluation = ref
+          .watch(endorsedEvaluationProvider(widget.application.id))
+          .valueOrNull;
       if (evaluation != null) {
         _score1 = (evaluation['score_academic'] as num).toDouble();
         _score2 = (evaluation['score_financial'] as num).toDouble();
@@ -471,215 +540,250 @@ class _ApplicantReviewDrawerState extends ConsumerState<ApplicantReviewDrawer> {
         final isNarrow = constraints.maxWidth < 640;
         final app = widget.application;
 
-    final profile = widget.applicantProfile;
-    final hasProfile = profile != null && profile.fullName.trim().isNotEmpty;
-    final scholarship = widget.scholarship;
-    final studentName = hasProfile ? profile.fullName.trim() : 'Applicant Profile Unavailable';
-    final studentSchool = profile?.school?.trim().isNotEmpty == true
-        ? profile!.school!.trim()
-        : 'School not recorded';
-    final studentCourse = profile?.course.trim().isNotEmpty == true
-        ? profile!.course.trim()
-        : 'Course not recorded';
-    final gwaString = (profile?.gpa ?? 0) > 0 ? profile!.gpa.toStringAsFixed(2) : 'N/A';
+        final individual = ref
+            .watch(providerSubRoleProvider)
+            .isIndividualBenefactor;
+        final profile = widget.applicantProfile;
+        final hasProfile =
+            profile != null && profile.fullName.trim().isNotEmpty;
+        final scholarship = widget.scholarship;
+        final studentName = hasProfile
+            ? profile.fullName.trim()
+            : 'Applicant Profile Unavailable';
+        final studentSchool = profile?.school?.trim().isNotEmpty == true
+            ? profile!.school!.trim()
+            : 'School not recorded';
+        final studentCourse = profile?.course.trim().isNotEmpty == true
+            ? profile!.course.trim()
+            : 'Course not recorded';
+        final gwaString = (profile?.gpa ?? 0) > 0
+            ? profile!.gpa.toStringAsFixed(2)
+            : 'N/A';
 
-    // Household income from real monthly_family_income
-    final annualIncome = profile?.monthlyFamilyIncome != null
-        ? '₱${((profile!.monthlyFamilyIncome! * 12) / 1000).toStringAsFixed(0)}k'
-        : 'Not disclosed';
+        // Household income from real monthly_family_income
+        final annualIncome = profile?.monthlyFamilyIncome != null
+            ? '₱${((profile!.monthlyFamilyIncome! * 12) / 1000).toStringAsFixed(0)}k'
+            : 'Not disclosed';
 
-    // Grant title from real scholarship record
-    final scholarshipTitle = scholarship?.title ?? 'Scholarship Grant';
-    final allocationAmount = scholarship?.formattedAmount ?? 'Grant allocation pending';
+        // Grant title from real scholarship record
+        final scholarshipTitle = scholarship?.title ?? 'Scholarship Grant';
+        final allocationAmount =
+            scholarship?.formattedAmount ?? 'Grant allocation pending';
 
-    final nameParts = studentName.split(' ');
-    final initials = hasProfile
-        ? (nameParts.length >= 2
-            ? '${nameParts.first[0]}${nameParts.last[0]}'.toUpperCase()
-            : (nameParts.isNotEmpty && nameParts[0].isNotEmpty ? nameParts[0][0].toUpperCase() : 'AU'))
-        : '—';
+        final nameParts = studentName.split(' ');
+        final initials = hasProfile
+            ? (nameParts.length >= 2
+                  ? '${nameParts.first[0]}${nameParts.last[0]}'.toUpperCase()
+                  : (nameParts.isNotEmpty && nameParts[0].isNotEmpty
+                        ? nameParts[0][0].toUpperCase()
+                        : 'AU'))
+            : '—';
 
-    // Total applicants in pool for honest cohort standing
-    final totalCohortCount = ref.watch(incomingApplicationsProvider).valueOrNull?.length ?? 1;
+        // Total applicants in pool for honest cohort standing
+        final totalCohortCount =
+            ref.watch(incomingApplicationsProvider).valueOrNull?.length ?? 1;
 
-    final drawerBody = Container(
-      color: Colors.white,
-      child: Column(
-        children: [
-          // 1. DRAWER HEADER
-          _buildDrawerHeader(
-            context: context,
-            initials: initials,
-            studentName: studentName,
-            scholarshipTitle: scholarshipTitle,
-            setupComplete: profile?.setupComplete ?? false,
-            isNarrow: isNarrow,
-          ),
-
-          // SCROLLABLE DOSSIER VIEWPORT
-          Expanded(
-            child: SingleChildScrollView(
-              physics: const AppleBouncingScrollPhysics(),
-              controller: _scrollController,
-              padding: EdgeInsets.all(isNarrow ? 16 : 24),
-              child: StaggeredContentReveal(
-                children: [
-                  // 2. APPLICANT HERO HIGHLIGHT CARD (Profile)
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 24),
-                    child: hasProfile
-                        ? _buildHeroHighlightCard(
-                            profile: profile,
-                            studentCourse: studentCourse,
-                            studentSchool: studentSchool,
-                            gwaString: gwaString,
-                            annualIncome: annualIncome,
-                            totalCohortCount: totalCohortCount,
-                            isNarrow: isNarrow,
-                          )
-                        : _buildProfileUnavailableCard(),
-                  ),
-
-                  // 3. ATTACHED VERIFICATION DOCUMENTS (Evidence)
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 24),
-                    child: _buildVerificationDocumentsSection(isNarrow),
-                  ),
-
-                  // 4. EVALUATION SCORING FORM & RUBRIC CRITERIA (Rubric)
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 24),
-                    child: _buildScoringRubricCard(isNarrow),
-                  ),
-
-                  // 5. REVIEWER DELIBERATION NOTES & COMMITTEE LOG (Deliberation)
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 16),
-                    child: _buildEvaluationCommentarySection(app),
-                  ),
-
-                  // 6. COHORT PERCENTILE DISTRIBUTION CARD
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 24),
-                    child: _buildCohortDistributionCard(totalCohortCount),
-                  ),
-                ],
+        final drawerBody = Container(
+          color: Colors.white,
+          child: Column(
+            children: [
+              // 1. DRAWER HEADER
+              _buildDrawerHeader(
+                context: context,
+                initials: initials,
+                studentName: studentName,
+                scholarshipTitle: scholarshipTitle,
+                setupComplete: profile?.setupComplete ?? false,
+                isNarrow: isNarrow,
               ),
-            ),
+
+              // SCROLLABLE DOSSIER VIEWPORT
+              Expanded(
+                child: SingleChildScrollView(
+                  physics: const AppleBouncingScrollPhysics(),
+                  controller: _scrollController,
+                  padding: EdgeInsets.all(isNarrow ? 16 : 24),
+                  child: StaggeredContentReveal(
+                    children: [
+                      // 2. APPLICANT HERO HIGHLIGHT CARD (Profile)
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 24),
+                        child: individual
+                            ? _buildIndividualProfile(profile)
+                            : hasProfile
+                            ? _buildHeroHighlightCard(
+                                profile: profile,
+                                studentCourse: studentCourse,
+                                studentSchool: studentSchool,
+                                gwaString: gwaString,
+                                annualIncome: annualIncome,
+                                totalCohortCount: totalCohortCount,
+                                isNarrow: isNarrow,
+                              )
+                            : _buildProfileUnavailableCard(),
+                      ),
+
+                      // 3. ATTACHED VERIFICATION DOCUMENTS (Evidence)
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 24),
+                        child: _buildVerificationDocumentsSection(isNarrow),
+                      ),
+
+                      if (!individual)
+                        // 4. EVALUATION SCORING FORM & RUBRIC CRITERIA (Rubric)
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 24),
+                          child: _buildScoringRubricCard(isNarrow),
+                        ),
+
+                      // 5. REVIEWER DELIBERATION NOTES & COMMITTEE LOG (Deliberation)
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 16),
+                        child: individual
+                            ? _buildIndividualNotes(app)
+                            : _buildEvaluationCommentarySection(app),
+                      ),
+
+                      if (!individual)
+                        // 6. COHORT PERCENTILE DISTRIBUTION CARD
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 24),
+                          child: _buildCohortDistributionCard(totalCohortCount),
+                        ),
+                    ],
+                  ),
+                ),
+              ),
+
+              // 7. DECISION ACTION CONTROLS (Sticky Footer)
+              _buildStickyDecisionControls(
+                allocationAmount: allocationAmount,
+                isNarrow: isNarrow,
+              ),
+            ],
           ),
+        );
 
-          // 7. DECISION ACTION CONTROLS (Sticky Footer)
-          _buildStickyDecisionControls(
-            allocationAmount: allocationAmount,
-            isNarrow: isNarrow,
-          ),
-        ],
-      ),
-    );
-
-    if (isDesktop || isReducedMotion(context)) {
-      return drawerBody;
-    }
-
-    return GestureDetector(
-      behavior: HitTestBehavior.translucent,
-      onVerticalDragStart: (details) {
-        if (_isScrolledToTop) {
-          _isDragActive = true;
-          _rawOvershootPx = 0.0;
-        } else {
-          _isDragActive = false;
+        if (isDesktop || isReducedMotion(context)) {
+          return drawerBody;
         }
-      },
-      onVerticalDragUpdate: (details) {
-        if (!_isDragActive) return;
-        final controller = _routeController;
-        if (controller == null) return;
 
-        final screenHeight = MediaQuery.sizeOf(context).height;
-        if (screenHeight <= 0) return;
-
-        final dy = details.delta.dy;
-
-        if (_rawOvershootPx > 0) {
-          // Already in upward overshoot territory
-          _rawOvershootPx -= dy;
-          if (_rawOvershootPx > 0) {
-            final resistedPx = appleRubberBand(overshoot: _rawOvershootPx, dimension: screenHeight);
-            controller.value = 1.0 + (resistedPx / screenHeight);
-          } else {
-            final remainingDownPx = -_rawOvershootPx;
-            _rawOvershootPx = 0.0;
-            controller.value =
-                (1.0 - remainingDownPx / screenHeight).clamp(0.0, 1.0);
-          }
-        } else {
-          final dragFraction = dy / screenHeight;
-          final nextValue = controller.value - dragFraction;
-
-          if (nextValue > 1.0) {
-            // Dragging upward past 1.0: enter rubber-band mode
-            final excessValue = nextValue - 1.0;
-            _rawOvershootPx += excessValue * screenHeight;
-            final resistedPx = appleRubberBand(overshoot: _rawOvershootPx, dimension: screenHeight);
-            controller.value = 1.0 + (resistedPx / screenHeight);
-          } else {
-            // Normal downward drag: 1:1 tracking
-            controller.value = nextValue.clamp(0.0, 1.0);
-          }
-        }
-      },
-      onVerticalDragEnd: (details) {
-        if (!_isDragActive) return;
-        _isDragActive = false;
-        _rawOvershootPx = 0.0;
-
-        final controller = _routeController;
-        if (controller == null) return;
-
-        final screenHeight = MediaQuery.sizeOf(context).height;
-        if (screenHeight <= 0) return;
-
-        final velocityPx = details.velocity.pixelsPerSecond.dy;
-        final animVelocity = -velocityPx / screenHeight;
-
-        final isOvershot = controller.value > 1.0;
-        final shouldDismiss =
-            !isOvershot && (velocityPx > 800 || controller.value < 0.5);
-
-        if (shouldDismiss) {
-          final relativeVel = calculateRelativeVelocity(
-            gestureVelocity: animVelocity,
-            currentValue: controller.value,
-            targetValue: 0.0,
-          );
-          final sim = SpringSimulation(
-              AppleSpringDescription.sheet, controller.value, 0.0, relativeVel);
-          controller.animateWith(sim).whenCompleteOrCancel(() {
-            if (mounted) {
-              Navigator.of(context).pop();
+        return GestureDetector(
+          behavior: HitTestBehavior.translucent,
+          onVerticalDragStart: (details) {
+            if (_isScrolledToTop) {
+              _isDragActive = true;
+              _rawOvershootPx = 0.0;
+            } else {
+              _isDragActive = false;
             }
-          });
-        } else {
-          final relativeVel = calculateRelativeVelocity(
-            gestureVelocity: animVelocity,
-            currentValue: controller.value,
-            targetValue: 1.0,
-          );
-          final sim = SpringSimulation(
-              AppleSpringDescription.sheet, controller.value, 1.0, relativeVel);
-          controller.animateWith(sim);
-        }
+          },
+          onVerticalDragUpdate: (details) {
+            if (!_isDragActive) return;
+            final controller = _routeController;
+            if (controller == null) return;
+
+            final screenHeight = MediaQuery.sizeOf(context).height;
+            if (screenHeight <= 0) return;
+
+            final dy = details.delta.dy;
+
+            if (_rawOvershootPx > 0) {
+              // Already in upward overshoot territory
+              _rawOvershootPx -= dy;
+              if (_rawOvershootPx > 0) {
+                final resistedPx = appleRubberBand(
+                  overshoot: _rawOvershootPx,
+                  dimension: screenHeight,
+                );
+                controller.value = 1.0 + (resistedPx / screenHeight);
+              } else {
+                final remainingDownPx = -_rawOvershootPx;
+                _rawOvershootPx = 0.0;
+                controller.value = (1.0 - remainingDownPx / screenHeight).clamp(
+                  0.0,
+                  1.0,
+                );
+              }
+            } else {
+              final dragFraction = dy / screenHeight;
+              final nextValue = controller.value - dragFraction;
+
+              if (nextValue > 1.0) {
+                // Dragging upward past 1.0: enter rubber-band mode
+                final excessValue = nextValue - 1.0;
+                _rawOvershootPx += excessValue * screenHeight;
+                final resistedPx = appleRubberBand(
+                  overshoot: _rawOvershootPx,
+                  dimension: screenHeight,
+                );
+                controller.value = 1.0 + (resistedPx / screenHeight);
+              } else {
+                // Normal downward drag: 1:1 tracking
+                controller.value = nextValue.clamp(0.0, 1.0);
+              }
+            }
+          },
+          onVerticalDragEnd: (details) {
+            if (!_isDragActive) return;
+            _isDragActive = false;
+            _rawOvershootPx = 0.0;
+
+            final controller = _routeController;
+            if (controller == null) return;
+
+            final screenHeight = MediaQuery.sizeOf(context).height;
+            if (screenHeight <= 0) return;
+
+            final velocityPx = details.velocity.pixelsPerSecond.dy;
+            final animVelocity = -velocityPx / screenHeight;
+
+            final isOvershot = controller.value > 1.0;
+            final shouldDismiss =
+                !isOvershot && (velocityPx > 800 || controller.value < 0.5);
+
+            if (shouldDismiss) {
+              final relativeVel = calculateRelativeVelocity(
+                gestureVelocity: animVelocity,
+                currentValue: controller.value,
+                targetValue: 0.0,
+              );
+              final sim = SpringSimulation(
+                AppleSpringDescription.sheet,
+                controller.value,
+                0.0,
+                relativeVel,
+              );
+              controller.animateWith(sim).whenCompleteOrCancel(() {
+                if (mounted) {
+                  Navigator.of(context).pop();
+                }
+              });
+            } else {
+              final relativeVel = calculateRelativeVelocity(
+                gestureVelocity: animVelocity,
+                currentValue: controller.value,
+                targetValue: 1.0,
+              );
+              final sim = SpringSimulation(
+                AppleSpringDescription.sheet,
+                controller.value,
+                1.0,
+                relativeVel,
+              );
+              controller.animateWith(sim);
+            }
+          },
+          onVerticalDragCancel: () {
+            if (_isDragActive) {
+              _isDragActive = false;
+              _rawOvershootPx = 0.0;
+            }
+          },
+          child: drawerBody,
+        );
       },
-      onVerticalDragCancel: () {
-        if (_isDragActive) {
-          _isDragActive = false;
-          _rawOvershootPx = 0.0;
-        }
-      },
-        child: drawerBody,
-      );
-    });
+    );
   }
 
   // ---------------------------------------------------------------------------
@@ -750,10 +854,16 @@ class _ApplicantReviewDrawerState extends ConsumerState<ApplicantReviewDrawer> {
                         ),
                       ),
                     ),
-                    if (!isNarrow) ...[
+                    if (!isNarrow &&
+                        !ref
+                            .watch(providerSubRoleProvider)
+                            .isIndividualBenefactor) ...[
                       const SizedBox(width: 8),
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 2,
+                        ),
                         decoration: BoxDecoration(
                           color: setupComplete
                               ? const Color(0xFFB3F1C6)
@@ -761,7 +871,15 @@ class _ApplicantReviewDrawerState extends ConsumerState<ApplicantReviewDrawer> {
                           borderRadius: BorderRadius.circular(9999),
                         ),
                         child: Text(
-                          setupComplete ? 'Profile Complete' : 'Profile Incomplete',
+                          ref
+                                  .watch(providerSubRoleProvider)
+                                  .isIndividualBenefactor
+                              ? (setupComplete
+                                    ? 'Setup complete'
+                                    : 'Setup incomplete')
+                              : (setupComplete
+                                    ? 'Profile Complete'
+                                    : 'Profile Incomplete'),
                           style: orgLabel(
                             fontSize: 11,
                             fontWeight: FontWeight.w600,
@@ -777,7 +895,10 @@ class _ApplicantReviewDrawerState extends ConsumerState<ApplicantReviewDrawer> {
                 const SizedBox(height: 3),
                 Row(
                   children: [
-                    if (!isNarrow) ...[
+                    if (!isNarrow &&
+                        !ref
+                            .watch(providerSubRoleProvider)
+                            .isIndividualBenefactor) ...[
                       Text(
                         'LRN: Not on file',
                         style: orgBody(
@@ -786,7 +907,14 @@ class _ApplicantReviewDrawerState extends ConsumerState<ApplicantReviewDrawer> {
                         ),
                       ),
                       const SizedBox(width: 6),
-                      const Text('•', style: TextStyle(color: Color(0xFF707971), fontSize: 12, letterSpacing: 0.15)),
+                      const Text(
+                        '•',
+                        style: TextStyle(
+                          color: Color(0xFF707971),
+                          fontSize: 12,
+                          letterSpacing: 0.15,
+                        ),
+                      ),
                       const SizedBox(width: 6),
                     ],
                     Expanded(
@@ -808,11 +936,16 @@ class _ApplicantReviewDrawerState extends ConsumerState<ApplicantReviewDrawer> {
           ),
 
           // Quick Action Icons
-          if (!isNarrow) ...[
+          if (!isNarrow &&
+              !ref.watch(providerSubRoleProvider).isIndividualBenefactor) ...[
             PressableScale(
               child: IconButton(
                 tooltip: 'Export Evaluator Summary PDF',
-                icon: const Icon(Icons.print_outlined, size: 18, color: Color(0xFF404942)),
+                icon: const Icon(
+                  Icons.print_outlined,
+                  size: 18,
+                  color: Color(0xFF404942),
+                ),
                 onPressed: () {
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(
@@ -826,11 +959,17 @@ class _ApplicantReviewDrawerState extends ConsumerState<ApplicantReviewDrawer> {
             PressableScale(
               child: IconButton(
                 tooltip: 'Candidate Profile Share',
-                icon: const Icon(Icons.share_outlined, size: 18, color: Color(0xFF404942)),
+                icon: const Icon(
+                  Icons.share_outlined,
+                  size: 18,
+                  color: Color(0xFF404942),
+                ),
                 onPressed: () {
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(
-                      content: Text('Candidate dossier link copied to clipboard'),
+                      content: Text(
+                        'Candidate dossier link copied to clipboard',
+                      ),
                       duration: Duration(seconds: 2),
                     ),
                   );
@@ -841,12 +980,131 @@ class _ApplicantReviewDrawerState extends ConsumerState<ApplicantReviewDrawer> {
           PressableScale(
             child: IconButton(
               tooltip: 'Close Drawer',
-              icon: const Icon(Icons.close_rounded, size: 20, color: Color(0xFF404942)),
+              icon: const Icon(
+                Icons.close_rounded,
+                size: 20,
+                color: Color(0xFF404942),
+              ),
               onPressed: () => Navigator.of(context).pop(),
             ),
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildIndividualProfile(ApplicantProfile? profile) {
+    if (profile == null) return _buildProfileUnavailableCard();
+    final facts = <(String, String)>[
+      (
+        'School',
+        profile.school?.trim().isNotEmpty == true
+            ? profile.school!
+            : 'Not provided',
+      ),
+      ('Course', profile.course.isEmpty ? 'Not provided' : profile.course),
+      (
+        'Year level',
+        profile.yearLevel > 0 ? 'Year ${profile.yearLevel}' : 'Not provided',
+      ),
+      (
+        'Recorded grade',
+        profile.gpa > 0 ? profile.gpa.toStringAsFixed(2) : 'Not provided',
+      ),
+      (
+        'Monthly household income',
+        profile.monthlyFamilyIncome == null
+            ? 'Not disclosed'
+            : supportMoney((profile.monthlyFamilyIncome! * 100).round()),
+      ),
+    ];
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: const Color(0xFFF5F6F1),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: kOrgBorder),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text('Student details', style: orgHeadline(fontSize: 20)),
+          const SizedBox(height: 8),
+          const Text(
+            'Submitted profile information. Review the supporting documents before making a decision.',
+          ),
+          const SizedBox(height: 20),
+          LayoutBuilder(
+            builder: (context, constraints) => Wrap(
+              spacing: 20,
+              runSpacing: 18,
+              children: [
+                for (final fact in facts)
+                  SizedBox(
+                    width: constraints.maxWidth < 450
+                        ? constraints.maxWidth
+                        : (constraints.maxWidth - 20) / 2,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          fact.$1,
+                          style: orgBody(
+                            fontSize: 12,
+                            color: kOrgTextSecondary,
+                          ),
+                        ),
+                        const SizedBox(height: 5),
+                        Text(fact.$2, style: orgLabel(fontSize: 15)),
+                      ],
+                    ),
+                  ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 16),
+          Text(
+            'The grading scale is not included in this review record. A grade alone does not verify honors or eligibility.',
+            style: orgBody(fontSize: 12, color: kOrgTextSecondary),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildIndividualNotes(Application app) {
+    final canDecide =
+        app.status == ApplicationStatus.submitted ||
+        app.status == ApplicationStatus.underReview;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text('Provider notes', style: orgHeadline(fontSize: 20)),
+        const SizedBox(height: 8),
+        Text(
+          canDecide
+              ? 'Optional context for your decision. Notes are saved with the decision record and may be visible to the student.'
+              : 'This application already has a recorded decision.',
+          style: orgBody(fontSize: 13, color: kOrgTextSecondary),
+        ),
+        if (canDecide) ...[
+          const SizedBox(height: 14),
+          TextFormField(
+            controller: _notesController,
+            enabled: !_isProcessing && !_decisionPromptOpen,
+            minLines: 3,
+            maxLines: 6,
+            maxLength: 2000,
+            decoration: const InputDecoration(
+              labelText: 'Decision notes (optional)',
+              hintText: 'Explain your decision or clarify the support offered.',
+              alignLabelWithHint: true,
+              border: OutlineInputBorder(),
+            ),
+          ),
+        ],
+      ],
     );
   }
 
@@ -1043,8 +1301,8 @@ class _ApplicantReviewDrawerState extends ConsumerState<ApplicantReviewDrawer> {
                             Text(
                               profile.gpa > 0
                                   ? (profile.gpa <= 1.45
-                                      ? "Dean's Honor List Eligible"
-                                      : "Good Academic Standing")
+                                        ? "Dean's Honor List Eligible"
+                                        : "Good Academic Standing")
                                   : "GWA Not Recorded",
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
@@ -1221,37 +1479,68 @@ class _ApplicantReviewDrawerState extends ConsumerState<ApplicantReviewDrawer> {
   // 3. ATTACHED VERIFICATION DOCUMENTS (Honest Empty State)
   // ---------------------------------------------------------------------------
   Widget _buildVerificationDocumentsSection(bool isNarrow) {
-    final documents = ref.watch(applicationDocumentsProvider(widget.application.id));
-    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      Text('SUBMITTED EVIDENCE', style: orgLabel(fontSize: 11, fontWeight: FontWeight.w600)),
-      const SizedBox(height: 8),
-      documents.when(
-        loading: () => const CircularProgressIndicator(),
-        error: (_, _) => TextButton(onPressed: () => ref.invalidate(applicationDocumentsProvider(widget.application.id)),
-          child: const Text('Could not load documents. Retry')),
-        data: (docs) => Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          if (docs.isEmpty) const Text('No verification documents on file'),
-          for (final doc in docs) ListTile(
-            contentPadding: EdgeInsets.zero,
-            leading: const Icon(Icons.description_outlined),
-            title: Text(doc.humanType),
-            subtitle: Text(doc.fileName, maxLines: 2, overflow: TextOverflow.ellipsis),
-            trailing: IconButton(tooltip: 'Open document', icon: const Icon(Icons.open_in_new),
-              onPressed: () async {
-                final url = await ref.read(applicationDocumentRepositoryProvider)
-                    .getSecureDocumentUrl(doc.filePath, expiresIn: 300);
-                if (!mounted) return;
-                if (url == null || !await launchUrl(Uri.parse(url))) {
-                  if (mounted) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Document access failed. Please retry.')));
-                  }
-                }
-              }),
+    final documents = ref.watch(
+      applicationDocumentsProvider(widget.application.id),
+    );
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          ref.watch(providerSubRoleProvider).isIndividualBenefactor
+              ? 'Requirements & documents'
+              : 'SUBMITTED EVIDENCE',
+          style: orgLabel(fontSize: 11, fontWeight: FontWeight.w600),
+        ),
+        const SizedBox(height: 8),
+        documents.when(
+          loading: () => const CircularProgressIndicator(),
+          error: (_, _) => TextButton(
+            onPressed: () => ref.invalidate(
+              applicationDocumentsProvider(widget.application.id),
+            ),
+            child: const Text('Could not load documents. Retry'),
           ),
-        ]),
-      ),
-    ]);
+          data: (docs) => Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              if (docs.isEmpty) const Text('No verification documents on file'),
+              for (final doc in docs)
+                ListTile(
+                  contentPadding: EdgeInsets.zero,
+                  leading: const Icon(Icons.description_outlined),
+                  title: Text(doc.humanType),
+                  subtitle: Text(
+                    doc.fileName,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  trailing: IconButton(
+                    tooltip: 'Open document',
+                    icon: const Icon(Icons.open_in_new),
+                    onPressed: () async {
+                      final url = await ref
+                          .read(applicationDocumentRepositoryProvider)
+                          .getSecureDocumentUrl(doc.filePath, expiresIn: 300);
+                      if (!mounted) return;
+                      if (url == null || !await launchUrl(Uri.parse(url))) {
+                        if (mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text(
+                                'Document access failed. Please retry.',
+                              ),
+                            ),
+                          );
+                        }
+                      }
+                    },
+                  ),
+                ),
+            ],
+          ),
+        ),
+      ],
+    );
   }
 
   // ---------------------------------------------------------------------------
@@ -1307,7 +1596,10 @@ class _ApplicantReviewDrawerState extends ConsumerState<ApplicantReviewDrawer> {
 
               // Composite Score Pill
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 14,
+                  vertical: 6,
+                ),
                 decoration: BoxDecoration(
                   color: kOrgPrimary,
                   borderRadius: BorderRadius.circular(16),
@@ -1481,13 +1773,19 @@ class _ApplicantReviewDrawerState extends ConsumerState<ApplicantReviewDrawer> {
                       title,
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
-                      style: orgHeadline(fontSize: 13, fontWeight: FontWeight.w600),
+                      style: orgHeadline(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
                   ),
                   const SizedBox(width: 6),
                   Text(
                     weightText,
-                    style: orgBody(fontSize: 11, color: const Color(0xFF404942)),
+                    style: orgBody(
+                      fontSize: 11,
+                      color: const Color(0xFF404942),
+                    ),
                   ),
                 ],
               ),
@@ -1517,16 +1815,16 @@ class _ApplicantReviewDrawerState extends ConsumerState<ApplicantReviewDrawer> {
             min: 0.0,
             max: 10.0,
             divisions: 90,
-            onChanged: ref.watch(providerSubRoleProvider).isEvaluator && widget.application.endorsedBy == null
-                ? onChanged : null,
+            onChanged:
+                ref.watch(providerSubRoleProvider).isEvaluator &&
+                    widget.application.endorsedBy == null
+                ? onChanged
+                : null,
           ),
         ),
         Text(
           note,
-          style: orgBody(
-            fontSize: 11,
-            color: const Color(0xFF404942),
-          ),
+          style: orgBody(fontSize: 11, color: const Color(0xFF404942)),
         ),
       ],
     );
@@ -1536,11 +1834,13 @@ class _ApplicantReviewDrawerState extends ConsumerState<ApplicantReviewDrawer> {
   // 5. REVIEWER DELIBERATION NOTES & COMMITTEE LOG (Real Notes & Honest State)
   // ---------------------------------------------------------------------------
   Widget _buildEvaluationCommentarySection(Application app) {
-    final evaluation = app.endorsedBy == null ? null
+    final evaluation = app.endorsedBy == null
+        ? null
         : ref.watch(endorsedEvaluationProvider(app.id)).valueOrNull;
     final realNotesText = evaluation?['deliberation_notes'] as String? ?? '';
     final hasRealNotes = realNotesText.trim().isNotEmpty;
-    final refCode = 'SCH-${app.id.length >= 8 ? app.id.substring(0, 8).toUpperCase() : app.id.toUpperCase()}';
+    final refCode =
+        'SCH-${app.id.length >= 8 ? app.id.substring(0, 8).toUpperCase() : app.id.toUpperCase()}';
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -1603,7 +1903,9 @@ class _ApplicantReviewDrawerState extends ConsumerState<ApplicantReviewDrawer> {
                   decoration: BoxDecoration(
                     color: const Color(0xFFF4F3F8),
                     borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: const Color(0xFFC0C9C0).withValues(alpha: 0.3)),
+                    border: Border.all(
+                      color: const Color(0xFFC0C9C0).withValues(alpha: 0.3),
+                    ),
                   ),
                   child: Text(
                     realNotesText,
@@ -1627,7 +1929,11 @@ class _ApplicantReviewDrawerState extends ConsumerState<ApplicantReviewDrawer> {
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Icon(Icons.rate_review_outlined, color: Color(0xFF707971), size: 18),
+                      const Icon(
+                        Icons.rate_review_outlined,
+                        color: Color(0xFF707971),
+                        size: 18,
+                      ),
                       const SizedBox(width: 8),
                       Expanded(
                         child: Column(
@@ -1674,7 +1980,10 @@ class _ApplicantReviewDrawerState extends ConsumerState<ApplicantReviewDrawer> {
                 style: orgBody(fontSize: 12),
                 decoration: InputDecoration(
                   hintText: 'Record committee deliberation notes or grant conditions before approving...',
-                  hintStyle: orgBody(fontSize: 12, color: const Color(0xFF707971)),
+                  hintStyle: orgBody(
+                    fontSize: 12,
+                    color: const Color(0xFF707971),
+                  ),
                   filled: true,
                   fillColor: const Color(0xFFFAF9FE),
                   contentPadding: const EdgeInsets.all(10),
@@ -1688,7 +1997,10 @@ class _ApplicantReviewDrawerState extends ConsumerState<ApplicantReviewDrawer> {
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10),
-                    borderSide: const BorderSide(color: kOrgPrimary, width: 1.5),
+                    borderSide: const BorderSide(
+                      color: kOrgPrimary,
+                      width: 1.5,
+                    ),
                   ),
                 ),
               ),
@@ -1719,10 +2031,7 @@ class _ApplicantReviewDrawerState extends ConsumerState<ApplicantReviewDrawer> {
               Flexible(
                 child: Text(
                   'Cohort Percentile Distribution',
-                  style: orgHeadline(
-                    fontSize: 13,
-                    fontWeight: FontWeight.w600,
-                  ),
+                  style: orgHeadline(fontSize: 13, fontWeight: FontWeight.w600),
                   overflow: TextOverflow.ellipsis,
                 ),
               ),
@@ -1847,8 +2156,10 @@ class _ApplicantReviewDrawerState extends ConsumerState<ApplicantReviewDrawer> {
         mainAxisSize: MainAxisSize.min,
         children: [
           if (widget.application.endorsedBy != null) ...[
-            Text('Endorsed by reviewer ${widget.application.endorsedBy} on ${widget.application.endorsedAt?.toLocal()}.',
-              style: orgBody(fontSize: 12, color: kOrgPrimary)),
+            Text(
+              'Endorsed by reviewer ${widget.application.endorsedBy} on ${widget.application.endorsedAt?.toLocal()}.',
+              style: orgBody(fontSize: 12, color: kOrgPrimary),
+            ),
             const SizedBox(height: 8),
           ],
           // Funding Allocation Summary Ribbon
@@ -1860,11 +2171,18 @@ class _ApplicantReviewDrawerState extends ConsumerState<ApplicantReviewDrawer> {
                     children: [
                       Text(
                         'Proposed Grant Allocation',
-                        style: orgBody(fontSize: 11, color: const Color(0xFF404942)),
+                        style: orgBody(
+                          fontSize: 11,
+                          color: const Color(0xFF404942),
+                        ),
                       ),
                       const SizedBox(height: 2),
                       Text(
-                        '$allocationAmount / Academic Year (Direct + Allowance)',
+                        ref
+                                .watch(providerSubRoleProvider)
+                                .isIndividualBenefactor
+                            ? '$allocationAmount ${widget.scholarship?.formattedFrequency ?? ''} · ${widget.scholarship?.coverage ?? 'Coverage not provided'}'
+                            : '$allocationAmount / Academic Year (Direct + Allowance)',
                         style: orgLabel(
                           fontSize: 12,
                           fontWeight: FontWeight.w600,
@@ -1879,14 +2197,21 @@ class _ApplicantReviewDrawerState extends ConsumerState<ApplicantReviewDrawer> {
                       Flexible(
                         child: Text(
                           'Proposed Grant Allocation',
-                          style: orgBody(fontSize: 11, color: const Color(0xFF404942)),
+                          style: orgBody(
+                            fontSize: 11,
+                            color: const Color(0xFF404942),
+                          ),
                           overflow: TextOverflow.ellipsis,
                         ),
                       ),
                       const SizedBox(width: 8),
                       Flexible(
                         child: Text(
-                          '$allocationAmount / Academic Year (Direct + Allowance)',
+                          ref
+                                  .watch(providerSubRoleProvider)
+                                  .isIndividualBenefactor
+                              ? '$allocationAmount ${widget.scholarship?.formattedFrequency ?? ''} · ${widget.scholarship?.coverage ?? 'Coverage not provided'}'
+                              : '$allocationAmount / Academic Year (Direct + Allowance)',
                           style: orgLabel(
                             fontSize: 12,
                             fontWeight: FontWeight.w600,
@@ -1904,19 +2229,29 @@ class _ApplicantReviewDrawerState extends ConsumerState<ApplicantReviewDrawer> {
           Builder(
             builder: (ctx) {
               final identity = ref.watch(providerSubRoleProvider);
-              final isReviewer = identity.isEvaluator; // Evaluator / Reviewer staff
-              final isDecider = identity.isOrgAdmin || identity.isIndividualBenefactor;
+              final isReviewer =
+                  identity.isEvaluator; // Evaluator / Reviewer staff
+              final isDecider =
+                  identity.isOrgAdmin || identity.isIndividualBenefactor;
 
               if (!isReviewer && !isDecider) {
-                return const Text('Review access unavailable. Contact your organization admin.');
+                return const Text(
+                  'Review access unavailable. Contact your organization admin.',
+                );
               }
-              if (!widget.application.status.isPending || widget.application.status == ApplicationStatus.draft) {
-                return Text('Final result: ${widget.application.status.dbValue}');
+              if (!widget.application.status.isPending ||
+                  widget.application.status == ApplicationStatus.draft) {
+                return Text(
+                  'Final result: ${widget.application.status.dbValue}',
+                );
               }
               if (isReviewer && widget.application.endorsedBy != null) {
-                return const Text('Endorsed to organization admin. Awaiting final decision.');
+                return const Text(
+                  'Endorsed to organization admin. Awaiting final decision.',
+                );
               }
-              if (identity.isOrgAdmin && widget.application.endorsedBy == null) {
+              if (identity.isOrgAdmin &&
+                  widget.application.endorsedBy == null) {
                 return const Text('Awaiting a separate reviewer endorsement.');
               }
               if (isReviewer) {
@@ -1932,14 +2267,18 @@ class _ApplicantReviewDrawerState extends ConsumerState<ApplicantReviewDrawer> {
                               backgroundColor: kOrgPrimary,
                               foregroundColor: Colors.white,
                               elevation: 2,
-                              padding: const EdgeInsets.symmetric(horizontal: 16),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 16,
+                              ),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(10),
                               ),
                             ),
-                            onPressed: _isProcessing
+                            onPressed: (_isProcessing || _decisionPromptOpen)
                                 ? null
-                                : () => _handleDecision(ApplicationStatus.underReview),
+                                : () => _handleDecision(
+                                    ApplicationStatus.underReview,
+                                  ),
                             icon: const Icon(Icons.verified_rounded, size: 18),
                             label: const FittedBox(
                               fit: BoxFit.scaleDown,
@@ -1979,15 +2318,22 @@ class _ApplicantReviewDrawerState extends ConsumerState<ApplicantReviewDrawer> {
                               borderRadius: BorderRadius.circular(10),
                             ),
                           ),
-                          onPressed: _isProcessing
+                          onPressed: (_isProcessing || _decisionPromptOpen)
                               ? null
-                              : () => _handleDecision(ApplicationStatus.rejected),
+                              : () =>
+                                    _handleDecision(ApplicationStatus.rejected),
                           icon: const Icon(Icons.block, size: 16),
-                          label: const FittedBox(
+                          label: FittedBox(
                             fit: BoxFit.scaleDown,
                             child: Text(
-                              'Ineligible',
-                              style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13, letterSpacing: 0.1),
+                              identity.isIndividualBenefactor
+                                  ? 'Decline application'
+                                  : 'Ineligible',
+                              style: TextStyle(
+                                fontWeight: FontWeight.w600,
+                                fontSize: 13,
+                                letterSpacing: 0.1,
+                              ),
                             ),
                           ),
                         ),
@@ -2012,15 +2358,20 @@ class _ApplicantReviewDrawerState extends ConsumerState<ApplicantReviewDrawer> {
                               borderRadius: BorderRadius.circular(10),
                             ),
                           ),
-                          onPressed: _isProcessing
+                          onPressed: (_isProcessing || _decisionPromptOpen)
                               ? null
-                              : () => _handleDecision(ApplicationStatus.approved),
+                              : () =>
+                                    _handleDecision(ApplicationStatus.approved),
                           icon: const Icon(Icons.check_rounded, size: 18),
                           label: const FittedBox(
                             fit: BoxFit.scaleDown,
                             child: Text(
                               'Approve Application',
-                              style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13, letterSpacing: 0.1),
+                              style: TextStyle(
+                                fontWeight: FontWeight.w600,
+                                fontSize: 13,
+                                letterSpacing: 0.1,
+                              ),
                             ),
                           ),
                         ),
@@ -2050,3 +2401,4 @@ class _ApplicantReviewDrawerState extends ConsumerState<ApplicantReviewDrawer> {
     }
   }
 }
+

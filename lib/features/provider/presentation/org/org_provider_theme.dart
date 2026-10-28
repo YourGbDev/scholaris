@@ -1,7 +1,7 @@
 // lib/features/provider/presentation/org/org_provider_theme.dart
 //
 // Institutional design tokens for Scholaris Provider Console
-// Apple Design DNA pass: clean squircles, #F5F5F7 sidebar, #0F4D2E active fill,
+// White workspace and sidebar, #0F4D2E active fill,
 // pure white active typography, subtle hairline borders, and responsive elevation.
 
 import 'package:flutter/material.dart';
@@ -13,14 +13,14 @@ import '../../../../shared/theme/app_motion.dart';
 const kOrgPrimary = Color(0xFF0F4D2E); // Bridge Green
 const kOrgPrimaryDark = Color(0xFF00351C);
 const kOrgSidebarDark = Color(0xFF0A321E); // Legacy reference
-const kOrgSidebarLight = Color(0xFFF5F5F7); // Apple Light Sidebar
+const kOrgSidebarLight = Color(0xFFFFFFFF);
 const kOrgActiveNavBg = Color(0xFF0F4D2E); // Active navigation fill
 const kOrgActiveNavText = Color(0xFFFFFFFF); // Pure white active text/icon
 const kOrgInactiveNavText = Color(0xFF404942); // Inactive dark gray nav text
 const kOrgAccentGold = Color(0xFFF1B41E); // Golden Opportunity
 const kOrgAccentGoldContainer = Color(0xFFFEBF2C);
 const kOrgCivicNavy = Color(0xFF1B3A5C); // Data series & tertiary
-const kOrgCanvas = Color(0xFFFAF9FE); // Light Apple canvas
+const kOrgCanvas = Color(0xFFFFFFFF);
 const kOrgSurfaceWhite = Color(0xFFFFFFFF);
 const kOrgBorder = Color(0xFFE5E7EB);
 const kOrgHairline = Color(0xFFE4E7EC);

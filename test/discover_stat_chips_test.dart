@@ -1,7 +1,7 @@
 // test/discover_stat_chips_test.dart
 //
 // Widget tests for DiscoverScreen upgraded features:
-// 1. Quick-stat chips navigation (Saved -> tab 1, Applied -> tab 2).
+// 1. Quick-stat chips navigation (Saved screen, Applied -> tab 2).
 // 2. Matching power bar tap opens MatchingPowerSheet modal.
 // 3. Active application status alert banner rendering and navigation.
 
@@ -15,6 +15,7 @@ import 'package:scholaris/features/applications/providers/applications_provider.
 import 'package:scholaris/features/auth/controllers/auth_controller.dart';
 import 'package:scholaris/features/bookmarks/providers/bookmarks_provider.dart';
 import 'package:scholaris/features/bookmarks/repositories/bookmark_repository.dart';
+import 'package:scholaris/features/scholarships/screens/saved_screen.dart';
 import 'package:scholaris/features/home/presentation/home_screen.dart';
 import 'package:scholaris/features/profile/models/student_profile.dart';
 import 'package:scholaris/features/profile/providers/profile_setup_provider.dart';
@@ -87,7 +88,7 @@ void main() {
   });
 
   group('DiscoverScreen Upgraded Dashboard Interactions', () {
-    testWidgets('tapping Bookmarked chip switches homeTabIndex to 1',
+    testWidgets('tapping Saved chip opens the saved scholarships screen',
         (tester) async {
       tester.view.physicalSize = const Size(800, 1200);
       tester.view.devicePixelRatio = 1.0;
@@ -103,12 +104,10 @@ void main() {
       expect(bookmarkedChip, findsOneWidget);
 
       await tester.tap(bookmarkedChip);
+      await tester.pump();
       await tester.pump(const Duration(milliseconds: 500));
 
-      // Home tab index should be 1 (Saved screen active)
-      final element = tester.element(find.byType(HomeScreen));
-      final container = ProviderScope.containerOf(element);
-      expect(container.read(homeTabIndexProvider), equals(1));
+      expect(find.byType(SavedScreen), findsOneWidget);
     });
 
     testWidgets('tapping Applied chip switches homeTabIndex to 2',

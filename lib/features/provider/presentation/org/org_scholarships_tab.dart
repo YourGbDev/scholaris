@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:scholaris/features/profile/providers/profile_setup_provider.dart';
+
 import '../../../applications/models/application.dart';
 import '../../../applications/providers/applications_provider.dart';
 import '../../../scholarships/models/scholarship.dart';
@@ -16,15 +17,16 @@ import '../../../scholarships/providers/scholarship_capacity_provider.dart';
 import '../../providers/provider_scholarships_provider.dart';
 import '../scholarship_form_screen.dart';
 import '../widgets/scholarship_qr_dialog.dart';
+
 import 'package:scholaris/shared/theme/app_motion.dart';
+
 import 'org_provider_theme.dart';
+import '../widgets/org_metric_count.dart';
+import '../widgets/org_summary_disclosure.dart';
 import 'widgets/assign_reviewer_dialog.dart';
 
 class OrgScholarshipsTab extends ConsumerStatefulWidget {
-  const OrgScholarshipsTab({
-    super.key,
-    this.onViewApplicationsForScholarship,
-  });
+  const OrgScholarshipsTab({super.key, this.onViewApplicationsForScholarship});
 
   final void Function(String scholarshipId)? onViewApplicationsForScholarship;
 
@@ -38,9 +40,7 @@ class _OrgScholarshipsTabState extends ConsumerState<OrgScholarshipsTab> {
 
   void _openCreateScreen() {
     Navigator.of(context).push(
-      MaterialPageRoute<bool>(
-        builder: (_) => const ScholarshipFormScreen(),
-      ),
+      MaterialPageRoute<bool>(builder: (_) => const ScholarshipFormScreen()),
     );
   }
 
@@ -59,77 +59,28 @@ class _OrgScholarshipsTabState extends ConsumerState<OrgScholarshipsTab> {
     return '₱${amount.toString().replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (m) => '${m[1]},')}';
   }
 
-  void _showEscrowCertificateDialog(BuildContext context, int count) {
-    showDialog<void>(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: Row(
-          children: [
-            const Icon(Icons.verified_rounded, color: kOrgPrimary, size: 24),
-            const SizedBox(width: 8),
-            Text('Escrow Audit Certificate', style: orgHeadline(fontSize: 18)),
-          ],
-        ),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Certificate of Institutional Compliance & Endowment Verification',
-              style: orgLabel(color: kOrgPrimary, fontSize: 12),
-            ),
-            const SizedBox(height: 12),
-            Text(
-              'All $count active scholarship grant portfolios are backed and fully funded in escrow with an accredited Institutional Escrow Depository Bank for Academic Year ${DateTime.now().year}–${DateTime.now().year + 1}.',
-              style: orgBody(fontSize: 13),
-            ),
-            const SizedBox(height: 16),
-            Container(
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: const Color(0xFFF4F3F8),
-                borderRadius: BorderRadius.circular(10),
-                border: Border.all(color: const Color(0xFFE5E7EB)),
-              ),
-              child: Column(
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text('Trust Reference', style: orgLabel(fontSize: 11)),
-                      Text('ESC-${DateTime.now().year}-0889-PH',
-                          style: orgHeadline(fontSize: 11, color: kOrgPrimary)),
-                    ],
-                  ),
-                  const SizedBox(height: 6),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text('Audit Status', style: orgLabel(fontSize: 11)),
-                      Text('SEC & CHED Verified',
-                          style: orgHeadline(fontSize: 11, color: const Color(0xFF0058BC))),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(ctx).pop(),
-            child: const Text('Close', style: TextStyle(color: kOrgPrimary)),
-          ),
-        ],
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     final scholarshipsAsync = ref.watch(providerScholarshipsProvider);
     final incomingAppsAsync = ref.watch(incomingApplicationsProvider);
+    if (incomingAppsAsync.isLoading) {
+      return const Center(child: CircularProgressIndicator());
+    }
+    if (incomingAppsAsync.hasError) {
+      return Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Text('Application totals could not load.'),
+            TextButton(
+              onPressed: () => ref.invalidate(incomingApplicationsProvider),
+              child: const Text('Retry'),
+            ),
+          ],
+        ),
+      );
+    }
+
     final profile = ref.watch(currentProfileProvider).valueOrNull;
 
     final orgName = (profile?.fullName.trim().isNotEmpty == true)
@@ -143,160 +94,198 @@ class _OrgScholarshipsTabState extends ConsumerState<OrgScholarshipsTab> {
         skeleton: _buildSkeletonLoader(),
         child: scholarshipsAsync.when(
           loading: () => _buildSkeletonLoader(),
-        error: (err, _) => Center(
-          child: Padding(
-            padding: const EdgeInsets.all(24),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const Icon(Icons.error_outline_rounded,
-                    size: 40, color: kOrgError),
-                const SizedBox(height: 12),
-                Text('Error loading scholarships',
-                    style: orgHeadline(fontSize: 16)),
-                const SizedBox(height: 6),
-                Text('$err',
-                    style: orgBody(fontSize: 12, color: kOrgTextSecondary)),
-                const SizedBox(height: 16),
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(backgroundColor: kOrgPrimary),
-                  onPressed: () =>
-                      ref.refresh(providerScholarshipsProvider.future),
-                  child: const Text('Retry',
-                      style: TextStyle(color: Colors.white)),
-                ),
-              ],
+          error: (err, _) => Center(
+            child: Padding(
+              padding: const EdgeInsets.all(24),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Icon(
+                    Icons.error_outline_rounded,
+                    size: 40,
+                    color: kOrgError,
+                  ),
+                  const SizedBox(height: 12),
+                  Text(
+                    'Error loading scholarships',
+                    style: orgHeadline(fontSize: 16),
+                  ),
+                  const SizedBox(height: 6),
+                  Text(
+                    'Check your connection and try again.',
+                    style: orgBody(fontSize: 12, color: kOrgTextSecondary),
+                  ),
+                  const SizedBox(height: 16),
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: kOrgPrimary,
+                    ),
+                    onPressed: () =>
+                        ref.refresh(providerScholarshipsProvider.future),
+                    child: const Text(
+                      'Retry',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
-        ),
-        data: (scholarships) {
-          final apps = incomingAppsAsync.valueOrNull ?? <Application>[];
+          data: (scholarships) {
+            final apps = incomingAppsAsync.valueOrNull ?? <Application>[];
 
-          // Compute Bento KPIs from live database
-          final activeScholarships = scholarships.where((s) => s.isActive).toList();
-          final archivedScholarships = scholarships.where((s) => !s.isActive).toList();
+            // Compute Bento KPIs from live database
+            final activeScholarships = scholarships
+                .where((s) => s.isActive)
+                .toList();
+            final archivedScholarships = scholarships
+                .where((s) => !s.isActive)
+                .toList();
 
-          final activeCount = activeScholarships.length;
-          final totalCommittedCapital = scholarships.fold<int>(
-            0,
-            (sum, s) => sum + (s.slots != null ? s.slots! * s.awardAmount : 0),
-          );
-          final totalQuota = scholarships.fold<int>(
-            0,
-            (sum, s) => sum + (s.slots ?? 0),
-          );
+            final activeCount = activeScholarships.length;
+            final totalCommittedCapital = scholarships.fold<int>(
+              0,
+              (sum, s) =>
+                  sum + (s.slots != null ? s.slots! * s.awardAmount : 0),
+            );
+            final totalQuota = scholarships.fold<int>(
+              0,
+              (sum, s) => sum + (s.slots ?? 0),
+            );
 
-          final awardedApps = apps.where((a) =>
-              a.status == ApplicationStatus.approved ||
-              a.status == ApplicationStatus.awarded).toList();
-          final awardedCount = awardedApps.length;
+            final awardedApps = apps
+                .where(
+                  (a) =>
+                      a.status == ApplicationStatus.approved ||
+                      a.status == ApplicationStatus.awarded,
+                )
+                .toList();
+            final awardedCount = awardedApps.length;
 
-          final quotaRatio = totalQuota > 0 ? (awardedCount / totalQuota) : 0.0;
-          final quotaPercent = quotaRatio * 100;
+            final quotaRatio = totalQuota > 0
+                ? (awardedCount / totalQuota)
+                : 0.0;
+            final quotaPercent = quotaRatio * 100;
 
-          final scholarshipsMap = <String, Scholarship>{
-            for (final s in scholarships) s.id: s
-          };
-          final annualDisbursement = awardedApps.fold<int>(
-            0,
-            (sum, a) => sum + (scholarshipsMap[a.scholarshipId]?.awardAmount ?? 50000),
-          );
+            final scholarshipsMap = <String, Scholarship>{
+              for (final s in scholarships) s.id: s,
+            };
+            final annualDisbursement = awardedApps.fold<int>(
+              0,
+              (sum, a) =>
+                  sum + (scholarshipsMap[a.scholarshipId]?.awardAmount ?? 0),
+            );
 
-          // Filter by selected segment
-          List<Scholarship> segmentScholarships;
-          if (_selectedSegment == 0) {
-            segmentScholarships = activeScholarships;
-          } else if (_selectedSegment == 1) {
-            segmentScholarships = archivedScholarships;
-          } else {
-            segmentScholarships = []; // Drafts
-          }
+            // Filter by selected segment
+            List<Scholarship> segmentScholarships;
+            if (_selectedSegment == 0) {
+              segmentScholarships = activeScholarships;
+            } else if (_selectedSegment == 1) {
+              segmentScholarships = archivedScholarships;
+            } else {
+              segmentScholarships = []; // Drafts
+            }
 
-          final displayScholarships = List<Scholarship>.from(segmentScholarships);
+            final displayScholarships = List<Scholarship>.from(
+              segmentScholarships,
+            );
 
-          // Sort
-          if (_sortBy == 'deadline') {
-            displayScholarships.sort((a, b) => a.deadline.compareTo(b.deadline));
-          } else if (_sortBy == 'allocation') {
-            displayScholarships.sort((a, b) {
-              final allocA = (a.slots ?? 0) * a.awardAmount;
-              final allocB = (b.slots ?? 0) * b.awardAmount;
-              return allocB.compareTo(allocA);
-            });
-          } else if (_sortBy == 'title') {
-            displayScholarships.sort((a, b) => a.title.compareTo(b.title));
-          }
+            // Sort
+            if (_sortBy == 'deadline') {
+              displayScholarships.sort(
+                (a, b) => a.deadline.compareTo(b.deadline),
+              );
+            } else if (_sortBy == 'allocation') {
+              displayScholarships.sort((a, b) {
+                final allocA = (a.slots ?? 0) * a.awardAmount;
+                final allocB = (b.slots ?? 0) * b.awardAmount;
+                return allocB.compareTo(allocA);
+              });
+            } else if (_sortBy == 'title') {
+              displayScholarships.sort((a, b) => a.title.compareTo(b.title));
+            }
 
-          return LayoutBuilder(
-            builder: (context, constraints) {
-              final isDesktop = constraints.maxWidth >= 768;
+            return LayoutBuilder(
+              builder: (context, constraints) {
+                final isDesktop = constraints.maxWidth >= 768;
 
-              return RefreshIndicator(
-                color: kOrgPrimary,
-                onRefresh: () async {
-                  ref.invalidate(providerScholarshipsProvider);
-                },
-                child: SingleChildScrollView(
-                  physics: const AppleBouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
-                  padding: EdgeInsets.symmetric(
-                    horizontal: isDesktop ? 32 : 16,
-                    vertical: isDesktop ? 28 : 20,
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // 1. Breadcrumb + Title + Subtitle + Action Controls
-                      _buildHeaderSection(context, orgName, isDesktop),
+                return RefreshIndicator(
+                  color: kOrgPrimary,
+                  onRefresh: () async {
+                    ref.invalidate(providerScholarshipsProvider);
+                  },
+                  child: SingleChildScrollView(
+                    physics: const AppleBouncingScrollPhysics(
+                      parent: AlwaysScrollableScrollPhysics(),
+                    ),
+                    padding: EdgeInsets.symmetric(
+                      horizontal: isDesktop ? 32 : 16,
+                      vertical: isDesktop ? 28 : 20,
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // 1. Breadcrumb + Title + Subtitle + Action Controls
+                        _buildHeaderSection(context, orgName, isDesktop),
 
-                      const SizedBox(height: 24),
+                        const SizedBox(height: 24),
 
-                      // 2. Bento Metrics Row (4 Cards)
-                      _buildBentoRow(
-                        constraints: constraints,
-                        activeCount: activeCount,
-                        totalCommittedCapital: totalCommittedCapital,
-                        awardedCount: awardedCount,
-                        totalQuota: totalQuota,
-                        quotaPercent: quotaPercent,
-                        annualDisbursement: annualDisbursement,
-                      ),
-
-                      const SizedBox(height: 24),
-
-                      // 3. Filter Segment Toolbar & Sort Dropdown
-                      _buildFilterToolbar(
-                        activeCount: activeCount,
-                        archivedCount: archivedScholarships.length,
-                        isDesktop: isDesktop,
-                      ),
-
-                      const SizedBox(height: 18),
-
-                      // 4. Grant Portfolio Cards Grid
-                      if (displayScholarships.isEmpty)
-                        _buildEmptyState()
-                      else
-                        _buildCardGrid(
-                          displayScholarships: displayScholarships,
-                          apps: apps,
-                          isDesktop: isDesktop,
-                          maxWidth: constraints.maxWidth,
+                        // 2. Bento Metrics Row (4 Cards)
+                        OrgSummaryDisclosure(
+                          title: 'Program summary',
+                          summary:
+                              '$activeCount active ${activeCount == 1 ? 'program' : 'programs'} · $awardedCount approved / awarded',
+                          child: _buildBentoRow(
+                            constraints: constraints,
+                            activeCount: activeCount,
+                            totalCommittedCapital: totalCommittedCapital,
+                            awardedCount: awardedCount,
+                            totalQuota: totalQuota,
+                            quotaPercent: quotaPercent,
+                            annualDisbursement: annualDisbursement,
+                          ),
                         ),
 
-                      const SizedBox(height: 32),
+                        const SizedBox(height: 24),
 
-                      // 5. Institutional Escrow Verification Footer Strip
-                      _buildEscrowBanner(context, scholarships.length, isDesktop),
+                        // 3. Filter Segment Toolbar & Sort Dropdown
+                        _buildFilterToolbar(
+                          activeCount: activeCount,
+                          archivedCount: archivedScholarships.length,
+                          isDesktop: isDesktop,
+                        ),
 
-                      const SizedBox(height: 24),
-                    ],
+                        const SizedBox(height: 18),
+
+                        // 4. Grant Portfolio Cards Grid
+                        if (displayScholarships.isEmpty)
+                          _buildEmptyState()
+                        else
+                          _buildCardGrid(
+                            displayScholarships: displayScholarships,
+                            apps: apps,
+                            isDesktop: isDesktop,
+                            maxWidth: constraints.maxWidth,
+                          ),
+
+                        const SizedBox(height: 32),
+
+                        // 5. Institutional Escrow Verification Footer Strip
+                        _buildEscrowBanner(
+                          context,
+                          scholarships.length,
+                          isDesktop,
+                        ),
+
+                        const SizedBox(height: 24),
+                      ],
+                    ),
                   ),
-                ),
-              );
-            },
-          );
-        },
-      ),
+                );
+              },
+            );
+          },
+        ),
       ),
     );
   }
@@ -304,7 +293,11 @@ class _OrgScholarshipsTabState extends ConsumerState<OrgScholarshipsTab> {
   // ===========================================================================
   // SECTION 1: Top Navigation, Breadcrumb & Header
   // ===========================================================================
-  Widget _buildHeaderSection(BuildContext context, String orgName, bool isDesktop) {
+  Widget _buildHeaderSection(
+    BuildContext context,
+    String orgName,
+    bool isDesktop,
+  ) {
     final breadcrumb = Row(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -335,8 +328,10 @@ class _OrgScholarshipsTabState extends ConsumerState<OrgScholarshipsTab> {
         ),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 6),
-          child: Text('•',
-              style: orgLabel(fontSize: 11, color: const Color(0xFFC0C9C0))),
+          child: Text(
+            '•',
+            style: orgLabel(fontSize: 11, color: const Color(0xFFC0C9C0)),
+          ),
         ),
         Text(
           'PORTFOLIO OVERSIGHT',
@@ -356,9 +351,9 @@ class _OrgScholarshipsTabState extends ConsumerState<OrgScholarshipsTab> {
         breadcrumb,
         const SizedBox(height: 8),
         Text(
-          'My Scholarships & Grant Programs',
+          'Scholarship programs',
           style: orgHeadline(
-            fontSize: isDesktop ? 26 : 21,
+            fontSize: isDesktop ? 32 : 26,
             fontWeight: FontWeight.w700,
             color: kOrgTextPrimary,
           ),
@@ -367,84 +362,36 @@ class _OrgScholarshipsTabState extends ConsumerState<OrgScholarshipsTab> {
         ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 680),
           child: Text(
-            'Manage active grant endowments, monitor quota fulfillment, and configure eligibility guidelines across higher education institutions.',
+            'Manage programs, eligibility requirements, and application deadlines.',
             style: orgBody(fontSize: 13.5, color: kOrgTextSecondary),
           ),
         ),
       ],
     );
 
-    final actionButtons = Row(
-      mainAxisSize: MainAxisSize.min,
+    final actionButtons = Wrap(
+      spacing: 8,
+      crossAxisAlignment: WrapCrossAlignment.center,
       children: [
-        // Export Portfolio Summary
-        PressableScale(
-          scale: 0.97,
-          child: Material(
-            color: const Color(0xFFE9E7ED),
-            borderRadius: BorderRadius.circular(12),
-            child: InkWell(
-              borderRadius: BorderRadius.circular(12),
-              onTap: () {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('Portfolio summary exported to PDF/CSV.'),
-                    duration: Duration(seconds: 2),
-                  ),
-                );
-              },
-              child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: const Color(0xFFE0DFE5)),
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const Icon(Icons.ios_share_rounded, size: 16, color: kOrgTextPrimary),
-                    const SizedBox(width: 8),
-                    Text(
-                      'Export Portfolio Summary',
-                      style: orgLabel(fontSize: 12.5, color: kOrgTextPrimary),
-                    ),
-                  ],
-                ),
-              ),
-            ),
+        FilledButton.icon(
+          onPressed: _openCreateScreen,
+          style: FilledButton.styleFrom(
+            backgroundColor: kOrgPrimary,
+            foregroundColor: Colors.white,
+            minimumSize: const Size(0, 44),
           ),
+          icon: const Icon(Icons.add_rounded, size: 18),
+          label: const Text('Create scholarship'),
         ),
-        const SizedBox(width: 10),
-        // Create New Grant
-        PressableScale(
-          scale: 0.97,
-          child: Material(
-            color: kOrgPrimary,
-            borderRadius: BorderRadius.circular(12),
-            elevation: 1,
-            child: InkWell(
-              borderRadius: BorderRadius.circular(12),
-              onTap: _openCreateScreen,
-              child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const Icon(Icons.add_rounded, size: 18, color: Colors.white),
-                    const SizedBox(width: 6),
-                    Text(
-                      'Create New Grant',
-                      style: orgLabel(
-                        fontSize: 12.5,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+        PopupMenuButton<String>(
+          tooltip: 'Additional program tools',
+          icon: const Icon(Icons.more_horiz_rounded, color: kOrgTextSecondary),
+          itemBuilder: (_) => const [
+            PopupMenuItem<String>(
+              enabled: false,
+              child: Text('Export summary — not available'),
             ),
-          ),
+          ],
         ),
       ],
     );
@@ -498,7 +445,8 @@ class _OrgScholarshipsTabState extends ConsumerState<OrgScholarshipsTab> {
         crossAxisAlignment: CrossAxisAlignment.baseline,
         textBaseline: TextBaseline.alphabetic,
         children: [
-          CountUpAnimation(
+          OrgMetricCount(
+            motionId: 'programs.activeCount',
             targetValue: activeCount,
             style: orgHeadline(
               fontSize: 22,
@@ -530,7 +478,7 @@ class _OrgScholarshipsTabState extends ConsumerState<OrgScholarshipsTab> {
           const SizedBox(width: 6),
           Expanded(
             child: Text(
-              '${activeCount > 0 ? 100 : 0}% Operational In-Window',
+              '$activeCount active programs',
               style: orgLabel(fontSize: 11, color: kOrgTextSecondary),
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
@@ -541,10 +489,11 @@ class _OrgScholarshipsTabState extends ConsumerState<OrgScholarshipsTab> {
     );
 
     final card2 = _buildBentoCard(
-      title: 'TOTAL COMMITTED CAPITAL',
+      title: 'ESTIMATED SLOT ALLOCATION',
       icon: Icons.account_balance_outlined,
       iconColor: kOrgPrimary,
-      primaryWidget: CountUpAnimation(
+      primaryWidget: OrgMetricCount(
+        motionId: 'programs.totalCommittedCapital',
         targetValue: totalCommittedCapital,
         prefix: '₱',
         formatWithCommas: true,
@@ -554,25 +503,9 @@ class _OrgScholarshipsTabState extends ConsumerState<OrgScholarshipsTab> {
           color: kOrgTextPrimary,
         ),
       ),
-      bottomWidget: Row(
-        children: [
-          Expanded(
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(4),
-              child: const LinearProgressIndicator(
-                value: 1.0,
-                minHeight: 5,
-                backgroundColor: Color(0xFFE9E7ED),
-                valueColor: AlwaysStoppedAnimation<Color>(kOrgPrimary),
-              ),
-            ),
-          ),
-          const SizedBox(width: 8),
-          Text(
-            'Fully Escrowed',
-            style: orgLabel(fontSize: 11, color: kOrgTextSecondary),
-          ),
-        ],
+      bottomWidget: Text(
+        'Listed slots × award amount; excludes unspecified slots.',
+        style: orgBody(fontSize: 11, color: kOrgTextSecondary),
       ),
     );
 
@@ -582,7 +515,8 @@ class _OrgScholarshipsTabState extends ConsumerState<OrgScholarshipsTab> {
       iconColor: const Color(0xFF0058BC),
       tooltip: 'View candidate applications roster',
       onTap: () => widget.onViewApplicationsForScholarship?.call(''),
-      primaryWidget: CountUpAnimation(
+      primaryWidget: OrgMetricCount(
+        motionId: 'programs.awardedCount',
         targetValue: awardedCount,
         style: orgHeadline(
           fontSize: 22,
@@ -597,10 +531,14 @@ class _OrgScholarshipsTabState extends ConsumerState<OrgScholarshipsTab> {
             child: ClipRRect(
               borderRadius: BorderRadius.circular(4),
               child: LinearProgressIndicator(
-                value: totalQuota > 0 ? (awardedCount / totalQuota).clamp(0.0, 1.0) : 0.0,
+                value: totalQuota > 0
+                    ? (awardedCount / totalQuota).clamp(0.0, 1.0)
+                    : 0.0,
                 minHeight: 5,
                 backgroundColor: const Color(0xFFE9E7ED),
-                valueColor: const AlwaysStoppedAnimation<Color>(Color(0xFF0070EB)),
+                valueColor: const AlwaysStoppedAnimation<Color>(
+                  Color(0xFF0070EB),
+                ),
               ),
             ),
           ),
@@ -614,10 +552,11 @@ class _OrgScholarshipsTabState extends ConsumerState<OrgScholarshipsTab> {
     );
 
     final card4 = _buildBentoCard(
-      title: 'ANNUAL DISBURSEMENT',
+      title: 'ESTIMATED AWARD COMMITMENTS',
       icon: Icons.payments_outlined,
       iconColor: kOrgPrimary,
-      primaryWidget: CountUpAnimation(
+      primaryWidget: OrgMetricCount(
+        motionId: 'programs.annualDisbursement',
         targetValue: annualDisbursement,
         prefix: '₱',
         formatWithCommas: true,
@@ -632,7 +571,7 @@ class _OrgScholarshipsTabState extends ConsumerState<OrgScholarshipsTab> {
         children: [
           Expanded(
             child: Text(
-              'Target AY 2024–2025',
+              'Known awards only; excludes missing programs',
               style: orgLabel(fontSize: 11, color: kOrgTextSecondary),
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
@@ -648,7 +587,7 @@ class _OrgScholarshipsTabState extends ConsumerState<OrgScholarshipsTab> {
                 borderRadius: BorderRadius.circular(10),
               ),
               child: Text(
-                awardedCount > 0 ? 'Tranche 1 Disbursed' : 'Awaiting Awards',
+                'Not a payment total',
                 style: orgHeadline(fontSize: 9.5, color: kOrgTextPrimary),
               ),
             ),
@@ -657,7 +596,7 @@ class _OrgScholarshipsTabState extends ConsumerState<OrgScholarshipsTab> {
       ),
     );
 
-    if (constraints.maxWidth >= 960) {
+    if (constraints.maxWidth >= 1280) {
       return Row(
         children: [
           Expanded(child: card1),
@@ -717,7 +656,7 @@ class _OrgScholarshipsTabState extends ConsumerState<OrgScholarshipsTab> {
     String? tooltip,
   }) {
     final cardContent = AnimatedContainer(
-      duration: kDurationFast,
+      duration: isReducedMotion(context) ? Duration.zero : kDurationFast,
       curve: kEaseOut,
       padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
@@ -857,34 +796,49 @@ class _OrgScholarshipsTabState extends ConsumerState<OrgScholarshipsTab> {
         mainAxisSize: MainAxisSize.min,
         children: List.generate(segmentTabs.length, (idx) {
           final isSelected = _selectedSegment == idx;
-          return PressableScale(
-            scale: 0.97,
-            child: GestureDetector(
-              onTap: () => setState(() => _selectedSegment = idx),
-              child: AnimatedContainer(
-                duration: const Duration(milliseconds: 150),
-                constraints: const BoxConstraints(minHeight: 36),
-                alignment: Alignment.center,
-                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-                decoration: BoxDecoration(
-                  color: isSelected ? kOrgSurfaceWhite : Colors.transparent,
-                  borderRadius: BorderRadius.circular(9),
-                  boxShadow: isSelected
-                      ? const [
-                          BoxShadow(
-                            color: Color(0x0A000000),
-                            blurRadius: 4,
-                            offset: Offset(0, 1),
-                          ),
-                        ]
-                      : null,
+          return Semantics(
+            selected: isSelected,
+            child: PressableScale(
+              scale: 0.97,
+              child: TextButton(
+                style: TextButton.styleFrom(
+                  padding: EdgeInsets.zero,
+                  minimumSize: Size.zero,
+                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                 ),
-                child: Text(
-                  segmentTabs[idx],
-                  style: orgLabel(
-                    fontSize: 12,
-                    fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
-                    color: isSelected ? kOrgTextPrimary : kOrgTextSecondary,
+                onPressed: () => setState(() => _selectedSegment = idx),
+                child: AnimatedContainer(
+                  duration: isReducedMotion(context)
+                      ? Duration.zero
+                      : const Duration(milliseconds: 150),
+                  constraints: const BoxConstraints(minHeight: 36),
+                  alignment: Alignment.center,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 14,
+                    vertical: 8,
+                  ),
+                  decoration: BoxDecoration(
+                    color: isSelected ? kOrgSurfaceWhite : Colors.transparent,
+                    borderRadius: BorderRadius.circular(9),
+                    boxShadow: isSelected
+                        ? const [
+                            BoxShadow(
+                              color: Color(0x0A000000),
+                              blurRadius: 4,
+                              offset: Offset(0, 1),
+                            ),
+                          ]
+                        : null,
+                  ),
+                  child: Text(
+                    segmentTabs[idx],
+                    style: orgLabel(
+                      fontSize: 12,
+                      fontWeight: isSelected
+                          ? FontWeight.w600
+                          : FontWeight.w500,
+                      color: isSelected ? kOrgTextPrimary : kOrgTextSecondary,
+                    ),
                   ),
                 ),
               ),
@@ -897,12 +851,17 @@ class _OrgScholarshipsTabState extends ConsumerState<OrgScholarshipsTab> {
     final sortDropdown = Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Text('Sort by:', style: orgLabel(fontSize: 12, color: kOrgTextSecondary)),
+        Text(
+          'Sort by:',
+          style: orgLabel(fontSize: 12, color: kOrgTextSecondary),
+        ),
         const SizedBox(width: 4),
         PopupMenuButton<String>(
           initialValue: _sortBy,
           tooltip: 'Sort scholarships',
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
           onSelected: (val) => setState(() => _sortBy = val),
           itemBuilder: (ctx) => [
             const PopupMenuItem(
@@ -913,10 +872,7 @@ class _OrgScholarshipsTabState extends ConsumerState<OrgScholarshipsTab> {
               value: 'allocation',
               child: Text('Total Allocation (Highest first)'),
             ),
-            const PopupMenuItem(
-              value: 'title',
-              child: Text('Title (A–Z)'),
-            ),
+            const PopupMenuItem(value: 'title', child: Text('Title (A–Z)')),
           ],
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
@@ -927,8 +883,8 @@ class _OrgScholarshipsTabState extends ConsumerState<OrgScholarshipsTab> {
                   _sortBy == 'deadline'
                       ? 'Deadline / Allocation'
                       : _sortBy == 'allocation'
-                          ? 'Total Allocation'
-                          : 'Title (A–Z)',
+                      ? 'Total Allocation'
+                      : 'Title (A–Z)',
                   style: orgHeadline(
                     fontSize: 12,
                     fontWeight: FontWeight.w600,
@@ -936,8 +892,11 @@ class _OrgScholarshipsTabState extends ConsumerState<OrgScholarshipsTab> {
                   ),
                 ),
                 const SizedBox(width: 2),
-                const Icon(Icons.arrow_drop_down_rounded,
-                    size: 18, color: kOrgTextPrimary),
+                const Icon(
+                  Icons.arrow_drop_down_rounded,
+                  size: 18,
+                  color: kOrgTextPrimary,
+                ),
               ],
             ),
           ),
@@ -949,7 +908,13 @@ class _OrgScholarshipsTabState extends ConsumerState<OrgScholarshipsTab> {
       return Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          pills,
+          Expanded(
+            child: SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: pills,
+            ),
+          ),
+          const SizedBox(width: 12),
           sortDropdown,
         ],
       );
@@ -957,10 +922,7 @@ class _OrgScholarshipsTabState extends ConsumerState<OrgScholarshipsTab> {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: pills,
-          ),
+          SingleChildScrollView(scrollDirection: Axis.horizontal, child: pills),
           const SizedBox(height: 10),
           sortDropdown,
         ],
@@ -982,8 +944,9 @@ class _OrgScholarshipsTabState extends ConsumerState<OrgScholarshipsTab> {
       final rows = <Widget>[];
       for (int i = 0; i < displayScholarships.length; i += 2) {
         final first = displayScholarships[i];
-        final second =
-            (i + 1 < displayScholarships.length) ? displayScholarships[i + 1] : null;
+        final second = (i + 1 < displayScholarships.length)
+            ? displayScholarships[i + 1]
+            : null;
 
         rows.add(
           Row(
@@ -1062,23 +1025,33 @@ class _OrgScholarshipsTabState extends ConsumerState<OrgScholarshipsTab> {
     );
   }
 
-  Widget _buildScholarshipCard(Scholarship scholarship, List<Application> apps) {
-    final targetApps =
-        apps.where((a) => a.scholarshipId == scholarship.id).toList();
+  Widget _buildScholarshipCard(
+    Scholarship scholarship,
+    List<Application> apps,
+  ) {
+    final targetApps = apps
+        .where((a) => a.scholarshipId == scholarship.id)
+        .toList();
     final applicantCount = targetApps.length;
 
-    final capacityAsync = ref.watch(scholarshipCapacityProvider(scholarship.id));
+    final capacityAsync = ref.watch(
+      scholarshipCapacityProvider(scholarship.id),
+    );
     final capacity = capacityAsync.valueOrNull;
 
-    final occupiedCount = capacity?.occupiedSlots ??
+    final occupiedCount =
+        capacity?.occupiedSlots ??
         targetApps
-            .where((a) =>
-                a.status == ApplicationStatus.approved ||
-                a.status == ApplicationStatus.awarded)
+            .where(
+              (a) =>
+                  a.status == ApplicationStatus.approved ||
+                  a.status == ApplicationStatus.awarded,
+            )
             .length;
     final totalSlots = capacity?.totalSlots ?? scholarship.slots;
     final hasSlots = totalSlots != null && !(capacity?.isUncapped ?? false);
-    final remainingSeats = capacity?.remainingSlots ??
+    final remainingSeats =
+        capacity?.remainingSlots ??
         (hasSlots ? (totalSlots - occupiedCount).clamp(0, totalSlots) : null);
 
     final daysLeft = scholarship.deadline.difference(DateTime.now()).inDays;
@@ -1087,8 +1060,9 @@ class _OrgScholarshipsTabState extends ConsumerState<OrgScholarshipsTab> {
         ? (occupiedCount / totalSlots).clamp(0.0, 1.0)
         : 0.0;
     final fillPercent = (fillRatio * 100).toInt();
-    final totalAllocation =
-        hasSlots ? totalSlots * scholarship.awardAmount : null;
+    final totalAllocation = hasSlots
+        ? totalSlots * scholarship.awardAmount
+        : null;
 
     return Container(
       decoration: BoxDecoration(
@@ -1113,13 +1087,16 @@ class _OrgScholarshipsTabState extends ConsumerState<OrgScholarshipsTab> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // Top Tag Bar & Trailing Options
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
+                Wrap(
+                  crossAxisAlignment: WrapCrossAlignment.center,
+                  runSpacing: 8,
                   children: [
                     // Status Tag: Active Intake or Deliberation
                     Container(
-                      padding:
-                          const EdgeInsets.symmetric(horizontal: 9, vertical: 3),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 9,
+                        vertical: 3,
+                      ),
                       decoration: BoxDecoration(
                         color: isExpired
                             ? const Color(0xFFFFDAD6).withValues(alpha: 0.5)
@@ -1155,7 +1132,9 @@ class _OrgScholarshipsTabState extends ConsumerState<OrgScholarshipsTab> {
                     if (!isExpired)
                       Container(
                         padding: const EdgeInsets.symmetric(
-                            horizontal: 9, vertical: 3),
+                          horizontal: 9,
+                          vertical: 3,
+                        ),
                         decoration: BoxDecoration(
                           color: const Color(0xFFE9E7ED),
                           borderRadius: BorderRadius.circular(20),
@@ -1163,8 +1142,11 @@ class _OrgScholarshipsTabState extends ConsumerState<OrgScholarshipsTab> {
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            const Icon(Icons.timer_outlined,
-                                size: 12, color: kOrgTextPrimary),
+                            const Icon(
+                              Icons.timer_outlined,
+                              size: 12,
+                              color: kOrgTextPrimary,
+                            ),
                             const SizedBox(width: 4),
                             Text(
                               daysLeft == 0
@@ -1182,31 +1164,40 @@ class _OrgScholarshipsTabState extends ConsumerState<OrgScholarshipsTab> {
                     else
                       Container(
                         padding: const EdgeInsets.symmetric(
-                            horizontal: 9, vertical: 3),
+                          horizontal: 9,
+                          vertical: 3,
+                        ),
                         decoration: BoxDecoration(
                           color: const Color(0xFFE9E7ED),
                           borderRadius: BorderRadius.circular(20),
                         ),
                         child: Text(
                           'Archived Intake',
-                          style: orgLabel(fontSize: 10.5, color: kOrgTextSecondary),
+                          style: orgLabel(
+                            fontSize: 10.5,
+                            color: kOrgTextSecondary,
+                          ),
                         ),
                       ),
 
-                    const Spacer(),
-
                     // More options popup
                     PopupMenuButton<String>(
-                      icon: const Icon(Icons.more_horiz_rounded,
-                          size: 20, color: kOrgTextSecondary),
+                      icon: const Icon(
+                        Icons.more_horiz_rounded,
+                        size: 20,
+                        color: kOrgTextSecondary,
+                      ),
                       tooltip: 'Grant Actions',
                       shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12)),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
                       onSelected: (action) {
                         if (action == 'edit') {
                           _openEditScreen(scholarship);
                         } else if (action == 'view_apps') {
-                          widget.onViewApplicationsForScholarship?.call(scholarship.id);
+                          widget.onViewApplicationsForScholarship?.call(
+                            scholarship.id,
+                          );
                         }
                       },
                       itemBuilder: (ctx) => [
@@ -1244,14 +1235,21 @@ class _OrgScholarshipsTabState extends ConsumerState<OrgScholarshipsTab> {
                       : 'Comprehensive collegiate grant for enrolled undergraduate students across recognized Philippine higher education institutions.',
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
-                  style: orgBody(fontSize: 13, color: kOrgTextSecondary, height: 1.35),
+                  style: orgBody(
+                    fontSize: 13,
+                    color: kOrgTextSecondary,
+                    height: 1.35,
+                  ),
                 ),
 
                 const SizedBox(height: 16),
 
                 // 3-Metric Light Box
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 14,
+                    vertical: 12,
+                  ),
                   decoration: BoxDecoration(
                     color: const Color(0xFFF4F3F8),
                     borderRadius: BorderRadius.circular(12),
@@ -1263,9 +1261,13 @@ class _OrgScholarshipsTabState extends ConsumerState<OrgScholarshipsTab> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text('Quota Fulfillment',
-                                style: orgLabel(
-                                    fontSize: 10.5, color: kOrgTextSecondary)),
+                            Text(
+                              'Quota Fulfillment',
+                              style: orgLabel(
+                                fontSize: 10.5,
+                                color: kOrgTextSecondary,
+                              ),
+                            ),
                             const SizedBox(height: 2),
                             RichText(
                               text: TextSpan(
@@ -1273,14 +1275,18 @@ class _OrgScholarshipsTabState extends ConsumerState<OrgScholarshipsTab> {
                                   TextSpan(
                                     text: '$occupiedCount ',
                                     style: orgHeadline(
-                                        fontSize: 14.5,
-                                        fontWeight: FontWeight.w700),
+                                      fontSize: 14.5,
+                                      fontWeight: FontWeight.w700,
+                                    ),
                                   ),
                                   TextSpan(
-                                    text: hasSlots ? '/ $totalSlots' : '/ Uncapped',
+                                    text: hasSlots
+                                        ? '/ $totalSlots'
+                                        : '/ Uncapped',
                                     style: orgBody(
-                                        fontSize: 12,
-                                        color: kOrgTextSecondary),
+                                      fontSize: 12,
+                                      color: kOrgTextSecondary,
+                                    ),
                                   ),
                                 ],
                               ),
@@ -1293,24 +1299,32 @@ class _OrgScholarshipsTabState extends ConsumerState<OrgScholarshipsTab> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text('Funding / Scholar',
-                                style: orgLabel(
-                                    fontSize: 10.5, color: kOrgTextSecondary)),
+                            Text(
+                              'Funding / Scholar',
+                              style: orgLabel(
+                                fontSize: 10.5,
+                                color: kOrgTextSecondary,
+                              ),
+                            ),
                             const SizedBox(height: 2),
                             RichText(
                               text: TextSpan(
                                 children: [
                                   TextSpan(
-                                    text: _formatCurrency(scholarship.awardAmount),
+                                    text: _formatCurrency(
+                                      scholarship.awardAmount,
+                                    ),
                                     style: orgHeadline(
-                                        fontSize: 14.5,
-                                        fontWeight: FontWeight.w700),
+                                      fontSize: 14.5,
+                                      fontWeight: FontWeight.w700,
+                                    ),
                                   ),
                                   TextSpan(
                                     text: ' / yr',
                                     style: orgBody(
-                                        fontSize: 11,
-                                        color: kOrgTextSecondary),
+                                      fontSize: 11,
+                                      color: kOrgTextSecondary,
+                                    ),
                                   ),
                                 ],
                               ),
@@ -1323,9 +1337,13 @@ class _OrgScholarshipsTabState extends ConsumerState<OrgScholarshipsTab> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text('Total Allocation',
-                                style: orgLabel(
-                                    fontSize: 10.5, color: kOrgTextSecondary)),
+                            Text(
+                              'Total Allocation',
+                              style: orgLabel(
+                                fontSize: 10.5,
+                                color: kOrgTextSecondary,
+                              ),
+                            ),
                             const SizedBox(height: 2),
                             Text(
                               totalAllocation != null
@@ -1359,7 +1377,9 @@ class _OrgScholarshipsTabState extends ConsumerState<OrgScholarshipsTab> {
                                 ? '$totalSlots total • $occupiedCount occupied • ${remainingSeats ?? 0} remaining'
                                 : 'Uncapped capacity • $occupiedCount scholar${occupiedCount == 1 ? "" : "s"} approved',
                             style: orgLabel(
-                                fontSize: 11, color: kOrgTextSecondary),
+                              fontSize: 11,
+                              color: kOrgTextSecondary,
+                            ),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                           ),
@@ -1369,12 +1389,14 @@ class _OrgScholarshipsTabState extends ConsumerState<OrgScholarshipsTab> {
                           !hasSlots
                               ? 'Uncapped intake ($occupiedCount approved)'
                               : fillPercent >= 100
-                                  ? '100% (Fully Booked)'
-                                  : '$fillPercent% (${remainingSeats ?? 0} open)',
+                              ? '100% (Fully Booked)'
+                              : '$fillPercent% (${remainingSeats ?? 0} open)',
                           style: orgHeadline(
                             fontSize: 11,
                             fontWeight: FontWeight.w600,
-                            color: fillPercent >= 100 ? kOrgPrimary : kOrgTextPrimary,
+                            color: fillPercent >= 100
+                                ? kOrgPrimary
+                                : kOrgTextPrimary,
                           ),
                         ),
                       ],
@@ -1386,8 +1408,9 @@ class _OrgScholarshipsTabState extends ConsumerState<OrgScholarshipsTab> {
                         value: hasSlots ? fillRatio : 0.0,
                         minHeight: 6,
                         backgroundColor: const Color(0xFFE9E7ED),
-                        valueColor:
-                            const AlwaysStoppedAnimation<Color>(kOrgPrimary),
+                        valueColor: const AlwaysStoppedAnimation<Color>(
+                          kOrgPrimary,
+                        ),
                       ),
                     ),
                   ],
@@ -1406,24 +1429,32 @@ class _OrgScholarshipsTabState extends ConsumerState<OrgScholarshipsTab> {
                 top: BorderSide(color: Color(0xFFEEEDF3), width: 1),
               ),
             ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            child: Wrap(
+              spacing: 12,
+              runSpacing: 10,
+              crossAxisAlignment: WrapCrossAlignment.center,
               children: [
                 // Text Link: View N Applicants
                 InkWell(
                   onTap: () {
-                    widget.onViewApplicationsForScholarship
-                        ?.call(scholarship.id);
+                    widget.onViewApplicationsForScholarship?.call(
+                      scholarship.id,
+                    );
                   },
                   borderRadius: BorderRadius.circular(6),
                   child: Padding(
                     padding: const EdgeInsets.symmetric(
-                        vertical: 4, horizontal: 2),
+                      vertical: 4,
+                      horizontal: 2,
+                    ),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        const Icon(Icons.group_outlined,
-                            size: 16, color: Color(0xFF0058BC)),
+                        const Icon(
+                          Icons.group_outlined,
+                          size: 16,
+                          color: Color(0xFF0058BC),
+                        ),
                         const SizedBox(width: 6),
                         Text(
                           'View $applicantCount ${applicantCount == 1 ? "Applicant" : "Applicants"}',
@@ -1439,23 +1470,29 @@ class _OrgScholarshipsTabState extends ConsumerState<OrgScholarshipsTab> {
                 ),
 
                 // Right buttons: Edit Criteria & Manage Ledger
-                Row(
-                  mainAxisSize: MainAxisSize.min,
+                Wrap(
+                  runSpacing: 8,
                   children: [
                     Material(
                       color: const Color(0xFFE3E2E7).withValues(alpha: 0.6),
                       borderRadius: BorderRadius.circular(8),
                       child: InkWell(
                         borderRadius: BorderRadius.circular(8),
-                        onTap: () => showScholarshipQrDialog(context, scholarship),
+                        onTap: () =>
+                            showScholarshipQrDialog(context, scholarship),
                         child: Container(
                           padding: const EdgeInsets.symmetric(
-                              horizontal: 8, vertical: 6),
+                            horizontal: 8,
+                            vertical: 6,
+                          ),
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              const Icon(Icons.qr_code_rounded,
-                                  size: 15, color: kOrgTextPrimary),
+                              const Icon(
+                                Icons.qr_code_rounded,
+                                size: 15,
+                                color: kOrgTextPrimary,
+                              ),
                               const SizedBox(width: 4),
                               Text(
                                 'QR',
@@ -1476,15 +1513,21 @@ class _OrgScholarshipsTabState extends ConsumerState<OrgScholarshipsTab> {
                       borderRadius: BorderRadius.circular(8),
                       child: InkWell(
                         borderRadius: BorderRadius.circular(8),
-                        onTap: () => AssignReviewerDialog.show(context, scholarship),
+                        onTap: () =>
+                            AssignReviewerDialog.show(context, scholarship),
                         child: Container(
                           padding: const EdgeInsets.symmetric(
-                              horizontal: 8, vertical: 6),
+                            horizontal: 8,
+                            vertical: 6,
+                          ),
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              const Icon(Icons.assignment_ind_outlined,
-                                  size: 15, color: kOrgTextPrimary),
+                              const Icon(
+                                Icons.assignment_ind_outlined,
+                                size: 15,
+                                color: kOrgTextPrimary,
+                              ),
                               const SizedBox(width: 4),
                               Text(
                                 'Reviewers',
@@ -1508,7 +1551,9 @@ class _OrgScholarshipsTabState extends ConsumerState<OrgScholarshipsTab> {
                         onTap: () => _openEditScreen(scholarship),
                         child: Container(
                           padding: const EdgeInsets.symmetric(
-                              horizontal: 10, vertical: 6),
+                            horizontal: 10,
+                            vertical: 6,
+                          ),
                           child: Text(
                             'Edit Criteria',
                             style: orgLabel(
@@ -1530,14 +1575,17 @@ class _OrgScholarshipsTabState extends ConsumerState<OrgScholarshipsTab> {
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
                               content: Text(
-                                  'Ledger details for "${scholarship.title}" loaded.'),
+                                'Ledger details for "${scholarship.title}" loaded.',
+                              ),
                               duration: const Duration(seconds: 2),
                             ),
                           );
                         },
                         child: Container(
                           padding: const EdgeInsets.symmetric(
-                              horizontal: 10, vertical: 6),
+                            horizontal: 10,
+                            vertical: 6,
+                          ),
                           child: Text(
                             'Manage Ledger',
                             style: orgLabel(
@@ -1562,145 +1610,18 @@ class _OrgScholarshipsTabState extends ConsumerState<OrgScholarshipsTab> {
   // ===========================================================================
   // SECTION 5: Institutional Escrow Verification Footer Strip
   // ===========================================================================
-  Widget _buildEscrowBanner(BuildContext context, int count, bool isDesktop) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
-      decoration: BoxDecoration(
-        color: const Color(0xFFF4F3F8),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: const Color(0xFFEEEDF3)),
-      ),
-      child: isDesktop
-          ? Row(
-              children: [
-                Container(
-                  width: 44,
-                  height: 44,
-                  decoration: BoxDecoration(
-                    color: kOrgSurfaceWhite,
-                    borderRadius: BorderRadius.circular(12),
-                    boxShadow: const [
-                      BoxShadow(
-                        color: Color(0x06000000),
-                        blurRadius: 4,
-                        offset: Offset(0, 1),
-                      ),
-                    ],
-                  ),
-                  child: const Center(
-                    child: Icon(Icons.verified_rounded,
-                        size: 24, color: kOrgPrimary),
-                  ),
-                ),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Institutional Escrow Verification',
-                        style: orgHeadline(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w700,
-                          color: kOrgTextPrimary,
-                        ),
-                      ),
-                      const SizedBox(height: 2),
-                      Text(
-                        'All $count grant portfolios have been audited and secured through an accredited Institutional Escrow Depository Bank for AY 2024–2025.',
-                        style: orgBody(fontSize: 12.5, color: kOrgTextSecondary),
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(width: 16),
-                Material(
-                  color: kOrgSurfaceWhite,
-                  borderRadius: BorderRadius.circular(10),
-                  elevation: 1,
-                  shadowColor: const Color(0x10000000),
-                  child: InkWell(
-                    borderRadius: BorderRadius.circular(10),
-                    onTap: () => _showEscrowCertificateDialog(context, count),
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 16, vertical: 10),
-                      child: Text(
-                        'View Audit Certificate',
-                        style: orgLabel(
-                          fontSize: 12.5,
-                          fontWeight: FontWeight.w600,
-                          color: kOrgTextPrimary,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            )
-          : Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    Container(
-                      width: 38,
-                      height: 38,
-                      decoration: BoxDecoration(
-                        color: kOrgSurfaceWhite,
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: const Center(
-                        child: Icon(Icons.verified_rounded,
-                            size: 20, color: kOrgPrimary),
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: Text(
-                        'Institutional Escrow Verification',
-                        style: orgHeadline(
-                            fontSize: 14, fontWeight: FontWeight.w700),
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  'All $count grant portfolios have been audited and secured through an accredited Institutional Escrow Depository Bank for AY 2024–2025.',
-                  style: orgBody(fontSize: 12, color: kOrgTextSecondary),
-                ),
-                const SizedBox(height: 14),
-                Material(
-                  color: kOrgSurfaceWhite,
-                  borderRadius: BorderRadius.circular(10),
-                  elevation: 1,
-                  child: InkWell(
-                    borderRadius: BorderRadius.circular(10),
-                    onTap: () => _showEscrowCertificateDialog(context, count),
-                    child: Container(
-                      width: double.infinity,
-                      padding: const EdgeInsets.symmetric(vertical: 10),
-                      alignment: Alignment.center,
-                      child: Text(
-                        'View Audit Certificate',
-                        style: orgLabel(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w600,
-                          color: kOrgTextPrimary,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-    );
-  }
-
-  // ===========================================================================
-  // Empty State
-  // ===========================================================================
+  Widget _buildEscrowBanner(BuildContext context, int count, bool isDesktop) =>
+      Container(
+        padding: const EdgeInsets.all(20),
+        decoration: BoxDecoration(
+          color: const Color(0xFFF4F3F8),
+          borderRadius: BorderRadius.circular(16),
+        ),
+        child: Text(
+          'Funding verification not recorded. Program allocations are estimates, not confirmed escrow balances or completed payments.',
+          style: orgBody(fontSize: 13, color: kOrgTextSecondary),
+        ),
+      );
   Widget _buildEmptyState() {
     return Container(
       width: double.infinity,
@@ -1721,8 +1642,11 @@ class _OrgScholarshipsTabState extends ConsumerState<OrgScholarshipsTab> {
               borderRadius: BorderRadius.circular(16),
             ),
             child: const Center(
-              child: Icon(Icons.folder_special_outlined,
-                  size: 28, color: kOrgTextSecondary),
+              child: Icon(
+                Icons.folder_special_outlined,
+                size: 28,
+                color: kOrgTextSecondary,
+              ),
             ),
           ),
           const SizedBox(height: 14),
@@ -1730,8 +1654,8 @@ class _OrgScholarshipsTabState extends ConsumerState<OrgScholarshipsTab> {
             _selectedSegment == 1
                 ? 'No Archived Endowments'
                 : _selectedSegment == 2
-                    ? 'No Draft Endowments'
-                    : 'No Active Scholarships Found',
+                ? 'No Draft Endowments'
+                : 'No Active Scholarships Found',
             style: orgHeadline(fontSize: 16, fontWeight: FontWeight.w700),
           ),
           const SizedBox(height: 6),
@@ -1751,9 +1675,12 @@ class _OrgScholarshipsTabState extends ConsumerState<OrgScholarshipsTab> {
               style: FilledButton.styleFrom(
                 backgroundColor: kOrgPrimary,
                 shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10)),
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 18,
+                  vertical: 10,
+                ),
               ),
               onPressed: _openCreateScreen,
               icon: const Icon(Icons.add_rounded, size: 16),

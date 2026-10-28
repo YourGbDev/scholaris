@@ -25,29 +25,32 @@ import 'helpers/fake_application_data_source.dart';
 import 'helpers/fake_profile_data_source.dart';
 import 'helpers/fake_scholarship_data_source.dart';
 
-class FakeProviderVerificationRepository extends ProviderVerificationRepository {
+class FakeProviderVerificationRepository
+    extends ProviderVerificationRepository {
   FakeProviderVerificationRepository({List<ProviderVerification>? initial})
-      : _items = initial ?? [
-          const ProviderVerification(
-            userId: 'prov-1',
-            providerType: 'organization',
-            orgName: 'DOST-SEI',
-            status: 'pending',
-            repEmail: 'contact@sei.dost.gov.ph',
-            regNumber: 'SEC-12345',
-            repName: 'Dr. Josette Biyo',
-            repPosition: 'Director',
-            secCertPath: 'prov-1/sec_reg.pdf',
-            bir2303Path: 'prov-1/bir_2303.pdf',
-          ),
-        ],
-        super(
-          client: SupabaseClient(
-            'https://mock.supabase.co',
-            'dummy-key',
-            authOptions: const AuthClientOptions(autoRefreshToken: false),
-          ),
-        );
+    : _items =
+          initial ??
+          [
+            const ProviderVerification(
+              userId: 'prov-1',
+              providerType: 'organization',
+              orgName: 'DOST-SEI',
+              status: 'pending',
+              repEmail: 'contact@sei.dost.gov.ph',
+              regNumber: 'SEC-12345',
+              repName: 'Dr. Josette Biyo',
+              repPosition: 'Director',
+              secCertPath: 'prov-1/sec_reg.pdf',
+              bir2303Path: 'prov-1/bir_2303.pdf',
+            ),
+          ],
+      super(
+        client: SupabaseClient(
+          'https://mock.supabase.co',
+          'dummy-key',
+          authOptions: const AuthClientOptions(autoRefreshToken: false),
+        ),
+      );
 
   final List<ProviderVerification> _items;
 
@@ -62,17 +65,19 @@ class FakeProviderVerificationRepository extends ProviderVerificationRepository 
 
   @override
   Future<ProviderVerification> submitVerification(
-      ProviderVerification verification) async {
+    ProviderVerification verification,
+  ) async {
     _items.removeWhere((v) => v.userId == verification.userId);
     _items.add(verification);
     return verification;
   }
 
   @override
-  Future<void> updateVerificationStatus({
+  Future<ProviderVerification> updateVerificationStatus({
     required String userId,
     required String status,
     required String adminId,
+    String? expectedStatus,
     String? reviewNote,
   }) async {
     final index = _items.indexWhere((v) => v.userId == userId);
@@ -83,12 +88,38 @@ class FakeProviderVerificationRepository extends ProviderVerificationRepository 
         reviewedAt: DateTime.now(),
         reviewNote: reviewNote,
       );
+      return _items[index];
     }
+    return ProviderVerification(
+      userId: userId,
+      providerType: 'individual',
+      status: status,
+      reviewedBy: adminId,
+      reviewNote: reviewNote,
+    );
   }
 
   @override
-  Future<String> getSignedUrl(String storagePath, {int expiresIn = 3600}) async =>
-      'https://example.com/signed/$storagePath';
+  Future<ProviderVerification> reviewVerification({
+    required String userId,
+    required String status,
+    String? expectedStatus,
+    String? reviewNote,
+  }) async {
+    return updateVerificationStatus(
+      userId: userId,
+      status: status,
+      adminId: 'admin-1',
+      expectedStatus: expectedStatus,
+      reviewNote: reviewNote,
+    );
+  }
+
+  @override
+  Future<String> getSignedUrl(
+    String storagePath, {
+    int expiresIn = 3600,
+  }) async => 'https://example.com/signed/$storagePath';
 
   @override
   Future<String> uploadDocument({
@@ -96,12 +127,11 @@ class FakeProviderVerificationRepository extends ProviderVerificationRepository 
     required String docType,
     required Uint8List bytes,
     required String fileName,
-  }) async =>
-      '$userId/$fileName';
+  }) async => '$userId/$fileName';
 }
 
 void main() {
-  Widget buildApp() {
+  Widget buildApp({int? initialTab}) {
     return ProviderScope(
       overrides: [
         currentUserIdProvider.overrideWithValue('admin-1'),
@@ -168,11 +198,7 @@ void main() {
                 'under_review': 3,
                 'approved': 2,
               },
-              profileRoleCounts: {
-                'student': 100,
-                'provider': 10,
-                'admin': 2,
-              },
+              profileRoleCounts: {'student': 100, 'provider': 10, 'admin': 2},
               totalScholarshipValue: 250000.0,
               scholarshipCount: 5,
               recentAuditLogs: [],
@@ -181,78 +207,115 @@ void main() {
         ),
         auditTrailLogsProvider.overrideWith((ref) => Future.value([])),
       ],
-      child: const MaterialApp(
-        home: AdminHomeScreen(),
-      ),
+      child: MaterialApp(home: AdminHomeScreen(initialTab: initialTab)),
     );
   }
 
   group('AdminHomeScreen', () {
-    testWidgets('renders Scholaris Admin title and Sign out button', (tester) async {
+    testWidgets('renders Scholaris Admin title and Sign out button', (
+      tester,
+    ) async {
+      await tester.binding.setSurfaceSize(const Size(1280, 800));
+      addTearDown(() => tester.binding.setSurfaceSize(null));
       await tester.pumpWidget(buildApp());
       await tester.pumpAndSettle();
 
       expect(find.text('Scholaris Admin'), findsWidgets);
-      expect(find.byTooltip('Sign out'), findsOneWidget);
+      expect(find.widgetWithText(TextButton, 'Sign out'), findsOneWidget);
     });
 
     testWidgets('renders seven navigation destinations', (tester) async {
+      await tester.binding.setSurfaceSize(const Size(1280, 800));
+      addTearDown(() => tester.binding.setSurfaceSize(null));
       await tester.pumpWidget(buildApp());
       await tester.pumpAndSettle();
 
       expect(find.text('Overview'), findsOneWidget);
       expect(find.text('Scholarships'), findsOneWidget);
-      expect(find.text('Providers'), findsOneWidget);
-      expect(find.text('Applicants'), findsOneWidget);
+      expect(find.text('Provider approvals'), findsOneWidget);
+      expect(find.text('Student applications'), findsOneWidget);
       expect(find.text('Users'), findsOneWidget);
       expect(find.text('Analytics'), findsOneWidget);
       expect(find.text('Audit Logs'), findsOneWidget);
     });
 
-    testWidgets('overview tab displays metrics and pipeline sections', (tester) async {
+    testWidgets('overview tab displays metrics and pipeline sections', (
+      tester,
+    ) async {
+      await tester.binding.setSurfaceSize(const Size(1280, 800));
+      addTearDown(() => tester.binding.setSurfaceSize(null));
       await tester.pumpWidget(buildApp());
       await tester.pumpAndSettle();
 
-      expect(find.text('Platform Overview'), findsOneWidget);
+      expect(find.text('Platform overview'), findsOneWidget);
+      await tester.scrollUntilVisible(
+        find.text('Platform statistics'),
+        200,
+        scrollable: find
+            .descendant(
+              of: find.byType(PlatformOverviewScreen),
+              matching: find.byType(Scrollable),
+            )
+            .first,
+      );
+      await tester.tap(find.text('Platform statistics'));
+      await tester.pumpAndSettle();
       expect(find.text('CORE PLATFORM SCALE'), findsOneWidget);
       expect(find.text('REGISTERED USERS'), findsOneWidget);
-      expect(find.text('ACTIVE SCHOLARSHIPS'), findsOneWidget);
+      expect(find.text('LISTED SCHOLARSHIPS'), findsOneWidget);
     });
 
-    testWidgets('switching to Scholarships tab renders catalog with search and chips', (tester) async {
+    testWidgets(
+      'switching to Scholarships tab renders catalog with search and chips',
+      (tester) async {
+        await tester.binding.setSurfaceSize(const Size(1280, 800));
+        addTearDown(() => tester.binding.setSurfaceSize(null));
+        await tester.pumpWidget(buildApp());
+        await tester.pumpAndSettle();
+
+        await tester.tap(find.text('Scholarships'));
+        await tester.pumpAndSettle();
+
+        expect(find.text('Scholarship Oversight & Moderation'), findsOneWidget);
+        expect(find.text('Test Science Grant'), findsOneWidget);
+        expect(find.text('DOST-SEI'), findsOneWidget);
+      },
+    );
+
+    testWidgets('switching to Providers tab renders verification queue', (
+      tester,
+    ) async {
+      await tester.binding.setSurfaceSize(const Size(1280, 800));
+      addTearDown(() => tester.binding.setSurfaceSize(null));
       await tester.pumpWidget(buildApp());
       await tester.pumpAndSettle();
 
-      await tester.tap(find.text('Scholarships'));
+      await tester.tap(find.text('Provider approvals'));
       await tester.pumpAndSettle();
 
-      expect(find.text('Scholarship Oversight & Moderation'), findsOneWidget);
-      expect(find.text('Test Science Grant'), findsOneWidget);
+      expect(find.text('Provider approvals'), findsWidgets);
       expect(find.text('DOST-SEI'), findsOneWidget);
     });
 
-    testWidgets('switching to Providers tab renders verification queue', (tester) async {
+    testWidgets('switching to Applicants tab renders student directory', (
+      tester,
+    ) async {
+      await tester.binding.setSurfaceSize(const Size(1280, 800));
+      addTearDown(() => tester.binding.setSurfaceSize(null));
       await tester.pumpWidget(buildApp());
       await tester.pumpAndSettle();
 
-      await tester.tap(find.text('Providers'));
-      await tester.pumpAndSettle();
-
-      expect(find.text('Provider Verifications'), findsOneWidget);
-      expect(find.text('DOST-SEI'), findsOneWidget);
-    });
-
-    testWidgets('switching to Applicants tab renders student directory', (tester) async {
-      await tester.pumpWidget(buildApp());
-      await tester.pumpAndSettle();
-
-      await tester.tap(find.text('Applicants'));
+      await tester.tap(find.text('Student applications'));
       await tester.pumpAndSettle();
 
       expect(find.text('Applications Oversight'), findsOneWidget);
     });
 
-    testWidgets('switching to Users tab renders user management', (tester) async {
+    testWidgets('switching to Users tab renders user management', (
+      tester,
+    ) async {
+      await tester.binding.setSurfaceSize(const Size(1280, 800));
+      addTearDown(() => tester.binding.setSurfaceSize(null));
       await tester.pumpWidget(buildApp());
       await tester.pumpAndSettle();
 
@@ -262,7 +325,11 @@ void main() {
       expect(find.text('User Directory & Access Control'), findsOneWidget);
     });
 
-    testWidgets('switching to Analytics tab renders platform analytics', (tester) async {
+    testWidgets('switching to Analytics tab renders platform analytics', (
+      tester,
+    ) async {
+      await tester.binding.setSurfaceSize(const Size(1280, 800));
+      addTearDown(() => tester.binding.setSurfaceSize(null));
       await tester.pumpWidget(buildApp());
       await tester.pumpAndSettle();
 
@@ -272,7 +339,11 @@ void main() {
       expect(find.text('Reports & Analytics'), findsOneWidget);
     });
 
-    testWidgets('switching to Audit Logs tab renders system audit ledger', (tester) async {
+    testWidgets('switching to Audit Logs tab renders system audit ledger', (
+      tester,
+    ) async {
+      await tester.binding.setSurfaceSize(const Size(1280, 800));
+      addTearDown(() => tester.binding.setSurfaceSize(null));
       await tester.pumpWidget(buildApp());
       await tester.pumpAndSettle();
 
@@ -282,68 +353,111 @@ void main() {
       expect(find.text('System Audit Trail'), findsOneWidget);
     });
 
-    testWidgets('tapping Review provider shows accreditation dialog and close dismisses dialog', (tester) async {
-      await tester.pumpWidget(buildApp());
+    testWidgets('initialTab 2 lands directly on Provider approvals for demo rehearsal', (
+      tester,
+    ) async {
+      await tester.binding.setSurfaceSize(const Size(1280, 800));
+      addTearDown(() => tester.binding.setSurfaceSize(null));
+      await tester.pumpWidget(buildApp(initialTab: 2));
       await tester.pumpAndSettle();
 
-      await tester.tap(find.text('Providers'));
-      await tester.pumpAndSettle();
-
-      // Find the unverified provider review button
-      final reviewBtn = find.text('Review →').first;
-      expect(reviewBtn, findsOneWidget);
-      await tester.ensureVisible(reviewBtn);
-      await tester.tap(reviewBtn);
-      await tester.pumpAndSettle();
-
-      // Verify review dialog appeared
-      expect(find.byType(Dialog), findsOneWidget);
-      expect(find.text('Organization Accreditation Dossier'), findsOneWidget);
-
-      // Tap close button on Dialog
-      final closeBtn = find.descendant(
-        of: find.byType(Dialog),
-        matching: find.byIcon(Icons.close_rounded),
-      );
-      expect(closeBtn, findsOneWidget);
-      await tester.tap(closeBtn);
-      await tester.pumpAndSettle();
-
-      // Dialog dismissed and provider review button still exists
-      expect(find.byType(Dialog), findsNothing);
-      expect(find.text('Review →'), findsOneWidget);
+      expect(find.text('Provider approvals'), findsWidgets);
+      expect(find.text('DOST-SEI'), findsOneWidget);
     });
 
-    testWidgets('tapping Review and confirming Approve & Accredit verifies provider', (tester) async {
-      await tester.pumpWidget(buildApp());
+    testWidgets('initialTab 9 lands directly on Reports and safety for demo rehearsal', (
+      tester,
+    ) async {
+      await tester.binding.setSurfaceSize(const Size(1280, 800));
+      addTearDown(() => tester.binding.setSurfaceSize(null));
+      await tester.pumpWidget(buildApp(initialTab: 9));
       await tester.pumpAndSettle();
 
-      await tester.tap(find.text('Providers'));
-      await tester.pumpAndSettle();
-
-      // Find the unverified provider review button
-      final reviewBtn = find.text('Review →').first;
-      expect(reviewBtn, findsOneWidget);
-      await tester.ensureVisible(reviewBtn);
-      await tester.tap(reviewBtn);
-      await tester.pumpAndSettle();
-
-      // Verify review dialog appeared
-      expect(find.byType(Dialog), findsOneWidget);
-      expect(find.text('Organization Accreditation Dossier'), findsOneWidget);
-
-      // Tap Approve & Accredit
-      final approveBtn = find.descendant(
-        of: find.byType(Dialog),
-        matching: find.text('Approve & Accredit'),
-      );
-      expect(approveBtn, findsOneWidget);
-      await tester.tap(approveBtn);
-      await tester.pumpAndSettle();
-
-      // Dialog dismissed, provider is now accredited, SnackBar is shown
-      expect(find.byType(Dialog), findsNothing);
-      expect(find.textContaining('accredited successfully'), findsOneWidget);
+      expect(find.text('Reports & safety'), findsWidgets);
     });
+
+    testWidgets(
+      'tapping Review provider shows accreditation dialog and close dismisses dialog',
+      (tester) async {
+        await tester.binding.setSurfaceSize(const Size(1280, 800));
+        addTearDown(() => tester.binding.setSurfaceSize(null));
+        await tester.pumpWidget(buildApp());
+        await tester.pumpAndSettle();
+
+        await tester.tap(find.text('Provider approvals'));
+        await tester.pumpAndSettle();
+
+        // Find the unverified provider review button
+        final reviewBtn = find.text('Review').first;
+        expect(reviewBtn, findsOneWidget);
+        await tester.ensureVisible(reviewBtn);
+        await tester.tap(reviewBtn);
+        await tester.pumpAndSettle();
+
+        // Verify review dialog appeared
+        expect(find.byType(Dialog), findsOneWidget);
+        expect(find.text('Organization review'), findsOneWidget);
+
+        // Tap close button on Dialog
+        final closeBtn = find.descendant(
+          of: find.byType(Dialog),
+          matching: find.byTooltip('Close review'),
+        );
+        expect(closeBtn, findsOneWidget);
+        await tester.tap(closeBtn);
+        await tester.pumpAndSettle();
+
+        // Dialog dismissed and provider review button still exists
+        expect(find.byType(Dialog), findsNothing);
+        expect(find.text('Review'), findsOneWidget);
+      },
+    );
+
+    testWidgets(
+      'tapping Review and confirming Approve & Accredit verifies provider',
+      (tester) async {
+        await tester.binding.setSurfaceSize(const Size(1280, 800));
+        addTearDown(() => tester.binding.setSurfaceSize(null));
+        await tester.pumpWidget(buildApp());
+        await tester.pumpAndSettle();
+
+        await tester.tap(find.text('Provider approvals'));
+        await tester.pumpAndSettle();
+
+        // Find the unverified provider review button
+        final reviewBtn = find.text('Review').first;
+        expect(reviewBtn, findsOneWidget);
+        await tester.ensureVisible(reviewBtn);
+        await tester.tap(reviewBtn);
+        await tester.pumpAndSettle();
+
+        // Verify review dialog appeared
+        expect(find.byType(Dialog), findsOneWidget);
+        expect(find.text('Organization review'), findsOneWidget);
+
+        await tester.enterText(
+          find.widgetWithText(TextField, 'Review note (required)'),
+          'Documents reviewed and identity checked.',
+        );
+        // Confirm the decision
+        final approveBtn = find.descendant(
+          of: find.byType(Dialog),
+          matching: find.text('Approve'),
+        );
+        expect(approveBtn, findsOneWidget);
+        await tester.ensureVisible(approveBtn);
+        await tester.tap(approveBtn);
+        await tester.pumpAndSettle();
+
+        await tester.tap(find.text('Confirm Approve'));
+        await tester.pumpAndSettle();
+        // The request completed; the repository does not return a verified record.
+        expect(find.byType(Dialog), findsNothing);
+        expect(
+          find.textContaining('Decision recorded: APPROVED for DOST-SEI'),
+          findsOneWidget,
+        );
+      },
+    );
   });
 }

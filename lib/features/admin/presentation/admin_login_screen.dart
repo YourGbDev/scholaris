@@ -14,6 +14,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'package:scholaris/core/security/login_lockout_service.dart';
+import 'package:scholaris/core/security/captcha_challenge.dart';
 import 'package:scholaris/shared/theme/app_motion.dart';
 
 class AdminLoginScreen extends ConsumerStatefulWidget {
@@ -108,10 +109,13 @@ class _AdminLoginScreenState extends ConsumerState<AdminLoginScreen> {
     setState(() => _isLoading = true);
 
     try {
+      final captcha = await acquireCaptcha(context);
+      if (!mounted || !captcha.allowed) return;
       final client = Supabase.instance.client;
       final authResponse = await client.auth.signInWithPassword(
         email: email,
         password: _passwordController.text,
+        captchaToken: captcha.token,
       );
 
       final user = authResponse.user;
@@ -156,7 +160,7 @@ class _AdminLoginScreenState extends ConsumerState<AdminLoginScreen> {
       }
     } catch (e) {
       if (mounted) {
-        _showErrorSnackBar('An unexpected error occurred: $e');
+        _showErrorSnackBar('Could not complete sign in. Please try again.');
       }
     } finally {
       if (mounted) {

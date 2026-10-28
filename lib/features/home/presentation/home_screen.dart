@@ -514,7 +514,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       onNotification: (n) => tabIndex == i
                           ? _controller.handleScrollNotification(n)
                           : false,
-                      child: StudentTabEntrance(active: tabIndex == i, visit: _tabVisit, child: _tabs[i]),
+                      child: StudentTabEntrance(active: tabIndex == i, visit: _tabVisit, firstArrivalDuration: const Duration(milliseconds: 1250), child: _tabs[i]),
                     )),
                     ),
                 ],

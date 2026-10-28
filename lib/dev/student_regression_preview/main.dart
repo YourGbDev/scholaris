@@ -132,7 +132,7 @@ Future<void> main() async {
       GoRoute(
         path: '/scholarship/:id',
         builder: (_, state) =>
-            ScholarshipDetailScreen(scholarshipId: state.pathParameters['id']!),
+            ScholarshipDetailScreen(scholarshipId: state.pathParameters['id']!, startApplication: state.uri.queryParameters['apply'] == '1'),
       ),
       GoRoute(
         path: '/application/:id',

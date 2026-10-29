@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../models/support_ledger.dart';
 import '../../repositories/support_repository.dart';
 import '../org/org_provider_theme.dart';
+import 'provider_overview_card.dart';
 
 class IndividualSupportSummary extends ConsumerWidget {
   const IndividualSupportSummary({super.key, required this.onOpen});
@@ -11,18 +12,14 @@ class IndividualSupportSummary extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final ledger = ref.watch(supportLedgerProvider);
-    return Container(
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        border: Border.all(color: kOrgBorder),
-        borderRadius: BorderRadius.circular(14),
+    return ProviderOverviewCard(
+      heading: Text(
+        'Your support at a glance',
+        style: orgHeadline(fontSize: 18),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('Your support at a glance', style: orgHeadline(fontSize: 18)),
-          const SizedBox(height: 8),
           ledger.when(
             loading: () => const Text('Loading your support records…'),
             error: (_, _) => const Text(

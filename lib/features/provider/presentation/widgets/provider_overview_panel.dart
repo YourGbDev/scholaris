@@ -1,4 +1,5 @@
 import 'individual_support_summary.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -10,6 +11,7 @@ import '../../providers/provider_sub_role_provider.dart';
 import '../org/org_provider_theme.dart';
 import 'org_overview_workspace.dart';
 import 'org_metric_count.dart';
+import 'provider_overview_card.dart';
 
 /// Uses the existing provider-scoped repositories; no new writes or permissions.
 class ProviderOverview extends ConsumerWidget {
@@ -162,40 +164,84 @@ class ProviderOverviewPanel extends StatelessWidget {
           padding: EdgeInsets.all(compact ? 18 : 20),
           decoration: BoxDecoration(
             color: Colors.white,
-            borderRadius: BorderRadius.circular(20),
-            border: Border.all(color: const Color(0xFFD6E6DA)),
+            borderRadius: BorderRadius.circular(26),
+            border: Border.all(color: const Color(0xFFF0F0F0)),
             boxShadow: const [
-              BoxShadow(color: Color(0x140F4D2E), blurRadius: 22, offset: Offset(0, 8)),
-              BoxShadow(color: Color(0xFFFFF1C9), offset: Offset(7, 8)),
+              BoxShadow(
+                color: Color(0x08000000),
+                blurRadius: 20,
+                offset: Offset(0, 4),
+              ),
             ],
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Row(children: [
-                const CircleAvatar(
-                  radius: 17,
-                  backgroundColor: Color(0xFFE1F1E5),
-                  child: Icon(Icons.school_rounded, size: 19, color: kOrgPrimary),
-                ),
-                const SizedBox(width: 10),
-                Expanded(child: Text(pendingCount > 0 ? 'APPLICATIONS TO REVIEW' : hasActiveScholarship ? 'YOUR IMPACT' : 'GET STARTED', style: orgLabel(fontSize: 11, color: kOrgPrimary, letterSpacing: 1))),
-              ]),
+              Row(
+                children: [
+                  const CircleAvatar(
+                    radius: 17,
+                    backgroundColor: Color(0xFFE1F1E5),
+                    child: Icon(
+                      Icons.school_rounded,
+                      size: 19,
+                      color: kOrgPrimary,
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: Text(
+                      pendingCount > 0
+                          ? 'APPLICATIONS TO REVIEW'
+                          : hasActiveScholarship
+                          ? 'YOUR IMPACT'
+                          : 'GET STARTED',
+                      style: orgLabel(
+                        fontSize: 11,
+                        color: kOrgPrimary,
+                        letterSpacing: 1,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
               const SizedBox(height: 8),
-              Text(pendingCount > 0 ? '$pendingCount ${pendingCount == 1 ? 'application' : 'applications'} to review' : hasActiveScholarship ? 'You’re all caught up' : 'Start your first scholarship', style: orgHeadline(fontSize: compact ? 20 : 23, color: kOrgPrimary)),
+              Text(
+                pendingCount > 0
+                    ? '$pendingCount ${pendingCount == 1 ? 'application' : 'applications'} to review'
+                    : hasActiveScholarship
+                    ? 'You’re all caught up'
+                    : 'Start your first scholarship',
+                style: orgHeadline(
+                  fontSize: compact ? 20 : 23,
+                  color: kOrgPrimary,
+                ),
+              ),
               const SizedBox(height: 6),
               Text(
                 pendingCount == 0
-                    ? hasActiveScholarship ? 'There are no applications awaiting review.' : 'Visit your scholarships to create an opportunity for students.'
+                    ? hasActiveScholarship
+                          ? 'There are no applications awaiting review.'
+                          : 'Visit your scholarships to create an opportunity for students.'
                     : '$pendingCount ${pendingCount == 1 ? 'application needs' : 'applications need'} a closer look. Take them one at a time.',
                 style: orgBody(fontSize: 14, color: kOrgTextSecondary),
               ),
               const SizedBox(height: 8),
               FilledButton.icon(
-                onPressed: pendingCount == 0 ? onScholarships : (onPendingApplications ?? onApplications),
+                onPressed: pendingCount == 0
+                    ? onScholarships
+                    : (onPendingApplications ?? onApplications),
                 icon: const Icon(Icons.arrow_forward_rounded, size: 18),
-                label: Text(pendingCount == 0 ? 'View scholarships' : 'Review applications'),
-                style: FilledButton.styleFrom(backgroundColor: kOrgPrimary, foregroundColor: Colors.white, minimumSize: const Size(0, 44)),
+                label: Text(
+                  pendingCount == 0
+                      ? 'View scholarships'
+                      : 'Review applications',
+                ),
+                style: FilledButton.styleFrom(
+                  backgroundColor: kOrgPrimary,
+                  foregroundColor: Colors.white,
+                  minimumSize: const Size(0, 44),
+                ),
               ),
             ],
           ),
@@ -233,25 +279,51 @@ class ProviderOverviewPanel extends StatelessWidget {
                     clipBehavior: Clip.antiAlias,
                     decoration: BoxDecoration(
                       color: const Color(0xFFF1F7EF),
-                      borderRadius: BorderRadius.circular(18),
+                      borderRadius: BorderRadius.circular(26),
                       border: Border.all(color: const Color(0xFFDDE5D4)),
-                      image: compact ? null : const DecorationImage(
-                        image: AssetImage('assets/images/provider_hero_illustration.png'),
-                        fit: BoxFit.cover,
-                        alignment: Alignment.topLeft,
-                      ),
+                      image: compact
+                          ? null
+                          : const DecorationImage(
+                              image: AssetImage(
+                                'assets/images/provider_hero_illustration.png',
+                              ),
+                              fit: BoxFit.cover,
+                              alignment: Alignment.topLeft,
+                            ),
                     ),
                     child: compact
-                        ? Column(children: [
-                            Image.asset('assets/images/provider_hero_illustration.png', fit: BoxFit.cover, excludeFromSemantics: true),
-                            Padding(padding: const EdgeInsets.fromLTRB(16, 0, 16, 20), child: heroCard),
-                          ])
+                        ? Column(
+                            children: [
+                              Image.asset(
+                                'assets/images/provider_hero_illustration.png',
+                                fit: BoxFit.cover,
+                                excludeFromSemantics: true,
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.fromLTRB(
+                                  16,
+                                  0,
+                                  16,
+                                  20,
+                                ),
+                                child: heroCard,
+                              ),
+                            ],
+                          )
                         : ConstrainedBox(
                             constraints: const BoxConstraints(minHeight: 300),
-                            child: Row(children: [
-                              const Expanded(flex: 4, child: SizedBox()),
-                              Expanded(flex: 6, child: Padding(padding: const EdgeInsets.all(24), child: heroCard)),
-                            ]),
+                            child: Row(
+                              children: [
+                                const Expanded(flex: 4, child: SizedBox()),
+                                Expanded(
+                                  flex: 6,
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(24),
+                                    child: heroCard,
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
                   ),
                   const SizedBox(height: 28),
@@ -282,7 +354,10 @@ class ProviderOverviewPanel extends StatelessWidget {
                       ),
                     ],
                   ),
-                  if (individual && onSupport != null) ...[const SizedBox(height: 24), IndividualSupportSummary(onOpen: onSupport!)],
+                  if (individual && onSupport != null) ...[
+                    const SizedBox(height: 24),
+                    IndividualSupportSummary(onOpen: onSupport!),
+                  ],
                   if (!individual) ...[
                     const SizedBox(height: 24),
                     Wrap(
@@ -326,14 +401,8 @@ class ProviderOverviewPanel extends StatelessWidget {
                   ),
                   const SizedBox(height: 20),
                   if (scholarships.isEmpty)
-                    Container(
-                      width: double.infinity,
+                    ProviderOverviewCard(
                       padding: const EdgeInsets.all(28),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(16),
-                        border: Border.all(color: kOrgBorder),
-                      ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -351,51 +420,51 @@ class ProviderOverviewPanel extends StatelessWidget {
                     )
                   else
                     ...scholarships.map(
-                      (scholarship) => Container(
-                        margin: const EdgeInsets.only(bottom: 12),
-                        padding: const EdgeInsets.all(22),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          border: Border.all(color: kOrgBorder),
-                          borderRadius: BorderRadius.circular(14),
-                        ),
-                        child: Row(
-                          children: [
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    scholarship.title,
-                                    style: orgHeadline(fontSize: 16),
-                                  ),
-                                  const SizedBox(height: 8),
-                                  Text(
-                                    '${scholarship.formattedAmount} ${scholarship.formattedFrequency}',
-                                    style: orgBody(color: kOrgTextSecondary),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            const SizedBox(width: 16),
-                            Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                              decoration: BoxDecoration(
-                                color: scholarship.isActive
-                                    ? kOrgBadgeApprovedBg
-                                    : const Color(0xFFF2F3F1),
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              child: Text(
-                                scholarship.isActive ? 'Active' : 'Closed',
-                                style: orgLabel(
-                                  color: scholarship.isActive
-                                      ? kOrgPrimary
-                                      : kOrgTextSecondary,
+                      (scholarship) => Padding(
+                        padding: const EdgeInsets.only(bottom: 12),
+                        child: ProviderOverviewCard(
+                          padding: const EdgeInsets.all(22),
+                          child: Row(
+                            children: [
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      scholarship.title,
+                                      style: orgHeadline(fontSize: 16),
+                                    ),
+                                    const SizedBox(height: 8),
+                                    Text(
+                                      '${scholarship.formattedAmount} ${scholarship.formattedFrequency}',
+                                      style: orgBody(color: kOrgTextSecondary),
+                                    ),
+                                  ],
                                 ),
                               ),
-                            ),
-                          ],
+                              const SizedBox(width: 16),
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 10,
+                                  vertical: 6,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: scholarship.isActive
+                                      ? kOrgBadgeApprovedBg
+                                      : const Color(0xFFF2F3F1),
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                child: Text(
+                                  scholarship.isActive ? 'Active' : 'Closed',
+                                  style: orgLabel(
+                                    color: scholarship.isActive
+                                        ? kOrgPrimary
+                                        : kOrgTextSecondary,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     ),
@@ -415,31 +484,31 @@ class ProviderOverviewPanel extends StatelessWidget {
     );
   }
 
-  Widget _metric(String label, int value, bool compact, double width, VoidCallback onTap) =>
-      Material(
-        color: Colors.transparent,
-        child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(14),
-        child: Container(
+  Widget _metric(
+    String label,
+    int value,
+    bool compact,
+    double width,
+    VoidCallback onTap,
+  ) => Material(
+    color: Colors.transparent,
+    child: InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(26),
+      child: SizedBox(
         width: compact ? double.infinity : (width - 112) / 3,
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          border: Border.all(color: kOrgBorder),
-          borderRadius: BorderRadius.circular(14),
+        child: ProviderOverviewCard(
+          heading: Text(
+            label,
+            style: orgBody(fontSize: 12, color: kOrgTextSecondary),
+          ),
+          child: OrgMetricCount(
+            motionId: 'individual-overview.$label',
+            targetValue: value,
+            style: orgHeadline(fontSize: 30),
+          ),
         ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(label, style: orgBody(fontSize: 12, color: kOrgTextSecondary)),
-            const SizedBox(height: 12),
-            OrgMetricCount(
-              motionId: 'individual-overview.$label',
-              targetValue: value,
-              style: orgHeadline(fontSize: 30),
-            ),
-          ],
-        ),
-      )));
+      ),
+    ),
+  );
 }

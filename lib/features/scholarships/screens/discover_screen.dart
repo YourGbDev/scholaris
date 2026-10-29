@@ -429,7 +429,7 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 11),
       decoration: BoxDecoration(
-        color: const Color(0xFFF1F3FF), // surface-container-low
+        color: const Color(0xFFF0F0F0), // surface-container-low
         borderRadius: BorderRadius.circular(12),
         border: Border.all(color: const Color(0xFFDDE2F3)),
       ),
@@ -990,7 +990,7 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: const Color(0xFFF1F3FF),
+              color: const Color(0xFFF0F0F0),
               borderRadius: BorderRadius.circular(12),
               border: Border.all(color: const Color(0xFFDDE2F3)),
             ),
@@ -1346,7 +1346,7 @@ class _ActiveFilterChip extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: const Color(0xFFE8EEFF),
+        color: const Color(0xFFF0F0F0),
         borderRadius: BorderRadius.circular(20),
         border: Border.all(color: const Color(0xFF0F4D2E).withValues(alpha: 0.25)),
       ),

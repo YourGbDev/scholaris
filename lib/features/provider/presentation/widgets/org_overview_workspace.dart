@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../scholarships/models/scholarship.dart';
 import '../org/org_provider_theme.dart';
 import 'org_metric_count.dart';
+import 'provider_overview_card.dart';
 
 /// Organization overview: orient, show the next task, then reveal program detail.
 class OrgOverviewWorkspace extends StatelessWidget {
@@ -49,9 +50,8 @@ class OrgOverviewWorkspace extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 12),
-          Container(
-            width: double.infinity,
-            decoration: _surface,
+          ProviderOverviewCard(
+            padding: EdgeInsets.zero,
             child: scholarships.isEmpty
                 ? Padding(
                     padding: const EdgeInsets.all(24),
@@ -89,9 +89,14 @@ class OrgOverviewWorkspace extends StatelessWidget {
                                 runSpacing: 8,
                                 children: [
                                   Container(
-                                    padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 5),
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 9,
+                                      vertical: 5,
+                                    ),
                                     decoration: BoxDecoration(
-                                      color: s.isActive ? kOrgBadgeApprovedBg : const Color(0xFFF2F3F1),
+                                      color: s.isActive
+                                          ? kOrgBadgeApprovedBg
+                                          : const Color(0xFFF2F3F1),
                                       borderRadius: BorderRadius.circular(8),
                                     ),
                                     child: Text(
@@ -247,47 +252,31 @@ class OrgOverviewWorkspace extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 28),
-                Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.symmetric(vertical: 20),
-                  decoration: const BoxDecoration(
-                    border: Border(
-                      top: BorderSide(color: kOrgBorder),
-                      bottom: BorderSide(color: kOrgBorder),
-                    ),
-                  ),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                LayoutBuilder(
+                  builder: (context, metricsBox) => Wrap(
+                    spacing: 16,
+                    runSpacing: 16,
                     children: [
-                      Expanded(
-                        child: _metric(
-                          'Applications received',
-                          applicationCount,
-                        ),
-                      ),
-                      const SizedBox(width: 16),
-                      Expanded(
-                        child: _metric('Decisions recorded', decidedCount),
-                      ),
-                      const SizedBox(width: 16),
-                      Expanded(
-                        child: _metric(
+                      for (final metric in [
+                        _metric('Applications received', applicationCount),
+                        _metric('Decisions recorded', decidedCount),
+                        _metric(
                           'Active programs',
                           scholarships.where((s) => s.isActive).length,
                         ),
-                      ),
+                      ])
+                        SizedBox(
+                          width: compact
+                              ? metricsBox.maxWidth
+                              : (metricsBox.maxWidth - 32) / 3,
+                          child: metric,
+                        ),
                     ],
                   ),
                 ),
                 const SizedBox(height: 28),
-                Container(
-                  width: double.infinity,
+                ProviderOverviewCard(
                   padding: const EdgeInsets.all(24),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFFEDF2E6),
-                    borderRadius: BorderRadius.circular(14),
-                    border: Border.all(color: const Color(0xFFDDE5D4)),
-                  ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -347,20 +336,15 @@ class OrgOverviewWorkspace extends StatelessWidget {
     },
   );
 
-  BoxDecoration get _surface => BoxDecoration(
-    color: Colors.white,
-    border: Border.all(color: kOrgBorder),
-    borderRadius: BorderRadius.circular(12),
-  );
-  Widget _metric(String label, int count) => SizedBox(
-    width: 190,
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        OrgMetricCount(motionId: 'overview.$label', targetValue: count, style: orgHeadline(fontSize: 28)),
-        const SizedBox(height: 6),
-        Text(label, style: orgBody(fontSize: 13, color: kOrgTextSecondary)),
-      ],
+  Widget _metric(String label, int count) => ProviderOverviewCard(
+    heading: Text(
+      label,
+      style: orgBody(fontSize: 13, color: kOrgTextSecondary),
+    ),
+    child: OrgMetricCount(
+      motionId: 'overview.$label',
+      targetValue: count,
+      style: orgHeadline(fontSize: 28),
     ),
   );
   Widget _sectionHeading(String title, [Widget? action]) => Wrap(

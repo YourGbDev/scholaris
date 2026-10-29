@@ -154,7 +154,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                             vertical: 3,
                           ),
                           decoration: BoxDecoration(
-                            color: const Color(0xFFF1F3FF),
+                            color: const Color(0xFFF0F0F0),
                             borderRadius: BorderRadius.circular(16),
                             border: Border.all(color: const Color(0xFFDDE2F3)),
                           ),
@@ -321,7 +321,7 @@ class _Slide1Ecosystem extends StatelessWidget {
                           vertical: 9,
                         ),
                         decoration: BoxDecoration(
-                          color: const Color(0xFFE8EEFF),
+                          color: const Color(0xFFF0F0F0),
                           borderRadius: BorderRadius.circular(12),
                           border: Border.all(color: const Color(0xFFDDE2F3)),
                         ),
@@ -479,7 +479,7 @@ class _Slide2Matching extends StatelessWidget {
                           vertical: 3.5,
                         ),
                         decoration: BoxDecoration(
-                          color: const Color(0xFFD2E4FF),
+                          color: const Color(0xFFF0F0F0),
                           borderRadius: BorderRadius.circular(20),
                         ),
                         child: Row(
@@ -735,7 +735,7 @@ class _Slide3AuditTrail extends StatelessWidget {
                           vertical: 8,
                         ),
                         decoration: BoxDecoration(
-                          color: const Color(0xFFF1F3FF),
+                          color: const Color(0xFFF0F0F0),
                           borderRadius: BorderRadius.circular(10),
                           border: Border.all(color: const Color(0xFFDDE2F3)),
                         ),
@@ -966,7 +966,7 @@ class _EcosystemHeroCanvas extends StatelessWidget {
           left: 6,
           child: _EcosystemBadge(
             icon: Icons.biotech_rounded,
-            iconBg: Color(0xFFD2E4FF),
+            iconBg: Color(0xFFF0F0F0),
             iconColor: Color(0xFF001C38),
             title: 'DOST-SEI',
             subtitle: 'Priority STEM',
@@ -1057,7 +1057,7 @@ class _VerifiedGrantsBadge extends StatelessWidget {
               vertical: 2.5,
             ),
             decoration: BoxDecoration(
-              color: const Color(0xFFE3E8F9),
+              color: const Color(0xFFF0F0F0),
               borderRadius: BorderRadius.circular(10),
             ),
             child: Row(
@@ -1119,7 +1119,7 @@ class _PrivateEndowmentsBadge extends StatelessWidget {
             width: 24,
             height: 24,
             decoration: const BoxDecoration(
-              color: Color(0xFFDDE2F3),
+              color: Color(0xFFF0F0F0),
               shape: BoxShape.circle,
             ),
             child: const Icon(
@@ -1362,7 +1362,7 @@ class _PrecisionMatchingCanvas extends StatelessWidget {
                     vertical: 3,
                   ),
                   decoration: BoxDecoration(
-                    color: const Color(0xFFE8EEFF),
+                    color: const Color(0xFFF0F0F0),
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: Row(
@@ -1530,7 +1530,7 @@ class _AuditTrailHeroCanvas extends StatelessWidget {
           left: 6,
           child: _EcosystemBadge(
             icon: Icons.biotech_rounded,
-            iconBg: Color(0xFFD2E4FF),
+            iconBg: Color(0xFFF0F0F0),
             iconColor: Color(0xFF001C38),
             title: 'DOST-SEI',
             subtitle: 'Priority STEM',
@@ -1633,7 +1633,7 @@ class _AuditTrailCanvas extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2.5),
                 decoration: BoxDecoration(
-                  color: const Color(0xFFE8EEFF),
+                  color: const Color(0xFFF0F0F0),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Row(
@@ -1699,7 +1699,7 @@ class _AuditTrailCanvas extends StatelessWidget {
                       chip: 'PROFILE',
                       subtitle: 'Review your details before applying',
                       badge: 'DRAFT',
-                      badgeBg: Color(0xFFF1F3FF),
+                      badgeBg: Color(0xFFF0F0F0),
                       badgeColor: Color(0xFF404942),
                     ),
                     _AuditStepRow(
@@ -1710,7 +1710,7 @@ class _AuditTrailCanvas extends StatelessWidget {
                       chip: 'APPLICATION',
                       subtitle: 'Application submitted for review',
                       badge: 'SUBMITTED',
-                      badgeBg: Color(0xFFD2E4FF),
+                      badgeBg: Color(0xFFF0F0F0),
                       badgeColor: Color(0xFF001C38),
                     ),
                     _AuditStepRow(
@@ -1723,7 +1723,7 @@ class _AuditTrailCanvas extends StatelessWidget {
                     ),
                     _AuditStepRow(
                       icon: Icons.stars_rounded,
-                      iconBg: Color(0xFFDDE2F3),
+                      iconBg: Color(0xFFF0F0F0),
                       iconColor: Color(0xFFF1B41E),
                       step: '4. Award decision',
                       chip: 'DECISION',
@@ -1992,7 +1992,7 @@ class _AuditStepRow extends StatelessWidget {
             width: 20,
             height: 20,
             decoration: BoxDecoration(
-              color: iconBg ?? const Color(0xFFDDE2F3),
+              color: iconBg ?? const Color(0xFFF0F0F0),
               shape: BoxShape.circle,
             ),
             child: Icon(icon, size: 11, color: iconColor ?? const Color(0xFF436084)),
@@ -2056,7 +2056,7 @@ class _AuditStepRow extends StatelessWidget {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 1.5),
             decoration: BoxDecoration(
-              color: badgeBg ?? const Color(0xFFE3E8F9),
+              color: badgeBg ?? const Color(0xFFF0F0F0),
               borderRadius: BorderRadius.circular(4),
             ),
             child: Text(
@@ -2125,7 +2125,7 @@ class _OnboardingDots extends StatelessWidget {
             decoration: BoxDecoration(
               color: i == active
                   ? const Color(0xFF0F4D2E)
-                  : const Color(0xFFDDE2F3),
+                  : const Color(0xFFE0E0E0),
               borderRadius: BorderRadius.circular(4),
             ),
           ),

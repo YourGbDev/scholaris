@@ -6,7 +6,7 @@ on:
       captcha_enabled:
         description: 'Enable the Scholaris CAPTCHA in this build'
         required: true
-        default: false
+        default: true
         type: boolean
   push:
     branches:
@@ -60,7 +60,7 @@ jobs:
       - name: Build iOS App (.app)
         run: >-
           flutter build ios --release --no-codesign -v
-          --dart-define=SCHOLARIS_CAPTCHA_ENABLED=${{ inputs.captcha_enabled == true || inputs.captcha_enabled == 'true' }}
+          --dart-define=SCHOLARIS_CAPTCHA_ENABLED=${{ github.event_name != 'workflow_dispatch' || inputs.captcha_enabled == true || inputs.captcha_enabled == 'true' }}
           --dart-define=SCHOLARIS_CAPTCHA_SITE_KEY=0x4AAAAAAFq-mSfnVs6Xvvjo
           --dart-define=SCHOLARIS_CAPTCHA_PAGE_URL=https://scholaris-captcha.pages.dev/captcha_challenge
 

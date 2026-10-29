@@ -862,7 +862,7 @@ class _LoginScreenState extends State<LoginScreen>
                                       width: double.infinity,
                                       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
                                       decoration: BoxDecoration(
-                                        color: const Color(0xFFF1F3FF),
+                                        color: const Color(0xFFF0F0F0),
                                         borderRadius: BorderRadius.circular(12),
                                         border: Border.all(color: const Color(0xFFD2E4FF)),
                                       ),
@@ -941,7 +941,7 @@ class _LoginScreenState extends State<LoginScreen>
                                         width: 32,
                                         height: 32,
                                         decoration: BoxDecoration(
-                                          color: const Color(0xFFE8EEFF),
+                                          color: const Color(0xFFF0F0F0),
                                           borderRadius: BorderRadius.circular(8),
                                         ),
                                         child: const Icon(Icons.account_balance_outlined, color: kNavyTrust, size: 18),
@@ -977,7 +977,7 @@ class _LoginScreenState extends State<LoginScreen>
                                   child: OutlinedButton(
                                     onPressed: null,
                                     style: OutlinedButton.styleFrom(
-                                      backgroundColor: const Color(0xFFF1F3FF),
+                                      backgroundColor: const Color(0xFFF0F0F0),
                                       side: const BorderSide(color: Color(0xFFE2E8E5)),
                                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                                       foregroundColor: kNavyTrust,

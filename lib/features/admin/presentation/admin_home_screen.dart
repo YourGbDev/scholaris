@@ -103,12 +103,26 @@ class _AdminHomeScreenState extends ConsumerState<AdminHomeScreen> {
     final tabIndex = ref.watch(adminTabIndexProvider);
     final isDesktop = MediaQuery.sizeOf(context).width >= 768;
 
-    return FocusTraversalGroup(
+    return Theme(
+      data: Theme.of(context).copyWith(
+        cardTheme: const CardThemeData(
+          color: Colors.white,
+          surfaceTintColor: Colors.transparent,
+          elevation: 1,
+          shadowColor: Color(0x06000000),
+          shape: RoundedRectangleBorder(
+            borderRadius: kAdminCardRadius,
+            side: BorderSide(color: kAdminHairline),
+          ),
+        ),
+      ),
+      child: FocusTraversalGroup(
       policy: WidgetOrderTraversalPolicy(),
       child: isDesktop
           ? Scaffold(
               backgroundColor: kAdminSurface,
               body: Row(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   // Persistent Left Sidebar on Desktop (>= 768px, 256px wide Apple design)
                   SizedBox(
@@ -209,7 +223,8 @@ class _AdminHomeScreenState extends ConsumerState<AdminHomeScreen> {
         child: _buildTabs()[tabIndex],
       ),
     ),
-  );
+      ),
+    );
   }
 
   Widget _buildTopBar(BuildContext context, WidgetRef ref) {
@@ -406,7 +421,7 @@ class _SidebarNavItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 2),
       child: Semantics(
         selected: isSelected,
         child: TextButton(
@@ -419,7 +434,7 @@ class _SidebarNavItem extends StatelessWidget {
                 : Colors.transparent,
             foregroundColor: isSelected ? Colors.white : kAdminInactiveNavText,
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10),
+              borderRadius: BorderRadius.circular(999),
             ),
           ),
           child: Row(

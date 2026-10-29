@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import '../../../shared/theme/app_theme.dart';
 
 import '../../../admin/screens/platform_overview_screen.dart';
 import '../../../features/admin/presentation/admin_analytics_provider.dart';
@@ -145,9 +146,7 @@ Widget buildAdminPreview({bool errorPreview = false}) {
     child: MaterialApp(
       navigatorKey: previewNavigator,
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF0F4D2E)),
-      ),
+      theme: scholarisTheme(),
       builder: (context, child) => MediaQuery(
         data: MediaQuery.of(context).copyWith(
           textScaler: scale == null ? null : TextScaler.linear(scale),

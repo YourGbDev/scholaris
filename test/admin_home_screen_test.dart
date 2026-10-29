@@ -279,6 +279,10 @@ void main() {
         expect(find.text('Scholarship Oversight & Moderation'), findsOneWidget);
         expect(find.text('Test Science Grant'), findsOneWidget);
         expect(find.text('DOST-SEI'), findsOneWidget);
+        expect(find.text('Oversight Intelligence & Allocation Portfolio'), findsOneWidget);
+        expect(find.text('PostgreSQL Real-Time Connected'), findsNothing);
+        expect(find.text('Regional Distribution Verified'), findsNothing);
+        expect(find.text('100% Verified DB'), findsNothing);
       },
     );
 

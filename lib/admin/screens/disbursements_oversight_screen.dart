@@ -411,20 +411,7 @@ class _DisbursementsOversightScreenState
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.symmetric(vertical: 64, horizontal: 24),
-      decoration: BoxDecoration(
-        color: kSeqSurfaceContainerLowest,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: kSeqOutlineVariant.withValues(alpha: 0.35),
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.02),
-            blurRadius: 10,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
+      decoration: kAdminCardDecoration,
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -483,13 +470,7 @@ class _DisbursementsOversightScreenState
 
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
-      decoration: BoxDecoration(
-        color: kSeqSurfaceContainerLowest,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: kSeqOutlineVariant.withValues(alpha: 0.4),
-        ),
-      ),
+      decoration: kAdminCardDecoration,
       child: InkWell(
         borderRadius: BorderRadius.circular(16),
         onTap: () => _showDisbursementDetail(context, record),
@@ -845,10 +826,7 @@ class _DisbursementsOversightScreenState
           const SizedBox(height: 24),
           Container(
             height: 120,
-            decoration: BoxDecoration(
-              color: kSeqSurfaceContainerLowest,
-              borderRadius: BorderRadius.circular(16),
-            ),
+            decoration: kAdminCardDecoration,
           ),
         ],
       ),

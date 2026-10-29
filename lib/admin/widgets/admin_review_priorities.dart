@@ -215,7 +215,7 @@ class AdminReviewPriorities extends ConsumerWidget {
     } else {
       badgeBg = const Color(0xFFE2EFE7);
       badgeFg = kAdminBridgeGreen;
-      cardBg = const Color(0xFFF8FAF7);
+      cardBg = Colors.white;
       borderColor = kAdminHairline;
       buttonBg = kAdminBridgeGreen;
       buttonFg = Colors.white;
@@ -226,14 +226,8 @@ class AdminReviewPriorities extends ConsumerWidget {
       decoration: BoxDecoration(
         color: cardBg,
         border: Border.all(color: borderColor),
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.02),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
+        borderRadius: kAdminCardRadius,
+        boxShadow: kAdminCardShadow,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

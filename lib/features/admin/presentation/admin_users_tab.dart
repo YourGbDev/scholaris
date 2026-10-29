@@ -542,18 +542,7 @@ class _AdminUsersTabState extends ConsumerState<AdminUsersTab> {
   }) {
     return Container(
       padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: kSeqSurfaceContainerLowest,
-        borderRadius: const BorderRadius.all(Radius.circular(16)),
-        border: Border.all(color: kSeqOutlineVariant.withValues(alpha: 0.35), width: 1),
-        boxShadow: const [
-          BoxShadow(
-            color: Color(0x0A000000),
-            blurRadius: 8,
-            offset: Offset(0, 2),
-          ),
-        ],
-      ),
+      decoration: kAdminCardDecoration,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -793,18 +782,7 @@ class _AdminUsersTabState extends ConsumerState<AdminUsersTab> {
 
     return Container(
       padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: kSeqSurfaceContainerLowest,
-        borderRadius: const BorderRadius.all(Radius.circular(16)),
-        border: Border.all(color: kSeqOutlineVariant.withValues(alpha: 0.35), width: 1),
-        boxShadow: const [
-          BoxShadow(
-            color: Color(0x0A000000),
-            blurRadius: 8,
-            offset: Offset(0, 2),
-          ),
-        ],
-      ),
+      decoration: kAdminCardDecoration,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -870,18 +848,7 @@ class _AdminUsersTabState extends ConsumerState<AdminUsersTab> {
     final isDesktop = width >= 900;
 
     return Container(
-      decoration: BoxDecoration(
-        color: kSeqSurfaceContainerLowest,
-        borderRadius: const BorderRadius.all(Radius.circular(16)),
-        border: Border.all(color: kSeqOutlineVariant.withValues(alpha: 0.35), width: 1),
-        boxShadow: const [
-          BoxShadow(
-            color: Color(0x0A000000),
-            blurRadius: 8,
-            offset: Offset(0, 2),
-          ),
-        ],
-      ),
+      decoration: kAdminCardDecoration,
       clipBehavior: Clip.antiAlias,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -1787,18 +1754,7 @@ class _AdminUsersTabState extends ConsumerState<AdminUsersTab> {
   }) {
     return Container(
       padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: kSeqSurfaceContainerLowest,
-        borderRadius: const BorderRadius.all(Radius.circular(16)),
-        border: Border.all(color: kSeqOutlineVariant.withValues(alpha: 0.35), width: 1),
-        boxShadow: const [
-          BoxShadow(
-            color: Color(0x0A000000),
-            blurRadius: 8,
-            offset: Offset(0, 2),
-          ),
-        ],
-      ),
+      decoration: kAdminCardDecoration,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -1901,11 +1857,7 @@ class _AdminUsersTabState extends ConsumerState<AdminUsersTab> {
                 child: Container(
                   margin: EdgeInsets.only(right: index < 3 ? 16 : 0),
                   padding: const EdgeInsets.all(20),
-                  decoration: BoxDecoration(
-                    color: kSeqSurfaceContainerLowest,
-                    borderRadius: BorderRadius.circular(16),
-                    border: Border.all(color: kSeqOutlineVariant.withValues(alpha: 0.3)),
-                  ),
+                  decoration: kAdminCardDecoration,
                   child: const Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -1925,22 +1877,14 @@ class _AdminUsersTabState extends ConsumerState<AdminUsersTab> {
           // Filter Section Skeleton
           Container(
             height: 60,
-            decoration: BoxDecoration(
-              color: kSeqSurfaceContainerLowest,
-              borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: kSeqOutlineVariant.withValues(alpha: 0.3)),
-            ),
+            decoration: kAdminCardDecoration,
           ),
           const SizedBox(height: 20),
 
           // Table Skeleton
           Container(
             height: 320,
-            decoration: BoxDecoration(
-              color: kSeqSurfaceContainerLowest,
-              borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: kSeqOutlineVariant.withValues(alpha: 0.3)),
-            ),
+            decoration: kAdminCardDecoration,
           ),
         ],
       ),

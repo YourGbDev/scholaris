@@ -10,8 +10,8 @@ import 'package:google_fonts/google_fonts.dart';
 
 // --- Color Palette -----------------------------------------------------------
 
-/// Light Apple canvas background (#FAF9FE)
-const Color kAdminSurface = Color(0xFFFAF9FE);
+/// Neutral canvas behind the white administration panels.
+const Color kAdminSurface = Color(0xFFFAFAFA);
 
 /// Primary operational green — nav active fill (#0F4D2E), primary CTAs, active highlights.
 const Color kAdminBridgeGreen = Color(0xFF0F4D2E);
@@ -26,7 +26,7 @@ const Color kAdminGoldenOpportunity = Color(0xFFF1B41E);
 const Color kAdminCoralConnect = Color(0xFFFF6F59);
 
 /// Subtle hairline divider / table border color.
-const Color kAdminHairline = Color(0xFFE4E7EC);
+const Color kAdminHairline = Color(0xFFE8E8E8);
 
 /// Dark text for primary content (#1A1B1F).
 const Color kAdminTextPrimary = Color(0xFF1A1B1F);
@@ -34,8 +34,8 @@ const Color kAdminTextPrimary = Color(0xFF1A1B1F);
 /// Muted secondary text for labels and captions (#5E6D66 / #707971).
 const Color kAdminTextSecondary = Color(0xFF5E6D66);
 
-/// Apple Light Sidebar background (#F5F5F7).
-const Color kAdminSidebarBackground = Color(0xFFF5F5F7);
+/// White sidebar surface, matching the provider workspace.
+const Color kAdminSidebarBackground = Color(0xFFFFFFFF);
 
 /// Active navigation item background (#0F4D2E).
 const Color kAdminActiveNavBackground = Color(0xFF0F4D2E);
@@ -49,10 +49,10 @@ const Color kAdminInactiveNavText = Color(0xFF404942);
 // --- Border Radius Tokens ----------------------------------------------------
 
 /// Apple squircle card radius for stat tiles, content panels, and tables.
-const BorderRadius kAdminCardRadius = BorderRadius.all(Radius.circular(16));
+const BorderRadius kAdminCardRadius = BorderRadius.all(Radius.circular(26));
 
 /// Squircle alias for explicit Apple design references.
-const BorderRadius kAdminSquircleRadius = BorderRadius.all(Radius.circular(16));
+const BorderRadius kAdminSquircleRadius = kAdminCardRadius;
 
 /// Sharp structural radius for dense inner data sub-cells.
 const BorderRadius kAdminTableRadius = BorderRadius.all(Radius.circular(8));
@@ -68,11 +68,19 @@ const BorderRadius kAdminPillRadius = BorderRadius.all(Radius.circular(20));
 /// Subtle Apple card shadow.
 const List<BoxShadow> kAdminCardShadow = [
   BoxShadow(
-    color: Color(0x08000000),
-    blurRadius: 8,
+    color: Color(0x06000000),
+    blurRadius: 4,
     offset: Offset(0, 2),
   ),
 ];
+
+/// Matches the provider workspace's light, single-surface cards.
+const BoxDecoration kAdminCardDecoration = BoxDecoration(
+  color: Colors.white,
+  borderRadius: kAdminCardRadius,
+  border: Border.fromBorderSide(BorderSide(color: kAdminHairline)),
+  boxShadow: kAdminCardShadow,
+);
 
 // --- Typography Helpers ------------------------------------------------------
 
@@ -133,7 +141,7 @@ TextStyle seqTabularFigures(TextStyle base) => base.copyWith(
 Widget adminIdPill(String idText) => Container(
       padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
       decoration: BoxDecoration(
-        color: const Color(0xFFF4F3F8),
+        color: kSeqSurfaceContainerLow,
         borderRadius: BorderRadius.circular(6),
         border: Border.all(color: kSeqOutlineVariant.withValues(alpha: 0.4)),
       ),
@@ -147,14 +155,14 @@ Widget adminIdPill(String idText) => Container(
 // Sequoia Apple Design System Tokens (from scholaris_sequoia/DESIGN.md)
 // =============================================================================
 
-const Color kSeqSurface = Color(0xFFFAF9FE);
-const Color kSeqSurfaceDim = Color(0xFFDAD9DF);
-const Color kSeqSurfaceBright = Color(0xFFFAF9FE);
+const Color kSeqSurface = kAdminSurface;
+const Color kSeqSurfaceDim = Color(0xFFDADADA);
+const Color kSeqSurfaceBright = kAdminSurface;
 const Color kSeqSurfaceContainerLowest = Color(0xFFFFFFFF);
-const Color kSeqSurfaceContainerLow = Color(0xFFF4F3F8);
-const Color kSeqSurfaceContainer = Color(0xFFEEEDF3);
-const Color kSeqSurfaceContainerHigh = Color(0xFFE9E7ED);
-const Color kSeqSurfaceContainerHighest = Color(0xFFE3E2E7);
+const Color kSeqSurfaceContainerLow = Color(0xFFF5F5F5);
+const Color kSeqSurfaceContainer = Color(0xFFF0F0F0);
+const Color kSeqSurfaceContainerHigh = Color(0xFFEAEAEA);
+const Color kSeqSurfaceContainerHighest = Color(0xFFE3E3E3);
 const Color kSeqOnSurface = Color(0xFF1A1B1F);
 const Color kSeqOnSurfaceVariant = Color(0xFF404942);
 const Color kSeqOutline = Color(0xFF5A625B);

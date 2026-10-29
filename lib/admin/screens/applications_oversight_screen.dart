@@ -562,18 +562,7 @@ class _ApplicationsOversightScreenState
   }) {
     return Container(
       padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: kSeqSurfaceContainerLowest,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: kSeqOutlineVariant.withValues(alpha: 0.3)),
-        boxShadow: const [
-          BoxShadow(
-            color: Color(0x06000000),
-            blurRadius: 6,
-            offset: Offset(0, 2),
-          ),
-        ],
-      ),
+      decoration: kAdminCardDecoration,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -646,18 +635,7 @@ class _ApplicationsOversightScreenState
 
     return Container(
       padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: kSeqSurfaceContainerLowest,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: kSeqOutlineVariant.withValues(alpha: 0.3)),
-        boxShadow: const [
-          BoxShadow(
-            color: Color(0x04000000),
-            blurRadius: 4,
-            offset: Offset(0, 1),
-          ),
-        ],
-      ),
+      decoration: kAdminCardDecoration,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -853,19 +831,7 @@ class _ApplicationsOversightScreenState
         borderRadius: BorderRadius.circular(16),
         child: Container(
           padding: const EdgeInsets.all(16),
-          decoration: BoxDecoration(
-            color: kSeqSurfaceContainerLowest,
-            borderRadius: BorderRadius.circular(16),
-            border: Border.all(
-                color: kSeqOutlineVariant.withValues(alpha: 0.35)),
-            boxShadow: const [
-              BoxShadow(
-                color: Color(0x06000000),
-                blurRadius: 6,
-                offset: Offset(0, 2),
-              ),
-            ],
-          ),
+          decoration: kAdminCardDecoration,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -1536,10 +1502,7 @@ class _ApplicationsOversightScreenState
                 child: Container(
                   margin: EdgeInsets.only(right: i < 3 ? 12 : 0),
                   height: 90,
-                  decoration: BoxDecoration(
-                    color: kSeqSurfaceContainerLowest,
-                    borderRadius: BorderRadius.circular(16),
-                  ),
+                  decoration: kAdminCardDecoration,
                 ),
               ),
             ),
@@ -1549,10 +1512,7 @@ class _ApplicationsOversightScreenState
           // Filter Shelf Skeleton
           Container(
             height: 90,
-            decoration: BoxDecoration(
-              color: kSeqSurfaceContainerLowest,
-              borderRadius: BorderRadius.circular(16),
-            ),
+            decoration: kAdminCardDecoration,
           ),
           const SizedBox(height: 16),
 
@@ -1563,10 +1523,7 @@ class _ApplicationsOversightScreenState
               (i) => Container(
                 margin: const EdgeInsets.only(bottom: 12),
                 height: 130,
-                decoration: BoxDecoration(
-                  color: kSeqSurfaceContainerLowest,
-                  borderRadius: BorderRadius.circular(16),
-                ),
+                decoration: kAdminCardDecoration,
               ),
             ),
           ),

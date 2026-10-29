@@ -502,14 +502,7 @@ Widget _buildSkeletonLoader(BuildContext context) {
   }) {
     return Container(
       padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: kSeqSurfaceContainerLowest,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: kSeqOutlineVariant.withValues(alpha: 0.5),
-          width: 1,
-        ),
-      ),
+      decoration: kAdminCardDecoration,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -721,13 +714,7 @@ Widget _buildSkeletonLoader(BuildContext context) {
       return Container(
         padding: const EdgeInsets.all(48),
         alignment: Alignment.center,
-        decoration: BoxDecoration(
-          color: kSeqSurfaceContainerLowest,
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(
-            color: kSeqOutlineVariant.withValues(alpha: 0.4),
-          ),
-        ),
+        decoration: kAdminCardDecoration,
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [

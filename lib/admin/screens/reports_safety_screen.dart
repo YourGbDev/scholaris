@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../features/admin/presentation/admin_analytics_provider.dart';
+import '../../features/admin/presentation/admin_theme.dart' show kAdminCardDecoration;
 import '../../features/provider/repositories/support_concern_repository.dart';
 import '../../features/safety/data/safety_report_repository.dart';
 import '../../features/safety/models/safety_report.dart';
@@ -478,11 +479,7 @@ class _ReportsSafetyScreenState extends ConsumerState<ReportsSafetyScreen> {
         Container(
           width: double.infinity,
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: const Color(0xFFE4E7EC)),
-          ),
+          decoration: kAdminCardDecoration,
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [

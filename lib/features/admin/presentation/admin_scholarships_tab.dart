@@ -489,18 +489,7 @@ class _AdminScholarshipsTabState extends ConsumerState<AdminScholarshipsTab> {
   }) {
     return Container(
       padding: const EdgeInsets.all(18),
-      decoration: BoxDecoration(
-        color: kSeqSurfaceContainerLowest,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: kSeqOutlineVariant.withValues(alpha: 0.35), width: 1),
-        boxShadow: const [
-          BoxShadow(
-            color: Color(0x0A000000),
-            blurRadius: 8,
-            offset: Offset(0, 2),
-          ),
-        ],
-      ),
+      decoration: kAdminCardDecoration,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -837,11 +826,7 @@ class _AdminScholarshipsTabState extends ConsumerState<AdminScholarshipsTab> {
     if (scholarships.isEmpty) {
       return Container(
         padding: const EdgeInsets.symmetric(vertical: 48, horizontal: 24),
-        decoration: BoxDecoration(
-          color: kSeqSurfaceContainerLowest,
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: kSeqOutlineVariant.withValues(alpha: 0.3)),
-        ),
+        decoration: kAdminCardDecoration,
         child: Center(
           child: Column(
             children: [
@@ -923,18 +908,7 @@ class _AdminScholarshipsTabState extends ConsumerState<AdminScholarshipsTab> {
 
     return Container(
       padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: kSeqSurfaceContainerLowest,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: kSeqOutlineVariant.withValues(alpha: 0.35), width: 1),
-        boxShadow: const [
-          BoxShadow(
-            color: Color(0x0A000000),
-            blurRadius: 8,
-            offset: Offset(0, 2),
-          ),
-        ],
-      ),
+      decoration: kAdminCardDecoration,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -1351,11 +1325,7 @@ class _AdminScholarshipsTabState extends ConsumerState<AdminScholarshipsTab> {
 
     return Container(
       padding: const EdgeInsets.all(22),
-      decoration: BoxDecoration(
-        color: kSeqSurfaceContainerLowest,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: kSeqOutlineVariant.withValues(alpha: 0.35)),
-      ),
+      decoration: kAdminCardDecoration,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -1381,17 +1351,6 @@ class _AdminScholarshipsTabState extends ConsumerState<AdminScholarshipsTab> {
                     ),
                   ],
                 ),
-              ),
-              Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const Icon(Icons.cloud_done_rounded, size: 16, color: kSeqPrimaryContainer),
-                  const SizedBox(width: 6),
-                  Text(
-                    'PostgreSQL Real-Time Connected',
-                    style: seqLabelSm(color: kSeqOutline, fontWeight: FontWeight.w600),
-                  ),
-                ],
               ),
             ],
           ),
@@ -1625,30 +1584,6 @@ class _AdminScholarshipsTabState extends ConsumerState<AdminScholarshipsTab> {
                   const SizedBox(width: 8),
                   Expanded(
                     child: _geoClusterBox('REGIONAL', '$regionalCount', 'Luz / Vis / Min', kSeqTertiary),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 12),
-              Wrap(
-                alignment: WrapAlignment.spaceBetween,
-                crossAxisAlignment: WrapCrossAlignment.center,
-                spacing: 8,
-                runSpacing: 4,
-                children: [
-                  Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      const Icon(Icons.check_circle_outline_rounded, size: 15, color: kSeqPrimaryContainer),
-                      const SizedBox(width: 6),
-                      Text(
-                        'Regional Distribution Verified',
-                        style: seqLabelSm(color: kSeqOnSurfaceVariant),
-                      ),
-                    ],
-                  ),
-                  Text(
-                    '100% Verified DB',
-                    style: seqLabelSm(color: kSeqOutline, fontWeight: FontWeight.w600),
                   ),
                 ],
               ),
@@ -1965,11 +1900,7 @@ class _AdminScholarshipsTabState extends ConsumerState<AdminScholarshipsTab> {
                 child: Container(
                   margin: EdgeInsets.only(right: i < 3 ? 14 : 0),
                   height: 130,
-                  decoration: BoxDecoration(
-                    color: kSeqSurfaceContainerLowest,
-                    borderRadius: BorderRadius.circular(16),
-                    border: Border.all(color: kSeqOutlineVariant.withValues(alpha: 0.3)),
-                  ),
+                  decoration: kAdminCardDecoration,
                 ),
               ),
             ),
@@ -1977,11 +1908,7 @@ class _AdminScholarshipsTabState extends ConsumerState<AdminScholarshipsTab> {
           const SizedBox(height: 20),
           Container(
             height: 60,
-            decoration: BoxDecoration(
-              color: kSeqSurfaceContainerLowest,
-              borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: kSeqOutlineVariant.withValues(alpha: 0.3)),
-            ),
+            decoration: kAdminCardDecoration,
           ),
           const SizedBox(height: 18),
           ...List.generate(
@@ -1989,11 +1916,7 @@ class _AdminScholarshipsTabState extends ConsumerState<AdminScholarshipsTab> {
             (_) => Container(
               margin: const EdgeInsets.only(bottom: 14),
               height: 160,
-              decoration: BoxDecoration(
-                color: kSeqSurfaceContainerLowest,
-                borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: kSeqOutlineVariant.withValues(alpha: 0.3)),
-              ),
+              decoration: kAdminCardDecoration,
             ),
           ),
         ],

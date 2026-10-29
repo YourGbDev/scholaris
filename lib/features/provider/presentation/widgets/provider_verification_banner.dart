@@ -3,12 +3,12 @@
 // Persistent Verification Status Banner for Provider Consoles.
 // Appears at the top of the provider shells without blocking access.
 
+import 'package:scholaris/shared/theme/app_theme.dart';
 import 'dart:typed_data';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 import '../../data/provider_verification_repository.dart';
 import '../../models/provider_verification.dart';
@@ -135,7 +135,7 @@ class ProviderVerificationBanner extends ConsumerWidget {
               children: [
                 Text(
                   title,
-                  style: GoogleFonts.inter(
+                  style: geist(
                     fontSize: 13,
                     fontWeight: FontWeight.w700,
                     color: titleColor,
@@ -144,7 +144,7 @@ class ProviderVerificationBanner extends ConsumerWidget {
                 const SizedBox(height: 2),
                 Text(
                   message,
-                  style: GoogleFonts.inter(
+                  style: geist(
                     fontSize: 12,
                     fontWeight: FontWeight.w400,
                     color: bodyColor,
@@ -165,7 +165,7 @@ class ProviderVerificationBanner extends ConsumerWidget {
                         side: const BorderSide(color: Color(0xFFFECACA)),
                         padding: const EdgeInsets.symmetric(
                             horizontal: 12, vertical: 12),
-                        textStyle: GoogleFonts.inter(
+                        textStyle: geist(
                           fontSize: 11.5,
                           fontWeight: FontWeight.w600,
                         ),
@@ -185,7 +185,7 @@ class ProviderVerificationBanner extends ConsumerWidget {
               ),
               child: Text(
                 'PENDING',
-                style: GoogleFonts.inter(
+                style: geist(
                   fontSize: 10,
                   fontWeight: FontWeight.w700,
                   color: const Color(0xFF92400E),

@@ -3,6 +3,7 @@
 // Provider modal dialog generating and displaying a shareable QR code for a published
 // scholarship using the canonical `scholaris://scholarships/{id}` URI scheme.
 
+import 'package:scholaris/shared/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -69,7 +70,7 @@ class _ScholarshipQrDialogState extends State<_ScholarshipQrDialog> {
                       children: [
                         Text(
                           'Scholarship QR Code',
-                          style: GoogleFonts.outfit(
+                          style: geist(
                             fontSize: 18,
                             fontWeight: FontWeight.w700,
                             color: const Color(0xFF161C27),
@@ -80,7 +81,7 @@ class _ScholarshipQrDialogState extends State<_ScholarshipQrDialog> {
                           s.title,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
-                          style: GoogleFonts.openSans(
+                          style: geist(
                             fontSize: 12.5,
                             color: const Color(0xFF707971),
                           ),
@@ -165,7 +166,7 @@ class _ScholarshipQrDialogState extends State<_ScholarshipQrDialog> {
                               const SizedBox(width: 4),
                               Text(
                                 _copied ? 'Copied' : 'Copy',
-                                style: GoogleFonts.outfit(
+                                style: geist(
                                   fontSize: 11.5,
                                   fontWeight: FontWeight.w600,
                                   color: _copied
@@ -186,7 +187,7 @@ class _ScholarshipQrDialogState extends State<_ScholarshipQrDialog> {
               Text(
                 'Students can scan this code with the Scholaris student app to open criteria and apply directly.',
                 textAlign: TextAlign.center,
-                style: GoogleFonts.openSans(
+                style: geist(
                   fontSize: 12,
                   color: const Color(0xFF707971),
                 ),
@@ -209,7 +210,7 @@ class _ScholarshipQrDialogState extends State<_ScholarshipQrDialog> {
                     onPressed: () => Navigator.of(context).pop(),
                     child: Text(
                       'Done',
-                      style: GoogleFonts.outfit(
+                      style: geist(
                         fontSize: 14,
                         fontWeight: FontWeight.w600,
                       ),

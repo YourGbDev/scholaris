@@ -5,8 +5,8 @@
 // in [ApplicationStatusUi] so the tracking surface and any future surface share one
 // consistent rendering.
 
+import 'package:scholaris/shared/theme/app_theme.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 import 'package:scholaris/features/applications/models/application.dart';
 
@@ -115,7 +115,7 @@ class ApplicationStatusChip extends StatelessWidget {
             Flexible(
               child: Text(
                 ui.label,
-                style: GoogleFonts.outfit(
+                style: geist(
                   fontSize: 11,
                   fontWeight: FontWeight.w700,
                   letterSpacing: 0.1,

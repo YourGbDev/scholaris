@@ -5,6 +5,7 @@
 // Strictly real data: 100% wired to public.applications, public.profiles, and public.scholarships.
 // Zero fabricated metrics, zero fake compliance stamps, zero fake candidate identities.
 
+import 'package:scholaris/shared/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -898,7 +899,7 @@ class _ApplicationsOversightScreenState
                       children: [
                         Text(
                           applicantDisplayName,
-                          style: GoogleFonts.inter(
+                          style: geist(
                             fontSize: 16,
                             color: hasApplicantName
                                 ? kSeqOnSurface

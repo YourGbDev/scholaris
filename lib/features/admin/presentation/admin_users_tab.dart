@@ -5,6 +5,7 @@
 // Visual tokens: scholaris_sequoia/DESIGN.md (Surface #FAF9FE, Primary Container #0F4D2E, Inter typography, 16px squircles)
 // Zero fabricated content: 100% wired to live Supabase profiles & provider_verifications.
 
+import 'package:scholaris/shared/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -1399,7 +1400,7 @@ class _AdminUsersTabState extends ConsumerState<AdminUsersTab> {
       alignment: Alignment.center,
       child: Text(
         initials,
-        style: GoogleFonts.inter(
+        style: geist(
           fontSize: size * 0.36,
           fontWeight: FontWeight.w700,
           color: fg,

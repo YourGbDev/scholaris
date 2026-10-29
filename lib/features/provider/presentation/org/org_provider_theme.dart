@@ -4,6 +4,7 @@
 // White workspace and sidebar, #0F4D2E active fill,
 // pure white active typography, subtle hairline borders, and responsive elevation.
 
+import 'package:scholaris/shared/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -71,7 +72,7 @@ TextStyle orgHeadline({
   double? letterSpacing,
   double? height,
 }) =>
-    GoogleFonts.inter(
+    geist(
       fontSize: fontSize,
       fontWeight: fontWeight,
       color: color,
@@ -86,7 +87,7 @@ TextStyle orgBody({
   double? letterSpacing,
   double? height,
 }) =>
-    GoogleFonts.inter(
+    geist(
       fontSize: fontSize,
       fontWeight: fontWeight,
       color: color,
@@ -101,7 +102,7 @@ TextStyle orgLabel({
   double? letterSpacing,
   double? height,
 }) =>
-    GoogleFonts.inter(
+    geist(
       fontSize: fontSize,
       fontWeight: fontWeight,
       color: color,

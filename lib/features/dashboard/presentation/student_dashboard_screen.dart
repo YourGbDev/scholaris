@@ -556,7 +556,7 @@ class _StudentDashboardScreenState
                     child: FittedBox(fit: BoxFit.scaleDown, alignment: Alignment.centerLeft, child:
                       Text(matchesFailed ? 'Matches unavailable' : matchCount == null ? 'Finding matches…' : '$matchCount ${matchCount == 1 ? 'match' : 'matches'}',
                         key: const ValueKey('stat-count-matches'),
-                        style: TextStyle(fontFamily: 'Georgia', fontSize: box.maxWidth * .075, fontWeight: FontWeight.bold, color: const Color(0xFF0F4D2E)),
+                        style: TextStyle(fontFamily: 'Geist', fontSize: box.maxWidth * .075, fontWeight: FontWeight.bold, color: const Color(0xFF0F4D2E)),
                       )),
                   ),
                 ),

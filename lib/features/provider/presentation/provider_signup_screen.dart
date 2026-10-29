@@ -9,6 +9,7 @@
 //
 // TODO(SMS-OTP): Integrate Telco SMS Gateway (e.g. Semaphore/Twilio) for live OTP verification.
 
+import 'package:scholaris/shared/theme/app_theme.dart';
 import 'dart:typed_data';
 
 import 'package:file_picker/file_picker.dart';
@@ -16,7 +17,6 @@ import 'package:flutter/material.dart';
 import 'package:scholaris/core/security/captcha_challenge.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'package:scholaris/core/security/password_validator.dart';
@@ -191,7 +191,7 @@ class _ProviderSignupScreenState extends ConsumerState<ProviderSignupScreen> {
     setState(() => _errorMessage = msg);
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(msg, style: GoogleFonts.inter(color: Colors.white)),
+        content: Text(msg, style: geist(color: Colors.white)),
         backgroundColor: const Color(0xFFBA1A1A),
         behavior: SnackBarBehavior.floating,
         margin: const EdgeInsets.all(16),
@@ -558,7 +558,7 @@ class _ProviderSignupScreenState extends ConsumerState<ProviderSignupScreen> {
                                 Expanded(
                                   child: Text(
                                     _errorMessage!,
-                                    style: GoogleFonts.inter(
+                                    style: geist(
                                       fontSize: 12.5,
                                       fontWeight: FontWeight.w500,
                                       color: const Color(0xFF410002),
@@ -629,7 +629,7 @@ class _ProviderSignupScreenState extends ConsumerState<ProviderSignupScreen> {
                       'PROVIDER REGISTRATION',
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: GoogleFonts.inter(
+                      style: geist(
                         fontSize: 9,
                         fontWeight: FontWeight.w700,
                         color: const Color(0xFF00351C),
@@ -648,7 +648,7 @@ class _ProviderSignupScreenState extends ConsumerState<ProviderSignupScreen> {
           icon: const Icon(Icons.arrow_back_rounded, size: 16),
           label: Text(
             'Login',
-            style: GoogleFonts.inter(
+            style: geist(
               fontSize: 12.5,
               fontWeight: FontWeight.w600,
             ),
@@ -714,7 +714,7 @@ class _ProviderSignupScreenState extends ConsumerState<ProviderSignupScreen> {
                         child: Text(
                           'Organization Provider',
                           maxLines: 1,
-                          style: GoogleFonts.inter(
+                          style: geist(
                             fontSize: 12,
                             fontWeight: isOrg
                                 ? FontWeight.w600
@@ -772,7 +772,7 @@ class _ProviderSignupScreenState extends ConsumerState<ProviderSignupScreen> {
                         child: Text(
                           'Individual Provider',
                           maxLines: 1,
-                          style: GoogleFonts.inter(
+                          style: geist(
                             fontSize: 12,
                             fontWeight: !isOrg
                                 ? FontWeight.w600
@@ -830,7 +830,7 @@ class _ProviderSignupScreenState extends ConsumerState<ProviderSignupScreen> {
           const SizedBox(height: 6),
           TextFormField(
             controller: _indivLegalNameCtrl,
-            style: GoogleFonts.inter(fontSize: 14),
+            style: geist(fontSize: 14),
             validator: (v) => (v == null || v.trim().isEmpty)
                 ? 'Enter your full legal name.'
                 : null,
@@ -847,7 +847,7 @@ class _ProviderSignupScreenState extends ConsumerState<ProviderSignupScreen> {
           TextFormField(
             controller: _indivEmailCtrl,
             keyboardType: TextInputType.emailAddress,
-            style: GoogleFonts.inter(fontSize: 14),
+            style: geist(fontSize: 14),
             validator: _validateEmail,
             decoration: _inputDecoration(
               hint: 'sponsor@gmail.com',
@@ -862,7 +862,7 @@ class _ProviderSignupScreenState extends ConsumerState<ProviderSignupScreen> {
           TextFormField(
             controller: _indivPhoneCtrl,
             keyboardType: TextInputType.phone,
-            style: GoogleFonts.inter(fontSize: 14),
+            style: geist(fontSize: 14),
             validator: _validatePhone,
             decoration: _inputDecoration(
               hint: '0917 123 4567 or +639171234567',
@@ -877,7 +877,7 @@ class _ProviderSignupScreenState extends ConsumerState<ProviderSignupScreen> {
           TextFormField(
             controller: _indivPasswordCtrl,
             obscureText: _obscurePassword,
-            style: GoogleFonts.inter(fontSize: 14),
+            style: geist(fontSize: 14),
             onChanged: (val) => setState(() {}),
             validator: (v) => PasswordValidator.validatePassword(v),
             decoration: _inputDecoration(
@@ -908,7 +908,7 @@ class _ProviderSignupScreenState extends ConsumerState<ProviderSignupScreen> {
           TextFormField(
             controller: _indivConfirmCtrl,
             obscureText: _obscureConfirm,
-            style: GoogleFonts.inter(fontSize: 14),
+            style: geist(fontSize: 14),
             validator: (v) => PasswordValidator.validateConfirmPassword(
               v,
               _indivPasswordCtrl.text,
@@ -956,7 +956,7 @@ class _ProviderSignupScreenState extends ConsumerState<ProviderSignupScreen> {
                       child: Text(
                         'Proceed to Identity & Verification',
                         maxLines: 1,
-                        style: GoogleFonts.inter(
+                        style: geist(
                           fontSize: 14,
                           fontWeight: FontWeight.w600,
                         ),
@@ -1024,7 +1024,7 @@ class _ProviderSignupScreenState extends ConsumerState<ProviderSignupScreen> {
           const SizedBox(height: 6),
           TextFormField(
             controller: _indivIdNumberCtrl,
-            style: GoogleFonts.inter(fontSize: 14),
+            style: geist(fontSize: 14),
             validator: (v) => (v == null || v.trim().isEmpty)
                 ? 'Enter your government ID number.'
                 : null,
@@ -1135,7 +1135,7 @@ class _ProviderSignupScreenState extends ConsumerState<ProviderSignupScreen> {
           const SizedBox(height: 6),
           TextFormField(
             controller: _indivTinCtrl,
-            style: GoogleFonts.inter(fontSize: 14),
+            style: geist(fontSize: 14),
             decoration: _inputDecoration(
               hint: '000-000-000-000',
               prefixIcon: Icons.receipt_long_outlined,
@@ -1163,7 +1163,7 @@ class _ProviderSignupScreenState extends ConsumerState<ProviderSignupScreen> {
               Expanded(
                 child: Text(
                   'I consent to the collection and secure processing of my personal and financial information under RA 10173 (Philippine Data Privacy Act) for identity verification and direct grant administration.',
-                  style: GoogleFonts.inter(
+                  style: geist(
                     fontSize: 11.5,
                     color: const Color(0xFF404942),
                     height: 1.4,
@@ -1223,7 +1223,7 @@ class _ProviderSignupScreenState extends ConsumerState<ProviderSignupScreen> {
                         )
                       : Text(
                           'Submit Verification',
-                          style: GoogleFonts.inter(
+                          style: geist(
                             fontSize: 14,
                             fontWeight: FontWeight.w600,
                           ),
@@ -1257,7 +1257,7 @@ class _ProviderSignupScreenState extends ConsumerState<ProviderSignupScreen> {
         Text(
           'Application submitted.',
           textAlign: TextAlign.center,
-          style: GoogleFonts.inter(
+          style: geist(
             fontSize: 22,
             fontWeight: FontWeight.w700,
             color: const Color(0xFF1A1B1F),
@@ -1273,7 +1273,7 @@ class _ProviderSignupScreenState extends ConsumerState<ProviderSignupScreen> {
           ),
           child: Text(
             'Verification status: Pending',
-            style: GoogleFonts.inter(
+            style: geist(
               fontSize: 12,
               fontWeight: FontWeight.w700,
               color: const Color(0xFF92400E),
@@ -1284,7 +1284,7 @@ class _ProviderSignupScreenState extends ConsumerState<ProviderSignupScreen> {
         Text(
           'Thank you, ${_indivLegalNameCtrl.text.trim()}. Your individual benefactor account has been registered. You can immediately access your Benefactor Console while our compliance committee reviews your submitted PhilSys/Government credentials.',
           textAlign: TextAlign.center,
-          style: GoogleFonts.inter(
+          style: geist(
             fontSize: 13,
             color: const Color(0xFF404942),
             height: 1.5,
@@ -1310,7 +1310,7 @@ class _ProviderSignupScreenState extends ConsumerState<ProviderSignupScreen> {
               children: [
                 Text(
                   'Access Individual Provider Console',
-                  style: GoogleFonts.inter(
+                  style: geist(
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
                   ),
@@ -1363,7 +1363,7 @@ class _ProviderSignupScreenState extends ConsumerState<ProviderSignupScreen> {
           const SizedBox(height: 6),
           TextFormField(
             controller: _orgNameCtrl,
-            style: GoogleFonts.inter(fontSize: 14),
+            style: geist(fontSize: 14),
             validator: (v) => (v == null || v.trim().isEmpty)
                 ? 'Enter your organization name.'
                 : null,
@@ -1415,7 +1415,7 @@ class _ProviderSignupScreenState extends ConsumerState<ProviderSignupScreen> {
           const SizedBox(height: 6),
           TextFormField(
             controller: _orgRegNumberCtrl,
-            style: GoogleFonts.inter(fontSize: 14),
+            style: geist(fontSize: 14),
             validator: (v) => (v == null || v.trim().isEmpty)
                 ? 'Enter SEC or BIR registration number.'
                 : null,
@@ -1451,7 +1451,7 @@ class _ProviderSignupScreenState extends ConsumerState<ProviderSignupScreen> {
                       child: Text(
                         'Proceed to Representative Details',
                         maxLines: 1,
-                        style: GoogleFonts.inter(
+                        style: geist(
                           fontSize: 14,
                           fontWeight: FontWeight.w600,
                         ),
@@ -1491,7 +1491,7 @@ class _ProviderSignupScreenState extends ConsumerState<ProviderSignupScreen> {
           const SizedBox(height: 6),
           TextFormField(
             controller: _orgRepNameCtrl,
-            style: GoogleFonts.inter(fontSize: 14),
+            style: geist(fontSize: 14),
             validator: (v) => (v == null || v.trim().isEmpty)
                 ? 'Enter representative full name.'
                 : null,
@@ -1507,7 +1507,7 @@ class _ProviderSignupScreenState extends ConsumerState<ProviderSignupScreen> {
           const SizedBox(height: 6),
           TextFormField(
             controller: _orgRepPositionCtrl,
-            style: GoogleFonts.inter(fontSize: 14),
+            style: geist(fontSize: 14),
             validator: (v) => (v == null || v.trim().isEmpty)
                 ? 'Enter official position.'
                 : null,
@@ -1524,7 +1524,7 @@ class _ProviderSignupScreenState extends ConsumerState<ProviderSignupScreen> {
           TextFormField(
             controller: _orgRepEmailCtrl,
             keyboardType: TextInputType.emailAddress,
-            style: GoogleFonts.inter(fontSize: 14),
+            style: geist(fontSize: 14),
             validator: _validateEmail,
             decoration: _inputDecoration(
               hint: 'msantos@ayalafoundation.org.ph',
@@ -1539,7 +1539,7 @@ class _ProviderSignupScreenState extends ConsumerState<ProviderSignupScreen> {
           TextFormField(
             controller: _orgRepPhoneCtrl,
             keyboardType: TextInputType.phone,
-            style: GoogleFonts.inter(fontSize: 14),
+            style: geist(fontSize: 14),
             validator: _validatePhone,
             decoration: _inputDecoration(
               hint: '0917 123 4567 or +639171234567',
@@ -1554,7 +1554,7 @@ class _ProviderSignupScreenState extends ConsumerState<ProviderSignupScreen> {
           TextFormField(
             controller: _orgPasswordCtrl,
             obscureText: _obscurePassword,
-            style: GoogleFonts.inter(fontSize: 14),
+            style: geist(fontSize: 14),
             onChanged: (val) => setState(() {}),
             validator: (v) => PasswordValidator.validatePassword(v),
             decoration: _inputDecoration(
@@ -1585,7 +1585,7 @@ class _ProviderSignupScreenState extends ConsumerState<ProviderSignupScreen> {
           TextFormField(
             controller: _orgConfirmCtrl,
             obscureText: _obscureConfirm,
-            style: GoogleFonts.inter(fontSize: 14),
+            style: geist(fontSize: 14),
             validator: (v) => PasswordValidator.validateConfirmPassword(
               v,
               _orgPasswordCtrl.text,
@@ -1651,7 +1651,7 @@ class _ProviderSignupScreenState extends ConsumerState<ProviderSignupScreen> {
                           child: Text(
                             'Proceed to Document Uploads',
                             maxLines: 1,
-                            style: GoogleFonts.inter(
+                            style: geist(
                               fontSize: 14,
                               fontWeight: FontWeight.w600,
                             ),
@@ -1783,7 +1783,7 @@ class _ProviderSignupScreenState extends ConsumerState<ProviderSignupScreen> {
                         child: Text(
                           'Review Application Dossier',
                           maxLines: 1,
-                          style: GoogleFonts.inter(
+                          style: geist(
                             fontSize: 14,
                             fontWeight: FontWeight.w600,
                           ),
@@ -1874,7 +1874,7 @@ class _ProviderSignupScreenState extends ConsumerState<ProviderSignupScreen> {
             Expanded(
               child: Text(
                 'I confirm that I am an authorized representative of the entity with full authority to register and disburse educational aid under RA 10173 and applicable Philippine foundation governance regulations.',
-                style: GoogleFonts.inter(
+                style: geist(
                   fontSize: 11.5,
                   color: const Color(0xFF404942),
                   height: 1.4,
@@ -1928,7 +1928,7 @@ class _ProviderSignupScreenState extends ConsumerState<ProviderSignupScreen> {
                       )
                     : Text(
                         'Submit for Accreditation',
-                        style: GoogleFonts.inter(
+                        style: geist(
                           fontSize: 14,
                           fontWeight: FontWeight.w600,
                         ),
@@ -1961,7 +1961,7 @@ class _ProviderSignupScreenState extends ConsumerState<ProviderSignupScreen> {
         Text(
           'Submitted for accreditation.',
           textAlign: TextAlign.center,
-          style: GoogleFonts.inter(
+          style: geist(
             fontSize: 22,
             fontWeight: FontWeight.w700,
             color: const Color(0xFF1A1B1F),
@@ -1977,7 +1977,7 @@ class _ProviderSignupScreenState extends ConsumerState<ProviderSignupScreen> {
           ),
           child: Text(
             'Status: Pending review',
-            style: GoogleFonts.inter(
+            style: geist(
               fontSize: 12,
               fontWeight: FontWeight.w700,
               color: const Color(0xFF92400E),
@@ -1988,7 +1988,7 @@ class _ProviderSignupScreenState extends ConsumerState<ProviderSignupScreen> {
         Text(
           'Your institutional dossier for ${_orgNameCtrl.text.trim()} has been dispatched to the Scholaris accreditation engine. You may immediately explore the Provider Console while our clearance auditors review your SEC & BIR documents.',
           textAlign: TextAlign.center,
-          style: GoogleFonts.inter(
+          style: geist(
             fontSize: 13,
             color: const Color(0xFF404942),
             height: 1.5,
@@ -2014,7 +2014,7 @@ class _ProviderSignupScreenState extends ConsumerState<ProviderSignupScreen> {
               children: [
                 Text(
                   'Access Organization Console',
-                  style: GoogleFonts.inter(
+                  style: geist(
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
                   ),
@@ -2047,7 +2047,7 @@ class _ProviderSignupScreenState extends ConsumerState<ProviderSignupScreen> {
           children: [
             Text(
               'STEP $currentStep OF $totalSteps',
-              style: GoogleFonts.inter(
+              style: geist(
                 fontSize: 11,
                 fontWeight: FontWeight.w700,
                 color: const Color(0xFF0F4D2E),
@@ -2056,7 +2056,7 @@ class _ProviderSignupScreenState extends ConsumerState<ProviderSignupScreen> {
             ),
             Text(
               '${((currentStep / totalSteps) * 100).toInt()}% COMPLETED',
-              style: GoogleFonts.inter(
+              style: geist(
                 fontSize: 10.5,
                 fontWeight: FontWeight.w600,
                 color: const Color(0xFF707971),
@@ -2077,7 +2077,7 @@ class _ProviderSignupScreenState extends ConsumerState<ProviderSignupScreen> {
         const SizedBox(height: 14),
         Text(
           stepTitle,
-          style: GoogleFonts.inter(
+          style: geist(
             fontSize: 20,
             fontWeight: FontWeight.w700,
             color: const Color(0xFF1A1B1F),
@@ -2087,7 +2087,7 @@ class _ProviderSignupScreenState extends ConsumerState<ProviderSignupScreen> {
         const SizedBox(height: 4),
         Text(
           subtitle,
-          style: GoogleFonts.inter(
+          style: geist(
             fontSize: 12.5,
             color: const Color(0xFF404942),
             height: 1.4,
@@ -2104,7 +2104,7 @@ class _ProviderSignupScreenState extends ConsumerState<ProviderSignupScreen> {
         Flexible(
           child: Text(
             label,
-            style: GoogleFonts.inter(
+            style: geist(
               fontSize: 12,
               fontWeight: FontWeight.w600,
               color: const Color(0xFF1A1B1F),
@@ -2114,7 +2114,7 @@ class _ProviderSignupScreenState extends ConsumerState<ProviderSignupScreen> {
         if (isRequired)
           Text(
             ' *',
-            style: GoogleFonts.inter(
+            style: geist(
               fontSize: 12,
               fontWeight: FontWeight.w700,
               color: const Color(0xFFBA1A1A),
@@ -2131,7 +2131,7 @@ class _ProviderSignupScreenState extends ConsumerState<ProviderSignupScreen> {
   }) {
     return InputDecoration(
       hintText: hint,
-      hintStyle: GoogleFonts.inter(
+      hintStyle: geist(
         fontSize: 13,
         color: const Color(0xFF707971).withValues(alpha: 0.6),
       ),
@@ -2192,7 +2192,7 @@ class _ProviderSignupScreenState extends ConsumerState<ProviderSignupScreen> {
                 title,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
-                style: GoogleFonts.inter(
+                style: geist(
                   fontSize: 12.5,
                   fontWeight: isUploaded ? FontWeight.w600 : FontWeight.w400,
                   color: isUploaded
@@ -2203,7 +2203,7 @@ class _ProviderSignupScreenState extends ConsumerState<ProviderSignupScreen> {
             ),
             Text(
               isUploaded ? 'Change' : 'Browse',
-              style: GoogleFonts.inter(
+              style: geist(
                 fontSize: 11.5,
                 fontWeight: FontWeight.w600,
                 color: const Color(0xFF0F4D2E),
@@ -2247,14 +2247,14 @@ class _ProviderSignupScreenState extends ConsumerState<ProviderSignupScreen> {
           children: [
             Text(
               'Password Complexity',
-              style: GoogleFonts.inter(
+              style: geist(
                 fontSize: 11,
                 color: const Color(0xFF707971),
               ),
             ),
             Text(
               PasswordValidator.strengthLabel(passwordStrength),
-              style: GoogleFonts.inter(
+              style: geist(
                 fontSize: 11,
                 fontWeight: FontWeight.w600,
                 color: passwordStrength >= 3
@@ -2314,7 +2314,7 @@ class _ProviderSignupScreenState extends ConsumerState<ProviderSignupScreen> {
           Expanded(
             child: Text(
               text,
-              style: GoogleFonts.inter(
+              style: geist(
                 fontSize: 11,
                 color: met ? const Color(0xFF1A1B1F) : const Color(0xFF707971),
               ),
@@ -2344,7 +2344,7 @@ class _ProviderSignupScreenState extends ConsumerState<ProviderSignupScreen> {
             children: [
               Text(
                 title,
-                style: GoogleFonts.inter(
+                style: geist(
                   fontSize: 13,
                   fontWeight: FontWeight.w700,
                   color: const Color(0xFF1A1B1F),
@@ -2354,7 +2354,7 @@ class _ProviderSignupScreenState extends ConsumerState<ProviderSignupScreen> {
                 onTap: onEdit,
                 child: Text(
                   'Edit',
-                  style: GoogleFonts.inter(
+                  style: geist(
                     fontSize: 12,
                     fontWeight: FontWeight.w600,
                     color: const Color(0xFF0F4D2E),
@@ -2372,7 +2372,7 @@ class _ProviderSignupScreenState extends ConsumerState<ProviderSignupScreen> {
                 children: [
                   Text(
                     e.key,
-                    style: GoogleFonts.inter(
+                    style: geist(
                       fontSize: 11.5,
                       color: const Color(0xFF707971),
                     ),
@@ -2382,7 +2382,7 @@ class _ProviderSignupScreenState extends ConsumerState<ProviderSignupScreen> {
                       e.value,
                       textAlign: TextAlign.right,
                       overflow: TextOverflow.ellipsis,
-                      style: GoogleFonts.inter(
+                      style: geist(
                         fontSize: 12,
                         fontWeight: FontWeight.w600,
                         color: const Color(0xFF1A1B1F),
@@ -2442,7 +2442,7 @@ class _ProviderSignupScreenState extends ConsumerState<ProviderSignupScreen> {
           Text(
             'Confirm Your Email Address',
             textAlign: TextAlign.center,
-            style: GoogleFonts.inter(
+            style: geist(
               fontSize: 22,
               fontWeight: FontWeight.w700,
               color: const Color(0xFF1A1B1F),
@@ -2453,7 +2453,7 @@ class _ProviderSignupScreenState extends ConsumerState<ProviderSignupScreen> {
           Text(
             'We have sent an accreditation confirmation link to:\n${_pendingConfirmationEmail ?? 'your registered email'}\n\nPlease check your inbox, confirm your email address, and then sign in to finish your provider verification.',
             textAlign: TextAlign.center,
-            style: GoogleFonts.inter(
+            style: geist(
               fontSize: 14,
               color: const Color(0xFF707971),
               height: 1.5,
@@ -2476,7 +2476,7 @@ class _ProviderSignupScreenState extends ConsumerState<ProviderSignupScreen> {
               ),
               child: Text(
                 'Proceed to Provider Sign In',
-                style: GoogleFonts.inter(
+                style: geist(
                   fontSize: 14,
                   fontWeight: FontWeight.w600,
                 ),
@@ -2504,7 +2504,7 @@ class _ProviderSignupScreenState extends ConsumerState<ProviderSignupScreen> {
               child: Text(
                 'RA 10173 Philippine Data Privacy Act Compliant · Encrypted Identity Verification',
                 textAlign: TextAlign.center,
-                style: GoogleFonts.inter(
+                style: geist(
                   fontSize: 10,
                   color: const Color(0xFF707971),
                 ),
@@ -2515,7 +2515,7 @@ class _ProviderSignupScreenState extends ConsumerState<ProviderSignupScreen> {
         const SizedBox(height: 4),
         Text(
           '© 2026 Scholaris Philippines • Provider Accreditation Framework',
-          style: GoogleFonts.inter(
+          style: geist(
             fontSize: 10,
             color: const Color(0xFF707971),
           ),

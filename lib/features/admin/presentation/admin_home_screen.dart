@@ -1,3 +1,4 @@
+import 'package:scholaris/shared/theme/app_theme.dart';
 import 'package:scholaris/admin/screens/reports_safety_screen.dart';
 import 'package:scholaris/shared/theme/app_motion.dart';
 import 'package:scholaris/features/safety/presentation/student_safety_report.dart';
@@ -5,7 +6,6 @@ import 'package:scholaris/features/provider/presentation/widgets/org_workspace_t
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 import 'package:scholaris/shared/widgets/logout_confirmation_dialog.dart';
 import 'package:scholaris/shared/widgets/scholaris_logo.dart';
@@ -225,7 +225,7 @@ class _AdminHomeScreenState extends ConsumerState<AdminHomeScreen> {
           Expanded(
             child: Text(
               'Platform administration',
-              style: GoogleFonts.inter(
+              style: geist(
                 fontSize: 13,
                 color: kAdminTextSecondary,
               ),
@@ -377,7 +377,7 @@ class _AdminHomeScreenState extends ConsumerState<AdminHomeScreen> {
       padding: const EdgeInsets.fromLTRB(16, 10, 16, 4),
       child: Text(
         title,
-        style: GoogleFonts.inter(
+        style: geist(
           fontSize: 11.5,
           fontWeight: FontWeight.w600,
           letterSpacing: 0.5,
@@ -429,7 +429,7 @@ class _SidebarNavItem extends StatelessWidget {
               Expanded(
                 child: Text(
                   label,
-                  style: GoogleFonts.inter(
+                  style: geist(
                     fontSize: 13.5,
                     fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
                   ),

@@ -42,7 +42,6 @@ import 'package:scholaris/features/onboarding/presentation/onboarding_screen.dar
 import 'package:scholaris/features/home/presentation/home_screen.dart';
 import 'package:scholaris/features/profile/presentation/profile_setup_screen.dart';
 import 'package:scholaris/features/profile/providers/profile_setup_provider.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:scholaris/features/applications/presentation/application_detail_screen.dart';
 import 'package:scholaris/features/applications/presentation/submission_confirmation_receipt_screen.dart';
 import 'package:scholaris/features/scholarships/models/scholarship.dart';
@@ -125,7 +124,7 @@ final routerProvider = Provider<GoRouter>((ref) {
               const SizedBox(height: 16),
               Text(
                 'Page Not Found',
-                style: GoogleFonts.outfit(
+                style: geist(
                   fontSize: 22,
                   fontWeight: FontWeight.bold,
                   color: const Color(0xFF161C27),
@@ -135,7 +134,7 @@ final routerProvider = Provider<GoRouter>((ref) {
               Text(
                 'The requested route (${state.uri.path}) does not exist.',
                 textAlign: TextAlign.center,
-                style: GoogleFonts.openSans(
+                style: geist(
                   fontSize: 14,
                   color: const Color(0xFF404942),
                 ),
@@ -153,7 +152,7 @@ final routerProvider = Provider<GoRouter>((ref) {
                 icon: const Icon(Icons.home_rounded, size: 18),
                 label: Text(
                   'Return to Home',
-                  style: GoogleFonts.outfit(fontSize: 14, fontWeight: FontWeight.w600),
+                  style: geist(fontSize: 14, fontWeight: FontWeight.w600),
                 ),
               ),
             ],

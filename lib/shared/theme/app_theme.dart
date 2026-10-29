@@ -4,12 +4,10 @@
 // Academic Momentum design specifications (`academic_momentum/DESIGN.md`).
 //
 // Typography:
-// - Display, Headlines, Titles, Labels: Outfit
-// - Body Copy & Analytical Reading: Open Sans
-// - Brand Wordmark: Poppins Bold
+// - UI headings, labels, body copy, and metrics: bundled Geist Sans
+// - Legacy font helpers delegate to Geist to preserve existing call sites.
 
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'app_motion.dart';
 
 // --- Stitch Color Tokens ----------------------------------------------------
@@ -131,7 +129,52 @@ const LinearGradient kHeroSurface = LinearGradient(
 
 // --- Typography Helpers -----------------------------------------------------
 
-/// Primary geometric font for headlines, metrics, pills, buttons, and titles.
+/// Scholaris UI typography. Bundled locally for consistent offline rendering.
+TextStyle geist({
+  TextStyle? textStyle,
+  Color? color,
+  Color? backgroundColor,
+  double? fontSize,
+  FontWeight? fontWeight,
+  FontStyle? fontStyle,
+  double? letterSpacing,
+  double? wordSpacing,
+  TextBaseline? textBaseline,
+  double? height,
+  Locale? locale,
+  Paint? foreground,
+  Paint? background,
+  List<Shadow>? shadows,
+  List<FontFeature>? fontFeatures,
+  TextDecoration? decoration,
+  Color? decorationColor,
+  TextDecorationStyle? decorationStyle,
+  double? decorationThickness,
+}) => (textStyle ?? const TextStyle()).copyWith(
+  fontFamily: 'Geist',
+  color: color,
+  backgroundColor: backgroundColor,
+  fontSize: fontSize,
+  fontWeight: fontWeight,
+  fontStyle: fontStyle,
+  letterSpacing: letterSpacing,
+  wordSpacing: wordSpacing,
+  textBaseline: textBaseline,
+  height: height,
+  locale: locale,
+  foreground: foreground,
+  background: background,
+  shadows: shadows,
+  fontFeatures: fontFeatures,
+  decoration: decoration,
+  decorationColor: decorationColor,
+  decorationStyle: decorationStyle,
+  decorationThickness: decorationThickness,
+);
+
+
+
+/// Compatibility helper; headlines and labels use Geist Sans.
 /// Defaults to Apple HIG optical tracking and leading if unspecified.
 TextStyle outfit({
   TextStyle? textStyle,
@@ -153,7 +196,7 @@ TextStyle outfit({
   Color? decorationColor,
   TextDecorationStyle? decorationStyle,
   double? decorationThickness,
-}) => GoogleFonts.outfit(
+}) => geist(
   textStyle: textStyle ?? const TextStyle(fontFamilyFallback: ['Roboto']),
   color: color,
   backgroundColor: backgroundColor,
@@ -175,7 +218,7 @@ TextStyle outfit({
   decorationThickness: decorationThickness,
 );
 
-/// Humanist font for body copy, eligibility descriptions, and analytical text.
+/// Compatibility helper; body copy uses Geist Sans.
 /// Defaults to Apple HIG optical tracking and relaxed body leading (1.45–1.50).
 TextStyle openSans({
   TextStyle? textStyle,
@@ -197,7 +240,7 @@ TextStyle openSans({
   Color? decorationColor,
   TextDecorationStyle? decorationStyle,
   double? decorationThickness,
-}) => GoogleFonts.openSans(
+}) => geist(
   textStyle: textStyle ?? const TextStyle(fontFamilyFallback: ['Roboto']),
   color: color,
   backgroundColor: backgroundColor,
@@ -219,7 +262,7 @@ TextStyle openSans({
   decorationThickness: decorationThickness,
 );
 
-/// Preserved helper for brand wordmarks and headers.
+/// Compatibility helper; wordmarks and headers use Geist Sans.
 TextStyle poppins({
   TextStyle? textStyle,
   Color? color,
@@ -240,7 +283,7 @@ TextStyle poppins({
   Color? decorationColor,
   TextDecorationStyle? decorationStyle,
   double? decorationThickness,
-}) => GoogleFonts.poppins(
+}) => geist(
   textStyle: textStyle ?? const TextStyle(fontFamilyFallback: ['Roboto']),
   color: color,
   backgroundColor: backgroundColor,
@@ -283,7 +326,7 @@ TextStyle inter({
   Color? decorationColor,
   TextDecorationStyle? decorationStyle,
   double? decorationThickness,
-}) => GoogleFonts.inter(
+}) => geist(
   textStyle: textStyle ?? const TextStyle(fontFamilyFallback: ['Roboto']),
   color: color,
   backgroundColor: backgroundColor,
@@ -339,7 +382,7 @@ ThemeData scholarisTheme() {
     useMaterial3: true,
     colorScheme: colorScheme,
     scaffoldBackgroundColor: kBackground,
-    fontFamily: GoogleFonts.openSans().fontFamily,
+    fontFamily: 'Geist',
     textTheme: applyOpticalTypography(baseTextTheme),
     appBarTheme: AppBarTheme(
       backgroundColor: kSurfaceContainerLowest,

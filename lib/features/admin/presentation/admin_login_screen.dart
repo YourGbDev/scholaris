@@ -6,11 +6,11 @@
 // - Strictly internal: no social logins, no student signups, no provider marketing
 // - Direct authentication & role-gated access to Admin HomeScreen
 
+import 'package:scholaris/shared/theme/app_theme.dart';
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'package:scholaris/core/security/login_lockout_service.dart';
@@ -179,7 +179,7 @@ class _AdminLoginScreenState extends ConsumerState<AdminLoginScreen> {
             Expanded(
               child: Text(
                 message,
-                style: GoogleFonts.openSans(fontSize: 13, color: Colors.white, fontWeight: FontWeight.w500),
+                style: geist(fontSize: 13, color: Colors.white, fontWeight: FontWeight.w500),
               ),
             ),
           ],
@@ -204,20 +204,20 @@ class _AdminLoginScreenState extends ConsumerState<AdminLoginScreen> {
             const SizedBox(width: 10),
             Text(
               'Access Restricted',
-              style: GoogleFonts.outfit(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 18),
+              style: geist(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 18),
             ),
           ],
         ),
         content: Text(
           'This account does not have Super Administrator privileges.\n\nOnly authorized institutional governance officers can sign in to the Scholaris Admin Console.',
-          style: GoogleFonts.openSans(color: const Color(0xFF94A3B8), fontSize: 13, height: 1.5),
+          style: geist(color: const Color(0xFF94A3B8), fontSize: 13, height: 1.5),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(),
             child: Text(
               'Acknowledge',
-              style: GoogleFonts.outfit(color: const Color(0xFF34D399), fontWeight: FontWeight.bold),
+              style: geist(color: const Color(0xFF34D399), fontWeight: FontWeight.bold),
             ),
           ),
         ],
@@ -321,7 +321,7 @@ class _AdminLoginScreenState extends ConsumerState<AdminLoginScreen> {
                                 const SizedBox(width: 8),
                                 Text(
                                   'RESTRICTED ACCESS • CENTRAL GOVERNANCE & AUDIT',
-                                  style: GoogleFonts.outfit(
+                                  style: geist(
                                     fontSize: 10.5,
                                     fontWeight: FontWeight.w700,
                                     letterSpacing: 0.8,
@@ -365,7 +365,7 @@ class _AdminLoginScreenState extends ConsumerState<AdminLoginScreen> {
                                 children: [
                                   Text(
                                     'Scholaris Admin Console',
-                                    style: GoogleFonts.outfit(
+                                    style: geist(
                                       fontSize: 22,
                                       fontWeight: FontWeight.bold,
                                       color: Colors.white,
@@ -375,7 +375,7 @@ class _AdminLoginScreenState extends ConsumerState<AdminLoginScreen> {
                                   const SizedBox(height: 2),
                                   Text(
                                     'Central Platform Oversight & Grant Disbursement',
-                                    style: GoogleFonts.openSans(
+                                    style: geist(
                                       fontSize: 12,
                                       color: const Color(0xFF94A3B8),
                                       fontWeight: FontWeight.w500,
@@ -392,7 +392,7 @@ class _AdminLoginScreenState extends ConsumerState<AdminLoginScreen> {
                         // Subtitle
                         Text(
                           'Sign in to verify scholarship providers, audit application lifecycle approvals, and authorize official grant disbursements.',
-                          style: GoogleFonts.openSans(
+                          style: geist(
                             fontSize: 13,
                             height: 1.5,
                             color: const Color(0xFFCBD5E1),
@@ -417,7 +417,7 @@ class _AdminLoginScreenState extends ConsumerState<AdminLoginScreen> {
                                 Expanded(
                                   child: Text(
                                     _lockoutStatus?.lockoutMessage ?? 'Too many attempts.',
-                                    style: GoogleFonts.openSans(
+                                    style: geist(
                                       color: const Color(0xFFFCA5A5),
                                       fontSize: 12.5,
                                       fontWeight: FontWeight.w600,
@@ -433,7 +433,7 @@ class _AdminLoginScreenState extends ConsumerState<AdminLoginScreen> {
                         // Email Field
                         Text(
                           'ADMINISTRATOR EMAIL',
-                          style: GoogleFonts.outfit(
+                          style: geist(
                             fontSize: 11,
                             fontWeight: FontWeight.bold,
                             letterSpacing: 1.0,
@@ -444,11 +444,11 @@ class _AdminLoginScreenState extends ConsumerState<AdminLoginScreen> {
                         TextFormField(
                           controller: _emailController,
                           enabled: !_isLoading && !isLocked,
-                          style: GoogleFonts.openSans(color: Colors.white, fontSize: 14),
+                          style: geist(color: Colors.white, fontSize: 14),
                           keyboardType: TextInputType.emailAddress,
                           decoration: InputDecoration(
                             hintText: 'e.g. admin@scholaris.edu.ph',
-                            hintStyle: GoogleFonts.openSans(color: const Color(0xFF64748B), fontSize: 13),
+                            hintStyle: geist(color: const Color(0xFF64748B), fontSize: 13),
                             prefixIcon: const Icon(Icons.alternate_email_rounded, color: Color(0xFF94A3B8), size: 19),
                             filled: true,
                             fillColor: const Color(0xFF0F172A),
@@ -482,7 +482,7 @@ class _AdminLoginScreenState extends ConsumerState<AdminLoginScreen> {
                         // Password Field
                         Text(
                           'SECURITY CREDENTIAL',
-                          style: GoogleFonts.outfit(
+                          style: geist(
                             fontSize: 11,
                             fontWeight: FontWeight.bold,
                             letterSpacing: 1.0,
@@ -494,10 +494,10 @@ class _AdminLoginScreenState extends ConsumerState<AdminLoginScreen> {
                           controller: _passwordController,
                           enabled: !_isLoading && !isLocked,
                           obscureText: _obscurePassword,
-                          style: GoogleFonts.openSans(color: Colors.white, fontSize: 14),
+                          style: geist(color: Colors.white, fontSize: 14),
                           decoration: InputDecoration(
                             hintText: '••••••••••••',
-                            hintStyle: GoogleFonts.openSans(color: const Color(0xFF64748B), fontSize: 13),
+                            hintStyle: geist(color: const Color(0xFF64748B), fontSize: 13),
                             prefixIcon: const Icon(Icons.key_rounded, color: Color(0xFF94A3B8), size: 19),
                             suffixIcon: IconButton(
                               icon: Icon(
@@ -572,7 +572,7 @@ class _AdminLoginScreenState extends ConsumerState<AdminLoginScreen> {
                                       const SizedBox(width: 10),
                                       Text(
                                         'Authorize & Sign In',
-                                        style: GoogleFonts.outfit(
+                                        style: geist(
                                           fontSize: 14,
                                           fontWeight: FontWeight.bold,
                                           color: Colors.white,
@@ -601,7 +601,7 @@ class _AdminLoginScreenState extends ConsumerState<AdminLoginScreen> {
                               Expanded(
                                 child: Text(
                                   'Protected by Row-Level Security & Immutable Audit Logging (RA 10173).',
-                                  style: GoogleFonts.openSans(
+                                  style: geist(
                                     fontSize: 10.5,
                                     color: const Color(0xFF64748B),
                                     height: 1.3,

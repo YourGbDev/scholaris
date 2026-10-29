@@ -6,7 +6,6 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 import '../../../../shared/theme/app_theme.dart';
 import '../../../profile/providers/avatar_provider.dart';
@@ -75,7 +74,7 @@ class IdentityPhotoRequiredDialog extends ConsumerWidget {
             Text(
               'Identity Photo Required',
               textAlign: TextAlign.center,
-              style: GoogleFonts.poppins(
+              style: geist(
                 fontSize: 18,
                 fontWeight: FontWeight.w700,
                 color: const Color(0xFF161C27),
@@ -86,7 +85,7 @@ class IdentityPhotoRequiredDialog extends ConsumerWidget {
             // Subtitle
             Text(
               'Official Student Verification',
-              style: GoogleFonts.outfit(
+              style: geist(
                 fontSize: 12,
                 fontWeight: FontWeight.w600,
                 color: kPrimary,
@@ -118,7 +117,7 @@ class IdentityPhotoRequiredDialog extends ConsumerWidget {
                       Expanded(
                         child: Text(
                           'Scholarship providers require an authentic, real photograph of you for identity verification before evaluating your application.',
-                          style: GoogleFonts.openSans(
+                          style: geist(
                             fontSize: 12,
                             height: 1.45,
                             color: const Color(0xFF404942),
@@ -130,7 +129,7 @@ class IdentityPhotoRequiredDialog extends ConsumerWidget {
                   const SizedBox(height: 8),
                   Text(
                     'Applications submitted with cartoon or placeholder avatars cannot be deliberated by scholarship committees.',
-                    style: GoogleFonts.openSans(
+                    style: geist(
                       fontSize: 11,
                       fontWeight: FontWeight.w600,
                       color: const Color(0xFFBA1A1A),
@@ -157,7 +156,7 @@ class IdentityPhotoRequiredDialog extends ConsumerWidget {
                 icon: const Icon(Icons.camera_alt_rounded, size: 18),
                 label: Text(
                   'Take Photo with Camera',
-                  style: GoogleFonts.poppins(
+                  style: geist(
                     fontSize: 13,
                     fontWeight: FontWeight.w600,
                   ),
@@ -184,7 +183,7 @@ class IdentityPhotoRequiredDialog extends ConsumerWidget {
                 icon: const Icon(Icons.photo_library_rounded, size: 18, color: kPrimary),
                 label: Text(
                   'Upload from Gallery',
-                  style: GoogleFonts.poppins(
+                  style: geist(
                     fontSize: 13,
                     fontWeight: FontWeight.w600,
                     color: kPrimary,
@@ -209,7 +208,7 @@ class IdentityPhotoRequiredDialog extends ConsumerWidget {
               onPressed: () => Navigator.of(context).pop(false),
               child: Text(
                 'Cancel',
-                style: GoogleFonts.openSans(
+                style: geist(
                   fontSize: 13,
                   fontWeight: FontWeight.w600,
                   color: const Color(0xFF707971),
@@ -221,7 +220,7 @@ class IdentityPhotoRequiredDialog extends ConsumerWidget {
               onPressed: () => Navigator.of(context).pop(true),
               child: Text(
                 'Proceed with Warning',
-                style: GoogleFonts.openSans(
+                style: geist(
                   fontSize: 12,
                   fontWeight: FontWeight.w600,
                   color: kPrimary,

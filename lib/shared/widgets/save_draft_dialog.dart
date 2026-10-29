@@ -4,7 +4,6 @@
 // an application flow with unsaved progress.
 
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:scholaris/shared/theme/app_theme.dart';
 
 enum SaveDraftExitAction {
@@ -25,7 +24,7 @@ Future<SaveDraftExitAction?> showSaveDraftExitDialog(BuildContext context) {
       backgroundColor: Colors.white,
       title: Text(
         'Save your progress?',
-        style: GoogleFonts.poppins(
+        style: geist(
           fontSize: 18,
           fontWeight: FontWeight.w700,
           color: kNavyTrust,
@@ -33,7 +32,7 @@ Future<SaveDraftExitAction?> showSaveDraftExitDialog(BuildContext context) {
       ),
       content: Text(
         'You have unsaved progress in your application. Would you like to save it as a draft so you can return to it later, or discard your progress?',
-        style: GoogleFonts.openSans(
+        style: geist(
           fontSize: 14,
           color: const Color(0xFF404942),
           height: 1.4,
@@ -46,7 +45,7 @@ Future<SaveDraftExitAction?> showSaveDraftExitDialog(BuildContext context) {
               Navigator.of(dialogContext).pop(SaveDraftExitAction.cancel),
           child: Text(
             'Cancel',
-            style: GoogleFonts.openSans(
+            style: geist(
               fontSize: 14,
               fontWeight: FontWeight.w600,
               color: const Color(0xFF707971),
@@ -59,7 +58,7 @@ Future<SaveDraftExitAction?> showSaveDraftExitDialog(BuildContext context) {
               Navigator.of(dialogContext).pop(SaveDraftExitAction.discard),
           child: Text(
             'Discard',
-            style: GoogleFonts.openSans(
+            style: geist(
               fontSize: 14,
               fontWeight: FontWeight.w600,
               color: kError,
@@ -80,7 +79,7 @@ Future<SaveDraftExitAction?> showSaveDraftExitDialog(BuildContext context) {
               Navigator.of(dialogContext).pop(SaveDraftExitAction.saveAsDraft),
           child: Text(
             'Save as Draft',
-            style: GoogleFonts.poppins(
+            style: geist(
               fontSize: 14,
               fontWeight: FontWeight.w600,
             ),

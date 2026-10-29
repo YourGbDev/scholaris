@@ -17,7 +17,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 import 'package:scholaris/features/onboarding/controllers/onboarding_controller.dart';
 import 'package:scholaris/shared/theme/app_motion.dart';
@@ -141,7 +140,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                           ),
                           child: Text(
                             'Skip',
-                            style: GoogleFonts.outfit(
+                            style: geist(
                               fontSize: 13.5,
                               fontWeight: FontWeight.w600,
                               color: const Color(0xFF436084),
@@ -164,7 +163,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                             children: [
                               Text(
                                 'STEP ',
-                                style: GoogleFonts.outfit(
+                                style: geist(
                                   fontSize: 9.5,
                                   fontWeight: FontWeight.w600,
                                   color: const Color(0xFF436084),
@@ -173,7 +172,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                               ),
                               Text(
                                 '3 of 3',
-                                style: GoogleFonts.outfit(
+                                style: geist(
                                   fontSize: 10.5,
                                   fontWeight: FontWeight.bold,
                                   color: const Color(0xFF0F4D2E),
@@ -282,7 +281,7 @@ class _Slide1Ecosystem extends StatelessWidget {
                             const SizedBox(width: 4),
                             Text(
                               'SIMULAN ANG PANGARAP',
-                              style: GoogleFonts.outfit(
+                              style: geist(
                                 fontSize: 10,
                                 fontWeight: FontWeight.w700,
                                 color: const Color(0xFF145131),
@@ -296,7 +295,7 @@ class _Slide1Ecosystem extends StatelessWidget {
                       // Headline
                       Text(
                         'Find Your Scholarship',
-                        style: GoogleFonts.outfit(
+                        style: geist(
                           fontSize: 24,
                           fontWeight: FontWeight.bold,
                           color: const Color(0xFF00351C),
@@ -308,7 +307,7 @@ class _Slide1Ecosystem extends StatelessWidget {
                       // Narrative
                       Text(
                         'Discover scholarships suited to your academic background, region, and financial needs.',
-                        style: GoogleFonts.openSans(
+                        style: geist(
                           fontSize: 13,
                           color: const Color(0xFF404942),
                           height: 1.35,
@@ -349,7 +348,7 @@ class _Slide1Ecosystem extends StatelessWidget {
                                 children: [
                                   Text(
                                     'Explore scholarship opportunities',
-                                    style: GoogleFonts.outfit(
+                                    style: geist(
                                       fontSize: 13.5,
                                       fontWeight: FontWeight.bold,
                                       color: const Color(0xFF161C27),
@@ -357,7 +356,7 @@ class _Slide1Ecosystem extends StatelessWidget {
                                   ),
                                   Text(
                                     'Across Luzon, Visayas & Mindanao',
-                                    style: GoogleFonts.openSans(
+                                    style: geist(
                                       fontSize: 11,
                                       color: const Color(0xFF436084),
                                     ),
@@ -394,7 +393,7 @@ class _Slide1Ecosystem extends StatelessWidget {
                     children: [
                       Text(
                         'Next',
-                        style: GoogleFonts.outfit(
+                        style: geist(
                           fontSize: 15,
                           fontWeight: FontWeight.w700,
                         ),
@@ -410,7 +409,7 @@ class _Slide1Ecosystem extends StatelessWidget {
                 onPressed: onLogin,
                 child: Text.rich(
                   TextSpan(
-                    style: GoogleFonts.openSans(
+                    style: geist(
                       fontSize: 12.5,
                       color: const Color(0xFF436084),
                     ),
@@ -418,7 +417,7 @@ class _Slide1Ecosystem extends StatelessWidget {
                       const TextSpan(text: 'Already have an account? '),
                       TextSpan(
                         text: 'Sign In',
-                        style: GoogleFonts.outfit(
+                        style: geist(
                           fontWeight: FontWeight.bold,
                           color: const Color(0xFF0F4D2E),
                           decoration: TextDecoration.underline,
@@ -494,7 +493,7 @@ class _Slide2Matching extends StatelessWidget {
                             const SizedBox(width: 4),
                             Text(
                               'SMART CRITERIA MATCHING',
-                              style: GoogleFonts.outfit(
+                              style: geist(
                                 fontSize: 10,
                                 fontWeight: FontWeight.w700,
                                 color: const Color(0xFF2B486B),
@@ -508,7 +507,7 @@ class _Slide2Matching extends StatelessWidget {
                       // Headline
                       Text.rich(
                         TextSpan(
-                          style: GoogleFonts.outfit(
+                          style: geist(
                             fontSize: 24,
                             fontWeight: FontWeight.bold,
                             color: const Color(0xFF161C27),
@@ -528,7 +527,7 @@ class _Slide2Matching extends StatelessWidget {
                       // Narrative
                       Text(
                         'Spend less time searching. Scholaris compares your profile with scholarship criteria to highlight opportunities that may suit you.',
-                        style: GoogleFonts.openSans(
+                        style: geist(
                           fontSize: 13,
                           color: const Color(0xFF404942),
                           height: 1.35,
@@ -583,7 +582,7 @@ class _Slide2Matching extends StatelessWidget {
                       icon: const Icon(Icons.arrow_back_rounded, size: 17),
                       label: Text(
                         'Back',
-                        style: GoogleFonts.outfit(
+                        style: geist(
                           fontSize: 14.5,
                           fontWeight: FontWeight.w600,
                         ),
@@ -617,7 +616,7 @@ class _Slide2Matching extends StatelessWidget {
                           children: [
                             Text(
                               'Continue',
-                              style: GoogleFonts.outfit(
+                              style: geist(
                                 fontSize: 15,
                                 fontWeight: FontWeight.w700,
                               ),
@@ -696,7 +695,7 @@ class _Slide3AuditTrail extends StatelessWidget {
                             const SizedBox(width: 4),
                             Text(
                               'RADICAL TRANSPARENCY',
-                              style: GoogleFonts.outfit(
+                              style: geist(
                                 fontSize: 10,
                                 fontWeight: FontWeight.w700,
                                 color: const Color(0xFF145131),
@@ -710,7 +709,7 @@ class _Slide3AuditTrail extends StatelessWidget {
                       // Headline
                       Text(
                         'Track Every Step',
-                        style: GoogleFonts.outfit(
+                        style: geist(
                           fontSize: 24,
                           fontWeight: FontWeight.bold,
                           color: const Color(0xFF161C27),
@@ -722,7 +721,7 @@ class _Slide3AuditTrail extends StatelessWidget {
                       // Narrative
                       Text(
                         'Follow your application from draft and submission through to a decision.',
-                        style: GoogleFonts.openSans(
+                        style: geist(
                           fontSize: 13,
                           color: const Color(0xFF404942),
                           height: 1.35,
@@ -751,7 +750,7 @@ class _Slide3AuditTrail extends StatelessWidget {
                             Expanded(
                               child: Text.rich(
                                 TextSpan(
-                                  style: GoogleFonts.openSans(
+                                  style: geist(
                                     fontSize: 11,
                                     color: const Color(0xFF404942),
                                   ),
@@ -762,7 +761,7 @@ class _Slide3AuditTrail extends StatelessWidget {
                                     ),
                                     TextSpan(
                                       text: '• 100% Free for Students',
-                                      style: GoogleFonts.openSans(
+                                      style: geist(
                                         fontWeight: FontWeight.bold,
                                         color: const Color(0xFF0F4D2E),
                                       ),
@@ -800,7 +799,7 @@ class _Slide3AuditTrail extends StatelessWidget {
                     children: [
                       Text(
                         'Get Started',
-                        style: GoogleFonts.outfit(
+                        style: geist(
                           fontSize: 15.5,
                           fontWeight: FontWeight.bold,
                         ),
@@ -816,7 +815,7 @@ class _Slide3AuditTrail extends StatelessWidget {
                 onPressed: onLogin,
                 child: Text.rich(
                   TextSpan(
-                    style: GoogleFonts.openSans(
+                    style: geist(
                       fontSize: 12.5,
                       color: const Color(0xFF436084),
                     ),
@@ -824,7 +823,7 @@ class _Slide3AuditTrail extends StatelessWidget {
                       const TextSpan(text: 'Already have an account? '),
                       TextSpan(
                         text: 'Log In',
-                        style: GoogleFonts.outfit(
+                        style: geist(
                           fontWeight: FontWeight.bold,
                           color: const Color(0xFF161C27),
                           decoration: TextDecoration.underline,
@@ -1075,7 +1074,7 @@ class _VerifiedGrantsBadge extends StatelessWidget {
                 const SizedBox(width: 4),
                 Text(
                   'SCHOLARSHIP DISCOVERY',
-                  style: GoogleFonts.outfit(
+                  style: geist(
                     fontSize: 9.5,
                     fontWeight: FontWeight.w700,
                     color: const Color(0xFF00351C),
@@ -1132,7 +1131,7 @@ class _PrivateEndowmentsBadge extends StatelessWidget {
           const SizedBox(width: 5.5),
           Text(
             'Private Endowments',
-            style: GoogleFonts.outfit(
+            style: geist(
               fontSize: 11.0,
               fontWeight: FontWeight.bold,
               color: const Color(0xFF404942),
@@ -1197,7 +1196,7 @@ class _EcosystemBadge extends StatelessWidget {
             children: [
               Text(
                 title,
-                style: GoogleFonts.outfit(
+                style: geist(
                   fontSize: 11.5,
                   fontWeight: FontWeight.bold,
                   color: const Color(0xFF161C27),
@@ -1206,7 +1205,7 @@ class _EcosystemBadge extends StatelessWidget {
               ),
               Text(
                 subtitle,
-                style: GoogleFonts.openSans(
+                style: geist(
                   fontSize: 9.0,
                   fontWeight: FontWeight.w600,
                   color: const Color(0xFF436084),
@@ -1324,7 +1323,7 @@ class _PrecisionMatchingCanvas extends StatelessWidget {
                         children: [
                           RichText(
                             text: TextSpan(
-                              style: GoogleFonts.outfit(
+                              style: geist(
                                 fontSize: 10.5,
                                 fontWeight: FontWeight.bold,
                                 color: const Color(0xFF0F4D2E),
@@ -1333,7 +1332,7 @@ class _PrecisionMatchingCanvas extends StatelessWidget {
                                 const TextSpan(text: '98'),
                                 TextSpan(
                                   text: '%',
-                                  style: GoogleFonts.outfit(
+                                  style: geist(
                                     fontSize: 7.5,
                                     fontWeight: FontWeight.w600,
                                     color: const Color(0xFFF1B41E),
@@ -1344,7 +1343,7 @@ class _PrecisionMatchingCanvas extends StatelessWidget {
                           ),
                           Text(
                             'MATCH',
-                            style: GoogleFonts.outfit(
+                            style: geist(
                               fontSize: 5.5,
                               fontWeight: FontWeight.w700,
                               color: const Color(0xFF436084),
@@ -1377,7 +1376,7 @@ class _PrecisionMatchingCanvas extends StatelessWidget {
                       const SizedBox(width: 3.5),
                       Text(
                         'DOST-SEI Merit',
-                        style: GoogleFonts.outfit(
+                        style: geist(
                           fontSize: 10.0,
                           fontWeight: FontWeight.bold,
                           color: const Color(0xFF0F4D2E),
@@ -1446,7 +1445,7 @@ class _MatrixBadge extends StatelessWidget {
           ],
           Text(
             text,
-            style: GoogleFonts.outfit(
+            style: geist(
               fontSize: 11.5,
               fontWeight: FontWeight.bold,
               color: const Color(0xFF161C27),
@@ -1619,7 +1618,7 @@ class _AuditTrailCanvas extends StatelessWidget {
                     Flexible(
                       child: Text(
                         'Application progress',
-                        style: GoogleFonts.outfit(
+                        style: geist(
                           fontSize: 12,
                           fontWeight: FontWeight.bold,
                           color: const Color(0xFF161C27),
@@ -1651,7 +1650,7 @@ class _AuditTrailCanvas extends StatelessWidget {
                     const SizedBox(width: 4),
                     Text(
                       'Status updates',
-                      style: GoogleFonts.outfit(
+                      style: geist(
                         fontSize: 9.5,
                         fontWeight: FontWeight.w600,
                         color: const Color(0xFF404942),
@@ -2010,7 +2009,7 @@ class _AuditStepRow extends StatelessWidget {
                   Expanded(
                     child: Text(
                       step,
-                      style: GoogleFonts.outfit(
+                      style: geist(
                         fontSize: 11,
                         fontWeight: FontWeight.bold,
                         color: const Color(0xFF161C27),
@@ -2031,7 +2030,7 @@ class _AuditStepRow extends StatelessWidget {
                       ),
                       child: Text(
                         chip!,
-                        style: GoogleFonts.outfit(
+                        style: geist(
                           fontSize: 8.5,
                           fontWeight: FontWeight.bold,
                           color: const Color(0xFF145131),
@@ -2043,7 +2042,7 @@ class _AuditStepRow extends StatelessWidget {
               ),
               Text(
                 subtitle,
-                style: GoogleFonts.openSans(
+                style: geist(
                   fontSize: 9.5,
                   color: const Color(0xFF404942),
                 ),
@@ -2062,7 +2061,7 @@ class _AuditStepRow extends StatelessWidget {
             ),
             child: Text(
               badge!,
-              style: GoogleFonts.outfit(
+              style: geist(
                 fontSize: 9,
                 fontWeight: FontWeight.bold,
                 color: badgeColor ?? const Color(0xFF161C27),
@@ -2095,7 +2094,7 @@ class _FeatureCheckRow extends StatelessWidget {
         Expanded(
           child: Text(
             text,
-            style: GoogleFonts.openSans(
+            style: geist(
               fontSize: 11.5,
               fontWeight: FontWeight.w600,
               color: const Color(0xFF161C27),

@@ -22,7 +22,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:scholaris/features/profile/providers/profile_setup_provider.dart';
 import 'package:scholaris/features/scholarships/services/match_reasons.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:scholaris/features/applications/models/application.dart';
@@ -114,7 +113,7 @@ class _SavedScreenState extends ConsumerState<SavedScreen> {
                       children: [
                         Text(
                           'Saved Scholarships',
-                          style: GoogleFonts.outfit(
+                          style: geist(
                             fontSize: 22,
                             fontWeight: FontWeight.bold,
                             color: const Color(0xFF161C27),
@@ -125,7 +124,7 @@ class _SavedScreenState extends ConsumerState<SavedScreen> {
                           targetValue: savedCount,
                           prefix: '(',
                           suffix: ' saved)',
-                          style: GoogleFonts.outfit(
+                          style: geist(
                             fontSize: 13,
                             fontWeight: FontWeight.w600,
                             color: const Color(0xFF404942),
@@ -171,7 +170,7 @@ class _SavedScreenState extends ConsumerState<SavedScreen> {
                   autofocus: true,
                   decoration: InputDecoration(
                     hintText: 'Search saved scholarships...',
-                    hintStyle: GoogleFonts.openSans(
+                    hintStyle: geist(
                       fontSize: 13.5,
                       color: const Color(0xFF707971),
                     ),
@@ -205,7 +204,7 @@ class _SavedScreenState extends ConsumerState<SavedScreen> {
                       borderSide: const BorderSide(color: kPrimary, width: 1.5),
                     ),
                   ),
-                  style: GoogleFonts.openSans(fontSize: 14),
+                  style: geist(fontSize: 14),
                 ),
               ),
 
@@ -304,7 +303,7 @@ class _SavedScreenState extends ConsumerState<SavedScreen> {
                   const SizedBox(height: 12),
                   Text(
                     'No matching saved scholarships',
-                    style: GoogleFonts.outfit(
+                    style: geist(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
                       color: const Color(0xFF161C27),
@@ -313,7 +312,7 @@ class _SavedScreenState extends ConsumerState<SavedScreen> {
                   const SizedBox(height: 4),
                   Text(
                     'Try searching with a different keyword.',
-                    style: GoogleFonts.openSans(
+                    style: geist(
                       fontSize: 13,
                       color: const Color(0xFF404942),
                     ),
@@ -324,7 +323,7 @@ class _SavedScreenState extends ConsumerState<SavedScreen> {
                       onPressed: () => _searchController.clear(),
                       child: Text(
                         'Clear search',
-                        style: GoogleFonts.outfit(
+                        style: geist(
                           fontSize: 13,
                           fontWeight: FontWeight.bold,
                           color: kPrimary,
@@ -392,7 +391,7 @@ class _SavedScreenState extends ConsumerState<SavedScreen> {
                     added
                         ? 'Scholarship saved to your list!'
                         : 'Scholarship removed from bookmarks',
-                    style: GoogleFonts.openSans(
+                    style: geist(
                       fontSize: 13,
                       fontWeight: FontWeight.w600,
                       color: Colors.white,
@@ -449,7 +448,7 @@ class _SavedEmptyState extends ConsumerWidget {
                 Text(
                   "Save scholarships you're interested in",
                   textAlign: TextAlign.center,
-                  style: GoogleFonts.outfit(
+                  style: geist(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
                     color: const Color(0xFF161C27),
@@ -460,7 +459,7 @@ class _SavedEmptyState extends ConsumerWidget {
                 Text(
                   "Save scholarships you're interested in so you don't lose them.",
                   textAlign: TextAlign.center,
-                  style: GoogleFonts.openSans(
+                  style: geist(
                     fontSize: 12,
                     fontWeight: FontWeight.w600,
                     color: const Color(0xFF0F4D2E),
@@ -472,7 +471,7 @@ class _SavedEmptyState extends ConsumerWidget {
                   'application requirements without losing your spot. Tap the bookmark '
                   'icon on any scholarship card to save it here.',
                   textAlign: TextAlign.center,
-                  style: GoogleFonts.openSans(
+                  style: geist(
                     fontSize: 12,
                     color: const Color(0xFF404942),
                     height: 1.4,
@@ -496,7 +495,7 @@ class _SavedEmptyState extends ConsumerWidget {
                       icon: const Icon(Icons.arrow_forward_rounded, size: 16),
                       label: Text(
                         'Discover Scholarships',
-                        style: GoogleFonts.outfit(
+                        style: geist(
                           fontSize: 14,
                           fontWeight: FontWeight.bold,
                         ),
@@ -527,7 +526,7 @@ class _SavedEmptyState extends ConsumerWidget {
                       child: Text(
                         'Trending Grants Near You',
                         overflow: TextOverflow.ellipsis,
-                        style: GoogleFonts.outfit(
+                        style: geist(
                           fontSize: 14.5,
                           fontWeight: FontWeight.bold,
                           color: const Color(0xFF161C27),
@@ -546,7 +545,7 @@ class _SavedEmptyState extends ConsumerWidget {
                 ),
                 child: Text(
                   'SUGGESTED',
-                  style: GoogleFonts.outfit(
+                  style: geist(
                     fontSize: 10,
                     fontWeight: FontWeight.w700,
                     color: const Color(0xFF001C38),
@@ -685,7 +684,7 @@ class _SuggestedGrantCard extends ConsumerWidget {
                           ),
                           child: Text(
                             category,
-                            style: GoogleFonts.outfit(
+                            style: geist(
                               fontSize: 10.5,
                               fontWeight: FontWeight.w600,
                               color: const Color(0xFF404942),
@@ -697,7 +696,7 @@ class _SuggestedGrantCard extends ConsumerWidget {
                           title,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
-                          style: GoogleFonts.outfit(
+                          style: geist(
                             fontSize: 14.5,
                             fontWeight: FontWeight.bold,
                             color: const Color(0xFF161C27),
@@ -708,7 +707,7 @@ class _SuggestedGrantCard extends ConsumerWidget {
                           provider,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
-                          style: GoogleFonts.openSans(
+                          style: geist(
                             fontSize: 12,
                             color: const Color(0xFF404942),
                           ),
@@ -749,7 +748,7 @@ class _SuggestedGrantCard extends ConsumerWidget {
                                         added
                                             ? 'Scholarship saved to your list!'
                                             : 'Scholarship removed from bookmarks',
-                                        style: GoogleFonts.openSans(
+                                        style: geist(
                                           fontSize: 13,
                                           fontWeight: FontWeight.w600,
                                           color: Colors.white,
@@ -795,7 +794,7 @@ class _SuggestedGrantCard extends ConsumerWidget {
                       children: [
                         Text(
                           amount,
-                          style: GoogleFonts.outfit(
+                          style: geist(
                             fontSize: 15,
                             fontWeight: FontWeight.w700,
                             color: const Color(0xFF0F4D2E),
@@ -803,7 +802,7 @@ class _SuggestedGrantCard extends ConsumerWidget {
                         ),
                         Text(
                           frequency,
-                          style: GoogleFonts.openSans(
+                          style: geist(
                             fontSize: 11,
                             color: const Color(0xFF404942),
                           ),
@@ -823,7 +822,7 @@ class _SuggestedGrantCard extends ConsumerWidget {
                           const SizedBox(width: 3),
                           Text(
                             badgeText,
-                            style: GoogleFonts.outfit(
+                            style: geist(
                               fontSize: 10.5,
                               fontWeight: FontWeight.w600,
                               color: badgeTextColor,

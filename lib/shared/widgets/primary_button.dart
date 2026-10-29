@@ -3,8 +3,8 @@
 // The primary Scholaris action button. Presents a loading spinner while
 // [onPressed] is in flight, matching the auth/setup screens' existing look.
 
+import 'package:scholaris/shared/theme/app_theme.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 class PrimaryButton extends StatelessWidget {
   const PrimaryButton({
@@ -37,7 +37,7 @@ class PrimaryButton extends StatelessWidget {
                   Icon(icon, size: 20, color: Colors.white),
                   const SizedBox(width: 8),
                 ],
-                Text(label, style: GoogleFonts.poppins(fontWeight: FontWeight.w600)),
+                Text(label, style: geist(fontWeight: FontWeight.w600)),
               ],
             ),
     );

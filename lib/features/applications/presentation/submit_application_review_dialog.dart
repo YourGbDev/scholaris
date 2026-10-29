@@ -18,7 +18,6 @@ import '../providers/application_document_provider.dart';
 import 'widgets/document_upload_sheet.dart';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 import 'package:scholaris/features/profile/models/student_profile.dart';
 import 'package:scholaris/features/profile/providers/profile_setup_provider.dart';
@@ -253,7 +252,7 @@ class _SubmitApplicationReviewDialogState
                               'Final Step • Review',
 
                               overflow: TextOverflow.ellipsis,
-                              style: GoogleFonts.outfit(
+                              style: geist(
                                 fontSize: 11,
                                 fontWeight: FontWeight.w700,
                                 color: kSecondary,
@@ -267,7 +266,7 @@ class _SubmitApplicationReviewDialogState
                     const SizedBox(height: 6),
                     Text(
                       'Submit Application',
-                      style: GoogleFonts.outfit(
+                      style: geist(
                         fontSize: 22,
                         fontWeight: FontWeight.bold,
                         color: kOnSurface,
@@ -278,7 +277,7 @@ class _SubmitApplicationReviewDialogState
                     // Prompt label preserved for accessibility and test suites
                     Text(
                       'Apply to this scholarship?',
-                      style: GoogleFonts.openSans(
+                      style: geist(
                         fontSize: 12,
                         fontWeight: FontWeight.w600,
                         color: kSecondary,
@@ -289,7 +288,7 @@ class _SubmitApplicationReviewDialogState
                       '${widget.scholarship.title} • ${widget.scholarship.provider ?? "National Science Endowment"}',
 
                       overflow: TextOverflow.ellipsis,
-                      style: GoogleFonts.openSans(
+                      style: geist(
                         fontSize: 12,
                         color: kOnSurfaceVariant,
                       ),
@@ -329,7 +328,7 @@ class _SubmitApplicationReviewDialogState
                   'Review & Submit',
 
                   overflow: TextOverflow.ellipsis,
-                  style: GoogleFonts.outfit(
+                  style: geist(
                     fontSize: 12,
                     fontWeight: FontWeight.bold,
                     color: kPrimaryDark,
@@ -342,7 +341,7 @@ class _SubmitApplicationReviewDialogState
                   'Review Required',
 
                   overflow: TextOverflow.ellipsis,
-                  style: GoogleFonts.outfit(
+                  style: geist(
                     fontSize: 12,
                     fontWeight: FontWeight.w600,
                     color: kOnSurfaceVariant,
@@ -428,7 +427,7 @@ class _SubmitApplicationReviewDialogState
         const SizedBox(width: 4),
         Text(
           label,
-          style: GoogleFonts.outfit(
+          style: geist(
             fontSize: 11,
             fontWeight: bold ? FontWeight.bold : FontWeight.w600,
             color: kPrimaryDark,
@@ -475,7 +474,7 @@ class _SubmitApplicationReviewDialogState
                     children: [
                       Text(
                         'AWARD VALUE',
-                        style: GoogleFonts.outfit(
+                        style: geist(
                           fontSize: 10,
                           fontWeight: FontWeight.w700,
                           color: kOnSurfaceVariant,
@@ -489,7 +488,7 @@ class _SubmitApplicationReviewDialogState
                         child: RichText(
                           text: TextSpan(
                             text: _grantValue(widget.scholarship),
-                            style: GoogleFonts.outfit(
+                            style: geist(
                               fontSize: 20,
                               fontWeight: FontWeight.bold,
                               color: kPrimaryDark,
@@ -497,7 +496,7 @@ class _SubmitApplicationReviewDialogState
                             children: [
                               TextSpan(
                                 text: ' / semester',
-                                style: GoogleFonts.openSans(
+                                style: geist(
                                   fontSize: 12,
                                   fontWeight: FontWeight.normal,
                                   color: kOnSurfaceVariant,
@@ -541,7 +540,7 @@ class _SubmitApplicationReviewDialogState
                           const SizedBox(width: 4),
                           Text(
                             '98% Fit',
-                            style: GoogleFonts.outfit(
+                            style: geist(
                               fontSize: 11,
                               fontWeight: FontWeight.bold,
                               color: kOnPrimaryFixedVariant,
@@ -553,7 +552,7 @@ class _SubmitApplicationReviewDialogState
                     const SizedBox(height: 3),
                     Text(
                       '4-Year Renewable',
-                      style: GoogleFonts.openSans(
+                      style: geist(
                         fontSize: 10,
                         color: kOnSurfaceVariant,
                       ),
@@ -599,7 +598,7 @@ class _SubmitApplicationReviewDialogState
                           children: [
                             Text(
                               'Deadline',
-                              style: GoogleFonts.outfit(
+                              style: geist(
                                 fontSize: 10,
                                 fontWeight: FontWeight.w600,
                                 color: kOnSurfaceVariant,
@@ -611,7 +610,7 @@ class _SubmitApplicationReviewDialogState
                                   : deadlineLabel(widget.scholarship.deadline),
 
                               overflow: TextOverflow.ellipsis,
-                              style: GoogleFonts.outfit(
+                              style: geist(
                                 fontSize: 12,
                                 fontWeight: FontWeight.w600,
                                 color: kError,
@@ -657,7 +656,7 @@ class _SubmitApplicationReviewDialogState
                           children: [
                             Text(
                               'Recipient',
-                              style: GoogleFonts.outfit(
+                              style: geist(
                                 fontSize: 10,
                                 fontWeight: FontWeight.w600,
                                 color: kOnSurfaceVariant,
@@ -667,7 +666,7 @@ class _SubmitApplicationReviewDialogState
                               'UP Diliman',
 
                               overflow: TextOverflow.ellipsis,
-                              style: GoogleFonts.outfit(
+                              style: geist(
                                 fontSize: 12,
                                 fontWeight: FontWeight.w600,
                                 color: kOnSurface,
@@ -708,7 +707,7 @@ class _SubmitApplicationReviewDialogState
         children: [
           Text(
             'Application Packet',
-            style: GoogleFonts.outfit(
+            style: geist(
               fontSize: 16,
               fontWeight: FontWeight.bold,
             ),
@@ -811,7 +810,7 @@ class _SubmitApplicationReviewDialogState
                   'Affirmations & Honor Code',
 
                   overflow: TextOverflow.ellipsis,
-                  style: GoogleFonts.outfit(
+                  style: geist(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
                     color: kOnSurface,
@@ -882,7 +881,7 @@ class _SubmitApplicationReviewDialogState
             Expanded(
               child: Text(
                 text,
-                style: GoogleFonts.openSans(
+                style: geist(
                   fontSize: 12,
                   color: kOnSurface,
                   height: 1.4,
@@ -922,7 +921,7 @@ class _SubmitApplicationReviewDialogState
             children: [
               Text(
                 'APPLICANT',
-                style: GoogleFonts.outfit(
+                style: geist(
                   fontSize: 10,
                   fontWeight: FontWeight.w700,
                   color: kOnSurfaceVariant,
@@ -940,7 +939,7 @@ class _SubmitApplicationReviewDialogState
                   const SizedBox(width: 4),
                   Text(
                     'Review Pending',
-                    style: GoogleFonts.outfit(
+                    style: geist(
                       fontSize: 11,
                       fontWeight: FontWeight.bold,
                       color: kPrimaryContainer,
@@ -970,7 +969,7 @@ class _SubmitApplicationReviewDialogState
                         children: [
                           Text(
                             'Applicant Name',
-                            style: GoogleFonts.openSans(
+                            style: geist(
                               fontSize: 10,
                               color: kOnSurfaceVariant,
                             ),
@@ -980,7 +979,7 @@ class _SubmitApplicationReviewDialogState
                             studentName,
 
                             overflow: TextOverflow.ellipsis,
-                            style: GoogleFonts.outfit(
+                            style: geist(
                               fontSize: 22,
                               fontWeight: FontWeight.bold,
                               fontStyle: FontStyle.italic,
@@ -1007,7 +1006,7 @@ class _SubmitApplicationReviewDialogState
                         'Submission time is saved after successful submission.',
 
                         overflow: TextOverflow.ellipsis,
-                        style: GoogleFonts.openSans(
+                        style: geist(
                           fontSize: 10,
                           color: kOnSurfaceVariant,
                         ),
@@ -1016,7 +1015,7 @@ class _SubmitApplicationReviewDialogState
                     const SizedBox(width: 8),
                     Text(
                       '',
-                      style: GoogleFonts.outfit(
+                      style: geist(
                         fontSize: 11,
                         fontWeight: FontWeight.bold,
                         color: kPrimaryContainer,
@@ -1042,7 +1041,7 @@ class _SubmitApplicationReviewDialogState
                 Expanded(
                   child: Text(
                     'A submission is complete only after it is saved successfully.',
-                    style: GoogleFonts.openSans(
+                    style: geist(
                       fontSize: 11,
                       color: kOnSurfaceVariant,
                     ),
@@ -1112,7 +1111,7 @@ class _SubmitApplicationReviewDialogState
                     child: Text(
                       'Submit Application (Final)',
                       textAlign: TextAlign.center,
-                      style: GoogleFonts.outfit(
+                      style: geist(
                         fontSize: 14,
                         fontWeight: FontWeight.bold,
                       ),
@@ -1137,7 +1136,7 @@ class _SubmitApplicationReviewDialogState
                 onPressed: () => Navigator.of(context).pop(false),
                 child: Text(
                   'Cancel',
-                  style: GoogleFonts.openSans(
+                  style: geist(
                     fontSize: 13,
                     fontWeight: FontWeight.w600,
                     color: const Color(0xFF707971),
@@ -1156,7 +1155,7 @@ class _SubmitApplicationReviewDialogState
                       )
                     : Text(
                         'Save Progress & Return to Grant Detail',
-                        style: GoogleFonts.outfit(
+                        style: geist(
                           fontSize: 13,
                           fontWeight: FontWeight.bold,
                           color: kPrimaryContainer,
@@ -1171,7 +1170,7 @@ class _SubmitApplicationReviewDialogState
             textAlign: TextAlign.center,
 
             overflow: TextOverflow.ellipsis,
-            style: GoogleFonts.openSans(
+            style: geist(
               fontSize: 10,
               color: kOnSurfaceVariant,
               height: 1.3,

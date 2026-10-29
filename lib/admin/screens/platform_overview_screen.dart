@@ -5,9 +5,9 @@
 // Strictly real data: 100% wired to live Supabase counts across core tables.
 // Zero fabricated metrics, zero fake compliance stamps, zero fake trends/charts.
 
+import 'package:scholaris/shared/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:scholaris/features/admin/presentation/admin_theme.dart';
 import 'package:scholaris/shared/theme/app_motion.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -401,7 +401,7 @@ class PlatformOverviewScreen extends ConsumerWidget {
                     Text(
                       '₱',
                       style: seqTabularFigures(
-                        GoogleFonts.inter(
+                        geist(
                           fontSize: 26,
                           fontWeight: FontWeight.w700,
                           color: kSeqOnSurface,
@@ -414,7 +414,7 @@ class PlatformOverviewScreen extends ConsumerWidget {
                         targetValue: item.targetValue,
                         duration: const Duration(milliseconds: 800),
                         style: seqTabularFigures(
-                          GoogleFonts.inter(
+                          geist(
                             fontSize: 36,
                             fontWeight: FontWeight.w800,
                             height: 1.0,
@@ -430,7 +430,7 @@ class PlatformOverviewScreen extends ConsumerWidget {
                   targetValue: item.targetValue,
                   duration: const Duration(milliseconds: 800),
                   style: seqTabularFigures(
-                    GoogleFonts.inter(
+                    geist(
                       fontSize: 38,
                       fontWeight: FontWeight.w800,
                       height: 1.0,
@@ -559,7 +559,7 @@ class PlatformOverviewScreen extends ConsumerWidget {
                   targetValue: item.count,
                   duration: const Duration(milliseconds: 800),
                   style: seqTabularFigures(
-                    GoogleFonts.inter(
+                    geist(
                       fontSize: 28,
                       fontWeight: FontWeight.w700,
                       height: 1.1,
@@ -689,7 +689,7 @@ class PlatformOverviewScreen extends ConsumerWidget {
             targetValue: item.count,
             duration: const Duration(milliseconds: 800),
             style: seqTabularFigures(
-              GoogleFonts.inter(
+              geist(
                 fontSize: 20,
                 fontWeight: FontWeight.w700,
                 color: kSeqOnSurface,

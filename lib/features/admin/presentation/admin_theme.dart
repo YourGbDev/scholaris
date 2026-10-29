@@ -4,6 +4,7 @@
 // Apple Design DNA pass: clean squircles, #F5F5F7 sidebar, #0F4D2E active fill,
 // pure white active typography, subtle hairline borders, and responsive elevation.
 
+import 'package:scholaris/shared/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -80,7 +81,7 @@ TextStyle adminHeaderStyle({
   FontWeight fontWeight = FontWeight.w600,
   Color color = kAdminNavyTrust,
 }) =>
-    GoogleFonts.poppins(
+    geist(
       fontSize: fontSize,
       fontWeight: fontWeight,
       color: color,
@@ -91,7 +92,7 @@ TextStyle adminLabelStyle({
   FontWeight fontWeight = FontWeight.w500,
   Color color = kAdminTextSecondary,
 }) =>
-    GoogleFonts.openSans(
+    geist(
       fontSize: fontSize,
       fontWeight: fontWeight,
       color: color,
@@ -102,7 +103,7 @@ TextStyle adminBodyStyle({
   FontWeight fontWeight = FontWeight.w400,
   Color color = kAdminTextPrimary,
 }) =>
-    GoogleFonts.openSans(
+    geist(
       fontSize: fontSize,
       fontWeight: fontWeight,
       color: color,
@@ -190,7 +191,7 @@ TextStyle seqDisplay({
   FontWeight fontWeight = FontWeight.w700,
   Color color = kSeqOnSurface,
 }) =>
-    GoogleFonts.inter(
+    geist(
       fontSize: 40,
       height: 48 / 40,
       letterSpacing: -0.022 * 40,
@@ -202,7 +203,7 @@ TextStyle seqHeadlineLg({
   FontWeight fontWeight = FontWeight.w600,
   Color color = kSeqOnSurface,
 }) =>
-    GoogleFonts.inter(
+    geist(
       fontSize: 32,
       height: 38 / 32,
       letterSpacing: -0.021 * 32,
@@ -214,7 +215,7 @@ TextStyle seqHeadlineMd({
   FontWeight fontWeight = FontWeight.w600,
   Color color = kSeqOnSurface,
 }) =>
-    GoogleFonts.inter(
+    geist(
       fontSize: 24,
       height: 30 / 24,
       letterSpacing: -0.019 * 24,
@@ -226,7 +227,7 @@ TextStyle seqHeadlineSm({
   FontWeight fontWeight = FontWeight.w600,
   Color color = kSeqOnSurface,
 }) =>
-    GoogleFonts.inter(
+    geist(
       fontSize: 19,
       height: 24 / 19,
       letterSpacing: -0.015 * 19,
@@ -238,7 +239,7 @@ TextStyle seqBodyLg({
   FontWeight fontWeight = FontWeight.w400,
   Color color = kSeqOnSurface,
 }) =>
-    GoogleFonts.inter(
+    geist(
       fontSize: 16,
       height: 24 / 16,
       letterSpacing: -0.011 * 16,
@@ -250,7 +251,7 @@ TextStyle seqBodyMd({
   FontWeight fontWeight = FontWeight.w400,
   Color color = kSeqOnSurface,
 }) =>
-    GoogleFonts.inter(
+    geist(
       fontSize: 14,
       height: 20 / 14,
       letterSpacing: -0.006 * 14,
@@ -262,7 +263,7 @@ TextStyle seqBodySm({
   FontWeight fontWeight = FontWeight.w400,
   Color color = kSeqOnSurface,
 }) =>
-    GoogleFonts.inter(
+    geist(
       fontSize: 12,
       height: 16 / 12,
       letterSpacing: 0,
@@ -274,7 +275,7 @@ TextStyle seqLabelLg({
   FontWeight fontWeight = FontWeight.w500,
   Color color = kSeqOnSurface,
 }) =>
-    GoogleFonts.inter(
+    geist(
       fontSize: 14,
       height: 18 / 14,
       letterSpacing: -0.008 * 14,
@@ -286,7 +287,7 @@ TextStyle seqLabelMd({
   FontWeight fontWeight = FontWeight.w500,
   Color color = kSeqOnSurface,
 }) =>
-    GoogleFonts.inter(
+    geist(
       fontSize: 12,
       height: 16 / 12,
       letterSpacing: -0.002 * 12,
@@ -298,7 +299,7 @@ TextStyle seqLabelSm({
   FontWeight fontWeight = FontWeight.w600,
   Color color = kSeqOnSurface,
 }) =>
-    GoogleFonts.inter(
+    geist(
       fontSize: 10,
       height: 12 / 10,
       letterSpacing: 0.03 * 10,

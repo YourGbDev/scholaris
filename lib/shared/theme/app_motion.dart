@@ -883,7 +883,7 @@ void showScholarisToast(
                 child: Text(
                   message,
                   style: const TextStyle(
-                    fontFamily: 'Open Sans',
+                    fontFamily: 'Geist',
                     fontSize: 13.5,
                     fontWeight: FontWeight.w600,
                     color: Colors.white,

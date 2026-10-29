@@ -5,6 +5,7 @@
 // Strictly real data: 100% wired to live Supabase queries across core tables.
 // Zero fabricated metrics, zero fake compliance stamps, zero fake report sections.
 
+import 'package:scholaris/shared/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -375,7 +376,7 @@ Widget _buildSkeletonLoader(BuildContext context) {
             children: [
               Text(
                 '₱',
-                style: seqTabularFigures(GoogleFonts.inter(
+                style: seqTabularFigures(geist(
                   fontSize: 26,
                   fontWeight: FontWeight.w700,
                   color: kSeqPrimary,
@@ -384,7 +385,7 @@ Widget _buildSkeletonLoader(BuildContext context) {
               const SizedBox(width: 3),
               Text(
                 _formatCurrencyValue(data.totalScholarshipValue),
-                style: seqTabularFigures(GoogleFonts.inter(
+                style: seqTabularFigures(geist(
                   fontSize: 36,
                   fontWeight: FontWeight.w800,
                   color: kSeqPrimary,
@@ -587,7 +588,7 @@ Widget _buildSkeletonLoader(BuildContext context) {
               children: [
                 Text(
                   '$count',
-                  style: seqTabularFigures(GoogleFonts.inter(
+                  style: seqTabularFigures(geist(
                     fontSize: 15,
                     fontWeight: FontWeight.w700,
                     color: kSeqOnSurface,

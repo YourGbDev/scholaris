@@ -17,7 +17,7 @@ on:
 jobs:
   build-ios:
     name: Build iOS Application
-    runs-on: macos-14 # Apple Silicon M-series runner for fast builds
+    runs-on: macos-latest
     timeout-minutes: 45
 
     steps:

@@ -149,7 +149,7 @@ class LoginLockoutService {
       } else {
         // Lockout expired
         _lockedUntil.remove(key);
-        _clearFromPrefs(key);
+        _prefs?.remove('lockout_until_$key');
       }
     }
 

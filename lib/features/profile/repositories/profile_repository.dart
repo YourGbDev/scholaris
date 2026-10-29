@@ -44,7 +44,9 @@ abstract class ProfileDataSource {
 
 /// Production implementation backed by Supabase.
 class SupabaseProfileDataSource implements ProfileDataSource {
-  SupabaseClient get _client => Supabase.instance.client;
+  SupabaseProfileDataSource({SupabaseClient? client}) : _overrideClient = client;
+  final SupabaseClient? _overrideClient;
+  SupabaseClient get _client => _overrideClient ?? Supabase.instance.client;
 
   @override
   Future<Map<String, dynamic>?> fetchProfile(String userId) async {
@@ -72,12 +74,14 @@ class SupabaseProfileDataSource implements ProfileDataSource {
 
   @override
   Future<void> updateProfile(String userId, Map<String, dynamic> row) async {
-    await _client.from('profiles').update(row).eq('id', userId);
+    final rows = await _client.from('profiles').update(row).eq('id', userId).select('id');
+    if (rows.length != 1) throw StateError('Profile update could not be confirmed.');
   }
 
   @override
   Future<void> deleteProfile(String userId) async {
-    await _client.from('profiles').delete().eq('id', userId);
+    final rows = await _client.from('profiles').delete().eq('id', userId).select('id');
+    if (rows.length != 1) throw StateError('Profile deletion could not be confirmed.');
   }
 }
 

@@ -1,7 +1,13 @@
 name: Build Scholaris iOS (.ipa)
 
 on:
-  workflow_dispatch: # Allows manual trigger from GitHub Actions tab
+  workflow_dispatch:
+    inputs:
+      captcha_enabled:
+        description: 'Enable the Scholaris CAPTCHA in this build'
+        required: true
+        default: false
+        type: boolean
   push:
     branches:
       - master
@@ -52,7 +58,11 @@ jobs:
         run: dart run build_runner build --delete-conflicting-outputs
 
       - name: Build iOS App (.app)
-        run: flutter build ios --release --no-codesign -v
+        run: >-
+          flutter build ios --release --no-codesign -v
+          --dart-define=SCHOLARIS_CAPTCHA_ENABLED=${{ inputs.captcha_enabled == true || inputs.captcha_enabled == 'true' }}
+          --dart-define=SCHOLARIS_CAPTCHA_SITE_KEY=0x4AAAAAAFq-mSfnVs6Xvvjo
+          --dart-define=SCHOLARIS_CAPTCHA_PAGE_URL=https://scholaris-captcha.pages.dev/captcha_challenge
 
       - name: Package .app into Sideloadable .ipa
         run: |

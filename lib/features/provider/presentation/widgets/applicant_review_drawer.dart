@@ -949,7 +949,7 @@ class _ApplicantReviewDrawerState extends ConsumerState<ApplicantReviewDrawer> {
                 onPressed: () {
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(
-                      content: Text('Exporting Evaluator Summary PDF...'),
+                      content: Text('Evaluator summary export is not available yet.'),
                       duration: Duration(seconds: 2),
                     ),
                   );

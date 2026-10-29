@@ -1,0 +1,422 @@
+{
+  "project": "yqwbarzxpduzmtrxnrbm",
+  "inspected_at": "2026-10-29T14:22:12.73519+00:00",
+  "functions": [
+    {
+      "signature": "guard_profiles_role_change()",
+      "definition": "CREATE OR REPLACE FUNCTION public.guard_profiles_role_change()\n RETURNS trigger\n LANGUAGE plpgsql\n SECURITY DEFINER\n SET search_path TO 'public'\nAS $function$\r\nBEGIN\r\n  -- If role or provider_type is changing\r\n  IF (NEW.role IS DISTINCT FROM OLD.role OR NEW.provider_type IS DISTINCT FROM OLD.provider_type) THEN\r\n    -- Allow if current session is an admin or called from an internal server trigger\r\n    IF NOT (public.is_admin() OR pg_trigger_depth() > 1) THEN\r\n      RAISE EXCEPTION 'Unauthorized: only administrators can modify role or provider_type directly.';\r\n    END IF;\r\n  END IF;\r\n  RETURN NEW;\r\nEND;\r\n$function$\n",
+      "acl": [
+        "=X/postgres",
+        "postgres=X/postgres",
+        "anon=X/postgres",
+        "authenticated=X/postgres",
+        "service_role=X/postgres"
+      ]
+    },
+    {
+      "signature": "is_admin()",
+      "definition": "CREATE OR REPLACE FUNCTION public.is_admin()\n RETURNS boolean\n LANGUAGE sql\n STABLE SECURITY DEFINER\n SET search_path TO 'public'\nAS $function$\r\n  SELECT EXISTS (\r\n    SELECT 1 FROM public.profiles\r\n    WHERE id = auth.uid() AND role = 'admin'\r\n  );\r\n$function$\n",
+      "acl": [
+        "=X/postgres",
+        "postgres=X/postgres",
+        "anon=X/postgres",
+        "authenticated=X/postgres",
+        "service_role=X/postgres"
+      ]
+    }
+  ],
+  "triggers": [
+    {
+      "table": "profiles",
+      "definition": "CREATE TRIGGER profiles_set_updated_at BEFORE UPDATE ON public.profiles FOR EACH ROW EXECUTE FUNCTION set_updated_at()",
+      "enabled": "O"
+    },
+    {
+      "table": "auth.users",
+      "definition": "CREATE TRIGGER on_auth_user_created AFTER INSERT ON auth.users FOR EACH ROW EXECUTE FUNCTION handle_new_user()",
+      "enabled": "O"
+    },
+    {
+      "table": "profiles",
+      "definition": "CREATE TRIGGER trg_guard_profiles_role_change BEFORE UPDATE ON public.profiles FOR EACH ROW EXECUTE FUNCTION guard_profiles_role_change()",
+      "enabled": "O"
+    }
+  ],
+  "audit_policies": [
+    {
+      "schemaname": "public",
+      "tablename": "audit_logs",
+      "policyname": "Admins can view audit logs",
+      "permissive": "PERMISSIVE",
+      "roles": [
+        "authenticated"
+      ],
+      "cmd": "SELECT",
+      "qual": "is_admin()",
+      "with_check": null
+    },
+    {
+      "schemaname": "public",
+      "tablename": "audit_logs",
+      "policyname": "Authenticated users can record audit actions",
+      "permissive": "PERMISSIVE",
+      "roles": [
+        "authenticated"
+      ],
+      "cmd": "INSERT",
+      "qual": null,
+      "with_check": "((auth.uid() = actor_id) OR (actor_id IS NULL) OR is_admin())"
+    }
+  ],
+  "audit_grants": [
+    {
+      "grantor": "postgres",
+      "grantee": "postgres",
+      "table_catalog": "postgres",
+      "table_schema": "public",
+      "table_name": "audit_logs",
+      "privilege_type": "INSERT",
+      "is_grantable": "YES",
+      "with_hierarchy": "NO"
+    },
+    {
+      "grantor": "postgres",
+      "grantee": "postgres",
+      "table_catalog": "postgres",
+      "table_schema": "public",
+      "table_name": "audit_logs",
+      "privilege_type": "SELECT",
+      "is_grantable": "YES",
+      "with_hierarchy": "YES"
+    },
+    {
+      "grantor": "postgres",
+      "grantee": "postgres",
+      "table_catalog": "postgres",
+      "table_schema": "public",
+      "table_name": "audit_logs",
+      "privilege_type": "UPDATE",
+      "is_grantable": "YES",
+      "with_hierarchy": "NO"
+    },
+    {
+      "grantor": "postgres",
+      "grantee": "postgres",
+      "table_catalog": "postgres",
+      "table_schema": "public",
+      "table_name": "audit_logs",
+      "privilege_type": "DELETE",
+      "is_grantable": "YES",
+      "with_hierarchy": "NO"
+    },
+    {
+      "grantor": "postgres",
+      "grantee": "postgres",
+      "table_catalog": "postgres",
+      "table_schema": "public",
+      "table_name": "audit_logs",
+      "privilege_type": "TRUNCATE",
+      "is_grantable": "YES",
+      "with_hierarchy": "NO"
+    },
+    {
+      "grantor": "postgres",
+      "grantee": "postgres",
+      "table_catalog": "postgres",
+      "table_schema": "public",
+      "table_name": "audit_logs",
+      "privilege_type": "REFERENCES",
+      "is_grantable": "YES",
+      "with_hierarchy": "NO"
+    },
+    {
+      "grantor": "postgres",
+      "grantee": "postgres",
+      "table_catalog": "postgres",
+      "table_schema": "public",
+      "table_name": "audit_logs",
+      "privilege_type": "TRIGGER",
+      "is_grantable": "YES",
+      "with_hierarchy": "NO"
+    },
+    {
+      "grantor": "postgres",
+      "grantee": "anon",
+      "table_catalog": "postgres",
+      "table_schema": "public",
+      "table_name": "audit_logs",
+      "privilege_type": "INSERT",
+      "is_grantable": "NO",
+      "with_hierarchy": "NO"
+    },
+    {
+      "grantor": "postgres",
+      "grantee": "anon",
+      "table_catalog": "postgres",
+      "table_schema": "public",
+      "table_name": "audit_logs",
+      "privilege_type": "SELECT",
+      "is_grantable": "NO",
+      "with_hierarchy": "YES"
+    },
+    {
+      "grantor": "postgres",
+      "grantee": "anon",
+      "table_catalog": "postgres",
+      "table_schema": "public",
+      "table_name": "audit_logs",
+      "privilege_type": "UPDATE",
+      "is_grantable": "NO",
+      "with_hierarchy": "NO"
+    },
+    {
+      "grantor": "postgres",
+      "grantee": "anon",
+      "table_catalog": "postgres",
+      "table_schema": "public",
+      "table_name": "audit_logs",
+      "privilege_type": "DELETE",
+      "is_grantable": "NO",
+      "with_hierarchy": "NO"
+    },
+    {
+      "grantor": "postgres",
+      "grantee": "anon",
+      "table_catalog": "postgres",
+      "table_schema": "public",
+      "table_name": "audit_logs",
+      "privilege_type": "TRUNCATE",
+      "is_grantable": "NO",
+      "with_hierarchy": "NO"
+    },
+    {
+      "grantor": "postgres",
+      "grantee": "anon",
+      "table_catalog": "postgres",
+      "table_schema": "public",
+      "table_name": "audit_logs",
+      "privilege_type": "REFERENCES",
+      "is_grantable": "NO",
+      "with_hierarchy": "NO"
+    },
+    {
+      "grantor": "postgres",
+      "grantee": "anon",
+      "table_catalog": "postgres",
+      "table_schema": "public",
+      "table_name": "audit_logs",
+      "privilege_type": "TRIGGER",
+      "is_grantable": "NO",
+      "with_hierarchy": "NO"
+    },
+    {
+      "grantor": "postgres",
+      "grantee": "authenticated",
+      "table_catalog": "postgres",
+      "table_schema": "public",
+      "table_name": "audit_logs",
+      "privilege_type": "INSERT",
+      "is_grantable": "NO",
+      "with_hierarchy": "NO"
+    },
+    {
+      "grantor": "postgres",
+      "grantee": "authenticated",
+      "table_catalog": "postgres",
+      "table_schema": "public",
+      "table_name": "audit_logs",
+      "privilege_type": "SELECT",
+      "is_grantable": "NO",
+      "with_hierarchy": "YES"
+    },
+    {
+      "grantor": "postgres",
+      "grantee": "authenticated",
+      "table_catalog": "postgres",
+      "table_schema": "public",
+      "table_name": "audit_logs",
+      "privilege_type": "UPDATE",
+      "is_grantable": "NO",
+      "with_hierarchy": "NO"
+    },
+    {
+      "grantor": "postgres",
+      "grantee": "authenticated",
+      "table_catalog": "postgres",
+      "table_schema": "public",
+      "table_name": "audit_logs",
+      "privilege_type": "DELETE",
+      "is_grantable": "NO",
+      "with_hierarchy": "NO"
+    },
+    {
+      "grantor": "postgres",
+      "grantee": "authenticated",
+      "table_catalog": "postgres",
+      "table_schema": "public",
+      "table_name": "audit_logs",
+      "privilege_type": "TRUNCATE",
+      "is_grantable": "NO",
+      "with_hierarchy": "NO"
+    },
+    {
+      "grantor": "postgres",
+      "grantee": "authenticated",
+      "table_catalog": "postgres",
+      "table_schema": "public",
+      "table_name": "audit_logs",
+      "privilege_type": "REFERENCES",
+      "is_grantable": "NO",
+      "with_hierarchy": "NO"
+    },
+    {
+      "grantor": "postgres",
+      "grantee": "authenticated",
+      "table_catalog": "postgres",
+      "table_schema": "public",
+      "table_name": "audit_logs",
+      "privilege_type": "TRIGGER",
+      "is_grantable": "NO",
+      "with_hierarchy": "NO"
+    },
+    {
+      "grantor": "postgres",
+      "grantee": "service_role",
+      "table_catalog": "postgres",
+      "table_schema": "public",
+      "table_name": "audit_logs",
+      "privilege_type": "INSERT",
+      "is_grantable": "NO",
+      "with_hierarchy": "NO"
+    },
+    {
+      "grantor": "postgres",
+      "grantee": "service_role",
+      "table_catalog": "postgres",
+      "table_schema": "public",
+      "table_name": "audit_logs",
+      "privilege_type": "SELECT",
+      "is_grantable": "NO",
+      "with_hierarchy": "YES"
+    },
+    {
+      "grantor": "postgres",
+      "grantee": "service_role",
+      "table_catalog": "postgres",
+      "table_schema": "public",
+      "table_name": "audit_logs",
+      "privilege_type": "UPDATE",
+      "is_grantable": "NO",
+      "with_hierarchy": "NO"
+    },
+    {
+      "grantor": "postgres",
+      "grantee": "service_role",
+      "table_catalog": "postgres",
+      "table_schema": "public",
+      "table_name": "audit_logs",
+      "privilege_type": "DELETE",
+      "is_grantable": "NO",
+      "with_hierarchy": "NO"
+    },
+    {
+      "grantor": "postgres",
+      "grantee": "service_role",
+      "table_catalog": "postgres",
+      "table_schema": "public",
+      "table_name": "audit_logs",
+      "privilege_type": "TRUNCATE",
+      "is_grantable": "NO",
+      "with_hierarchy": "NO"
+    },
+    {
+      "grantor": "postgres",
+      "grantee": "service_role",
+      "table_catalog": "postgres",
+      "table_schema": "public",
+      "table_name": "audit_logs",
+      "privilege_type": "REFERENCES",
+      "is_grantable": "NO",
+      "with_hierarchy": "NO"
+    },
+    {
+      "grantor": "postgres",
+      "grantee": "service_role",
+      "table_catalog": "postgres",
+      "table_schema": "public",
+      "table_name": "audit_logs",
+      "privilege_type": "TRIGGER",
+      "is_grantable": "NO",
+      "with_hierarchy": "NO"
+    }
+  ],
+  "audit_columns": [
+    {
+      "name": "id",
+      "type": "uuid"
+    },
+    {
+      "name": "actor_id",
+      "type": "uuid"
+    },
+    {
+      "name": "actor_email",
+      "type": "text"
+    },
+    {
+      "name": "actor_role",
+      "type": "text"
+    },
+    {
+      "name": "action",
+      "type": "text"
+    },
+    {
+      "name": "target_type",
+      "type": "text"
+    },
+    {
+      "name": "target_id",
+      "type": "text"
+    },
+    {
+      "name": "details",
+      "type": "jsonb"
+    },
+    {
+      "name": "ip_address",
+      "type": "text"
+    },
+    {
+      "name": "created_at",
+      "type": "timestamp with time zone"
+    }
+  ],
+  "profile_counts": [
+    {
+      "role": "admin",
+      "status": "active",
+      "count": 8
+    },
+    {
+      "role": "provider",
+      "status": "active",
+      "count": 46
+    },
+    {
+      "role": "provider",
+      "status": "deactivated",
+      "count": 3
+    },
+    {
+      "role": "student",
+      "status": "active",
+      "count": 103
+    },
+    {
+      "role": "student",
+      "status": "deactivated",
+      "count": 1
+    }
+  ]
+}

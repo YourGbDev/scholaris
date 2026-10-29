@@ -31,16 +31,24 @@ void main() {
       );
     });
 
+    test('rejects weak new passwords without contacting authentication', () async {
+      await expectLater(
+        repo.changePassword(currentPassword: 'old-password', newPassword: 'weak'),
+        throwsA(isA<ArgumentError>()),
+      );
+      expect(dataSource.calls, isEmpty);
+    });
+
     test('sequences reauthenticate BEFORE updatePassword', () async {
       await repo.changePassword(
         currentPassword: 'old-password',
-        newPassword: 'new-password',
+        newPassword: 'New-password1!',
       );
 
       expect(dataSource.calls, ['reauthenticate', 'updatePassword']);
       expect(dataSource.reauthenticateEmails, ['a@b.com']);
       expect(dataSource.reauthenticatePasswords, ['old-password']);
-      expect(dataSource.updatePasswords, ['new-password']);
+      expect(dataSource.updatePasswords, ['New-password1!']);
     });
 
     test('reauthentication failure never reaches the password update',
@@ -52,7 +60,7 @@ void main() {
       await expectLater(
         repo.changePassword(
           currentPassword: 'wrong',
-          newPassword: 'new-password',
+          newPassword: 'New-password1!',
         ),
         throwsA(isA<AuthException>()),
       );
@@ -70,7 +78,7 @@ void main() {
       await expectLater(
         repo.changePassword(
           currentPassword: 'not-my-password',
-          newPassword: 'new-password',
+          newPassword: 'New-password1!',
         ),
         throwsA(
           isA<AuthException>().having(
@@ -91,7 +99,7 @@ void main() {
       await expectLater(
         repo.changePassword(
           currentPassword: 'old-password',
-          newPassword: 'new-password',
+          newPassword: 'New-password1!',
         ),
         throwsA(isA<AuthException>()),
       );
@@ -109,12 +117,24 @@ void main() {
       await expectLater(
         repo.changePassword(
           currentPassword: 'old-password',
-          newPassword: 'new-password',
+          newPassword: 'New-password1!',
         ),
         throwsA(isA<AccountSessionChangedException>()),
       );
 
       expect(dataSource.calls, ['reauthenticate']);
+      expect(dataSource.updatePasswords, isEmpty);
+    });
+
+    test('account switch during reauthentication prevents password update', () async {
+      dataSource.reauthenticateGate = Completer<void>();
+      final pending = repo.changePassword(
+        currentPassword: 'old-password',
+        newPassword: 'New-password1!',
+      );
+      signedInUserId = 'user-b';
+      dataSource.reauthenticateGate!.complete();
+      await expectLater(pending, throwsA(isA<AccountSessionChangedException>()));
       expect(dataSource.updatePasswords, isEmpty);
     });
 
@@ -125,7 +145,7 @@ void main() {
       await expectLater(
         repo.changePassword(
           currentPassword: 'old-password',
-          newPassword: 'new-password',
+          newPassword: 'New-password1!',
         ),
         throwsA(isA<AccountNotAuthenticatedException>()),
       );
@@ -141,7 +161,7 @@ void main() {
       try {
         await repo.changePassword(
           currentPassword: 'super-secret-current',
-          newPassword: 'super-secret-new',
+          newPassword: 'Super-secret-new1!',
         );
       } catch (e) {
         caught = e;

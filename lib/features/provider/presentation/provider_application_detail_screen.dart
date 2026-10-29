@@ -262,7 +262,7 @@ class _ProviderApplicationDetailScreenState
                     ),
                     const SizedBox(height: 2),
                     Text(
-                      '$programTitle (AY 2024–2025)',
+                      programTitle,
                       style: openSans(
                         fontSize: 13,
                         color: Colors.black54,
@@ -481,7 +481,7 @@ class _ProviderApplicationDetailScreenState
                 const SizedBox(height: 8),
                 _infoRow(
                   'Academic Standing',
-                  'Year ${profile.yearLevel} • AY 2024–2025',
+                  'Year ${profile.yearLevel}',
                 ),
                 const SizedBox(height: 8),
                 Container(

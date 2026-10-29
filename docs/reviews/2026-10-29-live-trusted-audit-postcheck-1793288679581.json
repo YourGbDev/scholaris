@@ -1,0 +1,237 @@
+{
+  "project": "yqwbarzxpduzmtrxnrbm",
+  "source": "0039_trusted_audit_events.sql",
+  "hash": "F74F23CB777FC08B51E6D437DF79428A637093E2B09D39094382EBFC1E01BF98",
+  "mode": "--postcheck",
+  "started_at": "2026-10-29T15:44:38.294Z",
+  "checks": [
+    "live functions/triggers/ingestion grants and insert policies verified"
+  ],
+  "before_counts": {
+    "profiles": 161,
+    "auth_users": 167,
+    "scholarships": 32,
+    "audit_logs": 20,
+    "auth_audit_logs": 0
+  },
+  "before_catalog": [
+    {
+      "proname": "audit_admin_profile_update",
+      "definition": "CREATE OR REPLACE FUNCTION public.audit_admin_profile_update()\n RETURNS trigger\n LANGUAGE plpgsql\n SECURITY DEFINER\n SET search_path TO ''\nAS $function$\ndeclare v_actor uuid := auth.uid(); v_email text;\nbegin\n  if v_actor is null or public.is_admin() is not true or new is not distinct from old then return new; end if;\n  select email into v_email from auth.users where id = v_actor;\n  insert into public.audit_logs(actor_id,actor_email,actor_role,action,target_type,target_id,details)\n  values(v_actor,v_email,'admin','user_updated','user',old.id::text,jsonb_build_object('source','database','outcome','success'));\n  if new.role is distinct from old.role then\n    insert into public.audit_logs(actor_id,actor_email,actor_role,action,target_type,target_id,details)\n    values(v_actor,v_email,'admin','user_role_changed','user',old.id::text,\n      jsonb_build_object('source','database','outcome','success','old_role',old.role,'new_role',new.role));\n  end if;\n  if new.status is distinct from old.status then\n    insert into public.audit_logs(actor_id,actor_email,actor_role,action,target_type,target_id,details)\n    values(v_actor,v_email,'admin','user_status_changed','user',old.id::text,\n      jsonb_build_object('source','database','outcome','success','old_status',old.status,'new_status',new.status));\n  end if;\n  return new;\nend;\n$function$\n"
+    },
+    {
+      "proname": "audit_auth_event",
+      "definition": "CREATE OR REPLACE FUNCTION public.audit_auth_event()\n RETURNS trigger\n LANGUAGE plpgsql\n SECURITY DEFINER\n SET search_path TO ''\nAS $function$\ndeclare\n  v_action text := new.payload ->> 'action';\n  v_actor_text text := coalesce(new.payload ->> 'actor_id',new.payload ->> 'user_id');\n  v_actor uuid; v_target text; v_email text; v_role text; v_ip text;\nbegin\n  -- Only documented Auth event names are mirrored. Never copy arbitrary traits,\n  -- actor usernames, request bodies, passwords, JWTs or OTPs from the payload.\n  if v_action is null or v_action not in (\n    'login','logout','invite_accepted','user_signedup','user_invited','user_deleted','user_modified',\n    'user_recovery_requested','user_reauthenticate_requested','user_confirmation_requested','user_repeated_signup',\n    'user_updated_password','token_revoked','token_refreshed','generate_recovery_codes','factor_in_progress',\n    'factor_unenrolled','challenge_created','verification_attempted','factor_deleted','recovery_codes_deleted',\n    'factor_updated','mfa_code_login','identity_unlinked'\n  ) then return new; end if;\n  begin v_actor:=v_actor_text::uuid;\n  exception when invalid_text_representation then v_actor:=null; end;\n  v_target:=v_actor::text;\n  if not exists(select 1 from auth.users where id=v_actor) then v_actor:=null; end if;\n  select email into v_email from auth.users where id=v_actor;\n  select role into v_role from public.profiles where id=v_actor;\n  begin v_ip:=host(nullif(new.ip_address,'')::inet);\n  exception when invalid_text_representation then v_ip:=null; end;\n  insert into public.audit_logs(actor_id,actor_email,actor_role,action,target_type,target_id,details,ip_address,created_at)\n  values(v_actor,v_email,coalesce(v_role,'unknown'),'auth_'||v_action,'auth',v_target,\n    jsonb_build_object('source','supabase_auth','outcome','recorded','auth_action',v_action,'auth_event_id',new.id::text),\n    v_ip,coalesce(new.created_at,now()));\n  -- Failure intentionally aborts the Auth audit insert too; no silent gap.\n  return new;\nend;\n$function$\n"
+    },
+    {
+      "proname": "audit_profile_lifecycle",
+      "definition": "CREATE OR REPLACE FUNCTION public.audit_profile_lifecycle()\n RETURNS trigger\n LANGUAGE plpgsql\n SECURITY DEFINER\n SET search_path TO ''\nAS $function$\ndeclare v_actor uuid := auth.uid(); v_email text; v_role text; v_target uuid; v_action text;\nbegin\n  -- An Auth-side cascade may already have removed the actor's Auth row.\n  if v_actor is not null and not exists(select 1 from auth.users where id=v_actor) then v_actor := null; end if;\n  select email into v_email from auth.users where id=v_actor;\n  select role into v_role from public.profiles where id=v_actor;\n  if tg_op='DELETE' then v_target:=old.id; v_action:='user_deleted';\n  else v_target:=new.id; v_action:='user_created'; end if;\n  insert into public.audit_logs(actor_id,actor_email,actor_role,action,target_type,target_id,details)\n  values(v_actor,v_email,coalesce(v_role,case when v_actor is null then 'system' else 'unknown' end),\n    v_action,'user',v_target::text,jsonb_build_object('source','database_profile','outcome','success'));\n  if tg_op='DELETE' then return old; else return new; end if;\nend;\n$function$\n"
+    },
+    {
+      "proname": "audit_scholarship_change",
+      "definition": "CREATE OR REPLACE FUNCTION public.audit_scholarship_change()\n RETURNS trigger\n LANGUAGE plpgsql\n SECURITY DEFINER\n SET search_path TO ''\nAS $function$\ndeclare v_actor uuid := auth.uid(); v_email text; v_role text; v_action text; v_target uuid;\nbegin\n  if tg_op='UPDATE' and new is not distinct from old then return new; end if;\n  if v_actor is not null and not exists(select 1 from auth.users where id=v_actor) then v_actor:=null; end if;\n  select email into v_email from auth.users where id=v_actor;\n  select role into v_role from public.profiles where id=v_actor;\n  if tg_op='DELETE' then v_action:='scholarship_deleted'; v_target:=old.id;\n  elsif tg_op='INSERT' then v_action:='scholarship_created'; v_target:=new.id;\n  elsif new.is_active is distinct from old.is_active then\n    v_action:=case when new.is_active is true then 'scholarship_activated' else 'scholarship_paused' end; v_target:=new.id;\n  else v_action:='scholarship_updated'; v_target:=new.id; end if;\n  insert into public.audit_logs(actor_id,actor_email,actor_role,action,target_type,target_id,details)\n  values(v_actor,v_email,coalesce(v_role,case when v_actor is null then 'system' else 'unknown' end),v_action,\n    'scholarship',v_target::text,jsonb_build_object('source','database','outcome','success'));\n  if tg_op='DELETE' then return old; else return new; end if;\nend;\n$function$\n"
+    },
+    {
+      "proname": "log_audit_event",
+      "definition": "CREATE OR REPLACE FUNCTION public.log_audit_event(p_action text, p_target_type text, p_target_id text DEFAULT NULL::text, p_details jsonb DEFAULT '{}'::jsonb)\n RETURNS uuid\n LANGUAGE plpgsql\n SECURITY DEFINER\n SET search_path TO ''\nAS $function$\ndeclare\n  v_actor uuid := auth.uid();\n  v_email text;\n  v_target uuid;\n  v_title text;\n  v_provider text;\n  v_details jsonb := coalesce(p_details, '{}'::jsonb);\n  v_reason text;\n  v_note text;\n  v_id uuid;\nbegin\n  if v_actor is null or public.is_admin() is not true then\n    raise exception 'An active administrator is required.' using errcode = '42501';\n  end if;\n  -- Older clients still report these after the actual row mutation. The row\n  -- triggers own the evidence; tolerate the call without creating a duplicate.\n  if p_action in ('user_created','user_updated','user_deleted','user_deactivated',\n      'role_and_status_updated','scholarship_activated','scholarship_paused') then\n    return null;\n  end if;\n  if p_action is distinct from 'scholarship_flagged' or p_target_type is distinct from 'scholarship' then\n    raise exception 'This client audit action is not supported.' using errcode = '22023';\n  end if;\n  if jsonb_typeof(v_details) is distinct from 'object'\n     or exists (select 1 from jsonb_object_keys(v_details) k where k not in ('reason','resolution_note','title','provider')) then\n    raise exception 'Unsupported audit details.' using errcode = '22023';\n  end if;\n  if jsonb_typeof(v_details -> 'reason') is distinct from 'string' then\n    raise exception 'A text reason is required.' using errcode = '22023';\n  end if;\n  v_reason := btrim(v_details ->> 'reason');\n  if length(v_reason) not between 1 and 500 then\n    raise exception 'The reason must contain 1 to 500 characters.' using errcode = '22023';\n  end if;\n  if v_details ? 'resolution_note' and jsonb_typeof(v_details -> 'resolution_note') not in ('string','null') then\n    raise exception 'The resolution note must be text.' using errcode = '22023';\n  end if;\n  v_note := nullif(btrim(v_details ->> 'resolution_note'), '');\n  if length(v_note) > 1000 then\n    raise exception 'The resolution note is too long.' using errcode = '22023';\n  end if;\n  begin v_target := p_target_id::uuid;\n  exception when invalid_text_representation then\n    raise exception 'A valid scholarship identifier is required.' using errcode = '22023';\n  end;\n  select title, provider into v_title, v_provider from public.scholarships where id = v_target;\n  if not found then raise exception 'The scholarship was not found.' using errcode = 'P0002'; end if;\n  select email into v_email from auth.users where id = v_actor;\n  insert into public.audit_logs(actor_id,actor_email,actor_role,action,target_type,target_id,details)\n  values(v_actor,v_email,'admin','scholarship_flagged','scholarship',v_target::text,\n    jsonb_strip_nulls(jsonb_build_object('source','database_rpc','outcome','success',\n      'title',v_title,'provider',v_provider,'reason',v_reason,'resolution_note',v_note))) returning id into v_id;\n  return v_id;\nend;\n$function$\n"
+    },
+    {
+      "proname": "set_admin_scholarship_active",
+      "definition": "CREATE OR REPLACE FUNCTION public.set_admin_scholarship_active(p_id uuid, p_active boolean)\n RETURNS uuid\n LANGUAGE plpgsql\n SECURITY DEFINER\n SET search_path TO ''\nAS $function$\ndeclare v_id uuid;\nbegin\n  if auth.uid() is null or public.is_admin() is not true then\n    raise exception 'An active administrator is required.' using errcode = '42501';\n  end if;\n  if p_id is null or p_active is null then\n    raise exception 'A scholarship and active status are required.' using errcode = '22023';\n  end if;\n  update public.scholarships set is_active = p_active where id = p_id returning id into v_id;\n  if not found then raise exception 'The scholarship was not found.' using errcode = 'P0002'; end if;\n  return v_id;\nend;\n$function$\n"
+    }
+  ],
+  "scholarship_policies": [
+    {
+      "policyname": "Providers can delete own scholarships",
+      "roles": "{authenticated}",
+      "cmd": "DELETE",
+      "qual": "((created_by = auth.uid()) AND (EXISTS ( SELECT 1\n   FROM profiles\n  WHERE ((profiles.id = auth.uid()) AND (profiles.role = 'provider'::text)))))",
+      "with_check": null
+    },
+    {
+      "policyname": "Providers can insert own scholarships",
+      "roles": "{authenticated}",
+      "cmd": "INSERT",
+      "qual": null,
+      "with_check": "((created_by = auth.uid()) AND (EXISTS ( SELECT 1\n   FROM profiles\n  WHERE ((profiles.id = auth.uid()) AND (profiles.role = 'provider'::text)))))"
+    },
+    {
+      "policyname": "Providers can update own scholarships",
+      "roles": "{authenticated}",
+      "cmd": "UPDATE",
+      "qual": "((created_by = auth.uid()) AND (EXISTS ( SELECT 1\n   FROM profiles\n  WHERE ((profiles.id = auth.uid()) AND (profiles.role = 'provider'::text)))))",
+      "with_check": "(created_by = auth.uid())"
+    },
+    {
+      "policyname": "Scholarships are deletable by service_role only",
+      "roles": "{service_role}",
+      "cmd": "DELETE",
+      "qual": "true",
+      "with_check": null
+    },
+    {
+      "policyname": "Scholarships are insertable by service_role only",
+      "roles": "{service_role}",
+      "cmd": "INSERT",
+      "qual": null,
+      "with_check": "true"
+    },
+    {
+      "policyname": "Scholarships are readable by authenticated users",
+      "roles": "{authenticated}",
+      "cmd": "SELECT",
+      "qual": "true",
+      "with_check": null
+    },
+    {
+      "policyname": "Scholarships are updatable by service_role only",
+      "roles": "{service_role}",
+      "cmd": "UPDATE",
+      "qual": "true",
+      "with_check": null
+    },
+    {
+      "policyname": "scholarship_admin_delete_boundary",
+      "roles": "{authenticated}",
+      "cmd": "DELETE",
+      "qual": "(organization_role(created_by) = 'org_admin'::text)",
+      "with_check": null
+    },
+    {
+      "policyname": "scholarship_admin_insert_boundary",
+      "roles": "{authenticated}",
+      "cmd": "INSERT",
+      "qual": null,
+      "with_check": "((created_by = auth.uid()) AND (organization_role(created_by) = 'org_admin'::text))"
+    },
+    {
+      "policyname": "scholarship_admin_update_boundary",
+      "roles": "{authenticated}",
+      "cmd": "UPDATE",
+      "qual": "(organization_role(created_by) = 'org_admin'::text)",
+      "with_check": "((created_by = auth.uid()) AND (organization_role(created_by) = 'org_admin'::text))"
+    }
+  ],
+  "auth_source_grants": [
+    {
+      "role": "anon",
+      "auth_insert": false
+    },
+    {
+      "role": "authenticated",
+      "auth_insert": false
+    },
+    {
+      "role": "service_role",
+      "auth_insert": false
+    }
+  ],
+  "retained_writers": [
+    {
+      "signature": "assign_scholarship_reviewer(uuid,uuid)",
+      "prosecdef": true,
+      "owner": "postgres",
+      "owner_can_insert": true
+    },
+    {
+      "signature": "audit_admin_profile_update()",
+      "prosecdef": true,
+      "owner": "postgres",
+      "owner_can_insert": true
+    },
+    {
+      "signature": "audit_auth_event()",
+      "prosecdef": true,
+      "owner": "postgres",
+      "owner_can_insert": true
+    },
+    {
+      "signature": "audit_profile_lifecycle()",
+      "prosecdef": true,
+      "owner": "postgres",
+      "owner_can_insert": true
+    },
+    {
+      "signature": "audit_scholarship_change()",
+      "prosecdef": true,
+      "owner": "postgres",
+      "owner_can_insert": true
+    },
+    {
+      "signature": "handle_provider_verification_review()",
+      "prosecdef": true,
+      "owner": "postgres",
+      "owner_can_insert": true
+    },
+    {
+      "signature": "log_audit_event(text,text,text,jsonb)",
+      "prosecdef": true,
+      "owner": "postgres",
+      "owner_can_insert": true
+    },
+    {
+      "signature": "log_disbursement_audit()",
+      "prosecdef": true,
+      "owner": "postgres",
+      "owner_can_insert": true
+    },
+    {
+      "signature": "unassign_scholarship_reviewer(uuid,uuid)",
+      "prosecdef": true,
+      "owner": "postgres",
+      "owner_can_insert": true
+    }
+  ],
+  "grants": [
+    {
+      "role": "anon",
+      "table_insert": false,
+      "column_insert": false,
+      "auth_insert": false,
+      "auth_column_insert": false
+    },
+    {
+      "role": "authenticated",
+      "table_insert": false,
+      "column_insert": false,
+      "auth_insert": false,
+      "auth_column_insert": false
+    }
+  ],
+  "triggers": [
+    {
+      "tgname": "audit_admin_profile_update",
+      "tgenabled": "O",
+      "definition": "CREATE TRIGGER audit_admin_profile_update BEFORE UPDATE ON public.profiles FOR EACH ROW EXECUTE FUNCTION audit_admin_profile_update()"
+    },
+    {
+      "tgname": "audit_profile_created",
+      "tgenabled": "O",
+      "definition": "CREATE TRIGGER audit_profile_created AFTER INSERT ON public.profiles FOR EACH ROW EXECUTE FUNCTION audit_profile_lifecycle()"
+    },
+    {
+      "tgname": "audit_profile_deleted",
+      "tgenabled": "O",
+      "definition": "CREATE TRIGGER audit_profile_deleted BEFORE DELETE ON public.profiles FOR EACH ROW EXECUTE FUNCTION audit_profile_lifecycle()"
+    },
+    {
+      "tgname": "audit_scholarship_change",
+      "tgenabled": "O",
+      "definition": "CREATE TRIGGER audit_scholarship_change AFTER INSERT OR DELETE OR UPDATE ON public.scholarships FOR EACH ROW EXECUTE FUNCTION audit_scholarship_change()"
+    },
+    {
+      "tgname": "scholaris_auth_audit",
+      "tgenabled": "O",
+      "definition": "CREATE TRIGGER scholaris_auth_audit AFTER INSERT ON auth.audit_log_entries FOR EACH ROW EXECUTE FUNCTION audit_auth_event()"
+    }
+  ],
+  "after_counts": {
+    "profiles": 161,
+    "auth_users": 167,
+    "scholarships": 32,
+    "audit_logs": 20,
+    "auth_audit_logs": 0
+  },
+  "success": true,
+  "finished_at": "2026-10-29T15:44:39.581Z"
+}

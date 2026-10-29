@@ -1,0 +1,173 @@
+{
+  "project": "yqwbarzxpduzmtrxnrbm",
+  "inspected_at": "2026-10-29T15:06:47.548Z",
+  "columns": [
+    {
+      "column_name": "instance_id",
+      "data_type": "uuid"
+    },
+    {
+      "column_name": "id",
+      "data_type": "uuid"
+    },
+    {
+      "column_name": "payload",
+      "data_type": "json"
+    },
+    {
+      "column_name": "created_at",
+      "data_type": "timestamp with time zone"
+    },
+    {
+      "column_name": "ip_address",
+      "data_type": "character varying"
+    }
+  ],
+  "actions": [],
+  "payload_keys": [],
+  "metadata_keys": [],
+  "grants": [
+    {
+      "role": "anon",
+      "schema_usage": true,
+      "can_insert": false,
+      "can_trigger": false
+    },
+    {
+      "role": "authenticated",
+      "schema_usage": true,
+      "can_insert": false,
+      "can_trigger": false
+    },
+    {
+      "role": "service_role",
+      "schema_usage": true,
+      "can_insert": false,
+      "can_trigger": false
+    },
+    {
+      "role": "postgres",
+      "schema_usage": true,
+      "can_insert": true,
+      "can_trigger": true
+    },
+    {
+      "role": "supabase_auth_admin",
+      "schema_usage": true,
+      "can_insert": true,
+      "can_trigger": true
+    }
+  ],
+  "functions": [
+    {
+      "signature": "log_audit_event(text,text,text,jsonb)",
+      "prosecdef": true,
+      "definition": "CREATE OR REPLACE FUNCTION public.log_audit_event(p_action text, p_target_type text, p_target_id text DEFAULT NULL::text, p_details jsonb DEFAULT '{}'::jsonb)\n RETURNS uuid\n LANGUAGE plpgsql\n SECURITY DEFINER\n SET search_path TO 'public'\nAS $function$\r\ndeclare\r\n  v_user_id uuid;\r\n  v_user_email text;\r\n  v_user_role text;\r\n  v_log_id uuid;\r\nbegin\r\n  v_user_id := auth.uid();\r\n  if v_user_id is not null then\r\n    select email into v_user_email from auth.users where id = v_user_id;\r\n    select coalesce(role, 'student') into v_user_role from public.profiles where id = v_user_id;\r\n  end if;\r\n  \r\n  insert into public.audit_logs (\r\n    actor_id,\r\n    actor_email,\r\n    actor_role,\r\n    action,\r\n    target_type,\r\n    target_id,\r\n    details\r\n  ) values (\r\n    v_user_id,\r\n    v_user_email,\r\n    coalesce(v_user_role, 'unknown'),\r\n    p_action,\r\n    p_target_type,\r\n    p_target_id,\r\n    p_details\r\n  ) returning id into v_log_id;\r\n\r\n  return v_log_id;\r\nend;\r\n$function$\n",
+      "proacl": "{=X/postgres,postgres=X/postgres,anon=X/postgres,authenticated=X/postgres,service_role=X/postgres}"
+    }
+  ],
+  "audit_triggers": [
+    {
+      "table_name": "profiles",
+      "definition": "CREATE TRIGGER audit_admin_profile_update BEFORE UPDATE ON public.profiles FOR EACH ROW EXECUTE FUNCTION audit_admin_profile_update()"
+    },
+    {
+      "table_name": "profiles",
+      "definition": "CREATE TRIGGER profiles_set_updated_at BEFORE UPDATE ON public.profiles FOR EACH ROW EXECUTE FUNCTION set_updated_at()"
+    },
+    {
+      "table_name": "profiles",
+      "definition": "CREATE TRIGGER trg_guard_profiles_role_change BEFORE UPDATE ON public.profiles FOR EACH ROW EXECUTE FUNCTION guard_profiles_role_change()"
+    },
+    {
+      "table_name": "scholarships",
+      "definition": "CREATE TRIGGER trg_guard_scholarship_capacity BEFORE UPDATE OF slots ON public.scholarships FOR EACH ROW EXECUTE FUNCTION guard_scholarship_capacity()"
+    }
+  ],
+  "scholarship_columns": [
+    {
+      "column_name": "id",
+      "data_type": "uuid"
+    },
+    {
+      "column_name": "title",
+      "data_type": "text"
+    },
+    {
+      "column_name": "provider",
+      "data_type": "text"
+    },
+    {
+      "column_name": "description",
+      "data_type": "text"
+    },
+    {
+      "column_name": "min_gpa",
+      "data_type": "numeric"
+    },
+    {
+      "column_name": "max_monthly_income",
+      "data_type": "numeric"
+    },
+    {
+      "column_name": "required_year_levels",
+      "data_type": "ARRAY"
+    },
+    {
+      "column_name": "required_courses",
+      "data_type": "ARRAY"
+    },
+    {
+      "column_name": "location_restriction",
+      "data_type": "text"
+    },
+    {
+      "column_name": "for_indigenous",
+      "data_type": "boolean"
+    },
+    {
+      "column_name": "for_pwd",
+      "data_type": "boolean"
+    },
+    {
+      "column_name": "slots",
+      "data_type": "integer"
+    },
+    {
+      "column_name": "deadline",
+      "data_type": "date"
+    },
+    {
+      "column_name": "application_url",
+      "data_type": "text"
+    },
+    {
+      "column_name": "is_active",
+      "data_type": "boolean"
+    },
+    {
+      "column_name": "created_at",
+      "data_type": "timestamp with time zone"
+    },
+    {
+      "column_name": "created_by",
+      "data_type": "uuid"
+    },
+    {
+      "column_name": "amount",
+      "data_type": "numeric"
+    },
+    {
+      "column_name": "coverage",
+      "data_type": "text"
+    },
+    {
+      "column_name": "frequency",
+      "data_type": "text"
+    },
+    {
+      "column_name": "eligible_school_ids",
+      "data_type": "ARRAY"
+    }
+  ]
+}

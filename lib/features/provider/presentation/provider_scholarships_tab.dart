@@ -219,7 +219,7 @@ class _ProviderScholarshipsTabState
                           ),
                           const SizedBox(height: 1),
                           Text(
-                            'AY 2024–2025 Cycle • 1st Semester Intake (PHT)',
+                            'Scholarship programs',
                             style:
                                 openSans(fontSize: 11, color: Colors.black54),
                           ),

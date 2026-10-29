@@ -225,6 +225,17 @@ void main() {
       expect(check.isLocked, isFalse);
       expect(check.failedAttempts, 0);
     });
+
+    test('expired lockout keeps failed attempts persisted for escalation', () async {
+      const email = 'expired@example.com';
+      final prefs = await SharedPreferences.getInstance();
+      await lockout.initPrefs();
+      await prefs.setInt('lockout_attempts_$email', 3);
+      await prefs.setInt('lockout_until_$email', DateTime.now().subtract(const Duration(seconds: 1)).millisecondsSinceEpoch);
+      expect(lockout.checkLockout(email).isLocked, isFalse);
+      expect(prefs.getInt('lockout_attempts_$email'), 3);
+      expect(prefs.getInt('lockout_until_$email'), isNull);
+    });
   });
 
   group('IAS Audit Ledger Logging', () {

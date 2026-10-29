@@ -1,0 +1,96 @@
+{
+  "project": "yqwbarzxpduzmtrxnrbm",
+  "mode": "--preflight",
+  "started_at": "2026-10-29T14:47:58.717Z",
+  "sources": [
+    [
+      "0035_guard_profile_status.sql",
+      "343F9405A02BCBB5A1B4FA708C655340D2D1C8F850E38F37A1BFA1072B4FAEDB"
+    ],
+    [
+      "0036_sync_confirmed_auth_email.sql",
+      "92AB174E1CA3D591D1E4BCBCDEC183DB89993EB5F9C1DF3A4D931A2733469471"
+    ],
+    [
+      "0037_admin_profile_audit.sql",
+      "3EDE2F81428F15CEA47B84E4797158B2B7B42B7265A8435E7F3DF2D5315DAEA8"
+    ]
+  ],
+  "checks": [
+    "project, source hashes, unchanged live function definitions and active-admin preflight"
+  ],
+  "server": {
+    "database": "postgres",
+    "operator": "postgres",
+    "server_version": "17.6"
+  },
+  "before_counts": {
+    "profiles": 161,
+    "auth_users": 167,
+    "audit_logs": 20
+  },
+  "before_functions": [
+    {
+      "proname": "guard_profiles_role_change",
+      "definition": "CREATE OR REPLACE FUNCTION public.guard_profiles_role_change()\n RETURNS trigger\n LANGUAGE plpgsql\n SECURITY DEFINER\n SET search_path TO 'public'\nAS $function$\r\nBEGIN\r\n  -- If role or provider_type is changing\r\n  IF (NEW.role IS DISTINCT FROM OLD.role OR NEW.provider_type IS DISTINCT FROM OLD.provider_type) THEN\r\n    -- Allow if current session is an admin or called from an internal server trigger\r\n    IF NOT (public.is_admin() OR pg_trigger_depth() > 1) THEN\r\n      RAISE EXCEPTION 'Unauthorized: only administrators can modify role or provider_type directly.';\r\n    END IF;\r\n  END IF;\r\n  RETURN NEW;\r\nEND;\r\n$function$\n"
+    },
+    {
+      "proname": "is_admin",
+      "definition": "CREATE OR REPLACE FUNCTION public.is_admin()\n RETURNS boolean\n LANGUAGE sql\n STABLE SECURITY DEFINER\n SET search_path TO 'public'\nAS $function$\r\n  SELECT EXISTS (\r\n    SELECT 1 FROM public.profiles\r\n    WHERE id = auth.uid() AND role = 'admin'\r\n  );\r\n$function$\n"
+    }
+  ],
+  "constraints": [
+    {
+      "table_name": "audit_logs",
+      "conname": "audit_logs_actor_id_fkey",
+      "definition": "FOREIGN KEY (actor_id) REFERENCES auth.users(id) ON DELETE SET NULL"
+    },
+    {
+      "table_name": "audit_logs",
+      "conname": "audit_logs_pkey",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "table_name": "profiles",
+      "conname": "profiles_gpa_scale_valid",
+      "definition": "CHECK (((gpa_scale IS NULL) OR (gpa_scale = ANY (ARRAY['four_point'::text, 'five_point'::text, 'percentage'::text]))))"
+    },
+    {
+      "table_name": "profiles",
+      "conname": "profiles_id_fkey",
+      "definition": "FOREIGN KEY (id) REFERENCES auth.users(id) ON DELETE CASCADE"
+    },
+    {
+      "table_name": "profiles",
+      "conname": "profiles_pkey",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "table_name": "profiles",
+      "conname": "profiles_provider_type_check",
+      "definition": "CHECK ((provider_type = ANY (ARRAY['individual'::text, 'organization'::text])))"
+    },
+    {
+      "table_name": "profiles",
+      "conname": "profiles_school_id_fkey",
+      "definition": "FOREIGN KEY (school_id) REFERENCES schools(id)"
+    },
+    {
+      "table_name": "profiles",
+      "conname": "profiles_setup_step_valid",
+      "definition": "CHECK (((profile_setup_step >= 1) AND (profile_setup_step <= 3)))"
+    },
+    {
+      "table_name": "profiles",
+      "conname": "profiles_status_check",
+      "definition": "CHECK ((status = ANY (ARRAY['active'::text, 'deactivated'::text, 'suspended'::text])))"
+    }
+  ],
+  "after_counts": {
+    "profiles": 161,
+    "auth_users": 167,
+    "audit_logs": 20
+  },
+  "success": true,
+  "finished_at": "2026-10-29T14:48:00.749Z"
+}

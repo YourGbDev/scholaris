@@ -1,0 +1,206 @@
+{
+  "project": "yqwbarzxpduzmtrxnrbm",
+  "source": "0039_trusted_audit_events.sql",
+  "hash": "C50554AB93765BDF4FFB9438203A0DECBD95AA898B84DF1EB3B85C6179846D05",
+  "mode": "--dry-run",
+  "started_at": "2026-10-29T15:35:57.577Z",
+  "checks": [
+    "live functions/triggers/ingestion grants and insert policies verified",
+    "client direct and column INSERT denied, including spoofed administrator identity",
+    "inactive admin cannot annotate; active admin annotation derives identity and target metadata",
+    "active annotation validates details and legacy reports produce no new events"
+  ],
+  "before_counts": {
+    "profiles": 161,
+    "auth_users": 167,
+    "scholarships": 32,
+    "audit_logs": 20,
+    "auth_audit_logs": 0
+  },
+  "before_catalog": [
+    {
+      "proname": "audit_admin_profile_update",
+      "definition": "CREATE OR REPLACE FUNCTION public.audit_admin_profile_update()\n RETURNS trigger\n LANGUAGE plpgsql\n SECURITY DEFINER\n SET search_path TO ''\nAS $function$\ndeclare\n  v_actor uuid := auth.uid();\n  v_email text;\nbegin\n  if v_actor is null or public.is_admin() is not true or new is not distinct from old then\n    return new;\n  end if;\n  select email into v_email from public.profiles where id = v_actor;\n  insert into public.audit_logs (actor_id, actor_email, actor_role, action, target_type, target_id, details)\n  values (v_actor, v_email, 'admin', 'user_updated', 'user', old.id::text, '{}'::jsonb);\n  if new.role is distinct from old.role then\n    insert into public.audit_logs (actor_id, actor_email, actor_role, action, target_type, target_id, details)\n    values (v_actor, v_email, 'admin', 'user_role_changed', 'user', old.id::text,\n      jsonb_build_object('old_role', old.role, 'new_role', new.role));\n  end if;\n  if new.status is distinct from old.status then\n    insert into public.audit_logs (actor_id, actor_email, actor_role, action, target_type, target_id, details)\n    values (v_actor, v_email, 'admin', 'user_status_changed', 'user', old.id::text,\n      jsonb_build_object('old_status', old.status, 'new_status', new.status));\n  end if;\n  return new;\nend;\n$function$\n"
+    },
+    {
+      "proname": "log_audit_event",
+      "definition": "CREATE OR REPLACE FUNCTION public.log_audit_event(p_action text, p_target_type text, p_target_id text DEFAULT NULL::text, p_details jsonb DEFAULT '{}'::jsonb)\n RETURNS uuid\n LANGUAGE plpgsql\n SECURITY DEFINER\n SET search_path TO 'public'\nAS $function$\r\ndeclare\r\n  v_user_id uuid;\r\n  v_user_email text;\r\n  v_user_role text;\r\n  v_log_id uuid;\r\nbegin\r\n  v_user_id := auth.uid();\r\n  if v_user_id is not null then\r\n    select email into v_user_email from auth.users where id = v_user_id;\r\n    select coalesce(role, 'student') into v_user_role from public.profiles where id = v_user_id;\r\n  end if;\r\n  \r\n  insert into public.audit_logs (\r\n    actor_id,\r\n    actor_email,\r\n    actor_role,\r\n    action,\r\n    target_type,\r\n    target_id,\r\n    details\r\n  ) values (\r\n    v_user_id,\r\n    v_user_email,\r\n    coalesce(v_user_role, 'unknown'),\r\n    p_action,\r\n    p_target_type,\r\n    p_target_id,\r\n    p_details\r\n  ) returning id into v_log_id;\r\n\r\n  return v_log_id;\r\nend;\r\n$function$\n"
+    }
+  ],
+  "scholarship_policies": [
+    {
+      "policyname": "Providers can delete own scholarships",
+      "roles": "{authenticated}",
+      "cmd": "DELETE",
+      "qual": "((created_by = auth.uid()) AND (EXISTS ( SELECT 1\n   FROM profiles\n  WHERE ((profiles.id = auth.uid()) AND (profiles.role = 'provider'::text)))))",
+      "with_check": null
+    },
+    {
+      "policyname": "Providers can insert own scholarships",
+      "roles": "{authenticated}",
+      "cmd": "INSERT",
+      "qual": null,
+      "with_check": "((created_by = auth.uid()) AND (EXISTS ( SELECT 1\n   FROM profiles\n  WHERE ((profiles.id = auth.uid()) AND (profiles.role = 'provider'::text)))))"
+    },
+    {
+      "policyname": "Providers can update own scholarships",
+      "roles": "{authenticated}",
+      "cmd": "UPDATE",
+      "qual": "((created_by = auth.uid()) AND (EXISTS ( SELECT 1\n   FROM profiles\n  WHERE ((profiles.id = auth.uid()) AND (profiles.role = 'provider'::text)))))",
+      "with_check": "(created_by = auth.uid())"
+    },
+    {
+      "policyname": "Scholarships are deletable by service_role only",
+      "roles": "{service_role}",
+      "cmd": "DELETE",
+      "qual": "true",
+      "with_check": null
+    },
+    {
+      "policyname": "Scholarships are insertable by service_role only",
+      "roles": "{service_role}",
+      "cmd": "INSERT",
+      "qual": null,
+      "with_check": "true"
+    },
+    {
+      "policyname": "Scholarships are readable by authenticated users",
+      "roles": "{authenticated}",
+      "cmd": "SELECT",
+      "qual": "true",
+      "with_check": null
+    },
+    {
+      "policyname": "Scholarships are updatable by service_role only",
+      "roles": "{service_role}",
+      "cmd": "UPDATE",
+      "qual": "true",
+      "with_check": null
+    },
+    {
+      "policyname": "scholarship_admin_delete_boundary",
+      "roles": "{authenticated}",
+      "cmd": "DELETE",
+      "qual": "(organization_role(created_by) = 'org_admin'::text)",
+      "with_check": null
+    },
+    {
+      "policyname": "scholarship_admin_insert_boundary",
+      "roles": "{authenticated}",
+      "cmd": "INSERT",
+      "qual": null,
+      "with_check": "((created_by = auth.uid()) AND (organization_role(created_by) = 'org_admin'::text))"
+    },
+    {
+      "policyname": "scholarship_admin_update_boundary",
+      "roles": "{authenticated}",
+      "cmd": "UPDATE",
+      "qual": "(organization_role(created_by) = 'org_admin'::text)",
+      "with_check": "((created_by = auth.uid()) AND (organization_role(created_by) = 'org_admin'::text))"
+    }
+  ],
+  "auth_source_grants": [
+    {
+      "role": "anon",
+      "auth_insert": false
+    },
+    {
+      "role": "authenticated",
+      "auth_insert": false
+    },
+    {
+      "role": "service_role",
+      "auth_insert": false
+    }
+  ],
+  "retained_writers": [
+    {
+      "signature": "assign_scholarship_reviewer(uuid,uuid)",
+      "prosecdef": true,
+      "owner": "postgres",
+      "owner_can_insert": true
+    },
+    {
+      "signature": "audit_admin_profile_update()",
+      "prosecdef": true,
+      "owner": "postgres",
+      "owner_can_insert": true
+    },
+    {
+      "signature": "handle_provider_verification_review()",
+      "prosecdef": true,
+      "owner": "postgres",
+      "owner_can_insert": true
+    },
+    {
+      "signature": "log_audit_event(text,text,text,jsonb)",
+      "prosecdef": true,
+      "owner": "postgres",
+      "owner_can_insert": true
+    },
+    {
+      "signature": "log_disbursement_audit()",
+      "prosecdef": true,
+      "owner": "postgres",
+      "owner_can_insert": true
+    },
+    {
+      "signature": "unassign_scholarship_reviewer(uuid,uuid)",
+      "prosecdef": true,
+      "owner": "postgres",
+      "owner_can_insert": true
+    }
+  ],
+  "grants": [
+    {
+      "role": "anon",
+      "table_insert": false,
+      "column_insert": false,
+      "auth_insert": false,
+      "auth_column_insert": false
+    },
+    {
+      "role": "authenticated",
+      "table_insert": false,
+      "column_insert": false,
+      "auth_insert": false,
+      "auth_column_insert": false
+    }
+  ],
+  "triggers": [
+    {
+      "tgname": "audit_admin_profile_update",
+      "tgenabled": "O",
+      "definition": "CREATE TRIGGER audit_admin_profile_update BEFORE UPDATE ON public.profiles FOR EACH ROW EXECUTE FUNCTION audit_admin_profile_update()"
+    },
+    {
+      "tgname": "audit_profile_created",
+      "tgenabled": "O",
+      "definition": "CREATE TRIGGER audit_profile_created AFTER INSERT ON public.profiles FOR EACH ROW EXECUTE FUNCTION audit_profile_lifecycle()"
+    },
+    {
+      "tgname": "audit_profile_deleted",
+      "tgenabled": "O",
+      "definition": "CREATE TRIGGER audit_profile_deleted BEFORE DELETE ON public.profiles FOR EACH ROW EXECUTE FUNCTION audit_profile_lifecycle()"
+    },
+    {
+      "tgname": "audit_scholarship_change",
+      "tgenabled": "O",
+      "definition": "CREATE TRIGGER audit_scholarship_change AFTER INSERT OR DELETE OR UPDATE ON public.scholarships FOR EACH ROW EXECUTE FUNCTION audit_scholarship_change()"
+    },
+    {
+      "tgname": "scholaris_auth_audit",
+      "tgenabled": "O",
+      "definition": "CREATE TRIGGER scholaris_auth_audit AFTER INSERT ON auth.audit_log_entries FOR EACH ROW EXECUTE FUNCTION audit_auth_event()"
+    }
+  ],
+  "scholarship_update_rows": 0,
+  "scholarship_audit_delta": 0,
+  "success": false,
+  "failure": {
+    "stage": "real scholarship update writes one server event",
+    "name": "AssertionError",
+    "code": "ERR_ASSERTION"
+  },
+  "finished_at": "2026-10-29T15:36:02.837Z"
+}

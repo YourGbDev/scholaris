@@ -1,0 +1,237 @@
+{
+  "project": "yqwbarzxpduzmtrxnrbm",
+  "source": "0038_audit_log_mutation_privileges.sql",
+  "hash": "69A26F93C5B3786B2939BF7AC6ED5D97AE79B166130E144D50E04DC81560EC05",
+  "mode": "--apply",
+  "checks": [
+    "effective live client mutation privileges absent; read/insert/service-role privileges preserved",
+    "anon: actual truncate/update/delete denied",
+    "authenticated: actual truncate/update/delete denied",
+    "existing active-admin update trigger still inserts an audit event; fixture changes rolled back",
+    "effective live client mutation privileges absent; read/insert/service-role privileges preserved"
+  ],
+  "started_at": "2026-10-29T14:56:06.837Z",
+  "before": [
+    {
+      "role": "anon",
+      "privilege": "DELETE",
+      "allowed": true
+    },
+    {
+      "role": "anon",
+      "privilege": "INSERT",
+      "allowed": true
+    },
+    {
+      "role": "anon",
+      "privilege": "REFERENCES",
+      "allowed": true
+    },
+    {
+      "role": "anon",
+      "privilege": "SELECT",
+      "allowed": true
+    },
+    {
+      "role": "anon",
+      "privilege": "TRIGGER",
+      "allowed": true
+    },
+    {
+      "role": "anon",
+      "privilege": "TRUNCATE",
+      "allowed": true
+    },
+    {
+      "role": "anon",
+      "privilege": "UPDATE",
+      "allowed": true
+    },
+    {
+      "role": "authenticated",
+      "privilege": "DELETE",
+      "allowed": true
+    },
+    {
+      "role": "authenticated",
+      "privilege": "INSERT",
+      "allowed": true
+    },
+    {
+      "role": "authenticated",
+      "privilege": "REFERENCES",
+      "allowed": true
+    },
+    {
+      "role": "authenticated",
+      "privilege": "SELECT",
+      "allowed": true
+    },
+    {
+      "role": "authenticated",
+      "privilege": "TRIGGER",
+      "allowed": true
+    },
+    {
+      "role": "authenticated",
+      "privilege": "TRUNCATE",
+      "allowed": true
+    },
+    {
+      "role": "authenticated",
+      "privilege": "UPDATE",
+      "allowed": true
+    },
+    {
+      "role": "service_role",
+      "privilege": "DELETE",
+      "allowed": true
+    },
+    {
+      "role": "service_role",
+      "privilege": "INSERT",
+      "allowed": true
+    },
+    {
+      "role": "service_role",
+      "privilege": "REFERENCES",
+      "allowed": true
+    },
+    {
+      "role": "service_role",
+      "privilege": "SELECT",
+      "allowed": true
+    },
+    {
+      "role": "service_role",
+      "privilege": "TRIGGER",
+      "allowed": true
+    },
+    {
+      "role": "service_role",
+      "privilege": "TRUNCATE",
+      "allowed": true
+    },
+    {
+      "role": "service_role",
+      "privilege": "UPDATE",
+      "allowed": true
+    }
+  ],
+  "before_acl": {
+    "relacl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+    "relrowsecurity": true
+  },
+  "before_count": 20,
+  "after": [
+    {
+      "role": "anon",
+      "privilege": "DELETE",
+      "allowed": false
+    },
+    {
+      "role": "anon",
+      "privilege": "INSERT",
+      "allowed": true
+    },
+    {
+      "role": "anon",
+      "privilege": "REFERENCES",
+      "allowed": false
+    },
+    {
+      "role": "anon",
+      "privilege": "SELECT",
+      "allowed": true
+    },
+    {
+      "role": "anon",
+      "privilege": "TRIGGER",
+      "allowed": false
+    },
+    {
+      "role": "anon",
+      "privilege": "TRUNCATE",
+      "allowed": false
+    },
+    {
+      "role": "anon",
+      "privilege": "UPDATE",
+      "allowed": false
+    },
+    {
+      "role": "authenticated",
+      "privilege": "DELETE",
+      "allowed": false
+    },
+    {
+      "role": "authenticated",
+      "privilege": "INSERT",
+      "allowed": true
+    },
+    {
+      "role": "authenticated",
+      "privilege": "REFERENCES",
+      "allowed": false
+    },
+    {
+      "role": "authenticated",
+      "privilege": "SELECT",
+      "allowed": true
+    },
+    {
+      "role": "authenticated",
+      "privilege": "TRIGGER",
+      "allowed": false
+    },
+    {
+      "role": "authenticated",
+      "privilege": "TRUNCATE",
+      "allowed": false
+    },
+    {
+      "role": "authenticated",
+      "privilege": "UPDATE",
+      "allowed": false
+    },
+    {
+      "role": "service_role",
+      "privilege": "DELETE",
+      "allowed": true
+    },
+    {
+      "role": "service_role",
+      "privilege": "INSERT",
+      "allowed": true
+    },
+    {
+      "role": "service_role",
+      "privilege": "REFERENCES",
+      "allowed": true
+    },
+    {
+      "role": "service_role",
+      "privilege": "SELECT",
+      "allowed": true
+    },
+    {
+      "role": "service_role",
+      "privilege": "TRIGGER",
+      "allowed": true
+    },
+    {
+      "role": "service_role",
+      "privilege": "TRUNCATE",
+      "allowed": true
+    },
+    {
+      "role": "service_role",
+      "privilege": "UPDATE",
+      "allowed": true
+    }
+  ],
+  "committed": true,
+  "after_count": 20,
+  "success": true,
+  "finished_at": "2026-10-29T14:56:13.388Z"
+}

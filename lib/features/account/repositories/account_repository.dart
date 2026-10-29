@@ -22,6 +22,7 @@ import 'package:flutter/foundation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'package:scholaris/app/confirmation_redirect.dart';
+import 'package:scholaris/core/security/password_validator.dart';
 
 /// Thrown when an operation requires a signed-in user but none exists.
 class AccountNotAuthenticatedException implements Exception {
@@ -179,12 +180,16 @@ class AccountRepository {
       throw const AccountNotAuthenticatedException();
     }
 
+    if (!PasswordValidator.isComplex(newPassword)) {
+      throw ArgumentError('Password does not meet the security requirements.');
+    }
+
     final verifiedUserId = await _dataSource.reauthenticate(
       email: email,
       password: currentPassword,
       captchaToken: captchaToken,
     );
-    if (verifiedUserId != userId) {
+    if (verifiedUserId != userId || _currentUserId() != userId) {
       throw const AccountSessionChangedException();
     }
 

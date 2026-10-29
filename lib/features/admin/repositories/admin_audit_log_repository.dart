@@ -1,4 +1,3 @@
-import 'package:scholaris/core/security/login_lockout_service.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class AuditLog {
@@ -68,18 +67,11 @@ abstract class AuditLogDataSource {
 class SupabaseAuditLogDataSource implements AuditLogDataSource {
   @override
   Future<List<Map<String, dynamic>>> fetchAuditLogs() async {
-    try {
-      final client = Supabase.instance.client;
-      final rows = await client
-          .from('audit_logs')
-          .select()
-          .order('created_at', ascending: false);
-      final list = List<Map<String, dynamic>>.from(rows);
-      if (list.isNotEmpty) return list;
-    } catch (_) {
-      // Fall back to in-memory audit logs if offline or unauthenticated
-    }
-    return LoginLockoutService.instance.inMemoryAuditLogs;
+    final rows = await Supabase.instance.client
+        .from('audit_logs')
+        .select()
+        .order('created_at', ascending: false);
+    return List<Map<String, dynamic>>.from(rows);
   }
 }
 

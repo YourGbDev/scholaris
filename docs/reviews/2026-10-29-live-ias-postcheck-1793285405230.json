@@ -1,0 +1,98 @@
+{
+  "project": "yqwbarzxpduzmtrxnrbm",
+  "mode": "--postcheck",
+  "started_at": "2026-10-29T14:50:05.228Z",
+  "sources": [
+    [
+      "0035_guard_profile_status.sql",
+      "343F9405A02BCBB5A1B4FA708C655340D2D1C8F850E38F37A1BFA1072B4FAEDB"
+    ],
+    [
+      "0036_sync_confirmed_auth_email.sql",
+      "92AB174E1CA3D591D1E4BCBCDEC183DB89993EB5F9C1DF3A4D931A2733469471"
+    ],
+    [
+      "0037_admin_profile_audit.sql",
+      "3EDE2F81428F15CEA47B84E4797158B2B7B42B7265A8435E7F3DF2D5315DAEA8"
+    ]
+  ],
+  "checks": [
+    "expected live definitions, enabled triggers and audit function grants"
+  ],
+  "server": {
+    "database": "postgres",
+    "operator": "postgres",
+    "server_version": "17.6"
+  },
+  "before_counts": {
+    "profiles": 161,
+    "auth_users": 167,
+    "audit_logs": 20
+  },
+  "before_functions": [
+    {
+      "proname": "audit_admin_profile_update",
+      "definition": "CREATE OR REPLACE FUNCTION public.audit_admin_profile_update()\n RETURNS trigger\n LANGUAGE plpgsql\n SECURITY DEFINER\n SET search_path TO ''\nAS $function$\ndeclare\n  v_actor uuid := auth.uid();\n  v_email text;\nbegin\n  if v_actor is null or public.is_admin() is not true or new is not distinct from old then\n    return new;\n  end if;\n  select email into v_email from public.profiles where id = v_actor;\n  insert into public.audit_logs (actor_id, actor_email, actor_role, action, target_type, target_id, details)\n  values (v_actor, v_email, 'admin', 'user_updated', 'user', old.id::text, '{}'::jsonb);\n  if new.role is distinct from old.role then\n    insert into public.audit_logs (actor_id, actor_email, actor_role, action, target_type, target_id, details)\n    values (v_actor, v_email, 'admin', 'user_role_changed', 'user', old.id::text,\n      jsonb_build_object('old_role', old.role, 'new_role', new.role));\n  end if;\n  if new.status is distinct from old.status then\n    insert into public.audit_logs (actor_id, actor_email, actor_role, action, target_type, target_id, details)\n    values (v_actor, v_email, 'admin', 'user_status_changed', 'user', old.id::text,\n      jsonb_build_object('old_status', old.status, 'new_status', new.status));\n  end if;\n  return new;\nend;\n$function$\n"
+    },
+    {
+      "proname": "guard_profiles_role_change",
+      "definition": "CREATE OR REPLACE FUNCTION public.guard_profiles_role_change()\n RETURNS trigger\n LANGUAGE plpgsql\n SECURITY DEFINER\n SET search_path TO 'public'\nAS $function$\nbegin\n  if new.status is distinct from old.status\n     and public.is_admin() is not true\n     and not (auth.uid() is null and current_setting('role') in ('none', 'postgres', 'service_role')) then\n    raise exception 'Unauthorized: only administrators can modify account status.';\n  end if;\n\n  if (new.role is distinct from old.role or new.provider_type is distinct from old.provider_type)\n     and (public.is_admin() or pg_trigger_depth() > 1) is not true then\n    raise exception 'Unauthorized: only administrators can modify role or provider_type directly.';\n  end if;\n  return new;\nend;\n$function$\n"
+    },
+    {
+      "proname": "is_admin",
+      "definition": "CREATE OR REPLACE FUNCTION public.is_admin()\n RETURNS boolean\n LANGUAGE sql\n STABLE SECURITY DEFINER\n SET search_path TO 'public'\nAS $function$\n  select exists (\n    select 1 from public.profiles\n    where id = auth.uid() and role = 'admin' and status = 'active'\n  );\n$function$\n"
+    },
+    {
+      "proname": "sync_profile_auth_email",
+      "definition": "CREATE OR REPLACE FUNCTION public.sync_profile_auth_email()\n RETURNS trigger\n LANGUAGE plpgsql\n SECURITY DEFINER\n SET search_path TO 'public'\nAS $function$\nbegin\n  update public.profiles set email = new.email where id = new.id;\n  return new;\nend;\n$function$\n"
+    }
+  ],
+  "postcheck": {
+    "functions": [
+      {
+        "proname": "audit_admin_profile_update",
+        "definition": "CREATE OR REPLACE FUNCTION public.audit_admin_profile_update()\n RETURNS trigger\n LANGUAGE plpgsql\n SECURITY DEFINER\n SET search_path TO ''\nAS $function$\ndeclare\n  v_actor uuid := auth.uid();\n  v_email text;\nbegin\n  if v_actor is null or public.is_admin() is not true or new is not distinct from old then\n    return new;\n  end if;\n  select email into v_email from public.profiles where id = v_actor;\n  insert into public.audit_logs (actor_id, actor_email, actor_role, action, target_type, target_id, details)\n  values (v_actor, v_email, 'admin', 'user_updated', 'user', old.id::text, '{}'::jsonb);\n  if new.role is distinct from old.role then\n    insert into public.audit_logs (actor_id, actor_email, actor_role, action, target_type, target_id, details)\n    values (v_actor, v_email, 'admin', 'user_role_changed', 'user', old.id::text,\n      jsonb_build_object('old_role', old.role, 'new_role', new.role));\n  end if;\n  if new.status is distinct from old.status then\n    insert into public.audit_logs (actor_id, actor_email, actor_role, action, target_type, target_id, details)\n    values (v_actor, v_email, 'admin', 'user_status_changed', 'user', old.id::text,\n      jsonb_build_object('old_status', old.status, 'new_status', new.status));\n  end if;\n  return new;\nend;\n$function$\n"
+      },
+      {
+        "proname": "guard_profiles_role_change",
+        "definition": "CREATE OR REPLACE FUNCTION public.guard_profiles_role_change()\n RETURNS trigger\n LANGUAGE plpgsql\n SECURITY DEFINER\n SET search_path TO 'public'\nAS $function$\nbegin\n  if new.status is distinct from old.status\n     and public.is_admin() is not true\n     and not (auth.uid() is null and current_setting('role') in ('none', 'postgres', 'service_role')) then\n    raise exception 'Unauthorized: only administrators can modify account status.';\n  end if;\n\n  if (new.role is distinct from old.role or new.provider_type is distinct from old.provider_type)\n     and (public.is_admin() or pg_trigger_depth() > 1) is not true then\n    raise exception 'Unauthorized: only administrators can modify role or provider_type directly.';\n  end if;\n  return new;\nend;\n$function$\n"
+      },
+      {
+        "proname": "is_admin",
+        "definition": "CREATE OR REPLACE FUNCTION public.is_admin()\n RETURNS boolean\n LANGUAGE sql\n STABLE SECURITY DEFINER\n SET search_path TO 'public'\nAS $function$\n  select exists (\n    select 1 from public.profiles\n    where id = auth.uid() and role = 'admin' and status = 'active'\n  );\n$function$\n"
+      },
+      {
+        "proname": "sync_profile_auth_email",
+        "definition": "CREATE OR REPLACE FUNCTION public.sync_profile_auth_email()\n RETURNS trigger\n LANGUAGE plpgsql\n SECURITY DEFINER\n SET search_path TO 'public'\nAS $function$\nbegin\n  update public.profiles set email = new.email where id = new.id;\n  return new;\nend;\n$function$\n"
+      }
+    ],
+    "triggers": [
+      {
+        "tgname": "audit_admin_profile_update",
+        "tgenabled": "O",
+        "definition": "CREATE TRIGGER audit_admin_profile_update BEFORE UPDATE ON public.profiles FOR EACH ROW EXECUTE FUNCTION audit_admin_profile_update()"
+      },
+      {
+        "tgname": "sync_profile_auth_email",
+        "tgenabled": "O",
+        "definition": "CREATE TRIGGER sync_profile_auth_email AFTER UPDATE OF email ON auth.users FOR EACH ROW WHEN (((old.email)::text IS DISTINCT FROM (new.email)::text)) EXECUTE FUNCTION sync_profile_auth_email()"
+      },
+      {
+        "tgname": "trg_guard_profiles_role_change",
+        "tgenabled": "O",
+        "definition": "CREATE TRIGGER trg_guard_profiles_role_change BEFORE UPDATE ON public.profiles FOR EACH ROW EXECUTE FUNCTION guard_profiles_role_change()"
+      }
+    ],
+    "privileges": {
+      "anon_exec": false,
+      "authenticated_exec": false
+    }
+  },
+  "after_counts": {
+    "profiles": 161,
+    "auth_users": 167,
+    "audit_logs": 20
+  },
+  "success": true,
+  "finished_at": "2026-10-29T14:50:07.346Z"
+}

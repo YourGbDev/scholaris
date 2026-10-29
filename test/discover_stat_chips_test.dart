@@ -98,7 +98,7 @@ void main() {
       });
 
       await tester.pumpWidget(_wrap(child: const HomeScreen()));
-      await tester.pump(const Duration(milliseconds: 500));
+      await tester.pump(const Duration(milliseconds: 1500));
 
       final bookmarkedChip = find.byKey(const ValueKey('stat-chip-saved'));
       expect(bookmarkedChip, findsOneWidget);
@@ -120,7 +120,7 @@ void main() {
       });
 
       await tester.pumpWidget(_wrap(child: const HomeScreen()));
-      await tester.pump(const Duration(milliseconds: 500));
+      await tester.pump(const Duration(milliseconds: 1500));
 
       final appliedChip = find.byKey(const ValueKey('stat-chip-applied'));
       expect(appliedChip, findsOneWidget);

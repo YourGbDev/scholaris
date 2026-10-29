@@ -102,7 +102,7 @@ class _OrgDisbursementsTabState extends ConsumerState<OrgDisbursementsTab> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Exporting Payout Ledger',
+                      'Export unavailable',
                       style: inter(
                         fontSize: 13,
                         fontWeight: FontWeight.w600,
@@ -110,7 +110,7 @@ class _OrgDisbursementsTabState extends ConsumerState<OrgDisbursementsTab> {
                       ),
                     ),
                     Text(
-                      'Generating encrypted Ledger Summary CSV (AY 2024–2025)...',
+                      'This ledger cannot be exported yet.',
                       style: inter(
                         fontSize: 11,
                         color: kOrgTextSecondary,
@@ -938,7 +938,7 @@ class _OrgDisbursementsTabState extends ConsumerState<OrgDisbursementsTab> {
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Text(
-                'AY 2024–2025',
+                'Recorded activity',
                 style: inter(
                   fontSize: 10,
                   fontWeight: FontWeight.w700,

@@ -82,22 +82,13 @@ class AdminScholarshipsController {
 
   Future<void> toggleActive(Scholarship scholarship, bool newActive) async {
     final client = Supabase.instance.client;
-    await client
-        .from('scholarships')
-        .update({'is_active': newActive})
-        .eq('id', scholarship.id);
-
-    await logAdminAuditEvent(
-      action: newActive ? 'scholarship_activated' : 'scholarship_paused',
-      targetType: 'scholarship',
-      targetId: scholarship.id,
-      details: {
-        'title': scholarship.title,
-        'provider': scholarship.provider,
-        'previous_status': scholarship.isActive,
-        'new_status': newActive,
-      },
-    );
+    final result = await client.rpc('set_admin_scholarship_active', params: {
+      'p_id': scholarship.id,
+      'p_active': newActive,
+    });
+    if (result != scholarship.id) {
+      throw StateError('The scholarship update could not be confirmed.');
+    }
 
     ref.invalidate(adminScholarshipsProvider);
     ref.invalidate(scholarshipsProvider);

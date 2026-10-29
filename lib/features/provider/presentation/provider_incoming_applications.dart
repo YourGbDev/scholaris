@@ -52,7 +52,7 @@ class ProviderIncomingApplications extends ConsumerWidget {
                 ),
                 const SizedBox(height: 2),
                 Text(
-                  'AY 2024–2025 • Deliberate and evaluate student dossiers in real time.',
+                  'Review and evaluate student applications.',
                   style: openSans(fontSize: 12, color: Colors.black54),
                 ),
               ],

@@ -1910,20 +1910,28 @@ class _AdminScholarshipsTabState extends ConsumerState<AdminScholarshipsTab> {
               onPressed: () async {
                 if (selected != null && noteCtrl.text.trim().isNotEmpty) {
                   Navigator.of(dialogContext).pop();
-                  await ref.read(adminScholarshipsControllerProvider).flagScholarship(
-                        scholarship: selected!,
-                        reason: noteCtrl.text.trim(),
-                      );
-                  if (context.mounted) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text(
-                          'Program "${selected!.title}" flagged for review.',
-                          style: seqBodyMd(color: kSeqOnError),
+                  try {
+                    await ref.read(adminScholarshipsControllerProvider).flagScholarship(
+                          scholarship: selected!,
+                          reason: noteCtrl.text.trim(),
+                        );
+                    if (context.mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(
+                            'Program "${selected!.title}" flagged for review.',
+                            style: seqBodyMd(color: kSeqOnError),
+                          ),
+                          backgroundColor: kSeqError,
                         ),
-                        backgroundColor: kSeqError,
-                      ),
-                    );
+                      );
+                    }
+                  } catch (_) {
+                    if (context.mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('Could not save the flag. Please try again.')),
+                      );
+                    }
                   }
                 }
               },

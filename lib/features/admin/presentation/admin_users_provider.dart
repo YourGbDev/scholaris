@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'dart:math';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:scholaris/app/supabase_config.dart';
-import 'package:scholaris/core/security/login_lockout_service.dart';
 import 'package:scholaris/features/auth/controllers/auth_controller.dart';
 import 'package:scholaris/features/profile/models/student_profile.dart';
 import 'package:scholaris/features/profile/providers/profile_setup_provider.dart';
@@ -56,25 +55,15 @@ Future<void> logAdminAuditEvent({
   String? targetId,
   Map<String, dynamic>? details,
 }) async {
-  try {
-    final client = Supabase.instance.client;
-    await client.rpc('log_audit_event', params: {
-      'p_action': action,
-      'p_target_type': targetType,
-      'p_target_id': targetId,
-      'p_details': details ?? {},
-    });
-  } catch (_) {
-    // Non-fatal if offline or unauthenticated
+  final result = await Supabase.instance.client.rpc('log_audit_event', params: {
+    'p_action': action,
+    'p_target_type': targetType,
+    'p_target_id': targetId,
+    'p_details': details ?? {},
+  });
+  if (action == 'scholarship_flagged' && (result is! String || result.isEmpty)) {
+    throw StateError('The scholarship flag could not be confirmed.');
   }
-  // Local fallback / in-memory ledger
-  await LoginLockoutService.instance.logAuditEvent(
-    action: action,
-    targetType: targetType,
-    targetId: targetId,
-    details: details,
-    actorRole: 'admin',
-  );
 }
 
 class AdminUsersController {
@@ -111,17 +100,6 @@ class AdminUsersController {
       throw StateError('Account creation could not be confirmed.');
     }
 
-    await logAdminAuditEvent(
-      action: 'user_created',
-      targetType: 'user',
-      targetId: newId,
-      details: {
-        'full_name': fullName,
-        'email': email,
-        'role': role,
-        'status': status,
-      },
-    );
     ref.invalidate(adminUsersProvider);
     ref.invalidate(adminAuditLogsProvider);
   }
@@ -136,24 +114,7 @@ class AdminUsersController {
       'role': newRole,
       'status': newStatus,
     };
-    try {
-      await repo.adminUpdateProfile(user.id, data);
-    } catch (_) {
-      await repo.adminUpsertProfile(user.id, {...user.toDbRow(), ...data});
-    }
-    await logAdminAuditEvent(
-      action: 'role_and_status_updated',
-      targetType: 'user',
-      targetId: user.id,
-      details: {
-        'old_role': user.role,
-        'new_role': newRole,
-        'old_status': user.status,
-        'new_status': newStatus,
-        'email': user.email,
-        'full_name': user.fullName,
-      },
-    );
+    await repo.adminUpdateProfile(user.id, data);
     ref.invalidate(adminUsersProvider);
     ref.invalidate(adminAuditLogsProvider);
   }
@@ -163,21 +124,7 @@ class AdminUsersController {
     final data = {
       'status': 'deactivated',
     };
-    try {
-      await repo.adminUpdateProfile(user.id, data);
-    } catch (_) {
-      await repo.adminUpsertProfile(user.id, {...user.toDbRow(), ...data});
-    }
-    await logAdminAuditEvent(
-      action: 'user_deactivated',
-      targetType: 'user',
-      targetId: user.id,
-      details: {
-        'previous_status': user.status,
-        'email': user.email,
-        'full_name': user.fullName,
-      },
-    );
+    await repo.adminUpdateProfile(user.id, data);
     ref.invalidate(adminUsersProvider);
     ref.invalidate(adminAuditLogsProvider);
   }
@@ -185,16 +132,6 @@ class AdminUsersController {
   Future<void> deleteUser(StudentProfile user) async {
     final repo = ref.read(profileRepositoryProvider);
     await repo.adminDeleteProfile(user.id);
-    await logAdminAuditEvent(
-      action: 'user_deleted',
-      targetType: 'user',
-      targetId: user.id,
-      details: {
-        'role': user.role,
-        'email': user.email,
-        'full_name': user.fullName,
-      },
-    );
     ref.invalidate(adminUsersProvider);
     ref.invalidate(adminAuditLogsProvider);
   }

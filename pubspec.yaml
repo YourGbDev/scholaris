@@ -1,7 +1,7 @@
 name: scholaris
 description: "A new Flutter project."
 publish_to: "none"
-version: 1.0.0+11
+version: 1.0.0+12
 
 environment:
   sdk: ^3.13.1
@@ -26,6 +26,7 @@ dependencies:
   web: ^1.1.1
   mobile_scanner: ^7.4.2
   qr_flutter: ^4.1.0
+  webview_flutter: 4.14.1
 
 dev_dependencies:
   flutter_test:
@@ -66,4 +67,5 @@ flutter:
     - assets/images/login_hero.svg
     - assets/images/hero_banner_exact.png
     - assets/images/hero_banner_female.png
+    - assets/images/provider_hero_illustration.png
 

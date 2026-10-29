@@ -1,79 +1,47 @@
-# Task Card: QA (`cerith` / `ai/qa`)
+# Task Card: QA (`cerith` Session)
 
-**Sprint:** 3rd Increment Pre-Presentation Audit  
-**Role:** 🔍 Independent Quality Assurance & Bug Hunting Specialist  
-**Reference Plan:** `docs/plans/2026-10-19_increment3_pre_presentation_audit_plan.md`  
-**Status:** `READY FOR AUDIT`
-
----
-
-## 1. Objective
-Perform an independent, adversarial quality audit of the complete transaction cycle to ensure bulletproof stability during the instructor's live demonstration. Verify that all automated tests pass, edge cases (unauthorized submission, withdrawal constraints, premature approval) fail safely, and the classroom demonstration script is clear and verified.
+**Sprint**: Final Focused Student Navbar Proportions Pass (`student-navbar-proportions-2026-10-27`) & Student Motion Integration  
+**Target Deadline**: Completed — Standing down on standby; student navbar and motion handed off to Codex  
+**Role**: 🔍 Testing, Regressions & Failure Reproduction Specialist  
+**Assigned Workspace**: `C:\scholaris` on branch `fix/touch-targets-oct02`  
+**Standing Contract**: [`docs/coordination/SPECIALIST_CONTRACT.md`](../coordination/SPECIALIST_CONTRACT.md)  
+**Status**: `STANDBY (COMPLETED / HANDED OFF TO CODEX)`
 
 ---
 
-## 2. Permitted Files
-- `test/application_workflow_transport_test.dart`
-- `test/reviewer_drawer_lifecycle_test.dart`
-- `test/application_decision_letter_test.dart`
-- `test/award_celebration_ui_test.dart`
-- `test/features/provider/provider_sub_role_test.dart`
-- `test/features/student/bottom_nav_tab_switch_test.dart`
-- `scratch/verify_post_cleanup_state.mjs`
-- `docs/reports/3RD_INCREMENT_LIVE_DEMO_SCRIPT.md`
-- `docs/reports/2026-10-19_increment3_qa_report.md` (report deliverable)
+## 1. Permitted Files (Exact Named Files Only)
+
+### Sole Edit Ownership:
+- `C:\scholaris\test\student_scroll_dock_test.dart` (update collapsed assertions: icon-only `find.byIcon(...)` instead of `find.text('Home')` / `find.text('Discover')`; update clearance expectation to `90.0px` = `16 + 58 + 16`)
+- `C:\scholaris\test\student_nav_rebuild_test.dart` (update 62.0px height assertions to 58.0px)
+- `C:\scholaris\test\student_navbar_accessibility_test.dart` (update dock height 62.0px to 58.0px; verify touch targets $\ge 44\text{pt}$)
+- `C:\scholaris\docs\reports\student-navbar-proportions-2026-10-27\qa.md` (deliverable report)
+
+### Read-Only / Invariants:
+- All product files in `lib/` (UI/Builder owned)
 
 ---
 
-## 3. Specific Audit Checklist
+## 2. Tasks & Acceptance Criteria
 
-### A. Core Transaction Cycle Validation
-1. **The 4-Stage Transaction Loop**:
-   - Trace the exact sequence:
-     1. Student completes and submits application (`submitted`).
-     2. Reviewer scores rubric and endorses (`endorsed`).
-     3. Org Admin reviews evaluator rubric and approves (`approved`) or rejects (`rejected`). (Awarding to `awarded` is strictly platform-admin-only under migration 0025 via `public.is_admin()`).
-     4. Student receives in-app notification and views official decision letter / certificate.
-2. **Negative Edge Cases**:
-   - Verify withdrawal guard: Can an application in `endorsed`, `approved`, or `awarded` status be withdrawn? (Must throw `ApplicationWithdrawalException` and display user-friendly snackbar).
-   - Verify unauthenticated guard: What happens when an unauthenticated user attempts to submit an application? (Must be blocked cleanly).
-   - Verify empty state handling: Check that zero applications in incoming queues render clean, explanatory empty state cards without crashing.
+### Task QA-1: Update `student_scroll_dock_test.dart`
+1. **Collapsed Icon-Only Verification**:
+   - In Test 1 (lines 68–72) and Test 6 (line 208): update descendant check of `student-nav-compact-control` from `find.text(...)` to `find.byIcon(Icons.home_rounded)` / `find.byIcon(Icons.explore)`.
+   - Confirm visible text is absent (`find.descendant(of: compactControl, matching: find.byType(Text))` findsNothing), while `Semantics` label remains present (`tester.getSemantics(compactControl).label` contains active tab name).
+2. **Clearance Expectation**:
+   - In Test 9 (line 338): update `clearanceExpanded` check from `16.0 + 62.0 + 16.0` (`94.0`) to `16.0 + 58.0 + 16.0` (`90.0`).
 
-### B. Automated Test Suite Execution
-Execute the full suite of transaction, workflow, and lifecycle tests:
-```bash
-flutter test test/application_workflow_transport_test.dart
-flutter test test/reviewer_drawer_lifecycle_test.dart
-flutter test test/application_decision_letter_test.dart
-flutter test test/award_celebration_ui_test.dart
-flutter test test/features/provider/provider_sub_role_test.dart
-flutter test test/features/student/bottom_nav_tab_switch_test.dart
-```
+### Task QA-2: Update `student_nav_rebuild_test.dart`
+- Update lines 62–90: change `62.0` height expectation for outer SizedBox, 4-tab pill, and `+` button to `58.0`.
 
-### C. Live Demo Readiness & Script Audit
-1. Run read-only database state check:
-   ```bash
-   node scratch/verify_post_cleanup_state.mjs
-   ```
-2. Verify that:
-   - Student tracker has **0 applications**.
-   - Student notifications has **0 items**.
-   - Reviewer queue has **0 applications**.
-   - Org admin queue has **0 applications**.
-   - The 3 DOST demo scholarships are active with deadlines in December 2026.
-3. Review and audit `docs/reports/3RD_INCREMENT_LIVE_DEMO_SCRIPT.md` to guarantee every presentation step and credential matches current live system configuration.
+### Task QA-3: Update `student_navbar_accessibility_test.dart`
+- Update lines 255, 305, 337–338: change `62.0` dock height and `+` button size to `58.0`.
+- Verify touch targets remain $\ge 44\text{pt}$ (58.0px $\ge$ 44.0px).
 
----
-
-## 4. Deliverable Report
-Commit completion report to:
-`docs/reports/2026-10-19_increment3_qa_report.md`
-
-Must include:
-- `### Test Execution Summary` (with exact test names, pass/fail counts, execution times)
-- `### Negative & Edge Case Analysis`
-- `### Live Demo Environment Status`
-- `### Implemented / Audited`
-- `### Verified`
-- `### Not verified`
-- `### Remaining risks`
+### Task QA-4: Execute 35 Navigation Tests + 47 Security Regression Tests (82/82)
+- Run:
+  ```powershell
+  flutter test test/student_scroll_dock_test.dart test/student_navbar_accessibility_test.dart test/student_nav_rebuild_test.dart test/features/student/bottom_nav_tab_switch_test.dart
+  flutter test test/cross_tab_logout_test.dart test/ias_security_test.dart test/codex_auth_transition_review_test.dart test/admin_auth_boundary_invalidation_test.dart
+  ```
+- Deliver report to `C:\scholaris\docs\reports\student-navbar-proportions-2026-10-27\qa.md` and mark `QA_FINAL`.

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 
 import 'captcha_gate.dart';
 import 'captcha_view_stub.dart'
+    if (dart.library.io) 'captcha_view_native.dart'
     if (dart.library.js_interop) 'captcha_view_web.dart';
 
 const captchaEnabled = bool.fromEnvironment('SCHOLARIS_CAPTCHA_ENABLED');

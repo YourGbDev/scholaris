@@ -76,7 +76,7 @@ class _OrgAnalyticsTabState extends ConsumerState<OrgAnalyticsTab> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Compiling Impact Dossier',
+                      'Export unavailable',
                       style: inter(
                         fontSize: 13,
                         fontWeight: FontWeight.w600,
@@ -84,7 +84,7 @@ class _OrgAnalyticsTabState extends ConsumerState<OrgAnalyticsTab> {
                       ),
                     ),
                     Text(
-                      'Generating PDF and Excel packages...',
+                      'This report cannot be exported yet.',
                       style: inter(
                         fontSize: 11,
                         color: kOrgTextSecondary,
@@ -643,7 +643,7 @@ class _OrgAnalyticsTabState extends ConsumerState<OrgAnalyticsTab> {
               const Icon(Icons.date_range_rounded, size: 16, color: kOrgPrimary),
               const SizedBox(width: 6),
               Text(
-                'AY 2024–2025 (Full Year)',
+                'All available records',
                 style: inter(
                   fontSize: 11.5,
                   fontWeight: FontWeight.w500,
@@ -738,7 +738,7 @@ class _OrgAnalyticsTabState extends ConsumerState<OrgAnalyticsTab> {
         badgeText: totalScholars > 0 ? '100% Active' : null,
         badgeIcon: totalScholars > 0 ? Icons.check_circle_outline_rounded : null,
         subtext: totalScholars > 0
-            ? 'AY 2024–2025 verified intake'
+            ? 'Recorded intake'
             : 'No active beneficiaries enrolled yet',
       ),
     );

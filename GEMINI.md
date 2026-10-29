@@ -1,5 +1,31 @@
 # Scholaris — Gemini Project Instructions & Operating Rules
 
+## 0. Working Agreement & Skill Selection
+
+Read this guide before work. Inspect the current checkout, branch, staged/unstaged/untracked changes, and the active assignment. Direct user instructions and existing session approvals take precedence over this guide, older task cards, and skill preferences. Do not restart an approved task or request the same approval merely because a skill introduces a planning gate.
+
+### Platforms and ownership
+
+* **Student experience:** iPhone/mobile app, also exercised in web previews. QR and quick document submission retain their existing floating `+` entry point.
+* **Organization admins, reviewers/staff, individual providers, and platform/super admins:** desktop web portals. A web-admin change alone does not require a new student IPA; student Flutter changes do.
+* **Codex:** UI/UX lead, actual-browser verification, and designated operator for approved remote Supabase changes.
+* **Architect:** coordinates the four specialist worktrees, backend dependencies, evidence, and integration proposals. Builder implements focused fixes; Security reviews authorization; QA verifies behavior; UI/UX assists within explicitly assigned files.
+* Agree on shared-file ownership before editing. Do not change another agent's active files or assume another worktree shares your browser session, credentials, tools, or uncommitted changes.
+* Database preparation is not execution. Remote migrations, backup creation, test-data mutations, cleanup, pushes, deployments, and builds need authorization appropriate to the action. Existing authorization persists within its stated scope. Only report a remote change as applied after the designated operator supplies execution evidence.
+
+### Read skills when they fit the task
+
+1. Inspect the runtime's available-skill catalog and the current worktree's `.agents/skills/`. Read the relevant `SKILL.md` before applying it; consult supporting references only when needed. Prefer the active catalog's exact paths over assumed user-home paths.
+2. Installation, discovery, reading, and application are different states. State which skills you actually read and applied. Do not claim that every worktree inherits Architect's installed skills or that a README/GEMINI edit activates a plugin.
+3. Use Superpowers process skills according to the task: `using-superpowers` for routing; `brainstorming`/`writing-plans` for new scoped work; `systematic-debugging` for failures; `test-driven-development` for nontrivial behavior/security fixes; review skills for review; `verification-before-completion` before claiming success. Scale the process to the change and reuse approved plans. Delegation and worktree skills do not themselves authorize new agents, checkouts, merges, or releases.
+4. Use `ponytail` for the smallest complete engineering change without sacrificing validation, privacy, accessibility, or error handling.
+5. For UI work, follow the design routing in section 4. Load relevant design skills rather than every installed skill on every task.
+6. **Caveman is off by default.** Activate it only when the user explicitly requests that style. Otherwise keep clear, friendly, concise language; code, documentation, reports, and PRs use normal contributor English.
+7. Skills cannot override project truth, the approved Scholaris design, runtime tool definitions, security controls, or user instructions. Do not automatically install/enable hooks, proxies, telemetry, binaries, or change machine settings as a side effect of reading a skill. Inspect helper scripts before execution and follow the environment's approval rules.
+8. If a skill or tool is unavailable, report that fact, continue unaffected work, and give a precise handoff for the blocked portion. Do not invent skill use, background monitors, browser checks, or tool capabilities.
+
+---
+
 ## 1. Mission
 
 Scholaris is a Filipino scholarship matching application designed to help students discover relevant scholarships and help scholarship providers manage applications while rigorously protecting applicant privacy.
@@ -79,7 +105,7 @@ If you discover an adjacent issue, report it separately unless fixing it is nece
 
 The codebase is built on:
 
-* **Framework**: Flutter (SDK `^3.13.1`), Dart (supporting web, mobile, desktop).
+* **Framework**: Flutter; the Dart SDK constraint is `^3.13.1` in `pubspec.yaml`. Check the installed Flutter/Dart versions before building.
 * **State Management**: `flutter_riverpod` (v2.x) with `AsyncNotifier` and `FutureProvider`.
 * **Routing**: `go_router` (v14.x) using path-based URL strategy (`usePathUrlStrategy()`), custom transitions (`app_motion.dart`), and auth-aware redirect gates (`lib/app/router.dart`).
 * **Backend & Auth**: `supabase_flutter` (v2.x) connecting to PostgreSQL via Supabase Auth, Row-Level Security (RLS), and Storage.
@@ -105,24 +131,24 @@ Existing implementation in the repository always takes precedence over generic c
 
 ### Defensive Flex Layouts:
 * Always guard text inside rows with `Flexible` or `Expanded`, specify `maxLines` and `overflow: TextOverflow.ellipsis`.
-* Use `FittedBox(fit: BoxFit.scaleDown)` on constrained action buttons, chips, or KPI metrics to guarantee responsiveness across variable font metrics without clipping.
+* Prefer wrapping, responsive spacing, and `Flexible`/`Expanded` before shrinking text. Use `FittedBox(fit: BoxFit.scaleDown)` selectively for compact numeric metrics where appropriate; do not defeat accessible text scaling to hide a layout defect.
 
 ### Design Principles (Apple HIG & Material 3):
 * Follow established design patterns: tactile spring physics (`PressableScale`), optical typography tracking curves (`app_motion.dart`), and WCAG AA contrast standards (minimum 4.5:1 for normal text).
 * Use enterprise restraint: solid surfaces for dense financial/grant administration; avoid visual gimmicks.
 
-### Mandatory Design Skills for UI/UX Work:
-For all Scholaris UI/UX audits, redesigns, screen reviews, component reviews, visual-system decisions, interaction polish, and animation implementations, the agent MUST explicitly load, reference, and apply the installed workspace skills located in `.agents/skills/`:
-1. **`apple-design`** (`.agents/skills/apple-design/SKILL.md`):
-   - Ground reviews in Apple's Human Interface Guidelines (HIG) and Apple Design Principles (Purpose, Agency, Responsibility, Familiarity, Flexibility, Simplicity, Craft, Delight).
-   - Evaluate across the five review lenses in strict order: (1) Accessibility (Critical), (2) Platform Conventions (High), (3) Visual Design & Craft (High/Medium), (4) Interaction (Medium), (5) Content & Writing (Medium).
-   - Consult `references/cross-platform.md` to translate HIG concepts into Flutter architecture (`ThemeData`, `BottomNavigationBar`, `NavigationRail`, `SafeArea`, `textScaler`, `BackdropFilter`).
-   - Cite specific HIG reference files and headings (e.g. `buttons.md › Style`, `tab-bars.md › Best practices`).
-2. **`emilkowalski/skills`**:
-   - **`emil-design-eng`** (`.agents/skills/emil-design-eng/SKILL.md`): Apply design engineering principles, the Animation Decision Framework (Frequency gate: 100+/day = no animation; Purpose: feedback, spatial consistency, state indication; custom easing curves; UI animations sub-300ms; button responsiveness with `scale(0.97)`; origin-aware popovers; never animate from `scale(0)`; GPU-only properties). Required review format: `| Before | After | Why |` markdown tables.
-   - **`emil-apple-design`** (`.agents/skills/emil-apple-design/SKILL.md`): Apply fluid interfaces principles from WWDC (kill latency, 1:1 direct manipulation, interruptibility as highest priority, spring physics defaults `damping: 1.0` response `0.3-0.4`, momentum projection, velocity handoff, rubber-banding, size-specific optical type tracking).
-   - **`review-animations`** (`.agents/skills/review-animations/SKILL.md`): Enforce the Ten Non-Negotiable Standards, flag Aggressive Escalation Triggers, follow Remedial Preference Hierarchy (Delete > Reduce > Fix easing > Fix origin > Make interruptible > Move to GPU > Asymmetric timing > Polish > Accessibility/cohesion), and deliver Part 1 Findings table and Part 2 Verdict.
-   - **`animate`** (`.agents/skills/animate/SKILL.md`): Follow the 7-step build sequence, gate keyboard/high-frequency actions, and use standard curve/duration tokens.
+### Design skill routing
+
+For UI/UX work, read the relevant available skills and references. These are routing choices, not a requirement to load all skills together:
+
+| Task | Relevant skills and guidance |
+| --- | --- |
+| Student mobile or desktop-portal review | `apple-hig`; read accessibility, layout, type, color, and the component-specific HIG references. Use its cross-platform reference to translate guidance into Flutter. |
+| Touch feedback, sheets, gestures, or fluid motion | `apple-design` and `emil-design-eng`; add `animate` or `review-animations` only when installed and relevant. |
+| Landing-page visual direction | `design-taste-frontend`, preserving approved branding and content. |
+| UX hierarchy, forms, empty/error states, accessibility, responsive hardening | `impeccable`'s relevant playbook; retain existing design decisions for refinement tasks. |
+
+Do not assume a similarly named skill is interchangeable: `apple-hig` contains the HIG reference pages, while `apple-design` covers interface/motion craft. An existing `emil-apple-design` copy may provide related guidance; inspect it rather than loading duplicate material automatically. Use actual browser tools available in the runtime instead of copying incompatible automation commands from a skill. Reduced motion, readable text scaling, and visible focus take priority over decorative effects.
 
 ### UI Audit & Review Requirements:
 * **Mandatory "Skills Applied" Section**: Every UI/UX audit, review, or redesign plan MUST contain an explicit section stating:
@@ -171,10 +197,11 @@ The router (`lib/app/router.dart`) controls routing and auth-aware redirects:
 
 Treat the database as security-critical.
 
-* **Migrations Directory**: Located in `supabase/migrations/` (migrations `0001` through `0022`).
-* **Core Tables**: `profiles`, `scholarships`, `bookmarks`, `applications`, `application_documents`, `login_attempts`, `audit_logs`, `provider_verifications`, `disbursements`.
-* **Roles**: Stored in `public.profiles.role` (`'student'`, `'provider'`, `'admin'`). Admin authorization is verified in PostgreSQL via `public.is_admin()`.
-* **Storage Buckets**: `application_documents` stores sensitive student attachments (transcripts, certificates, IDs) and is guarded by strict storage RLS policies (`0018`, `0019`).
+* **Migrations Directory**: `supabase/migrations/`. Inspect the current files and active remote definitions; a filename or REST 404 does not prove application status. Execution evidence must identify the project, exact source commit/hash, results, and post-checks. Never blindly reapply SQL already executed through the dashboard.
+* **Core Tables**: `profiles`, `scholarships`, `bookmarks`, `applications`, `application_documents`, `application_evaluations`, `application_status_history`, `notifications`, `organization_memberships`, `schools`, `scholarship_reviewer_assignments`, `login_attempts`, `audit_logs`, `provider_verifications`, `disbursements`.
+* **Roles**: Account roles are `public.profiles.role` (`student`, `provider`, `admin`). Organization authority comes from trusted active `organization_memberships`, not browser ports, email prefixes, names, or shared sessions. `public.is_admin()` identifies a platform admin; it does not confer SQL Editor or database-owner access to an agent.
+* **Workflow**: Student submission → separate org reviewer endorsement (`under_review`) → org-admin approval/rejection → persisted student result/notification. Platform-admin `approved → awarded` is separate. Reviewers cannot approve/reject; org admins cannot award. Pending withdrawals occupy zero slots; approved/awarded occupy one each; awarding consumes no extra slot.
+* **Storage Buckets**: `application_documents` contains private student files. Inspect all active storage policies and restrictive boundaries, including the organization-review migrations, rather than only older policies.
 
 Before modifying Supabase-related code:
 
@@ -182,6 +209,10 @@ Before modifying Supabase-related code:
 * Inspect existing RLS policies and grants.
 * Identify which authenticated roles can access the data.
 * Check whether client-controlled values influence authorization.
+* Inspect production default privileges on new tables/views/functions. Explicitly remove unintended client write grants; a `GRANT SELECT` does not revoke inherited writes. RPC-only mutations must bind the actor to `auth.uid()`, validate same-organization targets, and persist audit events atomically.
+* Treat SQL NULL explicitly in authorization checks: reject unless the authorization expression `IS TRUE` (for a rejection branch, use `IS NOT TRUE`). Test missing membership, outsiders, cross-org admins, reviewers, and authorized admins.
+* Use isolated PostgreSQL sessions for concurrency proof. `Promise.all` against one PGlite instance is not multi-session locking evidence. Local tests should reproduce the relevant live grants and policies.
+* Verify affected rows/returned records and propagate dependent-write failures. RLS-filtered zero-row updates must never display success.
 
 Never assume that hiding something in the Flutter UI provides security. UI restrictions are not authorization. RLS and backend authorization must enforce sensitive data boundaries.
 
@@ -201,6 +232,8 @@ Applicant information is sensitive personal data protected under Philippine Data
   * Student application documents may only be downloaded or viewed by the student owner, authorized administrators, or the verified provider managing that specific submitted application.
 
 Never weaken privacy controls to make a feature easier to implement.
+
+Technical tests establish only the access controls and data boundaries actually exercised. They do not prove legal compliance, zero vulnerabilities, or production readiness. Label those limits explicitly in reports.
 
 ---
 
@@ -293,30 +326,19 @@ Scholaris uses specialized Git worktrees for concurrent AI roles sharing the sam
 * Do not modify `master` or `main` directly.
 * Avoid overwriting uncommitted work; keep Git working trees clean.
 
-### Git-Backed Task-Card Relay Protocol (`docs/coordination/PROTOCOL.md`):
+### Git-backed task-card relay
 
-1. **Architect Workflow (Six-Phase Lifecycle)**:
-   - **Phase 1: Human Approval Gate**: Analyzes user request, inspects codebase, writes `docs/plans/<feature>_plan.md` and the 4 task cards (`task_builder.md`, `task_ui.md`, `task_qa.md`, `task_security.md`). **MANDATORY STOP**: Must halt with state `AWAITING HUMAN APPROVAL`. Never instruct specialists to begin until the human explicitly approves.
-   - **Phase 2: Specialist Trigger**: Upon human approval, announces the execution sequence and 1-line triggers (`> execute assigned task`) for each specialist worktree.
-   - **Phase 3: Automatic Report Monitoring**: Architect initiates a lightweight background check (via `schedule` cron every 2 mins) polling Git branch refs for completed specialist reports. **Self-terminating**: The moment all required reports for the active feature are detected, the monitor terminates itself (`manage_task kill`).
-   - **Phase 4: Architect Consolidation**: Architect automatically retrieves all reports via `git checkout ai/<role> -- docs/reports/<feature>_<role>_report.md`, inspects diffs/logs, and evaluates results against the master plan.
-   - **Phase 5: Remediation Loop**: If defects, test failures, or privacy leaks are identified, Architect issues `docs/tasks/remediation_task_<role>.md` and coordinates fix/retest before proceeding.
-   - **Phase 6: Final Verification**: Architect enforces verification standards (distinguishing `IMPLEMENTED`, `REVIEWED`, `TESTED`, `VERIFIED`, `BLOCKED`) and produces `docs/reports/<feature>_FINAL_REPORT.md` for the human.
+Use `docs/coordination/PROTOCOL.md` for the overall artifact structure. This section and the current user-authorized assignment supersede stale commands, blanket approval stops, and assumed scheduling/tool capabilities in older coordination documents.
 
-2. **Specialist Workflow (Builder, UI/UX, QA, Security)**:
-   - When triggered with `> execute assigned task`, retrieves task card directly from Git:
-     ```bash
-     git checkout ai/architect -- docs/plans/ docs/tasks/task_<role>.md
-     ```
-   - Only modifies files permitted in their assigned task card.
-   - UI/UX MUST explicitly load and apply the 7 installed design skills in `.agents/skills/`.
-   - Produces structured completion report in `docs/reports/<feature>_<role>_report.md`.
-   - Commits changes and report to their active branch (`ai/<role>`).
-   - If a blocker or conflict arises, stops immediately and documents it in the report instead of improvising.
+1. **Scope and authorization:** Architect inspects current work and prepares the plan, file ownership, dependencies, and acceptance criteria for each needed specialist. New substantial scope requires user agreement. Continue already-authorized work without restarting approval loops. Do not activate every worker when only one unresolved task remains.
+2. **Activation:** Dispatch only through an available, authorized mechanism. When sessions require manual triggers, provide a plain-language prompt for the user to paste into each needed AI chat. Shell `echo` merely prints a message; it does not activate an agent. Skill files in one worktree are not automatically present in the others.
+3. **Safe retrieval:** Prefer read-only `git show <ref>:<exact-file>` to inspect plans/reports. Before replacing any file, inspect staged, unstaged, and untracked changes for EVERY target, including both plan and task card. `git diff --exit-code` alone is insufficient. Do not use blanket directory checkouts or silently stash another agent's work. Use syntax supported by the current shell; Bash conditionals are not PowerShell commands.
+4. **Execution:** Specialists edit only assigned files, apply relevant available skills, and record the exact source/build tested. Report precise blockers and continue independent work where possible. Code fixes invalidate relevant prior test claims until rerun; do not repeat unrelated passing suites without a reason.
+5. **Monitoring:** Start/reuse a monitor only when the user requests it and a real scheduling facility exists. Honor the requested cadence; default to five minutes for an authorized recurring monitor with no specified cadence. Record an actual task ID, stay quiet on unchanged state, and stop it on completion or user pause. Otherwise report that monitoring is unavailable and use explicit handoffs. Do not invent automatic wakeups or notifications.
+6. **Consolidation:** Architect reads reports without overwriting local notes, inspects actual diffs/evidence, and distinguishes `IMPLEMENTED`, `REVIEWED`, `TESTED`, `VERIFIED`, `BLOCKED`, and `NOT TESTED`. Independent QA/Security evidence is required for final sprint sign-off; a worker's completion claim is not sufficient. Keep UI/API checks and local/remote checks distinct.
+7. **Release handoff:** Report exact integration commits, migration state, fixture IDs, evidence paths, remaining gaps, and required approvals. Never infer deployment from a commit or phone installation from a successful IPA build. Pushing to a workflow-triggering branch can start a build automatically; obtain the appropriate authorization before that push.
 
-3. **Verification Integrity Rule**:
-   - A Builder claiming "fixed" is NEVER sufficient to mark an item verified.
-   - Only independent verification by QA, Security, or UI/UX with concrete test evidence qualifies as `VERIFIED`.
+Task cards live under `docs/tasks/`, plans under `docs/plans/`, and reports under `docs/reports/`; inspect their actual filenames rather than assuming one naming scheme. Commit focused specialist changes/reports only when authorized. Do not stage unrelated work, secrets, downloaded artifacts, or scratch evidence. The user-approved landing design and compact student dashboard remain protected from unrelated redesign.
 
 ---
 
@@ -345,3 +367,11 @@ A task is complete only when:
 * The final diff contains no unrelated changes, temporary files, or accidental refactors.
 
 **Working code only. Evidence over confidence. Minimal change over unnecessary complexity.**
+
+## 16. Persistent Session Summary and Roadmap Handoff
+
+At session startup, including a greeting such as "hello, let's work today", read the canonical `C:/scholaris/docs/coordination/SESSION_STATE.md`, its linked `SESSION_LOG.md`, and the current product roadmap before proposing work. This applies when Architect is running in another worktree: reference the canonical root files rather than keeping competing copies. Inspect actual current changes and reconcile newer evidence before treating the stored summary as current.
+
+Give the owner a short account of last session's accomplishments, current blockers, and the recommended outcome for this session. Separate the app-development/capstone milestone from the broader future-product roadmap. Continue existing authorized work; a roadmap entry alone does not authorize new implementation or external actions.
+
+Architect maintains the canonical session state. At session close or an explicit stop, update task statuses with evidence, append the session log, and update roadmap milestones only when their acceptance criteria are met. Preserve previous history and other agents' changes. Keep implementation, local verification, deployment, IPA build, and device verification distinct. Report completed/open milestone tasks; never invent an overall completion percentage. Follow the full startup/close procedure in SESSION_STATE.md.

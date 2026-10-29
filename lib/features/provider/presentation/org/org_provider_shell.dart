@@ -883,14 +883,14 @@ class _OrgProviderShellState extends ConsumerState<OrgProviderShell> {
     final isSelected = _selectedTab == index;
 
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 2),
       child: PressableScale(
         scale: 0.98,
         child: Material(
           color: Colors.transparent,
-          borderRadius: BorderRadius.circular(10),
+          borderRadius: BorderRadius.circular(999),
           child: InkWell(
-            borderRadius: BorderRadius.circular(10),
+            borderRadius: BorderRadius.circular(999),
             splashColor: Colors.transparent,
             highlightColor: kOrgPrimary.withValues(alpha: 0.10),
             focusColor: kOrgPrimary.withValues(alpha: 0.16),
@@ -912,7 +912,7 @@ class _OrgProviderShellState extends ConsumerState<OrgProviderShell> {
                 color: isSelected
                     ? kOrgActiveNavBg
                     : kOrgActiveNavBg.withValues(alpha: 0),
-                borderRadius: BorderRadius.circular(10),
+                borderRadius: BorderRadius.circular(999),
                 boxShadow: [
                   BoxShadow(
                     color: isSelected

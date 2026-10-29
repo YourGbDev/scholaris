@@ -123,7 +123,7 @@ class _IndividualProviderShellState
                                 padding: const EdgeInsets.only(bottom: 4),
                                 child: Material(
                                   color: Colors.transparent,
-                                  borderRadius: BorderRadius.circular(9),
+                                  borderRadius: BorderRadius.circular(999),
                                   child: AnimatedContainer(
                                     duration: isReducedMotion(context)
                                         ? Duration.zero
@@ -133,11 +133,11 @@ class _IndividualProviderShellState
                                       color: _currentIndex == item.$1
                                           ? kOrgPrimary
                                           : kOrgPrimary.withValues(alpha: 0),
-                                      borderRadius: BorderRadius.circular(9),
+                                      borderRadius: BorderRadius.circular(999),
                                     ),
                                     child: Material(
                                       color: Colors.transparent,
-                                      borderRadius: BorderRadius.circular(9),
+                                      borderRadius: BorderRadius.circular(999),
                                       child: ListTile(
                                     dense: true,
                                     minTileHeight: 44,
@@ -149,7 +149,7 @@ class _IndividualProviderShellState
                                     selectedTileColor: Colors.transparent,
                                     selectedColor: Colors.white,
                                     shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(9),
+                                      borderRadius: BorderRadius.circular(999),
                                     ),
                                     leading: Icon(
                                       item.$3,

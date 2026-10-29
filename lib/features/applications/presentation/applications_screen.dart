@@ -105,7 +105,7 @@ class ApplicationsScreen extends ConsumerWidget {
                       width: 40,
                       height: 40,
                       decoration: const BoxDecoration(
-                        color: kSurfaceContainer,
+                        color: Color(0xFFF0F0F0),
                         shape: BoxShape.circle,
                       ),
                       child: const Icon(
@@ -654,7 +654,7 @@ class _SummaryPill extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
         decoration: BoxDecoration(
-          color: const Color(0xFFF1F3FF),
+          color: const Color(0xFFF0F0F0),
           border: Border.all(color: const Color(0xFFE2E8E5), width: 1.0),
           borderRadius: BorderRadius.circular(20),
         ),
@@ -738,7 +738,7 @@ class _StatusFilterChip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final foreground = selected ? Colors.white : const Color(0xFF161C27);
-    final background = selected ? kPrimary : const Color(0xFFF1F3FF);
+    final background = selected ? kPrimary : const Color(0xFFF0F0F0);
     final border = selected ? kPrimary : const Color(0xFFE2E8E5);
 
     return PressableScale(
@@ -1101,7 +1101,7 @@ class _ApplicationCard extends StatelessWidget {
                 height: 36,
                 child: FilledButton.tonal(
                   style: FilledButton.styleFrom(
-                    backgroundColor: const Color(0xFFF1F3FF),
+                    backgroundColor: const Color(0xFFF0F0F0),
                     foregroundColor: const Color(0xFF161C27),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8),
@@ -1177,7 +1177,7 @@ class _ApplicationCard extends StatelessWidget {
         Container(
           padding: const EdgeInsets.all(10),
           decoration: BoxDecoration(
-            color: const Color(0xFFF1F3FF),
+            color: const Color(0xFFF0F0F0),
             borderRadius: BorderRadius.circular(10),
             border: Border.all(color: const Color(0xFFB3F1C6)),
           ),
@@ -1251,7 +1251,7 @@ class _ApplicationCard extends StatelessWidget {
         Container(
           padding: const EdgeInsets.all(10),
           decoration: BoxDecoration(
-            color: const Color(0xFFF1F3FF),
+            color: const Color(0xFFF0F0F0),
             borderRadius: BorderRadius.circular(10),
           ),
           child: Column(
@@ -1286,7 +1286,7 @@ class _ApplicationCard extends StatelessWidget {
             ),
             FilledButton.tonalIcon(
               style: FilledButton.styleFrom(
-                backgroundColor: const Color(0xFFE8EEFF),
+                backgroundColor: const Color(0xFFF0F0F0),
                 foregroundColor: const Color(0xFF161C27),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(8),
@@ -1472,7 +1472,7 @@ class _ApplicationTimelineStepper extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
       decoration: BoxDecoration(
-        color: const Color(0xFFF1F3FF).withValues(alpha: 0.7),
+        color: const Color(0xFFF0F0F0).withValues(alpha: 0.7),
         borderRadius: BorderRadius.circular(10),
       ),
       child: Column(
@@ -1636,7 +1636,7 @@ class _MetaChip extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 4),
       decoration: BoxDecoration(
-        color: const Color(0xFFF1F3FF),
+        color: const Color(0xFFF0F0F0),
         border: Border.all(color: const Color(0xFFE2E8E5), width: 1.0),
         borderRadius: BorderRadius.circular(20),
       ),
@@ -1807,7 +1807,7 @@ class _EmptyApplicationsState extends ConsumerWidget {
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: const Color(0xFFF1F3FF),
+              color: const Color(0xFFF0F0F0),
               borderRadius: BorderRadius.circular(16),
               border: Border.all(color: const Color(0xFFE2E8E5), width: 1.0),
             ),
@@ -1865,7 +1865,7 @@ class _EmptyApplicationsState extends ConsumerWidget {
                   width: 38,
                   height: 38,
                   decoration: BoxDecoration(
-                    color: const Color(0xFFF1F3FF),
+                    color: const Color(0xFFF0F0F0),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: const Icon(
@@ -1989,7 +1989,7 @@ class _EmptyApplicationsState extends ConsumerWidget {
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                       decoration: BoxDecoration(
-                        color: const Color(0xFFF1F3FF),
+                        color: const Color(0xFFF0F0F0),
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Row(
@@ -2059,7 +2059,7 @@ class _EmptyApplicationsState extends ConsumerWidget {
                     ),
                     FilledButton(
                       style: FilledButton.styleFrom(
-                        backgroundColor: const Color(0xFFF1F3FF),
+                        backgroundColor: const Color(0xFFF0F0F0),
                         foregroundColor: const Color(0xFF0F4D2E),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8),

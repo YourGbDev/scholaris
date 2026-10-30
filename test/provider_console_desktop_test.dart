@@ -128,7 +128,8 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('Total Intake'), findsOneWidget);
     expect(find.text('Under Review'), findsNWidgets(2));
-    expect(find.text('Confirmed Awardees'), findsOneWidget);
+    expect(find.text('Approved / Awarded'), findsWidgets);
+    expect(find.text('Confirmed Awardees'), findsNothing);
 
     // Applicant data
     expect(find.text('Sofia Cruz'), findsOneWidget);
@@ -155,5 +156,43 @@ void main() {
     expect(find.text('New Grant'), findsOneWidget);
     expect(find.text('Sofia Cruz'), findsOneWidget);
     expect(find.text('Review Dossier'), findsOneWidget);
+  });
+
+  testWidgets('OrgProviderShell renders at 1280x800 desktop console viewport with Approved / Awarded KPI', (tester) async {
+    tester.view.physicalSize = const Size(1280, 800);
+    tester.view.devicePixelRatio = 1.0;
+    addTearDown(tester.view.resetPhysicalSize);
+
+    await tester.pumpWidget(
+      MediaQuery(
+        data: const MediaQueryData(
+          size: Size(1280, 800),
+          textScaler: TextScaler.linear(1.15),
+        ),
+        child: buildApp(),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text('Organization overview'), findsOneWidget);
+    await tester.tap(find.text('Applications').first);
+    await tester.pumpAndSettle();
+
+    expect(find.text('Incoming Applications'), findsOneWidget);
+    expect(find.text('ORG ADMIN'), findsOneWidget);
+    expect(find.text('New Grant'), findsOneWidget);
+
+    // KPI cards
+    await tester.tap(find.text('Application summary'));
+    await tester.pumpAndSettle();
+    expect(find.text('Total Intake'), findsOneWidget);
+    expect(find.text('Under Review'), findsNWidgets(2));
+    expect(find.text('Approved / Awarded'), findsWidgets);
+    expect(find.text('Confirmed Awardees'), findsNothing);
+
+    // Applicant data
+    expect(find.text('Sofia Cruz'), findsOneWidget);
+    expect(find.text('Review Dossier'), findsOneWidget);
+    expect(tester.takeException(), isNull);
   });
 }

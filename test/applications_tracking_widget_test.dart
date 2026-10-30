@@ -291,6 +291,9 @@ void main() {
     final cardFade = find.descendant(of: card, matching: find.byType(FadeTransition)).first;
     expect(tester.widget<FadeTransition>(cardFade).opacity.value, 0);
     await tester.pumpAndSettle();
+    expect(find.text('Review your draft and attached documents.'), findsOneWidget);
+    expect(find.text('UP Diliman Academic Transcript'), findsNothing);
+    expect(find.text('Personal Statement (750 words)'), findsNothing);
   });
 
   testWidgets('cached empty tracker waits for the tab reveal', (tester) async {
@@ -590,6 +593,91 @@ void main() {
       expect(find.text('2 Total'), findsOneWidget);
       expect(find.text('Submitted (1)'), findsOneWidget);
       expect(find.text('Approved (1)'), findsOneWidget);
+      expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('draft card renders honest presentation at 360x800 with 1.5x text scaling',
+        (tester) async {
+      tester.view.physicalSize = const Size(360, 800);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.reset);
+
+      final applications = FakeApplicationDataSource();
+      await _seedApplication(applications, 'user-a',
+          scholarshipId: 'sch-dost', status: 'draft');
+
+      await tester.pumpWidget(MediaQuery(
+        data: const MediaQueryData(
+          size: Size(360, 800),
+          textScaler: TextScaler.linear(1.5),
+        ),
+        child: _wrap(applications: applications),
+      ));
+      await tester.pumpAndSettle();
+
+      await tester.drag(find.byType(CustomScrollView), const Offset(0, -250));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Review your draft and attached documents.'), findsOneWidget);
+      expect(find.text('UP Diliman Academic Transcript'), findsNothing);
+      expect(find.text('Personal Statement (750 words)'), findsNothing);
+      expect(find.text('Faculty Recommendation (1 of 2)'), findsNothing);
+      expect(find.text('Continue'), findsOneWidget);
+      expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('draft card renders honest presentation at 440x956 iPhone 16 Pro Max viewport',
+        (tester) async {
+      tester.view.physicalSize = const Size(440, 956);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.reset);
+
+      final applications = FakeApplicationDataSource();
+      await _seedApplication(applications, 'user-a',
+          scholarshipId: 'sch-dost', status: 'draft');
+
+      await tester.pumpWidget(MediaQuery(
+        data: const MediaQueryData(
+          size: Size(440, 956),
+          textScaler: TextScaler.linear(1.0),
+        ),
+        child: _wrap(applications: applications),
+      ));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Review your draft and attached documents.'), findsOneWidget);
+      expect(find.text('UP Diliman Academic Transcript'), findsNothing);
+      expect(find.text('Personal Statement (750 words)'), findsNothing);
+      expect(find.text('Faculty Recommendation (1 of 2)'), findsNothing);
+      expect(find.text('Continue'), findsOneWidget);
+      expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('draft card renders at 1280x800 desktop and handles missing deadline gracefully',
+        (tester) async {
+      tester.view.physicalSize = const Size(1280, 800);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.reset);
+
+      final applications = FakeApplicationDataSource();
+      // Use an unknown scholarship id to exercise the 'Deadline unavailable' fallback branch
+      await _seedApplication(applications, 'user-a',
+          scholarshipId: 'sch-unknown-deadline', status: 'draft');
+
+      await tester.pumpWidget(MediaQuery(
+        data: const MediaQueryData(
+          size: Size(1280, 800),
+          textScaler: TextScaler.linear(1.2),
+        ),
+        child: _wrap(applications: applications),
+      ));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Review your draft and attached documents.'), findsOneWidget);
+      expect(find.text('Deadline unavailable'), findsOneWidget);
+      expect(find.text('UP Diliman Academic Transcript'), findsNothing);
+      expect(find.text('Personal Statement (750 words)'), findsNothing);
+      expect(find.text('Continue'), findsOneWidget);
       expect(tester.takeException(), isNull);
     });
   });

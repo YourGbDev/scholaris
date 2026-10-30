@@ -849,4 +849,162 @@ void main() {
       await tester.pumpWidget(const SizedBox());
     },
   );
+
+  testWidgets(
+    'backward clock jump smaller than 24 hours clamps remaining time to 15-minute timeout',
+    (tester) async {
+      SharedPreferences.setMockInitialValues({});
+      var mockNow = DateTime(2026, 10, 30, 12, 0, 0);
+      var signOuts = 0;
+      final router = GoRouter(
+        routes: [
+          GoRoute(
+            path: '/',
+            builder: (_, _) => const Scaffold(body: Text('Protected Sensitive Data')),
+          ),
+        ],
+      );
+      addTearDown(router.dispose);
+
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            authSessionProvider.overrideWith(_SignedIn.new),
+            routerProvider.overrideWithValue(router),
+            inactivityClockProvider.overrideWithValue(() => mockNow),
+            inactivitySignOutProvider.overrideWithValue(() async => signOuts++),
+          ],
+          child: const ScholarisApp(),
+        ),
+      );
+      await tester.pump();
+      await tester.pump();
+      expect(find.text('Protected Sensitive Data'), findsOneWidget);
+
+      // System clock rolls back 2 hours (smaller than 24h)
+      mockNow = mockNow.subtract(const Duration(hours: 2));
+
+      // App lifecycle resume or activity evaluates deadline against rolled back time
+      tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.resumed);
+      await tester.pump();
+
+      // Advancing 16 minutes from the rolled-back time must expire the session
+      // because remaining time was clamped to 15 minutes instead of allowing 2h 15m
+      mockNow = mockNow.add(const Duration(minutes: 16));
+      await tester.pump(const Duration(minutes: 16));
+      await tester.pump();
+
+      expect(signOuts, 1);
+      expect(find.text('Your session has expired'), findsOneWidget);
+      await tester.pumpWidget(const SizedBox());
+    },
+  );
+
+  testWidgets(
+    'protected content is completely concealed during loading and expired-restore',
+    (tester) async {
+      SharedPreferences.setMockInitialValues({
+        'inactivity_deadline_student': DateTime.now()
+            .subtract(const Duration(minutes: 1))
+            .millisecondsSinceEpoch,
+      });
+      final router = GoRouter(
+        routes: [
+          GoRoute(
+            path: '/',
+            builder: (_, _) => const Scaffold(body: Text('Protected Confidential Document')),
+          ),
+        ],
+      );
+      addTearDown(router.dispose);
+
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            authSessionProvider.overrideWith(_SignedIn.new),
+            routerProvider.overrideWithValue(router),
+          ],
+          child: const ScholarisApp(),
+        ),
+      );
+      // During initial restore / loading
+      expect(find.text('Protected Confidential Document'), findsNothing);
+
+      await tester.pump();
+      await tester.pump();
+
+      // After restore expired: still concealed
+      expect(find.text('Protected Confidential Document'), findsNothing);
+      expect(find.text('Your session has expired'), findsOneWidget);
+      await tester.pumpWidget(const SizedBox());
+    },
+  );
+
+  testWidgets(
+    'protected content is completely concealed during storage failure',
+    (tester) async {
+      final brokenStorageRouter = GoRouter(
+        routes: [
+          GoRoute(
+            path: '/',
+            builder: (_, _) => const Scaffold(body: Text('Protected Confidential Document')),
+          ),
+        ],
+      );
+      addTearDown(brokenStorageRouter.dispose);
+
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            authSessionProvider.overrideWith(_SignedIn.new),
+            routerProvider.overrideWithValue(brokenStorageRouter),
+            inactivityStorageProvider.overrideWithValue(_BrokenStorage()),
+          ],
+          child: const ScholarisApp(),
+        ),
+      );
+      await tester.pump();
+      await tester.pump();
+
+      expect(find.text('Protected Confidential Document'), findsNothing);
+      expect(find.text('Security check unavailable'), findsOneWidget);
+      await tester.pumpWidget(const SizedBox());
+    },
+  );
+
+  testWidgets(
+    'protected content remains visible beneath warning dialog during pre-expiration warning',
+    (tester) async {
+      SharedPreferences.setMockInitialValues({});
+      final warningRouter = GoRouter(
+        routes: [
+          GoRoute(
+            path: '/',
+            builder: (_, _) => const Scaffold(body: Text('Protected Confidential Document')),
+          ),
+        ],
+      );
+      addTearDown(warningRouter.dispose);
+
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            authSessionProvider.overrideWith(_SignedIn.new),
+            routerProvider.overrideWithValue(warningRouter),
+          ],
+          child: const ScholarisApp(),
+        ),
+      );
+      await tester.pump();
+      await tester.pump();
+      expect(find.text('Protected Confidential Document'), findsOneWidget);
+
+      // Advance to warning window (14 minutes)
+      await tester.pump(const Duration(minutes: 14));
+      expect(find.text('Your session is about to expire'), findsOneWidget);
+      expect(find.text('Protected Confidential Document'), findsOneWidget);
+
+      await tester.pumpWidget(const SizedBox());
+    },
+  );
 }

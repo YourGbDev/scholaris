@@ -4,6 +4,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:scholaris/app/router.dart';
 import 'package:scholaris/core/security/inactivity_guard.dart';
+import 'package:scholaris/core/security/inactivity_storage.dart';
 import 'package:scholaris/features/applications/presentation/applications_screen.dart';
 import 'package:scholaris/features/applications/providers/applications_provider.dart';
 import 'package:scholaris/features/applications/repositories/application_repository.dart';
@@ -27,6 +28,11 @@ class _SignedInSession extends AuthSessionNotifier {
 
   @override
   AuthSession? build() => AuthSession(userId: _userId);
+}
+
+class _BrokenStorage extends InactivityStorage {
+  @override
+  Future<int?> read(String key) async => throw StateError('storage unavailable');
 }
 
 void main() {
@@ -227,14 +233,24 @@ void main() {
       final hasMockRec = find.text('Faculty Recommendation (1 of 2)').evaluate().isNotEmpty;
       final hasHonestText = find.text('Review your draft and attached documents.').evaluate().isNotEmpty;
 
-      // Diagnostic assertions for baseline reproduction vs delivered UI fix:
+      // Diagnostic logging for baseline defect reproduction
       if (hasMockTranscript || hasMockEssay || hasMockRec) {
-        debugPrint('[BASELINE REPRODUCTION] Synthetic mock draft items detected on baseline 4145458: '
+        debugPrint('[BASELINE REPRODUCTION] Synthetic mock draft items detected: '
             'transcript=$hasMockTranscript, essay=$hasMockEssay, rec=$hasMockRec');
       } else {
         debugPrint('[DELIVERED UI VERIFIED] Honest draft presentation verified: '
             'Review text present=$hasHonestText');
       }
+
+      // Strict assertions: Reject every synthetic checklist row and require honest draft copy
+      expect(find.text('Review your draft and attached documents.'), findsOneWidget,
+          reason: 'Honest draft review message must be rendered');
+      expect(find.text('Personal Statement (750 words)'), findsNothing,
+          reason: 'Synthetic personal statement checklist row must be completely removed');
+      expect(find.text('UP Diliman Academic Transcript'), findsNothing,
+          reason: 'Synthetic academic transcript checklist row must be completely removed');
+      expect(find.text('Faculty Recommendation (1 of 2)'), findsNothing,
+          reason: 'Synthetic faculty recommendation checklist row must be completely removed');
     });
 
     testWidgets('Provider console challenges legacy Confirmed Awardees KPI card title',
@@ -331,24 +347,140 @@ void main() {
           reason: 'Negative timestamps must be treated as expired');
     });
 
-    test('Contract 4.5 Clock Tampering: Backward clock jump expands difference beyond 15m', () {
-      final sessionStart = DateTime.now();
-      final deadline = sessionStart.add(const Duration(minutes: 15));
+    testWidgets(
+        'Contract 4.5 Clock Tampering: Backward clock jump (<24h) in InactivityGuard clamps remaining window to 15m',
+        (tester) async {
+      var mockNow = DateTime(2026, 10, 30, 12, 0, 0);
+      var signOutCalls = 0;
+      final router = GoRouter(routes: [
+        GoRoute(
+          path: '/',
+          builder: (_, _) => const Scaffold(body: Text('Protected Records')),
+        ),
+      ]);
+      addTearDown(router.dispose);
 
-      // System clock artificially rolled backward by 2 hours
-      final manipulatedNow = sessionStart.subtract(const Duration(hours: 2));
-      final inflatedRemaining = deadline.difference(manipulatedNow);
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            authSessionProvider.overrideWith(_SignedInSession.new),
+            routerProvider.overrideWithValue(router),
+            inactivityClockProvider.overrideWithValue(() => mockNow),
+            inactivitySignOutProvider.overrideWithValue(() async => signOutCalls++),
+          ],
+          child: const ScholarisApp(),
+        ),
+      );
+      await tester.pump();
+      await tester.pump();
+      expect(find.text('Protected Records'), findsOneWidget);
 
-      // Verify that without defensive clamping, the remaining duration is inflated
-      expect(inflatedRemaining, greaterThan(const Duration(minutes: 15)),
-          reason: 'Unclamped backward clock jump inflates session duration to 2h 15m');
+      // System clock artificially rolled backward by 2 hours (10:00:00 instead of 12:00:00)
+      mockNow = mockNow.subtract(const Duration(hours: 2));
 
-      // Defensive rule: remaining must be clamped to at most 15 minutes
-      final clampedRemaining = inflatedRemaining > const Duration(minutes: 15)
-          ? const Duration(minutes: 15)
-          : inflatedRemaining;
-      expect(clampedRemaining, equals(const Duration(minutes: 15)),
-          reason: 'Clamping enforces max 15 minute window regardless of backward clock manipulation');
+      // App lifecycle resumes; InactivityGuard must clamp remaining time to 15m instead of 2h 15m
+      tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.resumed);
+      await tester.pump();
+
+      // Advancing 16 minutes from the rolled-back time must trigger expiration
+      mockNow = mockNow.add(const Duration(minutes: 16));
+      await tester.pump(const Duration(minutes: 16));
+      await tester.pump();
+
+      expect(signOutCalls, 1,
+          reason: 'Session must expire after 15 minutes of rolled-back time due to 15-minute clamping');
+      expect(find.text('Your session has expired'), findsOneWidget);
+      await tester.pumpWidget(const SizedBox());
+    });
+  });
+
+  group('QA Challenge 6: Protected Content Concealment Verification (Requirement 2 & 5)', () {
+    testWidgets('Protected content is completely concealed during loading and expired restore',
+        (tester) async {
+      SharedPreferences.setMockInitialValues({
+        'inactivity_deadline_user-a': DateTime.now()
+            .subtract(const Duration(minutes: 1))
+            .millisecondsSinceEpoch,
+      });
+      final router = GoRouter(routes: [
+        GoRoute(path: '/', builder: (_, _) => const Scaffold(body: Text('Confidential Student Record'))),
+      ]);
+      addTearDown(router.dispose);
+
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            authSessionProvider.overrideWith(_SignedInSession.new),
+            routerProvider.overrideWithValue(router),
+          ],
+          child: const ScholarisApp(),
+        ),
+      );
+      // While hydrating / loading storage
+      expect(find.text('Confidential Student Record'), findsNothing);
+
+      await tester.pump();
+      await tester.pump();
+
+      // Restored expired: content must remain completely concealed
+      expect(find.text('Confidential Student Record'), findsNothing);
+      expect(find.text('Your session has expired'), findsOneWidget);
+      await tester.pumpWidget(const SizedBox());
+    });
+
+    testWidgets('Protected content is completely concealed during storage failure',
+        (tester) async {
+      final brokenStorage = _BrokenStorage();
+      final router = GoRouter(routes: [
+        GoRoute(path: '/', builder: (_, _) => const Scaffold(body: Text('Confidential Student Record'))),
+      ]);
+      addTearDown(router.dispose);
+
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            authSessionProvider.overrideWith(_SignedInSession.new),
+            routerProvider.overrideWithValue(router),
+            inactivityStorageProvider.overrideWithValue(brokenStorage),
+          ],
+          child: const ScholarisApp(),
+        ),
+      );
+      await tester.pump();
+      await tester.pump();
+
+      expect(find.text('Confidential Student Record'), findsNothing);
+      expect(find.text('Security check unavailable'), findsOneWidget);
+      await tester.pumpWidget(const SizedBox());
+    });
+
+    testWidgets('Protected content remains visible beneath warning dialog during 14m warning',
+        (tester) async {
+      final router = GoRouter(routes: [
+        GoRoute(path: '/', builder: (_, _) => const Scaffold(body: Text('Confidential Student Record'))),
+      ]);
+      addTearDown(router.dispose);
+
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            authSessionProvider.overrideWith(_SignedInSession.new),
+            routerProvider.overrideWithValue(router),
+          ],
+          child: const ScholarisApp(),
+        ),
+      );
+      await tester.pump();
+      await tester.pump();
+      expect(find.text('Confidential Student Record'), findsOneWidget);
+
+      // Advance to 14 minutes
+      await tester.pump(const Duration(minutes: 14));
+
+      // Warning dialog is visible AND protected content remains visible underneath
+      expect(find.text('Your session is about to expire'), findsOneWidget);
+      expect(find.text('Confidential Student Record'), findsOneWidget);
+      await tester.pumpWidget(const SizedBox());
     });
   });
 }

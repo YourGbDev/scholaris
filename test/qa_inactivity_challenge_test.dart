@@ -15,6 +15,7 @@ import 'package:scholaris/features/provider/providers/provider_sub_role_provider
 import 'package:scholaris/features/scholarships/providers/scholarships_provider.dart';
 import 'package:scholaris/features/scholarships/repositories/scholarship_repository.dart';
 import 'package:scholaris/main.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'helpers/fake_application_data_source.dart';
 import 'helpers/fake_profile_data_source.dart';
@@ -29,6 +30,8 @@ class _SignedInSession extends AuthSessionNotifier {
 }
 
 void main() {
+  setUp(() => SharedPreferences.setMockInitialValues({}));
+
   group('QA Challenge 1 & 2: Inactivity Lifecycle, Resumption & Sign-Out Handling', () {
     testWidgets('Requirement 7: Failed automatic sign-out keeps screen blocked and offers retry',
         (tester) async {
@@ -54,6 +57,7 @@ void main() {
           child: const ScholarisApp(),
         ),
       );
+      await tester.pump();
       await tester.pump();
       expect(find.text('Protected Dashboard'), findsOneWidget);
 
@@ -102,6 +106,7 @@ void main() {
           child: const ScholarisApp(),
         ),
       );
+      await tester.pump();
       await tester.pump();
       expect(find.text('Sensitive Grants'), findsOneWidget);
 
@@ -160,6 +165,7 @@ void main() {
             ),
           ),
         );
+        await tester.pump();
         await tester.pump();
         await tester.pump(const Duration(minutes: 14));
 
@@ -286,6 +292,12 @@ void main() {
       );
       await tester.pumpAndSettle();
 
+      // Navigate to Applications tab to inspect incoming applications KPI cards
+      await tester.tap(find.text('Applications').first);
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Application summary'));
+      await tester.pumpAndSettle();
+
       final hasLegacyTitle = find.text('Confirmed Awardees').evaluate().isNotEmpty;
       final hasUpdatedTitle = find.text('Approved / Awarded').evaluate().isNotEmpty;
 
@@ -294,6 +306,8 @@ void main() {
       } else {
         debugPrint('[DELIVERED UI VERIFIED] Honest KPI title "Approved / Awarded" detected: $hasUpdatedTitle');
       }
+      expect(hasLegacyTitle, isFalse, reason: 'Confirmed Awardees title must be eliminated');
+      expect(hasUpdatedTitle, isTrue, reason: 'Approved / Awarded title must be present');
     });
   });
 

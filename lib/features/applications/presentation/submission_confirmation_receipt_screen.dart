@@ -359,18 +359,7 @@ class _SubmissionConfirmationReceiptScreenState
     required String? userSchool,
   }) {
     return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: const Color(0xFFE2E8F3)),
-        boxShadow: const [
-          BoxShadow(
-            color: Color(0x0A161C27),
-            blurRadius: 12,
-            offset: Offset(0, 4),
-          ),
-        ],
-      ),
+      decoration: kSoftCardDecoration,
       padding: const EdgeInsets.all(16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -751,18 +740,7 @@ class _SubmissionConfirmationReceiptScreenState
   // --- SECTION 3: Review Timeline Milestones --------------------------------
   Widget _buildEvaluationRoadmapCard() {
     return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: const Color(0xFFE2E8F3)),
-        boxShadow: const [
-          BoxShadow(
-            color: Color(0x0A161C27),
-            blurRadius: 12,
-            offset: Offset(0, 4),
-          ),
-        ],
-      ),
+      decoration: kSoftCardDecoration,
       padding: const EdgeInsets.all(16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

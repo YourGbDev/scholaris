@@ -50,18 +50,12 @@ const kOrgBadgeRejectedBorder = Color(0xFFFFC2BA);
 
 // Border Radius Tokens (Apple Squircle Pass)
 const BorderRadius kOrgSquircleRadius = BorderRadius.all(Radius.circular(16));
-const BorderRadius kOrgCardRadius = BorderRadius.all(Radius.circular(16));
+const BorderRadius kOrgCardRadius = BorderRadius.all(Radius.circular(kRadiusCard));
 const BorderRadius kOrgChromeRadius = BorderRadius.all(Radius.circular(10));
 const BorderRadius kOrgPillRadius = BorderRadius.all(Radius.circular(20));
 
 // Shadows
-const List<BoxShadow> kOrgCardShadow = [
-  BoxShadow(
-    color: Color(0x08000000),
-    blurRadius: 8,
-    offset: Offset(0, 2),
-  ),
-];
+const List<BoxShadow> kOrgCardShadow = kCardElevationCrisp;
 
 // Typography Helpers adhering to Apple HIG Optical Typography (Section 15)
 TextStyle orgHeadline({

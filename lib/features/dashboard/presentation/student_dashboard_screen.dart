@@ -312,15 +312,10 @@ class _StudentDashboardScreenState
           onTap: () {
             ref.read(homeTabIndexProvider.notifier).selectTab(2);
           },
-          borderRadius: BorderRadius.circular(22),
+          borderRadius: BorderRadius.circular(kRadiusCard),
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(22),
-              border: kCardBorderCrisp,
-              boxShadow: kCardElevationCrisp,
-            ),
+            decoration: kSoftCardDecoration,
             child: Row(
               children: [
                 Container(
@@ -494,7 +489,7 @@ class _StudentDashboardScreenState
       child: LayoutBuilder(builder: (context, box) {
         final stacked = box.maxWidth < 320 || MediaQuery.textScalerOf(context).scale(14) > 20;
         return Stack(clipBehavior: Clip.none, children: [
-          Positioned.fill(child: ClipRRect(borderRadius: BorderRadius.circular(24),
+          Positioned.fill(child: ClipRRect(borderRadius: BorderRadius.circular(kRadiusCard),
             child: Stack(children: [
               const Positioned.fill(child: ColoredBox(color: Color(0xFFEDF4EF))),
               Positioned(left: -65, top: -20, width: 280, height: 360,
@@ -511,7 +506,7 @@ class _StudentDashboardScreenState
             Padding(padding: EdgeInsets.fromLTRB(box.maxWidth * .5, 24, 16, 20), child: summary),
             Positioned(left: 0, top: -18, bottom: 0, width: box.maxWidth * .55,
               child: ClipRRect(
-                borderRadius: const BorderRadius.only(bottomLeft: Radius.circular(24)),
+                borderRadius: const BorderRadius.only(bottomLeft: Radius.circular(kRadiusCard)),
                 child: portrait(290))),
           ],
         ]);
@@ -728,11 +723,7 @@ class _StudentDashboardScreenState
           padding: const EdgeInsets.only(bottom: 12),
           child: Container(
             padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: const Color(0xFFE2E8E5)),
-            ),
+            decoration: kSoftCardDecoration,
             child: const Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -831,7 +822,7 @@ class _StudentDashboardScreenState
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: const Color(0xFFF0F0F0),
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(kRadiusCard),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.03),
@@ -941,21 +932,16 @@ class _StatCard extends StatelessWidget {
       child: Material(
         key: itemKey,
         color: Colors.white,
-        borderRadius: BorderRadius.circular(22),
+        borderRadius: BorderRadius.circular(kRadiusCard),
         child: InkWell(
-          borderRadius: BorderRadius.circular(22),
+          borderRadius: BorderRadius.circular(kRadiusCard),
           onTap: () {
             HapticFeedback.lightImpact();
             onTap();
           },
           child: Container(
             padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(22),
-              border: kCardBorderCrisp,
-              boxShadow: kCardElevationCrisp,
-            ),
+            decoration: kSoftCardDecoration,
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [

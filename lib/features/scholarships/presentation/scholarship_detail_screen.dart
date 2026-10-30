@@ -487,18 +487,7 @@ class _HeroCard extends ConsumerWidget {
     final codeTag = _programCodeTag(scholarship);
 
     return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: const Color(0xFFE2E8F3)),
-        boxShadow: const [
-          BoxShadow(
-            color: kCardShadow,
-            blurRadius: 16,
-            offset: Offset(0, 6),
-          ),
-        ],
-      ),
+      decoration: kSoftCardDecoration,
       padding: const EdgeInsets.all(14),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -825,20 +814,9 @@ class _CapacityStatusCard extends ConsumerWidget {
         final tot = total ?? 0;
 
         return Container(
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(16),
-            border: Border.all(
-              color: isFull ? const Color(0xFFFFCDD2) : const Color(0xFFE2E8F3),
-            ),
-            boxShadow: const [
-              BoxShadow(
-                color: kCardShadow,
-                blurRadius: 16,
-                offset: Offset(0, 6),
-              ),
-            ],
-          ),
+          decoration: kSoftCardDecoration.copyWith(border: Border.all(
+              color: isFull ? const Color(0xFFFFCDD2) : kHairlineBorderSide.color,
+            )),
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -941,18 +919,7 @@ class _SchoolEligibilityGuidanceCard extends ConsumerWidget {
     final schoolsAsync = ref.watch(schoolsProvider);
 
     return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: const Color(0xFFE2E8F3)),
-        boxShadow: const [
-          BoxShadow(
-            color: kCardShadow,
-            blurRadius: 16,
-            offset: Offset(0, 6),
-          ),
-        ],
-      ),
+      decoration: kSoftCardDecoration,
       padding: const EdgeInsets.all(16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -1202,18 +1169,7 @@ class _AlgorithmicFitCard extends ConsumerWidget {
 
     return PressableScale(
       child: Container(
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: const Color(0xFFE2E8F3)),
-          boxShadow: const [
-            BoxShadow(
-              color: kCardShadow,
-              blurRadius: 16,
-              offset: Offset(0, 6),
-            ),
-          ],
-        ),
+        decoration: kSoftCardDecoration,
         padding: const EdgeInsets.all(18),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -1515,18 +1471,7 @@ class _AwardOverviewCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: const Color(0xFFE2E8F3)),
-        boxShadow: const [
-          BoxShadow(
-            color: kCardShadow,
-            blurRadius: 16,
-            offset: Offset(0, 6),
-          ),
-        ],
-      ),
+      decoration: kSoftCardDecoration,
       padding: const EdgeInsets.all(14),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -1717,18 +1662,7 @@ class _EligibilityCard extends ConsumerWidget {
         ref.watch(scholarshipEligibleSchoolsProvider(scholarship.id));
 
     return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: const Color(0xFFE2E8F3)),
-        boxShadow: const [
-          BoxShadow(
-            color: kCardShadow,
-            blurRadius: 16,
-            offset: Offset(0, 6),
-          ),
-        ],
-      ),
+      decoration: kSoftCardDecoration,
       padding: const EdgeInsets.all(18),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -1851,18 +1785,7 @@ class _ApplicationMaterialsCardState
         (hasEssay ? 1 : 0) + (hasTranscript ? 1 : 0) + (hasRec ? 1 : 0);
 
     return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: const Color(0xFFE2E8F3)),
-        boxShadow: const [
-          BoxShadow(
-            color: kCardShadow,
-            blurRadius: 16,
-            offset: Offset(0, 6),
-          ),
-        ],
-      ),
+      decoration: kSoftCardDecoration,
       padding: const EdgeInsets.all(18),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -2324,11 +2247,7 @@ class _ProviderTrustCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.all(18),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: const Color(0xFFE2E8F3)),
-      ),
+      decoration: kSoftCardDecoration,
       child: Row(children: [
         const Icon(Icons.account_balance_outlined, color: kSecondary),
         const SizedBox(width: 12),
@@ -2884,18 +2803,7 @@ class _DraftBanner extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: const Color(0xFFE2E8E5), width: 1.0),
-        boxShadow: const [
-          BoxShadow(
-            color: Color(0x081B3A5C),
-            blurRadius: 12,
-            offset: Offset(0, 4),
-          ),
-        ],
-      ),
+      decoration: kSoftCardDecoration,
       padding: const EdgeInsets.all(16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -3017,7 +2925,7 @@ class _AppliedBanner extends ConsumerWidget {
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
               ),
-              borderRadius: BorderRadius.circular(16),
+              borderRadius: BorderRadius.circular(kRadiusCard),
               boxShadow: const [
                 BoxShadow(
                   color: kCardShadow,
@@ -3084,18 +2992,7 @@ class _AppliedBanner extends ConsumerWidget {
           // Digital Submission Token Card
           Container(
             padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: const Color(0xFFE2E8E5)),
-              boxShadow: const [
-                BoxShadow(
-                  color: kCardShadow,
-                  blurRadius: 16,
-                  offset: Offset(0, 6),
-                ),
-              ],
-            ),
+            decoration: kSoftCardDecoration,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -3364,18 +3261,7 @@ class _ReadinessNotice extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: const Color(0xFFE2E8F3)),
-        boxShadow: const [
-          BoxShadow(
-            color: kCardShadow,
-            blurRadius: 16,
-            offset: Offset(0, 6),
-          ),
-        ],
-      ),
+      decoration: kSoftCardDecoration,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

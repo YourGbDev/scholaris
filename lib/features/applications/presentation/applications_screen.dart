@@ -481,7 +481,7 @@ class _PotentialAwardCard extends StatelessWidget {
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(kRadiusCard),
           boxShadow: const [
             BoxShadow(
               color: Color(0x1A0F4D2E),
@@ -953,29 +953,18 @@ class _ApplicationCard extends StatelessWidget {
             : 'Open application',
         child: Material(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(kRadiusCard),
         child: InkWell(
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(kRadiusCard),
           onTap: () => _openApplicationDetail(context),
           child: Container(
-            padding: const EdgeInsets.all(15),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(16),
-              border: Border.all(
+            padding: const EdgeInsets.all(20),
+            decoration: kSoftCardDecoration.copyWith(border: Border.all(
                 color: isApproved
                     ? const Color(0xFFB3F1C6)
-                    : const Color(0xFFE2E8E5),
-                width: 1.0,
-              ),
-              boxShadow: const [
-                BoxShadow(
-                  color: Color(0x0A161C27),
-                  blurRadius: 10,
-                  offset: Offset(0, 3),
-                ),
-              ],
-            ),
+                    : kHairlineBorderSide.color,
+                width: .5,
+              )),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -1468,8 +1457,12 @@ class _ApplicationTimelineStepper extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 8),
-          Row(
+          Wrap(
+            spacing: 8,
+            runSpacing: 6,
+            crossAxisAlignment: WrapCrossAlignment.center,
             children: [
+              Row(mainAxisSize: MainAxisSize.min, children: [
               Icon(
                 status == ApplicationStatus.underReview
                     ? Icons.hourglass_top_rounded
@@ -1478,7 +1471,7 @@ class _ApplicationTimelineStepper extends StatelessWidget {
                 color: const Color(0xFF436084),
               ),
               const SizedBox(width: 4),
-              Expanded(
+              Flexible(
                 child: Text(
                   _microStatusText(),
                   maxLines: 1,
@@ -1490,7 +1483,7 @@ class _ApplicationTimelineStepper extends StatelessWidget {
                   ),
                 ),
               ),
-              const SizedBox(width: 8),
+              ]),
               Text(
                 status == ApplicationStatus.underReview
                     ? 'Est. Decision: Oct 20'
@@ -1649,18 +1642,7 @@ class _EmptyApplicationsState extends ConsumerWidget {
           // Hero Empty State Card
           Container(
             padding: const EdgeInsets.all(24),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: const Color(0xFFE2E8E5), width: 1.0),
-              boxShadow: const [
-                BoxShadow(
-                  color: Color(0x081B3A5C),
-                  blurRadius: 16,
-                  offset: Offset(0, 4),
-                ),
-              ],
-            ),
+            decoration: kSoftCardDecoration,
             child: Column(
               children: [
                 // Consoling Mascot Hero
@@ -1776,7 +1758,7 @@ class _EmptyApplicationsState extends ConsumerWidget {
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
               color: const Color(0xFFF0F0F0),
-              borderRadius: BorderRadius.circular(16),
+              borderRadius: BorderRadius.circular(kRadiusCard),
               border: Border.all(color: const Color(0xFFE2E8E5), width: 1.0),
             ),
             child: Column(
@@ -1821,11 +1803,7 @@ class _EmptyApplicationsState extends ConsumerWidget {
           // Document Preparation Tip Card
           Container(
             padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: const Color(0xFFE2E8E5), width: 1.0),
-            ),
+            decoration: kSoftCardDecoration,
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -1913,18 +1891,7 @@ class _EmptyApplicationsState extends ConsumerWidget {
           const SizedBox(height: 10),
           Container(
             padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: const Color(0xFFE2E8E5)),
-              boxShadow: const [
-                BoxShadow(
-                  color: Color(0x0A161C27),
-                  blurRadius: 8,
-                  offset: Offset(0, 2),
-                ),
-              ],
-            ),
+            decoration: kSoftCardDecoration,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [

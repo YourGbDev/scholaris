@@ -108,11 +108,11 @@ class _AdminHomeScreenState extends ConsumerState<AdminHomeScreen> {
         cardTheme: const CardThemeData(
           color: Colors.white,
           surfaceTintColor: Colors.transparent,
-          elevation: 1,
+          elevation: 0,
           shadowColor: Color(0x06000000),
           shape: RoundedRectangleBorder(
             borderRadius: kAdminCardRadius,
-            side: BorderSide(color: kAdminHairline),
+            side: kHairlineBorderSide,
           ),
         ),
       ),

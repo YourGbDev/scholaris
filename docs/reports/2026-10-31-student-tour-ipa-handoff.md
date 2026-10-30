@@ -4,10 +4,12 @@ Source branch: `codex/student-tour-ipa-handoff`, based on Build 15 commit `e6576
 
 This handoff contains the compact Home/Discover refinements, grouped header actions, chat quick action, mandatory Geist overrides, gender-specific greeting, new male waving asset, and the real-screen student application tour. The authoritative latest behavior is described in the final section of `docs/reports/student-device-feedback-2026-10-31/implementation.md`. Earlier example-page descriptions in that report are superseded.
 
+The later approved card-consistency refinement is also on this branch. Fetch its latest commit rather than pinning the earlier `d18be89` tour-only handoff: primary student cards now share 26 px corners, a faint 0.5 px outline and the scholarship card's soft shadow. Tracker also uses 20 px padding, with a wrapping progress footer for narrow layouts. Shared Material/admin/provider card tokens follow the same shape/elevation values. New validation: 156 affected tests passed and all 15 changed Dart files passed analysis. No version bump or IPA build was performed for this refinement; CAPTCHA requirements remain mandatory.
+
 ## Build instructions
 
 - Fetch and build the exact published handoff commit. Do not rebuild old Build 15 or use a preview entry point. The production target is `lib/main.dart`.
-- Assign the next unused iOS build number (16 if still available) in a separate release commit. Keep the marketing version unless another release requires changing it.
+- Build 16 was assigned in release commit `9d52abd` before the card-consistency follow-up. For a new IPA containing the card changes, assign the next unused iOS build number (17 if still available) in a separate release commit. Keep the marketing version unless another release requires changing it.
 - Preserve the existing native CAPTCHA and Supabase configuration. Use `.github/workflows/build_ios.yml` with `captcha_enabled=true`. This handoff branch does not match the workflow's push triggers, so dispatch the workflow explicitly on the final release commit and avoid duplicate runs.
 - Verify the compile log includes `SCHOLARIS_CAPTCHA_ENABLED=true`, the existing `SCHOLARIS_CAPTCHA_SITE_KEY`, and `SCHOLARIS_CAPTCHA_PAGE_URL=https://scholaris-captcha.pages.dev/captcha_challenge`. Do not disable CAPTCHA or change server authentication requirements to work around a build/login issue.
 - Produce the sideloadable `Scholaris-iOS-App` artifact using the existing workflow. Download into a new build-specific directory without overwriting old IPA archives. Report the source and release commits, workflow URL, version/build, IPA location, size and SHA-256.

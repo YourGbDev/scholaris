@@ -167,7 +167,7 @@ class _SubmitApplicationReviewDialogState
       ),
       decoration: BoxDecoration(
         color: kBackground,
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(kRadiusCard),
         boxShadow: const [
           BoxShadow(
             color: Color(0x33161C27),
@@ -228,18 +228,7 @@ class _SubmitApplicationReviewDialogState
   Widget _buildHeaderCard() {
     return Container(
       padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: const Color(0xFFE2E8F3)),
-        boxShadow: const [
-          BoxShadow(
-            color: Color(0x0A161C27),
-            blurRadius: 10,
-            offset: Offset(0, 2),
-          ),
-        ],
-      ),
+      decoration: kSoftCardDecoration,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -469,18 +458,7 @@ class _SubmitApplicationReviewDialogState
 
     return Container(
       padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: const Color(0xFFE2E8F3)),
-        boxShadow: const [
-          BoxShadow(
-            color: Color(0x0A161C27),
-            blurRadius: 10,
-            offset: Offset(0, 2),
-          ),
-        ],
-      ),
+      decoration: kSoftCardDecoration,
       child: Column(
         children: [
           // Award Value & Fit Row
@@ -723,10 +701,7 @@ class _SubmitApplicationReviewDialogState
         : ref.watch(applicationDocumentsProvider(application.id));
     return Container(
       padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-      ),
+      decoration: kSoftCardDecoration,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -808,18 +783,7 @@ class _SubmitApplicationReviewDialogState
     return Container(
       key: widget.tour?.confirmationsKey,
       padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: const Color(0xFFE2E8F3)),
-        boxShadow: const [
-          BoxShadow(
-            color: Color(0x0A161C27),
-            blurRadius: 10,
-            offset: Offset(0, 2),
-          ),
-        ],
-      ),
+      decoration: kSoftCardDecoration,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -924,18 +888,7 @@ class _SubmitApplicationReviewDialogState
   Widget _buildDigitalSignatureCard({required String studentName}) {
     return Container(
       padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: const Color(0xFFE2E8F3)),
-        boxShadow: const [
-          BoxShadow(
-            color: Color(0x0A161C27),
-            blurRadius: 10,
-            offset: Offset(0, 2),
-          ),
-        ],
-      ),
+      decoration: kSoftCardDecoration,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

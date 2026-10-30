@@ -198,20 +198,15 @@ class ScholarshipCard extends StatelessWidget {
       child: PressableScale(
         child: Material(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(26),
+          borderRadius: BorderRadius.circular(kRadiusCard),
           child: InkWell(
-            borderRadius: BorderRadius.circular(26),
+            borderRadius: BorderRadius.circular(kRadiusCard),
             onTap: () => context.push(
               '/scholarship/${scholarship.id}',
               extra: scholarship,
             ),
             child: Container(
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(26),
-              border: Border.all(color: const Color(0x0A161C27), width: .5),
-              boxShadow: const [BoxShadow(color: Color(0x050F172A), blurRadius: 16, offset: Offset(0, 4))],
-            ),
+            decoration: kSoftCardDecoration,
             child: Stack(
               children: [
                 Padding(

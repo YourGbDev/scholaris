@@ -99,33 +99,36 @@ const Color kMatchGoldText = Color(0xFF5D4200);
 // --- Shape & Elevation Tokens -----------------------------------------------
 
 const double kRadiusInput = 12.0;
-const double kRadiusCard = 16.0;
-const double kRadiusCardFeatured = 24.0;
+const double kRadiusCard = 26.0;
+const double kRadiusCardFeatured = kRadiusCard;
 const double kSpaceMd = 24.0;
 
 const Color kCardShadow = Color(0x0A1B3A5C);
 
-/// Hairline border token for crisp high-DPI surfaces (Tarsi aesthetic: 6% neutral ink)
+/// Faint neutral outline shared by the soft content-card surfaces.
 const BorderSide kHairlineBorderSide = BorderSide(
-  color: Color(0x0F161C27),
+  color: Color(0x0A161C27),
   width: 0.5,
 );
 
 const Border kCardBorderCrisp = Border.fromBorderSide(kHairlineBorderSide);
 
-/// Dual-layer optical elevation: crisp resting contact shadow + soft ambient depth
+/// Shared soft elevation, matching the scholarship program cards.
 const List<BoxShadow> kCardElevationCrisp = [
   BoxShadow(
-    color: Color(0x08161C27), // 3.1% tight contact anchor shadow
-    blurRadius: 2,
-    offset: Offset(0, 1),
-  ),
-  BoxShadow(
-    color: Color(0x051B3A5C), // 2% diffuse ambient elevation
+    color: Color(0x050F172A),
     blurRadius: 16,
-    offset: Offset(0, 6),
+    offset: Offset(0, 4),
   ),
 ];
+
+/// Default for full-size content cards; status borders can override the border.
+const BoxDecoration kSoftCardDecoration = BoxDecoration(
+  color: Colors.white,
+  borderRadius: BorderRadius.all(Radius.circular(kRadiusCard)),
+  border: kCardBorderCrisp,
+  boxShadow: kCardElevationCrisp,
+);
 
 const LinearGradient kHeroSurface = LinearGradient(
   begin: Alignment.topLeft,
@@ -457,6 +460,11 @@ ThemeData scholarisTheme() {
     cardTheme: const CardThemeData(
       color: kSurfaceContainerLowest,
       surfaceTintColor: Colors.transparent,
+      elevation: 0,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.all(Radius.circular(kRadiusCard)),
+        side: kHairlineBorderSide,
+      ),
     ),
     bottomSheetTheme: const BottomSheetThemeData(
       backgroundColor: kSurfaceContainerLowest,

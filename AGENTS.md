@@ -11,6 +11,12 @@ These rules apply to every contributor and agent, including Codex and Archi. Rea
 - Platform-owned keyboards/system UI and essential missing-glyph fallback are outside this app-owned typography requirement. Otherwise, a font exception requires the user's explicit instruction.
 - Before handoff, inspect changed themes/styles, run the relevant UI/typography tests, and verify the actual rendered result when device/browser access is available. Do not claim a video alone proves the font family.
 
+## Consistent content-card surfaces
+
+- Full-size content cards use the shared scholarship-card treatment: `kRadiusCard` (26 px), `kCardBorderCrisp` (faint 0.5 px border), and `kCardElevationCrisp` (soft ambient shadow). Reuse `kSoftCardDecoration` rather than introducing another neutral card style.
+- Keep outer Material/InkWell/clip corners aligned with the card decoration. Preserve meaningful status borders and colors. Buttons, fields, pills, icon containers and nested rows keep their purpose-specific shapes; they are not full-size cards.
+- Use the shared card tokens in role-specific themes as well. Verify narrow layouts and enlarged text when changing padding.
+
 ## Every IPA must enable CAPTCHA
 
 - **CAPTCHA is mandatory for every Scholaris IPA, including development, demo and sideload builds. Never build or hand off an IPA with CAPTCHA disabled.** Authentication must remain usable with the backend's CAPTCHA requirements.

@@ -508,11 +508,7 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
           padding: const EdgeInsets.only(bottom: 14),
           child: Container(
             padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: const Color(0xFFE2E8E5)),
-            ),
+            decoration: kSoftCardDecoration,
             child: const Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -622,12 +618,7 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
   Widget _buildEditorialHelperCard(BuildContext context) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        border: kCardBorderCrisp,
-        boxShadow: kCardElevationCrisp,
-      ),
+      decoration: kSoftCardDecoration,
       child: Column(
         children: [
           Container(
@@ -709,18 +700,7 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
       child: Container(
         margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 28),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: const Color(0xFFE2E8E5)),
-          boxShadow: const [
-            BoxShadow(
-              color: Color(0x081B3A5C),
-              blurRadius: 16,
-              offset: Offset(0, 4),
-            ),
-          ],
-        ),
+        decoration: kSoftCardDecoration,
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -826,18 +806,7 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
         const SizedBox(height: 12),
         Container(
           padding: const EdgeInsets.all(20),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: const Color(0xFFE2E8E5)),
-            boxShadow: const [
-              BoxShadow(
-                color: Color(0x081B3A5C),
-                blurRadius: 12,
-                offset: Offset(0, 4),
-              ),
-            ],
-          ),
+          decoration: kSoftCardDecoration,
           child: Column(
             children: [
               const MascotPoseView(pose: MascotPose.consoling, height: 110),

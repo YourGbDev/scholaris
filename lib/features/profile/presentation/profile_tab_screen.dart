@@ -301,18 +301,7 @@ class ProfileTabScreen extends ConsumerWidget {
 
     return Container(
       padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: kSurfaceContainerLowest,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: kBorderLight),
-        boxShadow: const [
-          BoxShadow(
-            color: kCardShadow,
-            blurRadius: 10,
-            offset: Offset(0, 3),
-          ),
-        ],
-      ),
+      decoration: kSoftCardDecoration,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -545,18 +534,7 @@ class ProfileTabScreen extends ConsumerWidget {
 
     return Container(
       padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: kSurfaceContainerLowest,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: kBorderLight),
-        boxShadow: const [
-          BoxShadow(
-            color: kCardShadow,
-            blurRadius: 8,
-            offset: Offset(0, 2),
-          ),
-        ],
-      ),
+      decoration: kSoftCardDecoration,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -690,18 +668,7 @@ class ProfileTabScreen extends ConsumerWidget {
   Widget _buildLocationCard(BuildContext context, StudentProfile profile) {
     return Container(
       padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: kSurfaceContainerLowest,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: kBorderLight),
-        boxShadow: const [
-          BoxShadow(
-            color: kCardShadow,
-            blurRadius: 8,
-            offset: Offset(0, 2),
-          ),
-        ],
-      ),
+      decoration: kSoftCardDecoration,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -902,18 +869,7 @@ class ProfileTabScreen extends ConsumerWidget {
   Widget _buildFinancialCard(BuildContext context, StudentProfile profile) {
     return Container(
       padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: kSurfaceContainerLowest,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: kBorderLight),
-        boxShadow: const [
-          BoxShadow(
-            color: kCardShadow,
-            blurRadius: 8,
-            offset: Offset(0, 2),
-          ),
-        ],
-      ),
+      decoration: kSoftCardDecoration,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -1498,26 +1454,15 @@ class _ProfileMilestoneCard extends StatelessWidget {
         color: Colors.transparent,
         child: InkWell(
           key: const ValueKey('profile-milestone-card'),
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(kRadiusCard),
           onTap: () => showMatchingPowerSheet(context, profile),
           child: Container(
             padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(16),
-              border: Border.all(
+            decoration: kSoftCardDecoration.copyWith(border: Border.all(
                 color: isComplete
                     ? kPrimary.withValues(alpha: 0.3)
                     : kAccent.withValues(alpha: 0.35),
-              ),
-              boxShadow: const [
-                BoxShadow(
-                  color: kCardShadow,
-                  blurRadius: 10,
-                  offset: Offset(0, 3),
-                ),
-              ],
-            ),
+              )),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [

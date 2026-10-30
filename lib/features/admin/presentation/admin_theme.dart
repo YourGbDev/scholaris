@@ -48,7 +48,7 @@ const Color kAdminInactiveNavText = Color(0xFF404942);
 // --- Border Radius Tokens ----------------------------------------------------
 
 /// Apple squircle card radius for stat tiles, content panels, and tables.
-const BorderRadius kAdminCardRadius = BorderRadius.all(Radius.circular(26));
+const BorderRadius kAdminCardRadius = BorderRadius.all(Radius.circular(kRadiusCard));
 
 /// Squircle alias for explicit Apple design references.
 const BorderRadius kAdminSquircleRadius = kAdminCardRadius;
@@ -65,21 +65,10 @@ const BorderRadius kAdminPillRadius = BorderRadius.all(Radius.circular(20));
 // --- Shadows -----------------------------------------------------------------
 
 /// Subtle Apple card shadow.
-const List<BoxShadow> kAdminCardShadow = [
-  BoxShadow(
-    color: Color(0x06000000),
-    blurRadius: 4,
-    offset: Offset(0, 2),
-  ),
-];
+const List<BoxShadow> kAdminCardShadow = kCardElevationCrisp;
 
 /// Matches the provider workspace's light, single-surface cards.
-const BoxDecoration kAdminCardDecoration = BoxDecoration(
-  color: Colors.white,
-  borderRadius: kAdminCardRadius,
-  border: Border.fromBorderSide(BorderSide(color: kAdminHairline)),
-  boxShadow: kAdminCardShadow,
-);
+const BoxDecoration kAdminCardDecoration = kSoftCardDecoration;
 
 // --- Typography Helpers ------------------------------------------------------
 

@@ -361,18 +361,7 @@ class _AccountSettingsScreenState extends ConsumerState<AccountSettingsScreen> {
         const SizedBox(height: 8),
 
         Container(
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: const Color(0xFFDDE2F3)),
-            boxShadow: const [
-              BoxShadow(
-                color: kCardShadow,
-                blurRadius: 8,
-                offset: Offset(0, 2),
-              ),
-            ],
-          ),
+          decoration: kSoftCardDecoration,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
@@ -826,18 +815,7 @@ class _AccountSettingsScreenState extends ConsumerState<AccountSettingsScreen> {
         const SizedBox(height: 8),
 
         Container(
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: const Color(0xFFDDE2F3)),
-            boxShadow: const [
-              BoxShadow(
-                color: kCardShadow,
-                blurRadius: 8,
-                offset: Offset(0, 2),
-              ),
-            ],
-          ),
+          decoration: kSoftCardDecoration,
           child: Column(
             children: [
               _notificationSwitch(
@@ -1010,18 +988,7 @@ class _AccountSettingsScreenState extends ConsumerState<AccountSettingsScreen> {
         const SizedBox(height: 8),
 
         Container(
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: const Color(0xFFDDE2F3)),
-            boxShadow: const [
-              BoxShadow(
-                color: kCardShadow,
-                blurRadius: 8,
-                offset: Offset(0, 2),
-              ),
-            ],
-          ),
+          decoration: kSoftCardDecoration,
           child: Column(
             children: [
               // Shielding Banner
@@ -1029,7 +996,7 @@ class _AccountSettingsScreenState extends ConsumerState<AccountSettingsScreen> {
                 padding: const EdgeInsets.all(14),
                 decoration: const BoxDecoration(
                   color: Color(0xFFF1F3FF),
-                  borderRadius: BorderRadius.vertical(top: Radius.circular(15)),
+                  borderRadius: BorderRadius.vertical(top: Radius.circular(kRadiusCard - .5)),
                 ),
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -1174,18 +1141,7 @@ class _AccountSettingsScreenState extends ConsumerState<AccountSettingsScreen> {
         const SizedBox(height: 8),
 
         Container(
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: const Color(0xFFDDE2F3)),
-            boxShadow: const [
-              BoxShadow(
-                color: kCardShadow,
-                blurRadius: 8,
-                offset: Offset(0, 2),
-              ),
-            ],
-          ),
+          decoration: kSoftCardDecoration,
           child: Column(
             children: [
               _actionListTile(

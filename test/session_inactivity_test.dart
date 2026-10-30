@@ -1007,4 +1007,115 @@ void main() {
       await tester.pumpWidget(const SizedBox());
     },
   );
+
+  group('Web storage corruption and absent-key differentiation', () {
+    test('parseInactivityDeadline unit tests distinguish missing from invalid data', () {
+      expect(parseInactivityDeadline(null), isNull);
+      expect(() => parseInactivityDeadline(''), throwsFormatException);
+      expect(() => parseInactivityDeadline('corrupted'), throwsFormatException);
+      expect(() => parseInactivityDeadline('NaN'), throwsFormatException);
+      expect(() => parseInactivityDeadline('12.34'), throwsFormatException);
+      expect(parseInactivityDeadline('1730275200000'), 1730275200000);
+    });
+
+    testWidgets('InactivityWebStorage with missing key permits new session initialization', (tester) async {
+      final mockWebStorage = <String, String>{};
+      final webStorage = InactivityWebStorage(
+        getItem: (k) => mockWebStorage[k],
+        setItem: (k, v) => mockWebStorage[k] = v,
+        removeItem: (k) => mockWebStorage.remove(k),
+      );
+      final router = GoRouter(
+        routes: [
+          GoRoute(path: '/', builder: (_, _) => const Scaffold(body: Text('Protected Data'))),
+        ],
+      );
+      addTearDown(router.dispose);
+
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            authSessionProvider.overrideWith(_SignedIn.new),
+            routerProvider.overrideWithValue(router),
+            inactivityStorageProvider.overrideWithValue(webStorage),
+          ],
+          child: const ScholarisApp(),
+        ),
+      );
+      await tester.pump();
+      await tester.pump();
+
+      expect(find.text('Protected Data'), findsOneWidget);
+      expect(mockWebStorage.containsKey('inactivity_deadline_student'), isTrue);
+      await tester.pumpWidget(const SizedBox());
+    });
+
+    testWidgets('InactivityWebStorage with empty string stored value fails closed', (tester) async {
+      final mockWebStorage = <String, String>{
+        'inactivity_deadline_student': '',
+      };
+      final webStorage = InactivityWebStorage(
+        getItem: (k) => mockWebStorage[k],
+        setItem: (k, v) => mockWebStorage[k] = v,
+        removeItem: (k) => mockWebStorage.remove(k),
+      );
+      final router = GoRouter(
+        routes: [
+          GoRoute(path: '/', builder: (_, _) => const Scaffold(body: Text('Protected Data'))),
+        ],
+      );
+      addTearDown(router.dispose);
+
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            authSessionProvider.overrideWith(_SignedIn.new),
+            routerProvider.overrideWithValue(router),
+            inactivityStorageProvider.overrideWithValue(webStorage),
+          ],
+          child: const ScholarisApp(),
+        ),
+      );
+      await tester.pump();
+      await tester.pump();
+
+      expect(find.text('Protected Data'), findsNothing);
+      expect(find.text('Security check unavailable'), findsOneWidget);
+      await tester.pumpWidget(const SizedBox());
+    });
+
+    testWidgets('InactivityWebStorage with non-numeric stored value fails closed', (tester) async {
+      final mockWebStorage = <String, String>{
+        'inactivity_deadline_student': 'corrupted_non_numeric_token',
+      };
+      final webStorage = InactivityWebStorage(
+        getItem: (k) => mockWebStorage[k],
+        setItem: (k, v) => mockWebStorage[k] = v,
+        removeItem: (k) => mockWebStorage.remove(k),
+      );
+      final router = GoRouter(
+        routes: [
+          GoRoute(path: '/', builder: (_, _) => const Scaffold(body: Text('Protected Data'))),
+        ],
+      );
+      addTearDown(router.dispose);
+
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            authSessionProvider.overrideWith(_SignedIn.new),
+            routerProvider.overrideWithValue(router),
+            inactivityStorageProvider.overrideWithValue(webStorage),
+          ],
+          child: const ScholarisApp(),
+        ),
+      );
+      await tester.pump();
+      await tester.pump();
+
+      expect(find.text('Protected Data'), findsNothing);
+      expect(find.text('Security check unavailable'), findsOneWidget);
+      await tester.pumpWidget(const SizedBox());
+    });
+  });
 }

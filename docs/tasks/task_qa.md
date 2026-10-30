@@ -1,47 +1,46 @@
 # Task Card: QA (`cerith` Session)
 
-**Sprint**: Final Focused Student Navbar Proportions Pass (`student-navbar-proportions-2026-10-27`) & Student Motion Integration  
-**Target Deadline**: Completed — Standing down on standby; student navbar and motion handed off to Codex  
-**Role**: 🔍 Testing, Regressions & Failure Reproduction Specialist  
-**Assigned Workspace**: `C:\scholaris` on branch `fix/touch-targets-oct02`  
+**Sprint**: Round 6 — Inactivity Persistence, Zero Synthetic State & Pre-Integration Verification  
+**Role**: 🔍 Quality Assurance, Failure Reproduction & Independent Verification Specialist  
+**Assigned Workspace**: `C:\Users\Windows 11\orca\workspaces\scholaris\cerith`  
+**Active Branch**: `codex/round6-qa` (Baseline: `41454588d88323db4f9cf80ac5f852a4c7bf598c`)  
 **Standing Contract**: [`docs/coordination/SPECIALIST_CONTRACT.md`](../coordination/SPECIALIST_CONTRACT.md)  
-**Status**: `STANDBY (COMPLETED / HANDED OFF TO CODEX)`
+**Status**: `READY`
 
 ---
 
-## 1. Permitted Files (Exact Named Files Only)
+## 1. Permitted Files (Strict Sole Ownership)
 
 ### Sole Edit Ownership:
-- `C:\scholaris\test\student_scroll_dock_test.dart` (update collapsed assertions: icon-only `find.byIcon(...)` instead of `find.text('Home')` / `find.text('Discover')`; update clearance expectation to `90.0px` = `16 + 58 + 16`)
-- `C:\scholaris\test\student_nav_rebuild_test.dart` (update 62.0px height assertions to 58.0px)
-- `C:\scholaris\test\student_navbar_accessibility_test.dart` (update dock height 62.0px to 58.0px; verify touch targets $\ge 44\text{pt}$)
-- `C:\scholaris\docs\reports\student-navbar-proportions-2026-10-27\qa.md` (deliverable report)
+- `test/qa_inactivity_challenge_test.dart` (QA-authored challenge suite)
+- `docs/reports/task_qa_report.md`
 
-### Read-Only / Invariants:
-- All product files in `lib/` (UI/Builder owned)
+### Read-Only / Excluded:
+- Product code in `lib/` (UI/Builder ownership)
+- Builder's unit test file `test/session_inactivity_test.dart` (re-run only; do not overwrite)
+- UI's test files `test/applications_tracking_widget_test.dart`, `test/provider_console_desktop_test.dart` (re-run only)
 
 ---
 
-## 2. Tasks & Acceptance Criteria
+## 2. Directives & Tasks
 
-### Task QA-1: Update `student_scroll_dock_test.dart`
-1. **Collapsed Icon-Only Verification**:
-   - In Test 1 (lines 68–72) and Test 6 (line 208): update descendant check of `student-nav-compact-control` from `find.text(...)` to `find.byIcon(Icons.home_rounded)` / `find.byIcon(Icons.explore)`.
-   - Confirm visible text is absent (`find.descendant(of: compactControl, matching: find.byType(Text))` findsNothing), while `Semantics` label remains present (`tester.getSemantics(compactControl).label` contains active tab name).
-2. **Clearance Expectation**:
-   - In Test 9 (line 338): update `clearanceExpanded` check from `16.0 + 62.0 + 16.0` (`94.0`) to `16.0 + 58.0 + 16.0` (`90.0`).
-
-### Task QA-2: Update `student_nav_rebuild_test.dart`
-- Update lines 62–90: change `62.0` height expectation for outer SizedBox, 4-tab pill, and `+` button to `58.0`.
-
-### Task QA-3: Update `student_navbar_accessibility_test.dart`
-- Update lines 255, 305, 337–338: change `62.0` dock height and `+` button size to `58.0`.
-- Verify touch targets remain $\ge 44\text{pt}$ (58.0px $\ge$ 44.0px).
-
-### Task QA-4: Execute 35 Navigation Tests + 47 Security Regression Tests (82/82)
-- Run:
-  ```powershell
-  flutter test test/student_scroll_dock_test.dart test/student_navbar_accessibility_test.dart test/student_nav_rebuild_test.dart test/features/student/bottom_nav_tab_switch_test.dart
-  flutter test test/cross_tab_logout_test.dart test/ias_security_test.dart test/codex_auth_transition_review_test.dart test/admin_auth_boundary_invalidation_test.dart
-  ```
-- Deliver report to `C:\scholaris\docs\reports\student-navbar-proportions-2026-10-27\qa.md` and mark `QA_FINAL`.
+1. **Integration of Delivered Commits**:
+   - Wait until Builder (`cowrie`) and UI/UX (`bowhead`) deliver their commits on `codex/round6-builder` and `codex/round6-ui`.
+   - In `cerith`, merge/cherry-pick the exact delivered commits from Builder and UI/UX into `codex/round6-qa`.
+   - Record the exact tested commit SHA and Security's report revision.
+2. **Author Independent Challenge Suite (`test/qa_inactivity_challenge_test.dart`)**:
+   - Do NOT merely execute tests supplied by the implementer. Author independent tests exercising:
+     * **Corrupted/Implausible Timestamps**: Stored values that are null, negative, in the far future (>24h), or non-numeric strings must fail closed.
+     * **System Clock Jumps (Forward & Backward)**: Verify behavior when the system clock jumps forward or backward while the app is suspended.
+     * **Storage Throws**: Mock storage throwing `PlatformException` on read, write, or removal. Confirm the blocking barrier dialog is displayed and manual sign-out is offered.
+     * **Rapid Account Switching & Late Writes**: Simulate User A signing out and User B signing in within milliseconds; verify User A's late queued write does not overwrite User B's deadline.
+     * **Sign-Out Retry**: Simulate `signOut` network failure; confirm screen remains blocked and retry button functions.
+3. **Regression Execution**:
+   - Run:
+     ```powershell
+     flutter test test/session_inactivity_test.dart test/applications_tracking_widget_test.dart test/provider_console_desktop_test.dart test/qa_inactivity_challenge_test.dart
+     ```
+   - Record baseline failures separately; do not silently waive them.
+4. **Independent Verdict Delivery**:
+   - Record `PASS`, `FAIL`, or `NOT VERIFIED` for each acceptance criterion with full reproducible command outputs.
+   - Deliver report to `docs/reports/task_qa_report.md`.

@@ -348,10 +348,18 @@ void main() {
     });
 
     testWidgets(
-        'Contract 4.5 Clock Tampering: Backward clock jump (<24h) in InactivityGuard clamps remaining window to 15m',
+        'Contract 4.5 Clock Tampering: Restored session with future deadline (>15m, <24h) clamps to 15m and discriminates against unclamped implementation',
         (tester) async {
-      var mockNow = DateTime(2026, 10, 30, 12, 0, 0);
+      final mockNow = DateTime(2026, 10, 30, 10, 0, 0);
       var signOutCalls = 0;
+
+      // Simulate a device whose clock jumped backward by 2 hours before launching the app,
+      // leaving a stored deadline 2 hours in the future relative to mockNow:
+      final futureStoredDeadline = mockNow.add(const Duration(hours: 2));
+      SharedPreferences.setMockInitialValues({
+        'inactivity_deadline_user-a': futureStoredDeadline.millisecondsSinceEpoch,
+      });
+
       final router = GoRouter(routes: [
         GoRoute(
           path: '/',
@@ -375,20 +383,16 @@ void main() {
       await tester.pump();
       expect(find.text('Protected Records'), findsOneWidget);
 
-      // System clock artificially rolled backward by 2 hours (10:00:00 instead of 12:00:00)
-      mockNow = mockNow.subtract(const Duration(hours: 2));
-
-      // App lifecycle resumes; InactivityGuard must clamp remaining time to 15m instead of 2h 15m
-      tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.resumed);
-      await tester.pump();
-
-      // Advancing 16 minutes from the rolled-back time must trigger expiration
-      mockNow = mockNow.add(const Duration(minutes: 16));
+      // Advance 16 minutes from the start time:
+      // - WITH CLAMPING: _restore clamps deadline to mockNow + 15m, scheduling a 15-minute timer.
+      //   Pumping 16 minutes fires the timer and expires the session.
+      // - WITHOUT CLAMPING: _restore retains the 2-hour deadline, scheduling a 2-hour timer.
+      //   Pumping 16 minutes leaves the session unexpired (signOutCalls == 0), failing the test.
       await tester.pump(const Duration(minutes: 16));
       await tester.pump();
 
       expect(signOutCalls, 1,
-          reason: 'Session must expire after 15 minutes of rolled-back time due to 15-minute clamping');
+          reason: 'Session must expire after 16 minutes because future deadline was clamped to 15m');
       expect(find.text('Your session has expired'), findsOneWidget);
       await tester.pumpWidget(const SizedBox());
     });
@@ -480,6 +484,125 @@ void main() {
       // Warning dialog is visible AND protected content remains visible underneath
       expect(find.text('Your session is about to expire'), findsOneWidget);
       expect(find.text('Confidential Student Record'), findsOneWidget);
+      await tester.pumpWidget(const SizedBox());
+    });
+  });
+
+  group('QA Challenge 7: Web Storage Corruption & Absent Key Differentiation (Contract 4.1 & Fail-Closed)', () {
+    test('Requirement: parseInactivityDeadline distinguishes absent key from malformed stored values', () {
+      // Absent key returns null -> signals genuine new session
+      expect(parseInactivityDeadline(null), isNull);
+
+      // Empty string throws FormatException -> fails closed
+      expect(() => parseInactivityDeadline(''), throwsFormatException);
+
+      // Non-numeric string throws FormatException -> fails closed
+      expect(() => parseInactivityDeadline('invalid_timestamp'), throwsFormatException);
+      expect(() => parseInactivityDeadline('NaN'), throwsFormatException);
+      expect(() => parseInactivityDeadline('123.456'), throwsFormatException);
+
+      // Valid timestamp string parses correctly
+      expect(parseInactivityDeadline('1730275200000'), 1730275200000);
+    });
+
+    testWidgets('Requirement: InactivityWebStorage with missing key permits new session initialization',
+        (tester) async {
+      final mockWebStorage = <String, String>{};
+      final webStorage = InactivityWebStorage(
+        getItem: (k) => mockWebStorage[k],
+        setItem: (k, v) => mockWebStorage[k] = v,
+        removeItem: (k) => mockWebStorage.remove(k),
+      );
+      final router = GoRouter(routes: [
+        GoRoute(path: '/', builder: (_, _) => const Scaffold(body: Text('Protected Web Data'))),
+      ]);
+      addTearDown(router.dispose);
+
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            authSessionProvider.overrideWith(_SignedInSession.new),
+            routerProvider.overrideWithValue(router),
+            inactivityStorageProvider.overrideWithValue(webStorage),
+          ],
+          child: const ScholarisApp(),
+        ),
+      );
+      await tester.pump();
+      await tester.pump();
+
+      expect(find.text('Protected Web Data'), findsOneWidget);
+      expect(mockWebStorage.containsKey('inactivity_deadline_user-a'), isTrue);
+      await tester.pumpWidget(const SizedBox());
+    });
+
+    testWidgets('Requirement: InactivityWebStorage with empty string stored value fails closed and conceals content',
+        (tester) async {
+      final mockWebStorage = <String, String>{
+        'inactivity_deadline_user-a': '',
+      };
+      final webStorage = InactivityWebStorage(
+        getItem: (k) => mockWebStorage[k],
+        setItem: (k, v) => mockWebStorage[k] = v,
+        removeItem: (k) => mockWebStorage.remove(k),
+      );
+      final router = GoRouter(routes: [
+        GoRoute(path: '/', builder: (_, _) => const Scaffold(body: Text('Confidential Student Record'))),
+      ]);
+      addTearDown(router.dispose);
+
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            authSessionProvider.overrideWith(_SignedInSession.new),
+            routerProvider.overrideWithValue(router),
+            inactivityStorageProvider.overrideWithValue(webStorage),
+          ],
+          child: const ScholarisApp(),
+        ),
+      );
+      await tester.pump();
+      await tester.pump();
+
+      expect(find.text('Confidential Student Record'), findsNothing,
+          reason: 'Protected content must be completely concealed during web storage failure');
+      expect(find.text('Security check unavailable'), findsOneWidget,
+          reason: 'Fail-closed error dialog must be rendered for empty string web storage value');
+      await tester.pumpWidget(const SizedBox());
+    });
+
+    testWidgets('Requirement: InactivityWebStorage with non-numeric stored value fails closed and conceals content',
+        (tester) async {
+      final mockWebStorage = <String, String>{
+        'inactivity_deadline_user-a': 'tampered_malformed_string',
+      };
+      final webStorage = InactivityWebStorage(
+        getItem: (k) => mockWebStorage[k],
+        setItem: (k, v) => mockWebStorage[k] = v,
+        removeItem: (k) => mockWebStorage.remove(k),
+      );
+      final router = GoRouter(routes: [
+        GoRoute(path: '/', builder: (_, _) => const Scaffold(body: Text('Confidential Student Record'))),
+      ]);
+      addTearDown(router.dispose);
+
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            authSessionProvider.overrideWith(_SignedInSession.new),
+            routerProvider.overrideWithValue(router),
+            inactivityStorageProvider.overrideWithValue(webStorage),
+          ],
+          child: const ScholarisApp(),
+        ),
+      );
+      await tester.pump();
+      await tester.pump();
+
+      expect(find.text('Confidential Student Record'), findsNothing,
+          reason: 'Protected content must be completely concealed during web storage failure');
+      expect(find.text('Security check unavailable'), findsOneWidget,
+          reason: 'Fail-closed error dialog must be rendered for non-numeric web storage value');
       await tester.pumpWidget(const SizedBox());
     });
   });

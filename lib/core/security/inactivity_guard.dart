@@ -16,6 +16,10 @@ final inactivitySignOutProvider = Provider<Future<void> Function()>((ref) {
   return () => Supabase.instance.client.auth.signOut(scope: SignOutScope.local);
 });
 
+final inactivityClockProvider = Provider<DateTime Function()>(
+  (ref) => DateTime.now,
+);
+
 class InactivityGuard extends ConsumerStatefulWidget {
   const InactivityGuard({required this.child, super.key});
 
@@ -41,6 +45,8 @@ class _InactivityGuardState extends ConsumerState<InactivityGuard>
   bool _storageFailed = false;
   int _generation = 0;
   Future<void> _storageQueue = Future.value();
+
+  DateTime _now() => ref.read(inactivityClockProvider)();
 
   String _key(String userId) => 'inactivity_deadline_$userId';
 
@@ -107,8 +113,9 @@ class _InactivityGuardState extends ConsumerState<InactivityGuard>
       });
       if (!mounted || generation != _generation) return;
 
+      final now = _now();
       if (saved == null) {
-        final deadline = DateTime.now().add(_timeout);
+        final deadline = now.add(_timeout);
         await _queue(() async {
           if (generation != _generation) return;
           await storage.write(_key(userId), deadline.millisecondsSinceEpoch);
@@ -120,7 +127,6 @@ class _InactivityGuardState extends ConsumerState<InactivityGuard>
         });
         _scheduleDeadline();
       } else {
-        final now = DateTime.now();
         final isInvalid = saved! <= 0;
         final savedDeadline = isInvalid
             ? null
@@ -136,9 +142,22 @@ class _InactivityGuardState extends ConsumerState<InactivityGuard>
           return;
         }
 
+        var deadlineToUse = savedDeadline;
+        if (deadlineToUse.difference(now) > _timeout) {
+          deadlineToUse = now.add(_timeout);
+          await _queue(() async {
+            if (generation != _generation) return;
+            await storage.write(
+              _key(userId),
+              deadlineToUse.millisecondsSinceEpoch,
+            );
+          });
+          if (!mounted || generation != _generation) return;
+        }
+
         setState(() {
           _loading = false;
-          _deadline = savedDeadline;
+          _deadline = deadlineToUse;
         });
         _scheduleDeadline();
       }
@@ -154,10 +173,17 @@ class _InactivityGuardState extends ConsumerState<InactivityGuard>
 
   void _scheduleDeadline() {
     _cancelTimers();
-    final remaining = _deadline!.difference(DateTime.now());
+    final now = _now();
+    var remaining = _deadline!.difference(now);
     if (remaining <= Duration.zero || remaining > const Duration(hours: 24)) {
       _expire();
       return;
+    }
+    // Backward-clock defense: clamp remaining time to _timeout (15 minutes)
+    // so rolling back system time cannot extend the session indefinitely.
+    if (remaining > _timeout) {
+      remaining = _timeout;
+      _deadline = now.add(_timeout);
     }
     if (remaining <= _warningBefore) {
       setState(() => _warning = true);
@@ -172,7 +198,8 @@ class _InactivityGuardState extends ConsumerState<InactivityGuard>
   void _resetTimer() {
     if (_userId == null || _expired || _loading || _storageFailed) return;
     _cancelTimers();
-    _deadline = DateTime.now().add(_timeout);
+    final now = _now();
+    _deadline = now.add(_timeout);
     final userId = _userId!;
     final generation = _generation;
     final deadline = _deadline!;
@@ -199,7 +226,7 @@ class _InactivityGuardState extends ConsumerState<InactivityGuard>
       return;
     }
     if (_deadline != null) {
-      final now = DateTime.now();
+      final now = _now();
       if (!now.isBefore(_deadline!) ||
           _deadline!.difference(now) > const Duration(hours: 24)) {
         _expire();
@@ -219,10 +246,19 @@ class _InactivityGuardState extends ConsumerState<InactivityGuard>
     if (state != AppLifecycleState.resumed || _deadline == null || _expired) {
       return;
     }
-    final remaining = _deadline!.difference(DateTime.now());
+    final now = _now();
+    var remaining = _deadline!.difference(now);
     if (remaining <= Duration.zero || remaining > const Duration(hours: 24)) {
       _expire();
-    } else if (remaining <= _warningBefore && !_warning) {
+      return;
+    }
+    if (remaining > _timeout) {
+      remaining = _timeout;
+      _deadline = now.add(_timeout);
+      _scheduleDeadline();
+      return;
+    }
+    if (remaining <= _warningBefore && !_warning) {
       setState(() => _warning = true);
     }
   }
@@ -256,6 +292,8 @@ class _InactivityGuardState extends ConsumerState<InactivityGuard>
     final userId = ref.watch(currentUserIdProvider);
     if (userId != _userId) _startSession(userId);
 
+    final concealContent = _loading || _expired || _storageFailed;
+
     return Listener(
       behavior: HitTestBehavior.translucent,
       onPointerDown: (_) => _activity(),
@@ -263,13 +301,19 @@ class _InactivityGuardState extends ConsumerState<InactivityGuard>
       onPointerSignal: (_) => _activity(),
       child: Stack(
         children: [
-          ExcludeFocus(
-            excluding: _warning || _expired || _loading || _storageFailed,
-            child: ExcludeSemantics(
-              excluding: _warning || _expired || _loading || _storageFailed,
-              child: widget.child,
+          if (concealContent)
+            const ColoredBox(
+              color: Colors.white,
+              child: SizedBox.expand(),
+            )
+          else
+            ExcludeFocus(
+              excluding: _warning,
+              child: ExcludeSemantics(
+                excluding: _warning,
+                child: widget.child,
+              ),
             ),
-          ),
           if (_loading || _storageFailed) ...[
             const ModalBarrier(dismissible: false, color: Colors.black54),
             Center(

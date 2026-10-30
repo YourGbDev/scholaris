@@ -601,7 +601,7 @@ class _OrgIncomingApplicationsTabState
     final card4 = StaggeredListItem(
       index: 3,
       child: _buildKpiCard(
-        title: 'Confirmed Awardees',
+        title: 'Approved / Awarded',
         icon: Icons.verified_outlined,
         value: '$confirmedCount',
         numericValue: confirmedCount,

@@ -1249,41 +1249,45 @@ class _ApplicationCard extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Container(
+          width: double.infinity,
           padding: const EdgeInsets.all(10),
           decoration: BoxDecoration(
             color: const Color(0xFFF0F0F0),
             borderRadius: BorderRadius.circular(10),
           ),
-          child: Column(
-            children: [
-              _checklistRow('Personal Statement (750 words)', 'Ready', true),
-              const SizedBox(height: 6),
-              _checklistRow('UP Diliman Academic Transcript', 'Uploaded', true),
-              const SizedBox(height: 6),
-              _checklistRow('Faculty Recommendation (1 of 2)', 'Pending', false),
-            ],
+          child: Text(
+            'Review your draft and attached documents.',
+            style: openSans(fontSize: 11.5, color: const Color(0xFF161C27)),
           ),
         ),
         const SizedBox(height: 10),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Row(
-              children: [
-                const Icon(Icons.timelapse_rounded, size: 15, color: Color(0xFFBA1A1A)),
-                const SizedBox(width: 4),
-                Text(
-                  scholarship != null
-                      ? deadlineLabel(scholarship!.deadline)
-                      : 'Due soon',
-                  style: outfit(
-                    fontSize: 11.5,
-                    fontWeight: FontWeight.w600,
-                    color: const Color(0xFFBA1A1A),
+            Flexible(
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Icon(Icons.timelapse_rounded, size: 15, color: Color(0xFFBA1A1A)),
+                  const SizedBox(width: 4),
+                  Flexible(
+                    child: Text(
+                      scholarship != null
+                          ? deadlineLabel(scholarship!.deadline)
+                          : 'Deadline unavailable',
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: outfit(
+                        fontSize: 11.5,
+                        fontWeight: FontWeight.w600,
+                        color: const Color(0xFFBA1A1A),
+                      ),
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
+            const SizedBox(width: 8),
             FilledButton.tonalIcon(
               style: FilledButton.styleFrom(
                 backgroundColor: const Color(0xFFF0F0F0),
@@ -1304,40 +1308,6 @@ class _ApplicationCard extends StatelessWidget {
               ),
             ),
           ],
-        ),
-      ],
-    );
-  }
-
-  Widget _checklistRow(String title, String status, bool ready) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Row(
-          children: [
-            Icon(
-              ready ? Icons.check_circle_rounded : Icons.pending_rounded,
-              size: 15,
-              color: ready ? const Color(0xFF0F4D2E) : const Color(0xFFBA1A1A),
-            ),
-            const SizedBox(width: 6),
-            Text(
-              title,
-              style: openSans(
-                fontSize: 11.5,
-                fontWeight: FontWeight.w500,
-                color: const Color(0xFF161C27),
-              ),
-            ),
-          ],
-        ),
-        Text(
-          status,
-          style: outfit(
-            fontSize: 10.5,
-            fontWeight: FontWeight.w600,
-            color: ready ? const Color(0xFF0F4D2E) : const Color(0xFFBA1A1A),
-          ),
         ),
       ],
     );

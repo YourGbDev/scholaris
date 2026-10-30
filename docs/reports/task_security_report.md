@@ -6,29 +6,34 @@
 **Active Branch**: `codex/round6-security`  
 **Baseline Commit**: `41454588d88323db4f9cf80ac5f852a4c7bf598c`  
 **Audited Target**: Builder (`cowrie` worktree on `codex/round6-builder`)  
-**Audited Delivered Commit SHA**: `a880be6` (supersedes `e1cb62e` / `f76f517`)  
+**Audited Delivered Commit SHA**: `59527ad` (supersedes `a880be6`, `e1cb62e`, `f76f517`)  
 **Audit Document**: [`docs/reviews/2026-10-30-inactivity-storage-audit.md`](../reviews/2026-10-30-inactivity-storage-audit.md)  
 **Contract Reference**: [`docs/coordination/SPECIALIST_CONTRACT.md`](../coordination/SPECIALIST_CONTRACT.md)  
-**Status**: `COMPLETE (REVISED AUDIT ENDORSED — PASS)`
+**Status**: `COMPLETE (FINAL AUDIT ENDORSED — UNCONDITIONAL PASS)`
 
 ---
 
 ## 1. Executive Summary
 
-Security performed a comprehensive re-audit of Builder's revised implementation in commit `a880be6` across ten core security, privacy, and statutory data protection vectors under Philippine RA 10173:
+Security performed a comprehensive re-audit of Builder's delivered implementation in commit `59527ad` across eleven core security, privacy, and statutory data protection vectors under Philippine RA 10173:
 
-1. **Complete Visual Concealment of Protected Content**:
-   - In accordance with the Lead Architect's finding, when session access is unverified or denied (`_loading`, `_expired`, or `_storageFailed`), `InactivityGuard` strictly unmounts and conceals `widget.child` behind a solid white surface (`ColoredBox(color: Colors.white, child: SizedBox.expand())`).
-   - This eliminates the previous flaw where sensitive student records, personal statements, grades, or grant disbursements were visible behind a 54% black translucent `ModalBarrier`.
+1. **Web Storage Corruption Differentiation & Fail-Closed Parsing**:
+   - Audited the implementation of `parseInactivityDeadline(String? raw)` in `lib/core/security/inactivity_storage.dart` and its consumption in `inactivity_storage_web.dart`.
+   - Verified that missing keys (`raw == null`) return `null`, allowing genuine new authenticated sessions to initialize a fresh 15-minute deadline.
+   - Verified that corrupted, empty (`''`), or non-numeric (`'tampered'`, `'NaN'`, `'12.34'`) storage entries throw `FormatException`.
+   - Confirmed that `InactivityGuard._restore()` catches this exception in its top-level error barrier, setting `_storageFailed = true`, completely concealing protected content behind a solid white surface, and rendering *"Security check unavailable"*.
+   - This completely resolves the previous vulnerability where `int.tryParse(window.sessionStorage.getItem(key) ?? '')` collapsed absent keys and corrupted values into identical `null` outputs, improperly granting fresh 15-minute sessions on tampered web storage.
+2. **Complete Visual Concealment of Protected Content**:
+   - When session access is unverified or denied (`_loading`, `_expired`, or `_storageFailed`), `InactivityGuard` strictly unmounts and conceals `widget.child` behind a solid white surface (`ColoredBox(color: Colors.white, child: SizedBox.expand())`).
+   - This eliminates visual leakage of sensitive student records, personal statements, grades, or grant disbursements beneath modal barriers.
    - During the 1-minute pre-expiration warning window (`_warning`), `widget.child` remains visible beneath the warning dialog, preserving user orientation while authenticated.
-2. **Backward System Clock Clamping**:
-   - Audited the implementation of `inactivityClockProvider = Provider<DateTime Function()>((ref) => DateTime.now);`.
+3. **Backward System Clock Clamping**:
    - Confirmed that rolling back the system clock by any duration (including jumps $< 24\text{ hours}$) is clamped to `_timeout` (15 minutes) in `_restore`, `_scheduleDeadline`, and `didChangeAppLifecycleState`.
    - This prevents an attacker or user from inflating their inactivity window or keeping an abandoned session alive indefinitely by manipulating device time.
-3. **Fail-Closed Storage Boundaries & Generation Tracking**:
+4. **Fail-Closed Storage Boundaries & Generation Tracking**:
    - Re-verified fail-closed error dialogs on storage throws, monotonic `_generation` tracking discarding late async operations across user transitions, and immediate key purging on account switch.
 
-A **Final Unconditional Pass** is rendered for commit `a880be6`.
+A **Final Unconditional Pass** is rendered for commit `59527ad`.
 
 ---
 
@@ -38,20 +43,21 @@ In accordance with `AGENTS.md` (Section 2 & 3) and `GEMINI.md`:
 
 1. **`systematic-debugging`** (`.agents/skills/systematic-debugging/SKILL.md`):
    - *Guidelines/Rules*: Phase 1 (Root Cause Investigation) and Phase 3 (Boundary Testing).
-   - *Application*: Inspected `lib/core/security/inactivity_guard.dart` lines 275–295 to verify that `widget.child` is completely excluded from the tree when `concealContent` is true, ensuring zero visual pixel leakage.
+   - *Application*: Traced the root cause of web storage corruption collapsing. Confirmed that distinguishing `raw == null` from non-null non-integers enforces fail-closed isolation against storage tampering.
 2. **`verification-before-completion`** (`.agents/skills/verification-before-completion/SKILL.md`):
    - *Guidelines/Rules*: Iron Law ("No completion claims without fresh verification evidence").
-   - *Application*: Executed full unit test suite (25/25 tests passing, exit code 0) and analyzer (0 issues, exit code 0) against Builder's commit `a880be6`.
+   - *Application*: Inspected Builder's fresh test suite (29/29 tests passing, exit code 0) and analyzer (0 issues, exit code 0) against commit `59527ad`.
 3. **`ponytail`** (`.agents/skills/ponytail/SKILL.md`):
    - *Guidelines/Rules*: Minimal complete engineering change without over-engineering; strict file boundaries.
-   - *Application*: Verified minimal conditional rendering (`if (concealContent) ... else ...`) and direct `inactivityClockProvider` typedef.
+   - *Application*: Verified that `parseInactivityDeadline` is a pure 10-line function with zero external package dependencies.
 
 ---
 
 ## 3. Security Re-Audit Matrix
 
-| Criterion | Specification | Implemented Defense in `a880be6` | Verdict |
+| Criterion | Specification | Implemented Defense in `59527ad` | Verdict |
 | :--- | :--- | :--- | :---: |
+| **Web Storage Parsing** | Absent keys permit new sessions; empty/non-numeric strings fail closed | `parseInactivityDeadline` throws `FormatException` on empty/non-numeric strings; guard catches and triggers `_storageFailed` | **PASS** |
 | **Visual Content Concealment** | No protected student data visible during loading, expired-restore, or storage failure | Unmounts `widget.child` and renders solid surface `ColoredBox` | **PASS** |
 | **Backward Clock Clamping** | Rollbacks $< 24\text{h}$ must not inflate session duration | Clamps `remaining = _timeout` (15m) and updates deadline | **PASS** |
 | **Forward Clock Expiration** | Advancing past deadline expires session immediately | Evaluates `difference(now)` against zero; triggers `_expire()` | **PASS** |
@@ -64,10 +70,14 @@ In accordance with `AGENTS.md` (Section 2 & 3) and `GEMINI.md`:
 
 ## 4. Verification Evidence
 
-### Check 1: Unit Test Suite in Builder Worktree (Commit `a880be6`)
+### Check 1: Unit Test Suite in Builder Worktree (Commit `59527ad`)
 - **Command**: `flutter test test/session_inactivity_test.dart`
-- **Result**: `00:01 +25: All tests passed!` (`Exit code 0`).
+- **Result**: `00:01 +29: All tests passed!` (`Exit code 0`).
 - **Pass Log Highlights**:
+  - `parseInactivityDeadline unit tests distinguish missing from invalid data` — **PASS**
+  - `InactivityWebStorage with missing key permits new session initialization` — **PASS**
+  - `InactivityWebStorage with empty string stored value fails closed` — **PASS**
+  - `InactivityWebStorage with non-numeric stored value fails closed` — **PASS**
   - `backward clock jump smaller than 24 hours clamps remaining time to 15-minute timeout` — **PASS**
   - `protected content is completely concealed during loading and expired-restore` — **PASS**
   - `protected content is completely concealed during storage failure` — **PASS**
@@ -75,10 +85,10 @@ In accordance with `AGENTS.md` (Section 2 & 3) and `GEMINI.md`:
 
 ### Check 2: Static Analyzer in Builder Worktree
 - **Command**: `flutter analyze lib/core/security/ test/session_inactivity_test.dart`
-- **Result**: `Analyzing 2 items... No issues found! (ran in 4.8s)` (`Exit code 0`).
+- **Result**: `Analyzing 2 items... No issues found! (ran in 2.7s)` (`Exit code 0`).
 
 ---
 
 ## 5. Compliance & Statutory Limitation (RA 10173)
 
-This report provides factual technical findings on client-side access barriers, storage keys, error handling, and visual content concealment. It does **not** constitute legal certification or statutory compliance under Republic Act No. 10173 (Philippine Data Privacy Act of 2012) or National Privacy Commission (NPC) circulars.
+This report provides factual technical findings on client-side access barriers, storage keys, error handling, web storage corruption defenses, and visual content concealment. It does **not** constitute legal certification or statutory compliance under Republic Act No. 10173 (Philippine Data Privacy Act of 2012) or National Privacy Commission (NPC) circulars.

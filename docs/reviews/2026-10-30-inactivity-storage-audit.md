@@ -20,18 +20,18 @@
 | Domain | Assessment | Severity / Status |
 | :--- | :--- | :--- |
 | **Restart Persistence** | Verified safe cold-start hydration; expired deadlines block immediately. New session defaults to 15 min. | **PASS** |
-| **Timestamp Validation** | Far-future (>24h) and web non-numeric inputs lack clamping / fail-closed rejection. | **HIGH DEFECT** |
+| **Timestamp Validation** | Far-future (>24h) and web non-numeric inputs rejected fail closed (`FormatException` triggers `_storageFailed`). | **PASS** |
 | **Storage Failures** | Read/write/remove exceptions trigger non-dismissible modal barrier (`Security check unavailable`). | **PASS** |
 | **Cross-User Isolation** | Storage keys scoped with `userId`; previous user key purged on sign-out and switch. | **PASS** |
 | **Late Queued Operations** | Monotonic `_generation` tracking and FIFO `_storageQueue` discard stale async writes. | **PASS** |
-| **Clock Manipulation** | Forward jumps fail closed. Backward jumps inflate remaining duration up to hours. | **MEDIUM RISK** |
+| **Clock Manipulation** | Forward jumps fail closed. Backward jumps $< 24\text{h}$ clamped to 15m in `_restore`, `_scheduleDeadline`, and resume. | **PASS** |
 | **Sign-Out Retry** | Sign-out failure retains non-dismissible modal lock with retry option. | **PASS** |
 | **Key & Value Exposure** | Values contain strictly integer timestamps. Zero tokens/credentials exposed. | **PASS** |
 | **Enforcement Scope** | Client-side presentation/storage barrier only; distinct from server-side JWT revocation. | **DOCUMENTED** |
 | **Compliance Scope** | Technical verification of access controls; not statutory RA 10173 certification. | **DISCLAIMED** |
 
-**Initial Audit Verdict**: **CONDITIONAL PASS / ACTION REQUIRED FOR BUILDER**.  
-The architecture is sound, modular, and cleanly handles concurrent queues and storage exceptions. However, before final sign-off, Builder must add defensive bounds validation to `_restore()` to clamp or reject far-future timestamps (>24 hours) and handle web non-numeric string corruption, and clamp backwards clock manipulation in `_scheduleDeadline()`.
+**Final Audit Verdict**: **UNCONDITIONAL PASS (COMMIT `59527ad`)**.  
+Builder resolved all identified vulnerabilities in commit `59527ad`. Web storage parsing now strictly distinguishes absent keys from malformed/corrupted strings (`parseInactivityDeadline`), and backward-clock manipulation is clamped across all state transitions.
 
 ---
 

@@ -256,7 +256,7 @@ void main() {
             builder: (context) {
               // Under standard text scale 1.0x: dockHeight = 58, clearance = 16 + 58 + 16 = 90.0
               final standardClearance = computeStudentContentClearance(context);
-              expect(standardClearance, equals(94.0));
+              expect(standardClearance, equals(88.0));
               return const SizedBox();
             },
           ),
@@ -275,7 +275,7 @@ void main() {
                 final textScaler = MediaQuery.textScalerOf(context);
                 final expectedDockHeight = computeStudentDockHeight(textScaler);
                 final scaledClearance = computeStudentContentClearance(context);
-                expect(scaledClearance, equals(16.0 + expectedDockHeight + 16.0));
+                expect(scaledClearance, equals(10.0 + expectedDockHeight + 16.0));
                 return const SizedBox();
               },
             ),
@@ -295,7 +295,7 @@ void main() {
                 final textScaler = MediaQuery.textScalerOf(context);
                 final expectedDockHeight = computeStudentDockHeight(textScaler);
                 final scaledClearance = computeStudentContentClearance(context);
-                expect(scaledClearance, equals(16.0 + expectedDockHeight + 16.0));
+                expect(scaledClearance, equals(10.0 + expectedDockHeight + 16.0));
                 return const SizedBox();
               },
             ),
@@ -542,8 +542,8 @@ void main() {
 
       // Action sheet should display options
       expect(find.text('Quick Actions'), findsOneWidget);
-      expect(find.text('Scan QR Code'), findsOneWidget);
-      expect(find.text('Upload Quick Documents'), findsOneWidget);
+      expect(find.text('Scan scholarship QR'), findsOneWidget);
+      expect(find.text('Upload document'), findsOneWidget);
     });
 
     testWidgets('11. Bounding-box non-overlap verification at 320px 3.0x: Home/Discover and Tracker/Profile have positive clearance and zero collision',

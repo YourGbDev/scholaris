@@ -26,6 +26,7 @@ import 'package:scholaris/features/account/presentation/change_email_dialog.dart
 import 'package:scholaris/features/account/repositories/account_repository.dart';
 import 'package:scholaris/features/auth/controllers/auth_controller.dart';
 import 'package:scholaris/shared/theme/app_theme.dart';
+import '../../home/presentation/widgets/student_app_tour.dart';
 import 'package:scholaris/shared/widgets/logout_confirmation_dialog.dart';
 import 'package:scholaris/shared/widgets/responsive_container.dart';
 import 'package:scholaris/shared/widgets/success_overlay.dart';
@@ -1187,6 +1188,17 @@ class _AccountSettingsScreenState extends ConsumerState<AccountSettingsScreen> {
           ),
           child: Column(
             children: [
+              _actionListTile(
+                icon: Icons.explore_outlined,
+                title: 'Replay app tour',
+                subtitle: 'Discover, Tracker, Profile, and quick actions',
+                trailingIcon: Icons.chevron_right_rounded,
+                onTap: () {
+                  ref.read(studentTourReplayProvider.notifier).state++;
+                  Navigator.of(context).pop();
+                },
+              ),
+              const Divider(height: 1, color: Color(0xFFF0F0F0)),
               _actionListTile(
                 icon: Icons.forum_outlined,
                 title: 'Student Help Desk & FAQs',

@@ -1,9 +1,4 @@
-// lib/features/home/presentation/widgets/student_action_sheet.dart
-//
-// Student Action Sheet modal ("+" bottom navigation action) presenting
-// two primary options:
-//   A. Scan Scholarship QR (mobile_scanner)
-//   B. Upload Document (file_picker & Supabase Storage)
+import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -13,257 +8,183 @@ import '../../../../shared/theme/app_theme.dart';
 import '../../../applications/presentation/widgets/document_upload_sheet.dart';
 import '../../../scholarships/presentation/scholarship_qr_scanner_screen.dart';
 
-Future<void> showStudentActionSheet(BuildContext context) {
-  return showAppleSpringModalBottomSheet<void>(
+enum StudentQuickAction { scan, upload }
+
+/// Retains the existing entry point while presenting a compact menu above the dock.
+Future<void> showStudentActionSheet(
+  BuildContext context, {
+  double bottomOffset = 100,
+}) async {
+  final action = await showGeneralDialog<StudentQuickAction>(
     context: context,
-    backgroundColor: Colors.white,
-    shape: const RoundedRectangleBorder(
-      borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+    barrierDismissible: true,
+    barrierLabel: 'Close quick actions',
+    barrierColor: Colors.transparent,
+    transitionDuration: isReducedMotion(context)
+        ? Duration.zero
+        : const Duration(milliseconds: 160),
+    pageBuilder: (menuContext, _, _) => SafeArea(
+      child: LayoutBuilder(
+        builder: (context, constraints) => Align(
+          alignment: Alignment.bottomRight,
+          child: Padding(
+            padding: EdgeInsets.only(
+              right: 16,
+              left: 16,
+              bottom: math.min(bottomOffset, constraints.maxHeight * .45),
+            ),
+            child: ConstrainedBox(
+              constraints: BoxConstraints(
+                maxWidth: 320,
+                maxHeight: math.max(
+                  80,
+                  constraints.maxHeight -
+                      math.min(bottomOffset, constraints.maxHeight * .45) -
+                      16,
+                ),
+              ),
+              child: const StudentActionSheet(),
+            ),
+          ),
+        ),
+      ),
     ),
-    builder: (ctx) => const StudentActionSheet(),
+    transitionBuilder: (_, animation, _, child) =>
+        FadeTransition(opacity: animation, child: child),
   );
+  if (!context.mounted || action == null) return;
+  HapticFeedback.lightImpact();
+  switch (action) {
+    case StudentQuickAction.scan:
+      ScholarshipQrScannerScreen.show(context);
+    case StudentQuickAction.upload:
+      showDocumentUploadSheet(context);
+  }
 }
 
 class StudentActionSheet extends StatelessWidget {
-  const StudentActionSheet({super.key});
+  const StudentActionSheet({super.key, this.onSelect});
+  final ValueChanged<StudentQuickAction>? onSelect;
 
   @override
-  Widget build(BuildContext context) {
-    return Container(
-      decoration: const BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-      ),
-      padding: const EdgeInsets.fromLTRB(20, 16, 20, 28),
-      child: SingleChildScrollView(child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
+  Widget build(BuildContext context) => Material(
+    color: Colors.white,
+    elevation: 8,
+    shadowColor: const Color(0x20000000),
+    borderRadius: BorderRadius.circular(26),
+    clipBehavior: Clip.antiAlias,
+    child: Padding(
+      padding: const EdgeInsets.fromLTRB(8, 6, 8, 12),
+      child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          // Header
-          Row(
-            children: [
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Quick Actions',
-                      style: outfit(
-                        fontSize: 18,
-                        fontWeight: FontWeight.w700,
-                        color: const Color(0xFF161C27),
-                      ),
-                    ),
-                    const SizedBox(height: 2),
-                    Text(
-                      'Scan a scholarship QR or attach application documents',
-                      style: openSans(
-                        fontSize: 12.5,
-                        color: const Color(0xFF707971),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              IconButton(
-                tooltip: 'Close quick actions',
-                icon: const Icon(Icons.close_rounded, size: 20, color: Color(0xFF707971)),
-                onPressed: () => Navigator.of(context).pop(),
-              ),
-            ],
-          ),
-          const SizedBox(height: 20),
-
-          // Option A: Scan Scholarship QR
-          StaggeredListItem(
-            index: 0,
-            child: PressableScale(
-              child: Material(
-                color: const Color(0xFFF9F9FF),
-                borderRadius: BorderRadius.circular(16),
-                child: InkWell(
-                  borderRadius: BorderRadius.circular(16),
-                  onTap: () {
-                    HapticFeedback.lightImpact();
-                    Navigator.of(context).pop();
-                    ScholarshipQrScannerScreen.show(context);
-                  },
-                  child: Container(
-                    padding: const EdgeInsets.all(16),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(16),
-                      border: Border.all(color: const Color(0xFFE2E8F3)),
-                      boxShadow: const [
-                        BoxShadow(
-                          color: Color(0x06000000),
-                          blurRadius: 10,
-                          offset: Offset(0, 4),
-                        ),
-                      ],
-                    ),
-                    child: Row(
-                      children: [
-                        Container(
-                          width: 48,
-                          height: 48,
-                          decoration: BoxDecoration(
-                            gradient: const LinearGradient(
-                              colors: [
-                                Color(0xFF0F4D2E),
-                                Color(0xFF1B6C42),
-                              ],
-                              begin: Alignment.topLeft,
-                              end: Alignment.bottomRight,
-                            ),
-                            borderRadius: BorderRadius.circular(14),
-                            boxShadow: [
-                              BoxShadow(
-                                color: const Color(0xFF0F4D2E).withValues(alpha: 0.25),
-                                blurRadius: 8,
-                                offset: const Offset(0, 3),
-                              ),
-                            ],
-                          ),
-                          child: const Icon(
-                            Icons.qr_code_scanner_rounded,
-                            color: Colors.white,
-                            size: 24,
-                          ),
-                        ),
-                        const SizedBox(width: 14),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                'Scan QR Code',
-                                style: outfit(
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.w700,
-                                  color: const Color(0xFF161C27),
-                                ),
-                              ),
-                              const SizedBox(height: 2),
-                              Text(
-                                'Scan an institutional or partner grant QR to view criteria and apply',
-                                style: openSans(
-                                  fontSize: 12,
-                                  color: const Color(0xFF404942),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        const SizedBox(width: 8),
-                        const Icon(
-                          Icons.chevron_right_rounded,
-                          color: Color(0xFF707971),
-                          size: 20,
-                        ),
-                      ],
+          Padding(
+            padding: const EdgeInsets.only(left: 12),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    'Quick Actions',
+                    style: geist(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                      color: const Color(0xFF59635D),
                     ),
                   ),
                 ),
-              ),
+                IconButton(
+                  tooltip: 'Close quick actions',
+                  icon: const Icon(Icons.close_rounded, size: 20),
+                  onPressed: () => Navigator.of(context).pop(),
+                ),
+              ],
             ),
           ),
-          const SizedBox(height: 12),
-
-          // Option B: Upload Document
-          StaggeredListItem(
-            index: 1,
-            child: PressableScale(
-              child: Material(
-                color: const Color(0xFFF9F9FF),
-                borderRadius: BorderRadius.circular(16),
-                child: InkWell(
-                  borderRadius: BorderRadius.circular(16),
-                  onTap: () {
-                    HapticFeedback.lightImpact();
-                    Navigator.of(context).pop();
-                    showDocumentUploadSheet(context);
-                  },
-                  child: Container(
-                    padding: const EdgeInsets.all(16),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(16),
-                      border: Border.all(color: const Color(0xFFE2E8F3)),
-                      boxShadow: const [
-                        BoxShadow(
-                          color: Color(0x06000000),
-                          blurRadius: 10,
-                          offset: Offset(0, 4),
-                        ),
-                      ],
-                    ),
-                    child: Row(
-                      children: [
-                        Container(
-                          width: 48,
-                          height: 48,
-                          decoration: BoxDecoration(
-                            gradient: const LinearGradient(
-                              colors: [
-                                Color(0xFF0058BC),
-                                Color(0xFF0070EB),
-                              ],
-                              begin: Alignment.topLeft,
-                              end: Alignment.bottomRight,
-                            ),
-                            borderRadius: BorderRadius.circular(14),
-                            boxShadow: [
-                              BoxShadow(
-                                color: const Color(0xFF0058BC).withValues(alpha: 0.25),
-                                blurRadius: 8,
-                                offset: const Offset(0, 3),
-                              ),
-                            ],
-                          ),
-                          child: const Icon(
-                            Icons.upload_file_rounded,
-                            color: Colors.white,
-                            size: 24,
-                          ),
-                        ),
-                        const SizedBox(width: 14),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                'Upload Quick Documents',
-                                style: outfit(
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.w700,
-                                  color: const Color(0xFF161C27),
-                                ),
-                              ),
-                              const SizedBox(height: 2),
-                              Text(
-                                'Attach official transcripts, indigency certs, or credentials to an application',
-                                style: openSans(
-                                  fontSize: 12,
-                                  color: const Color(0xFF404942),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        const SizedBox(width: 8),
-                        const Icon(
-                          Icons.chevron_right_rounded,
-                          color: Color(0xFF707971),
-                          size: 20,
-                        ),
-                      ],
-                    ),
+          Flexible(
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  _action(
+                    context,
+                    StudentQuickAction.scan,
+                    Icons.qr_code_scanner_rounded,
+                    'Scan scholarship QR',
+                    'Open a scholarship from its QR code.',
                   ),
-                ),
+                  const Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 16),
+                    child: Divider(height: 1, color: Color(0xFFF0F0F0)),
+                  ),
+                  _action(
+                    context,
+                    StudentQuickAction.upload,
+                    Icons.upload_file_outlined,
+                    'Upload document',
+                    'Add a document for your applications.',
+                  ),
+                ],
               ),
             ),
           ),
         ],
-      )),
-    );
-  }
+      ),
+    ),
+  );
+
+  Widget _action(
+    BuildContext context,
+    StudentQuickAction action,
+    IconData icon,
+    String title,
+    String subtitle,
+  ) => InkWell(
+    borderRadius: BorderRadius.circular(18),
+    onTap: () => onSelect != null
+        ? onSelect!(action)
+        : Navigator.of(context).pop(action),
+    child: Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            width: 40,
+            height: 40,
+            decoration: BoxDecoration(
+              color: const Color(0xFFEDF4EE),
+              borderRadius: BorderRadius.circular(13),
+            ),
+            child: Icon(icon, color: kPrimary, size: 22),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: geist(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                    color: kOnSurface,
+                    height: 1.25,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  subtitle,
+                  style: geist(
+                    fontSize: 14,
+                    height: 1.4,
+                    color: const Color(0xFF59635D),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    ),
+  );
 }

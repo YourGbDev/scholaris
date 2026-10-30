@@ -96,7 +96,7 @@ class _IndicatorState extends State<StudentSelectionIndicator>
               child: DecoratedBox(
                 key: const ValueKey('student-nav-moving-indicator'),
                 decoration: BoxDecoration(
-                  color: const Color(0x1C1E4D2B),
+                  color: const Color(0x1C555555),
                   borderRadius: BorderRadius.circular(999),
                 ),
               ),

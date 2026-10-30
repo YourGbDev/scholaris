@@ -37,9 +37,10 @@ Future<void> main() async {
   final profiles = FakeProfileDataSource();
   await profiles.upsertProfile(
     user,
-    const StudentProfile(
+    StudentProfile(
       id: user,
       fullName: 'Maria Santos',
+      gender: params['gender'],
       nationality: 'Filipino',
       region: 'NCR',
       school: 'University of the Philippines Diliman',

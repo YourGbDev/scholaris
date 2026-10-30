@@ -73,7 +73,7 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
     final totalOpportunities = matchesList.length;
 
     return Scaffold(
-      backgroundColor: kBackground,
+      backgroundColor: kStudentCanvas,
       body: SafeArea(
         bottom: false,
         child: ResponsiveContainer(
@@ -588,10 +588,12 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
               const SizedBox(height: 2),
               Text(
                 'Showing $count targeted opportunities for $studentName',
-                maxLines: stacked ? null : 1,
+                maxLines: stacked ? null : 2,
                 overflow: stacked ? TextOverflow.visible : TextOverflow.ellipsis,
                 style: openSans(
-                  fontSize: 12,
+                  fontSize: 13,
+                  fontWeight: FontWeight.w600,
+                  height: 1.4,
                   color: const Color(0xFF404942),
                 ),
               ),

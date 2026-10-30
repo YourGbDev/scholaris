@@ -83,7 +83,7 @@ void main() {
       }
       final label = tester.widget<Text>(find.text('Home'));
       expect(label.style!.fontSize, 10.5);
-      expect(label.style!.fontWeight, FontWeight.w500);
+      expect(label.style!.fontWeight, FontWeight.w600);
       expect(label.style!.letterSpacing, -.1);
       final plus = tester.widget<Icon>(find.byIcon(Icons.add_rounded));
       expect(plus.size, 21);
@@ -94,7 +94,7 @@ void main() {
       );
       final lens = selection.decoration as BoxDecoration;
       expect(lens.gradient, isNull);
-      expect(lens.color, const Color(0x1C1E4D2B));
+      expect(lens.color, const Color(0x1C555555));
       expect(lens.border, isNull);
       expect(lens.borderRadius, BorderRadius.circular(999));
     },

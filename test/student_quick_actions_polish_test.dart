@@ -36,10 +36,33 @@ void main() {
         isNot(TextDecoration.underline),
       );
       expect(find.byTooltip('Close quick actions'), findsOneWidget);
-      await tester.ensureVisible(find.text('Upload Quick Documents'));
+      await tester.ensureVisible(find.text('Upload document'));
       await tester.pumpAndSettle();
-      expect(find.text('Upload Quick Documents').hitTestable(), findsOneWidget);
+      expect(find.text('Upload document').hitTestable(), findsOneWidget);
       expect(tester.takeException(), isNull);
+      expect(find.text('Ask Scholaris'), findsNothing);
+      await tester.tap(find.byTooltip('Close quick actions'));
+      await tester.pumpAndSettle();
+      expect(find.text('Quick Actions'), findsNothing);
+      await tester.tap(find.text('Open'));
+      await tester.pumpAndSettle();
+      await tester.tapAt(const Offset(4, 4));
+      await tester.pumpAndSettle();
+      expect(find.text('Quick Actions'), findsNothing);
     },
   );
+
+  testWidgets('menu actions select the existing QR and upload destinations', (
+    tester,
+  ) async {
+    final selected = <StudentQuickAction>[];
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(body: StudentActionSheet(onSelect: selected.add)),
+      ),
+    );
+    await tester.tap(find.text('Scan scholarship QR'));
+    await tester.tap(find.text('Upload document'));
+    expect(selected, [StudentQuickAction.scan, StudentQuickAction.upload]);
+  });
 }

@@ -205,6 +205,46 @@ Finder _inClosingSoon(Finder inner) => find.descendant(
     );
 
 void main() {
+  for (final gender in ['male', 'female']) {
+  testWidgets('$gender hero keeps shared recommendations and a working Explore action', (tester) async {
+    tester.view.physicalSize = const Size(390, 844);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+    await tester.pumpWidget(_wrap(child: const HomeScreen(),
+      profileFuture: Future.value(_student().copyWith(gender: gender))));
+    await tester.pumpAndSettle();
+    expect(find.text('Matches for your profile'), findsNothing);
+    expect(find.text('MATCH REVEAL'), findsNothing);
+    expect(find.byKey(const ValueKey('stat-count-matches')), findsOneWidget);
+    await tester.scrollUntilVisible(find.text('Recommended for you'), 160,
+      scrollable: find.descendant(of: find.byType(StudentDashboardScreen),
+        matching: find.byType(Scrollable)).first);
+    expect(find.text('Recommended for you'), findsOneWidget);
+    await tester.scrollUntilVisible(find.text('Explore matches'), -160,
+      scrollable: find.descendant(of: find.byType(StudentDashboardScreen),
+        matching: find.byType(Scrollable)).first);
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Explore matches'));
+    await tester.pumpAndSettle();
+    final container = ProviderScope.containerOf(tester.element(find.byType(HomeScreen)));
+    expect(container.read(homeTabIndexProvider), 1);
+  });
+
+  testWidgets('$gender hero reflows on a narrow phone with enlarged text', (tester) async {
+    tester.view.physicalSize = const Size(320, 568);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+    tester.platformDispatcher.textScaleFactorTestValue = 2;
+    addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
+    await tester.pumpWidget(_wrap(profileFuture: Future.value(_student().copyWith(gender: gender))));
+    await tester.pumpAndSettle();
+    await tester.ensureVisible(find.text('Explore matches'));
+    await tester.pumpAndSettle();
+    expect(find.text('Explore matches').hitTestable(), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+  }
+
   testWidgets('Home lists do not repeat dock clearance between sections', (tester) async {
     tester.view.physicalSize = const Size(440, 12000);
     tester.view.devicePixelRatio = 1;
@@ -227,6 +267,8 @@ void main() {
   testWidgets('Saved opened from Home returns to Home with Back', (tester) async {
     await tester.pumpWidget(_wrap(child: const HomeScreen()));
     await tester.pumpAndSettle();
+    await tester.ensureVisible(find.byKey(const ValueKey('stat-chip-saved')));
+    await tester.pumpAndSettle();
     await tester.tap(find.byKey(const ValueKey('stat-chip-saved')));
     await tester.pumpAndSettle();
     expect(find.byType(SavedScreen), findsOneWidget);
@@ -248,12 +290,12 @@ void main() {
     Finder banner(String name) => find.byWidgetPredicate((w) =>
       w is Image && w.image is AssetImage &&
       (w.image as AssetImage).assetName == 'assets/images/$name');
-    expect(banner('hero_banner_exact.png'), findsNothing);
+    expect(banner('student_hero_graduate_campus.png'), findsNothing);
     expect(find.byKey(const ValueKey('student-hero-loading')), findsOneWidget);
     pending.complete(_student().copyWith(gender: 'female'));
     await tester.pumpAndSettle();
-    expect(banner('hero_banner_exact.png'), findsNothing);
-    expect(banner('hero_banner_female.png'), findsOneWidget);
+    expect(banner('student_hero_graduate_campus.png'), findsNothing);
+    expect(banner('student_hero_graduate_campus_female.png'), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
 
@@ -261,7 +303,7 @@ void main() {
     await tester.pumpWidget(_wrap(profileFuture: Future.value(_student().copyWith(gender: 'male'))));
     await tester.pumpAndSettle();
     expect(find.byWidgetPredicate((w) => w is Image && w.image is AssetImage &&
-      (w.image as AssetImage).assetName == 'assets/images/hero_banner_exact.png'), findsOneWidget);
+      (w.image as AssetImage).assetName == 'assets/images/student_hero_graduate_campus.png'), findsOneWidget);
   });
 
   group('Dashboard summary', () {
@@ -288,6 +330,9 @@ void main() {
           );
 
       expect(countOf('matches'), 2);
+      expect(find.text('Find your next opportunity.'), findsOneWidget);
+      expect(tester.widget<Text>(find.byKey(const ValueKey('stat-count-matches'))).data,
+          '2 scholarships match your profile.');
       expect(countOf('closing-soon'), 2);
       expect(countOf('saved'), 1);
       expect(countOf('applied'), 1);

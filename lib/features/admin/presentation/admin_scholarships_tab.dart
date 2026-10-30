@@ -1188,18 +1188,18 @@ class _AdminScholarshipsTabState extends ConsumerState<AdminScholarshipsTab> {
       constraints: const BoxConstraints(maxWidth: 260),
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        color: kSeqSurfaceContainer,
+        color: kScholarshipTagBackground,
         borderRadius: BorderRadius.circular(8),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, size: 13, color: kSeqOnSurfaceVariant),
+          Icon(icon, size: 13, color: kScholarshipTagForeground),
           const SizedBox(width: 4),
           Flexible(
             child: Text(
               text,
-              style: seqLabelSm(color: kSeqOnSurfaceVariant, fontWeight: FontWeight.w600),
+              style: seqLabelSm(color: kScholarshipTagForeground, fontWeight: FontWeight.w600),
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
             ),

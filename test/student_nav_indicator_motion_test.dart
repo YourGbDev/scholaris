@@ -144,7 +144,7 @@ void main() {
       expect(
         fill.a,
         closeTo(.11, .005),
-        reason: 'Selection transmits background colors without a hard ring.',
+        reason: 'Selection uses translucent neutral gray without a hard ring.',
       );
       final first = tester.getTopLeft(indicator).dx;
       final restingWidth = tester.getSize(indicator).width;

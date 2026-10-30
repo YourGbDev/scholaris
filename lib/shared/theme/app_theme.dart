@@ -57,6 +57,8 @@ const Color kPrimarySoft = Color(0x140F4D2E);
 
 // Surfaces & Neutrals
 const Color kBackground = Color(0xFFF8FAF8);
+// Calmer student browsing canvas; other roles keep their existing surfaces.
+const Color kStudentCanvas = Color(0xFFF3F6F3);
 const Color kSurface = Color(0xFFFFFFFF);
 const Color kSurfaceDim = Color(0xFFD4DAEA);
 const Color kSurfaceBright = Color(0xFFFFFFFF);
@@ -80,6 +82,10 @@ const Color kPrimaryLight = Color(0xFFB3F1C6);
 
 const Color kTextPrimary = Color(0xFF161C27);
 const Color kTextSecondary = Color(0xFF404942);
+
+// Informational benefit/qualification tags, separate from status and filter colors.
+const Color kScholarshipTagBackground = Color(0xFFEAEAEA);
+const Color kScholarshipTagForeground = Color(0xFF252525);
 
 // Backward-compatible alias tokens
 const Color kLumiGold = Color(0xFFFABC28);

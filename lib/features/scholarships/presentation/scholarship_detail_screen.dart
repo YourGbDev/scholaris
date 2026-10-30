@@ -742,7 +742,7 @@ class _HeroPill extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
       decoration: BoxDecoration(
-        color: kSurfaceContainerLow,
+        color: kScholarshipTagBackground,
         borderRadius: BorderRadius.circular(20),
       ),
       child: Text(
@@ -750,7 +750,7 @@ class _HeroPill extends StatelessWidget {
         style: outfit(
           fontSize: 11,
           fontWeight: FontWeight.w600,
-          color: kSecondary,
+          color: kScholarshipTagForeground,
         ),
       ),
     );
@@ -3428,13 +3428,13 @@ class _EligibilityChip extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       decoration: BoxDecoration(
-        color: kSurfaceContainerLow,
+        color: kScholarshipTagBackground,
         borderRadius: BorderRadius.circular(10),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, size: 16, color: kSecondary),
+          Icon(icon, size: 16, color: kScholarshipTagForeground),
           const SizedBox(width: 6),
           Flexible(
             child: Text(
@@ -3444,7 +3444,7 @@ class _EligibilityChip extends StatelessWidget {
               style: openSans(
                 fontSize: 13,
                 fontWeight: FontWeight.w600,
-                color: kOnSurface,
+                color: kScholarshipTagForeground,
               ),
             ),
           ),

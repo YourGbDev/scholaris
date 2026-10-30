@@ -35,7 +35,6 @@ import 'package:scholaris/features/scholarships/screens/saved_screen.dart';
 import 'package:scholaris/features/scholarships/services/match_reasons.dart';
 import 'package:scholaris/shared/theme/app_motion.dart';
 import 'package:scholaris/shared/theme/app_theme.dart';
-import 'package:scholaris/shared/widgets/mascot_pose_view.dart';
 import 'package:scholaris/shared/widgets/responsive_container.dart';
 import 'package:scholaris/shared/widgets/scholarship_card.dart';
 import 'widgets/student_notifications_sheet.dart';
@@ -100,7 +99,7 @@ class _StudentDashboardScreenState
     }
 
     return Scaffold(
-      backgroundColor: kBackground,
+      backgroundColor: kStudentCanvas,
       body: SafeArea(
         bottom: false,
         child: ResponsiveContainer(
@@ -375,12 +374,12 @@ class _StudentDashboardScreenState
           onTap: () {
             ref.read(homeTabIndexProvider.notifier).selectTab(2);
           },
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(22),
           child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+            padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 16),
             decoration: BoxDecoration(
               color: Colors.white,
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(22),
               border: kCardBorderCrisp,
               boxShadow: kCardElevationCrisp,
             ),
@@ -402,7 +401,7 @@ class _StudentDashboardScreenState
                       Text(
                         title,
                         style: outfit(
-                          fontSize: 13,
+                          fontSize: 16,
                           fontWeight: FontWeight.bold,
                           color: const Color(0xFF161C27),
                         ),
@@ -410,10 +409,12 @@ class _StudentDashboardScreenState
                       Text(
                         subtitle,
                         style: openSans(
-                          fontSize: 11,
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                          height: 1.4,
                           color: const Color(0xFF404942),
                         ),
-                        maxLines: 1,
+                        maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                       ),
                     ],
@@ -445,9 +446,9 @@ class _StudentDashboardScreenState
         Text(
           dateStr,
           style: outfit(
-            fontSize: 11.5,
-            fontWeight: FontWeight.w700,
-            color: const Color(0xFF8F9992),
+            fontSize: 12,
+            fontWeight: FontWeight.w500,
+            color: const Color(0xFF657168),
             letterSpacing: 0.8,
           ),
         ),
@@ -455,8 +456,8 @@ class _StudentDashboardScreenState
         Text(
           greetingStr,
           style: outfit(
-            fontSize: 24,
-            fontWeight: FontWeight.w800,
+            fontSize: 28,
+            fontWeight: FontWeight.w700,
             color: const Color(0xFF0F4D2E),
             letterSpacing: -0.5,
           ),
@@ -507,123 +508,76 @@ class _StudentDashboardScreenState
     }
   }
 
-  // --- 3. Pixel-Perfect Free-Floating Mascot Hero & "Your Next Chapter" Banner ---
+  // One quiet hero with real text and a real, accessible action.
   Widget _buildMascotHeroSection({
     required StudentProfile? profile,
     required int? matchCount,
     required bool matchesFailed,
   }) {
-    // Reserve the artwork's space without guessing a gender before hydration.
     if (profile == null) {
-      return Center(
-        child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 440),
-          child: const AspectRatio(
-            key: ValueKey('student-hero-loading'),
-            aspectRatio: 853 / 520,
-            child: SizedBox.expand(),
-          ),
-        ),
-      );
+      return const SizedBox(key: ValueKey('student-hero-loading'), height: 220);
     }
     final isFemale = profile.gender?.trim().toLowerCase() == 'female';
-    final bannerAsset = isFemale
-        ? 'assets/images/mascot_female.png'
-        : 'assets/images/mascot_male.png';
-    final illustratedAsset = isFemale
-        ? 'assets/images/hero_banner_female.png'
-        : 'assets/images/hero_banner_exact.png';
-
-    // Preserve the illustrated scene while replacing its printed count with
-    // real, accessible content. Larger text uses the flexible layout below.
-    if (MediaQuery.textScalerOf(context).scale(14) <= 17) {
-      return Center(
-        child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 440),
-          child: AspectRatio(
-            aspectRatio: 853 / 520,
-            child: LayoutBuilder(builder: (context, box) {
-              return Stack(children: [
-                Positioned.fill(child: Image.asset(illustratedAsset, fit: BoxFit.fill, excludeFromSemantics: true)),
-                Positioned(
-                  left: box.maxWidth * .485,
-                  top: box.maxHeight * .37,
-                  width: box.maxWidth * .395,
-                  height: box.maxHeight * .29,
-                  child: Container(
-                    color: Colors.white,
-                    alignment: Alignment.centerLeft,
-                    child: FittedBox(fit: BoxFit.scaleDown, alignment: Alignment.centerLeft, child:
-                      Text(matchesFailed ? 'Matches unavailable' : matchCount == null ? 'Finding matches…' : '$matchCount ${matchCount == 1 ? 'match' : 'matches'}',
-                        key: const ValueKey('stat-count-matches'),
-                        style: TextStyle(fontFamily: 'Geist', fontSize: box.maxWidth * .075, fontWeight: FontWeight.bold, color: const Color(0xFF0F4D2E)),
-                      )),
-                  ),
-                ),
-                Positioned(
-                  left: box.maxWidth * .49,
-                  top: box.maxHeight * .74,
-                  width: box.maxWidth * .35,
-                  height: 48,
-                  child: Semantics(button: true, label: 'Explore matches', child: Material(
-                    color: Colors.transparent,
-                    child: InkWell(onTap: () { HapticFeedback.lightImpact(); ref.read(homeTabIndexProvider.notifier).selectTab(1); }),
-                  )),
-                ),
-              ]);
-            }),
-          ),
-        ),
-      );
-    }
-
-    return Center(
-      child: ConstrainedBox(
-        constraints: const BoxConstraints(maxWidth: 440),
-        child: Container(
-          padding: const EdgeInsets.all(12),
-          decoration: BoxDecoration(
-            color: const Color(0xFFF0F7F0),
-            borderRadius: BorderRadius.circular(20),
-          ),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              Expanded(flex: 4, child: Image.asset(bannerAsset, height: 190, fit: BoxFit.contain, excludeFromSemantics: true)),
-              const SizedBox(width: 6),
-              Expanded(
-                flex: 6,
-                child: Container(
-                  padding: const EdgeInsets.all(14),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(18),
-                    border: Border.all(color: const Color(0xFFD6E6DA)),
-                    boxShadow: const [BoxShadow(color: Color(0xFFFFF1C9), offset: Offset(5, 6))],
-                  ),
-                  child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                    Text('YOUR NEXT CHAPTER', style: outfit(fontSize: 10, fontWeight: FontWeight.w700, color: const Color(0xFF0F4D2E))),
-                    const SizedBox(height: 8),
-                    Text(
-                      matchesFailed ? 'Matches unavailable' : matchCount == null ? 'Finding matches…' : '$matchCount ${matchCount == 1 ? 'match' : 'matches'}',
-                      key: const ValueKey('stat-count-matches'),
-                      style: outfit(fontSize: 22, fontWeight: FontWeight.w700, color: const Color(0xFF0F4D2E)),
-                    ),
-                    const SizedBox(height: 6),
-                    Text(matchesFailed ? 'Please try again.' : 'A step closer to your future.', style: outfit(fontSize: 12, color: const Color(0xFF505A53))),
-                    const SizedBox(height: 10),
-                    FilledButton(
-                      onPressed: () { HapticFeedback.lightImpact(); ref.read(homeTabIndexProvider.notifier).selectTab(1); },
-                      style: FilledButton.styleFrom(backgroundColor: const Color(0xFF0F4D2E), foregroundColor: Colors.white, padding: const EdgeInsets.symmetric(horizontal: 12), minimumSize: const Size(0, 44)),
-                      child: const Text('Explore matches'),
-                    ),
-                  ]),
-                ),
-              ),
-            ],
-          ),
+    final asset = isFemale
+        ? 'assets/images/student_hero_graduate_campus_female.png'
+        : 'assets/images/student_hero_graduate_campus.png';
+    final countLabel = matchesFailed ? 'Matches unavailable' : matchCount == null
+        ? 'Finding matches…' : '$matchCount ${matchCount == 1 ? 'scholarship matches' : 'scholarships match'} your profile.';
+    final summary = Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.min, children: [
+      Text('YOUR NEXT CHAPTER', style: geist(fontSize: 11, fontWeight: FontWeight.w600,
+        color: const Color(0xFF485356), letterSpacing: .15)),
+      const SizedBox(height: 12),
+      Text('Find your next opportunity.',
+        style: geist(fontSize: 24, fontWeight: FontWeight.w700, color: kPrimary, height: 1.15, letterSpacing: -.6)),
+      const SizedBox(height: 14),
+      Text(countLabel, key: const ValueKey('stat-count-matches'),
+        style: geist(fontSize: 14, fontWeight: FontWeight.w600, height: 1.5, color: const Color(0xFF485356))),
+      const SizedBox(height: 16),
+      Padding(
+        padding: const EdgeInsets.only(left: 12),
+        child: FilledButton(
+          onPressed: () {
+            HapticFeedback.lightImpact();
+            ref.read(homeTabIndexProvider.notifier).selectTab(1);
+          },
+          style: FilledButton.styleFrom(backgroundColor: kPrimary, foregroundColor: Colors.white,
+            minimumSize: const Size(0, 44), padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12)),
+          child: const Text('Explore matches'),
         ),
       ),
+    ]);
+    Widget portrait(double height) => Transform.scale(
+      scale: isFemale ? .94 : 1,
+      alignment: Alignment.bottomLeft,
+      child: Image.asset(asset, height: height, fit: BoxFit.contain,
+        alignment: Alignment.bottomLeft, excludeFromSemantics: true));
+    return Padding(
+      padding: const EdgeInsets.only(top: 26),
+      child: LayoutBuilder(builder: (context, box) {
+        final stacked = box.maxWidth < 320 || MediaQuery.textScalerOf(context).scale(14) > 20;
+        return Stack(clipBehavior: Clip.none, children: [
+          Positioned.fill(child: ClipRRect(borderRadius: BorderRadius.circular(24),
+            child: Stack(children: [
+              const Positioned.fill(child: ColoredBox(color: Color(0xFFEDF4EF))),
+              Positioned(left: -65, top: -20, width: 280, height: 360,
+                child: DecoratedBox(decoration: BoxDecoration(
+                  color: const Color(0xFFE0EDE1), borderRadius: BorderRadius.circular(160)))),
+            ]))),
+          if (stacked)
+            Padding(padding: const EdgeInsets.fromLTRB(20, 0, 20, 24),
+              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                Center(child: Transform.translate(offset: const Offset(0, -24), child: portrait(210))),
+                summary,
+              ]))
+          else ...[
+            Padding(padding: EdgeInsets.fromLTRB(box.maxWidth * .5, 40, 16, 32), child: summary),
+            Positioned(left: 0, top: -26, bottom: 0, width: box.maxWidth * .55,
+              child: ClipRRect(
+                borderRadius: const BorderRadius.only(bottomLeft: Radius.circular(24)),
+                child: portrait(290))),
+          ],
+        ]);
+      }),
     );
   }
 
@@ -644,8 +598,8 @@ class _StudentDashboardScreenState
             itemKey: const ValueKey('stat-chip-saved'),
             countKey: const ValueKey('stat-count-saved'),
             icon: Icons.bookmark_rounded,
-            iconBg: const Color(0xFFEFF6FF),
-            iconColor: const Color(0xFF2563EB),
+            iconBg: const Color(0xFFE4EEE6),
+            iconColor: kPrimary,
             count: '${info.savedCount}',
             label: 'Saved',
             onTap: () {
@@ -663,8 +617,8 @@ class _StudentDashboardScreenState
             itemKey: const ValueKey('stat-chip-applied'),
             countKey: const ValueKey('stat-count-applied'),
             icon: Icons.pending_actions_rounded,
-            iconBg: const Color(0xFFF3E8FF),
-            iconColor: const Color(0xFF7C3AED),
+            iconBg: const Color(0xFFE4EEE6),
+            iconColor: kPrimary,
             count: '$appliedCount',
             label: 'In Progress',
             onTap: () {
@@ -680,8 +634,8 @@ class _StudentDashboardScreenState
             itemKey: const ValueKey('stat-chip-urgent'),
             countKey: const ValueKey('stat-count-closing-soon'),
             icon: Icons.notification_important_rounded,
-            iconBg: const Color(0xFFFEF3D6),
-            iconColor: const Color(0xFFD97706),
+            iconBg: urgentCount > 0 ? const Color(0xFFFEF3D6) : const Color(0xFFE4EEE6),
+            iconColor: urgentCount > 0 ? const Color(0xFFD97706) : kPrimary,
             count: urgentCount > 0 ? '$urgentCount Action' : '0 Action',
             rawCount: '$urgentCount',
             label: urgentCount > 0 ? 'Closing soon' : 'Up to date',
@@ -715,12 +669,10 @@ class _StudentDashboardScreenState
           children: [
             Expanded(
               child: Text(
-                'Top Recommended For You',
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
+                'Recommended for you',
                 style: outfit(
-                  fontSize: 17,
-                  fontWeight: FontWeight.bold,
+                  fontSize: 21,
+                  fontWeight: FontWeight.w700,
                   color: const Color(0xFF161C27),
                   letterSpacing: -0.34,
                 ),
@@ -733,7 +685,9 @@ class _StudentDashboardScreenState
                 onTap: () {
                   ref.read(homeTabIndexProvider.notifier).selectTab(1);
                 },
-                child: Padding(
+                child: Container(
+                  constraints: const BoxConstraints(minWidth: 44, minHeight: 44),
+                  alignment: Alignment.center,
                   padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
                   child: FittedBox(
                     fit: BoxFit.scaleDown,
@@ -741,7 +695,7 @@ class _StudentDashboardScreenState
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Text(
-                          totalCount > 0 ? 'See All ($totalCount)' : 'See All',
+                          totalCount > 0 ? 'See all ($totalCount)' : 'See all',
                           style: outfit(
                             fontSize: 12.5,
                             fontWeight: FontWeight.w600,
@@ -792,10 +746,6 @@ class _StudentDashboardScreenState
             return Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                if (items.isNotEmpty) ...[
-                  StudentTabReveal(order: 2, structural: true, child: _buildMatchRevealBanner(items.length, gender: profile?.gender)),
-                  const SizedBox(height: 12),
-                ],
                 ListView.separated(
                   shrinkWrap: true,
                   padding: EdgeInsets.zero,
@@ -865,70 +815,6 @@ class _StudentDashboardScreenState
     );
   }
 
-  Widget _buildMatchRevealBanner(int count, {String? gender}) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-      decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          colors: [Color(0xFF0F4D2E), Color(0xFF1B3A5C)],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: const [
-          BoxShadow(
-            color: Color(0x140F4D2E),
-            blurRadius: 10,
-            offset: Offset(0, 3),
-          ),
-        ],
-      ),
-      child: Row(
-        children: [
-          MascotPoseView(
-            pose: MascotPose.celebrating,
-            gender: gender,
-            height: 56,
-            width: 56,
-          ),
-          const SizedBox(width: 14),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    const Icon(Icons.auto_awesome, size: 14, color: Color(0xFFF1B41E)),
-                    const SizedBox(width: 4),
-                    Text(
-                      'MATCH REVEAL',
-                      style: outfit(
-                        fontSize: 11,
-                        fontWeight: FontWeight.w700,
-                        color: const Color(0xFFF1B41E),
-                        letterSpacing: 0.5,
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 2),
-                Text(
-                  'Found $count scholarship${count > 1 ? 's' : ''} matching your profile!',
-                  style: openSans(
-                    fontSize: 12.5,
-                    fontWeight: FontWeight.w500,
-                    color: Colors.white,
-                    height: 1.45,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
   void _toggleBookmark(WidgetRef ref, String scholarshipId) {
     ref.read(bookmarksProvider.notifier).toggle(scholarshipId);
   }
@@ -957,7 +843,7 @@ class _StudentDashboardScreenState
               color: Color(0xFFBA1A1A),
             ),
             const SizedBox(width: 6),
-            Text(
+            Expanded(child: Text(
               'Closing Soon (${info.closingSoonCount})',
               style: outfit(
                 fontSize: 16,
@@ -965,7 +851,7 @@ class _StudentDashboardScreenState
                 color: const Color(0xFFC62828),
                 letterSpacing: -0.32,
               ),
-            ),
+            )),
           ],
         )),
         const SizedBox(height: 10),
@@ -1002,7 +888,7 @@ class _StudentDashboardScreenState
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: const Color(0xFFF1F3FF), // surface-container-low
+        color: const Color(0xFFF0F0F0),
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
@@ -1113,18 +999,18 @@ class _StatCard extends StatelessWidget {
       child: Material(
         key: itemKey,
         color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(22),
         child: InkWell(
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(22),
           onTap: () {
             HapticFeedback.lightImpact();
             onTap();
           },
           child: Container(
-            padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 8),
+            padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
             decoration: BoxDecoration(
               color: Colors.white,
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(22),
               border: kCardBorderCrisp,
               boxShadow: kCardElevationCrisp,
             ),
@@ -1154,7 +1040,7 @@ class _StatCard extends StatelessWidget {
                         child: CountUpAnimation(
                           targetValue: numericValue,
                           style: outfit(
-                            fontSize: 20,
+                            fontSize: 24,
                             fontWeight: FontWeight.bold,
                             color: const Color(0xFF161C27),
                           ),
@@ -1178,16 +1064,16 @@ class _StatCard extends StatelessWidget {
                       ),
                     ),
                   ),
-                const SizedBox(height: 2),
+                const SizedBox(height: 8),
                 Text(
                   label,
                   textAlign: TextAlign.center,
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                   style: openSans(
-                    fontSize: 11,
+                    fontSize: 13,
                     fontWeight: FontWeight.w600,
-                    color: isUrgent ? const Color(0xFF8A5B00) : const Color(0xFF404942),
+                    color: isUrgent ? const Color(0xFF8A5B00) : const Color(0xFF263D2C),
                   ),
                 ),
               ],

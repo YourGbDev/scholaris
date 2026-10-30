@@ -652,23 +652,22 @@ class _SummaryPill extends StatelessWidget {
   Widget build(BuildContext context) {
     return PressableScale(
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
         decoration: BoxDecoration(
-          color: const Color(0xFFF0F0F0),
-          border: Border.all(color: const Color(0xFFE2E8E5), width: 1.0),
-          borderRadius: BorderRadius.circular(20),
+          color: kScholarshipTagBackground,
+          borderRadius: BorderRadius.circular(999),
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(icon, size: 13, color: kPrimary),
+            Icon(icon, size: 12, color: kScholarshipTagForeground),
             const SizedBox(width: 5),
             Text(
               label,
               style: outfit(
-                fontSize: 12,
+                fontSize: 11,
                 fontWeight: FontWeight.w600,
-                color: kPrimary,
+                color: kScholarshipTagForeground,
               ),
             ),
           ],
@@ -1604,16 +1603,15 @@ class _MetaChip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 4),
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
       decoration: BoxDecoration(
-        color: const Color(0xFFF0F0F0),
-        border: Border.all(color: const Color(0xFFE2E8E5), width: 1.0),
-        borderRadius: BorderRadius.circular(20),
+        color: kScholarshipTagBackground,
+        borderRadius: BorderRadius.circular(999),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, size: 12.5, color: kPrimary),
+          Icon(icon, size: 12, color: kScholarshipTagForeground),
           const SizedBox(width: 4.5),
           Flexible(
             child: Text(
@@ -1621,7 +1619,7 @@ class _MetaChip extends StatelessWidget {
               style: openSans(
                 fontSize: 11,
                 fontWeight: FontWeight.w600,
-                color: kPrimary,
+                color: kScholarshipTagForeground,
               ),
             ),
           ),

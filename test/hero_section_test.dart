@@ -95,13 +95,13 @@ void main() {
       expect(find.text('Finding matches…'), findsOneWidget);
       pending.complete(const []);
       await tester.pumpAndSettle();
-      expect(find.text('0 matches'), findsOneWidget);
+      expect(find.text('0 scholarships match your profile.'), findsOneWidget);
     });
     testWidgets('hero does not show a fake zero when matches fail', (tester) async {
       await tester.pumpWidget(_buildTestApp(matchesError: true));
       await tester.pumpAndSettle();
       expect(find.text('Matches unavailable'), findsOneWidget);
-      expect(find.text('0 matches'), findsNothing);
+      expect(find.text('0 scholarships match your profile.'), findsNothing);
     });
     for (final size in [const Size(360, 800), const Size(440, 956)]) {
       testWidgets('live hero remains readable with large text at $size', (tester) async {
@@ -113,19 +113,19 @@ void main() {
         addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
         await tester.pumpWidget(_buildTestApp(matches: const []));
         await tester.pumpAndSettle();
-        expect(find.text('0 matches'), findsOneWidget);
+        expect(find.text('0 scholarships match your profile.'), findsOneWidget);
         expect(tester.takeException(), isNull);
       });
     }
     testWidgets('hero displays the actual match count, including zero', (tester) async {
       await tester.pumpWidget(_buildTestApp(matches: const []));
       await tester.pumpAndSettle();
-      expect(find.text('0 matches'), findsOneWidget);
+      expect(find.text('0 scholarships match your profile.'), findsOneWidget);
       final oneMatch = Scholarship(id: 'live-match', title: 'Sample', minGpa: 2, deadline: DateTime(2099));
       await tester.pumpWidget(const SizedBox.shrink());
       await tester.pumpWidget(_buildTestApp(matches: [oneMatch]));
       await tester.pumpAndSettle();
-      expect(find.text('1 match'), findsOneWidget);
+      expect(find.text('1 scholarship matches your profile.'), findsOneWidget);
     });
     testWidgets('displays male mascot by default or when gender is male',
         (tester) async {
@@ -144,7 +144,7 @@ void main() {
 
       final imageWidget = tester.widget<Image>(imageFinder.first);
       expect((imageWidget.image as AssetImage).assetName,
-          'assets/images/hero_banner_exact.png');
+          'assets/images/student_hero_graduate_campus.png');
 
       // Verify Gilbert greeting is displayed
       expect(find.textContaining('Gilbert!'), findsOneWidget);
@@ -167,7 +167,7 @@ void main() {
 
       final imageWidget = tester.widget<Image>(imageFinder.first);
       expect((imageWidget.image as AssetImage).assetName,
-          'assets/images/hero_banner_female.png');
+          'assets/images/student_hero_graduate_campus_female.png');
 
       expect(find.textContaining('Maria!'), findsOneWidget);
     });

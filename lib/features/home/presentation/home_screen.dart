@@ -29,6 +29,8 @@ import 'package:scholaris/features/dashboard/presentation/student_dashboard_scre
 import 'package:scholaris/features/scholarships/screens/discover_screen.dart';
 import 'package:scholaris/features/profile/presentation/profile_tab_screen.dart';
 import 'widgets/student_action_sheet.dart';
+import 'widgets/student_app_tour.dart';
+import '../../auth/controllers/auth_controller.dart';
 import 'widgets/student_tab_entrance.dart';
 import 'widgets/student_glass_refraction.dart';
 
@@ -55,10 +57,10 @@ final homeTabIndexProvider = NotifierProvider<HomeTabIndexNotifier, int>(
 const double kStudentNavBaseFontSize = 10.5;
 const Color kStudentNavSelectedGreen = Color(0xFF1F6338);
 
-// Expand the fixed Cupertino glyph silhouette by .15px per side. Its font
+// Expand the fixed Cupertino glyph silhouette by .22px per side. Its font
 // has no variable weight axis, so Icon.weight would leave these strokes thin.
 List<Shadow> _studentIconStroke(Color ink) => [
-  for (final offset in const [Offset(-.15, 0), Offset(.15, 0), Offset(0, -.15), Offset(0, .15)])
+  for (final offset in const [Offset(-.22, 0), Offset(.22, 0), Offset(0, -.22), Offset(0, .22)])
     Shadow(color: ink, offset: offset),
 ];
 
@@ -228,7 +230,7 @@ double computeStudentDockHeight(dynamic scalerOrScale, {double screenWidth = 440
 /// Respects nonlinear TextScaler using scale(baseFont), not scale(1.0).
 double computeStudentContentClearance(BuildContext context) {
   final safeBottom = MediaQuery.paddingOf(context).bottom;
-  final bottomPad = safeBottom > 0 ? safeBottom + 4.0 : 16.0;
+  final bottomPad = safeBottom > 0 ? safeBottom : 10.0;
   final textScaler = MediaQuery.textScalerOf(context);
   final screenWidth = MediaQuery.sizeOf(context).width;
   final dockHeight = computeStudentDockHeight(textScaler, screenWidth: screenWidth);
@@ -454,6 +456,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   late final StudentScrollDockController _controller;
   int _lastTabIndex = 0;
   int _tabVisit = 0;
+  bool _quickActionsOpen = false;
+  bool _tourActive = false;
+  final _tourTargets = List.generate(5, (_) => GlobalKey());
 
   @override
   void initState() {
@@ -491,7 +496,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     final contentClearance = computeStudentContentClearance(context);
 
     return Scaffold(
-      backgroundColor: kBackground,
+      backgroundColor: kStudentCanvas,
       extendBody: true,
       body: Stack(
         children: [
@@ -502,7 +507,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   bottom: contentClearance,
                 ),
               ),
-              child: Stack(
+              child: TooltipVisibility(visible: !_tourActive, child: ExcludeFocus(excluding: _tourActive, child: ExcludeSemantics(excluding: _tourActive, child: Stack(
                 fit: StackFit.expand,
                 children: [
                   for (int i = 0; i < _tabs.length; i++)
@@ -518,7 +523,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     )),
                     ),
                 ],
-              ),
+              )))),
             ),
           ),
           if (!isKeyboardOpen)
@@ -526,7 +531,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               left: 0,
               right: 0,
               bottom: 0,
-              child: StudentBottomNav(
+              child: ExcludeFocus(excluding: _tourActive, child: ExcludeSemantics(excluding: _tourActive, child: StudentBottomNav(
+                tourTargets: _tourTargets,
+                isQuickActionOpen: _quickActionsOpen,
                 tabIndex: tabIndex,
                 onSelectTab: (index) {
                   setState(() => _tabVisit++);
@@ -536,10 +543,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 onQuickAction: () async {
                   _controller.expand();
                   _controller.setSheetOpen(true);
+                  setState(() => _quickActionsOpen = true);
                   try {
-                    await showStudentActionSheet(context);
+                    await showStudentActionSheet(context, bottomOffset: contentClearance);
                   } finally {
                     if (mounted) {
+                      setState(() => _quickActionsOpen = false);
                       _controller.setSheetOpen(false);
                     }
                   }
@@ -547,8 +556,18 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 isCollapsed: _controller.effectiveCollapsed,
                 onExpand: _controller.expand,
                 onNavFocusChange: _controller.setNavFocused,
-              ),
+              ))),
             ),
+          Positioned.fill(child: StudentTourLayer(
+            userId: ref.watch(currentUserIdProvider), targets: _tourTargets,
+            bottomClearance: contentClearance,
+            onSelectTab: (index) => ref.read(homeTabIndexProvider.notifier).selectTab(index),
+            onActiveChanged: (active) {
+              setState(() => _tourActive = active);
+              _controller.setSheetOpen(active);
+              _controller.expand();
+            },
+          )),
         ],
       ),
     );
@@ -570,8 +589,12 @@ class StudentBottomNav extends StatelessWidget {
     this.dockBlur,
     this.dockTintOpacity,
     this.useCrispSingleRim = false,
+    this.isQuickActionOpen = false,
+    this.tourTargets,
   });
 
+  final bool isQuickActionOpen;
+  final List<GlobalKey>? tourTargets;
   final bool enableRefraction;
   final int tabIndex;
   final ValueChanged<int> onSelectTab;
@@ -593,7 +616,7 @@ class StudentBottomNav extends StatelessWidget {
     final horizontalPad = screenWidth < 360 ? 8.0 : 16.0;
     // Elegant floating island elevation above the safe area / home indicator
     final safeBottom = MediaQuery.paddingOf(context).bottom;
-    final bottomPad = safeBottom > 0 ? safeBottom + 4.0 : 16.0;
+    final bottomPad = safeBottom > 0 ? safeBottom : 10.0;
 
     final textScaler = MediaQuery.textScalerOf(context);
     final isAccessible = isStudentNavAccessible(textScaler, screenWidth: screenWidth);
@@ -658,6 +681,7 @@ class StudentBottomNav extends StatelessWidget {
                         key: i == 0 ? const ValueKey('student-nav-dashboard') : null,
                         child: _StudentNavItem(
                           key: ValueKey('student-nav-${keys[i]}'),
+                          targetKey: tourTargets?[i],
                           icon: icons[i], selectedIcon: icons[i], label: labels[i],
                           selected: tabIndex == i, onTap: () => onSelectTab(i),
                           itemHeight: constraints.maxHeight,
@@ -702,6 +726,7 @@ class StudentBottomNav extends StatelessWidget {
                       key: const ValueKey('student-nav-dashboard'),
                       child: _StudentNavItem(
                         key: const ValueKey('student-nav-home'),
+                      targetKey: tourTargets?[0],
                         icon: CupertinoIcons.house_alt,
                         selectedIcon: CupertinoIcons.house_alt,
                         label: 'Home',
@@ -718,6 +743,7 @@ class StudentBottomNav extends StatelessWidget {
                     flex: 3,
                     child: _StudentNavItem(
                       key: const ValueKey('student-nav-discover'),
+                      targetKey: tourTargets?[1],
                       icon: CupertinoIcons.compass,
                       selectedIcon: CupertinoIcons.compass,
                       label: 'Discover',
@@ -738,6 +764,7 @@ class StudentBottomNav extends StatelessWidget {
                   Expanded(
                     child: _StudentNavItem(
                       key: const ValueKey('student-nav-tracker'),
+                      targetKey: tourTargets?[2],
                       icon: CupertinoIcons.doc_text,
                       selectedIcon: CupertinoIcons.doc_text,
                       label: 'Tracker',
@@ -752,6 +779,7 @@ class StudentBottomNav extends StatelessWidget {
                   Expanded(
                     child: _StudentNavItem(
                       key: const ValueKey('student-nav-profile'),
+                      targetKey: tourTargets?[3],
                       icon: CupertinoIcons.person,
                       selectedIcon: CupertinoIcons.person,
                       label: 'Profile',
@@ -826,6 +854,8 @@ class StudentBottomNav extends StatelessWidget {
                 ),
                 const SizedBox(width: 8),
                 _StudentQuickActionButton(
+                  isOpen: isQuickActionOpen,
+                  targetKey: tourTargets?[4],
                   onTap: onQuickAction,
                   size: dockHeight,
                   isCollapsed: effectiveCollapsed,
@@ -848,6 +878,8 @@ class StudentBottomNav extends StatelessWidget {
             Align(
               alignment: Alignment.centerRight,
               child: _StudentQuickActionButton(
+                  isOpen: isQuickActionOpen,
+                  targetKey: tourTargets?[4],
                 onTap: onQuickAction,
                 size: kStudentPlusButtonSize,
                 isHighContrast: true,
@@ -976,9 +1008,11 @@ class _StudentNavItem extends StatefulWidget {
     required this.itemHeight,
     this.isAccessible = false,
     this.collapseProgress = 0,
+    this.targetKey,
     this.onFocusChange,
   });
 
+  final GlobalKey? targetKey;
   final IconData icon;
   final IconData selectedIcon;
   final String label;
@@ -1030,7 +1064,7 @@ class _StudentNavItemState extends State<_StudentNavItem> with SingleTickerProvi
     final isVeryNarrow = screenWidth < 340;
     final labelMetrics = TextPainter(
       text: TextSpan(text: widget.label, style: outfit(
-        fontSize: kStudentNavBaseFontSize, fontWeight: FontWeight.w500, letterSpacing: -.1)),
+        fontSize: kStudentNavBaseFontSize, fontWeight: FontWeight.w600, letterSpacing: -.1)),
       textDirection: Directionality.of(context), textScaler: MediaQuery.textScalerOf(context),
     )..layout();
     final centerOffset = (labelMetrics.height + (widget.isAccessible ? 1 : 3.5)) / 2;
@@ -1059,6 +1093,7 @@ class _StudentNavItemState extends State<_StudentNavItem> with SingleTickerProvi
         hint: 'Switches to ${widget.label}',
         onTap: widget.onTap,
         child: SizedBox(
+          key: widget.targetKey,
           height: widget.itemHeight,
           child: DecoratedBox(
             decoration: _isFocused
@@ -1081,7 +1116,7 @@ class _StudentNavItemState extends State<_StudentNavItem> with SingleTickerProvi
                       vertical: widget.isAccessible ? 1.0 : 4.0,
                     ),
                     decoration: BoxDecoration(
-                      color: widget.selected && widget.isAccessible ? const Color(0x1C1E4D2B) : Colors.transparent,
+                      color: widget.selected && widget.isAccessible ? const Color(0x1C555555) : Colors.transparent,
                       borderRadius: BorderRadius.circular(16),
                     ),
                     child: AnimatedBuilder(
@@ -1116,7 +1151,7 @@ class _StudentNavItemState extends State<_StudentNavItem> with SingleTickerProvi
                             softWrap: false,
                             style: outfit(
                               fontSize: kStudentNavBaseFontSize,
-                              fontWeight: FontWeight.w500,
+                              fontWeight: FontWeight.w600,
                               letterSpacing: -.1,
                               color: ink,
                             ),
@@ -1141,12 +1176,16 @@ class _StudentQuickActionButton extends StatefulWidget {
     required this.onTap,
     required this.size,
     required this.isHighContrast,
+    this.isOpen = false,
+    this.targetKey,
     this.onFocusChange,
     this.isCollapsed = false,
   });
 
   final VoidCallback onTap;
   final double size;
+  final bool isOpen;
+  final GlobalKey? targetKey;
   final bool isCollapsed;
   final bool isHighContrast;
   final ValueChanged<bool>? onFocusChange;
@@ -1162,7 +1201,7 @@ class _StudentQuickActionButtonState extends State<_StudentQuickActionButton> {
   Widget build(BuildContext context) {
     Widget content = Center(
       child: Icon(
-        Icons.add_rounded,
+        widget.isOpen ? Icons.close_rounded : Icons.add_rounded,
         color: const Color(0xFF1C1C1E),
         size: 21,
         shadows: _studentIconStroke(const Color(0xFF1C1C1E)),
@@ -1213,10 +1252,11 @@ class _StudentQuickActionButtonState extends State<_StudentQuickActionButton> {
       mouseCursor: SystemMouseCursors.click,
       child: Semantics(
         button: true,
-        label: 'Quick actions',
+        label: widget.isOpen ? 'Close quick actions' : 'Quick actions',
         hint: 'Opens QR scan and document upload',
         onTap: widget.onTap,
         child: SizedBox(
+          key: widget.targetKey,
           width: widget.size,
           height: widget.size,
           child: DecoratedBox(

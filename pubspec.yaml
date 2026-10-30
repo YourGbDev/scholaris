@@ -66,6 +66,8 @@ flutter:
     - assets/images/scholaris_hero_student.png
     - assets/mascots/
     - assets/images/mascot_male.png
+    - assets/images/student_hero_graduate_campus.png
+    - assets/images/student_hero_graduate_campus_female.png
     - assets/images/mascot_female.png
     - assets/images/mascot_female_pointing.png
     - assets/images/mascot_male_thinking.png

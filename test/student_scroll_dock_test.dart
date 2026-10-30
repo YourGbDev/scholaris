@@ -349,7 +349,7 @@ void main() {
 
       // Clearance must be identical, preventing layout jumping or oscillation
       expect(clearanceCollapsed, equals(clearanceExpanded));
-      expect(clearanceExpanded, equals(16.0 + 62.0 + 16.0)); // 90.0px
+      expect(clearanceExpanded, equals(10.0 + 62.0 + 16.0)); // 88.0px
     });
 
     testWidgets('10. Keyboard focus / traversal restores all 4 tabs',

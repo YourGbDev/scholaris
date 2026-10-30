@@ -10,7 +10,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:scholaris/core/security/captcha_challenge.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:scholaris/features/profile/models/student_profile.dart';
 import 'package:scholaris/features/provider/models/provider_verification.dart';
 import 'package:scholaris/features/provider/providers/provider_verification_provider.dart';
@@ -2200,7 +2199,7 @@ class _AdminUsersTabState extends ConsumerState<AdminUsersTab> {
               children: [
                 Text(
                   'User ID: ${user.id}',
-                  style: GoogleFonts.robotoMono(fontSize: 11, color: kSeqOutline),
+                  style: geist(fontSize: 11, color: kSeqOutline),
                 ),
                 const SizedBox(height: 16),
                 DropdownButtonFormField<String>(

@@ -39,7 +39,7 @@ Future<void> main() async {
     user,
     StudentProfile(
       id: user,
-      fullName: 'Maria Santos',
+      fullName: params['gender']?.toLowerCase() == 'female' ? 'Maria Santos' : 'Gb',
       gender: params['gender'],
       nationality: 'Filipino',
       region: 'NCR',

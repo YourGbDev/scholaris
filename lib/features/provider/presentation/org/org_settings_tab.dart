@@ -8,7 +8,6 @@ import 'package:scholaris/shared/theme/app_theme.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'package:scholaris/features/profile/providers/profile_setup_provider.dart';
@@ -1618,7 +1617,7 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
               ),
               Text(
                 'NOT AVAILABLE',
-                style: GoogleFonts.jetBrainsMono(
+                style: geist(
                   fontSize: 10,
                   fontWeight: FontWeight.w600,
                   color: kOrgTextSecondary,

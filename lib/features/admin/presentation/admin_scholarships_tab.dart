@@ -9,7 +9,6 @@ import 'package:scholaris/shared/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:scholaris/features/provider/models/provider_verification.dart';
 import 'package:scholaris/features/provider/providers/provider_verification_provider.dart';
 import 'package:scholaris/features/scholarships/models/scholarship.dart';
@@ -979,7 +978,7 @@ class _AdminScholarshipsTabState extends ConsumerState<AdminScholarshipsTab> {
                           ),
                           child: Text(
                             'SCH-${(s.id.length >= 8 ? s.id.substring(0, 8) : s.id).toUpperCase()}',
-                            style: GoogleFonts.robotoMono(
+                            style: geist(
                               fontSize: 10,
                               fontWeight: FontWeight.w500,
                               color: kSeqOnSurfaceVariant,

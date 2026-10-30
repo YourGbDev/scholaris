@@ -43,7 +43,9 @@ import 'widgets/avatar_display.dart';
 import 'widgets/avatar_selector_sheet.dart';
 
 class ProfileTabScreen extends ConsumerWidget {
-  const ProfileTabScreen({super.key});
+  const ProfileTabScreen({super.key, this.guideTargets = const [], this.scrollController});
+  final List<GlobalKey> guideTargets;
+  final ScrollController? scrollController;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -115,6 +117,7 @@ class ProfileTabScreen extends ConsumerWidget {
     StudentProfile profile,
   ) {
     return SingleChildScrollView(
+      controller: scrollController,
       physics: const AppleBouncingScrollPhysics(),
       padding: EdgeInsets.fromLTRB(
         16,
@@ -501,21 +504,24 @@ class ProfileTabScreen extends ConsumerWidget {
         // Card 1: Academic Information
         StudentTabReveal(
           order: 1,
-          child: _buildAcademicCard(context, profile),
+          child: KeyedSubtree(key: guideTargets.isNotEmpty ? guideTargets[0] : null,
+            child: _buildAcademicCard(context, profile)),
         ),
         const SizedBox(height: 12),
 
         // Card 2: Location & Residency
         StudentTabReveal(
           order: 2,
-          child: _buildLocationCard(context, profile),
+          child: KeyedSubtree(key: guideTargets.length > 1 ? guideTargets[1] : null,
+            child: _buildLocationCard(context, profile)),
         ),
         const SizedBox(height: 12),
 
         // Card 3: Financial Background
         StudentTabReveal(
           order: 3,
-          child: _buildFinancialCard(context, profile),
+          child: KeyedSubtree(key: guideTargets.length > 2 ? guideTargets[2] : null,
+            child: _buildFinancialCard(context, profile)),
         ),
       ],
     );

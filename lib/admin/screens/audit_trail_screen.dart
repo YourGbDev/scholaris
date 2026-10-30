@@ -7,9 +7,9 @@
 
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:scholaris/shared/theme/app_theme.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:scholaris/features/admin/presentation/admin_theme.dart';
 import 'package:scholaris/shared/theme/app_motion.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -1098,7 +1098,7 @@ Widget _buildSkeletonLoader(BuildContext context) {
                                           width: 140,
                                           child: Text(
                                             kv.key,
-                                            style: GoogleFonts.robotoMono(
+                                            style: geist(
                                               fontSize: 12,
                                               color: kSeqOnSurfaceVariant,
                                               fontWeight: FontWeight.w600,
@@ -1108,7 +1108,7 @@ Widget _buildSkeletonLoader(BuildContext context) {
                                         Expanded(
                                           child: Text(
                                             kv.value?.toString() ?? 'null',
-                                            style: GoogleFonts.robotoMono(
+                                            style: geist(
                                               fontSize: 12,
                                               color: kSeqOnSurface,
                                             ),

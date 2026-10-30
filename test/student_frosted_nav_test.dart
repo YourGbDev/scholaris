@@ -5,7 +5,7 @@ import 'package:scholaris/features/home/presentation/widgets/student_selection_i
 import 'package:scholaris/features/home/presentation/widgets/liquid_glass_pill.dart';
 
 void main() {
-  testWidgets('collapsed icon centers in a 56px circle and turns charcoal', (tester) async {
+  testWidgets('collapsed icon centers in a 56px circle and retains selected green', (tester) async {
     Widget host(bool collapsed) => MaterialApp(home: MediaQuery(
       data: const MediaQueryData(size: Size(440, 900)),
       child: Scaffold(body: StudentBottomNav(tabIndex: 0, isCollapsed: collapsed,
@@ -26,7 +26,7 @@ void main() {
     expect(tester.getSize(compact), const Size(56, 56));
     final icon = find.descendant(of: compact, matching: find.byType(Icon)).first;
     expect(tester.getCenter(icon), tester.getCenter(compact));
-    expect(tester.widget<Icon>(icon).color, const Color(0xFF1C1C1E));
+    expect(tester.widget<Icon>(icon).color, kStudentNavSelectedGreen);
   });
 
   testWidgets(

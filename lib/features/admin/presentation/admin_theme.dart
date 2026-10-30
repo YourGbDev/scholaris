@@ -6,7 +6,6 @@
 
 import 'package:scholaris/shared/theme/app_theme.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 // --- Color Palette -----------------------------------------------------------
 
@@ -117,13 +116,13 @@ TextStyle adminBodyStyle({
       color: color,
     );
 
-/// Monospace font reserved exclusively for counts, quantitative metrics, timestamps, and IDs.
+/// Compatibility helper; counts, metrics, timestamps, and IDs use Geist Sans.
 TextStyle adminDataMono({
   double fontSize = 13,
   FontWeight fontWeight = FontWeight.w500,
   Color color = kAdminTextPrimary,
 }) =>
-    GoogleFonts.robotoMono(
+    geist(
       fontSize: fontSize,
       fontWeight: fontWeight,
       color: color,
@@ -137,7 +136,7 @@ TextStyle seqTabularFigures(TextStyle base) => base.copyWith(
       ],
     );
 
-/// Monospace pill container helper for IDs, hashes, and IP addresses.
+/// Geist Sans pill container helper for IDs, hashes, and IP addresses.
 Widget adminIdPill(String idText) => Container(
       padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
       decoration: BoxDecoration(

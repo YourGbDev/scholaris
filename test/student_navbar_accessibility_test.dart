@@ -542,7 +542,7 @@ void main() {
 
       // Action sheet should display options
       expect(find.text('Quick Actions'), findsOneWidget);
-      expect(find.text('Scan scholarship QR'), findsOneWidget);
+      expect(find.text('Scan QR code'), findsOneWidget);
       expect(find.text('Upload document'), findsOneWidget);
     });
 

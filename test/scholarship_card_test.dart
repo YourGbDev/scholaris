@@ -6,6 +6,7 @@
 // deadline is "Closed" — never "Closing soon — Closed".
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:go_router/go_router.dart';
@@ -42,6 +43,27 @@ Widget _wrap({required ScholarshipCard card}) =>
     MaterialApp(home: Scaffold(body: card));
 
 void main() {
+  testWidgets('deadline and Applied remain adjacent on a phone with a bookmark', (tester) async {
+    final fonts = FontLoader('Geist')
+      ..addFont(rootBundle.load('assets/fonts/geist/Geist-Regular.ttf'))
+      ..addFont(rootBundle.load('assets/fonts/geist/Geist-SemiBold.ttf'))
+      ..addFont(rootBundle.load('assets/fonts/geist/Geist-Bold.ttf'));
+    await fonts.load();
+    tester.view.physicalSize = const Size(390, 1100);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+    await tester.pumpWidget(MaterialApp(home: Scaffold(body: Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      child: ScholarshipCard(scholarship: _scholarship(deadline: '2099-12-18'),
+        matchPercentage: 98, isApplied: true, onToggleBookmark: () {}),
+    ))));
+    await tester.pumpAndSettle();
+    final deadline = tester.getRect(find.text('Closes Dec 18'));
+    final applied = tester.getRect(find.text('Applied'));
+    expect(applied.center.dy, closeTo(deadline.center.dy, 2));
+    expect(applied.left, greaterThan(deadline.right));
+    expect(tester.takeException(), isNull);
+  });
   testWidgets('award sits beside title when wide and below on a narrow screen', (tester) async {
     const profile = StudentProfile(id: 'student', fullName: 'Student', gpa: 3.0, yearLevel: 1, setupComplete: true);
     Future<void> renderAt(double width) async {

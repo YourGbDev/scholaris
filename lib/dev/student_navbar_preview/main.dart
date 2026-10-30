@@ -28,7 +28,7 @@ class StudentNavbarPreviewApp extends StatelessWidget {
       title: 'Scholaris Student Navbar Preview',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        fontFamily: 'Outfit',
+        fontFamily: 'Geist',
         useMaterial3: true,
         scaffoldBackgroundColor: const Color(0xFF1E242B), // Dark outer preview canvas
       ),

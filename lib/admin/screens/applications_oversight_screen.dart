@@ -8,7 +8,6 @@
 import 'package:scholaris/shared/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:scholaris/features/admin/presentation/admin_theme.dart';
 import 'package:scholaris/features/applications/providers/applications_provider.dart';
 import 'package:scholaris/shared/theme/app_motion.dart';
@@ -1159,7 +1158,7 @@ class _ApplicationsOversightScreenState
                             const SizedBox(height: 3),
                             Text(
                               item.status,
-                              style: GoogleFonts.robotoMono(
+                              style: geist(
                                 fontSize: 11,
                                 color: kSeqOutline,
                               ),

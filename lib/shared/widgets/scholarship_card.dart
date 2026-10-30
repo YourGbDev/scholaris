@@ -128,6 +128,7 @@ class ScholarshipCard extends StatelessWidget {
     this.isApplied = false,
     this.onToggleBookmark,
     this.onQuickApply,
+    this.viewDetailsKey,
   });
 
   final Scholarship scholarship;
@@ -147,6 +148,7 @@ class ScholarshipCard extends StatelessWidget {
 
   /// Optional quick apply callback.
   final VoidCallback? onQuickApply;
+  final GlobalKey? viewDetailsKey;
 
   int _effectiveMatchPercentage() {
     if (matchPercentage != null) return matchPercentage!;
@@ -267,20 +269,26 @@ class ScholarshipCard extends StatelessWidget {
                                   ),
                                 ),
 
-                                // Urgency or Deadline Chip
-                                _DeadlineChip(
-                                  label: deadlineLabel(scholarship.deadline),
-                                  urgent: closing,
-                                  expired: expired,
+                                // Keep the application status with its deadline when badges wrap.
+                                Wrap(
+                                  spacing: 6,
+                                  runSpacing: 4,
+                                  crossAxisAlignment: WrapCrossAlignment.center,
+                                  children: [
+                                    _DeadlineChip(
+                                      label: deadlineLabel(scholarship.deadline),
+                                      urgent: closing,
+                                      expired: expired,
+                                    ),
+                                    if (isApplied) const _AppliedChip(),
+                                  ],
                                 ),
-
-                                if (isApplied) const _AppliedChip(),
                               ],
                             ),
                           ),
 
                           if (onToggleBookmark != null) ...[
-                            const SizedBox(width: 44),
+                            const SizedBox(width: 36),
                           ],
                         ],
                       ),
@@ -371,7 +379,7 @@ class ScholarshipCard extends StatelessWidget {
                       const SizedBox(height: 12),
                       Row(children: [
                         Expanded(child: PressableScale(
-                          child: SizedBox(height: 44, child: TextButton(
+                          child: SizedBox(key: viewDetailsKey, height: 44, child: TextButton(
                             onPressed: () => context.push(
                               '/scholarship/${scholarship.id}',
                               extra: scholarship,

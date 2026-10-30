@@ -5,10 +5,11 @@ import 'package:flutter/services.dart';
 
 import '../../../../shared/theme/app_motion.dart';
 import '../../../../shared/theme/app_theme.dart';
+import '../student_chat_screen.dart';
 import '../../../applications/presentation/widgets/document_upload_sheet.dart';
 import '../../../scholarships/presentation/scholarship_qr_scanner_screen.dart';
 
-enum StudentQuickAction { scan, upload }
+enum StudentQuickAction { chat, scan, upload }
 
 /// Retains the existing entry point while presenting a compact menu above the dock.
 Future<void> showStudentActionSheet(
@@ -35,7 +36,9 @@ Future<void> showStudentActionSheet(
             ),
             child: ConstrainedBox(
               constraints: BoxConstraints(
-                maxWidth: 320,
+                maxWidth: MediaQuery.textScalerOf(context).scale(16) > 22
+                    ? 288
+                    : 240,
                 maxHeight: math.max(
                   80,
                   constraints.maxHeight -
@@ -55,6 +58,10 @@ Future<void> showStudentActionSheet(
   if (!context.mounted || action == null) return;
   HapticFeedback.lightImpact();
   switch (action) {
+    case StudentQuickAction.chat:
+      Navigator.of(context).push(
+        MaterialPageRoute<void>(builder: (_) => const StudentChatScreen()),
+      );
     case StudentQuickAction.scan:
       ScholarshipQrScannerScreen.show(context);
     case StudentQuickAction.upload:
@@ -71,10 +78,10 @@ class StudentActionSheet extends StatelessWidget {
     color: Colors.white,
     elevation: 8,
     shadowColor: const Color(0x20000000),
-    borderRadius: BorderRadius.circular(26),
+    borderRadius: BorderRadius.circular(20),
     clipBehavior: Clip.antiAlias,
     child: Padding(
-      padding: const EdgeInsets.fromLTRB(8, 6, 8, 12),
+      padding: const EdgeInsets.fromLTRB(8, 4, 8, 8),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -107,10 +114,19 @@ class StudentActionSheet extends StatelessWidget {
                 children: [
                   _action(
                     context,
+                    StudentQuickAction.chat,
+                    Icons.chat_bubble_outline_rounded,
+                    'Chat',
+                  ),
+                  const Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 16),
+                    child: Divider(height: 1, color: Color(0xFFF0F0F0)),
+                  ),
+                  _action(
+                    context,
                     StudentQuickAction.scan,
                     Icons.qr_code_scanner_rounded,
-                    'Scan scholarship QR',
-                    'Open a scholarship from its QR code.',
+                    'Scan QR code',
                   ),
                   const Padding(
                     padding: EdgeInsets.symmetric(horizontal: 16),
@@ -121,7 +137,6 @@ class StudentActionSheet extends StatelessWidget {
                     StudentQuickAction.upload,
                     Icons.upload_file_outlined,
                     'Upload document',
-                    'Add a document for your applications.',
                   ),
                 ],
               ),
@@ -137,26 +152,17 @@ class StudentActionSheet extends StatelessWidget {
     StudentQuickAction action,
     IconData icon,
     String title,
-    String subtitle,
   ) => InkWell(
     borderRadius: BorderRadius.circular(18),
     onTap: () => onSelect != null
         ? onSelect!(action)
         : Navigator.of(context).pop(action),
     child: Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
       child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Container(
-            width: 40,
-            height: 40,
-            decoration: BoxDecoration(
-              color: const Color(0xFFEDF4EE),
-              borderRadius: BorderRadius.circular(13),
-            ),
-            child: Icon(icon, color: kPrimary, size: 22),
-          ),
+          Icon(icon, color: kPrimary, size: 22),
           const SizedBox(width: 12),
           Expanded(
             child: Column(
@@ -169,15 +175,6 @@ class StudentActionSheet extends StatelessWidget {
                     fontWeight: FontWeight.w600,
                     color: kOnSurface,
                     height: 1.25,
-                  ),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  subtitle,
-                  style: geist(
-                    fontSize: 14,
-                    height: 1.4,
-                    color: const Color(0xFF59635D),
                   ),
                 ),
               ],

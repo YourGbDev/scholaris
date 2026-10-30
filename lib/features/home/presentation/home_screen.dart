@@ -14,8 +14,10 @@
 // Retained offstage pages preserve state; StudentTabEntrance animates each visit.
 
 import 'dart:math' as math;
+
 import 'widgets/student_selection_indicator.dart';
 import 'widgets/liquid_glass_pill.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart' show CupertinoIcons;
 import 'package:flutter/rendering.dart' show ScrollDirection;
@@ -28,9 +30,12 @@ import 'package:scholaris/features/applications/presentation/applications_screen
 import 'package:scholaris/features/dashboard/presentation/student_dashboard_screen.dart';
 import 'package:scholaris/features/scholarships/screens/discover_screen.dart';
 import 'package:scholaris/features/profile/presentation/profile_tab_screen.dart';
+
 import 'widgets/student_action_sheet.dart';
 import 'widgets/student_app_tour.dart';
 import '../../auth/controllers/auth_controller.dart';
+import '../../profile/providers/profile_setup_provider.dart';
+import '../../scholarships/providers/discovery_provider.dart';
 import 'widgets/student_tab_entrance.dart';
 import 'widgets/student_glass_refraction.dart';
 
@@ -60,7 +65,12 @@ const Color kStudentNavSelectedGreen = Color(0xFF1F6338);
 // Expand the fixed Cupertino glyph silhouette by .22px per side. Its font
 // has no variable weight axis, so Icon.weight would leave these strokes thin.
 List<Shadow> _studentIconStroke(Color ink) => [
-  for (final offset in const [Offset(-.22, 0), Offset(.22, 0), Offset(0, -.22), Offset(0, .22)])
+  for (final offset in const [
+    Offset(-.22, 0),
+    Offset(.22, 0),
+    Offset(0, -.22),
+    Offset(0, .22),
+  ])
     Shadow(color: ink, offset: offset),
 ];
 
@@ -85,7 +95,9 @@ const Border kStudentNavDockGlassBorder = Border.fromBorderSide(
   BorderSide.none,
 );
 const double kStudentNavGlassSaturation = 1;
-const Color kStudentNavGlassLightEdge = Color(0xB3FFFFFF); // 70% white specular top highlight
+const Color kStudentNavGlassLightEdge = Color(
+  0xB3FFFFFF,
+); // 70% white specular top highlight
 
 const Border kStudentNavGlassBorder = Border.fromBorderSide(
   BorderSide.none, // The foreground painter owns the single specular rim.
@@ -147,7 +159,8 @@ class DirectionalGlassRimPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(covariant DirectionalGlassRimPainter oldDelegate) =>
-      oldDelegate.borderRadius != borderRadius || oldDelegate.strokeWidth != strokeWidth;
+      oldDelegate.borderRadius != borderRadius ||
+      oldDelegate.strokeWidth != strokeWidth;
 }
 
 class _StudentNavTabItemData {
@@ -194,7 +207,10 @@ const List<_StudentNavTabItemData> _kStudentNavTabs = [
 /// Determines whether the navigation dock should adopt an adaptive accessible
 /// arrangement (e.g. 2-row reflowed layout) to comfortably accommodate scaled text.
 /// Respects nonlinear TextScaler by scaling kStudentNavBaseFontSize directly.
-bool isStudentNavAccessible(TextScaler textScaler, {double screenWidth = 440.0}) {
+bool isStudentNavAccessible(
+  TextScaler textScaler, {
+  double screenWidth = 440.0,
+}) {
   final scaled = textScaler.scale(kStudentNavBaseFontSize);
   return scaled > 13.5 || (screenWidth < 360.0 && scaled > 11.5);
 }
@@ -204,7 +220,10 @@ bool isStudentNavAccessible(TextScaler textScaler, {double screenWidth = 440.0})
 /// Standard 1-row dock: 62.0.
 /// Accessible mode: total component height including the standalone '+' button (52.0),
 /// vertical gap (8.0), and full-width 2x2 pill dock height.
-double computeStudentDockHeight(dynamic scalerOrScale, {double screenWidth = 440.0}) {
+double computeStudentDockHeight(
+  dynamic scalerOrScale, {
+  double screenWidth = 440.0,
+}) {
   final TextScaler textScaler;
   if (scalerOrScale is TextScaler) {
     textScaler = scalerOrScale;
@@ -219,7 +238,10 @@ double computeStudentDockHeight(dynamic scalerOrScale, {double screenWidth = 440
   }
 
   final scaledFontSize = textScaler.scale(kStudentNavBaseFontSize);
-  final singleRowHeight = (20.0 + (scaledFontSize * 1.15) + 12.0).clamp(44.0, 76.0);
+  final singleRowHeight = (20.0 + (scaledFontSize * 1.15) + 12.0).clamp(
+    44.0,
+    76.0,
+  );
   final pillHeight = (singleRowHeight * 2 + 16.0).clamp(104.0, 168.0);
   return kStudentPlusButtonSize + kStudentPlusGap + pillHeight;
 }
@@ -233,7 +255,10 @@ double computeStudentContentClearance(BuildContext context) {
   final bottomPad = safeBottom > 0 ? safeBottom : 10.0;
   final textScaler = MediaQuery.textScalerOf(context);
   final screenWidth = MediaQuery.sizeOf(context).width;
-  final dockHeight = computeStudentDockHeight(textScaler, screenWidth: screenWidth);
+  final dockHeight = computeStudentDockHeight(
+    textScaler,
+    screenWidth: screenWidth,
+  );
   return bottomPad + dockHeight + 16.0;
 }
 
@@ -284,7 +309,9 @@ class StudentScrollDockController extends ChangeNotifier {
 
   void collapse() {
     if (isLockedExpanded) return;
-    if (!_isCollapsed || _cumulativeScrollDelta != 0.0 || _pendingDelta != 0.0) {
+    if (!_isCollapsed ||
+        _cumulativeScrollDelta != 0.0 ||
+        _pendingDelta != 0.0) {
       _isCollapsed = true;
       _cumulativeScrollDelta = 0.0;
       _pendingDelta = 0.0;
@@ -425,7 +452,10 @@ class StudentScrollDockController extends ChangeNotifier {
     if (notification is ScrollUpdateNotification) {
       final delta = notification.scrollDelta;
       if (delta != null && delta != 0.0) {
-        final hasIntent = _isUserScrolling || _hasUserIntent || notification.dragDetails != null;
+        final hasIntent =
+            _isUserScrolling ||
+            _hasUserIntent ||
+            notification.dragDetails != null;
         if (hasIntent) {
           _applyDelta(delta, currentPixels: currentPixels);
         } else {
@@ -446,12 +476,14 @@ class HomeScreen extends ConsumerStatefulWidget {
 }
 
 class _HomeScreenState extends ConsumerState<HomeScreen> {
-  static const _tabs = <Widget>[
-    StudentDashboardScreen(),
-    DiscoverScreen(),
-    ApplicationsScreen(embedded: true),
-    ProfileTabScreen(),
-  ];
+  final _homeGuideTargets = List.generate(4, (_) => GlobalKey());
+  final _profileGuideTargets = List.generate(3, (_) => GlobalKey());
+  final _dashboardScroll = ScrollController();
+  final _profileScroll = ScrollController();
+  final _discoverScroll = ScrollController();
+  final _discoverDetails = GlobalKey();
+  final _discoverEnd = GlobalKey();
+  late final List<Widget> _tabs;
 
   late final StudentScrollDockController _controller;
   int _lastTabIndex = 0;
@@ -463,6 +495,25 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   @override
   void initState() {
     super.initState();
+    _tabs = [
+      StudentDashboardScreen(
+        savedGuideKey: _homeGuideTargets[0],
+        progressGuideKey: _homeGuideTargets[1],
+        scrollController: _dashboardScroll,
+        recommendationsGuideKey: _homeGuideTargets[2],
+        detailsGuideKey: _homeGuideTargets[3],
+      ),
+      DiscoverScreen(
+        scrollController: _discoverScroll,
+        detailsGuideKey: _discoverDetails,
+        endGuideKey: _discoverEnd,
+      ),
+      const ApplicationsScreen(embedded: true),
+      ProfileTabScreen(
+        guideTargets: _profileGuideTargets,
+        scrollController: _profileScroll,
+      ),
+    ];
     _controller = StudentScrollDockController();
     _controller.addListener(_onDockStateChanged);
   }
@@ -471,6 +522,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   void dispose() {
     _controller.removeListener(_onDockStateChanged);
     _controller.dispose();
+    _dashboardScroll.dispose();
+    _profileScroll.dispose();
+    _discoverScroll.dispose();
     super.dispose();
   }
 
@@ -503,27 +557,44 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           Positioned.fill(
             child: MediaQuery(
               data: MediaQuery.of(context).copyWith(
-                padding: MediaQuery.of(context).padding.copyWith(
-                  bottom: contentClearance,
+                padding: MediaQuery.of(context).padding
+                    .copyWith(bottom: contentClearance),
+              ),
+              child: TooltipVisibility(
+                visible: !_tourActive,
+                child: ExcludeFocus(
+                  excluding: _tourActive,
+                  child: ExcludeSemantics(
+                    excluding: _tourActive,
+                    child: Stack(
+                      fit: StackFit.expand,
+                      children: [
+                        for (int i = 0; i < _tabs.length; i++)
+                          Offstage(
+                            offstage: tabIndex != i,
+                            child: TickerMode(
+                              enabled: tabIndex == i,
+                              child: NotificationListener<ScrollNotification>(
+                                key: ValueKey('student-tab-scroll-$i'),
+                                onNotification: (n) => tabIndex == i
+                                    ? _controller.handleScrollNotification(n)
+                                    : false,
+                                child: StudentTabEntrance(
+                                  active: tabIndex == i,
+                                  visit: _tabVisit,
+                                  firstArrivalDuration: const Duration(
+                                    milliseconds: 1250,
+                                  ),
+                                  child: _tabs[i],
+                                ),
+                              ),
+                            ),
+                          ),
+                      ],
+                    ),
+                  ),
                 ),
               ),
-              child: TooltipVisibility(visible: !_tourActive, child: ExcludeFocus(excluding: _tourActive, child: ExcludeSemantics(excluding: _tourActive, child: Stack(
-                fit: StackFit.expand,
-                children: [
-                  for (int i = 0; i < _tabs.length; i++)
-                    Offstage(
-                      offstage: tabIndex != i,
-                      child: TickerMode(enabled: tabIndex == i,
-                      child: NotificationListener<ScrollNotification>(
-                      key: ValueKey('student-tab-scroll-$i'),
-                      onNotification: (n) => tabIndex == i
-                          ? _controller.handleScrollNotification(n)
-                          : false,
-                      child: StudentTabEntrance(active: tabIndex == i, visit: _tabVisit, firstArrivalDuration: const Duration(milliseconds: 1250), child: _tabs[i]),
-                    )),
-                    ),
-                ],
-              )))),
             ),
           ),
           if (!isKeyboardOpen)
@@ -531,43 +602,73 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               left: 0,
               right: 0,
               bottom: 0,
-              child: ExcludeFocus(excluding: _tourActive, child: ExcludeSemantics(excluding: _tourActive, child: StudentBottomNav(
-                tourTargets: _tourTargets,
-                isQuickActionOpen: _quickActionsOpen,
-                tabIndex: tabIndex,
-                onSelectTab: (index) {
-                  setState(() => _tabVisit++);
-                  ref.read(homeTabIndexProvider.notifier).selectTab(index);
-                  _controller.expand();
-                },
-                onQuickAction: () async {
-                  _controller.expand();
-                  _controller.setSheetOpen(true);
-                  setState(() => _quickActionsOpen = true);
-                  try {
-                    await showStudentActionSheet(context, bottomOffset: contentClearance);
-                  } finally {
-                    if (mounted) {
-                      setState(() => _quickActionsOpen = false);
-                      _controller.setSheetOpen(false);
-                    }
-                  }
-                },
-                isCollapsed: _controller.effectiveCollapsed,
-                onExpand: _controller.expand,
-                onNavFocusChange: _controller.setNavFocused,
-              ))),
+              child: ExcludeFocus(
+                excluding: _tourActive,
+                child: ExcludeSemantics(
+                  excluding: _tourActive,
+                  child: StudentBottomNav(
+                    tourTargets: _tourTargets,
+                    isQuickActionOpen: _quickActionsOpen,
+                    tabIndex: tabIndex,
+                    onSelectTab: (index) {
+                      setState(() => _tabVisit++);
+                      ref.read(homeTabIndexProvider.notifier).selectTab(index);
+                      _controller.expand();
+                    },
+                    onQuickAction: () async {
+                      _controller.expand();
+                      _controller.setSheetOpen(true);
+                      setState(() => _quickActionsOpen = true);
+                      try {
+                        await showStudentActionSheet(
+                          context,
+                          bottomOffset: contentClearance,
+                        );
+                      } finally {
+                        if (mounted) {
+                          setState(() => _quickActionsOpen = false);
+                          _controller.setSheetOpen(false);
+                        }
+                      }
+                    },
+                    isCollapsed: _controller.effectiveCollapsed,
+                    onExpand: _controller.expand,
+                    onNavFocusChange: _controller.setNavFocused,
+                  ),
+                ),
+              ),
             ),
-          Positioned.fill(child: StudentTourLayer(
-            userId: ref.watch(currentUserIdProvider), targets: _tourTargets,
-            bottomClearance: contentClearance,
-            onSelectTab: (index) => ref.read(homeTabIndexProvider.notifier).selectTab(index),
-            onActiveChanged: (active) {
-              setState(() => _tourActive = active);
-              _controller.setSheetOpen(active);
-              _controller.expand();
-            },
-          )),
+          Positioned.fill(
+            child: StudentTourLayer(
+              userId: ref.watch(currentUserIdProvider),
+              targets: _tourTargets,
+              homeTargets: _homeGuideTargets,
+              discoverScroll: _discoverScroll,
+              discoverDetails: _discoverDetails,
+              discoverEnd: _discoverEnd,
+              profileReady:
+                  ref.watch(currentProfileProvider).valueOrNull != null,
+              profileTargets: _profileGuideTargets,
+              homeScroll: _dashboardScroll,
+              profileScroll: _profileScroll,
+              studentName:
+                  ref.watch(currentProfileProvider).valueOrNull?.fullName ??
+                  'Student',
+              gender: ref.watch(currentProfileProvider).valueOrNull?.gender,
+              exampleScholarship:
+                  ref.watch(filteredMatchesProvider).valueOrNull?.firstOrNull ??
+                  ref.watch(filteredBrowseProvider).valueOrNull?.firstOrNull,
+              bottomClearance: contentClearance,
+              onSelectTab: (index) =>
+                  ref.read(homeTabIndexProvider.notifier).selectTab(index),
+              onActiveChanged: (active) {
+                setState(() => _tourActive = active);
+                if (_dashboardScroll.hasClients) _dashboardScroll.jumpTo(0);
+                _controller.setSheetOpen(active);
+                _controller.expand();
+              },
+            ),
+          ),
         ],
       ),
     );
@@ -608,8 +709,10 @@ class StudentBottomNav extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => LayoutBuilder(
-    builder: (context, constraints) => _buildDock(context,
-      math.min(MediaQuery.sizeOf(context).width, constraints.maxWidth)),
+    builder: (context, constraints) => _buildDock(
+      context,
+      math.min(MediaQuery.sizeOf(context).width, constraints.maxWidth),
+    ),
   );
 
   Widget _buildDock(BuildContext context, double screenWidth) {
@@ -619,8 +722,14 @@ class StudentBottomNav extends StatelessWidget {
     final bottomPad = safeBottom > 0 ? safeBottom : 10.0;
 
     final textScaler = MediaQuery.textScalerOf(context);
-    final isAccessible = isStudentNavAccessible(textScaler, screenWidth: screenWidth);
-    final dockHeight = computeStudentDockHeight(textScaler, screenWidth: screenWidth);
+    final isAccessible = isStudentNavAccessible(
+      textScaler,
+      screenWidth: screenWidth,
+    );
+    final dockHeight = computeStudentDockHeight(
+      textScaler,
+      screenWidth: screenWidth,
+    );
 
     // Transparency is treated separately from reduced motion:
     // Solid opaque fallback is strictly used when high contrast is active.
@@ -629,85 +738,129 @@ class StudentBottomNav extends StatelessWidget {
 
     // Disable collapse if accessible large text layout is active or
     // if screen-reader accessible navigation is requested.
-    final isAccessibilityActive = isAccessible || MediaQuery.accessibleNavigationOf(context);
+    final isAccessibilityActive =
+        isAccessible || MediaQuery.accessibleNavigationOf(context);
     final effectiveCollapsed = isCollapsed && !isAccessibilityActive;
 
-    final availableRowWidth = math.min(screenWidth - (horizontalPad * 2), 440.0 - (horizontalPad * 2));
-    final expandedPillWidth = math.max(0.0, availableRowWidth - dockHeight - 8.0);
-    final Duration animDuration = isReducedMotion(context) ? Duration.zero : kDurationSlow;
+    final availableRowWidth = math.min(
+      screenWidth - (horizontalPad * 2),
+      440.0 - (horizontalPad * 2),
+    );
+    final expandedPillWidth = math.max(
+      0.0,
+      availableRowWidth - dockHeight - 8.0,
+    );
+    final Duration animDuration = isReducedMotion(context)
+        ? Duration.zero
+        : kDurationSlow;
 
     final Widget navDockContent;
     if (!isAccessible) {
-      final activeTab = _kStudentNavTabs[tabIndex.clamp(0, _kStudentNavTabs.length - 1)];
+      final activeTab =
+          _kStudentNavTabs[tabIndex.clamp(0, _kStudentNavTabs.length - 1)];
 
-      navDockContent = LayoutBuilder(builder: (context, constraints) {
-        // Derive every position from the material's presented width. Reversing
-        // the outer animation therefore reverses the icon without a crossfade.
-        final progress = expandedPillWidth <= 56 ? 0.0 :
-            ((expandedPillWidth - constraints.maxWidth) / (expandedPillWidth - 56)).clamp(0.0, 1.0);
-        if (progress >= .9999) {
-          return _StudentNavCompactControl(
-            key: const ValueKey('student-nav-compact-control'),
-            tabIndex: tabIndex, label: activeTab.label, icon: activeTab.icon,
-            selectedIcon: activeTab.selectedIcon, onExpand: onExpand ?? () {},
-            itemHeight: 56, onFocusChange: onNavFocusChange,
-          );
-        }
-        final cellWidth = expandedPillWidth / 4;
-        final labels = ['Home', 'Discover', 'Tracker', 'Profile'];
-        final keys = ['home', 'discover', 'tracker', 'profile'];
-        final icons = [CupertinoIcons.house_alt, CupertinoIcons.compass,
-          CupertinoIcons.doc_text, CupertinoIcons.person];
-        final fading = (1 - progress * 2).clamp(0.0, 1.0);
-        return Stack(
-          key: const ValueKey('student-nav-expanded-row'),
-          clipBehavior: Clip.none,
-          children: [
-            Positioned(left: 0, top: 0, width: expandedPillWidth, height: constraints.maxHeight,
-              child: Opacity(opacity: fading, child: StudentSelectionIndicator(
-                index: tabIndex, duration: isReducedMotion(context) ? Duration.zero : kStudentSelectionDuration,
-              )),
-            ),
-            for (var i = 0; i < 4; i++)
+      navDockContent = LayoutBuilder(
+        builder: (context, constraints) {
+          // Derive every position from the material's presented width. Reversing
+          // the outer animation therefore reverses the icon without a crossfade.
+          final progress = expandedPillWidth <= 56
+              ? 0.0
+              : ((expandedPillWidth - constraints.maxWidth) /
+                        (expandedPillWidth - 56))
+                    .clamp(0.0, 1.0);
+          if (progress >= .9999) {
+            return _StudentNavCompactControl(
+              key: const ValueKey('student-nav-compact-control'),
+              tabIndex: tabIndex,
+              label: activeTab.label,
+              icon: activeTab.icon,
+              selectedIcon: activeTab.selectedIcon,
+              onExpand: onExpand ?? () {},
+              itemHeight: 56,
+              onFocusChange: onNavFocusChange,
+            );
+          }
+          final cellWidth = expandedPillWidth / 4;
+          final labels = ['Home', 'Discover', 'Tracker', 'Profile'];
+          final keys = ['home', 'discover', 'tracker', 'profile'];
+          final icons = [
+            CupertinoIcons.house_alt,
+            CupertinoIcons.compass,
+            CupertinoIcons.doc_text,
+            CupertinoIcons.person,
+          ];
+          final fading = (1 - progress * 2).clamp(0.0, 1.0);
+          return Stack(
+            key: const ValueKey('student-nav-expanded-row'),
+            clipBehavior: Clip.none,
+            children: [
               Positioned(
-                left: i == tabIndex
-                    ? i * cellWidth * (1 - progress) + (28 - cellWidth / 2) * progress
-                    : i * cellWidth,
-                top: 0, width: cellWidth, height: constraints.maxHeight,
-                child: IgnorePointer(ignoring: effectiveCollapsed,
-                  child: ExcludeSemantics(excluding: effectiveCollapsed,
-                    child: Opacity(opacity: i == tabIndex ? 1 : fading,
-                      child: KeyedSubtree(
-                        key: i == 0 ? const ValueKey('student-nav-dashboard') : null,
-                        child: _StudentNavItem(
-                          key: ValueKey('student-nav-${keys[i]}'),
-                          targetKey: tourTargets?[i],
-                          icon: icons[i], selectedIcon: icons[i], label: labels[i],
-                          selected: tabIndex == i, onTap: () => onSelectTab(i),
-                          itemHeight: constraints.maxHeight,
-                          collapseProgress: i == tabIndex ? progress : 0,
-                          onFocusChange: onNavFocusChange,
+                left: 0,
+                top: 0,
+                width: expandedPillWidth,
+                height: constraints.maxHeight,
+                child: Opacity(
+                  opacity: fading,
+                  child: StudentSelectionIndicator(
+                    index: tabIndex,
+                    duration: isReducedMotion(context)
+                        ? Duration.zero
+                        : kStudentSelectionDuration,
+                  ),
+                ),
+              ),
+              for (var i = 0; i < 4; i++)
+                Positioned(
+                  left: i == tabIndex
+                      ? i * cellWidth * (1 - progress) +
+                            (28 - cellWidth / 2) * progress
+                      : i * cellWidth,
+                  top: 0,
+                  width: cellWidth,
+                  height: constraints.maxHeight,
+                  child: IgnorePointer(
+                    ignoring: effectiveCollapsed,
+                    child: ExcludeSemantics(
+                      excluding: effectiveCollapsed,
+                      child: Opacity(
+                        opacity: i == tabIndex ? 1 : fading,
+                        child: KeyedSubtree(
+                          key: i == 0
+                              ? const ValueKey('student-nav-dashboard')
+                              : null,
+                          child: _StudentNavItem(
+                            key: ValueKey('student-nav-${keys[i]}'),
+                            targetKey: tourTargets?[i],
+                            icon: icons[i],
+                            selectedIcon: icons[i],
+                            label: labels[i],
+                            selected: tabIndex == i,
+                            onTap: () => onSelectTab(i),
+                            itemHeight: constraints.maxHeight,
+                            collapseProgress: i == tabIndex ? progress : 0,
+                            onFocusChange: onNavFocusChange,
+                          ),
                         ),
                       ),
                     ),
                   ),
                 ),
-              ),
-            if (effectiveCollapsed && progress > 0)
-              Positioned.fill(
-                child: Semantics(
-                  button: true,
-                  label: '${activeTab.label} Tab. Tap to expand navigation',
-                  onTap: onExpand,
-                  child: GestureDetector(
-                    behavior: HitTestBehavior.opaque,
+              if (effectiveCollapsed && progress > 0)
+                Positioned.fill(
+                  child: Semantics(
+                    button: true,
+                    label: '${activeTab.label} Tab. Tap to expand navigation',
                     onTap: onExpand,
+                    child: GestureDetector(
+                      behavior: HitTestBehavior.opaque,
+                      onTap: onExpand,
+                    ),
                   ),
                 ),
-              ),
-          ],
-        );
-      });
+            ],
+          );
+        },
+      );
     } else {
       // Adaptive 2-row accessible layout for large text / narrow widths
       final pillHeight = dockHeight - kStudentPlusButtonSize - kStudentPlusGap;
@@ -726,7 +879,7 @@ class StudentBottomNav extends StatelessWidget {
                       key: const ValueKey('student-nav-dashboard'),
                       child: _StudentNavItem(
                         key: const ValueKey('student-nav-home'),
-                      targetKey: tourTargets?[0],
+                        targetKey: tourTargets?[0],
                         icon: CupertinoIcons.house_alt,
                         selectedIcon: CupertinoIcons.house_alt,
                         label: 'Home',
@@ -806,17 +959,23 @@ class StudentBottomNav extends StatelessWidget {
       children: [
         Positioned.fill(
           child: isHighContrast || isAccessible
-              ? DecoratedBox(decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(pillBorderRadius),
-                  border: Border.all(
-                    color: isHighContrast ? const Color(0xFF1C1C1E) : const Color(0x30747775),
-                    width: isHighContrast ? 1.5 : .7),
-                ))
+              ? DecoratedBox(
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(pillBorderRadius),
+                    border: Border.all(
+                      color: isHighContrast
+                          ? const Color(0xFF1C1C1E)
+                          : const Color(0x30747775),
+                      width: isHighContrast ? 1.5 : .7,
+                    ),
+                  ),
+                )
               : LiquidGlassPill(
-                    coreBlur: dockBlur ?? kStudentNavDockGlassBlur,
-                    tintOpacity: dockTintOpacity ?? kStudentNavDockGlassTintOpacity,
-                    child: const SizedBox.expand(),
+                  coreBlur: dockBlur ?? kStudentNavDockGlassBlur,
+                  tintOpacity:
+                      dockTintOpacity ?? kStudentNavDockGlassTintOpacity,
+                  child: const SizedBox.expand(),
                 ),
         ),
         navDockContent,
@@ -824,7 +983,11 @@ class StudentBottomNav extends StatelessWidget {
     );
 
     if (enableRefraction) {
-      navDock = StudentGlassRefraction(enabled: true, radius: pillBorderRadius, child: navDock);
+      navDock = StudentGlassRefraction(
+        enabled: true,
+        radius: pillBorderRadius,
+        child: navDock,
+      );
     }
     final Widget dockBody;
     if (!isAccessible) {
@@ -833,7 +996,10 @@ class StudentBottomNav extends StatelessWidget {
       // anchored at the left, while the '+' button remains separate at the right.
       dockBody = LayoutBuilder(
         builder: (context, constraints) {
-          final maxPillWidth = math.max(0.0, constraints.maxWidth - dockHeight - 8.0);
+          final maxPillWidth = math.max(
+            0.0,
+            constraints.maxWidth - dockHeight - 8.0,
+          );
           final pillWidth = effectiveCollapsed ? 56.0 : maxPillWidth;
           return SizedBox(
             height: dockHeight,
@@ -878,8 +1044,8 @@ class StudentBottomNav extends StatelessWidget {
             Align(
               alignment: Alignment.centerRight,
               child: _StudentQuickActionButton(
-                  isOpen: isQuickActionOpen,
-                  targetKey: tourTargets?[4],
+                isOpen: isQuickActionOpen,
+                targetKey: tourTargets?[4],
                 onTap: onQuickAction,
                 size: kStudentPlusButtonSize,
                 isHighContrast: true,
@@ -931,7 +1097,8 @@ class _StudentNavCompactControl extends StatefulWidget {
   final ValueChanged<bool>? onFocusChange;
 
   @override
-  State<_StudentNavCompactControl> createState() => _StudentNavCompactControlState();
+  State<_StudentNavCompactControl> createState() =>
+      _StudentNavCompactControlState();
 }
 
 class _StudentNavCompactControlState extends State<_StudentNavCompactControl> {
@@ -954,13 +1121,18 @@ class _StudentNavCompactControlState extends State<_StudentNavCompactControl> {
         SingleActivator(LogicalKeyboardKey.space): ButtonActivateIntent(),
       },
       actions: <Type, Action<Intent>>{
-        ActivateIntent: CallbackAction<ActivateIntent>(onInvoke: (_) => widget.onExpand()),
-        ButtonActivateIntent: CallbackAction<ButtonActivateIntent>(onInvoke: (_) => widget.onExpand()),
+        ActivateIntent: CallbackAction<ActivateIntent>(
+          onInvoke: (_) => widget.onExpand(),
+        ),
+        ButtonActivateIntent: CallbackAction<ButtonActivateIntent>(
+          onInvoke: (_) => widget.onExpand(),
+        ),
       },
       mouseCursor: SystemMouseCursors.click,
       child: Semantics(
         button: true,
-        label: '${widget.label} Tab. Navigation collapsed, tap to expand navigation',
+        label:
+            '${widget.label} Tab. Navigation collapsed, tap to expand navigation',
         hint: 'Restores all navigation tabs',
         onTap: widget.onExpand,
         child: SizedBox(
@@ -984,8 +1156,8 @@ class _StudentNavCompactControlState extends State<_StudentNavCompactControl> {
                   child: Icon(
                     widget.selectedIcon,
                     size: 20.5,
-                    color: const Color(0xFF1C1C1E),
-                    shadows: _studentIconStroke(const Color(0xFF1C1C1E)),
+                    color: kStudentNavSelectedGreen,
+                    shadows: _studentIconStroke(kStudentNavSelectedGreen),
                   ),
                 ),
               ),
@@ -1027,10 +1199,13 @@ class _StudentNavItem extends StatefulWidget {
   State<_StudentNavItem> createState() => _StudentNavItemState();
 }
 
-class _StudentNavItemState extends State<_StudentNavItem> with SingleTickerProviderStateMixin {
+class _StudentNavItemState extends State<_StudentNavItem>
+    with SingleTickerProviderStateMixin {
   bool _isFocused = false;
   late final AnimationController _selection = AnimationController(
-    vsync: this, duration: kStudentSelectionDuration, value: 1,
+    vsync: this,
+    duration: kStudentSelectionDuration,
+    value: 1,
   );
 
   @override
@@ -1052,8 +1227,12 @@ class _StudentNavItemState extends State<_StudentNavItem> with SingleTickerProvi
 
   @override
   Widget build(BuildContext context) => TweenAnimationBuilder<Color?>(
-    tween: ColorTween(end: widget.selected ? kStudentNavSelectedGreen : const Color(0xFF25282B)),
-    duration: isReducedMotion(context) ? Duration.zero : const Duration(milliseconds: 180),
+    tween: ColorTween(
+      end: widget.selected ? kStudentNavSelectedGreen : const Color(0xFF25282B),
+    ),
+    duration: isReducedMotion(context)
+        ? Duration.zero
+        : const Duration(milliseconds: 180),
     curve: Curves.easeOutCubic,
     builder: (context, ink, _) => _buildItem(context, ink!),
   );
@@ -1063,11 +1242,19 @@ class _StudentNavItemState extends State<_StudentNavItem> with SingleTickerProvi
     final isNarrow = screenWidth < 360;
     final isVeryNarrow = screenWidth < 340;
     final labelMetrics = TextPainter(
-      text: TextSpan(text: widget.label, style: outfit(
-        fontSize: kStudentNavBaseFontSize, fontWeight: FontWeight.w600, letterSpacing: -.1)),
-      textDirection: Directionality.of(context), textScaler: MediaQuery.textScalerOf(context),
+      text: TextSpan(
+        text: widget.label,
+        style: outfit(
+          fontSize: kStudentNavBaseFontSize,
+          fontWeight: FontWeight.w600,
+          letterSpacing: -.1,
+        ),
+      ),
+      textDirection: Directionality.of(context),
+      textScaler: MediaQuery.textScalerOf(context),
     )..layout();
-    final centerOffset = (labelMetrics.height + (widget.isAccessible ? 1 : 3.5)) / 2;
+    final centerOffset =
+        (labelMetrics.height + (widget.isAccessible ? 1 : 3.5)) / 2;
     labelMetrics.dispose();
 
     return FocusableActionDetector(
@@ -1082,8 +1269,12 @@ class _StudentNavItemState extends State<_StudentNavItem> with SingleTickerProvi
         SingleActivator(LogicalKeyboardKey.space): ButtonActivateIntent(),
       },
       actions: <Type, Action<Intent>>{
-        ActivateIntent: CallbackAction<ActivateIntent>(onInvoke: (_) => widget.onTap()),
-        ButtonActivateIntent: CallbackAction<ButtonActivateIntent>(onInvoke: (_) => widget.onTap()),
+        ActivateIntent: CallbackAction<ActivateIntent>(
+          onInvoke: (_) => widget.onTap(),
+        ),
+        ButtonActivateIntent: CallbackAction<ButtonActivateIntent>(
+          onInvoke: (_) => widget.onTap(),
+        ),
       },
       mouseCursor: SystemMouseCursors.click,
       child: Semantics(
@@ -1116,50 +1307,72 @@ class _StudentNavItemState extends State<_StudentNavItem> with SingleTickerProvi
                       vertical: widget.isAccessible ? 1.0 : 4.0,
                     ),
                     decoration: BoxDecoration(
-                      color: widget.selected && widget.isAccessible ? const Color(0x1C555555) : Colors.transparent,
+                      color: widget.selected && widget.isAccessible
+                          ? const Color(0x1C555555)
+                          : Colors.transparent,
                       borderRadius: BorderRadius.circular(16),
                     ),
                     child: AnimatedBuilder(
                       animation: _selection,
                       builder: (context, child) => Transform.scale(
-                        scale: isReducedMotion(context) || !widget.selected || widget.isAccessible
-                            ? 1 : 1 + .06 * math.sin(math.pi * _selection.value),
+                        scale:
+                            isReducedMotion(context) ||
+                                !widget.selected ||
+                                widget.isAccessible
+                            ? 1
+                            : 1 + .06 * math.sin(math.pi * _selection.value),
                         child: child,
                       ),
                       child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Transform.translate(
-                          offset: Offset(0, centerOffset * (widget.collapseProgress * 2).clamp(0, 1)),
-                          child: Icon(
-                          widget.selected ? widget.selectedIcon : widget.icon,
-                          size: widget.isAccessible ? 18.0 : 20.5,
-                          color: widget.selected ? Color.lerp(ink, const Color(0xFF1C1C1E), widget.collapseProgress) : const Color(0xFF25282B),
-                          shadows: _studentIconStroke(widget.selected ? Color.lerp(ink, const Color(0xFF1C1C1E), widget.collapseProgress)! : const Color(0xFF25282B)),
-                        ),
-                        ),
-                        SizedBox(height: widget.isAccessible ? 1.0 : 3.5),
-                        Opacity(
-                          opacity: (1 - widget.collapseProgress * 2).clamp(0.0, 1.0),
-                          child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 1.0),
-                          child: Text(
-                            widget.label,
-                            maxLines: 1,
-                            overflow: TextOverflow.visible,
-                            softWrap: false,
-                            style: outfit(
-                              fontSize: kStudentNavBaseFontSize,
-                              fontWeight: FontWeight.w600,
-                              letterSpacing: -.1,
-                              color: ink,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Transform.translate(
+                            offset: Offset(
+                              0,
+                              centerOffset *
+                                  (widget.collapseProgress * 2).clamp(0, 1),
+                            ),
+                            child: Icon(
+                              widget.selected
+                                  ? widget.selectedIcon
+                                  : widget.icon,
+                              size: widget.isAccessible ? 18.0 : 20.5,
+                              color: widget.selected
+                                  ? ink
+                                  : const Color(0xFF25282B),
+                              shadows: _studentIconStroke(
+                                widget.selected ? ink : const Color(0xFF25282B),
+                              ),
                             ),
                           ),
-                        ),
-                        ),
-                      ],
-                    )),
+                          SizedBox(height: widget.isAccessible ? 1.0 : 3.5),
+                          Opacity(
+                            opacity: (1 - widget.collapseProgress * 2).clamp(
+                              0.0,
+                              1.0,
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 1.0,
+                              ),
+                              child: Text(
+                                widget.label,
+                                maxLines: 1,
+                                overflow: TextOverflow.visible,
+                                softWrap: false,
+                                style: outfit(
+                                  fontSize: kStudentNavBaseFontSize,
+                                  fontWeight: FontWeight.w600,
+                                  letterSpacing: -.1,
+                                  color: ink,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
                   ),
                 ),
               ),
@@ -1191,7 +1404,8 @@ class _StudentQuickActionButton extends StatefulWidget {
   final ValueChanged<bool>? onFocusChange;
 
   @override
-  State<_StudentQuickActionButton> createState() => _StudentQuickActionButtonState();
+  State<_StudentQuickActionButton> createState() =>
+      _StudentQuickActionButtonState();
 }
 
 class _StudentQuickActionButtonState extends State<_StudentQuickActionButton> {
@@ -1214,10 +1428,7 @@ class _StudentQuickActionButtonState extends State<_StudentQuickActionButton> {
             decoration: BoxDecoration(
               color: Colors.white,
               shape: BoxShape.circle,
-              border: Border.all(
-                color: const Color(0xFF1C1C1E),
-                width: 1.5,
-              ),
+              border: Border.all(color: const Color(0xFF1C1C1E), width: 1.5),
               boxShadow: const [
                 BoxShadow(
                   color: Color(0x14000000),
@@ -1229,9 +1440,9 @@ class _StudentQuickActionButtonState extends State<_StudentQuickActionButton> {
             child: content,
           )
         : LiquidGlassPill(
-              key: const ValueKey('student-nav-quick-action'),
-              tintOpacity: kStudentNavGlassTintOpacity,
-              child: content,
+            key: const ValueKey('student-nav-quick-action'),
+            tintOpacity: kStudentNavGlassTintOpacity,
+            child: content,
           );
 
     return FocusableActionDetector(
@@ -1246,8 +1457,12 @@ class _StudentQuickActionButtonState extends State<_StudentQuickActionButton> {
         SingleActivator(LogicalKeyboardKey.space): ButtonActivateIntent(),
       },
       actions: <Type, Action<Intent>>{
-        ActivateIntent: CallbackAction<ActivateIntent>(onInvoke: (_) => widget.onTap()),
-        ButtonActivateIntent: CallbackAction<ButtonActivateIntent>(onInvoke: (_) => widget.onTap()),
+        ActivateIntent: CallbackAction<ActivateIntent>(
+          onInvoke: (_) => widget.onTap(),
+        ),
+        ButtonActivateIntent: CallbackAction<ButtonActivateIntent>(
+          onInvoke: (_) => widget.onTap(),
+        ),
       },
       mouseCursor: SystemMouseCursors.click,
       child: Semantics(
@@ -1275,7 +1490,9 @@ class _StudentQuickActionButtonState extends State<_StudentQuickActionButton> {
                 onTap: widget.onTap,
                 child: Center(
                   child: AnimatedContainer(
-                    duration: isReducedMotion(context) ? Duration.zero : kDurationSlow,
+                    duration: isReducedMotion(context)
+                        ? Duration.zero
+                        : kDurationSlow,
                     curve: Curves.easeInOutCubic,
                     width: widget.isCollapsed ? 56 : widget.size,
                     height: widget.isCollapsed ? 56 : widget.size,

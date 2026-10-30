@@ -14,7 +14,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 import 'package:scholaris/features/home/presentation/home_screen.dart';
 import 'package:scholaris/features/profile/providers/profile_setup_provider.dart';
@@ -464,7 +463,7 @@ class _SubmissionConfirmationReceiptScreenState
                         (widget.receiptId != null && widget.receiptId!.trim().isNotEmpty)
                             ? widget.receiptId!
                             : 'Receipt ID unavailable',
-                        style: GoogleFonts.robotoMono(
+                        style: geist(
                           fontSize: 13,
                           fontWeight: FontWeight.bold,
                           color: (widget.receiptId != null && widget.receiptId!.trim().isNotEmpty)
@@ -583,7 +582,7 @@ class _SubmissionConfirmationReceiptScreenState
                         'SHA-256: e3b0c44298fc1c...8b456',
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: GoogleFonts.robotoMono(
+                        style: geist(
                           fontSize: 10,
                           color: kOnSurfaceVariant,
                         ),

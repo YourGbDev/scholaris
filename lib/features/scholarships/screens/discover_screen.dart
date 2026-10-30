@@ -2,11 +2,10 @@ import 'package:scholaris/features/home/presentation/widgets/student_tab_entranc
 // lib/features/scholarships/screens/discover_screen.dart
 //
 // Student Core Flow — Stitch Discover Screen (scholaris_discover_filters/code.html):
-// - Sticky Top Bar with Scholaris logo badge, Notification bell with gold dot, and Profile Avatar
+// - Sticky top bar with Scholaris logo, notifications, and account settings
 // - Search & Active Filter Bar (Search input + "Filters" button with active count badge)
 // - Filter Chips Horizontal Carousel (All Matches, Match >90%, Deadline < 14 Days, No Essay, ₱50k - ₱150k+, Need-Based)
-// - Applied Criteria Quick-Bar ("Active: STEM • Undergrad • Need-Based • EFC < ₱50k" + "Edit" action)
-// - Opportunity Feed Header ("Verified Matches", "Showing N targeted opportunities for Maya", "Highest Match %" sort selector)
+// - Compact Matched for you heading; sorting remains in Filters
 // - Feed Cards Container (rebuilt ScholarshipCard components with full Stitch anatomy)
 // - Deduplicated Browse Section
 // - Editorial End-of-Feed Helper Card ("Looking for more niche grants?")
@@ -19,11 +18,8 @@ import 'package:scholaris/features/applications/models/application.dart';
 import 'package:scholaris/features/applications/providers/applications_provider.dart';
 import 'package:scholaris/features/applications/services/application_filters.dart';
 import 'package:scholaris/features/bookmarks/providers/bookmarks_provider.dart';
-import 'package:scholaris/features/home/presentation/home_screen.dart';
-import 'package:scholaris/features/profile/models/student_profile.dart';
-import 'package:scholaris/features/profile/presentation/widgets/avatar_display.dart';
-import 'package:scholaris/features/profile/providers/avatar_provider.dart';
-import 'package:scholaris/features/dashboard/presentation/widgets/student_notifications_sheet.dart';
+import 'package:scholaris/shared/widgets/student_header_actions.dart';
+
 import 'package:scholaris/features/profile/providers/profile_setup_provider.dart';
 import 'package:scholaris/features/scholarships/models/scholarship.dart';
 import 'package:scholaris/features/scholarships/presentation/discovery_filter_sheet.dart';
@@ -41,7 +37,15 @@ import 'package:scholaris/shared/widgets/section_header.dart';
 import 'package:scholaris/shared/widgets/state_views.dart';
 
 class DiscoverScreen extends ConsumerStatefulWidget {
-  const DiscoverScreen({super.key});
+  const DiscoverScreen({
+    super.key,
+    this.scrollController,
+    this.detailsGuideKey,
+    this.endGuideKey,
+  });
+  final ScrollController? scrollController;
+  final GlobalKey? detailsGuideKey;
+  final GlobalKey? endGuideKey;
 
   @override
   ConsumerState<DiscoverScreen> createState() => _DiscoverScreenState();
@@ -52,8 +56,6 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final profileAsync = ref.watch(currentProfileProvider);
-    final profile = profileAsync.valueOrNull;
     final filteredMatches = ref.watch(filteredMatchesProvider);
     final filteredBrowse = ref.watch(filteredBrowseProvider);
     final bookmarkIds =
@@ -62,12 +64,6 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
       ref.watch(applicationsProvider).valueOrNull ?? const <Application>[],
     );
     final state = ref.watch(discoveryFilterProvider);
-    final avatarState = ref.watch(currentAvatarProvider);
-
-    final firstName = profile?.fullName.trim().split(' ').first;
-    final studentName = (firstName != null && firstName.isNotEmpty)
-        ? firstName
-        : 'you';
 
     final matchesList = filteredMatches.valueOrNull ?? const <Scholarship>[];
     final totalOpportunities = matchesList.length;
@@ -88,6 +84,7 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
               ref.invalidate(bookmarksProvider);
             },
             child: ListView(
+              controller: widget.scrollController,
               physics: const AppleBouncingScrollPhysics(),
               padding: EdgeInsets.fromLTRB(
                 20,
@@ -97,52 +94,50 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
               ),
               children: [
                 // 1. Sticky Header
-                StudentTabReveal(order: 0,
+                StudentTabReveal(
+                  order: 0,
                   immediate: true,
-                  child: _buildHeader(context, ref, avatarState)),
+                  child: _buildHeader(context),
+                ),
                 const SizedBox(height: 16),
 
                 // 2. Search & Active Filter Bar
-                StudentTabReveal(order: 1,
+                StudentTabReveal(
+                  order: 1,
                   structural: true,
-                  child: _buildSearchBar(context, ref)),
+                  child: _buildSearchBar(context, ref),
+                ),
                 const SizedBox(height: 12),
 
                 // 3. Filter Chips Horizontal Carousel
-                StudentTabReveal(order: 1,
+                StudentTabReveal(
+                  order: 1,
                   structural: true,
                   child: _buildFilterChipsCarousel(
-                  context,
-                  ref,
-                  state,
-                  totalOpportunities,
-                )),
-                const SizedBox(height: 12),
-
-                // 4. Applied Criteria Quick-Bar
-                StudentTabReveal(order: 1,
-                  structural: true,
-                  child: _buildAppliedCriteriaQuickBar(context, ref, profile, state)),
+                    context,
+                    ref,
+                    state,
+                    totalOpportunities,
+                  ),
+                ),
 
                 if (state.isActive) ...[
                   const SizedBox(height: 12),
-                  StudentTabReveal(order: 1,
+                  StudentTabReveal(
+                    order: 1,
                     structural: true,
-                    child: _buildActiveFilterChips(context, ref, state)),
+                    child: _buildActiveFilterChips(context, ref, state),
+                  ),
                 ],
-                const SizedBox(height: 20),
+                const SizedBox(height: 16),
 
                 // 5. Opportunity Feed Header
-                StudentTabReveal(order: 2,
+                StudentTabReveal(
+                  order: 2,
                   structural: true,
-                  child: _buildFeedHeader(
-                  context,
-                  ref,
-                  totalOpportunities,
-                  studentName,
-                  state.sort,
-                )),
-                const SizedBox(height: 16),
+                  child: _buildFeedHeader(),
+                ),
+                const SizedBox(height: 12),
 
                 // 6. Feed Cards Container
                 KeyedSubtree(
@@ -170,7 +165,13 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
                 const SizedBox(height: 28),
 
                 // 8. Editorial End-of-Feed Helper Card
-                StudentTabReveal(order: 6, child: _buildEditorialHelperCard(context)),
+                KeyedSubtree(
+                  key: widget.endGuideKey,
+                  child: StudentTabReveal(
+                    order: 6,
+                    child: _buildEditorialHelperCard(context),
+                  ),
+                ),
               ],
             ),
           ),
@@ -180,114 +181,61 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
   }
 
   // --- 1. Sticky Top Bar ---
-  Widget _buildHeader(
-    BuildContext context,
-    WidgetRef ref,
-    AvatarState avatarState,
-  ) {
+  Widget _buildHeader(BuildContext context) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         // Scholaris Brand Logo
-        Expanded(child: StudentTabReveal(
-          order: 0,
-          immediate: true,
-          child: FittedBox(fit: BoxFit.scaleDown, alignment: Alignment.centerLeft, child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Container(
-              width: 36,
-              height: 36,
-              decoration: BoxDecoration(
-                color: const Color(0xFF0F4D2E), // primary-container
-                borderRadius: BorderRadius.circular(12),
-                boxShadow: [
-                  BoxShadow(
-                    color: const Color(0xFF0F4D2E).withValues(alpha: 0.15),
-                    blurRadius: 6,
-                    offset: const Offset(0, 2),
+        Expanded(
+          child: StudentTabReveal(
+            order: 0,
+            immediate: true,
+            child: FittedBox(
+              fit: BoxFit.scaleDown,
+              alignment: Alignment.centerLeft,
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Container(
+                    width: 36,
+                    height: 36,
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF0F4D2E), // primary-container
+                      borderRadius: BorderRadius.circular(12),
+                      boxShadow: [
+                        BoxShadow(
+                          color: const Color(0xFF0F4D2E)
+                              .withValues(alpha: 0.15),
+                          blurRadius: 6,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
+                    ),
+                    child: const Center(
+                      child: Icon(
+                        Icons.school_rounded,
+                        size: 20,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Text(
+                    'Scholaris',
+                    style: outfit(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: const Color(0xFF161C27),
+                      letterSpacing: -0.5,
+                    ),
                   ),
                 ],
               ),
-              child: const Center(
-                child: Icon(
-                  Icons.school_rounded,
-                  size: 20,
-                  color: Colors.white,
-                ),
-              ),
             ),
-            const SizedBox(width: 8),
-            Text(
-              'Scholaris',
-              style: outfit(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-                color: const Color(0xFF161C27),
-                letterSpacing: -0.5,
-              ),
-            ),
-          ],
-          )),
-        )),
-
-        // Notifications Bell & Profile Avatar
-        Row(
-          children: [
-            Stack(
-              clipBehavior: Clip.none,
-              children: [
-                IconButton(
-                  tooltip: 'Notifications',
-                  icon: const Icon(
-                    Icons.notifications_none_rounded,
-                    size: 24,
-                    color: Color(0xFF161C27),
-                  ),
-                  onPressed: () {
-                    showStudentNotificationsSheet(context);
-                  },
-                ),
-                Positioned(
-                  top: 10,
-                  right: 10,
-                  child: Container(
-                    width: 8,
-                    height: 8,
-                    decoration: BoxDecoration(
-                      color: const Color(0xFFFABC28), // tertiary-fixed-dim
-                      shape: BoxShape.circle,
-                      border: Border.all(color: Colors.white, width: 1.5),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(width: 4),
-
-            GestureDetector(
-              onTap: () {
-                ref.read(homeTabIndexProvider.notifier).selectTab(3);
-              },
-              child: Container(
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  border: Border.all(
-                    color: const Color(0xFFE2E8F9),
-                    width: 1.5,
-                  ),
-                ),
-                child: AvatarDisplay(
-                  avatarId: avatarState.avatarId,
-                  isRealPhoto: avatarState.isRealPhoto,
-                  photoPath: avatarState.photoPath,
-                  size: 32,
-                  showVerifiedBadge: false,
-                ),
-              ),
-            ),
-          ],
+          ),
         ),
+
+        const StudentHeaderActions(),
       ],
     );
   }
@@ -298,9 +246,7 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
       children: [
         const Expanded(child: _SearchField()),
         const SizedBox(width: 8),
-        _FilterButton(
-          onPressed: () => showDiscoveryFilterSheet(context),
-        ),
+        _FilterButton(onPressed: () => showDiscoveryFilterSheet(context)),
       ],
     );
   }
@@ -392,101 +338,6 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
     );
   }
 
-  // --- 4. Applied Criteria Quick-Bar ---
-  Widget _buildAppliedCriteriaQuickBar(
-    BuildContext context,
-    WidgetRef ref,
-    StudentProfile? profile,
-    DiscoveryFilterState state,
-  ) {
-    final items = <String>[];
-    if (profile != null) {
-      if (profile.course.isNotEmpty) {
-        items.add(profile.course);
-      }
-      items.add('College Yr ${profile.yearLevel}');
-      if (profile.region.isNotEmpty) {
-        items.add(profile.region);
-      }
-      if (profile.gpa > 0) {
-        items.add('GPA ${profile.gpa.toStringAsFixed(1)}+');
-      }
-      if (profile.monthlyFamilyIncome != null &&
-          profile.monthlyFamilyIncome! <= 20000) {
-        items.add('Need-Based');
-      }
-    }
-    if (state.incomeBracket != null) {
-      items.add('Income: ${incomeLabel(state.incomeBracket)}');
-    }
-    if (state.closingSoonOnly) {
-      items.add('Closing Soon (<14d)');
-    }
-    final criteriaSummary = items.isNotEmpty
-        ? items.join(' • ')
-        : 'All Fields • General Eligibility';
-
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 11),
-      decoration: BoxDecoration(
-        color: const Color(0xFFF0F0F0), // surface-container-low
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: const Color(0xFFDDE2F3)),
-      ),
-      child: Row(
-        children: [
-          const Icon(
-            Icons.verified_rounded,
-            size: 18,
-            color: Color(0xFF436084), // secondary
-          ),
-          const SizedBox(width: 8),
-          Expanded(
-            child: RichText(
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              text: TextSpan(
-                style: openSans(
-                  fontSize: 12,
-                  color: const Color(0xFF404942),
-                ),
-                children: [
-                  TextSpan(
-                    text: 'Active: ',
-                    style: outfit(
-                      fontWeight: FontWeight.bold,
-                      color: const Color(0xFF161C27),
-                    ),
-                  ),
-                  TextSpan(text: criteriaSummary),
-                ],
-              ),
-            ),
-          ),
-          const SizedBox(width: 8),
-          InkWell(
-            borderRadius: BorderRadius.circular(4),
-            onTap: () => showDiscoveryFilterSheet(context),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
-              child: ConstrainedBox(
-                constraints: const BoxConstraints(minWidth: 44, minHeight: 44),
-                child: Center(child: Text(
-                'Edit',
-                style: outfit(
-                  fontSize: 12,
-                  fontWeight: FontWeight.bold,
-                  color: const Color(0xFF436084),
-                ),
-              )),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
   // --- Active Filter Removable Chips ---
   Widget _buildActiveFilterChips(
     BuildContext context,
@@ -497,50 +348,56 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
 
     if (state.query.trim().isNotEmpty) {
       final label = state.query.trim();
-      chips.add(_ActiveFilterChip(
-        key: ValueKey('filter-chip-$label'),
-        label: label,
-        onRemove: () => ref.read(discoveryFilterProvider.notifier).setQuery(''),
-      ));
+      chips.add(
+        _ActiveFilterChip(
+          key: ValueKey('filter-chip-$label'),
+          label: label,
+          onRemove: () =>
+              ref.read(discoveryFilterProvider.notifier).setQuery(''),
+        ),
+      );
     }
 
     if (state.incomeBracket != null) {
       final label = 'Income: ${incomeLabel(state.incomeBracket)}';
-      chips.add(_ActiveFilterChip(
-        key: ValueKey('filter-chip-$label'),
-        label: label,
-        onRemove: () =>
-            ref.read(discoveryFilterProvider.notifier).setIncomeBracket(null),
-      ));
+      chips.add(
+        _ActiveFilterChip(
+          key: ValueKey('filter-chip-$label'),
+          label: label,
+          onRemove: () =>
+              ref.read(discoveryFilterProvider.notifier).setIncomeBracket(null),
+        ),
+      );
     }
 
     for (final region in state.regions) {
-      chips.add(_ActiveFilterChip(
-        key: ValueKey('filter-chip-$region'),
-        label: region,
-        onRemove: () =>
-            ref.read(discoveryFilterProvider.notifier).toggleRegion(region),
-      ));
+      chips.add(
+        _ActiveFilterChip(
+          key: ValueKey('filter-chip-$region'),
+          label: region,
+          onRemove: () =>
+              ref.read(discoveryFilterProvider.notifier).toggleRegion(region),
+        ),
+      );
     }
 
     if (state.closingSoonOnly) {
       const label = 'Closing soon';
-      chips.add(_ActiveFilterChip(
-        key: const ValueKey('filter-chip-Closing soon'),
-        label: label,
-        onRemove: () =>
-            ref.read(discoveryFilterProvider.notifier).setClosingSoonOnly(false),
-      ));
+      chips.add(
+        _ActiveFilterChip(
+          key: const ValueKey('filter-chip-Closing soon'),
+          label: label,
+          onRemove: () => ref
+              .read(discoveryFilterProvider.notifier)
+              .setClosingSoonOnly(false),
+        ),
+      );
     }
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Wrap(
-          spacing: 8,
-          runSpacing: 8,
-          children: chips,
-        ),
+        Wrap(spacing: 8, runSpacing: 8, children: chips),
         const SizedBox(height: 4),
         Align(
           alignment: Alignment.centerRight,
@@ -561,108 +418,15 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
   }
 
   // --- 5. Opportunity Feed Header ---
-  Widget _buildFeedHeader(
-    BuildContext context,
-    WidgetRef ref,
-    int count,
-    String studentName,
-    DiscoverySort currentSort,
-  ) {
-    final sortLabel = currentSort == DiscoverySort.highestAmount
-        ? 'Highest Amount'
-        : 'Soonest Deadline';
-    final stacked = MediaQuery.sizeOf(context).width < 380 ||
-        MediaQuery.textScalerOf(context).scale(12) > 14;
-    final heading = Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'Matched for you',
-                style: outfit(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: const Color(0xFF161C27),
-                  letterSpacing: -0.3,
-                ),
-              ),
-              const SizedBox(height: 2),
-              Text(
-                'Showing $count targeted opportunities for $studentName',
-                maxLines: stacked ? null : 2,
-                overflow: stacked ? TextOverflow.visible : TextOverflow.ellipsis,
-                style: openSans(
-                  fontSize: 13,
-                  fontWeight: FontWeight.w600,
-                  height: 1.4,
-                  color: const Color(0xFF404942),
-                ),
-              ),
-            ],
-          );
-    final sortButton = PopupMenuButton<DiscoverySort>(
-          tooltip: 'Sort scholarships',
-          initialValue: currentSort,
-          onSelected: (sort) {
-            ref.read(discoveryFilterProvider.notifier).setSort(sort);
-          },
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-          itemBuilder: (_) => [
-            const PopupMenuItem(
-              value: DiscoverySort.defaultSort,
-              child: Text('Soonest Deadline'),
-            ),
-            const PopupMenuItem(
-              value: DiscoverySort.highestAmount,
-              child: Text('Highest Amount'),
-            ),
-          ],
-          child: Container(
-            constraints: const BoxConstraints(minHeight: 44),
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(8),
-              border: Border.all(color: const Color(0xFFE2E8E5)),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.04),
-                  blurRadius: 4,
-                  offset: const Offset(0, 2),
-                ),
-              ],
-            ),
-            child: FittedBox(
-              fit: BoxFit.scaleDown,
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    sortLabel,
-                    style: outfit(
-                      fontSize: 11.5,
-                      fontWeight: FontWeight.w600,
-                      color: const Color(0xFF161C27),
-                    ),
-                  ),
-                  const SizedBox(width: 2),
-                  const Icon(
-                    Icons.expand_more_rounded,
-                    size: 16,
-                    color: Color(0xFF404942),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        );
-    return stacked
-        ? Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            heading, const SizedBox(height: 8), sortButton,
-          ])
-        : Row(crossAxisAlignment: CrossAxisAlignment.end, children: [
-            Expanded(child: heading), const SizedBox(width: 8), sortButton,
-          ]);
-  }
+  Widget _buildFeedHeader() => Text(
+    'Matched for you',
+    style: outfit(
+      fontSize: 18,
+      fontWeight: FontWeight.bold,
+      color: const Color(0xFF161C27),
+      letterSpacing: -0.3,
+    ),
+  );
 
   // --- 6. Feed Cards Container ---
   Widget _buildMatchesSection(
@@ -675,54 +439,65 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
     DiscoveryFilterState state,
   ) {
     return matchesAsync.when(
-        loading: () => StudentTabReveal(order: 3, child: _buildDiscoverSkeleton()),
-        error: (err, _) => StudentTabReveal(order: 3, child: ErrorView(
+      loading: () =>
+          StudentTabReveal(order: 3, child: _buildDiscoverSkeleton()),
+      error: (err, _) => StudentTabReveal(
+        order: 3,
+        child: ErrorView(
           message: 'Could not load your matches.',
           onRetry: () => ref.invalidate(matchesProvider),
-        )),
-        data: (matches) {
-          final browse = browseAsync.valueOrNull ?? const <Scholarship>[];
-          if (matches.isEmpty && browse.isEmpty) {
-            return StudentTabReveal(order: 3, child: _buildNoResultsEmptyState(context, ref));
-          }
-          if (matches.isEmpty) {
-            return StudentTabReveal(order: 3, child: _buildMatchesEmptyNote(context, ref, state));
-          }
-
-          final profile = ref.watch(currentProfileProvider).valueOrNull;
-
-          return ListView.separated(
-            shrinkWrap: true,
-            padding: EdgeInsets.zero,
-            physics: const NeverScrollableScrollPhysics(),
-            itemCount: matches.length,
-            separatorBuilder: (_, _) => const SizedBox(height: 14),
-            itemBuilder: (context, index) {
-              final scholarship = matches[index];
-              final reasons = profile != null
-                  ? matchReasonsFor(profile, scholarship)
-                  : const <String>[];
-              return StudentTabReveal(
-                order: 1 + index,
-                child: ScholarshipCard(
-                  scholarship: scholarship,
-                  studentProfile: profile,
-                  reasons: reasons,
-                  isBookmarked: bookmarkIds.contains(scholarship.id),
-                  isApplied: appliedIds.contains(scholarship.id),
-                  onToggleBookmark: () => _toggleBookmark(ref, scholarship.id),
-                  onQuickApply: () {
-                    context.push(
-                      '/scholarship/${scholarship.id}?apply=1',
-                      extra: scholarship,
-                    );
-                  },
-                ),
-              );
-            },
+        ),
+      ),
+      data: (matches) {
+        final browse = browseAsync.valueOrNull ?? const <Scholarship>[];
+        if (matches.isEmpty && browse.isEmpty) {
+          return StudentTabReveal(
+            order: 3,
+            child: _buildNoResultsEmptyState(context, ref),
           );
-        },
-      );
+        }
+        if (matches.isEmpty) {
+          return StudentTabReveal(
+            order: 3,
+            child: _buildMatchesEmptyNote(context, ref, state),
+          );
+        }
+
+        final profile = ref.watch(currentProfileProvider).valueOrNull;
+
+        return ListView.separated(
+          shrinkWrap: true,
+          padding: EdgeInsets.zero,
+          physics: const NeverScrollableScrollPhysics(),
+          itemCount: matches.length,
+          separatorBuilder: (_, _) => const SizedBox(height: 14),
+          itemBuilder: (context, index) {
+            final scholarship = matches[index];
+            final reasons = profile != null
+                ? matchReasonsFor(profile, scholarship)
+                : const <String>[];
+            return StudentTabReveal(
+              order: 1 + index,
+              child: ScholarshipCard(
+                viewDetailsKey: index == 0 ? widget.detailsGuideKey : null,
+                scholarship: scholarship,
+                studentProfile: profile,
+                reasons: reasons,
+                isBookmarked: bookmarkIds.contains(scholarship.id),
+                isApplied: appliedIds.contains(scholarship.id),
+                onToggleBookmark: () => _toggleBookmark(ref, scholarship.id),
+                onQuickApply: () {
+                  context.push(
+                    '/scholarship/${scholarship.id}?apply=1',
+                    extra: scholarship,
+                  );
+                },
+              ),
+            );
+          },
+        );
+      },
+    );
   }
 
   Widget _buildDiscoverSkeleton() {
@@ -772,24 +547,32 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
   ) {
     return browseAsync.when(
       loading: () => const SizedBox.shrink(),
-      error: (err, _) => StudentTabReveal(order: 3, child: ErrorView(
-        message: 'Could not load the scholarship catalog.',
-        onRetry: () => ref.invalidate(scholarshipsProvider),
-      )),
+      error: (err, _) => StudentTabReveal(
+        order: 3,
+        child: ErrorView(
+          message: 'Could not load the scholarship catalog.',
+          onRetry: () => ref.invalidate(scholarshipsProvider),
+        ),
+      ),
       data: (browse) {
         if (browse.isEmpty) return const SizedBox.shrink();
 
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            StudentTabReveal(order: 2,
+            StudentTabReveal(
+              order: 2,
               structural: true,
-              child: SectionHeader(title: 'Browse all scholarships')),
+              child: SectionHeader(title: 'Browse all scholarships'),
+            ),
             const SizedBox(height: 4),
-            StudentTabReveal(order: 0, child: Text(
-              'Showing ${browse.length} scholarships',
-              style: openSans(fontSize: 13, color: const Color(0xFF404942)),
-            )),
+            StudentTabReveal(
+              order: 0,
+              child: Text(
+                'Showing ${browse.length} scholarships',
+                style: openSans(fontSize: 13, color: const Color(0xFF404942)),
+              ),
+            ),
             const SizedBox(height: 12),
             ListView.separated(
               shrinkWrap: true,
@@ -801,10 +584,22 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
                 order: 1 + i,
                 child: ScholarshipCard(
                   scholarship: browse[i],
+                  viewDetailsKey:
+                      i == 0 &&
+                          (ref
+                                  .watch(filteredMatchesProvider)
+                                  .valueOrNull
+                                  ?.isEmpty ??
+                              false)
+                      ? widget.detailsGuideKey
+                      : null,
                   studentProfile: ref.watch(currentProfileProvider).valueOrNull,
                   reasons: ref.watch(currentProfileProvider).valueOrNull == null
                       ? const []
-                      : matchReasonsFor(ref.watch(currentProfileProvider).valueOrNull!, browse[i]),
+                      : matchReasonsFor(
+                          ref.watch(currentProfileProvider).valueOrNull!,
+                          browse[i],
+                        ),
                   isBookmarked: bookmarkIds.contains(browse[i].id),
                   isApplied: appliedIds.contains(browse[i].id),
                   onToggleBookmark: () => _toggleBookmark(ref, browse[i].id),
@@ -875,10 +670,15 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
             child: ElevatedButton(
               onPressed: () => showDiscoveryFilterSheet(context),
               style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF436084), // secondary Slate Navy
+                backgroundColor: const Color(
+                  0xFF436084,
+                ), // secondary Slate Navy
                 foregroundColor: Colors.white,
                 elevation: 0,
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 12,
+                ),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10),
                 ),
@@ -892,10 +692,7 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
                     const SizedBox(width: 8),
                     Text(
                       'Update Eligibility Filters',
-                      style: outfit(
-                        fontSize: 13,
-                        fontWeight: FontWeight.bold,
-                      ),
+                      style: outfit(fontSize: 13, fontWeight: FontWeight.bold),
                     ),
                   ],
                 ),
@@ -927,10 +724,7 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const MascotPoseView(
-              pose: MascotPose.confused,
-              height: 110,
-            ),
+            const MascotPoseView(pose: MascotPose.confused, height: 110),
             const SizedBox(height: 16),
             Text(
               'No scholarships found',
@@ -953,12 +747,16 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
             ),
             const SizedBox(height: 18),
             ElevatedButton(
-              onPressed: () => ref.read(discoveryFilterProvider.notifier).reset(),
+              onPressed: () =>
+                  ref.read(discoveryFilterProvider.notifier).reset(),
               style: ElevatedButton.styleFrom(
                 backgroundColor: kPrimary,
                 foregroundColor: Colors.white,
                 elevation: 0,
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 20,
+                  vertical: 12,
+                ),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10),
                 ),
@@ -1042,10 +840,7 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
           ),
           child: Column(
             children: [
-              const MascotPoseView(
-                pose: MascotPose.consoling,
-                height: 110,
-              ),
+              const MascotPoseView(pose: MascotPose.consoling, height: 110),
               const SizedBox(height: 14),
               Text(
                 'No matches found for your profile yet',
@@ -1073,7 +868,10 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
                   backgroundColor: kPrimary,
                   foregroundColor: Colors.white,
                   elevation: 0,
-                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 20,
+                    vertical: 12,
+                  ),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10),
                   ),
@@ -1119,8 +917,10 @@ class _SearchFieldState extends ConsumerState<_SearchField> {
   void initState() {
     super.initState();
     _controller.text = ref.read(discoveryFilterProvider).query;
-    ref.listenManual<DiscoveryFilterState>(discoveryFilterProvider,
-        (prev, next) {
+    ref.listenManual<DiscoveryFilterState>(discoveryFilterProvider, (
+      prev,
+      next,
+    ) {
       if (_controller.text != next.query) {
         _controller.text = next.query;
       }
@@ -1159,8 +959,10 @@ class _SearchFieldState extends ConsumerState<_SearchField> {
           ),
           filled: true,
           fillColor: Colors.transparent,
-          contentPadding:
-              const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 14,
+            vertical: 12,
+          ),
           border: InputBorder.none,
           enabledBorder: InputBorder.none,
           focusedBorder: InputBorder.none,
@@ -1198,56 +1000,58 @@ class _FilterButton extends ConsumerWidget {
             child: Container(
               height: 48,
               padding: const EdgeInsets.symmetric(horizontal: 14),
-            alignment: Alignment.center,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(12),
-              border: kCardBorderCrisp,
-        boxShadow: kCardElevationCrisp,
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const Icon(
-                  Icons.tune_rounded,
-                  color: Color(0xFF436084),
-                  size: 20,
-                ),
-                const SizedBox(width: 5),
-                Text(
-                  'Filter',
-                  style: outfit(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w600,
-                    color: const Color(0xFF436084),
+              alignment: Alignment.center,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(12),
+                border: kCardBorderCrisp,
+                boxShadow: kCardElevationCrisp,
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Icon(
+                    Icons.tune_rounded,
+                    color: Color(0xFF436084),
+                    size: 20,
                   ),
-                ),
-                if (count > 0) ...[
                   const SizedBox(width: 5),
-                  Container(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 6, vertical: 1.5),
-                    decoration: BoxDecoration(
-                      color: const Color(0xFF0F4D2E), // primary-container
-                      borderRadius: BorderRadius.circular(20),
+                  Text(
+                    'Filter',
+                    style: outfit(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w600,
+                      color: const Color(0xFF436084),
                     ),
-                    child: Text(
-                      '$count',
-                      style: outfit(
-                        fontSize: 10,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
+                  ),
+                  if (count > 0) ...[
+                    const SizedBox(width: 5),
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 6,
+                        vertical: 1.5,
+                      ),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFF0F4D2E), // primary-container
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Text(
+                        '$count',
+                        style: outfit(
+                          fontSize: 10,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
                       ),
                     ),
-                  ),
+                  ],
                 ],
-              ],
+              ),
             ),
           ),
         ),
       ),
-    ),
-  );
-}
+    );
+  }
 }
 
 class _StitchCarouselChip extends StatelessWidget {
@@ -1350,7 +1154,9 @@ class _ActiveFilterChip extends StatelessWidget {
       decoration: BoxDecoration(
         color: const Color(0xFFF0F0F0),
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: const Color(0xFF0F4D2E).withValues(alpha: 0.25)),
+        border: Border.all(
+          color: const Color(0xFF0F4D2E).withValues(alpha: 0.25),
+        ),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -1376,7 +1182,11 @@ class _ActiveFilterChip extends StatelessWidget {
                   width: 36,
                   height: 36,
                   child: Center(
-                    child: Icon(Icons.close, size: 14, color: Color(0xFF0F4D2E)),
+                    child: Icon(
+                      Icons.close,
+                      size: 14,
+                      color: Color(0xFF0F4D2E),
+                    ),
                   ),
                 ),
               ),

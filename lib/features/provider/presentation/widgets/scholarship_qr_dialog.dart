@@ -6,7 +6,6 @@
 import 'package:scholaris/shared/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
 import '../../../../shared/theme/app_motion.dart';
@@ -135,7 +134,7 @@ class _ScholarshipQrDialogState extends State<_ScholarshipQrDialog> {
                         _qrPayload,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: GoogleFonts.sourceCodePro(
+                        style: geist(
                           fontSize: 11,
                           color: const Color(0xFF404942),
                         ),

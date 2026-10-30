@@ -164,6 +164,7 @@ Widget buildApp({bool? individualPreview}) {
         child: child!,
       ),
       theme: ThemeData(
+        fontFamily: 'Geist',
         colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF0F4D2E)),
       ),
       home: showAdminSupport

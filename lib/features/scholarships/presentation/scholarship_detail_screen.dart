@@ -82,17 +82,37 @@ extension ScholarshipCapacityFullExt on ScholarshipCapacity {
       !isUncapped && totalSlots != null && (remainingSlots ?? 0) <= 0;
 }
 
+/// Presentation hooks for guiding the real detail screen without submitting.
+class ScholarshipDetailTourHooks {
+  const ScholarshipDetailTourHooks({
+    required this.scrollController,
+    required this.backToTopKey,
+    required this.applyKey,
+    required this.onBackToTop,
+    required this.onApply,
+    required this.onExit,
+  });
+  final ScrollController scrollController;
+  final GlobalKey backToTopKey;
+  final GlobalKey applyKey;
+  final VoidCallback onBackToTop;
+  final VoidCallback onApply;
+  final VoidCallback onExit;
+}
+
 class ScholarshipDetailScreen extends ConsumerStatefulWidget {
   const ScholarshipDetailScreen({
     super.key,
     required this.scholarshipId,
     this.initial,
     this.startApplication = false,
+    this.tour,
   });
 
   final String scholarshipId;
   final Scholarship? initial;
   final bool startApplication;
+  final ScholarshipDetailTourHooks? tour;
 
   @override
   ConsumerState<ScholarshipDetailScreen> createState() =>
@@ -128,7 +148,7 @@ class _ScholarshipDetailScreenState
         surfaceTintColor: Colors.transparent,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_rounded, color: kOnSurface),
-          onPressed: () {
+          onPressed: widget.tour?.onExit ?? () {
             if (context.canPop()) {
               context.pop();
             } else {
@@ -172,7 +192,7 @@ class _ScholarshipDetailScreenState
         actions: [
           IconButton(
             tooltip: 'View QR Code',
-            onPressed: () {
+            onPressed: widget.tour != null ? null : () {
               final s = widget.initial ??
                   ref.read(scholarshipByIdProvider(widget.scholarshipId)).valueOrNull;
               if (s != null) {
@@ -187,7 +207,7 @@ class _ScholarshipDetailScreenState
           ),
           IconButton(
             tooltip: 'Share scholarship',
-            onPressed: () {
+            onPressed: widget.tour != null ? null : () {
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(content: Text('Scholarship link copied to clipboard.')),
               );
@@ -200,17 +220,25 @@ class _ScholarshipDetailScreenState
           ),
           IconButton(
             tooltip: saved ? 'Remove from saved' : 'Save this scholarship',
-            onPressed: saved ? _unbookmark : _bookmark,
+            onPressed: widget.tour != null
+                ? null
+                : saved ? _unbookmark : _bookmark,
             icon: Icon(
               saved ? Icons.bookmark_rounded : Icons.bookmark_border_rounded,
               size: 22,
               color: saved ? kAccent : kOnSurface,
             ),
           ),
-          StudentSafetyReportButton(
-            scholarshipId: widget.scholarshipId,
-            scholarshipTitle: widget.initial?.title ?? 'Scholarship',
-            isIconOnly: true,
+          IgnorePointer(
+            ignoring: widget.tour != null,
+            child: ExcludeFocus(
+              excluding: widget.tour != null,
+              child: StudentSafetyReportButton(
+                scholarshipId: widget.scholarshipId,
+                scholarshipTitle: widget.initial?.title ?? 'Scholarship',
+                isIconOnly: true,
+              ),
+            ),
           ),
           const SizedBox(width: 4),
         ],
@@ -227,7 +255,8 @@ class _ScholarshipDetailScreenState
         saved: saved,
         checklistKey: _checklistKey,
         onScrollToChecklist: _scrollToChecklist,
-        startApplication: widget.startApplication,
+        startApplication: widget.startApplication && widget.tour == null,
+        tour: widget.tour,
       );
     }
 
@@ -249,7 +278,8 @@ class _ScholarshipDetailScreenState
                   saved: saved,
                   checklistKey: _checklistKey,
                   onScrollToChecklist: _scrollToChecklist,
-                  startApplication: widget.startApplication,
+                  startApplication: widget.startApplication && widget.tour == null,
+                  tour: widget.tour,
                 ),
         );
   }
@@ -296,6 +326,7 @@ class _DetailContent extends ConsumerWidget {
     required this.checklistKey,
     required this.onScrollToChecklist,
     required this.startApplication,
+    this.tour,
   });
 
   final Scholarship scholarship;
@@ -303,6 +334,7 @@ class _DetailContent extends ConsumerWidget {
   final GlobalKey checklistKey;
   final VoidCallback onScrollToChecklist;
   final bool startApplication;
+  final ScholarshipDetailTourHooks? tour;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -314,6 +346,7 @@ class _DetailContent extends ConsumerWidget {
     final reasons = _matchReasons(ref);
 
     return ListView(
+      controller: tour?.scrollController,
       physics: const AppleBouncingScrollPhysics(),
       padding: const EdgeInsets.fromLTRB(20, 4, 20, 48),
       children: [
@@ -353,6 +386,7 @@ class _DetailContent extends ConsumerWidget {
           child: _ApplySection(
             scholarship: scholarship,
             onScrollToChecklist: onScrollToChecklist,
+            tour: tour,
           ),
         ),
         if (!startApplication) const SizedBox(height: 14),
@@ -389,7 +423,13 @@ class _DetailContent extends ConsumerWidget {
         // 6. Application Materials & Requirements
         StaggeredListItem(
           index: 7,
-          child: _ApplicationMaterialsCard(scholarshipId: scholarship.id),
+          child: AbsorbPointer(
+            absorbing: tour != null,
+            child: ExcludeFocus(
+              excluding: tour != null,
+              child: _ApplicationMaterialsCard(scholarshipId: scholarship.id),
+            ),
+          ),
         ),
         const SizedBox(height: 20),
 
@@ -400,8 +440,10 @@ class _DetailContent extends ConsumerWidget {
         ),
         const SizedBox(height: 20),
         Builder(builder: (context) => OutlinedButton.icon(
-          onPressed: () {
-            Scrollable.of(context).position.animateTo(0, duration: kDurationSlow, curve: kAppleSpringCurve);
+          key: tour?.backToTopKey,
+          onPressed: () async {
+            await Scrollable.of(context).position.animateTo(0, duration: kDurationSlow, curve: kAppleSpringCurve);
+            tour?.onBackToTop();
           },
           icon: const Icon(Icons.arrow_upward_rounded),
           label: const Text('Back to top'),
@@ -2307,11 +2349,13 @@ class _ApplySection extends ConsumerStatefulWidget {
     required this.scholarship,
     required this.onScrollToChecklist,
     this.startApplication = false,
+    this.tour,
   });
 
   final Scholarship scholarship;
   final VoidCallback onScrollToChecklist;
   final bool startApplication;
+  final ScholarshipDetailTourHooks? tour;
 
   @override
   ConsumerState<_ApplySection> createState() => _ApplySectionState();
@@ -2554,6 +2598,8 @@ class _ApplySectionState extends ConsumerState<_ApplySection> {
 
   @override
   Widget build(BuildContext context) {
+    final tour = widget.tour;
+    if (tour != null) return _applyButtonRow(onPressed: tour.onApply);
     final applicationsAsync = ref.watch(applicationsProvider);
     if (widget.startApplication && !_autoStartConsumed) {
       final userId = ref.watch(currentUserIdProvider);
@@ -2764,7 +2810,7 @@ class _ApplySectionState extends ConsumerState<_ApplySection> {
                 label: 'Apply to this scholarship',
                 child: PressableScale(
                   child: ElevatedButton(
-                    key: const ValueKey('apply-now'),
+                    key: widget.tour?.applyKey ?? const ValueKey('apply-now'),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: kPrimaryContainer,
                       foregroundColor: Colors.white,

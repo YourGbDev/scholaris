@@ -190,3 +190,6 @@ Before contributing code, discuss the proposed change with the maintainer so wor
 ## License
 
 A project-level open-source license has not yet been selected. Public repository visibility alone does not grant permission to reuse or redistribute the project. Dependency and third-party asset licenses remain applicable.
+## Mandatory contributor and IPA build rules
+
+All contributors and build agents, including Archi, must follow [AGENTS.md](AGENTS.md). Every app-owned text surface uses bundled **Geist Sans** (`Geist`), and **every IPA must enable CAPTCHA**. Manual iOS workflow runs must explicitly use `captcha_enabled=true`; verify the compiled settings and report device CAPTCHA/login testing honestly. Never disable CAPTCHA to work around a login problem.

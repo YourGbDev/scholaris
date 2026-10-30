@@ -13,6 +13,9 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import 'package:scholaris/features/applications/providers/applications_provider.dart';
+import 'package:scholaris/features/account/presentation/account_settings_screen.dart';
+import 'package:scholaris/shared/widgets/student_header_actions.dart';
+import 'package:scholaris/shared/theme/app_theme.dart';
 import 'package:scholaris/features/applications/repositories/application_repository.dart';
 import 'package:scholaris/features/auth/controllers/auth_controller.dart';
 import 'package:scholaris/features/bookmarks/providers/bookmarks_provider.dart';
@@ -205,6 +208,26 @@ Finder _inClosingSoon(Finder inner) => find.descendant(
     );
 
 void main() {
+  for (final tab in ['Home', 'Discover']) {
+    testWidgets('$tab header Settings opens account settings', (tester) async {
+      await tester.pumpWidget(_wrap(child: const HomeScreen()));
+      await tester.pumpAndSettle();
+      if (tab == 'Discover') {
+        await tester.tap(find.text('Discover'));
+        await tester.pumpAndSettle();
+      }
+      expect(find.byType(StudentHeaderActions), findsOneWidget);
+      for (final tooltip in ['Notifications', 'Settings']) {
+        final button = find.byTooltip(tooltip);
+        expect(tester.getSize(button).shortestSide, greaterThanOrEqualTo(44));
+        expect(tester.widget<Icon>(find.descendant(of: button,
+          matching: find.byType(Icon))).color, kPrimary);
+      }
+      await tester.tap(find.byTooltip('Settings'));
+      await tester.pumpAndSettle();
+      expect(find.byType(AccountSettingsScreen), findsOneWidget);
+    });
+  }
   for (final gender in ['male', 'female']) {
   testWidgets('$gender hero keeps shared recommendations and a working Explore action', (tester) async {
     tester.view.physicalSize = const Size(390, 844);

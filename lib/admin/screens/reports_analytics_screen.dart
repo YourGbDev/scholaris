@@ -8,7 +8,6 @@
 import 'package:scholaris/shared/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:scholaris/features/admin/presentation/admin_home_screen.dart';
 import 'package:scholaris/features/admin/presentation/admin_theme.dart';
 import 'package:scholaris/shared/theme/app_motion.dart';
@@ -709,7 +708,7 @@ Widget _buildSkeletonLoader(BuildContext context) {
                                 ),
                                 Text(
                                   '${entry.targetType} · ${_truncateId(entry.targetId)}',
-                                  style: GoogleFonts.robotoMono(
+                                  style: geist(
                                     fontSize: 11,
                                     color: kSeqOnSurfaceVariant,
                                   ),
@@ -747,7 +746,7 @@ Widget _buildSkeletonLoader(BuildContext context) {
                           const SizedBox(height: 2),
                           Text(
                             '${entry.targetType} · ${_truncateId(entry.targetId)}',
-                            style: GoogleFonts.robotoMono(
+                            style: geist(
                               fontSize: 11,
                               color: kSeqOnSurfaceVariant,
                             ),

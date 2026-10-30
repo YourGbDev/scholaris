@@ -1190,8 +1190,8 @@ class _AccountSettingsScreenState extends ConsumerState<AccountSettingsScreen> {
             children: [
               _actionListTile(
                 icon: Icons.explore_outlined,
-                title: 'Replay app tour',
-                subtitle: 'Discover, Tracker, Profile, and quick actions',
+                title: 'Replay application guide',
+                subtitle: 'See the steps from scholarship details to Tracker',
                 trailingIcon: Icons.chevron_right_rounded,
                 onTap: () {
                   ref.read(studentTourReplayProvider.notifier).state++;

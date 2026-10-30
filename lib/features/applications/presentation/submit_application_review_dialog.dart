@@ -27,17 +27,33 @@ import 'package:scholaris/shared/theme/app_theme.dart';
 import 'package:scholaris/shared/utils/constants.dart';
 import 'package:scholaris/shared/widgets/save_draft_dialog.dart';
 
+/// Presentation hooks for the real review anatomy; callbacks never submit.
+class SubmitApplicationReviewTourHooks {
+  const SubmitApplicationReviewTourHooks({
+    required this.scrollController,
+    required this.confirmationsKey,
+    required this.submitKey,
+    this.onSubmit,
+  });
+  final ScrollController scrollController;
+  final GlobalKey confirmationsKey;
+  final GlobalKey submitKey;
+  final VoidCallback? onSubmit;
+}
+
 class SubmitApplicationReviewDialog extends ConsumerStatefulWidget {
   const SubmitApplicationReviewDialog({
     super.key,
     required this.scholarship,
     required this.onSaveDraft,
     this.initialCertificationsChecked = false,
+    this.tour,
   });
 
   final Scholarship scholarship;
   final Future<void> Function() onSaveDraft;
   final bool initialCertificationsChecked;
+  final SubmitApplicationReviewTourHooks? tour;
 
   static Future<bool?> show(
     BuildContext context, {
@@ -105,6 +121,7 @@ class _SubmitApplicationReviewDialogState
   bool get _allAffirmationsChecked => _cert1 && _cert2 && _cert3;
 
   Future<void> _handleExitIntent() async {
+    if (widget.tour != null) return;
     final action = await showSaveDraftExitDialog(context);
     if (!mounted) return;
     if (action == SaveDraftExitAction.saveAsDraft) {
@@ -123,6 +140,7 @@ class _SubmitApplicationReviewDialogState
   }
 
   Future<void> _handleSaveDraftDirectly() async {
+    if (widget.tour != null) return;
     setState(() => _isSavingDraft = true);
     try {
       await widget.onSaveDraft();
@@ -165,6 +183,7 @@ class _SubmitApplicationReviewDialogState
           // Scrollable Cards List (Cards 1 to 5)
           Expanded(
             child: SingleChildScrollView(
+              controller: widget.tour?.scrollController,
               padding: const EdgeInsets.fromLTRB(16, 16, 16, 12),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -182,7 +201,13 @@ class _SubmitApplicationReviewDialogState
                   const SizedBox(height: 12),
 
                   // CARD 4: Affirmations & Honor Code
-                  _buildAffirmationsCard(),
+                  AbsorbPointer(
+                    absorbing: widget.tour != null,
+                    child: ExcludeFocus(
+                      excluding: widget.tour != null,
+                      child: _buildAffirmationsCard(),
+                    ),
+                  ),
                   const SizedBox(height: 12),
 
                   // CARD 5: Digital Signature
@@ -314,7 +339,7 @@ class _SubmitApplicationReviewDialogState
                   ),
                 ),
                 tooltip: 'Close',
-                onPressed: _handleExitIntent,
+                onPressed: widget.tour != null ? null : _handleExitIntent,
               ),
             ],
           ),
@@ -741,7 +766,7 @@ class _SubmitApplicationReviewDialogState
               ),
             ),
           TextButton.icon(
-            onPressed: _isSavingDraft
+            onPressed: widget.tour != null || _isSavingDraft
                 ? null
                 : () async {
                     setState(() {
@@ -781,6 +806,7 @@ class _SubmitApplicationReviewDialogState
 
   Widget _buildAffirmationsCard() {
     return Container(
+      key: widget.tour?.confirmationsKey,
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Colors.white,
@@ -1081,7 +1107,7 @@ class _SubmitApplicationReviewDialogState
               minHeight: 46,
             ),
             child: FilledButton(
-              key: const ValueKey('apply-confirm'),
+              key: widget.tour?.submitKey ?? const ValueKey('apply-confirm'),
               style: FilledButton.styleFrom(
                 backgroundColor: kPrimaryContainer,
                 foregroundColor: Colors.white,
@@ -1099,7 +1125,9 @@ class _SubmitApplicationReviewDialogState
                 ),
               ),
               onPressed: _allAffirmationsChecked && !_isSavingDraft
-                  ? () => Navigator.of(context).pop(true)
+                  ? widget.tour != null
+                      ? widget.tour!.onSubmit ?? () {}
+                      : () => Navigator.of(context).pop(true)
                   : null,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -1133,7 +1161,9 @@ class _SubmitApplicationReviewDialogState
               // Cancel Button
               TextButton(
                 key: const ValueKey('apply-cancel'),
-                onPressed: () => Navigator.of(context).pop(false),
+                onPressed: widget.tour != null
+                    ? null
+                    : () => Navigator.of(context).pop(false),
                 child: Text(
                   'Cancel',
                   style: geist(
@@ -1146,7 +1176,7 @@ class _SubmitApplicationReviewDialogState
               // Save Progress Button
               TextButton(
                 key: const ValueKey('apply-save-draft'),
-                onPressed: _isSavingDraft ? null : _handleSaveDraftDirectly,
+                onPressed: widget.tour != null || _isSavingDraft ? null : _handleSaveDraftDirectly,
                 child: _isSavingDraft
                     ? const SizedBox(
                         width: 16,

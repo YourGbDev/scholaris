@@ -5,13 +5,11 @@ import 'package:scholaris/features/home/presentation/widgets/student_tab_entranc
 // Implements design-reference/stitch_scholaris_mobile_app/scholaris_student_dashboard/code.html
 //
 // Features:
-// - Sticky header with Scholaris logo badge, notifications bell + gold dot, and student avatar
+// - Sticky header with Scholaris logo, notifications, and account settings
 // - Personalized greeting with student name & daily opportunities counter
-// - Matching Power Hero Card (Slate Navy #436084) with RadialMatchingGauge,
-//   bento box for ₱ Matched Value and High Fit (>90%) with gold star,
-//   and +18% boost actionable row with "Boost Matches" CTA button
+// - Compact graduate hero with a live match summary and Explore matches action
 // - 3 Quick-Stat tactile tiles: Saved, In Progress, Action Needed
-// - "Top Recommended For You" section with rebuilt Stitch ScholarshipCards and "See All" link
+// - Recommended for you section with scholarship cards and a See all action
 // - "Pro-Tip for Applicants" bento box with gold lightbulb badge and statistical insight
 
 
@@ -25,8 +23,7 @@ import 'package:scholaris/features/applications/services/application_filters.dar
 import 'package:scholaris/features/bookmarks/providers/bookmarks_provider.dart';
 import 'package:scholaris/features/home/presentation/home_screen.dart';
 import 'package:scholaris/features/profile/models/student_profile.dart';
-import 'package:scholaris/features/profile/presentation/widgets/avatar_display.dart';
-import 'package:scholaris/features/profile/providers/avatar_provider.dart';
+import 'package:scholaris/shared/widgets/student_header_actions.dart';
 import 'package:scholaris/features/profile/providers/profile_setup_provider.dart';
 import 'package:scholaris/features/scholarships/models/scholarship.dart';
 import 'package:scholaris/features/scholarships/providers/dashboard_provider.dart';
@@ -37,10 +34,16 @@ import 'package:scholaris/shared/theme/app_motion.dart';
 import 'package:scholaris/shared/theme/app_theme.dart';
 import 'package:scholaris/shared/widgets/responsive_container.dart';
 import 'package:scholaris/shared/widgets/scholarship_card.dart';
-import 'widgets/student_notifications_sheet.dart';
+
 
 class StudentDashboardScreen extends ConsumerStatefulWidget {
-  const StudentDashboardScreen({super.key});
+  const StudentDashboardScreen({super.key, this.savedGuideKey, this.progressGuideKey, this.scrollController,
+    this.recommendationsGuideKey, this.detailsGuideKey});
+  final GlobalKey? savedGuideKey;
+  final GlobalKey? progressGuideKey;
+  final ScrollController? scrollController;
+  final GlobalKey? recommendationsGuideKey;
+  final GlobalKey? detailsGuideKey;
 
   @override
   ConsumerState<StudentDashboardScreen> createState() =>
@@ -67,7 +70,6 @@ class _StudentDashboardScreenState
     final appliedIds = ApplicationFilters.activeAppliedScholarshipIds(
       ref.watch(applicationsProvider).valueOrNull ?? const <Application>[],
     );
-    final avatarState = ref.watch(currentAvatarProvider);
 
     final info = dashboardAsync.valueOrNull ??
         const DashboardInfo(
@@ -114,6 +116,7 @@ class _StudentDashboardScreenState
               ref.invalidate(bookmarksProvider);
             },
             child: ListView(
+              controller: widget.scrollController,
               physics: const AppleBouncingScrollPhysics(
                 parent: AlwaysScrollableScrollPhysics(),
               ),
@@ -127,7 +130,7 @@ class _StudentDashboardScreenState
                 // 1. Sticky Header
                 _wrapSection(
                   index: 0,
-                  child: _buildHeader(context, ref, avatarState),
+                  child: _buildHeader(context),
                 ),
                 const SizedBox(height: 16),
 
@@ -212,8 +215,6 @@ class _StudentDashboardScreenState
   // --- 1. Sticky Header ---
   Widget _buildHeader(
     BuildContext context,
-    WidgetRef ref,
-    AvatarState avatarState,
   ) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -261,70 +262,7 @@ class _StudentDashboardScreenState
           )),
         )),
 
-        // Action Buttons: Notifications Bell & Profile Avatar
-        Row(
-          children: [
-            // Notifications Bell with Gold Dot
-            PressableScale(
-              child: Stack(
-                clipBehavior: Clip.none,
-                children: [
-                  IconButton(
-                    tooltip: 'Notifications',
-                    icon: const Icon(
-                      Icons.notifications_none_rounded,
-                      size: 24,
-                      color: Color(0xFF161C27),
-                    ),
-                    onPressed: () {
-                      showStudentNotificationsSheet(context);
-                    },
-                  ),
-                  Positioned(
-                    top: 10,
-                    right: 10,
-                    child: Container(
-                      width: 8,
-                      height: 8,
-                      decoration: BoxDecoration(
-                        color: const Color(0xFFFABC28), // tertiary-fixed-dim
-                        shape: BoxShape.circle,
-                        border: Border.all(color: Colors.white, width: 1.5),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(width: 4),
-
-            // Profile Avatar
-            PressableScale(
-              onTap: () {
-                ref.read(homeTabIndexProvider.notifier).selectTab(3);
-              },
-              child: SizedBox(
-                width: 44,
-                height: 44,
-                child: Center(
-                  child: Container(
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      border: Border.all(color: const Color(0xFFE2E8F9), width: 1.5),
-                    ),
-                    child: AvatarDisplay(
-                      avatarId: avatarState.avatarId,
-                      isRealPhoto: avatarState.isRealPhoto,
-                      photoPath: avatarState.photoPath,
-                      size: 32,
-                      showVerifiedBadge: false,
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ],
-        ),
+        const StudentHeaderActions(),
       ],
     );
   }
@@ -363,7 +301,7 @@ class _StudentDashboardScreenState
       iconColor = const Color(0xFF001C38);
       bgColor = const Color(0xFFD2E4FF);
       title = 'Application Submitted';
-      subtitle = 'Tap to track your application timeline.';
+      subtitle = 'Track your application.';
     }
 
     return PressableScale(
@@ -376,7 +314,7 @@ class _StudentDashboardScreenState
           },
           borderRadius: BorderRadius.circular(22),
           child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 16),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(22),
@@ -526,13 +464,13 @@ class _StudentDashboardScreenState
     final summary = Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.min, children: [
       Text('YOUR NEXT CHAPTER', style: geist(fontSize: 11, fontWeight: FontWeight.w600,
         color: const Color(0xFF485356), letterSpacing: .15)),
-      const SizedBox(height: 12),
+      const SizedBox(height: 8),
       Text('Find your next opportunity.',
-        style: geist(fontSize: 24, fontWeight: FontWeight.w700, color: kPrimary, height: 1.15, letterSpacing: -.6)),
-      const SizedBox(height: 14),
+        style: geist(fontSize: 22, fontWeight: FontWeight.w700, color: kPrimary, height: 1.15, letterSpacing: -.5)),
+      const SizedBox(height: 10),
       Text(countLabel, key: const ValueKey('stat-count-matches'),
-        style: geist(fontSize: 14, fontWeight: FontWeight.w600, height: 1.5, color: const Color(0xFF485356))),
-      const SizedBox(height: 16),
+        style: geist(fontSize: 13, fontWeight: FontWeight.w600, height: 1.4, color: const Color(0xFF485356))),
+      const SizedBox(height: 12),
       Padding(
         padding: const EdgeInsets.only(left: 12),
         child: FilledButton(
@@ -552,7 +490,7 @@ class _StudentDashboardScreenState
       child: Image.asset(asset, height: height, fit: BoxFit.contain,
         alignment: Alignment.bottomLeft, excludeFromSemantics: true));
     return Padding(
-      padding: const EdgeInsets.only(top: 26),
+      padding: const EdgeInsets.only(top: 18),
       child: LayoutBuilder(builder: (context, box) {
         final stacked = box.maxWidth < 320 || MediaQuery.textScalerOf(context).scale(14) > 20;
         return Stack(clipBehavior: Clip.none, children: [
@@ -570,8 +508,8 @@ class _StudentDashboardScreenState
                 summary,
               ]))
           else ...[
-            Padding(padding: EdgeInsets.fromLTRB(box.maxWidth * .5, 40, 16, 32), child: summary),
-            Positioned(left: 0, top: -26, bottom: 0, width: box.maxWidth * .55,
+            Padding(padding: EdgeInsets.fromLTRB(box.maxWidth * .5, 24, 16, 20), child: summary),
+            Positioned(left: 0, top: -18, bottom: 0, width: box.maxWidth * .55,
               child: ClipRRect(
                 borderRadius: const BorderRadius.only(bottomLeft: Radius.circular(24)),
                 child: portrait(290))),
@@ -594,6 +532,7 @@ class _StudentDashboardScreenState
       children: [
         // Tile 1: Saved
         Expanded(
+          key: widget.savedGuideKey,
           child: _StatCard(
             itemKey: const ValueKey('stat-chip-saved'),
             countKey: const ValueKey('stat-count-saved'),
@@ -613,6 +552,7 @@ class _StudentDashboardScreenState
 
         // Tile 2: In Progress
         Expanded(
+          key: widget.progressGuideKey,
           child: _StatCard(
             itemKey: const ValueKey('stat-chip-applied'),
             countKey: const ValueKey('stat-count-applied'),
@@ -670,6 +610,7 @@ class _StudentDashboardScreenState
             Expanded(
               child: Text(
                 'Recommended for you',
+                key: widget.recommendationsGuideKey,
                 style: outfit(
                   fontSize: 21,
                   fontWeight: FontWeight.w700,
@@ -761,6 +702,7 @@ class _StudentDashboardScreenState
                       order: 1 + i,
                       child: ScholarshipCard(
                         scholarship: s,
+                        viewDetailsKey: i == 0 ? widget.detailsGuideKey : null,
                         studentProfile: profile,
                         reasons: reasons,
                         isBookmarked: bookmarkIds.contains(s.id),
@@ -1007,7 +949,7 @@ class _StatCard extends StatelessWidget {
             onTap();
           },
           child: Container(
-            padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
+            padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(22),

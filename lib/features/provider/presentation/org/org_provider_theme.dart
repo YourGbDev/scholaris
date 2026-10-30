@@ -6,7 +6,6 @@
 
 import 'package:scholaris/shared/theme/app_theme.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 import '../../../../shared/theme/app_motion.dart';
 
@@ -110,13 +109,13 @@ TextStyle orgLabel({
       height: height ?? opticalLeading(fontSize, isBody: false),
     );
 
-/// Monospace font reserved exclusively for counts, quantitative metrics, timestamps, and IDs.
+/// Compatibility helper; counts, metrics, timestamps, and IDs use Geist Sans.
 TextStyle orgDataMono({
   double fontSize = 12.5,
   FontWeight fontWeight = FontWeight.w500,
   Color color = kOrgTextPrimary,
 }) =>
-    GoogleFonts.robotoMono(
+    geist(
       fontSize: fontSize,
       fontWeight: fontWeight,
       color: color,
@@ -130,7 +129,7 @@ TextStyle orgTabularFigures(TextStyle base) => base.copyWith(
       ],
     );
 
-/// Monospace pill container helper for IDs, hashes, and reference codes.
+/// Geist Sans pill container helper for IDs, hashes, and reference codes.
 Widget orgIdPill(String idText) => Container(
       padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
       decoration: BoxDecoration(

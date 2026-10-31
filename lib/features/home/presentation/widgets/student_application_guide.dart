@@ -85,9 +85,8 @@ class _StudentApplicationGuideState extends State<StudentApplicationGuide>
     ),
     _Stop(
       'Recommended for you',
-      'Swipe up to explore the scholarships below your Home summary.',
-      anchor: 'home-2',
-      scroll: true,
+      'Here are scholarships matched to your profile. Review why you match and explore more opportunities.',
+      anchor: 'home-3',
     ),
     _Stop(
       'Explore Discover',
@@ -103,7 +102,6 @@ class _StudentApplicationGuideState extends State<StudentApplicationGuide>
       'Browse at your own pace',
       'Swipe up through your matches and the wider catalog. Browse a little way down, then tap to continue when you’re ready.',
       scroll: true,
-      end: true,
     ),
     _Stop(
       'Open one scholarship',
@@ -130,16 +128,11 @@ class _StudentApplicationGuideState extends State<StudentApplicationGuide>
       action: 'Start Application',
     ),
     _Stop(
-      'Review your application',
-      'This is the application review screen. Scroll through the packet and read the confirmations. No documents or signature are required in this demo.',
-      scroll: true,
-      end: true,
-    ),
-    _Stop(
-      'Try submitting the demo',
-      'The confirmations cover accuracy, authorized review and the no-guarantee reminder. Tap the final button to simulate success. Nothing will be sent.',
+      'Review & submit demo',
+      'This is the application review screen. Scroll through the packet and tap Submit Application (Final) to test submission. Nothing will be sent.',
       anchor: 'submit',
       action: 'Submit Application (Final)',
+      scroll: true,
     ),
     _Stop(
       'You did it!',
@@ -169,19 +162,16 @@ class _StudentApplicationGuideState extends State<StudentApplicationGuide>
       'Academic information',
       'Scroll to your academic details. Update your school, degree and grades here when they change.',
       anchor: 'profile-0',
-      scroll: true,
     ),
     _Stop(
       'Location & residency',
       'Keep scrolling to your location and residency details. These can matter for regional scholarships.',
       anchor: 'profile-1',
-      scroll: true,
     ),
     _Stop(
       'Financial background',
       'Find your financial details here. Keep them accurate for income-based scholarships. The tour does not edit anything.',
       anchor: 'profile-2',
-      scroll: true,
     ),
     _Stop(
       'Your shortcuts',
@@ -207,8 +197,7 @@ class _StudentApplicationGuideState extends State<StudentApplicationGuide>
   bool _browsing = false, _positioning = false;
   double _lastOffset = 0,
       _userProgress = 0,
-      _browseThreshold = 400,
-      _entryViewport = 0;
+      _browseThreshold = 400;
   bool _browseComplete = false;
   bool _ready = false;
   bool _actionPending = false;
@@ -226,9 +215,9 @@ class _StudentApplicationGuideState extends State<StudentApplicationGuide>
       _stop.tip.replaceAll('Ari', getMascotName(gender: widget.gender));
   bool get _reduced => MediaQuery.disableAnimationsOf(context);
   bool get _canScroll => _stop.scroll || _step == 7;
-  bool get _mascot => _step == 0 || _step == 5 || _step == 13;
+  bool get _mascot => _step == 0 || _step == 5 || _step == 12;
   bool get _details => _step >= 8 && _step <= 10;
-  bool get _review => _step >= 11 && _step <= 12;
+  bool get _review => _step == 11;
   ScrollController? get _scroll => _details
       ? _detailScroll
       : _review
@@ -237,7 +226,7 @@ class _StudentApplicationGuideState extends State<StudentApplicationGuide>
       ? widget.homeScroll
       : _step <= 7
       ? widget.discoverScroll
-      : _step >= 17 && _step <= 20
+      : _step >= 16 && _step <= 19
       ? widget.profileScroll
       : null;
   GlobalKey? get _anchor {
@@ -265,7 +254,7 @@ class _StudentApplicationGuideState extends State<StudentApplicationGuide>
     super.initState();
     _step = widget.initialStep;
     _positioning = _step == 7 && widget.discoverCard != null;
-    if (_step >= 8 && _step <= 13) {
+    if (_step >= 8 && _step <= 12) {
       _selectedScholarship = widget.exampleScholarship;
     }
     _cue = AnimationController(
@@ -343,16 +332,7 @@ class _StudentApplicationGuideState extends State<StudentApplicationGuide>
         _waitForIdle();
         return;
       }
-      final remaining = _scroll?.hasClients == true
-          ? _scroll!.position.extentAfter
-          : 0.0;
-      final sameViewport =
-          _scroll?.hasClients == true &&
-          _scroll!.position.viewportDimension == _entryViewport;
-      final threshold = sameViewport
-          ? math.min(_browseThreshold, _userProgress + remaining)
-          : _browseThreshold;
-      if (_step == 6 && _userProgress > 0 && _userProgress >= threshold) {
+      if (_step == 6 && _userProgress >= 400.0) {
         _browseComplete = true;
       }
       setState(() => _browsing = false);
@@ -383,6 +363,9 @@ class _StudentApplicationGuideState extends State<StudentApplicationGuide>
     final offset = _scroll?.hasClients == true ? _scroll!.offset : _lastOffset;
     if (_browsing && !_positioning) {
       _userProgress += offset - _lastOffset;
+      if (_step == 6 && _userProgress >= 400.0) {
+        _browseComplete = true;
+      }
       _waitForIdle();
     }
     _lastOffset = offset;
@@ -401,7 +384,6 @@ class _StudentApplicationGuideState extends State<StudentApplicationGuide>
       _observed?.addListener(_onScroll);
       if (_observed?.hasClients == true) {
         _lastOffset = _observed!.offset;
-        _entryViewport = _observed!.position.viewportDimension;
         _browseThreshold = math.min(400, _observed!.position.extentAfter);
         if (_step == 6 && _browseThreshold <= 0) _browseComplete = true;
       }
@@ -423,6 +405,7 @@ class _StudentApplicationGuideState extends State<StudentApplicationGuide>
               : const Duration(milliseconds: 450),
           curve: Curves.easeOutCubic,
         );
+        await WidgetsBinding.instance.endOfFrame;
       }
       if (mounted && ticket == _ticket) _measure();
     });
@@ -431,15 +414,22 @@ class _StudentApplicationGuideState extends State<StudentApplicationGuide>
   Future<void> _alignCard(int ticket) async {
     setState(() => _positioning = true);
     final controller = widget.discoverScroll;
-    if (widget.discoverCard?.currentContext == null &&
-        controller?.hasClients == true) {
+    final cardContext = widget.discoverCard?.currentContext;
+    if (cardContext != null && cardContext.mounted) {
+      await Scrollable.ensureVisible(
+        cardContext,
+        alignment: 0.15,
+        duration: _reduced ? Duration.zero : const Duration(milliseconds: 450),
+        curve: Curves.easeOutCubic,
+      );
+    } else if (controller?.hasClients == true) {
       await controller!.animateTo(
         0,
         duration: _reduced ? Duration.zero : const Duration(milliseconds: 450),
         curve: Curves.easeOutCubic,
       );
-      await WidgetsBinding.instance.endOfFrame;
     }
+    await WidgetsBinding.instance.endOfFrame;
     if (!mounted || ticket != _ticket) return;
     final safeTop = MediaQuery.paddingOf(context).top + 64;
     final target = widget.discoverCard?.currentContext;
@@ -458,16 +448,22 @@ class _StudentApplicationGuideState extends State<StudentApplicationGuide>
           controller.position.minScrollExtent,
           controller.position.maxScrollExtent,
         );
-        await controller.animateTo(
-          offset,
-          duration: _reduced
-              ? Duration.zero
-              : const Duration(milliseconds: 450),
-          curve: Curves.easeOutCubic,
-        );
+        if ((offset - controller.offset).abs() > 4) {
+          await controller.animateTo(
+            offset,
+            duration: _reduced
+                ? Duration.zero
+                : const Duration(milliseconds: 300),
+            curve: Curves.easeOutCubic,
+          );
+          await WidgetsBinding.instance.endOfFrame;
+        }
       }
     }
-    if (mounted && ticket == _ticket) setState(() => _positioning = false);
+    if (mounted && ticket == _ticket) {
+      setState(() => _positioning = false);
+      _measure();
+    }
   }
 
   Rect? _bounds(GlobalKey? key, RenderObject? surface) {
@@ -495,11 +491,7 @@ class _StudentApplicationGuideState extends State<StudentApplicationGuide>
     final cardRect = _step == 7 ? _bounds(widget.discoverCard, surface) : null;
     final controller = _scroll;
     // End gates are based on the current real scroll position. No timer or swipe-distance shortcut.
-    final endKey = _step == 6
-        ? widget.discoverEnd
-        : _step == 8
-        ? _backTop
-        : null;
+    final endKey = _step == 8 ? _backTop : null;
     final endBox = endKey?.currentContext?.findRenderObject();
     final endVisible =
         endKey == null ||
@@ -521,7 +513,11 @@ class _StudentApplicationGuideState extends State<StudentApplicationGuide>
         rect.top < MediaQuery.sizeOf(context).height - 180;
     final ready =
         !_stop.scroll ||
-        (_step == 6 ? _browseComplete : (_stop.end ? atEnd : visible));
+        (_step == 6
+            ? _browseComplete
+            : (_step == 11
+                ? (visible || atEnd)
+                : (_stop.end ? atEnd : visible)));
     if (rect != _rect || cardRect != _cardRect || ready != _ready) {
       setState(() {
         _rect = rect;
@@ -574,16 +570,16 @@ class _StudentApplicationGuideState extends State<StudentApplicationGuide>
     widget.onSelectTab(
       next <= 4
           ? 0
-          : next <= 14
+          : next <= 13
           ? 1
-          : next <= 16
+          : next <= 15
           ? 2
           : 3,
     );
     if ((next == 5) && widget.discoverScroll?.hasClients == true) {
       widget.discoverScroll!.jumpTo(0);
     }
-    if (next == 17 && widget.profileScroll?.hasClients == true) {
+    if (next == 16 && widget.profileScroll?.hasClients == true) {
       widget.profileScroll!.jumpTo(0);
     }
     _schedule();
@@ -671,14 +667,14 @@ class _StudentApplicationGuideState extends State<StudentApplicationGuide>
               confirmationsKey: _confirmations,
               submitKey: _submit,
               onSubmit: () {
-                if (_step == 12) _show(13);
+                if (_step == 11) _show(12);
               },
             ),
           ),
         ),
       );
     }
-    if (_step == 22) {
+    if (_step == 21) {
       return Align(
         alignment: Alignment.bottomRight,
         child: Padding(
@@ -766,7 +762,7 @@ class _StudentApplicationGuideState extends State<StudentApplicationGuide>
                         onContinue: _next,
                         onSkip: _exit,
                         explicitContinue: _step == 0,
-                        celebrating: _step == 13,
+                        celebrating: _step == 12,
                       ),
                     )
                   else ...[
@@ -844,7 +840,7 @@ class _StudentApplicationGuideState extends State<StudentApplicationGuide>
                                     ),
                                   ),
                                 ),
-                                if (target != null && _stop.action != null)
+                                if (target != null && _stop.action != null && (!_stop.scroll || _ready))
                                   Positioned.fromRect(
                                     rect: target,
                                     child: Semantics(
@@ -864,7 +860,7 @@ class _StudentApplicationGuideState extends State<StudentApplicationGuide>
                                       ? size.height - target.top + 12
                                       : below
                                       ? null
-                                      : (_step == 22 ? size.height * .52 : 110),
+                                      : (_step == 21 ? size.height * .52 : 110),
                                   child: _bubble(panel, target, above, below),
                                 ),
                                 if ((_stop.scroll && !_ready) ||
@@ -1039,7 +1035,9 @@ class _StudentApplicationGuideState extends State<StudentApplicationGuide>
                     padding: const EdgeInsets.symmetric(vertical: 8),
                     child: Text(
                       _stop.action != null
-                          ? 'Tap the highlighted button'
+                          ? (_stop.scroll && !_ready
+                              ? 'Swipe up to review and submit'
+                              : 'Tap the highlighted button')
                           : _stop.scroll && !_ready
                           ? 'Swipe up to explore'
                           : _step == _stops.length - 1

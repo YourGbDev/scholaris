@@ -993,6 +993,7 @@ class CountUpAnimation extends StatefulWidget {
     this.duration = const Duration(milliseconds: 800),
     this.style,
     this.formatWithCommas = true,
+    this.immediate = false,
   });
 
   final int targetValue;
@@ -1002,6 +1003,7 @@ class CountUpAnimation extends StatefulWidget {
   final Duration duration;
   final TextStyle? style;
   final bool formatWithCommas;
+  final bool immediate;
 
   @override
   State<CountUpAnimation> createState() => _CountUpAnimationState();
@@ -1015,18 +1017,20 @@ class _CountUpAnimationState extends State<CountUpAnimation>
   void initState() {
     super.initState();
     _controller = AnimationController.unbounded(
-      value: 0.0,
+      value: widget.immediate ? widget.targetValue.toDouble() : 0.0,
       vsync: this,
     );
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (mounted) {
-        _animate(0.0, widget.targetValue.toDouble());
-      }
-    });
+    if (!widget.immediate) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) {
+          _animate(0.0, widget.targetValue.toDouble());
+        }
+      });
+    }
   }
 
   void _animate(double from, double to) {
-    if (isReducedMotion(context)) {
+    if (isReducedMotion(context) || widget.immediate) {
       _controller.value = to;
       return;
     }
@@ -1044,7 +1048,11 @@ class _CountUpAnimationState extends State<CountUpAnimation>
   void didUpdateWidget(CountUpAnimation oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.targetValue != widget.targetValue) {
-      _animate(_controller.value, widget.targetValue.toDouble());
+      if (widget.immediate) {
+        _controller.value = widget.targetValue.toDouble();
+      } else {
+        _animate(_controller.value, widget.targetValue.toDouble());
+      }
     }
   }
 

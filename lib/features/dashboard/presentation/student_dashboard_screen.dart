@@ -815,7 +815,7 @@ class _StudentDashboardScreenState
                       order: 1 + i,
                       child: ScholarshipCard(
                         scholarship: s,
-                        viewDetailsKey: i == 0 ? widget.detailsGuideKey : null,
+                        cardGuideKey: i == 0 ? widget.detailsGuideKey : null,
                         studentProfile: profile,
                         reasons: reasons,
                         isBookmarked: bookmarkIds.contains(s.id),

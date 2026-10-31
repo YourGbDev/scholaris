@@ -234,7 +234,7 @@ class ApplicationsScreen extends ConsumerWidget {
                     children: [
                       const SizedBox(height: 4),
                       StudentTabReveal(order: 1, structural: true, child: _PotentialAwardCard(
-                        totalPotential: totalPotential, applications: applications, counts: counts,
+                        totalPotential: totalPotential, applications: applications, counts: counts, immediate: embedded,
                       )),
                       const SizedBox(height: 10),
                       StudentTabReveal(order: 1, structural: true, child: _SummaryBar(applications: applications)),
@@ -294,6 +294,7 @@ class ApplicationsScreen extends ConsumerWidget {
                 totalPotential: totalPotential,
                 applications: applications,
                 counts: counts,
+                immediate: embedded,
               )),
               const SizedBox(height: 10),
               StudentTabReveal(order: 1, structural: true, child: _SummaryBar(applications: applications)),
@@ -451,11 +452,13 @@ class _PotentialAwardCard extends StatelessWidget {
     required this.totalPotential,
     required this.applications,
     required this.counts,
+    this.immediate = false,
   });
 
   final double totalPotential;
   final List<Application> applications;
   final Map<ApplicationStatus, int> counts;
+  final bool immediate;
 
   @override
   Widget build(BuildContext context) {
@@ -537,6 +540,7 @@ class _PotentialAwardCard extends StatelessWidget {
                               CountUpAnimation(
                                   targetValue: totalPotential.toInt(),
                                   prefix: '₱',
+                                  immediate: immediate,
                                   style: outfit(
                                     fontSize: 21,
                                     fontWeight: FontWeight.w800,

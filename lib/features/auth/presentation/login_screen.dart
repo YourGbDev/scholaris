@@ -26,6 +26,8 @@ import 'package:scholaris/shared/theme/app_theme.dart';
 import 'package:scholaris/shared/widgets/entrance.dart';
 import 'package:scholaris/shared/widgets/scholaris_logo.dart';
 
+final loginCaptchaProvider = Provider((ref) => acquireCaptcha);
+
 const int kLoginEntranceTotalMs = 1450;
 
 final _emailPattern = RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$');
@@ -59,6 +61,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
   bool _obscurePassword = true;
   bool _rememberMe = true;
   bool _isLoading = false;
+  int _loginEpoch = 0;
 
   LockoutStatus? _lockoutStatus;
   Timer? _lockoutTimer;
@@ -132,6 +135,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
 
     final email = _emailController.text.trim();
     final password = _passwordController.text;
+    final epoch = _loginEpoch;
     final lockoutCheck = LoginLockoutService.instance.checkLockout(email);
     if (lockoutCheck.isLocked) {
       _startLockoutCountdown(lockoutCheck);
@@ -143,8 +147,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
     setState(() => _isLoading = true);
     debugPrint('[LOGIN] calling signInWithPassword');
     try {
-      final captcha = await acquireCaptcha(context);
-      if (!mounted || !captcha.allowed) return;
+      final captcha = await ref.read(loginCaptchaProvider)(context);
+      if (!mounted || epoch != _loginEpoch || !captcha.allowed) return;
       final result = await Supabase.instance.client.auth.signInWithPassword(
         email: email,
         password: password,
@@ -159,6 +163,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
         '[LOGIN] signInWithPassword succeeded session=${result.session != null}',
       );
     } on AuthException catch (error) {
+      if (!mounted || epoch != _loginEpoch) return;
       if (error.message.contains('Email not confirmed') ||
           error.message.contains('email_not_confirmed')) {
         if (!mounted) return;
@@ -190,6 +195,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
           : _friendlyError(error);
       ScaffoldMessenger.of(context).showSnackBar(_snackBar(msg));
     } catch (_) {
+      if (!mounted || epoch != _loginEpoch) return;
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           _snackBar('Could not complete the security check. Please try again.'),
@@ -396,6 +402,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
 
   @override
   Widget build(BuildContext context) {
+    ref.listen(authSessionProvider, (_, _) => _loginEpoch++);
     final session = ref.watch(authSessionProvider);
     if (session != null && !session.passwordRecovery) {
       return const SessionEntryStatus();

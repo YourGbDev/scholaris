@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:math' as math;
 
 import 'package:flutter/gestures.dart';
@@ -10,6 +11,7 @@ import '../../../scholarships/presentation/scholarship_detail_screen.dart';
 import '../../../applications/presentation/submit_application_review_dialog.dart';
 import 'student_action_sheet.dart';
 import 'student_guide_greeting.dart';
+import '../../../../shared/widgets/mascot_pose_view.dart';
 import 'student_swipe_cue.dart';
 
 class StudentApplicationGuide extends StatefulWidget {
@@ -25,6 +27,8 @@ class StudentApplicationGuide extends StatefulWidget {
     this.profileScroll,
     this.discoverScroll,
     this.discoverDetails,
+    this.discoverCard,
+    this.scrollActivity,
     this.discoverEnd,
     this.studentName = 'Student',
     this.gender,
@@ -36,6 +40,8 @@ class StudentApplicationGuide extends StatefulWidget {
   final List<GlobalKey> homeTargets, navTargets, profileTargets;
   final ScrollController? homeScroll, profileScroll, discoverScroll;
   final GlobalKey? discoverDetails;
+  final GlobalKey? discoverCard;
+  final ValueNotifier<ScrollNotification?>? scrollActivity;
   final GlobalKey? discoverEnd;
   final String studentName;
   final String? gender;
@@ -95,7 +101,7 @@ class _StudentApplicationGuideState extends State<StudentApplicationGuide>
     ),
     _Stop(
       'Browse at your own pace',
-      'Swipe up through your matches and the wider catalog. I’ll wait until you reach the end before we open one scholarship.',
+      'Swipe up through your matches and the wider catalog. Browse a little way down, then tap to continue when you’re ready.',
       scroll: true,
       end: true,
     ),
@@ -195,6 +201,15 @@ class _StudentApplicationGuideState extends State<StudentApplicationGuide>
   late int _step;
   int _ticket = 0;
   Rect? _rect;
+  Rect? _cardRect;
+  Timer? _settleTimer;
+  Drag? _drag;
+  bool _browsing = false, _positioning = false;
+  double _lastOffset = 0,
+      _userProgress = 0,
+      _browseThreshold = 400,
+      _entryViewport = 0;
+  bool _browseComplete = false;
   bool _ready = false;
   bool _actionPending = false;
   Scholarship? _selectedScholarship;
@@ -207,7 +222,10 @@ class _StudentApplicationGuideState extends State<StudentApplicationGuide>
   ScrollController? _observed;
   late final AnimationController _cue;
   _Stop get _stop => _stops[_step];
+  String get _tip =>
+      _stop.tip.replaceAll('Ari', getMascotName(gender: widget.gender));
   bool get _reduced => MediaQuery.disableAnimationsOf(context);
+  bool get _canScroll => _stop.scroll || _step == 7;
   bool get _mascot => _step == 0 || _step == 5 || _step == 13;
   bool get _details => _step >= 8 && _step <= 10;
   bool get _review => _step >= 11 && _step <= 12;
@@ -246,6 +264,7 @@ class _StudentApplicationGuideState extends State<StudentApplicationGuide>
   void initState() {
     super.initState();
     _step = widget.initialStep;
+    _positioning = _step == 7 && widget.discoverCard != null;
     if (_step >= 8 && _step <= 13) {
       _selectedScholarship = widget.exampleScholarship;
     }
@@ -253,12 +272,29 @@ class _StudentApplicationGuideState extends State<StudentApplicationGuide>
       vsync: this,
       duration: const Duration(milliseconds: 1700),
     );
+    widget.scrollActivity?.addListener(_externalScroll);
     _schedule();
+  }
+
+  @override
+  void didUpdateWidget(StudentApplicationGuide oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.scrollActivity != widget.scrollActivity) {
+      oldWidget.scrollActivity?.removeListener(_externalScroll);
+      widget.scrollActivity?.addListener(_externalScroll);
+    }
+    if (_step == 7 &&
+        oldWidget.exampleScholarship?.id != widget.exampleScholarship?.id) {
+      _schedule();
+    }
   }
 
   @override
   void dispose() {
     _ticket++;
+    _settleTimer?.cancel();
+    _drag?.cancel();
+    widget.scrollActivity?.removeListener(_externalScroll);
     _observed?.removeListener(_onScroll);
     _cue.dispose();
     _detailScroll.dispose();
@@ -266,7 +302,90 @@ class _StudentApplicationGuideState extends State<StudentApplicationGuide>
     super.dispose();
   }
 
+  void _externalScroll() {
+    final n = widget.scrollActivity?.value;
+    if (n != null) _activity(n);
+  }
+
+  bool _activity(ScrollNotification n) {
+    if (n.depth != 0 ||
+        n.metrics.axis != Axis.vertical ||
+        !_stop.scroll ||
+        _positioning) {
+      return false;
+    }
+    if (n is ScrollStartNotification && n.dragDetails != null) _beginBrowse();
+    if (_browsing) _waitForIdle();
+    return false;
+  }
+
+  void _beginBrowse() {
+    if (!_canScroll) return;
+    _settleTimer?.cancel();
+    if (_positioning) {
+      _ticket++;
+      _positioning = false;
+    }
+    if (!_browsing) {
+      _lastOffset = _scroll?.hasClients == true ? _scroll!.offset : 0;
+      setState(() => _browsing = true);
+    }
+    _cue.stop();
+  }
+
+  void _waitForIdle() {
+    _settleTimer?.cancel();
+    final ticket = _ticket;
+    _settleTimer = Timer(const Duration(milliseconds: 350), () {
+      if (!mounted || ticket != _ticket) return;
+      if (_scroll?.hasClients == true &&
+          _scroll!.position.isScrollingNotifier.value) {
+        _waitForIdle();
+        return;
+      }
+      final remaining = _scroll?.hasClients == true
+          ? _scroll!.position.extentAfter
+          : 0.0;
+      final sameViewport =
+          _scroll?.hasClients == true &&
+          _scroll!.position.viewportDimension == _entryViewport;
+      final threshold = sameViewport
+          ? math.min(_browseThreshold, _userProgress + remaining)
+          : _browseThreshold;
+      if (_step == 6 && _userProgress > 0 && _userProgress >= threshold) {
+        _browseComplete = true;
+      }
+      setState(() => _browsing = false);
+      _measure();
+    });
+  }
+
+  void _dragStart(DragStartDetails details) {
+    if (!_canScroll || _scroll?.hasClients != true) return;
+    _beginBrowse();
+    _drag = _scroll!.position.drag(details, () => _drag = null);
+  }
+
+  void _dragUpdate(DragUpdateDetails details) => _drag?.update(details);
+  void _dragEnd(DragEndDetails details) {
+    _drag?.end(details);
+    _drag = null;
+    _waitForIdle();
+  }
+
+  void _dragCancel() {
+    _drag?.cancel();
+    _drag = null;
+    _waitForIdle();
+  }
+
   void _onScroll() {
+    final offset = _scroll?.hasClients == true ? _scroll!.offset : _lastOffset;
+    if (_browsing && !_positioning) {
+      _userProgress += offset - _lastOffset;
+      _waitForIdle();
+    }
+    _lastOffset = offset;
     // Lazy feed sections mount and update their extent during this frame.
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) _measure();
@@ -280,9 +399,22 @@ class _StudentApplicationGuideState extends State<StudentApplicationGuide>
       _observed?.removeListener(_onScroll);
       _observed = _scroll;
       _observed?.addListener(_onScroll);
+      if (_observed?.hasClients == true) {
+        _lastOffset = _observed!.offset;
+        _entryViewport = _observed!.position.viewportDimension;
+        _browseThreshold = math.min(400, _observed!.position.extentAfter);
+        if (_step == 6 && _browseThreshold <= 0) _browseComplete = true;
+      }
       if (!_reduced) _cue.forward(from: 0);
+      if (_step == 7 && widget.discoverCard != null) {
+        await _alignCard(ticket);
+        if (!mounted || ticket != _ticket) return;
+      }
       final target = _anchor?.currentContext;
-      if (!_stop.scroll && target != null) {
+      if (target != null && !target.mounted) return;
+      if ((_step != 7 || widget.discoverCard == null) &&
+          !_stop.scroll &&
+          target != null) {
         await Scrollable.ensureVisible(
           target,
           alignment: .2,
@@ -296,6 +428,59 @@ class _StudentApplicationGuideState extends State<StudentApplicationGuide>
     });
   }
 
+  Future<void> _alignCard(int ticket) async {
+    setState(() => _positioning = true);
+    final controller = widget.discoverScroll;
+    if (widget.discoverCard?.currentContext == null &&
+        controller?.hasClients == true) {
+      await controller!.animateTo(
+        0,
+        duration: _reduced ? Duration.zero : const Duration(milliseconds: 450),
+        curve: Curves.easeOutCubic,
+      );
+      await WidgetsBinding.instance.endOfFrame;
+    }
+    if (!mounted || ticket != _ticket) return;
+    final safeTop = MediaQuery.paddingOf(context).top + 64;
+    final target = widget.discoverCard?.currentContext;
+    if (target != null && target.mounted && controller?.hasClients == true) {
+      final box = target.findRenderObject();
+      final surface = _surface.currentContext?.findRenderObject();
+      if (box is RenderBox && surface is RenderBox && box.hasSize) {
+        final top = surface.globalToLocal(box.localToGlobal(Offset.zero)).dy;
+        final actionBounds = _bounds(widget.discoverDetails, surface);
+        final viewportHeight = MediaQuery.sizeOf(context).height;
+        final oversized = box.size.height > viewportHeight - safeTop - 90;
+        final delta = oversized && actionBounds != null
+            ? actionBounds.bottom - (viewportHeight - 76)
+            : top - safeTop;
+        final offset = (controller!.offset + delta).clamp(
+          controller.position.minScrollExtent,
+          controller.position.maxScrollExtent,
+        );
+        await controller.animateTo(
+          offset,
+          duration: _reduced
+              ? Duration.zero
+              : const Duration(milliseconds: 450),
+          curve: Curves.easeOutCubic,
+        );
+      }
+    }
+    if (mounted && ticket == _ticket) setState(() => _positioning = false);
+  }
+
+  Rect? _bounds(GlobalKey? key, RenderObject? surface) {
+    final box = key?.currentContext?.findRenderObject();
+    if (box is RenderBox &&
+        surface is RenderBox &&
+        box.attached &&
+        box.hasSize) {
+      return surface.globalToLocal(box.localToGlobal(Offset.zero)) & box.size;
+    }
+    return null;
+  }
+
   void _measure() {
     if (!mounted) return;
     final box = _anchor?.currentContext?.findRenderObject();
@@ -307,6 +492,7 @@ class _StudentApplicationGuideState extends State<StudentApplicationGuide>
         box.hasSize) {
       rect = surface.globalToLocal(box.localToGlobal(Offset.zero)) & box.size;
     }
+    final cardRect = _step == 7 ? _bounds(widget.discoverCard, surface) : null;
     final controller = _scroll;
     // End gates are based on the current real scroll position. No timer or swipe-distance shortcut.
     final endKey = _step == 6
@@ -333,33 +519,35 @@ class _StudentApplicationGuideState extends State<StudentApplicationGuide>
         rect != null &&
         rect.bottom > 90 &&
         rect.top < MediaQuery.sizeOf(context).height - 180;
-    final ready = !_stop.scroll || (_stop.end ? atEnd : visible);
-    if (rect != _rect || ready != _ready) {
+    final ready =
+        !_stop.scroll ||
+        (_step == 6 ? _browseComplete : (_stop.end ? atEnd : visible));
+    if (rect != _rect || cardRect != _cardRect || ready != _ready) {
       setState(() {
         _rect = rect;
+        _cardRect = cardRect;
         _ready = ready;
       });
     }
   }
 
   void _scrollBy(double delta) {
-    if (!_stop.scroll) return;
+    if (!_canScroll) return;
     final controller = _scroll;
     if (controller?.hasClients != true) return;
-    controller!.jumpTo(
-      (controller.offset + delta).clamp(
-        controller.position.minScrollExtent,
-        controller.position.maxScrollExtent,
-      ),
-    );
+    _beginBrowse();
+    controller!.position.pointerScroll(delta);
+    _waitForIdle();
     _measure();
     if (_cue.isAnimating) _cue.stop();
   }
 
   void _end() {
     final controller = _scroll;
-    if (_stop.scroll && controller?.hasClients == true) {
+    if (_canScroll && controller?.hasClients == true) {
+      _beginBrowse();
       controller!.jumpTo(controller.position.maxScrollExtent);
+      _waitForIdle();
     }
     _measure();
   }
@@ -367,11 +555,20 @@ class _StudentApplicationGuideState extends State<StudentApplicationGuide>
   void _show(int next) {
     Tooltip.dismissAllToolTips();
     _cue.stop();
+    _settleTimer?.cancel();
+    _drag?.cancel();
+    _drag = null;
+    _browsing = false;
+    _positioning = false;
+    _userProgress = 0;
+    _browseComplete = false;
     _observed?.removeListener(_onScroll);
     _observed = null;
     setState(() {
       _step = next;
+      _positioning = next == 7 && widget.discoverCard != null;
       _rect = null;
+      _cardRect = null;
       _ready = false;
     });
     widget.onSelectTab(
@@ -383,7 +580,7 @@ class _StudentApplicationGuideState extends State<StudentApplicationGuide>
           ? 2
           : 3,
     );
-    if ((next == 5 || next == 7) && widget.discoverScroll?.hasClients == true) {
+    if ((next == 5) && widget.discoverScroll?.hasClients == true) {
       widget.discoverScroll!.jumpTo(0);
     }
     if (next == 17 && widget.profileScroll?.hasClients == true) {
@@ -395,12 +592,29 @@ class _StudentApplicationGuideState extends State<StudentApplicationGuide>
   void _next() =>
       _step == _stops.length - 1 ? widget.onFinish() : _show(_step + 1);
   void _advance() {
-    if (_stop.action == null && (!_stop.scroll || _ready)) _next();
+    if (!_browsing &&
+        !_positioning &&
+        _stop.action == null &&
+        (!_stop.scroll || _ready)) {
+      _next();
+    }
   }
 
-  void _back() => _step == 0 ? widget.onExit() : _show(_step - 1);
+  void _exit() {
+    _ticket++;
+    _settleTimer?.cancel();
+    _drag?.cancel();
+    _drag = null;
+    if (_positioning && _scroll?.hasClients == true) {
+      _scroll!.jumpTo(_scroll!.offset);
+    }
+    widget.onExit();
+  }
+
+  void _back() => _step == 0 ? _exit() : _show(_step - 1);
   Future<void> _action() async {
     if (_actionPending) return;
+    if (_positioning || _browsing) return;
     if (_step == 7 && widget.exampleScholarship == null) return;
     if (_step == 7) _selectedScholarship = widget.exampleScholarship;
     final step = _step;
@@ -487,7 +701,7 @@ class _StudentApplicationGuideState extends State<StudentApplicationGuide>
     },
     child: CallbackShortcuts(
       bindings: {
-        const SingleActivator(LogicalKeyboardKey.escape): widget.onExit,
+        const SingleActivator(LogicalKeyboardKey.escape): _exit,
         const SingleActivator(LogicalKeyboardKey.arrowDown): () =>
             _scrollBy(160),
         const SingleActivator(LogicalKeyboardKey.arrowUp): () =>
@@ -506,7 +720,11 @@ class _StudentApplicationGuideState extends State<StudentApplicationGuide>
               final size = constraints.biggest;
               final large = MediaQuery.textScalerOf(context).scale(15) > 22;
               final panel = math.min(
-                large ? size.height * .5 : 210.0,
+                _step == 7
+                    ? (size.height < 400
+                          ? 64.0
+                          : (large ? size.height * .25 : 160.0))
+                    : (large ? size.height * .5 : 210.0),
                 size.height - 160,
               );
               final clipped = _rect?.intersect(
@@ -520,7 +738,7 @@ class _StudentApplicationGuideState extends State<StudentApplicationGuide>
                   target != null &&
                   target.bottom + panel + 70 < size.height - 24;
               final above =
-                  target != null && !below && target.top > panel + 130;
+                  target != null && !below && target.top > panel + 110;
               return Stack(
                 key: _surface,
                 fit: StackFit.expand,
@@ -528,7 +746,12 @@ class _StudentApplicationGuideState extends State<StudentApplicationGuide>
                   Positioned.fill(
                     child: IgnorePointer(
                       child: ExcludeFocus(
-                        child: ExcludeSemantics(child: _page()),
+                        child: ExcludeSemantics(
+                          child: NotificationListener<ScrollNotification>(
+                            onNotification: _activity,
+                            child: _page(),
+                          ),
+                        ),
                       ),
                     ),
                   ),
@@ -538,10 +761,10 @@ class _StudentApplicationGuideState extends State<StudentApplicationGuide>
                         title: _step == 0
                             ? 'Hi, ${widget.studentName.trim().split(' ').first}!'
                             : _stop.title,
-                        message: _stop.tip,
+                        message: _tip,
                         gender: widget.gender,
                         onContinue: _next,
-                        onSkip: widget.onExit,
+                        onSkip: _exit,
                         explicitContinue: _step == 0,
                         celebrating: _step == 13,
                       ),
@@ -557,71 +780,123 @@ class _StudentApplicationGuideState extends State<StudentApplicationGuide>
                         child: GestureDetector(
                           behavior: HitTestBehavior.opaque,
                           onTap: _advance,
-                          onVerticalDragUpdate: (event) =>
-                              _scrollBy(-event.delta.dy),
+                          onVerticalDragStart: _dragStart,
+                          onVerticalDragUpdate: _dragUpdate,
+                          onVerticalDragEnd: _dragEnd,
+                          onVerticalDragCancel: _dragCancel,
                           child: const SizedBox.expand(),
                         ),
                       ),
                     ),
                     Positioned.fill(
                       child: IgnorePointer(
-                        child: AnimatedBuilder(
-                          animation: _cue,
-                          builder: (_, _) => CustomPaint(
-                            painter: _SpotlightPainter(
-                              target: target,
-                              pulse: _reduced
-                                  ? 0
-                                  : math.sin(_cue.value * math.pi * 4).abs(),
+                        ignoring: _browsing || _positioning,
+                        child: ExcludeSemantics(
+                          excluding: _browsing || _positioning,
+                          child: AnimatedOpacity(
+                            key: const ValueKey('guide-presentation'),
+                            opacity: _browsing || _positioning ? 0 : 1,
+                            duration: _reduced
+                                ? Duration.zero
+                                : const Duration(milliseconds: 150),
+                            child: Stack(
+                              fit: StackFit.expand,
+                              children: [
+                                Positioned.fill(
+                                  child: IgnorePointer(
+                                    child: AnimatedBuilder(
+                                      animation: _cue,
+                                      builder: (_, _) {
+                                        final viewBounds = Rect.fromLTWH(
+                                          12,
+                                          60,
+                                          math.max(0, size.width - 24),
+                                          math.max(0, size.height - 80),
+                                        );
+                                        final rawTarget = _cardRect ?? target;
+                                        final safeTarget = (rawTarget != null && rawTarget.overlaps(viewBounds))
+                                            ? rawTarget.intersect(viewBounds)
+                                            : null;
+                                        final validTarget = (safeTarget != null && !safeTarget.isEmpty && safeTarget.width > 0 && safeTarget.height > 0)
+                                            ? safeTarget
+                                            : null;
+                                        final rawAction = _step == 7 ? target : null;
+                                        final safeAction = (rawAction != null && rawAction.overlaps(viewBounds))
+                                            ? rawAction.intersect(viewBounds)
+                                            : null;
+                                        final validAction = (safeAction != null && !safeAction.isEmpty && safeAction.width > 0 && safeAction.height > 0)
+                                            ? safeAction
+                                            : null;
+                                        return CustomPaint(
+                                          painter: _SpotlightPainter(
+                                            target: validTarget,
+                                            action: validAction,
+                                            pulse: _reduced
+                                                ? 0
+                                                : math
+                                                      .sin(
+                                                        _cue.value * math.pi * 4,
+                                                      )
+                                                      .abs(),
+                                          ),
+                                        );
+                                      },
+                                    ),
+                                  ),
+                                ),
+                                if (target != null && _stop.action != null)
+                                  Positioned.fromRect(
+                                    rect: target,
+                                    child: Semantics(
+                                      label: 'Guide action: ${_stop.action}',
+                                      button: true,
+                                      child: Material(
+                                        color: Colors.transparent,
+                                        child: InkWell(onTap: _action),
+                                      ),
+                                    ),
+                                  ),
+                                Positioned(
+                                  left: 28,
+                                  right: 28,
+                                  top: below ? target.bottom + 12 : null,
+                                  bottom: above
+                                      ? size.height - target.top + 12
+                                      : below
+                                      ? null
+                                      : (_step == 22 ? size.height * .52 : 110),
+                                  child: _bubble(panel, target, above, below),
+                                ),
+                                if ((_stop.scroll && !_ready) ||
+                                    (_step == 7 && target == null))
+                                  Positioned(
+                                    right: 0,
+                                    top: size.height * .28,
+                                    child: GestureDetector(
+                                      onVerticalDragStart: _dragStart,
+                                      onVerticalDragUpdate: _dragUpdate,
+                                      onVerticalDragEnd: _dragEnd,
+                                      onVerticalDragCancel: _dragCancel,
+                                      child: SizedBox(
+                                        key: const ValueKey('guide-scroll-cue'),
+                                        width: 82,
+                                        height: 180,
+                                        child: AnimatedBuilder(
+                                          animation: _cue,
+                                          builder: (_, _) => StudentSwipeCue(
+                                            progress: _cue.value,
+                                            reducedMotion: _reduced,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                              ],
                             ),
                           ),
                         ),
                       ),
                     ),
-                    if (target != null && _stop.action != null)
-                      Positioned.fromRect(
-                        rect: target,
-                        child: Semantics(
-                          label: 'Guide action: ${_stop.action}',
-                          button: true,
-                          child: Material(
-                            color: Colors.transparent,
-                            child: InkWell(onTap: _action),
-                          ),
-                        ),
-                      ),
-                    Positioned(
-                      left: 28,
-                      right: 28,
-                      top: below ? target.bottom + 12 : null,
-                      bottom: above
-                          ? size.height - target.top + 12
-                          : below
-                          ? null
-                          : (_step == 22 ? size.height * .52 : 110),
-                      child: _bubble(panel, target, above, below),
-                    ),
-                    if (_stop.scroll && !_ready)
-                      Positioned(
-                        right: 0,
-                        top: size.height * .28,
-                        child: GestureDetector(
-                          onVerticalDragUpdate: (event) =>
-                              _scrollBy(-event.delta.dy),
-                          child: SizedBox(
-                            key: const ValueKey('guide-scroll-cue'),
-                            width: 82,
-                            height: 180,
-                            child: AnimatedBuilder(
-                              animation: _cue,
-                              builder: (_, _) => StudentSwipeCue(
-                                progress: _cue.value,
-                                reducedMotion: _reduced,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
                     Positioned(
                       top: MediaQuery.paddingOf(context).top + 4,
                       left: 12,
@@ -632,7 +907,7 @@ class _StudentApplicationGuideState extends State<StudentApplicationGuide>
                           const Spacer(),
                           IconButton(
                             tooltip: 'Skip guide',
-                            onPressed: widget.onExit,
+                            onPressed: _exit,
                             style: IconButton.styleFrom(
                               backgroundColor: Colors.white,
                             ),
@@ -673,9 +948,10 @@ class _StudentApplicationGuideState extends State<StudentApplicationGuide>
         child: GestureDetector(
           behavior: HitTestBehavior.opaque,
           onTap: _advance,
-          onVerticalDragUpdate: _stop.scroll
-              ? (event) => _scrollBy(-event.delta.dy)
-              : null,
+          onVerticalDragStart: _stop.scroll ? _dragStart : null,
+          onVerticalDragUpdate: _stop.scroll ? _dragUpdate : null,
+          onVerticalDragEnd: _stop.scroll ? _dragEnd : null,
+          onVerticalDragCancel: _stop.scroll ? _dragCancel : null,
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -709,7 +985,11 @@ class _StudentApplicationGuideState extends State<StudentApplicationGuide>
                         ),
                         const SizedBox(height: 10),
                         Text(
-                          _stop.tip,
+                          _step == 7 &&
+                                  target == null &&
+                                  widget.discoverCard != null
+                              ? 'Swipe up to find View Details, then tap that button to review this scholarship.'
+                              : _tip,
                           style: geist(
                             fontSize: 15,
                             height: 1.45,
@@ -723,7 +1003,9 @@ class _StudentApplicationGuideState extends State<StudentApplicationGuide>
                             'No scholarship is available right now. Skip the guide and try again when listings load.',
                             style: geist(fontSize: 14),
                           ),
-                        ] else if (_stop.action != null && target == null) ...[
+                        ] else if (_stop.action != null &&
+                            target == null &&
+                            !(_step == 7 && widget.discoverCard != null)) ...[
                           const SizedBox(height: 12),
                           Semantics(
                             label: 'Guide action: ${_stop.action}',
@@ -793,23 +1075,30 @@ class _StudentApplicationGuideState extends State<StudentApplicationGuide>
 }
 
 class _SpotlightPainter extends CustomPainter {
-  const _SpotlightPainter({this.target, required this.pulse});
+  const _SpotlightPainter({this.target, this.action, required this.pulse});
+  final Rect? action;
   final Rect? target;
   final double pulse;
   @override
   void paint(Canvas canvas, Size size) {
     final path = Path()..addRect(Offset.zero & size);
-    if (target != null) {
+    if (target != null && !target!.isEmpty && target!.width > 0 && target!.height > 0) {
       path.addRRect(
-        RRect.fromRectAndRadius(target!.inflate(4), const Radius.circular(16)),
+        RRect.fromRectAndRadius(
+          target!.inflate(4),
+          Radius.circular(action != null ? kRadiusCard : 16),
+        ),
       );
     }
     path.fillType = PathFillType.evenOdd;
     canvas.drawPath(path, Paint()..color = const Color(0xA31A2920));
-    if (target != null) {
+    final pulseTarget = action != null && !action!.isEmpty && action!.width > 0 && action!.height > 0
+        ? action!
+        : (target != null && !target!.isEmpty && target!.width > 0 && target!.height > 0 ? target : null);
+    if (pulseTarget != null) {
       canvas.drawRRect(
         RRect.fromRectAndRadius(
-          target!.inflate(4 + pulse * 3),
+          pulseTarget.inflate(4 + pulse * 3),
           const Radius.circular(16),
         ),
         Paint()
@@ -822,7 +1111,9 @@ class _SpotlightPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(_SpotlightPainter oldDelegate) =>
-      oldDelegate.target != target || oldDelegate.pulse != pulse;
+      oldDelegate.target != target ||
+      oldDelegate.action != action ||
+      oldDelegate.pulse != pulse;
 }
 
 class _PointerPainter extends CustomPainter {

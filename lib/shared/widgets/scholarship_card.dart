@@ -80,7 +80,9 @@ String formatScholarshipFrequency(Scholarship s) {
 /// Formats the right-hand pill in the award highlight tile from canonical coverage & frequency
 ({String text, bool isRenewable}) formatScholarshipBenefit(Scholarship s) {
   final isRenewable = s.frequency == 'annual' || s.frequency == 'per_semester';
-  final text = s.coverage.trim().isNotEmpty ? s.coverage : 'Tuition + Allowance';
+  final text = s.coverage.trim().isNotEmpty
+      ? s.coverage
+      : 'Tuition + Allowance';
   return (text: text, isRenewable: isRenewable);
 }
 
@@ -129,6 +131,7 @@ class ScholarshipCard extends StatelessWidget {
     this.onToggleBookmark,
     this.onQuickApply,
     this.viewDetailsKey,
+    this.cardGuideKey,
   });
 
   final Scholarship scholarship;
@@ -149,6 +152,7 @@ class ScholarshipCard extends StatelessWidget {
   /// Optional quick apply callback.
   final VoidCallback? onQuickApply;
   final GlobalKey? viewDetailsKey;
+  final GlobalKey? cardGuideKey;
 
   int _effectiveMatchPercentage() {
     if (matchPercentage != null) return matchPercentage!;
@@ -159,15 +163,20 @@ class ScholarshipCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final now = DateTime.now();
     final expired = isDeadlinePassed(scholarship.deadline, now: now);
-    final closing = !expired &&
-        isClosingSoon(scholarship.deadline.difference(now).inDays);
+    final closing =
+        !expired && isClosingSoon(scholarship.deadline.difference(now).inDays);
     final readiness = evaluateApplicationReadiness(
-      profile: studentProfile, scholarship: scholarship, referenceNow: now,
+      profile: studentProfile,
+      scholarship: scholarship,
+      referenceNow: now,
     );
     // Placeholder score only; replace with a real scoring model when available.
     final rawMatchPct = _effectiveMatchPercentage();
-    final matchPct = readiness.state == ApplicationReadinessState.notEligible && rawMatchPct > 69
-        ? 69 : rawMatchPct;
+    final matchPct =
+        readiness.state == ApplicationReadinessState.notEligible &&
+            rawMatchPct > 69
+        ? 69
+        : rawMatchPct;
     final amount = formatScholarshipAmount(scholarship);
     final benefit = formatScholarshipBenefit(scholarship);
     final requirements = formatScholarshipRequirements(scholarship);
@@ -175,7 +184,8 @@ class ScholarshipCard extends StatelessWidget {
 
     // Collect criteria chips
     final criteriaChips = <String>[];
-    if (scholarship.requiredCourses != null && scholarship.requiredCourses!.isNotEmpty) {
+    if (scholarship.requiredCourses != null &&
+        scholarship.requiredCourses!.isNotEmpty) {
       criteriaChips.addAll(scholarship.requiredCourses!.take(2));
     } else {
       criteriaChips.add('All Majors');
@@ -188,11 +198,13 @@ class ScholarshipCard extends StatelessWidget {
     } else {
       criteriaChips.add('Merit-Based');
     }
-    if (scholarship.requiredYearLevels != null && scholarship.requiredYearLevels!.isNotEmpty) {
+    if (scholarship.requiredYearLevels != null &&
+        scholarship.requiredYearLevels!.isNotEmpty) {
       criteriaChips.add('College');
     }
 
     return Semantics(
+      key: cardGuideKey,
       button: true,
       label: 'View ${scholarship.title}',
       child: PressableScale(
@@ -206,229 +218,383 @@ class ScholarshipCard extends StatelessWidget {
               extra: scholarship,
             ),
             child: Container(
-            decoration: kSoftCardDecoration,
-            child: Stack(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(20, 20, 20, 20),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // 1. Top Badges & Bookmark Row
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Expanded(
-                            child: Wrap(
-                              spacing: 6,
-                              runSpacing: 4,
-                              crossAxisAlignment: WrapCrossAlignment.center,
-                              children: [
-                                // Fit leads the metadata hierarchy; Applied remains a quiet confirmation.
-                                Container(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 9,
-                                    vertical: 4,
+              decoration: kSoftCardDecoration,
+              child: Stack(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(20, 20, 20, 20),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // 1. Top Badges & Bookmark Row
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Expanded(
+                              child: Wrap(
+                                spacing: 6,
+                                runSpacing: 4,
+                                crossAxisAlignment: WrapCrossAlignment.center,
+                                children: [
+                                  // Fit leads the metadata hierarchy; Applied remains a quiet confirmation.
+                                  Container(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 9,
+                                      vertical: 4,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: matchPct >= 90
+                                          ? const Color(
+                                              0xFFCBEDD5,
+                                            ) // Clear match emphasis
+                                          : const Color(0xFFF0F2F0),
+                                      borderRadius: BorderRadius.circular(20),
+                                    ),
+                                    child: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Container(
+                                          width: 6,
+                                          height: 6,
+                                          decoration: BoxDecoration(
+                                            color: matchPct >= 90
+                                                ? kPrimary
+                                                : const Color(
+                                                    0xFF436084,
+                                                  ), // kSecondary
+                                            shape: BoxShape.circle,
+                                          ),
+                                        ),
+                                        const SizedBox(width: 4.5),
+                                        Flexible(
+                                          child: Text(
+                                            '$matchPct% Fit',
+                                            style: outfit(
+                                              fontSize: 12.5,
+                                              fontWeight: FontWeight.w700,
+                                              color: matchPct >= 90
+                                                  ? kPrimary
+                                                  : const Color(0xFF404942),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
                                   ),
-                                  decoration: BoxDecoration(
-                                    color: matchPct >= 90
-                                        ? const Color(0xFFCBEDD5) // Clear match emphasis
-                                        : const Color(0xFFF0F2F0),
-                                    borderRadius: BorderRadius.circular(20),
-                                  ),
-                                  child: Row(
-                                    mainAxisSize: MainAxisSize.min,
+
+                                  // Keep the application status with its deadline when badges wrap.
+                                  Wrap(
+                                    spacing: 6,
+                                    runSpacing: 4,
+                                    crossAxisAlignment:
+                                        WrapCrossAlignment.center,
                                     children: [
-                                      Container(
-                                        width: 6,
-                                        height: 6,
-                                        decoration: BoxDecoration(
-                                          color: matchPct >= 90
-                                              ? kPrimary
-                                              : const Color(0xFF436084), // kSecondary
-                                          shape: BoxShape.circle,
+                                      _DeadlineChip(
+                                        label: deadlineLabel(
+                                          scholarship.deadline,
                                         ),
+                                        urgent: closing,
+                                        expired: expired,
                                       ),
-                                      const SizedBox(width: 4.5),
-                                      Flexible(child: Text(
-                                        '$matchPct% Fit',
-                                        style: outfit(
-                                          fontSize: 12.5,
-                                          fontWeight: FontWeight.w700,
-                                          color: matchPct >= 90
-                                              ? kPrimary
-                                              : const Color(0xFF404942),
-                                        ),
-                                      )),
+                                      if (isApplied) const _AppliedChip(),
                                     ],
                                   ),
-                                ),
+                                ],
+                              ),
+                            ),
 
-                                // Keep the application status with its deadline when badges wrap.
-                                Wrap(
-                                  spacing: 6,
-                                  runSpacing: 4,
-                                  crossAxisAlignment: WrapCrossAlignment.center,
+                            if (onToggleBookmark != null) ...[
+                              const SizedBox(width: 36),
+                            ],
+                          ],
+                        ),
+                        const SizedBox(height: 10),
+
+                        // Keep the award beside the title only when both can breathe.
+                        LayoutBuilder(
+                          builder: (context, constraints) {
+                            final sideBySide =
+                                constraints.maxWidth >= 420 &&
+                                MediaQuery.textScalerOf(context).scale(12) <=
+                                    14;
+                            final heading = Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  scholarship.title,
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: outfit(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w700,
+                                    color: const Color(0xFF161C27),
+                                    letterSpacing: -0.25,
+                                    height: 1.25,
+                                  ),
+                                ),
+                                const SizedBox(height: 4),
+                                Row(
                                   children: [
-                                    _DeadlineChip(
-                                      label: deadlineLabel(scholarship.deadline),
-                                      urgent: closing,
-                                      expired: expired,
+                                    Icon(
+                                      Icons.account_balance_outlined,
+                                      size: 15,
+                                      color: providerTypeColor(
+                                        scholarship.provider,
+                                      ),
                                     ),
-                                    if (isApplied) const _AppliedChip(),
+                                    const SizedBox(width: 5),
+                                    Expanded(
+                                      child: Text(
+                                        scholarship.provider ??
+                                            'Scholarship Provider',
+                                        maxLines: 2,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: openSans(
+                                          fontSize: 14,
+                                          height: 1.4,
+                                          color: const Color(0xFF4E5C53),
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                      ),
+                                    ),
                                   ],
                                 ),
                               ],
-                            ),
-                          ),
-
-                          if (onToggleBookmark != null) ...[
-                            const SizedBox(width: 36),
-                          ],
-                        ],
-                      ),
-                      const SizedBox(height: 10),
-
-                      // Keep the award beside the title only when both can breathe.
-                      LayoutBuilder(builder: (context, constraints) {
-                        final sideBySide = constraints.maxWidth >= 420 &&
-                            MediaQuery.textScalerOf(context).scale(12) <= 14;
-                        final heading = Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(scholarship.title, maxLines: 2, overflow: TextOverflow.ellipsis,
-                              style: outfit(fontSize: 16, fontWeight: FontWeight.w700,
-                                color: const Color(0xFF161C27), letterSpacing: -0.25, height: 1.25)),
-                            const SizedBox(height: 4),
-                            Row(children: [
-                              Icon(Icons.account_balance_outlined, size: 15, color: providerTypeColor(scholarship.provider)),
-                              const SizedBox(width: 5),
-                              Expanded(child: Text(scholarship.provider ?? 'Scholarship Provider',
-                                maxLines: 2, overflow: TextOverflow.ellipsis,
-                                style: openSans(fontSize: 14, height: 1.4, color: const Color(0xFF4E5C53), fontWeight: FontWeight.w600))),
-                            ]),
-                          ],
-                        );
-                        final amountText = Text(amount, style: outfit(fontSize: 18, fontWeight: FontWeight.w700,
-                          color: kPrimary, letterSpacing: -0.4));
-                        final frequencyText = Text(scholarship.formattedFrequency, style: openSans(fontSize: 12.5,
-                          color: const Color(0xFF4E5C53), fontWeight: FontWeight.w600));
-                        final award = sideBySide
-                            ? Column(crossAxisAlignment: CrossAxisAlignment.end, mainAxisSize: MainAxisSize.min,
-                                children: [amountText, frequencyText])
-                            : Wrap(spacing: 6, runSpacing: 2, crossAxisAlignment: WrapCrossAlignment.center,
-                                children: [const Icon(Icons.school_outlined, size: 17, color: Color(0xFF657168)), amountText, frequencyText]);
-                        if (sideBySide) {
-                          return Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                            Expanded(child: heading),
-                            const SizedBox(width: 14),
-                            Flexible(child: award),
-                          ]);
-                        }
-                        return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                          heading,
-                          const SizedBox(height: 10),
-                          award,
-                        ]);
-                      }),
-                      const SizedBox(height: 10),
-                      Wrap(spacing: 5, runSpacing: 5, children: [
-                        Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 4),
-                          decoration: BoxDecoration(
-                            color: kScholarshipTagBackground,
-                            borderRadius: BorderRadius.circular(999),
-                          ),
-                          child: Text(benefit.text, style: outfit(fontSize: 11, fontWeight: FontWeight.w600,
-                            color: kScholarshipTagForeground)),
-                        ),
-                        ...criteriaChips.map((c) {
-                          return Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 8,
-                              vertical: 3,
-                            ),
-                            decoration: BoxDecoration(
-                              color: kScholarshipTagBackground,
-                              borderRadius: BorderRadius.circular(999),
-                            ),
-                            child: Text(
-                              c,
+                            );
+                            final amountText = Text(
+                              amount,
                               style: outfit(
-                                fontSize: 11,
+                                fontSize: 18,
+                                fontWeight: FontWeight.w700,
+                                color: kPrimary,
+                                letterSpacing: -0.4,
+                              ),
+                            );
+                            final frequencyText = Text(
+                              scholarship.formattedFrequency,
+                              style: openSans(
+                                fontSize: 12.5,
+                                color: const Color(0xFF4E5C53),
                                 fontWeight: FontWeight.w600,
-                                color: kScholarshipTagForeground,
+                              ),
+                            );
+                            final award = sideBySide
+                                ? Column(
+                                    crossAxisAlignment: CrossAxisAlignment.end,
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [amountText, frequencyText],
+                                  )
+                                : Wrap(
+                                    spacing: 6,
+                                    runSpacing: 2,
+                                    crossAxisAlignment:
+                                        WrapCrossAlignment.center,
+                                    children: [
+                                      const Icon(
+                                        Icons.school_outlined,
+                                        size: 17,
+                                        color: Color(0xFF657168),
+                                      ),
+                                      amountText,
+                                      frequencyText,
+                                    ],
+                                  );
+                            if (sideBySide) {
+                              return Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Expanded(child: heading),
+                                  const SizedBox(width: 14),
+                                  Flexible(child: award),
+                                ],
+                              );
+                            }
+                            return Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                heading,
+                                const SizedBox(height: 10),
+                                award,
+                              ],
+                            );
+                          },
+                        ),
+                        const SizedBox(height: 10),
+                        Wrap(
+                          spacing: 5,
+                          runSpacing: 5,
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 9,
+                                vertical: 4,
+                              ),
+                              decoration: BoxDecoration(
+                                color: kScholarshipTagBackground,
+                                borderRadius: BorderRadius.circular(999),
+                              ),
+                              child: Text(
+                                benefit.text,
+                                style: outfit(
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.w600,
+                                  color: kScholarshipTagForeground,
+                                ),
                               ),
                             ),
-                          );
-                        }),
-                      ]),
-                      const SizedBox(height: 8),
+                            ...criteriaChips.map((c) {
+                              return Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 8,
+                                  vertical: 3,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: kScholarshipTagBackground,
+                                  borderRadius: BorderRadius.circular(999),
+                                ),
+                                child: Text(
+                                  c,
+                                  style: outfit(
+                                    fontSize: 11,
+                                    fontWeight: FontWeight.w600,
+                                    color: kScholarshipTagForeground,
+                                  ),
+                                ),
+                              );
+                            }),
+                          ],
+                        ),
+                        const SizedBox(height: 8),
 
-                      Row(children: [
-                        Icon(requirements.icon, size: 15, color: const Color(0xFF404942)),
-                        const SizedBox(width: 6),
-                        Expanded(child: Text(requirements.text, maxLines: 2, overflow: TextOverflow.ellipsis,
-                          style: openSans(fontSize: 13, height: 1.45, fontWeight: FontWeight.w600, color: const Color(0xFF4E5C53)))),
-                      ]),
-                      const SizedBox(height: 12),
-                      Row(children: [
-                        Expanded(child: PressableScale(
-                          child: SizedBox(key: viewDetailsKey, height: 44, child: TextButton(
-                            onPressed: () => context.push(
-                              '/scholarship/${scholarship.id}',
-                              extra: scholarship,
+                        Row(
+                          children: [
+                            Icon(
+                              requirements.icon,
+                              size: 15,
+                              color: const Color(0xFF404942),
                             ),
-                            style: TextButton.styleFrom(
-                              backgroundColor: const Color(0xFFF4F6F8),
-                              foregroundColor: const Color(0xFF161C27),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(16),
+                            const SizedBox(width: 6),
+                            Expanded(
+                              child: Text(
+                                requirements.text,
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                                style: openSans(
+                                  fontSize: 13,
+                                  height: 1.45,
+                                  fontWeight: FontWeight.w600,
+                                  color: const Color(0xFF4E5C53),
+                                ),
                               ),
                             ),
-                            child: Text(
-                              'View Details',
-                              style: outfit(fontSize: 13, fontWeight: FontWeight.w600),
+                          ],
+                        ),
+                        const SizedBox(height: 12),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: PressableScale(
+                                child: SizedBox(
+                                  key: viewDetailsKey,
+                                  height: 44,
+                                  child: TextButton(
+                                    onPressed: () => context.push(
+                                      '/scholarship/${scholarship.id}',
+                                      extra: scholarship,
+                                    ),
+                                    style: TextButton.styleFrom(
+                                      backgroundColor: const Color(0xFFF4F6F8),
+                                      foregroundColor: const Color(0xFF161C27),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(16),
+                                      ),
+                                    ),
+                                    child: Text(
+                                      'View Details',
+                                      style: outfit(
+                                        fontSize: 13,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
                             ),
-                          )),
-                        )),
-                        if (canShowApply) ...[
-                          const SizedBox(width: 8),
-                          Expanded(child: PressableScale(child: SizedBox(height: 44, child: ElevatedButton(
-                            onPressed: onQuickApply ?? () => context.push('/scholarship/${scholarship.id}?apply=1', extra: scholarship),
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: const Color(0xFF0F4D2E), foregroundColor: Colors.white,
-                              elevation: 0, padding: const EdgeInsets.symmetric(horizontal: 6),
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-                            ),
-                            child: FittedBox(child: Row(mainAxisSize: MainAxisSize.min, children: [
-                              Text('Apply Now', style: outfit(fontSize: 13, fontWeight: FontWeight.w600, color: Colors.white)),
-                              const SizedBox(width: 4),
-                              const Icon(Icons.arrow_forward_rounded, size: 15),
-                            ])),
-                          )))),
-                        ],
-                      ]),
-                    ],
-                  ),
-                ),
-                // Keep a full touch target without making the badge row taller.
-                if (onToggleBookmark != null)
-                  Positioned(
-                    top: 0,
-                    right: 8,
-                    child: _BookmarkButton(
-                      isBookmarked: isBookmarked,
-                      onToggleBookmark: onToggleBookmark!,
+                            if (canShowApply) ...[
+                              const SizedBox(width: 8),
+                              Expanded(
+                                child: PressableScale(
+                                  child: SizedBox(
+                                    height: 44,
+                                    child: ElevatedButton(
+                                      onPressed:
+                                          onQuickApply ??
+                                          () => context.push(
+                                            '/scholarship/${scholarship.id}?apply=1',
+                                            extra: scholarship,
+                                          ),
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: const Color(
+                                          0xFF0F4D2E,
+                                        ),
+                                        foregroundColor: Colors.white,
+                                        elevation: 0,
+                                        padding: const EdgeInsets.symmetric(
+                                          horizontal: 6,
+                                        ),
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(
+                                            16,
+                                          ),
+                                        ),
+                                      ),
+                                      child: FittedBox(
+                                        child: Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            Text(
+                                              'Apply Now',
+                                              style: outfit(
+                                                fontSize: 13,
+                                                fontWeight: FontWeight.w600,
+                                                color: Colors.white,
+                                              ),
+                                            ),
+                                            const SizedBox(width: 4),
+                                            const Icon(
+                                              Icons.arrow_forward_rounded,
+                                              size: 15,
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ],
+                        ),
+                      ],
                     ),
                   ),
-              ],
+                  // Keep a full touch target without making the badge row taller.
+                  if (onToggleBookmark != null)
+                    Positioned(
+                      top: 0,
+                      right: 8,
+                      child: _BookmarkButton(
+                        isBookmarked: isBookmarked,
+                        onToggleBookmark: onToggleBookmark!,
+                      ),
+                    ),
+                ],
+              ),
             ),
           ),
         ),
       ),
-    ),
-  );
+    );
   }
 }
 
@@ -460,13 +626,17 @@ class _BookmarkButtonState extends State<_BookmarkButton>
       duration: const Duration(milliseconds: 420),
       vsync: this,
     );
-    _burstScale = TweenSequence<double>(
-      [
-        TweenSequenceItem(tween: Tween(begin: 1.0, end: 1.4), weight: 1),
-        TweenSequenceItem(tween: Tween(begin: 1.4, end: 1.0), weight: 1),
-      ],
-    ).animate(CurvedAnimation(parent: _burstController, curve: Curves.elasticOut));
-    _burstColor = ColorTween(begin: kPrimary, end: kAccent).animate(_burstController);
+    _burstScale =
+        TweenSequence<double>([
+          TweenSequenceItem(tween: Tween(begin: 1.0, end: 1.4), weight: 1),
+          TweenSequenceItem(tween: Tween(begin: 1.4, end: 1.0), weight: 1),
+        ]).animate(
+          CurvedAnimation(parent: _burstController, curve: Curves.elasticOut),
+        );
+    _burstColor = ColorTween(
+      begin: kPrimary,
+      end: kAccent,
+    ).animate(_burstController);
   }
 
   @override
@@ -593,21 +763,26 @@ class _DeadlineChip extends StatelessWidget {
       decoration: BoxDecoration(
         color: bg,
         borderRadius: BorderRadius.circular(6),
-        border: Border.all(color: urgent ? const Color(0x33FF6F59) : const Color(0x0A161C27), width: 0.75),
+        border: Border.all(
+          color: urgent ? const Color(0x33FF6F59) : const Color(0x0A161C27),
+          width: 0.75,
+        ),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
           Icon(icon, size: 13, color: fg),
           const SizedBox(width: 3.5),
-          Flexible(child: Text(
-            label,
-            style: outfit(
-              fontSize: 10.5,
-              fontWeight: FontWeight.w600,
-              color: fg,
+          Flexible(
+            child: Text(
+              label,
+              style: outfit(
+                fontSize: 10.5,
+                fontWeight: FontWeight.w600,
+                color: fg,
+              ),
             ),
-          )),
+          ),
         ],
       ),
     );
@@ -629,20 +804,18 @@ class _AppliedChip extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const Icon(
-            Icons.check_circle,
-            size: 14,
-            color: kPrimary,
-          ),
+          const Icon(Icons.check_circle, size: 14, color: kPrimary),
           const SizedBox(width: 3),
-          Flexible(child: Text(
-            'Applied',
-            style: outfit(
-              fontSize: 11.5,
-              fontWeight: FontWeight.w600,
-              color: const Color(0xFF345B40),
+          Flexible(
+            child: Text(
+              'Applied',
+              style: outfit(
+                fontSize: 11.5,
+                fontWeight: FontWeight.w600,
+                color: const Color(0xFF345B40),
+              ),
             ),
-          )),
+          ),
         ],
       ),
     );

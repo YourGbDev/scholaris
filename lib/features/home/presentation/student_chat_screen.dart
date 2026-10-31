@@ -84,7 +84,7 @@ class StudentChatScreen extends ConsumerWidget {
                         ),
                         const SizedBox(height: 24),
                         Text(
-                          'A little guidance for your next step.',
+                          'I’m ${getMascotName(gender: profile?.gender)}. A little guidance for your next step.',
                           style: geist(
                             fontSize: 22,
                             fontWeight: FontWeight.w500,

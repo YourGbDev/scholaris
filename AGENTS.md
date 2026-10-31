@@ -34,3 +34,7 @@ These rules apply to every contributor and agent, including Codex and Archi. Rea
 
 - Stage and commit only the authorized task's files. Preserve unrelated landing work, readiness/coordination reports, generated assets and IPA/ZIP archives.
 - Build from the intended committed source using the production entry point, not a regression-preview entry point. Assign the next unused build number when a new IPA is authorized; keep old archives in place.
+
+## Mascot identity
+
+- Ariel is the male mascot; Ari is the female mascot. Resolve both name and artwork from the student's stored gender using the shared mascot helpers. Tour and Chat must use the same identity.

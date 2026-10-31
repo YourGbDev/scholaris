@@ -125,37 +125,41 @@ void main() {
     await operation;
     expect(c.read(bookmarksProvider).requireValue, isEmpty);
   });
-  for (final draft in [false, true]) test(
-    'late ${draft ? 'draft' : 'application'} completion cannot populate the next session',
-    () async {
-      final auth = Session();
-      final source = DelayedApplications();
-      String? user = 'a';
-      final c = ProviderContainer(
-        overrides: [
-          authSessionProvider.overrideWith(() => auth),
-          applicationRepositoryProvider.overrideWith(
-            (ref) => ApplicationRepository(
-              dataSource: source,
-              currentUserId: () => user,
+  for (final draft in [false, true]) {
+    test(
+      'late ${draft ? 'draft' : 'application'} completion cannot populate the next session',
+      () async {
+        final auth = Session();
+        final source = DelayedApplications();
+        String? user = 'a';
+        final c = ProviderContainer(
+          overrides: [
+            authSessionProvider.overrideWith(() => auth),
+            applicationRepositoryProvider.overrideWith(
+              (ref) => ApplicationRepository(
+                dataSource: source,
+                currentUserId: () => user,
+              ),
             ),
-          ),
-        ],
-      );
-      addTearDown(c.dispose);
-      c.read(authSessionProvider);
-      final keep = c.listen(applicationsProvider, (_, _) {});
-      addTearDown(keep.close);
-      await c.read(applicationsProvider.future);
-      final notifier = c.read(applicationsProvider.notifier);
-      final operation = draft ? notifier.saveDraft('grant') : notifier.apply('grant');
-      await Future<void>.delayed(Duration.zero);
-      user = 'b';
-      auth.change('b');
-      await c.read(applicationsProvider.future);
-      source.gate.complete();
-      await operation;
-      expect(c.read(applicationsProvider).requireValue, isEmpty);
-    },
-  );
+          ],
+        );
+        addTearDown(c.dispose);
+        c.read(authSessionProvider);
+        final keep = c.listen(applicationsProvider, (_, _) {});
+        addTearDown(keep.close);
+        await c.read(applicationsProvider.future);
+        final notifier = c.read(applicationsProvider.notifier);
+        final operation = draft
+            ? notifier.saveDraft('grant')
+            : notifier.apply('grant');
+        await Future<void>.delayed(Duration.zero);
+        user = 'b';
+        auth.change('b');
+        await c.read(applicationsProvider.future);
+        source.gate.complete();
+        await operation;
+        expect(c.read(applicationsProvider).requireValue, isEmpty);
+      },
+    );
+  }
 }

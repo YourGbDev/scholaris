@@ -41,10 +41,12 @@ class DiscoverScreen extends ConsumerStatefulWidget {
     super.key,
     this.scrollController,
     this.detailsGuideKey,
+    this.cardGuideKey,
     this.endGuideKey,
   });
   final ScrollController? scrollController;
   final GlobalKey? detailsGuideKey;
+  final GlobalKey? cardGuideKey;
   final GlobalKey? endGuideKey;
 
   @override
@@ -480,6 +482,7 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
               order: 1 + index,
               child: ScholarshipCard(
                 viewDetailsKey: index == 0 ? widget.detailsGuideKey : null,
+                cardGuideKey: index == 0 ? widget.cardGuideKey : null,
                 scholarship: scholarship,
                 studentProfile: profile,
                 reasons: reasons,
@@ -580,6 +583,15 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
                 order: 1 + i,
                 child: ScholarshipCard(
                   scholarship: browse[i],
+                  cardGuideKey:
+                      i == 0 &&
+                          (ref
+                                  .watch(filteredMatchesProvider)
+                                  .valueOrNull
+                                  ?.isEmpty ??
+                              false)
+                      ? widget.cardGuideKey
+                      : null,
                   viewDetailsKey:
                       i == 0 &&
                           (ref

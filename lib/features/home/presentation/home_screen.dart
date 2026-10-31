@@ -486,6 +486,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   final _profileScroll = ScrollController();
   final _discoverScroll = ScrollController();
   final _discoverDetails = GlobalKey();
+  final _discoverCard = GlobalKey();
+  final _tourScrollActivity = ValueNotifier<ScrollNotification?>(null);
   final _discoverEnd = GlobalKey();
   late final List<Widget> _tabs;
 
@@ -510,6 +512,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       DiscoverScreen(
         scrollController: _discoverScroll,
         detailsGuideKey: _discoverDetails,
+        cardGuideKey: _discoverCard,
         endGuideKey: _discoverEnd,
       ),
       const ApplicationsScreen(embedded: true),
@@ -529,6 +532,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     _dashboardScroll.dispose();
     _profileScroll.dispose();
     _discoverScroll.dispose();
+    _tourScrollActivity.dispose();
     super.dispose();
   }
 
@@ -542,7 +546,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   Widget build(BuildContext context) {
     final user = ref.watch(currentUserIdProvider);
     final profile = ref.watch(currentProfileProvider);
-    if (user != null && (profile.hasError || (profile.hasValue && profile.valueOrNull?.id != user))) {
+    if (user != null &&
+        (profile.hasError ||
+            (profile.hasValue && profile.valueOrNull?.id != user))) {
       return const SessionEntryStatus();
     }
     final tabIndex = ref.watch(homeTabIndexProvider);
@@ -585,9 +591,17 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                               enabled: tabIndex == i,
                               child: NotificationListener<ScrollNotification>(
                                 key: ValueKey('student-tab-scroll-$i'),
-                                onNotification: (n) => tabIndex == i
-                                    ? _controller.handleScrollNotification(n)
-                                    : false,
+                                onNotification: (n) {
+                                  if (tabIndex != i) return false;
+                                  if (_tourActive &&
+                                      n.depth == 0 &&
+                                      n.metrics.axis == Axis.vertical) {
+                                    _tourScrollActivity.value = n;
+                                  }
+                                  return _controller.handleScrollNotification(
+                                    n,
+                                  );
+                                },
                                 child: StudentTabEntrance(
                                   active: tabIndex == i,
                                   visit: _tabVisit,
@@ -654,6 +668,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               homeTargets: _homeGuideTargets,
               discoverScroll: _discoverScroll,
               discoverDetails: _discoverDetails,
+              discoverCard: _discoverCard,
+              scrollActivity: _tourScrollActivity,
               discoverEnd: _discoverEnd,
               profileReady:
                   ref.watch(currentProfileProvider).valueOrNull != null,

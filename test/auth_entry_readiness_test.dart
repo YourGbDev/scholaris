@@ -1,5 +1,7 @@
 import 'dart:async';
 
+import 'package:scholaris/core/security/captcha_gate.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -54,6 +56,51 @@ StudentProfile student() => const StudentProfile(
   setupComplete: true,
 );
 void main() {
+  testWidgets(
+    'a CAPTCHA result from a superseded login cannot exchange credentials',
+    (tester) async {
+      final auth = MutableSession();
+      final captcha = Completer<CaptchaResult>();
+      final profile = Completer<StudentProfile?>();
+      tester.view.physicalSize = const Size(1000, 1400);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.reset);
+      await tester.pumpWidget(
+        fixture.wrap(
+          ProviderScope(
+            overrides: [
+              authSessionProvider.overrideWith(() => auth),
+              currentProfileProvider.overrideWith((ref) => profile.future),
+              loginCaptchaProvider.overrideWithValue(
+                (context) => captcha.future,
+              ),
+            ],
+            child: const LoginScreen(),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+      await tester.enterText(
+        find.byType(TextFormField).at(0),
+        'demo@example.test',
+      );
+      await tester.enterText(find.byType(TextFormField).at(1), 'Password123!');
+      await tester.tap(find.text('Log in'));
+      await tester.pump();
+      auth.login();
+      await tester.pump();
+      captcha.complete(
+        const CaptchaResult(allowed: true, token: 'obsolete-token'),
+      );
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 500));
+      expect(
+        find.text('Could not complete the security check. Please try again.'),
+        findsNothing,
+      );
+      expect(find.byKey(const ValueKey('auth-entry-busy')), findsOneWidget);
+    },
+  );
   testWidgets('summary remains unknown until a complete snapshot is ready', (
     tester,
   ) async {

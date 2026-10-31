@@ -1,3 +1,4 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 // Focused widget tests for the Verify Email screen (Day 13).
 //
 // The screen is rendered offline through a tiny GoRouter harness so that
@@ -65,7 +66,7 @@ void main() {
   testWidgets('renders heading, email, resend, and back-to-login', (
     tester,
   ) async {
-    await tester.pumpWidget(harness(email: 'a@b.com'));
+    await tester.pumpWidget(ProviderScope(child: harness(email: 'a@b.com')));
     await tester.pumpAndSettle();
 
     expect(find.text('Verify your email'), findsOneWidget);
@@ -75,7 +76,7 @@ void main() {
   });
 
   testWidgets('resend email is disabled when email is null', (tester) async {
-    await tester.pumpWidget(harness(email: null));
+    await tester.pumpWidget(ProviderScope(child: harness(email: null)));
     await tester.pumpAndSettle();
 
     final resendButton = tester.widget<ElevatedButton>(
@@ -90,7 +91,7 @@ void main() {
   testWidgets('rejects an incomplete code before contacting Supabase', (
     tester,
   ) async {
-    await tester.pumpWidget(harness(email: 'a@b.com'));
+    await tester.pumpWidget(ProviderScope(child: harness(email: 'a@b.com')));
     await tester.pumpAndSettle();
     await tester.enterText(find.byType(TextFormField), '123');
     await tester.ensureVisible(find.text('Verify code'));
@@ -137,7 +138,13 @@ void main() {
         );
         addTearDown(subscription.cancel);
         await tester.pumpWidget(
-          harness(email: 'a@b.com', client: client, recovery: recovery),
+          ProviderScope(
+            child: harness(
+              email: 'a@b.com',
+              client: client,
+              recovery: recovery,
+            ),
+          ),
         );
         await tester.pumpAndSettle();
         await tester.enterText(find.byType(TextFormField), '12345678');
@@ -182,7 +189,13 @@ void main() {
         );
         addTearDown(client.dispose);
         await tester.pumpWidget(
-          harness(email: 'a@b.com', client: client, recovery: recovery),
+          ProviderScope(
+            child: harness(
+              email: 'a@b.com',
+              client: client,
+              recovery: recovery,
+            ),
+          ),
         );
         await tester.pumpAndSettle();
         await tester.enterText(find.byType(TextFormField), '12345678');
@@ -219,7 +232,11 @@ void main() {
         }),
       );
       addTearDown(client.dispose);
-      await tester.pumpWidget(harness(email: 'a@b.com', client: client));
+      await tester.pumpWidget(
+        ProviderScope(
+          child: harness(email: 'a@b.com', client: client),
+        ),
+      );
       await tester.pumpAndSettle();
       await tester.ensureVisible(find.text('Resend email'));
       await tester.tap(find.text('Resend email'));
@@ -233,7 +250,7 @@ void main() {
   );
 
   testWidgets('back to login navigates to the login screen', (tester) async {
-    await tester.pumpWidget(harness(email: 'a@b.com'));
+    await tester.pumpWidget(ProviderScope(child: harness(email: 'a@b.com')));
     await tester.pumpAndSettle();
 
     // The back link sits below the fold on the default test viewport (the V1
@@ -245,4 +262,3 @@ void main() {
     expect(find.text('Welcome Back'), findsOneWidget);
   });
 }
-

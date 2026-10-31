@@ -1,3 +1,4 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 // test/ias_security_test.dart
 //
 // IAS Module Security and Audit Unit Tests:
@@ -7,6 +8,7 @@
 // - Audit logging event trail.
 
 import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -81,7 +83,10 @@ class _MockAuthHttpClient extends http.BaseClient {
 
     if (path.contains('/auth/v1/logout')) {
       if (failSignOut) {
-        final body = jsonEncode({'message': 'Network timeout during revocation', 'code': 504});
+        final body = jsonEncode({
+          'message': 'Network timeout during revocation',
+          'code': 504,
+        });
         return http.StreamedResponse(
           Stream.value(utf8.encode(body)),
           504,
@@ -115,8 +120,10 @@ void main() {
     });
 
     test('rejects short passwords (< 8 chars)', () {
-      expect(PasswordValidator.validatePassword('Pass1!'),
-          'Password must be at least 8 characters.');
+      expect(
+        PasswordValidator.validatePassword('Pass1!'),
+        'Password must be at least 8 characters.',
+      );
     });
 
     test('rejects passwords missing required character classes', () {
@@ -149,12 +156,18 @@ void main() {
     });
 
     test('confirm password validation', () {
-      expect(PasswordValidator.validateConfirmPassword('', 'Pass123!'),
-          'Confirm your password.');
-      expect(PasswordValidator.validateConfirmPassword('Different', 'Pass123!'),
-          'Passwords do not match.');
-      expect(PasswordValidator.validateConfirmPassword('Pass123!', 'Pass123!'),
-          isNull);
+      expect(
+        PasswordValidator.validateConfirmPassword('', 'Pass123!'),
+        'Confirm your password.',
+      );
+      expect(
+        PasswordValidator.validateConfirmPassword('Different', 'Pass123!'),
+        'Passwords do not match.',
+      );
+      expect(
+        PasswordValidator.validateConfirmPassword('Pass123!', 'Pass123!'),
+        isNull,
+      );
     });
   });
 
@@ -226,16 +239,24 @@ void main() {
       expect(check.failedAttempts, 0);
     });
 
-    test('expired lockout keeps failed attempts persisted for escalation', () async {
-      const email = 'expired@example.com';
-      final prefs = await SharedPreferences.getInstance();
-      await lockout.initPrefs();
-      await prefs.setInt('lockout_attempts_$email', 3);
-      await prefs.setInt('lockout_until_$email', DateTime.now().subtract(const Duration(seconds: 1)).millisecondsSinceEpoch);
-      expect(lockout.checkLockout(email).isLocked, isFalse);
-      expect(prefs.getInt('lockout_attempts_$email'), 3);
-      expect(prefs.getInt('lockout_until_$email'), isNull);
-    });
+    test(
+      'expired lockout keeps failed attempts persisted for escalation',
+      () async {
+        const email = 'expired@example.com';
+        final prefs = await SharedPreferences.getInstance();
+        await lockout.initPrefs();
+        await prefs.setInt('lockout_attempts_$email', 3);
+        await prefs.setInt(
+          'lockout_until_$email',
+          DateTime.now()
+              .subtract(const Duration(seconds: 1))
+              .millisecondsSinceEpoch,
+        );
+        expect(lockout.checkLockout(email).isLocked, isFalse);
+        expect(prefs.getInt('lockout_attempts_$email'), 3);
+        expect(prefs.getInt('lockout_until_$email'), isNull);
+      },
+    );
   });
 
   group('IAS Audit Ledger Logging', () {
@@ -270,96 +291,132 @@ void main() {
       lockout.resetState();
     });
 
-    testWidgets('LoginScreen displays lockout banner and disables button when locked',
-        (tester) async {
-      const email = 'locked@example.com';
-      for (int i = 0; i < 3; i++) {
+    testWidgets(
+      'LoginScreen displays lockout banner and disables button when locked',
+      (tester) async {
+        const email = 'locked@example.com';
+        for (int i = 0; i < 3; i++) {
+          lockout.recordFailedAttempt(email);
+        }
+        expect(lockout.checkLockout(email).isLocked, isTrue);
+
+        await tester.pumpWidget(
+          ProviderScope(child: const MaterialApp(home: LoginScreen())),
+        );
+        await tester.pumpAndSettle();
+
+        final emailField = find.byType(TextFormField).at(0);
+        await tester.enterText(emailField, email);
+        await tester.pumpAndSettle();
+
+        expect(
+          find.byKey(const ValueKey('lockout-active-banner')),
+          findsOneWidget,
+        );
+        expect(find.text('Account Temporarily Locked'), findsOneWidget);
+        expect(find.text('Account Locked'), findsOneWidget);
+
+        final button = tester.widget<ElevatedButton>(
+          find.byType(ElevatedButton),
+        );
+        expect(button.onPressed, isNull);
+      },
+    );
+
+    testWidgets(
+      'LoginScreen displays warning banner on 1 or 2 failed attempts',
+      (tester) async {
+        const email = 'warn@example.com';
         lockout.recordFailedAttempt(email);
-      }
-      expect(lockout.checkLockout(email).isLocked, isTrue);
+        expect(lockout.checkLockout(email).failedAttempts, 1);
 
-      await tester.pumpWidget(const MaterialApp(home: LoginScreen()));
-      await tester.pumpAndSettle();
+        await tester.pumpWidget(
+          ProviderScope(child: const MaterialApp(home: LoginScreen())),
+        );
+        await tester.pumpAndSettle();
 
-      final emailField = find.byType(TextFormField).at(0);
-      await tester.enterText(emailField, email);
-      await tester.pumpAndSettle();
+        final emailField = find.byType(TextFormField).at(0);
+        await tester.enterText(emailField, email);
+        await tester.pumpAndSettle();
 
-      expect(find.byKey(const ValueKey('lockout-active-banner')), findsOneWidget);
-      expect(find.text('Account Temporarily Locked'), findsOneWidget);
-      expect(find.text('Account Locked'), findsOneWidget);
+        expect(
+          find.byKey(const ValueKey('lockout-warning-banner')),
+          findsOneWidget,
+        );
+        expect(
+          find.textContaining('Security Notice: 1 failed login attempt'),
+          findsOneWidget,
+        );
+      },
+    );
 
-      final button = tester.widget<ElevatedButton>(find.byType(ElevatedButton));
-      expect(button.onPressed, isNull);
-    });
+    testWidgets(
+      'SignupScreen renders password complexity checklist and indicators',
+      (tester) async {
+        await tester.pumpWidget(
+          ProviderScope(child: const MaterialApp(home: SignupScreen())),
+        );
+        await tester.pumpAndSettle();
 
-    testWidgets('LoginScreen displays warning banner on 1 or 2 failed attempts',
-        (tester) async {
-      const email = 'warn@example.com';
-      lockout.recordFailedAttempt(email);
-      expect(lockout.checkLockout(email).failedAttempts, 1);
+        expect(find.text('Password Complexity'), findsOneWidget);
+        expect(find.text('At least 8 characters'), findsOneWidget);
+        expect(find.text('Uppercase & lowercase letters'), findsOneWidget);
+        expect(find.text('At least one number (0-9)'), findsOneWidget);
+        expect(find.text('Special character (!@#\$%^&*)'), findsOneWidget);
+      },
+    );
 
-      await tester.pumpWidget(const MaterialApp(home: LoginScreen()));
-      await tester.pumpAndSettle();
+    testWidgets(
+      'ResetPasswordScreen renders 4-point requirement guidelines matching PasswordValidator',
+      (tester) async {
+        await tester.pumpWidget(
+          ProviderScope(child: const MaterialApp(home: ResetPasswordScreen())),
+        );
+        await tester.pumpAndSettle();
 
-      final emailField = find.byType(TextFormField).at(0);
-      await tester.enterText(emailField, email);
-      await tester.pumpAndSettle();
+        expect(find.text('SECURITY GUIDELINES'), findsOneWidget);
+        expect(find.text('At least 8 characters long'), findsOneWidget);
+        expect(find.text('Uppercase & lowercase letters'), findsOneWidget);
+        expect(find.text('Includes at least one number (0-9)'), findsOneWidget);
+        expect(find.text('Special character (!@#\$%^&*)'), findsOneWidget);
+      },
+    );
 
-      expect(find.byKey(const ValueKey('lockout-warning-banner')), findsOneWidget);
-      expect(find.textContaining('Security Notice: 1 failed login attempt'), findsOneWidget);
-    });
+    testWidgets(
+      'LoginScreen warning banner handles expired lockout without negative remaining count',
+      (tester) async {
+        const email = 'warn2@example.com';
+        lockout.recordFailedAttempt(email);
+        lockout.recordFailedAttempt(email);
 
-    testWidgets('SignupScreen renders password complexity checklist and indicators',
-        (tester) async {
-      await tester.pumpWidget(const MaterialApp(home: SignupScreen()));
-      await tester.pumpAndSettle();
+        await tester.pumpWidget(
+          ProviderScope(child: const MaterialApp(home: LoginScreen())),
+        );
+        await tester.pumpAndSettle();
 
-      expect(find.text('Password Complexity'), findsOneWidget);
-      expect(find.text('At least 8 characters'), findsOneWidget);
-      expect(find.text('Uppercase & lowercase letters'), findsOneWidget);
-      expect(find.text('At least one number (0-9)'), findsOneWidget);
-      expect(find.text('Special character (!@#\$%^&*)'), findsOneWidget);
-    });
+        final emailField = find.byType(TextFormField).at(0);
+        await tester.enterText(emailField, email);
+        await tester.pumpAndSettle();
 
-    testWidgets('ResetPasswordScreen renders 4-point requirement guidelines matching PasswordValidator',
-        (tester) async {
-      await tester.pumpWidget(const MaterialApp(home: ResetPasswordScreen()));
-      await tester.pumpAndSettle();
-
-      expect(find.text('SECURITY GUIDELINES'), findsOneWidget);
-      expect(find.text('At least 8 characters long'), findsOneWidget);
-      expect(find.text('Uppercase & lowercase letters'), findsOneWidget);
-      expect(find.text('Includes at least one number (0-9)'), findsOneWidget);
-      expect(find.text('Special character (!@#\$%^&*)'), findsOneWidget);
-    });
-
-    testWidgets('LoginScreen warning banner handles expired lockout without negative remaining count',
-        (tester) async {
-      const email = 'warn2@example.com';
-      lockout.recordFailedAttempt(email);
-      lockout.recordFailedAttempt(email);
-
-      await tester.pumpWidget(const MaterialApp(home: LoginScreen()));
-      await tester.pumpAndSettle();
-
-      final emailField = find.byType(TextFormField).at(0);
-      await tester.enterText(emailField, email);
-      await tester.pumpAndSettle();
-
-      expect(find.byKey(const ValueKey('lockout-warning-banner')), findsOneWidget);
-      expect(
-        find.textContaining('1 attempt remaining before temporary account lockout'),
-        findsOneWidget,
-      );
-      expect(
-        find.descendant(
-          of: find.byKey(const ValueKey('lockout-warning-banner')),
-          matching: find.textContaining('-'),
-        ),
-        findsNothing,
-      );
-    });
+        expect(
+          find.byKey(const ValueKey('lockout-warning-banner')),
+          findsOneWidget,
+        );
+        expect(
+          find.textContaining(
+            '1 attempt remaining before temporary account lockout',
+          ),
+          findsOneWidget,
+        );
+        expect(
+          find.descendant(
+            of: find.byKey(const ValueKey('lockout-warning-banner')),
+            matching: find.textContaining('-'),
+          ),
+          findsNothing,
+        );
+      },
+    );
   });
 
   group('IAS Section C4: Session Invalidation on Password Update', () {
@@ -515,156 +572,156 @@ void main() {
       expect(logoutRequests, isEmpty);
     });
 
-    testWidgets('ResetPasswordScreen._onSubmit updates password and revokes other sessions via SignOutScope.others',
-        (tester) async {
-      await tester.binding.setSurfaceSize(const Size(360, 800));
-      addTearDown(() => tester.binding.setSurfaceSize(null));
+    testWidgets(
+      'ResetPasswordScreen._onSubmit updates password and revokes other sessions via SignOutScope.others',
+      (tester) async {
+        await tester.binding.setSurfaceSize(const Size(360, 800));
+        addTearDown(() => tester.binding.setSurfaceSize(null));
 
-      await tester.pumpWidget(
-        const MaterialApp(
-          home: ResetPasswordScreen(),
-        ),
-      );
-      await tester.pumpAndSettle();
+        await tester.pumpWidget(
+          ProviderScope(child: const MaterialApp(home: ResetPasswordScreen())),
+        );
+        await tester.pumpAndSettle();
 
-      final textFields = find.byType(TextFormField);
-      expect(textFields, findsNWidgets(2));
+        final textFields = find.byType(TextFormField);
+        expect(textFields, findsNWidgets(2));
 
-      await tester.enterText(textFields.at(0), 'Scholaris2026!#');
-      await tester.enterText(textFields.at(1), 'Scholaris2026!#');
-      await tester.pump();
+        await tester.enterText(textFields.at(0), 'Scholaris2026!#');
+        await tester.enterText(textFields.at(1), 'Scholaris2026!#');
+        await tester.pump();
 
-      expect(find.text('Passwords match'), findsOneWidget);
-      expect(find.byIcon(Icons.check_circle_rounded), findsOneWidget);
+        expect(find.text('Passwords match'), findsOneWidget);
+        expect(find.byIcon(Icons.check_circle_rounded), findsOneWidget);
 
-      final updateBtn = find.widgetWithText(ElevatedButton, 'Reset Password');
-      expect(updateBtn, findsOneWidget);
+        final updateBtn = find.widgetWithText(ElevatedButton, 'Reset Password');
+        expect(updateBtn, findsOneWidget);
 
-      await tester.ensureVisible(updateBtn);
-      await tester.tap(updateBtn);
-      await tester.pump();
-      await tester.pump(const Duration(seconds: 3));
+        await tester.ensureVisible(updateBtn);
+        await tester.tap(updateBtn);
+        await tester.pump();
+        await tester.pump(const Duration(seconds: 3));
 
-      final userReq = mockHttp.requests.firstWhere(
-        (r) => r.url.path.contains('/auth/v1/user'),
-      );
-      expect(userReq.method, 'PUT');
+        final userReq = mockHttp.requests.firstWhere(
+          (r) => r.url.path.contains('/auth/v1/user'),
+        );
+        expect(userReq.method, 'PUT');
 
-      final logoutReq = mockHttp.requests.firstWhere(
-        (r) => r.url.path.contains('/auth/v1/logout'),
-      );
-      expect(logoutReq.method, 'POST');
-      expect(logoutReq.url.queryParameters['scope'], 'others');
-    });
+        final logoutReq = mockHttp.requests.firstWhere(
+          (r) => r.url.path.contains('/auth/v1/logout'),
+        );
+        expect(logoutReq.method, 'POST');
+        expect(logoutReq.url.queryParameters['scope'], 'others');
+      },
+    );
 
-    testWidgets('ResetPasswordScreen._onSubmit handles revocation failure non-fatally and completes password update',
-        (tester) async {
-      mockHttp.failSignOut = true;
-      await tester.binding.setSurfaceSize(const Size(360, 800));
-      addTearDown(() => tester.binding.setSurfaceSize(null));
+    testWidgets(
+      'ResetPasswordScreen._onSubmit handles revocation failure non-fatally and completes password update',
+      (tester) async {
+        mockHttp.failSignOut = true;
+        await tester.binding.setSurfaceSize(const Size(360, 800));
+        addTearDown(() => tester.binding.setSurfaceSize(null));
 
-      await tester.pumpWidget(
-        const MaterialApp(
-          home: ResetPasswordScreen(),
-        ),
-      );
-      await tester.pumpAndSettle();
+        await tester.pumpWidget(
+          ProviderScope(child: const MaterialApp(home: ResetPasswordScreen())),
+        );
+        await tester.pumpAndSettle();
 
-      final textFields = find.byType(TextFormField);
-      await tester.enterText(textFields.at(0), 'Scholaris2026!#');
-      await tester.enterText(textFields.at(1), 'Scholaris2026!#');
-      await tester.pump();
+        final textFields = find.byType(TextFormField);
+        await tester.enterText(textFields.at(0), 'Scholaris2026!#');
+        await tester.enterText(textFields.at(1), 'Scholaris2026!#');
+        await tester.pump();
 
-      final updateBtn = find.widgetWithText(ElevatedButton, 'Reset Password');
-      await tester.ensureVisible(updateBtn);
-      await tester.tap(updateBtn);
-      await tester.pump();
+        final updateBtn = find.widgetWithText(ElevatedButton, 'Reset Password');
+        await tester.ensureVisible(updateBtn);
+        await tester.tap(updateBtn);
+        await tester.pump();
 
-      // Verify primary update was dispatched and committed
-      final userReq = mockHttp.requests.firstWhere(
-        (r) => r.url.path.contains('/auth/v1/user'),
-      );
-      expect(userReq.method, 'PUT');
+        // Verify primary update was dispatched and committed
+        final userReq = mockHttp.requests.firstWhere(
+          (r) => r.url.path.contains('/auth/v1/user'),
+        );
+        expect(userReq.method, 'PUT');
 
-      // Verify revocation was attempted via SignOutScope.others
-      final logoutReq = mockHttp.requests.firstWhere(
-        (r) => r.url.path.contains('/auth/v1/logout'),
-      );
-      expect(logoutReq.method, 'POST');
-      expect(logoutReq.url.queryParameters['scope'], 'others');
+        // Verify revocation was attempted via SignOutScope.others
+        final logoutReq = mockHttp.requests.firstWhere(
+          (r) => r.url.path.contains('/auth/v1/logout'),
+        );
+        expect(logoutReq.method, 'POST');
+        expect(logoutReq.url.queryParameters['scope'], 'others');
 
-      // Pump through SuccessOverlay duration (auto-dismiss)
-      await tester.pump(const Duration(seconds: 3));
-      await tester.pumpAndSettle();
+        // Pump through SuccessOverlay duration (auto-dismiss)
+        await tester.pump(const Duration(seconds: 3));
+        await tester.pumpAndSettle();
 
-      // Verify visible warning SnackBar is surfaced honestly when revocation fails
-      expect(
-        find.textContaining('Other active sessions could not be signed out'),
-        findsOneWidget,
-      );
-    });
+        // Verify visible warning SnackBar is surfaced honestly when revocation fails
+        expect(
+          find.textContaining('Other active sessions could not be signed out'),
+          findsOneWidget,
+        );
+      },
+    );
 
-    testWidgets('ResetPasswordScreen._onSubmit primary update failure shows error, no success overlay, and skips revocation',
-        (tester) async {
-      mockHttp.failUpdateUser = true;
-      await tester.binding.setSurfaceSize(const Size(360, 800));
-      addTearDown(() => tester.binding.setSurfaceSize(null));
+    testWidgets(
+      'ResetPasswordScreen._onSubmit primary update failure shows error, no success overlay, and skips revocation',
+      (tester) async {
+        mockHttp.failUpdateUser = true;
+        await tester.binding.setSurfaceSize(const Size(360, 800));
+        addTearDown(() => tester.binding.setSurfaceSize(null));
 
-      await tester.pumpWidget(
-        const MaterialApp(
-          home: ResetPasswordScreen(),
-        ),
-      );
-      await tester.pumpAndSettle();
+        await tester.pumpWidget(
+          ProviderScope(child: const MaterialApp(home: ResetPasswordScreen())),
+        );
+        await tester.pumpAndSettle();
 
-      final textFields = find.byType(TextFormField);
-      await tester.enterText(textFields.at(0), 'Scholaris2026!#');
-      await tester.enterText(textFields.at(1), 'Scholaris2026!#');
-      await tester.pump();
+        final textFields = find.byType(TextFormField);
+        await tester.enterText(textFields.at(0), 'Scholaris2026!#');
+        await tester.enterText(textFields.at(1), 'Scholaris2026!#');
+        await tester.pump();
 
-      final updateBtn = find.widgetWithText(ElevatedButton, 'Reset Password');
-      await tester.ensureVisible(updateBtn);
-      await tester.tap(updateBtn);
-      await tester.pump();
-      await tester.pumpAndSettle();
+        final updateBtn = find.widgetWithText(ElevatedButton, 'Reset Password');
+        await tester.ensureVisible(updateBtn);
+        await tester.tap(updateBtn);
+        await tester.pump();
+        await tester.pumpAndSettle();
 
-      // Zero logout requests dispatched
-      final logoutRequests = mockHttp.requests.where(
-        (r) => r.url.path.contains('/auth/v1/logout'),
-      );
-      expect(logoutRequests, isEmpty);
+        // Zero logout requests dispatched
+        final logoutRequests = mockHttp.requests.where(
+          (r) => r.url.path.contains('/auth/v1/logout'),
+        );
+        expect(logoutRequests, isEmpty);
 
-      // Warning snackbar is never shown
-      expect(
-        find.textContaining('Other active sessions could not be signed out'),
-        findsNothing,
-      );
+        // Warning snackbar is never shown
+        expect(
+          find.textContaining('Other active sessions could not be signed out'),
+          findsNothing,
+        );
 
-      // Friendly error message appears in snackbar
-      expect(find.byType(SnackBar), findsOneWidget);
-      expect(find.textContaining('Failed user update'), findsOneWidget);
-    });
+        // Friendly error message appears in snackbar
+        expect(find.byType(SnackBar), findsOneWidget);
+        expect(find.textContaining('Failed user update'), findsOneWidget);
+      },
+    );
 
-    testWidgets('ResetPasswordScreen reactive password-match indicators at 360x800 standard text',
-        (tester) async {
-      await tester.binding.setSurfaceSize(const Size(360, 800));
-      addTearDown(() => tester.binding.setSurfaceSize(null));
+    testWidgets(
+      'ResetPasswordScreen reactive password-match indicators at 360x800 standard text',
+      (tester) async {
+        await tester.binding.setSurfaceSize(const Size(360, 800));
+        addTearDown(() => tester.binding.setSurfaceSize(null));
 
-      await tester.pumpWidget(
-        const MaterialApp(
-          home: ResetPasswordScreen(),
-        ),
-      );
-      await tester.pumpAndSettle();
+        await tester.pumpWidget(
+          ProviderScope(child: const MaterialApp(home: ResetPasswordScreen())),
+        );
+        await tester.pumpAndSettle();
 
-      final textFields = find.byType(TextFormField);
-      await tester.enterText(textFields.at(0), 'Scholaris2026!#');
-      await tester.enterText(textFields.at(1), 'Scholaris2026!#');
-      await tester.pump();
+        final textFields = find.byType(TextFormField);
+        await tester.enterText(textFields.at(0), 'Scholaris2026!#');
+        await tester.enterText(textFields.at(1), 'Scholaris2026!#');
+        await tester.pump();
 
-      // Verify match indicator is reactive and visible
-      expect(find.text('Passwords match'), findsOneWidget);
-      expect(find.byIcon(Icons.check_circle_rounded), findsOneWidget);
-    });
+        // Verify match indicator is reactive and visible
+        expect(find.text('Passwords match'), findsOneWidget);
+        expect(find.byIcon(Icons.check_circle_rounded), findsOneWidget);
+      },
+    );
   });
 }

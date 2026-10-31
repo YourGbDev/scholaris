@@ -32,6 +32,7 @@ import 'package:scholaris/features/scholarships/screens/discover_screen.dart';
 import 'package:scholaris/features/profile/presentation/profile_tab_screen.dart';
 
 import 'widgets/student_action_sheet.dart';
+import '../../auth/presentation/session_entry_status.dart';
 import 'widgets/student_app_tour.dart';
 import '../../auth/controllers/auth_controller.dart';
 import '../../profile/providers/profile_setup_provider.dart';
@@ -44,7 +45,10 @@ import 'widgets/student_glass_refraction.dart';
 /// Defaults to the Discover tab.
 class HomeTabIndexNotifier extends Notifier<int> {
   @override
-  int build() => 0;
+  int build() {
+    ref.watch(currentUserIdProvider);
+    return 0;
+  }
 
   void selectTab(int index) {
     if (state != index) {
@@ -536,6 +540,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final user = ref.watch(currentUserIdProvider);
+    final profile = ref.watch(currentProfileProvider);
+    if (user != null && (profile.hasError || (profile.hasValue && profile.valueOrNull?.id != user))) {
+      return const SessionEntryStatus();
+    }
     final tabIndex = ref.watch(homeTabIndexProvider);
     if (tabIndex != _lastTabIndex) {
       _lastTabIndex = tabIndex;

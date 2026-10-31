@@ -1,3 +1,4 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 // Day 19 tests: the redesigned login screen sitting on the EmptyStage.
 //
 // Verifies the visual composition (EmptyStage behind the form, locked
@@ -34,7 +35,9 @@ void main() {
   /// Pumps the login screen and advances the fake clock past the entire
   /// entrance so every element has settled at full opacity.
   Future<void> pumpSettled(WidgetTester tester) async {
-    await tester.pumpWidget(const MaterialApp(home: LoginScreen()));
+    await tester.pumpWidget(
+      ProviderScope(child: const MaterialApp(home: LoginScreen())),
+    );
     await tester.pump(
       const Duration(milliseconds: kLoginEntranceTotalMs) +
           const Duration(milliseconds: 100),
@@ -44,11 +47,21 @@ void main() {
   group('LoginScreen composition', () {
     testWidgets('login form enters smoothly and settles', (tester) async {
       await useLargeSurface(tester);
-      await tester.pumpWidget(const MaterialApp(home: LoginScreen()));
+      await tester.pumpWidget(
+        ProviderScope(child: const MaterialApp(home: LoginScreen())),
+      );
       await tester.pump(const Duration(milliseconds: 350));
-      double reveal(int index) => tester.widget<FadeTransition>(find.descendant(
-        of: find.byKey(ValueKey('login-reveal-$index')), matching: find.byType(FadeTransition),
-      ).first).opacity.value;
+      double reveal(int index) => tester
+          .widget<FadeTransition>(
+            find
+                .descendant(
+                  of: find.byKey(ValueKey('login-reveal-$index')),
+                  matching: find.byType(FadeTransition),
+                )
+                .first,
+          )
+          .opacity
+          .value;
       expect(reveal(0), greaterThan(reveal(2)));
       expect(reveal(4), 0);
       await tester.pumpAndSettle();
@@ -138,7 +151,9 @@ void main() {
       tester,
     ) async {
       await useLargeSurface(tester);
-      await tester.pumpWidget(const MaterialApp(home: LoginScreen()));
+      await tester.pumpWidget(
+        ProviderScope(child: const MaterialApp(home: LoginScreen())),
+      );
       await tester.pump();
 
       // Mid-entrance not everything is settled yet — the later items (provider
@@ -164,7 +179,9 @@ void main() {
     ) async {
       await useLargeSurface(tester);
       useReducedMotion(tester);
-      await tester.pumpWidget(const MaterialApp(home: LoginScreen()));
+      await tester.pumpWidget(
+        ProviderScope(child: const MaterialApp(home: LoginScreen())),
+      );
       await tester.pump();
 
       // All elements are immediately visible and the button is interactive.
@@ -180,35 +197,44 @@ void main() {
       expect(button.onPressed, isNotNull);
     });
 
-    testWidgets('provider CTA is hidden on mobile by default when landing URL is unconfigured', (
-      tester,
-    ) async {
-      await useLargeSurface(tester);
-      await pumpSettled(tester);
+    testWidgets(
+      'provider CTA is hidden on mobile by default when landing URL is unconfigured',
+      (tester) async {
+        await useLargeSurface(tester);
+        await pumpSettled(tester);
 
-      expect(find.text('Want to help students reach their dreams?'),
-          findsNothing);
-      expect(find.text('Become a scholarship provider'), findsNothing);
-    });
+        expect(
+          find.text('Want to help students reach their dreams?'),
+          findsNothing,
+        );
+        expect(find.text('Become a scholarship provider'), findsNothing);
+      },
+    );
 
     testWidgets('provider CTA renders and is tappable when enabled or on web', (
       tester,
     ) async {
       await useLargeSurface(tester);
       await tester.pumpWidget(
-        const MaterialApp(home: LoginScreen(showProviderCta: true)),
+        ProviderScope(
+          child: const MaterialApp(home: LoginScreen(showProviderCta: true)),
+        ),
       );
       await tester.pump(
         const Duration(milliseconds: kLoginEntranceTotalMs) +
             const Duration(milliseconds: 100),
       );
 
-      expect(find.text('Want to help students reach their dreams?'),
-          findsOneWidget);
+      expect(
+        find.text('Want to help students reach their dreams?'),
+        findsOneWidget,
+      );
       expect(find.text('Become a scholarship provider'), findsOneWidget);
 
-      await tester.tap(find.text('Become a scholarship provider'),
-          warnIfMissed: false);
+      await tester.tap(
+        find.text('Become a scholarship provider'),
+        warnIfMissed: false,
+      );
       await tester.pump();
     });
 
@@ -251,7 +277,9 @@ void main() {
           ),
         ],
       );
-      await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+      await tester.pumpWidget(
+        ProviderScope(child: MaterialApp.router(routerConfig: router)),
+      );
       await tester.pumpAndSettle();
 
       await tester.tap(find.text('Forgot password?'));

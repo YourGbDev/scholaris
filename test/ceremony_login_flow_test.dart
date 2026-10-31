@@ -1,3 +1,4 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 // Day 19 integration test: full ceremony → login flow.
 //
 // Exercises the end-to-end path:
@@ -21,8 +22,11 @@ void main() {
 
   /// Advances [ms] of fake time in fixed small steps so the Lottie ticker
   /// actually makes progress.
-  Future<void> pumpSteps(WidgetTester tester, int ms,
-      {int stepMs = 200}) async {
+  Future<void> pumpSteps(
+    WidgetTester tester,
+    int ms, {
+    int stepMs = 200,
+  }) async {
     var remaining = ms;
     while (remaining > 0) {
       final step = remaining < stepMs ? remaining : stepMs;
@@ -48,7 +52,9 @@ void main() {
       ],
     );
 
-    await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+    await tester.pumpWidget(
+      ProviderScope(child: MaterialApp.router(routerConfig: router)),
+    );
     await tester.pump(); // Lottie load starts
     await tester.pump(); // composition resolves, forward()
 

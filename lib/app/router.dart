@@ -9,7 +9,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 
 // Screens referenced by the routes below. Implement them in their feature
 // folders; the router only wires them together. Expected contracts:
@@ -70,7 +69,7 @@ class ProfileCompleteNotifier extends AsyncNotifier<bool> {
     // Rebuild whenever the signed-in user changes, so the redirect below is
     // never evaluated against a previous user's profile.
     ref.watch(currentUserIdProvider);
-    final profile = await ref.watch(profileRepositoryProvider).fetchCurrent();
+    final profile = await ref.watch(currentProfileProvider.future);
     return profile?.setupComplete ?? false;
   }
 
@@ -99,11 +98,8 @@ final userRoleProvider = FutureProvider<String>((ref) async {
 // -----------------------------------------------------------------------------
 
 final routerProvider = Provider<GoRouter>((ref) {
-  // Instantiate the auth session boundary before the router registers its own
-  // auth subscription below. Its onAuthStateChange listener therefore runs
-  // first on every session change, invalidating every user-scoped provider
-  // (through currentUserIdProvider) before the redirect re-evaluates — so a
-  // redirect can never be decided from the previous user's cached state.
+  // All routing observes the shared auth boundary; refresh is coalesced after
+  // dependent providers receive each session event.
   ref.read(authSessionProvider);
 
   final router = GoRouter(
@@ -117,10 +113,7 @@ final routerProvider = Provider<GoRouter>((ref) {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const MascotPoseView(
-                pose: MascotPose.confused,
-                height: 120,
-              ),
+              const MascotPoseView(pose: MascotPose.confused, height: 120),
               const SizedBox(height: 16),
               Text(
                 'Page Not Found',
@@ -134,10 +127,7 @@ final routerProvider = Provider<GoRouter>((ref) {
               Text(
                 'The requested route (${state.uri.path}) does not exist.',
                 textAlign: TextAlign.center,
-                style: geist(
-                  fontSize: 14,
-                  color: const Color(0xFF404942),
-                ),
+                style: geist(fontSize: 14, color: const Color(0xFF404942)),
               ),
               const SizedBox(height: 24),
               ElevatedButton.icon(
@@ -145,8 +135,13 @@ final routerProvider = Provider<GoRouter>((ref) {
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFF0F4D2E),
                   foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 24,
+                    vertical: 12,
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
                 ),
                 onPressed: () => context.go('/home'),
                 icon: const Icon(Icons.home_rounded, size: 18),
@@ -201,12 +196,11 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/verify-email',
         name: 'verify-email',
-        builder: (context, state) =>
-            VerifyEmailScreen(
-              email: state.uri.queryParameters['email'],
-              recovery: state.uri.queryParameters['purpose'] == 'recovery',
-              successLocation: state.uri.queryParameters['redirect'],
-            ),
+        builder: (context, state) => VerifyEmailScreen(
+          email: state.uri.queryParameters['email'],
+          recovery: state.uri.queryParameters['purpose'] == 'recovery',
+          successLocation: state.uri.queryParameters['redirect'],
+        ),
       ),
       GoRoute(
         path: '/become-provider',
@@ -218,9 +212,8 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/provider/login',
         name: 'provider-login',
-        builder: (context, state) => ProviderLoginScreen(
-          initialType: state.uri.queryParameters['type'],
-        ),
+        builder: (context, state) =>
+            ProviderLoginScreen(initialType: state.uri.queryParameters['type']),
       ),
       // Retarget legacy /provider-login alias -> /provider/login
       GoRoute(
@@ -233,14 +226,8 @@ final routerProvider = Provider<GoRouter>((ref) {
         },
       ),
       // Landing page and legacy route aliases
-      GoRoute(
-        path: '/student/login',
-        redirect: (context, state) => '/login',
-      ),
-      GoRoute(
-        path: '/student/signup',
-        redirect: (context, state) => '/signup',
-      ),
+      GoRoute(path: '/student/login', redirect: (context, state) => '/login'),
+      GoRoute(path: '/student/signup', redirect: (context, state) => '/signup'),
       GoRoute(
         path: '/provider/signup',
         redirect: (context, state) {
@@ -263,7 +250,8 @@ final routerProvider = Provider<GoRouter>((ref) {
         name: 'provider-home',
         builder: (context, state) {
           final tabStr = state.uri.queryParameters['tab'];
-          final openDrawer = state.uri.queryParameters['drawer'] == 'open' ||
+          final openDrawer =
+              state.uri.queryParameters['drawer'] == 'open' ||
               state.uri.queryParameters['drawer'] == 'true';
           int initialTab = openDrawer ? 0 : 8;
           if (tabStr == 'applications' || tabStr == '0') {
@@ -280,7 +268,10 @@ final routerProvider = Provider<GoRouter>((ref) {
           } else if (tabStr == 'settings' || tabStr == '5') {
             initialTab = 5;
           }
-          return ProviderHomeScreen(initialTab: initialTab, autoOpenDrawer: openDrawer);
+          return ProviderHomeScreen(
+            initialTab: initialTab,
+            autoOpenDrawer: openDrawer,
+          );
         },
       ),
       GoRoute(
@@ -336,8 +327,11 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/onboarding',
         name: 'onboarding',
-        pageBuilder: (context, state) =>
-            _fadeRisePage(state, child: const OnboardingScreen(), outgoingEnd: 0.8),
+        pageBuilder: (context, state) => _fadeRisePage(
+          state,
+          child: const OnboardingScreen(),
+          outgoingEnd: 0.8,
+        ),
       ),
 
       // --- Root / splash -----------------------------------------------------
@@ -414,7 +408,7 @@ final routerProvider = Provider<GoRouter>((ref) {
         path: '/applications',
         name: 'applications',
         redirect: (context, state) {
-          Future.microtask(() => ref.read(homeTabIndexProvider.notifier).selectTab(2));
+          _selectSessionTab(ref, 2);
           return '/home';
         },
       ),
@@ -422,7 +416,7 @@ final routerProvider = Provider<GoRouter>((ref) {
         path: '/tracker',
         name: 'tracker',
         redirect: (context, state) {
-          Future.microtask(() => ref.read(homeTabIndexProvider.notifier).selectTab(2));
+          _selectSessionTab(ref, 2);
           return '/home';
         },
       ),
@@ -430,7 +424,7 @@ final routerProvider = Provider<GoRouter>((ref) {
         path: '/discover',
         name: 'discover',
         redirect: (context, state) {
-          Future.microtask(() => ref.read(homeTabIndexProvider.notifier).selectTab(1));
+          _selectSessionTab(ref, 1);
           return '/home';
         },
       ),
@@ -438,7 +432,7 @@ final routerProvider = Provider<GoRouter>((ref) {
         path: '/profile',
         name: 'profile',
         redirect: (context, state) {
-          Future.microtask(() => ref.read(homeTabIndexProvider.notifier).selectTab(3));
+          _selectSessionTab(ref, 3);
           return '/home';
         },
       ),
@@ -480,7 +474,8 @@ final routerProvider = Provider<GoRouter>((ref) {
           debugPrint('[ROUTER] parent redirect for path=${state.uri.path}');
           // Only redirect bare /profile-setup to personal; child paths must
           // pass through untouched or the Next button bounces back to step 1.
-          if (state.uri.path == '/profile-setup' || state.uri.path.endsWith('/profile-setup/')) {
+          if (state.uri.path == '/profile-setup' ||
+              state.uri.path.endsWith('/profile-setup/')) {
             return ProfileSetupRoute.personal;
           }
           return null;
@@ -526,34 +521,40 @@ final routerProvider = Provider<GoRouter>((ref) {
   // refresh, turning a single token renewal into an unbounded refresh loop
   // (burning refresh tokens until Supabase rate-limits with a 429 and signs
   // the user out). React only to real session changes.
-  final authSub = Supabase.instance.client.auth.onAuthStateChange.listen((
-    event,
-  ) {
-    debugPrint(
-      '[AUTH EVENT] event=${event.event.name} session=${event.session != null} user=${event.session?.user.id}',
-    );
-    if (event.event == AuthChangeEvent.tokenRefreshed) {
-      return;
-    }
-    router.refresh();
+  var refreshQueued = false;
+  var disposed = false;
+  ref.onDispose(() {
+    disposed = true;
+    router.dispose();
   });
-  ref.onDispose(() => authSub.cancel());
+  // Auth dependents must receive the boundary event before a redirect reads them.
+  // Coalesce this event's notifications, rather than routing from an old snapshot.
+  void refreshSettled() {
+    if (refreshQueued || disposed) return;
+    refreshQueued = true;
+    Future.microtask(() {
+      refreshQueued = false;
+      if (!disposed) router.refresh();
+    });
+  }
 
-  ref.listen(profileCompleteProvider, (_, _) => router.refresh());
+  ref.listen(authSessionProvider, (_, _) => refreshSettled());
+
+  ref.listen(profileCompleteProvider, (_, _) => refreshSettled());
   // The provider branch of the landing decision depends on role, so a role
   // change (e.g. after provider signup tags the row) must also re-evaluate
   // redirects.
-  ref.listen(userRoleProvider, (_, _) => router.refresh());
+  ref.listen(userRoleProvider, (_, _) => refreshSettled());
 
   // Re-evaluate the signed-out entry point once the first-launch flag resolves
   // (loading → seen/not-seen), so splash hands off to onboarding or login
   // exactly once.
-  ref.listen(onboardingSeenProvider, (_, _) => router.refresh());
-  ref.listen(introSeenProvider, (_, _) => router.refresh());
+  ref.listen(onboardingSeenProvider, (_, _) => refreshSettled());
+  ref.listen(introSeenProvider, (_, _) => refreshSettled());
 
   // Release the splash hold once the animated sequence completes, so the
   // redirect re-runs and proceeds to onboarding/login/home.
-  ref.listen(splashCompletedProvider, (_, _) => router.refresh());
+  ref.listen(splashCompletedProvider, (_, _) => refreshSettled());
 
   return router;
 });
@@ -600,7 +601,10 @@ CustomTransitionPage<void> _fadeRisePage(
     child: child,
     transitionDuration: const Duration(milliseconds: 350),
     transitionsBuilder: (context, animation, secondaryAnimation, child) {
-      final curved = CurvedAnimation(parent: animation, curve: kAppleSpringCurve);
+      final curved = CurvedAnimation(
+        parent: animation,
+        curve: kAppleSpringCurve,
+      );
       if (MediaQuery.of(context).disableAnimations) return child;
       final outgoingFade = CurvedAnimation(
         parent: secondaryAnimation,
@@ -735,10 +739,15 @@ String? _redirect(Ref ref, GoRouterState state) {
     onVerifyRoute: location == AuthRoute.verifyEmail,
     onSetupRoute: location.startsWith('/profile-setup'),
     profileLoading:
-        profileAsync.isLoading || (roleAsync.isLoading && roleAsync.value == null),
+        ref.read(currentProfileProvider).isLoading ||
+        profileAsync.isLoading ||
+        profileAsync.hasError ||
+        ref.read(currentProfileProvider).hasError ||
+        (roleAsync.isLoading && roleAsync.value == null),
     profileComplete: profileAsync.valueOrNull ?? false,
     role: roleAsync.valueOrNull ?? 'student',
-    profileSetupStep: ref.read(currentProfileProvider).valueOrNull?.profileSetupStep ?? 1,
+    profileSetupStep:
+        ref.read(currentProfileProvider).valueOrNull?.profileSetupStep ?? 1,
   );
   debugPrint('[ROUTER] authDecision=$authDecision');
 
@@ -754,7 +763,7 @@ String? _redirect(Ref ref, GoRouterState state) {
     recoveryActive: recoveryActive,
   );
   if (result == '/home' && location.startsWith('/profile-setup')) {
-    Future.microtask(() => ref.read(homeTabIndexProvider.notifier).selectTab(0));
+    _selectSessionTab(ref, 0);
   }
   debugPrint('[ROUTER] final redirect=$result');
   return result;
@@ -801,9 +810,7 @@ String? onboardingRedirectDecision({
   // Direct navigation to auth routes (/login, /signup, /become-provider, etc.)
   // renders the requested screen directly, even for unauthenticated / first-time
   // visitors, rather than being hijacked to /intro or /onboarding.
-  final funnelsToLogin =
-      authDecision == '/login' ||
-      location == '/intro';
+  final funnelsToLogin = authDecision == '/login' || location == '/intro';
   if (!funnelsToLogin) return authDecision;
 
   // When splash completes its animation sequence, hand off directly to the onboarding slides
@@ -885,7 +892,8 @@ String? authRedirectDecision({
   // profileComplete check so a provider row (whose setup_complete is
   // irrelevant) is never forced through the student wizard.
   if (role == 'provider') {
-    final isProviderRoute = location == ProviderRoute.home ||
+    final isProviderRoute =
+        location == ProviderRoute.home ||
         location == '/provider-review' ||
         location.startsWith('/provider-application');
     return isProviderRoute ? null : ProviderRoute.home;
@@ -897,7 +905,11 @@ String? authRedirectDecision({
   }
 
   if (profileComplete) {
-    if (onAuthRoute || onSetupRoute || onVerifyRoute || location == '/onboarding' || location == '/splash') {
+    if (onAuthRoute ||
+        onSetupRoute ||
+        onVerifyRoute ||
+        location == '/onboarding' ||
+        location == '/splash') {
       return '/home';
     }
     return null;
@@ -911,3 +923,11 @@ String? authRedirectDecision({
   return onSetupRoute ? null : resumeRoute;
 }
 
+void _selectSessionTab(Ref ref, int index) {
+  final session = ref.read(authSessionProvider);
+  Future.microtask(() {
+    if (session != null && identical(session, ref.read(authSessionProvider))) {
+      ref.read(homeTabIndexProvider.notifier).selectTab(index);
+    }
+  });
+}

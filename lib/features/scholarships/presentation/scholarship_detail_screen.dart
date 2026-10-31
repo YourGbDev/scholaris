@@ -13,6 +13,7 @@
 // official Digital Submission Token and confirmation receipt.
 
 import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -49,22 +50,24 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 final scholarshipEligibleSchoolsProvider =
     FutureProvider.family<List<String>?, String>((ref, scholarshipId) async {
-  try {
-    final res = await Supabase.instance.client
-        .from('scholarships')
-        .select('eligible_school_ids')
-        .eq('id', scholarshipId)
-        .maybeSingle();
-    if (res == null) return null;
-    final list = res['eligible_school_ids'] as List<dynamic>?;
-    return list?.map((e) => e.toString()).toList() ?? <String>[];
-  } catch (_) {
-    return null;
-  }
-});
+      try {
+        final res = await Supabase.instance.client
+            .from('scholarships')
+            .select('eligible_school_ids')
+            .eq('id', scholarshipId)
+            .maybeSingle();
+        if (res == null) return null;
+        final list = res['eligible_school_ids'] as List<dynamic>?;
+        return list?.map((e) => e.toString()).toList() ?? <String>[];
+      } catch (_) {
+        return null;
+      }
+    });
 
-final studentProfileSchoolIdProvider =
-    FutureProvider.family<String?, String>((ref, userId) async {
+final studentProfileSchoolIdProvider = FutureProvider.family<String?, String>((
+  ref,
+  userId,
+) async {
   try {
     final res = await Supabase.instance.client
         .from('profiles')
@@ -148,13 +151,15 @@ class _ScholarshipDetailScreenState
         surfaceTintColor: Colors.transparent,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_rounded, color: kOnSurface),
-          onPressed: widget.tour?.onExit ?? () {
-            if (context.canPop()) {
-              context.pop();
-            } else {
-              context.go('/discover');
-            }
-          },
+          onPressed:
+              widget.tour?.onExit ??
+              () {
+                if (context.canPop()) {
+                  context.pop();
+                } else {
+                  context.go('/discover');
+                }
+              },
         ),
         title: FittedBox(
           fit: BoxFit.scaleDown,
@@ -192,13 +197,18 @@ class _ScholarshipDetailScreenState
         actions: [
           IconButton(
             tooltip: 'View QR Code',
-            onPressed: widget.tour != null ? null : () {
-              final s = widget.initial ??
-                  ref.read(scholarshipByIdProvider(widget.scholarshipId)).valueOrNull;
-              if (s != null) {
-                showScholarshipQrDialog(context, s);
-              }
-            },
+            onPressed: widget.tour != null
+                ? null
+                : () {
+                    final s =
+                        widget.initial ??
+                        ref
+                            .read(scholarshipByIdProvider(widget.scholarshipId))
+                            .valueOrNull;
+                    if (s != null) {
+                      showScholarshipQrDialog(context, s);
+                    }
+                  },
             icon: const Icon(
               Icons.qr_code_rounded,
               size: 22,
@@ -207,22 +217,24 @@ class _ScholarshipDetailScreenState
           ),
           IconButton(
             tooltip: 'Share scholarship',
-            onPressed: widget.tour != null ? null : () {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Scholarship link copied to clipboard.')),
-              );
-            },
-            icon: const Icon(
-              Icons.share_outlined,
-              size: 22,
-              color: kOnSurface,
-            ),
+            onPressed: widget.tour != null
+                ? null
+                : () {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Scholarship link copied to clipboard.'),
+                      ),
+                    );
+                  },
+            icon: const Icon(Icons.share_outlined, size: 22, color: kOnSurface),
           ),
           IconButton(
             tooltip: saved ? 'Remove from saved' : 'Save this scholarship',
             onPressed: widget.tour != null
                 ? null
-                : saved ? _unbookmark : _bookmark,
+                : saved
+                ? _unbookmark
+                : _bookmark,
             icon: Icon(
               saved ? Icons.bookmark_rounded : Icons.bookmark_border_rounded,
               size: 22,
@@ -260,7 +272,9 @@ class _ScholarshipDetailScreenState
       );
     }
 
-    return ref.watch(scholarshipByIdProvider(widget.scholarshipId)).when(
+    return ref
+        .watch(scholarshipByIdProvider(widget.scholarshipId))
+        .when(
           loading: () => const LoadingView(),
           error: (_, _) => ErrorView(
             message: 'We could not load this scholarship.',
@@ -278,7 +292,8 @@ class _ScholarshipDetailScreenState
                   saved: saved,
                   checklistKey: _checklistKey,
                   onScrollToChecklist: _scrollToChecklist,
-                  startApplication: widget.startApplication && widget.tour == null,
+                  startApplication:
+                      widget.startApplication && widget.tour == null,
                   tour: widget.tour,
                 ),
         );
@@ -290,9 +305,8 @@ class _ScholarshipDetailScreenState
     try {
       await notifier.toggle(widget.scholarshipId);
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Saved to your list.')),
-        );
+        ScaffoldMessenger.of(context)
+            .showSnackBar(const SnackBar(content: Text('Saved to your list.')));
       }
     } on Exception {
       if (mounted) {
@@ -340,8 +354,8 @@ class _DetailContent extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final now = DateTime.now();
     final expired = isDeadlinePassed(scholarship.deadline, now: now);
-    final closing = !expired &&
-        isClosingSoon(scholarship.deadline.difference(now).inDays);
+    final closing =
+        !expired && isClosingSoon(scholarship.deadline.difference(now).inDays);
     final daysLeft = scholarship.deadline.difference(now).inDays;
     final reasons = _matchReasons(ref);
 
@@ -351,7 +365,11 @@ class _DetailContent extends ConsumerWidget {
       padding: const EdgeInsets.fromLTRB(20, 4, 20, 48),
       children: [
         if (startApplication) ...[
-          _ApplySection(scholarship: scholarship, onScrollToChecklist: onScrollToChecklist, startApplication: true),
+          _ApplySection(
+            scholarship: scholarship,
+            onScrollToChecklist: onScrollToChecklist,
+            startApplication: true,
+          ),
           const SizedBox(height: 14),
         ],
         // 1. Hero Card
@@ -381,14 +399,15 @@ class _DetailContent extends ConsumerWidget {
         const SizedBox(height: 14),
 
         // 2. Application Readiness & CTA / Banner
-        if (!startApplication) StaggeredListItem(
-          index: 3,
-          child: _ApplySection(
-            scholarship: scholarship,
-            onScrollToChecklist: onScrollToChecklist,
-            tour: tour,
+        if (!startApplication)
+          StaggeredListItem(
+            index: 3,
+            child: _ApplySection(
+              scholarship: scholarship,
+              onScrollToChecklist: onScrollToChecklist,
+              tour: tour,
+            ),
           ),
-        ),
         if (!startApplication) const SizedBox(height: 14),
 
         // 3. Algorithmic Fit & Criteria Checklist
@@ -427,7 +446,14 @@ class _DetailContent extends ConsumerWidget {
             absorbing: tour != null,
             child: ExcludeFocus(
               excluding: tour != null,
-              child: _ApplicationMaterialsCard(scholarshipId: scholarship.id),
+              child: _ApplicationMaterialsCard(
+                key: ValueKey((
+                  ref.watch(currentUserIdProvider),
+                  scholarship.id,
+                )),
+                userId: ref.watch(currentUserIdProvider),
+                scholarshipId: scholarship.id,
+              ),
             ),
           ),
         ),
@@ -439,15 +465,21 @@ class _DetailContent extends ConsumerWidget {
           child: _ProviderTrustCard(scholarship: scholarship),
         ),
         const SizedBox(height: 20),
-        Builder(builder: (context) => OutlinedButton.icon(
-          key: tour?.backToTopKey,
-          onPressed: () async {
-            await Scrollable.of(context).position.animateTo(0, duration: kDurationSlow, curve: kAppleSpringCurve);
-            tour?.onBackToTop();
-          },
-          icon: const Icon(Icons.arrow_upward_rounded),
-          label: const Text('Back to top'),
-        )),
+        Builder(
+          builder: (context) => OutlinedButton.icon(
+            key: tour?.backToTopKey,
+            onPressed: () async {
+              await Scrollable.of(context).position.animateTo(
+                0,
+                duration: kDurationSlow,
+                curve: kAppleSpringCurve,
+              );
+              tour?.onBackToTop();
+            },
+            icon: const Icon(Icons.arrow_upward_rounded),
+            label: const Text('Back to top'),
+          ),
+        ),
       ],
     );
   }
@@ -531,7 +563,10 @@ class _HeroCard extends ConsumerWidget {
               const SizedBox(width: 6),
               Flexible(
                 child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 7,
+                    vertical: 2,
+                  ),
                   decoration: BoxDecoration(
                     color: kSurfaceContainer,
                     borderRadius: BorderRadius.circular(4),
@@ -606,7 +641,8 @@ class _HeroCard extends ConsumerWidget {
               const _HeroPill(label: 'Merit-Based'),
               const _HeroPill(label: 'Undergraduate'),
               _HeroPill(
-                label: (scholarship.requiredCourses == null ||
+                label:
+                    (scholarship.requiredCourses == null ||
                         scholarship.requiredCourses!.isEmpty)
                     ? 'All Majors'
                     : 'Priority S&T Track',
@@ -633,7 +669,11 @@ class _HeroCard extends ConsumerWidget {
         ),
         child: Row(
           children: [
-            const Icon(Icons.event_busy_rounded, size: 16, color: Color(0xFF93000A)),
+            const Icon(
+              Icons.event_busy_rounded,
+              size: 16,
+              color: Color(0xFF93000A),
+            ),
             const SizedBox(width: 8),
             Text(
               'Deadline Passed • Closed',
@@ -648,7 +688,9 @@ class _HeroCard extends ConsumerWidget {
       );
     }
 
-    final capacityAsync = ref.watch(scholarshipCapacityProvider(scholarship.id));
+    final capacityAsync = ref.watch(
+      scholarshipCapacityProvider(scholarship.id),
+    );
     final capacity = capacityAsync.valueOrNull;
 
     if (capacity != null && capacity.isFull) {
@@ -660,7 +702,11 @@ class _HeroCard extends ConsumerWidget {
         ),
         child: Row(
           children: [
-            const Icon(Icons.group_off_rounded, size: 16, color: Color(0xFF93000A)),
+            const Icon(
+              Icons.group_off_rounded,
+              size: 16,
+              color: Color(0xFF93000A),
+            ),
             const SizedBox(width: 8),
             Expanded(
               child: Text(
@@ -688,7 +734,11 @@ class _HeroCard extends ConsumerWidget {
         ),
         child: Row(
           children: [
-            const Icon(Icons.timer_outlined, size: 16, color: Color(0xFF93000A)),
+            const Icon(
+              Icons.timer_outlined,
+              size: 16,
+              color: Color(0xFF93000A),
+            ),
             const SizedBox(width: 8),
             Expanded(
               child: Text(
@@ -710,12 +760,15 @@ class _HeroCard extends ConsumerWidget {
     final String slotInfo;
     if (capacity != null) {
       if (capacity.isUncapped) {
-        slotInfo = ' · Uncapped capacity • ${capacity.occupiedSlots} scholar approved';
+        slotInfo =
+            ' · Uncapped capacity • ${capacity.occupiedSlots} scholar approved';
       } else {
-        slotInfo = ' · ${capacity.remainingSlots} of ${capacity.totalSlots} slots remaining';
+        slotInfo =
+            ' · ${capacity.remainingSlots} of ${capacity.totalSlots} slots remaining';
       }
     } else if (scholarship.slots != null) {
-      slotInfo = ' · ${scholarship.slots.toString().replaceAllMapped(RegExp(r"(\d{1,3})(?=(\d{3})+(?!\d))"), (Match m) => "${m[1]},")} slots available';
+      slotInfo =
+          ' · ${scholarship.slots.toString().replaceAllMapped(RegExp(r"(\d{1,3})(?=(\d{3})+(?!\d))"), (Match m) => "${m[1]},")} slots available';
     } else {
       slotInfo = '';
     }
@@ -796,7 +849,9 @@ class _CapacityStatusCard extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final capacityAsync = ref.watch(scholarshipCapacityProvider(scholarship.id));
+    final capacityAsync = ref.watch(
+      scholarshipCapacityProvider(scholarship.id),
+    );
 
     return capacityAsync.when(
       loading: () => const SizedBox.shrink(),
@@ -814,9 +869,13 @@ class _CapacityStatusCard extends ConsumerWidget {
         final tot = total ?? 0;
 
         return Container(
-          decoration: kSoftCardDecoration.copyWith(border: Border.all(
-              color: isFull ? const Color(0xFFFFCDD2) : kHairlineBorderSide.color,
-            )),
+          decoration: kSoftCardDecoration.copyWith(
+            border: Border.all(
+              color: isFull
+                  ? const Color(0xFFFFCDD2)
+                  : kHairlineBorderSide.color,
+            ),
+          ),
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -824,7 +883,9 @@ class _CapacityStatusCard extends ConsumerWidget {
               Row(
                 children: [
                   Icon(
-                    isFull ? Icons.group_off_rounded : Icons.people_outline_rounded,
+                    isFull
+                        ? Icons.group_off_rounded
+                        : Icons.people_outline_rounded,
                     size: 18,
                     color: isFull ? const Color(0xFFC62828) : kPrimary,
                   ),
@@ -840,29 +901,36 @@ class _CapacityStatusCard extends ConsumerWidget {
                     ),
                   ),
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 3,
+                    ),
                     decoration: BoxDecoration(
                       color: isFull
                           ? const Color(0xFFFFEBEE)
                           : isUncapped
-                              ? const Color(0xFFE8F5E9)
-                              : (rem <= 3 ? const Color(0xFFFFF3E0) : const Color(0xFFE8F5E9)),
+                          ? const Color(0xFFE8F5E9)
+                          : (rem <= 3
+                                ? const Color(0xFFFFF3E0)
+                                : const Color(0xFFE8F5E9)),
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Text(
                       isFull
                           ? 'Capacity Reached'
                           : isUncapped
-                              ? 'Uncapped'
-                              : '$rem Seats Open',
+                          ? 'Uncapped'
+                          : '$rem Seats Open',
                       style: openSans(
                         fontSize: 11,
                         fontWeight: FontWeight.w700,
                         color: isFull
                             ? const Color(0xFFC62828)
                             : isUncapped
-                                ? const Color(0xFF2E7D32)
-                                : (rem <= 3 ? const Color(0xFFE65100) : const Color(0xFF2E7D32)),
+                            ? const Color(0xFF2E7D32)
+                            : (rem <= 3
+                                  ? const Color(0xFFE65100)
+                                  : const Color(0xFF2E7D32)),
                       ),
                     ),
                   ),
@@ -877,7 +945,11 @@ class _CapacityStatusCard extends ConsumerWidget {
               else ...[
                 Text(
                   '$tot total • $occupied occupied • $rem remaining',
-                  style: openSans(fontSize: 12, fontWeight: FontWeight.w600, color: Colors.black87),
+                  style: openSans(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.black87,
+                  ),
                 ),
                 const SizedBox(height: 6),
                 ClipRRect(
@@ -909,8 +981,9 @@ class _SchoolEligibilityGuidanceCard extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final eligibleSchoolIdsAsync =
-        ref.watch(scholarshipEligibleSchoolsProvider(scholarship.id));
+    final eligibleSchoolIdsAsync = ref.watch(
+      scholarshipEligibleSchoolsProvider(scholarship.id),
+    );
     final currentProfile = ref.watch(currentProfileProvider).valueOrNull;
     final userId = ref.watch(currentUserIdProvider);
     final userSchoolIdAsync = userId != null
@@ -971,7 +1044,10 @@ class _SchoolEligibilityGuidanceCard extends ConsumerWidget {
               if (eligibleIds == null || eligibleIds.isEmpty) {
                 // Open to all schools
                 return Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 8,
+                  ),
                   decoration: BoxDecoration(
                     color: const Color(0xFFE8F5E9),
                     borderRadius: BorderRadius.circular(8),
@@ -979,7 +1055,11 @@ class _SchoolEligibilityGuidanceCard extends ConsumerWidget {
                   ),
                   child: Row(
                     children: [
-                      const Icon(Icons.check_circle_outline_rounded, size: 16, color: Color(0xFF2E7D32)),
+                      const Icon(
+                        Icons.check_circle_outline_rounded,
+                        size: 16,
+                        color: Color(0xFF2E7D32),
+                      ),
                       const SizedBox(width: 8),
                       Expanded(
                         child: Text(
@@ -1004,7 +1084,10 @@ class _SchoolEligibilityGuidanceCard extends ConsumerWidget {
               // Legacy or unlinked profile: fail closed and prompt to update profile
               if (studentSchoolId == null) {
                 return Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 8,
+                  ),
                   decoration: BoxDecoration(
                     color: const Color(0xFFFFF8E1),
                     borderRadius: BorderRadius.circular(8),
@@ -1012,7 +1095,11 @@ class _SchoolEligibilityGuidanceCard extends ConsumerWidget {
                   ),
                   child: Row(
                     children: [
-                      const Icon(Icons.info_outline_rounded, size: 16, color: Color(0xFFE65100)),
+                      const Icon(
+                        Icons.info_outline_rounded,
+                        size: 16,
+                        color: Color(0xFFE65100),
+                      ),
                       const SizedBox(width: 8),
                       Expanded(
                         child: Text(
@@ -1043,7 +1130,10 @@ class _SchoolEligibilityGuidanceCard extends ConsumerWidget {
 
               if (isMatch) {
                 return Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 8,
+                  ),
                   decoration: BoxDecoration(
                     color: const Color(0xFFE8F5E9),
                     borderRadius: BorderRadius.circular(8),
@@ -1051,7 +1141,11 @@ class _SchoolEligibilityGuidanceCard extends ConsumerWidget {
                   ),
                   child: Row(
                     children: [
-                      const Icon(Icons.verified_outlined, size: 16, color: Color(0xFF2E7D32)),
+                      const Icon(
+                        Icons.verified_outlined,
+                        size: 16,
+                        color: Color(0xFF2E7D32),
+                      ),
                       const SizedBox(width: 8),
                       Expanded(
                         child: Text(
@@ -1075,10 +1169,15 @@ class _SchoolEligibilityGuidanceCard extends ConsumerWidget {
                   .take(3)
                   .join(', ');
               final moreCount = eligibleIds.length - 3;
-              final partnerSummary = moreCount > 0 ? '$eligibleNames +$moreCount more' : eligibleNames;
+              final partnerSummary = moreCount > 0
+                  ? '$eligibleNames +$moreCount more'
+                  : eligibleNames;
 
               return Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 8,
+                ),
                 decoration: BoxDecoration(
                   color: const Color(0xFFFFF8E1),
                   borderRadius: BorderRadius.circular(8),
@@ -1089,7 +1188,11 @@ class _SchoolEligibilityGuidanceCard extends ConsumerWidget {
                   children: [
                     Row(
                       children: [
-                        const Icon(Icons.warning_amber_rounded, size: 16, color: Color(0xFFE65100)),
+                        const Icon(
+                          Icons.warning_amber_rounded,
+                          size: 16,
+                          color: Color(0xFFE65100),
+                        ),
                         const SizedBox(width: 8),
                         Expanded(
                           child: Text(
@@ -1107,7 +1210,10 @@ class _SchoolEligibilityGuidanceCard extends ConsumerWidget {
                       const SizedBox(height: 4),
                       Text(
                         'Partner institutions: $partnerSummary',
-                        style: openSans(fontSize: 11, color: const Color(0xFF795548)),
+                        style: openSans(
+                          fontSize: 11,
+                          color: const Color(0xFF795548),
+                        ),
                       ),
                     ],
                   ],
@@ -1128,7 +1234,11 @@ class _SchoolEligibilityGuidanceCard extends ConsumerWidget {
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Icon(Icons.info_outline_rounded, size: 15, color: Colors.black54),
+                const Icon(
+                  Icons.info_outline_rounded,
+                  size: 15,
+                  color: Colors.black54,
+                ),
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text(
@@ -1152,10 +1262,7 @@ class _SchoolEligibilityGuidanceCard extends ConsumerWidget {
 /// 3. Algorithmic Fit Card: Displays Match percentage with circular progress gauge,
 /// criteria checklist with 'Why this matches you' explainer, and High Probability Tier callout.
 class _AlgorithmicFitCard extends ConsumerWidget {
-  const _AlgorithmicFitCard({
-    required this.reasons,
-    required this.scholarship,
-  });
+  const _AlgorithmicFitCard({required this.reasons, required this.scholarship});
 
   final List<String> reasons;
   final Scholarship scholarship;
@@ -1163,7 +1270,8 @@ class _AlgorithmicFitCard extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final profile = ref.watch(currentProfileProvider).valueOrNull;
-    final userName = (profile?.fullName != null && profile!.fullName.trim().isNotEmpty)
+    final userName =
+        (profile?.fullName != null && profile!.fullName.trim().isNotEmpty)
         ? profile.fullName.trim().split(' ').first
         : 'your';
 
@@ -1202,7 +1310,9 @@ class _AlgorithmicFitCard extends ConsumerWidget {
                         ),
                         const SizedBox(height: 2),
                         CountUpAnimation(
-                          targetValue: placeholderMatchPercentage(reasons.length),
+                          targetValue: placeholderMatchPercentage(
+                            reasons.length,
+                          ),
                           suffix: '% Match',
                           style: outfit(
                             fontSize: 22,
@@ -1210,132 +1320,134 @@ class _AlgorithmicFitCard extends ConsumerWidget {
                             color: const Color(0xFF00351C),
                           ),
                         ),
-                      const SizedBox(height: 2),
-                      Text(
-                        'Demo score • Based on $userName\'s profile',
-                        style: openSans(
-                          fontSize: 11,
-                          fontWeight: FontWeight.w500,
-                          color: kOnSurface,
+                        const SizedBox(height: 2),
+                        Text(
+                          'Demo score • Based on $userName\'s profile',
+                          style: openSans(
+                            fontSize: 11,
+                            fontWeight: FontWeight.w500,
+                            color: kOnSurface,
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
-                ),
-                SizedBox(
-                  width: 56,
-                  height: 56,
-                  child: Stack(
-                    alignment: Alignment.center,
-                    children: [
-                      CustomPaint(
-                        size: const Size(56, 56),
-                        painter: _FitGaugePainter(placeholderMatchPercentage(reasons.length)),
-                      ),
-                      const Icon(
-                        Icons.verified_rounded,
-                        color: kPrimaryContainer,
-                        size: 24,
-                      ),
-                    ],
+                  SizedBox(
+                    width: 56,
+                    height: 56,
+                    child: Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        CustomPaint(
+                          size: const Size(56, 56),
+                          painter: _FitGaugePainter(
+                            placeholderMatchPercentage(reasons.length),
+                          ),
+                        ),
+                        const Icon(
+                          Icons.verified_rounded,
+                          color: kPrimaryContainer,
+                          size: 24,
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 16),
-
-          // Criteria Checklist header & 'Why this matches you' explainer
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Flexible(
-                child: Text(
-                  'Criteria Checklist',
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: outfit(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: kOnSurface,
-                  ),
-                ),
+                ],
               ),
-              const SizedBox(width: 8),
-              FittedBox(
-                fit: BoxFit.scaleDown,
-                child: Text(
-                  '${reasons.length} of ${reasons.length} Met',
-                  style: outfit(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w600,
-                    color: kPrimaryContainer,
-                  ),
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 2),
-          Text(
-            'Why this matches you',
-            style: openSans(
-              fontSize: 12,
-              fontWeight: FontWeight.w500,
-              color: kOnSurfaceVariant,
             ),
-          ),
-          const SizedBox(height: 12),
+            const SizedBox(height: 16),
 
-          // Checklist items
-          ...reasons.map((r) => _buildChecklistItem(r)),
-          const SizedBox(height: 10),
-
-          // High Probability Tier Callout (Stitch literal)
-          Container(
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: const Color(0xFFFFF7E6),
-              borderRadius: BorderRadius.circular(10),
-              border: Border.all(color: const Color(0xFFFFDEA3)),
-            ),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
+            // Criteria Checklist header & 'Why this matches you' explainer
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Icon(
-                  Icons.trending_up_rounded,
-                  size: 20,
-                  color: Color(0xFF5D4200),
+                Flexible(
+                  child: Text(
+                    'Criteria Checklist',
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: outfit(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: kOnSurface,
+                    ),
+                  ),
                 ),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'High Probability Tier',
-                        style: outfit(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w700,
-                          color: const Color(0xFF5D4200),
-                        ),
-                      ),
-                      const SizedBox(height: 2),
-                      Text(
-                        'Your academic profile ranks in the top 5% of historical applicants for this endowment. Early submissions have an 18% higher acceptance yield.',
-                        style: openSans(
-                          fontSize: 11,
-                          color: kOnSurface,
-                          height: 1.4,
-                        ),
-                      ),
-                    ],
+                const SizedBox(width: 8),
+                FittedBox(
+                  fit: BoxFit.scaleDown,
+                  child: Text(
+                    '${reasons.length} of ${reasons.length} Met',
+                    style: outfit(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w600,
+                      color: kPrimaryContainer,
+                    ),
                   ),
                 ),
               ],
             ),
-          ),
-        ],
-      ),
+            const SizedBox(height: 2),
+            Text(
+              'Why this matches you',
+              style: openSans(
+                fontSize: 12,
+                fontWeight: FontWeight.w500,
+                color: kOnSurfaceVariant,
+              ),
+            ),
+            const SizedBox(height: 12),
+
+            // Checklist items
+            ...reasons.map((r) => _buildChecklistItem(r)),
+            const SizedBox(height: 10),
+
+            // High Probability Tier Callout (Stitch literal)
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: const Color(0xFFFFF7E6),
+                borderRadius: BorderRadius.circular(10),
+                border: Border.all(color: const Color(0xFFFFDEA3)),
+              ),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Icon(
+                    Icons.trending_up_rounded,
+                    size: 20,
+                    color: Color(0xFF5D4200),
+                  ),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'High Probability Tier',
+                          style: outfit(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w700,
+                            color: const Color(0xFF5D4200),
+                          ),
+                        ),
+                        const SizedBox(height: 2),
+                        Text(
+                          'Your academic profile ranks in the top 5% of historical applicants for this endowment. Early submissions have an 18% higher acceptance yield.',
+                          style: openSans(
+                            fontSize: 11,
+                            color: kOnSurface,
+                            height: 1.4,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -1403,11 +1515,15 @@ class _AlgorithmicFitCard extends ConsumerWidget {
     final lower = reason.toLowerCase();
     if (lower.contains('gpa') || lower.contains('gwa')) {
       return 'Based on the academic information in your profile';
-    } else if (lower.contains('course') || lower.contains('major') || lower.contains('track')) {
+    } else if (lower.contains('course') ||
+        lower.contains('major') ||
+        lower.contains('track')) {
       return 'Based on the course in your profile';
     } else if (lower.contains('year') || lower.contains('level')) {
       return 'Based on the year level in your profile';
-    } else if (lower.contains('citizen') || lower.contains('resident') || lower.contains('region')) {
+    } else if (lower.contains('citizen') ||
+        lower.contains('resident') ||
+        lower.contains('region')) {
       return 'Based on the information in your profile';
     } else if (lower.contains('income')) {
       return 'Based on the income information in your profile';
@@ -1452,13 +1568,18 @@ class _FitGaugePainter extends CustomPainter {
       primaryPaint,
     );
 
-    canvas.drawArc(Rect.fromCircle(center: center, radius: radius),
+    canvas.drawArc(
+      Rect.fromCircle(center: center, radius: radius),
       -math.pi / 2 + 2 * math.pi * percentage / 100 - 0.05,
-      0.05, false, accentPaint);
+      0.05,
+      false,
+      accentPaint,
+    );
   }
 
   @override
-  bool shouldRepaint(covariant _FitGaugePainter oldDelegate) => oldDelegate.percentage != percentage;
+  bool shouldRepaint(covariant _FitGaugePainter oldDelegate) =>
+      oldDelegate.percentage != percentage;
 }
 
 /// 4. Award Overview & Impact Card: 3-column metrics grid, description ('About'),
@@ -1492,7 +1613,8 @@ class _AwardOverviewCard extends StatelessWidget {
               Expanded(
                 child: _MetricTile(
                   label: 'Total Pool',
-                  value: '₱${(((scholarship.slots != null && scholarship.slots! > 0) ? scholarship.slots! * scholarship.awardAmount : scholarship.awardAmount)).toString().replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (m) => '${m[1]},')}',
+                  value:
+                      '₱${(((scholarship.slots != null && scholarship.slots! > 0) ? scholarship.slots! * scholarship.awardAmount : scholarship.awardAmount)).toString().replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (m) => '${m[1]},')}',
                   caption: scholarship.slots != null
                       ? '${scholarship.slots} grants'
                       : 'Active grant',
@@ -1529,8 +1651,7 @@ class _AwardOverviewCard extends StatelessWidget {
           ),
           const SizedBox(height: 8),
           Text(
-            scholarship.description ??
-                'Established to empower next-generation technology pioneers from diverse socioeconomic backgrounds. Funds cover tuition, laboratory equipment supplies, and authorized academic conference research stipends throughout the degree program.',
+            scholarship.description ?? 'Established to empower next-generation technology pioneers from diverse socioeconomic backgrounds. Funds cover tuition, laboratory equipment supplies, and authorized academic conference research stipends throughout the degree program.',
             style: openSans(
               fontSize: 13,
               height: 1.5,
@@ -1555,7 +1676,11 @@ class _AwardOverviewCard extends StatelessWidget {
                     color: Color(0xFFD2E4FF),
                     shape: BoxShape.circle,
                   ),
-                  child: const Icon(Icons.school_rounded, color: kSecondary, size: 20),
+                  child: const Icon(
+                    Icons.school_rounded,
+                    color: kSecondary,
+                    size: 20,
+                  ),
                 ),
                 const SizedBox(width: 10),
                 Expanded(
@@ -1574,10 +1699,7 @@ class _AwardOverviewCard extends StatelessWidget {
                       const SizedBox(height: 2),
                       Text(
                         'Elena R. • 2024 Scholar, UP Diliman CS',
-                        style: openSans(
-                          fontSize: 10,
-                          color: kOnSurfaceVariant,
-                        ),
+                        style: openSans(fontSize: 10, color: kOnSurfaceVariant),
                       ),
                     ],
                   ),
@@ -1639,10 +1761,7 @@ class _MetricTile extends StatelessWidget {
             caption,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
-            style: openSans(
-              fontSize: 9,
-              color: kOnSurfaceVariant,
-            ),
+            style: openSans(fontSize: 9, color: kOnSurfaceVariant),
           ),
         ],
       ),
@@ -1658,8 +1777,9 @@ class _EligibilityCard extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final eligibleSchoolIdsAsync =
-        ref.watch(scholarshipEligibleSchoolsProvider(scholarship.id));
+    final eligibleSchoolIdsAsync = ref.watch(
+      scholarshipEligibleSchoolsProvider(scholarship.id),
+    );
 
     return Container(
       decoration: kSoftCardDecoration,
@@ -1690,7 +1810,8 @@ class _EligibilityCard extends ConsumerWidget {
               ),
               _EligibilityChip(
                 icon: Icons.menu_book_outlined,
-                label: (scholarship.requiredCourses == null ||
+                label:
+                    (scholarship.requiredCourses == null ||
                         scholarship.requiredCourses!.isEmpty)
                     ? 'All courses'
                     : 'Selected courses',
@@ -1715,7 +1836,8 @@ class _EligibilityCard extends ConsumerWidget {
                   if (ids != null && ids.isNotEmpty) {
                     return _EligibilityChip(
                       icon: Icons.account_balance_outlined,
-                      label: 'Restricted to ${ids.length} Partner School${ids.length == 1 ? '' : 's'}',
+                      label:
+                          'Restricted to ${ids.length} Partner School${ids.length == 1 ? '' : 's'}',
                     );
                   }
                   return const _EligibilityChip(
@@ -1735,7 +1857,12 @@ class _EligibilityCard extends ConsumerWidget {
 
 /// 6. Application Materials & Requirements Card: Checklist of documents matching Stitch code.html.
 class _ApplicationMaterialsCard extends ConsumerStatefulWidget {
-  const _ApplicationMaterialsCard({required this.scholarshipId});
+  const _ApplicationMaterialsCard({
+    super.key,
+    required this.userId,
+    required this.scholarshipId,
+  });
+  final String? userId;
 
   final String scholarshipId;
 
@@ -1746,6 +1873,8 @@ class _ApplicationMaterialsCard extends ConsumerStatefulWidget {
 
 class _ApplicationMaterialsCardState
     extends ConsumerState<_ApplicationMaterialsCard> {
+  ApplicationDraftKey get _draftKey =>
+      (userId: widget.userId, scholarshipId: widget.scholarshipId);
   bool _isEditingEssay = false;
   late final TextEditingController _essayController;
   final TextEditingController _recEmailController = TextEditingController();
@@ -1754,7 +1883,7 @@ class _ApplicationMaterialsCardState
   @override
   void initState() {
     super.initState();
-    final draft = ref.read(applicationDraftProvider(widget.scholarshipId));
+    final draft = ref.read(applicationDraftProvider(_draftKey));
     _essayController = TextEditingController(text: draft.essay);
   }
 
@@ -1769,9 +1898,10 @@ class _ApplicationMaterialsCardState
   Widget build(BuildContext context) {
     final profile = ref.watch(currentProfileProvider).valueOrNull;
     final school = profile?.school;
-    final hasTranscript = profile != null && school != null && school.isNotEmpty;
+    final hasTranscript =
+        profile != null && school != null && school.isNotEmpty;
 
-    final draft = ref.watch(applicationDraftProvider(widget.scholarshipId));
+    final draft = ref.watch(applicationDraftProvider(_draftKey));
     final recommenders = draft.recommenders;
 
     final essayText = _essayController.text.trim();
@@ -1809,7 +1939,10 @@ class _ApplicationMaterialsCardState
               FittedBox(
                 fit: BoxFit.scaleDown,
                 child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 3,
+                  ),
                   decoration: BoxDecoration(
                     color: readyCount == 3
                         ? const Color(0xFFB3F1C6)
@@ -1848,7 +1981,11 @@ class _ApplicationMaterialsCardState
                     Expanded(
                       child: Row(
                         children: [
-                          const Icon(Icons.description_outlined, size: 18, color: kSecondary),
+                          const Icon(
+                            Icons.description_outlined,
+                            size: 18,
+                            color: kSecondary,
+                          ),
                           const SizedBox(width: 8),
                           Expanded(
                             child: Text(
@@ -1866,7 +2003,10 @@ class _ApplicationMaterialsCardState
                       ),
                     ),
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 6,
+                        vertical: 2,
+                      ),
                       decoration: BoxDecoration(
                         color: hasEssay
                             ? const Color(0xFFB3F1C6)
@@ -1909,14 +2049,20 @@ class _ApplicationMaterialsCardState
                         maxLines: 4,
                         style: openSans(fontSize: 12, color: kOnSurface),
                         decoration: InputDecoration(
-                          hintText: 'Type your essay / personal statement here...',
-                          hintStyle: openSans(fontSize: 12, color: const Color(0xFF707971)),
+                          hintText:
+                              'Type your essay / personal statement here...',
+                          hintStyle: openSans(
+                            fontSize: 12,
+                            color: const Color(0xFF707971),
+                          ),
                           fillColor: Colors.white,
                           filled: true,
                           contentPadding: const EdgeInsets.all(10),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(8),
-                            borderSide: const BorderSide(color: Color(0xFFE2E8E5)),
+                            borderSide: const BorderSide(
+                              color: Color(0xFFE2E8E5),
+                            ),
                           ),
                         ),
                         onChanged: (_) => setState(() {}),
@@ -1930,7 +2076,9 @@ class _ApplicationMaterialsCardState
                             style: outfit(
                               fontSize: 11,
                               fontWeight: FontWeight.w600,
-                              color: wordCount > 750 ? kError : kPrimaryContainer,
+                              color: wordCount > 750
+                                  ? kError
+                                  : kPrimaryContainer,
                             ),
                           ),
                           PressableScale(
@@ -1938,16 +2086,27 @@ class _ApplicationMaterialsCardState
                               style: FilledButton.styleFrom(
                                 backgroundColor: kPrimaryContainer,
                                 foregroundColor: Colors.white,
-                                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 12,
+                                  vertical: 4,
+                                ),
                                 minimumSize: const Size(60, 30),
                               ),
                               onPressed: () {
-                                ref.read(applicationDraftProvider(widget.scholarshipId).notifier).setEssay(_essayController.text);
+                                ref
+                                    .read(
+                                      applicationDraftProvider(_draftKey)
+                                          .notifier,
+                                    )
+                                    .setEssay(_essayController.text);
                                 setState(() => _isEditingEssay = false);
                               },
                               child: Text(
                                 'Save Statement',
-                                style: outfit(fontSize: 11, fontWeight: FontWeight.w600),
+                                style: outfit(
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.w600,
+                                ),
                               ),
                             ),
                           ),
@@ -1965,13 +2124,17 @@ class _ApplicationMaterialsCardState
                       children: [
                         Flexible(
                           child: Text(
-                            hasEssay ? '$wordCount words composed' : 'No statement composed yet',
+                            hasEssay
+                                ? '$wordCount words composed'
+                                : 'No statement composed yet',
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                             style: outfit(
                               fontSize: 11,
                               fontWeight: FontWeight.w600,
-                              color: hasEssay ? kPrimaryContainer : const Color(0xFF707971),
+                              color: hasEssay
+                                  ? kPrimaryContainer
+                                  : const Color(0xFF707971),
                             ),
                           ),
                         ),
@@ -1983,7 +2146,9 @@ class _ApplicationMaterialsCardState
                               mainAxisSize: MainAxisSize.min,
                               children: [
                                 Text(
-                                  hasEssay ? 'Edit Statement' : 'Write Statement',
+                                  hasEssay
+                                      ? 'Edit Statement'
+                                      : 'Write Statement',
                                   style: outfit(
                                     fontSize: 12,
                                     fontWeight: FontWeight.w600,
@@ -1991,7 +2156,11 @@ class _ApplicationMaterialsCardState
                                   ),
                                 ),
                                 const SizedBox(width: 2),
-                                const Icon(Icons.edit_note_rounded, size: 16, color: kSecondary),
+                                const Icon(
+                                  Icons.edit_note_rounded,
+                                  size: 16,
+                                  color: kSecondary,
+                                ),
                               ],
                             ),
                           ),
@@ -2014,7 +2183,11 @@ class _ApplicationMaterialsCardState
             ),
             child: Row(
               children: [
-                const Icon(Icons.school_outlined, size: 18, color: kPrimaryContainer),
+                const Icon(
+                  Icons.school_outlined,
+                  size: 18,
+                  color: kPrimaryContainer,
+                ),
                 const SizedBox(width: 8),
                 Expanded(
                   child: Column(
@@ -2036,16 +2209,23 @@ class _ApplicationMaterialsCardState
                         style: openSans(
                           fontSize: 11,
                           fontWeight: FontWeight.w500,
-                          color: hasTranscript ? kPrimaryContainer : const Color(0xFF707971),
+                          color: hasTranscript
+                              ? kPrimaryContainer
+                              : const Color(0xFF707971),
                         ),
                       ),
                     ],
                   ),
                 ),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 6,
+                    vertical: 2,
+                  ),
                   decoration: BoxDecoration(
-                    color: hasTranscript ? const Color(0xFFB3F1C6) : const Color(0xFFFFDAD6),
+                    color: hasTranscript
+                        ? const Color(0xFFB3F1C6)
+                        : const Color(0xFFFFDAD6),
                     borderRadius: BorderRadius.circular(4),
                   ),
                   child: Text(
@@ -2053,7 +2233,9 @@ class _ApplicationMaterialsCardState
                     style: outfit(
                       fontSize: 10,
                       fontWeight: FontWeight.w600,
-                      color: hasTranscript ? const Color(0xFF145131) : const Color(0xFF93000A),
+                      color: hasTranscript
+                          ? const Color(0xFF145131)
+                          : const Color(0xFF93000A),
                     ),
                   ),
                 ),
@@ -2078,7 +2260,11 @@ class _ApplicationMaterialsCardState
                     Expanded(
                       child: Row(
                         children: [
-                          const Icon(Icons.mail_outline_rounded, size: 18, color: Color(0xFFE1A604)),
+                          const Icon(
+                            Icons.mail_outline_rounded,
+                            size: 18,
+                            color: Color(0xFFE1A604),
+                          ),
                           const SizedBox(width: 8),
                           Expanded(
                             child: Text(
@@ -2096,7 +2282,10 @@ class _ApplicationMaterialsCardState
                       ),
                     ),
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 6,
+                        vertical: 2,
+                      ),
                       decoration: BoxDecoration(
                         color: hasRec
                             ? const Color(0xFFB3F1C6)
@@ -2104,7 +2293,9 @@ class _ApplicationMaterialsCardState
                         borderRadius: BorderRadius.circular(4),
                       ),
                       child: Text(
-                        hasRec ? '${recommenders.length} Linked' : '0 of 2 Linked',
+                        hasRec
+                            ? '${recommenders.length} Linked'
+                            : '0 of 2 Linked',
                         style: outfit(
                           fontSize: 10,
                           fontWeight: FontWeight.w600,
@@ -2127,20 +2318,39 @@ class _ApplicationMaterialsCardState
                           padding: const EdgeInsets.only(bottom: 4),
                           child: Row(
                             children: [
-                              const Icon(Icons.check_circle_outline_rounded, size: 14, color: kPrimaryContainer),
+                              const Icon(
+                                Icons.check_circle_outline_rounded,
+                                size: 14,
+                                color: kPrimaryContainer,
+                              ),
                               const SizedBox(width: 6),
                               Expanded(
                                 child: Text(
                                   rec,
-                                  style: openSans(fontSize: 11, color: kOnSurface),
+                                  style: openSans(
+                                    fontSize: 11,
+                                    color: kOnSurface,
+                                  ),
                                 ),
                               ),
                               IconButton(
-                                constraints: const BoxConstraints(minWidth: 24, minHeight: 24),
+                                constraints: const BoxConstraints(
+                                  minWidth: 24,
+                                  minHeight: 24,
+                                ),
                                 padding: EdgeInsets.zero,
-                                icon: const Icon(Icons.close_rounded, size: 14, color: Color(0xFF707971)),
+                                icon: const Icon(
+                                  Icons.close_rounded,
+                                  size: 14,
+                                  color: Color(0xFF707971),
+                                ),
                                 onPressed: () {
-                                  ref.read(applicationDraftProvider(widget.scholarshipId).notifier).removeRecommender(rec);
+                                  ref
+                                      .read(
+                                        applicationDraftProvider(_draftKey)
+                                            .notifier,
+                                      )
+                                      .removeRecommender(rec);
                                 },
                               ),
                             ],
@@ -2159,12 +2369,18 @@ class _ApplicationMaterialsCardState
                                     controller: _recEmailController,
                                     style: openSans(fontSize: 12),
                                     decoration: InputDecoration(
-                                      hintText: 'Faculty email (e.g. prof@univ.edu)',
+                                      hintText:
+                                          'Faculty email (e.g. prof@univ.edu)',
                                       hintStyle: openSans(fontSize: 11),
-                                      contentPadding: const EdgeInsets.symmetric(horizontal: 8),
+                                      contentPadding:
+                                          const EdgeInsets.symmetric(
+                                            horizontal: 8,
+                                          ),
                                       filled: true,
                                       fillColor: Colors.white,
-                                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(6)),
+                                      border: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(6),
+                                      ),
                                     ),
                                   ),
                                 ),
@@ -2174,20 +2390,31 @@ class _ApplicationMaterialsCardState
                                 child: FilledButton(
                                   style: FilledButton.styleFrom(
                                     backgroundColor: kPrimaryContainer,
-                                    padding: const EdgeInsets.symmetric(horizontal: 10),
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 10,
+                                    ),
                                     minimumSize: const Size(50, 44),
                                   ),
                                   onPressed: () {
-                                    final email = _recEmailController.text.trim();
+                                    final email = _recEmailController.text
+                                        .trim();
                                     if (email.isNotEmpty) {
-                                      ref.read(applicationDraftProvider(widget.scholarshipId).notifier).addRecommender(email);
+                                      ref
+                                          .read(
+                                            applicationDraftProvider(_draftKey)
+                                                .notifier,
+                                          )
+                                          .addRecommender(email);
                                       setState(() {
                                         _recEmailController.clear();
                                         _isAddingRec = false;
                                       });
                                     }
                                   },
-                                  child: const Text('Add', style: TextStyle(fontSize: 11)),
+                                  child: const Text(
+                                    'Add',
+                                    style: TextStyle(fontSize: 11),
+                                  ),
                                 ),
                               ),
                             ],
@@ -2203,21 +2430,29 @@ class _ApplicationMaterialsCardState
                               onTap: () => setState(() => _isAddingRec = true),
                               borderRadius: BorderRadius.circular(8),
                               child: Container(
-                                constraints: const BoxConstraints(minHeight: 44),
+                                constraints: const BoxConstraints(
+                                  minHeight: 44,
+                                ),
                                 alignment: Alignment.centerLeft,
                                 child: Row(
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
-                                    const Icon(Icons.add_circle_outline_rounded, size: 14, color: kSecondary),
+                                    const Icon(
+                                      Icons.add_circle_outline_rounded,
+                                      size: 14,
+                                      color: kSecondary,
+                                    ),
                                     const SizedBox(width: 4),
-                                    Flexible(child: Text(
-                                      'Add Recommender Email',
-                                      style: outfit(
-                                        fontSize: 11.5,
-                                        fontWeight: FontWeight.w600,
-                                        color: kSecondary,
+                                    Flexible(
+                                      child: Text(
+                                        'Add Recommender Email',
+                                        style: outfit(
+                                          fontSize: 11.5,
+                                          fontWeight: FontWeight.w600,
+                                          color: kSecondary,
+                                        ),
                                       ),
-                                    )),
+                                    ),
                                   ],
                                 ),
                               ),
@@ -2248,15 +2483,32 @@ class _ProviderTrustCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(18),
       decoration: kSoftCardDecoration,
-      child: Row(children: [
-        const Icon(Icons.account_balance_outlined, color: kSecondary),
-        const SizedBox(width: 12),
-        Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Text('Scholarship provider', style: outfit(fontSize: 15, fontWeight: FontWeight.bold, color: kSecondary)),
-          const SizedBox(height: 4),
-          Text(scholarship.provider ?? 'Scholarship Provider', style: openSans(fontSize: 12, color: kOnSurfaceVariant)),
-        ])),
-      ]),
+      child: Row(
+        children: [
+          const Icon(Icons.account_balance_outlined, color: kSecondary),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Scholarship provider',
+                  style: outfit(
+                    fontSize: 15,
+                    fontWeight: FontWeight.bold,
+                    color: kSecondary,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  scholarship.provider ?? 'Scholarship Provider',
+                  style: openSans(fontSize: 12, color: kOnSurfaceVariant),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
@@ -2305,7 +2557,11 @@ class _ApplySectionState extends ConsumerState<_ApplySection> {
           SnackBar(
             content: Row(
               children: [
-                const Icon(Icons.bookmark_added_rounded, color: Colors.white, size: 20),
+                const Icon(
+                  Icons.bookmark_added_rounded,
+                  color: Colors.white,
+                  size: 20,
+                ),
                 const SizedBox(width: 10),
                 Expanded(
                   child: Text(
@@ -2321,7 +2577,9 @@ class _ApplySectionState extends ConsumerState<_ApplySection> {
             ),
             backgroundColor: const Color(0xFF1B3A5C),
             behavior: SnackBarBehavior.floating,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
           ),
         );
       }
@@ -2331,7 +2589,11 @@ class _ApplySectionState extends ConsumerState<_ApplySection> {
           SnackBar(
             content: Row(
               children: [
-                const Icon(Icons.error_outline_rounded, color: Colors.white, size: 20),
+                const Icon(
+                  Icons.error_outline_rounded,
+                  color: Colors.white,
+                  size: 20,
+                ),
                 const SizedBox(width: 10),
                 Expanded(
                   child: Text(
@@ -2343,7 +2605,9 @@ class _ApplySectionState extends ConsumerState<_ApplySection> {
             ),
             backgroundColor: const Color(0xFFBA1A1A),
             behavior: SnackBarBehavior.floating,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
           ),
         );
       }
@@ -2388,7 +2652,9 @@ class _ApplySectionState extends ConsumerState<_ApplySection> {
         if (updatedAvatarState.isRealPhoto) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
-              content: Text('Profile photo added. Proceeding with application...'),
+              content: Text(
+                'Profile photo added. Proceeding with application...',
+              ),
               backgroundColor: Color(0xFF145131),
               duration: Duration(seconds: 2),
             ),
@@ -2420,14 +2686,20 @@ class _ApplySectionState extends ConsumerState<_ApplySection> {
   Future<void> _submit() async {
     setState(() => _isApplying = true);
     try {
-      await ref.read(applicationsProvider.notifier).apply(widget.scholarship.id);
+      await ref
+          .read(applicationsProvider.notifier)
+          .apply(widget.scholarship.id);
       HapticFeedback.mediumImpact();
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Row(
             children: [
-              const Icon(Icons.check_circle_rounded, color: Colors.white, size: 20),
+              const Icon(
+                Icons.check_circle_rounded,
+                color: Colors.white,
+                size: 20,
+              ),
               const SizedBox(width: 10),
               Expanded(
                 child: Text(
@@ -2443,7 +2715,9 @@ class _ApplySectionState extends ConsumerState<_ApplySection> {
           ),
           backgroundColor: const Color(0xFF0F4D2E),
           behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
           duration: const Duration(seconds: 4),
         ),
       );
@@ -2453,7 +2727,11 @@ class _ApplySectionState extends ConsumerState<_ApplySection> {
         SnackBar(
           content: Row(
             children: [
-              const Icon(Icons.lock_outline_rounded, color: Colors.white, size: 20),
+              const Icon(
+                Icons.lock_outline_rounded,
+                color: Colors.white,
+                size: 20,
+              ),
               const SizedBox(width: 10),
               Expanded(
                 child: Text(
@@ -2465,7 +2743,9 @@ class _ApplySectionState extends ConsumerState<_ApplySection> {
           ),
           backgroundColor: const Color(0xFF2E312F),
           behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
         ),
       );
     } on ApplicationDuplicateException {
@@ -2474,7 +2754,11 @@ class _ApplySectionState extends ConsumerState<_ApplySection> {
         SnackBar(
           content: Row(
             children: [
-              const Icon(Icons.info_outline_rounded, color: Colors.white, size: 20),
+              const Icon(
+                Icons.info_outline_rounded,
+                color: Colors.white,
+                size: 20,
+              ),
               const SizedBox(width: 10),
               Expanded(
                 child: Text(
@@ -2486,7 +2770,9 @@ class _ApplySectionState extends ConsumerState<_ApplySection> {
           ),
           backgroundColor: const Color(0xFF404942),
           behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
         ),
       );
     } on Exception {
@@ -2495,7 +2781,11 @@ class _ApplySectionState extends ConsumerState<_ApplySection> {
         SnackBar(
           content: Row(
             children: [
-              const Icon(Icons.error_outline_rounded, color: Colors.white, size: 20),
+              const Icon(
+                Icons.error_outline_rounded,
+                color: Colors.white,
+                size: 20,
+              ),
               const SizedBox(width: 10),
               Expanded(
                 child: Text(
@@ -2507,7 +2797,9 @@ class _ApplySectionState extends ConsumerState<_ApplySection> {
           ),
           backgroundColor: const Color(0xFFBA1A1A),
           behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
         ),
       );
     } finally {
@@ -2523,13 +2815,29 @@ class _ApplySectionState extends ConsumerState<_ApplySection> {
     if (widget.startApplication && !_autoStartConsumed) {
       final userId = ref.watch(currentUserIdProvider);
       final profile = userId == null ? null : ref.watch(currentProfileProvider);
-      final schools = ref.watch(scholarshipEligibleSchoolsProvider(widget.scholarship.id));
-      final school = userId == null ? null : ref.watch(studentProfileSchoolIdProvider(userId));
-      final capacity = ref.watch(scholarshipCapacityProvider(widget.scholarship.id));
-      if (applicationsAsync.isLoading || profile?.isLoading == true || schools.isLoading || school?.isLoading == true || capacity.isLoading) {
+      final schools = ref.watch(
+        scholarshipEligibleSchoolsProvider(widget.scholarship.id),
+      );
+      final school = userId == null
+          ? null
+          : ref.watch(studentProfileSchoolIdProvider(userId));
+      final capacity = ref.watch(
+        scholarshipCapacityProvider(widget.scholarship.id),
+      );
+      if (applicationsAsync.isLoading ||
+          profile?.isLoading == true ||
+          schools.isLoading ||
+          school?.isLoading == true ||
+          capacity.isLoading) {
         return const Center(child: CircularProgressIndicator());
       }
-      if (applicationsAsync.hasError || profile?.hasError == true || schools.hasError || schools.valueOrNull == null || school?.hasError == true || capacity.hasError || capacity.valueOrNull == null) {
+      if (applicationsAsync.hasError ||
+          profile?.hasError == true ||
+          schools.hasError ||
+          schools.valueOrNull == null ||
+          school?.hasError == true ||
+          capacity.hasError ||
+          capacity.valueOrNull == null) {
         return _ReadinessNotice(
           icon: Icons.info_outline_rounded,
           title: 'Unable to check application options',
@@ -2538,26 +2846,47 @@ class _ApplySectionState extends ConsumerState<_ApplySection> {
           onAction: () {
             ref.invalidate(applicationsProvider);
             ref.invalidate(currentProfileProvider);
-            ref.invalidate(scholarshipEligibleSchoolsProvider(widget.scholarship.id));
+            ref.invalidate(
+              scholarshipEligibleSchoolsProvider(widget.scholarship.id),
+            );
             ref.invalidate(scholarshipCapacityProvider(widget.scholarship.id));
-            if (userId != null) ref.invalidate(studentProfileSchoolIdProvider(userId));
+            if (userId != null) {
+              ref.invalidate(studentProfileSchoolIdProvider(userId));
+            }
           },
         );
       }
-      final existing = ref.read(applicationsProvider.notifier).applicationFor(widget.scholarship.id);
-      final readiness = evaluateApplicationReadiness(profile: profile?.valueOrNull, scholarship: widget.scholarship, referenceNow: DateTime.now());
+      final existing = ref
+          .read(applicationsProvider.notifier)
+          .applicationFor(widget.scholarship.id);
+      final readiness = evaluateApplicationReadiness(
+        profile: profile?.valueOrNull,
+        scholarship: widget.scholarship,
+        referenceNow: DateTime.now(),
+      );
       final eligibleSchools = schools.valueOrNull!;
-      final schoolEligible = eligibleSchools.isEmpty || (school?.valueOrNull != null && eligibleSchools.contains(school!.valueOrNull));
+      final schoolEligible =
+          eligibleSchools.isEmpty ||
+          (school?.valueOrNull != null &&
+              eligibleSchools.contains(school!.valueOrNull));
       _autoStartConsumed = true;
-      final alreadyApplied = ref.read(applicationsProvider.notifier).hasApplied(widget.scholarship.id);
-      if (userId != null && readiness.canApply && schoolEligible && !capacity.valueOrNull!.isFull && (!alreadyApplied || existing?.status == ApplicationStatus.draft) && (existing == null || existing.status == ApplicationStatus.draft)) {
+      final alreadyApplied = ref
+          .read(applicationsProvider.notifier)
+          .hasApplied(widget.scholarship.id);
+      if (userId != null &&
+          readiness.canApply &&
+          schoolEligible &&
+          !capacity.valueOrNull!.isFull &&
+          (!alreadyApplied || existing?.status == ApplicationStatus.draft) &&
+          (existing == null || existing.status == ApplicationStatus.draft)) {
         WidgetsBinding.instance.addPostFrameCallback((_) {
           if (mounted) _apply();
         });
       }
     }
-    final existingApp =
-        ref.read(applicationsProvider.notifier).applicationFor(widget.scholarship.id);
+    final existingApp = ref
+        .read(applicationsProvider.notifier)
+        .applicationFor(widget.scholarship.id);
 
     if (existingApp != null) {
       if (existingApp.status == ApplicationStatus.draft) {
@@ -2569,14 +2898,16 @@ class _ApplySectionState extends ConsumerState<_ApplySection> {
       return _AppliedBanner(scholarship: widget.scholarship);
     }
 
-    final applied =
-        ref.read(applicationsProvider.notifier).hasApplied(widget.scholarship.id);
+    final applied = ref
+        .read(applicationsProvider.notifier)
+        .hasApplied(widget.scholarship.id);
 
     if (applied) return _AppliedBanner(scholarship: widget.scholarship);
 
     final userId = ref.watch(currentUserIdProvider);
-    final profileAsync =
-        userId == null ? null : ref.watch(currentProfileProvider);
+    final profileAsync = userId == null
+        ? null
+        : ref.watch(currentProfileProvider);
     if (profileAsync != null && profileAsync.isLoading) {
       return const SizedBox.shrink();
     }
@@ -2588,13 +2919,15 @@ class _ApplySectionState extends ConsumerState<_ApplySection> {
     );
 
     // Authoritative slot capacity & school eligibility checks
-    final eligibleSchoolIds =
-        ref.watch(scholarshipEligibleSchoolsProvider(widget.scholarship.id)).valueOrNull;
+    final eligibleSchoolIds = ref
+        .watch(scholarshipEligibleSchoolsProvider(widget.scholarship.id))
+        .valueOrNull;
     final userSchoolId = userId != null
         ? ref.watch(studentProfileSchoolIdProvider(userId)).valueOrNull
         : null;
 
-    bool isSchoolRestricted = eligibleSchoolIds != null && eligibleSchoolIds.isNotEmpty;
+    bool isSchoolRestricted =
+        eligibleSchoolIds != null && eligibleSchoolIds.isNotEmpty;
     bool isSchoolIneligible = false;
     bool isSchoolLegacyUnlinked = false;
     if (isSchoolRestricted) {
@@ -2605,8 +2938,9 @@ class _ApplySectionState extends ConsumerState<_ApplySection> {
       }
     }
 
-    final capacity =
-        ref.watch(scholarshipCapacityProvider(widget.scholarship.id)).valueOrNull;
+    final capacity = ref
+        .watch(scholarshipCapacityProvider(widget.scholarship.id))
+        .valueOrNull;
     final isCapacityReached = capacity != null && capacity.isFull;
 
     switch (readiness.state) {
@@ -2615,8 +2949,7 @@ class _ApplySectionState extends ConsumerState<_ApplySection> {
           return _ReadinessNotice(
             icon: Icons.school_outlined,
             title: 'Profile update required',
-            message:
-                'This grant is restricted to partner institutions. Please update your profile to select your school.',
+            message: 'This grant is restricted to partner institutions. Please update your profile to select your school.',
             actionLabel: 'Update profile',
             onAction: () => context.go('/profile-setup/personal'),
           );
@@ -2625,16 +2958,14 @@ class _ApplySectionState extends ConsumerState<_ApplySection> {
           return const _ReadinessNotice(
             icon: Icons.school_outlined,
             title: "Why you can't apply",
-            message:
-                'Ineligible based on profile: Restricted to partner institutions.',
+            message: 'Ineligible based on profile: Restricted to partner institutions.',
           );
         }
         if (isCapacityReached) {
           return const _ReadinessNotice(
             icon: Icons.group_off_rounded,
             title: 'Scholarship capacity reached',
-            message:
-                'All allocated slots for this scholarship have been filled by approved scholars.',
+            message: 'All allocated slots for this scholarship have been filled by approved scholars.',
           );
         }
         return _applyButtonRow(onPressed: _apply);
@@ -2643,24 +2974,21 @@ class _ApplySectionState extends ConsumerState<_ApplySection> {
         return const _ReadinessNotice(
           icon: Icons.event_busy_rounded,
           title: 'Applications closed',
-          message:
-              'The deadline for this scholarship has passed. You can no longer apply.',
+          message: 'The deadline for this scholarship has passed. You can no longer apply.',
         );
 
       case ApplicationReadinessState.inactive:
         return const _ReadinessNotice(
           icon: Icons.pause_circle_outline_rounded,
           title: 'Not accepting applications',
-          message:
-              'This scholarship is currently inactive. Explore other scholarships instead.',
+          message: 'This scholarship is currently inactive. Explore other scholarships instead.',
         );
 
       case ApplicationReadinessState.notEligible:
         return _ReadinessNotice(
           icon: Icons.info_outline_rounded,
           title: "Why you can't apply",
-          message:
-              'Based on your profile, the requirements below are not met:',
+          message: 'Based on your profile, the requirements below are not met:',
           reasons: readiness.reasons,
         );
 
@@ -2671,8 +2999,7 @@ class _ApplySectionState extends ConsumerState<_ApplySection> {
         return _ReadinessNotice(
           icon: Icons.person_add_alt_1_outlined,
           title: 'Finish your profile to apply',
-          message:
-              'Your profile is incomplete, so we cannot check your eligibility yet.',
+          message: 'Your profile is incomplete, so we cannot check your eligibility yet.',
           actionLabel: 'Update profile',
           onAction: () => context.go('/profile-setup/personal'),
         );
@@ -2774,7 +3101,11 @@ class _ApplySectionState extends ConsumerState<_ApplySection> {
                               ),
                             ),
                             const SizedBox(width: 4),
-                            const Icon(Icons.arrow_forward_rounded, size: 16, color: Colors.white),
+                            const Icon(
+                              Icons.arrow_forward_rounded,
+                              size: 16,
+                              color: Colors.white,
+                            ),
                           ],
                         ],
                       ),
@@ -2792,10 +3123,7 @@ class _ApplySectionState extends ConsumerState<_ApplySection> {
 
 /// Draft Application Banner: Displays draft status and "Continue Application" CTA.
 class _DraftBanner extends StatelessWidget {
-  const _DraftBanner({
-    required this.scholarship,
-    required this.onContinue,
-  });
+  const _DraftBanner({required this.scholarship, required this.onContinue});
 
   final Scholarship scholarship;
   final VoidCallback onContinue;
@@ -2884,10 +3212,7 @@ class _DraftBanner extends StatelessWidget {
               icon: const Icon(Icons.arrow_forward_rounded, size: 18),
               label: Text(
                 'Continue Application',
-                style: outfit(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w600,
-                ),
+                style: outfit(fontSize: 14, fontWeight: FontWeight.w600),
               ),
             ),
           ),
@@ -2906,10 +3231,16 @@ class _AppliedBanner extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final application = ref.watch(applicationsProvider).valueOrNull
-        ?.where((a) => a.scholarshipId == scholarship.id).firstOrNull;
-    final documents = application == null ? null : ref.watch(applicationDocumentsProvider(application.id));
-    final savedStatus = application?.status.dbValue.replaceAll('_', ' ') ?? 'saved';
+    final application = ref
+        .watch(applicationsProvider)
+        .valueOrNull
+        ?.where((a) => a.scholarshipId == scholarship.id)
+        .firstOrNull;
+    final documents = application == null
+        ? null
+        : ref.watch(applicationDocumentsProvider(application.id));
+    final savedStatus =
+        application?.status.dbValue.replaceAll('_', ' ') ?? 'saved';
     return Semantics(
       liveRegion: true,
       label: 'Application $savedStatus',
@@ -2951,7 +3282,10 @@ class _AppliedBanner extends ConsumerWidget {
                 ),
                 const SizedBox(height: 12),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 3,
+                  ),
                   decoration: BoxDecoration(
                     color: const Color(0xFFB3F1C6).withValues(alpha: 0.2),
                     borderRadius: BorderRadius.circular(20),
@@ -2979,10 +3313,7 @@ class _AppliedBanner extends ConsumerWidget {
                 Text(
                   'Your application has been saved. Check the tracker for its current status.',
                   textAlign: TextAlign.center,
-                  style: openSans(
-                    fontSize: 13,
-                    color: const Color(0xFFB3F1C6),
-                  ),
+                  style: openSans(fontSize: 13, color: const Color(0xFFB3F1C6)),
                 ),
               ],
             ),
@@ -3009,7 +3340,11 @@ class _AppliedBanner extends ConsumerWidget {
                               color: const Color(0xFFE8EEFF),
                               borderRadius: BorderRadius.circular(8),
                             ),
-                            child: const Icon(Icons.receipt_long_rounded, size: 18, color: kSecondary),
+                            child: const Icon(
+                              Icons.receipt_long_rounded,
+                              size: 18,
+                              color: kSecondary,
+                            ),
                           ),
                           const SizedBox(width: 8),
                           Expanded(
@@ -3045,7 +3380,10 @@ class _AppliedBanner extends ConsumerWidget {
                     ),
                     const SizedBox(width: 8),
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 2,
+                      ),
                       decoration: BoxDecoration(
                         color: const Color(0xFFB3F1C6),
                         borderRadius: BorderRadius.circular(6),
@@ -3063,7 +3401,10 @@ class _AppliedBanner extends ConsumerWidget {
                 ),
                 const SizedBox(height: 12),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 8,
+                  ),
                   decoration: BoxDecoration(
                     color: const Color(0xFFF1F3FF),
                     borderRadius: BorderRadius.circular(8),
@@ -3077,7 +3418,10 @@ class _AppliedBanner extends ConsumerWidget {
                           children: [
                             Text(
                               'Reference Identifier',
-                              style: openSans(fontSize: 10, color: const Color(0xFF404942)),
+                              style: openSans(
+                                fontSize: 10,
+                                color: const Color(0xFF404942),
+                              ),
                             ),
                             Text(
                               application?.id ?? 'Application unavailable',
@@ -3095,14 +3439,26 @@ class _AppliedBanner extends ConsumerWidget {
                       const SizedBox(width: 8),
                       IconButton(
                         tooltip: 'Copy Tracking ID',
-                        icon: const Icon(Icons.content_copy_rounded, size: 16, color: kSecondary),
-                        onPressed: application == null ? null : () async {
-                          await Clipboard.setData(ClipboardData(text: application.id));
-                          if (!context.mounted) return;
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text('Receipt ID copied to clipboard.')),
-                          );
-                        },
+                        icon: const Icon(
+                          Icons.content_copy_rounded,
+                          size: 16,
+                          color: kSecondary,
+                        ),
+                        onPressed: application == null
+                            ? null
+                            : () async {
+                                await Clipboard.setData(
+                                  ClipboardData(text: application.id),
+                                );
+                                if (!context.mounted) return;
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text(
+                                      'Receipt ID copied to clipboard.',
+                                    ),
+                                  ),
+                                );
+                              },
                       ),
                     ],
                   ),
@@ -3130,7 +3486,11 @@ class _AppliedBanner extends ConsumerWidget {
                               color: const Color(0xFF404942),
                             ),
                           ),
-                          const Icon(Icons.check_circle_rounded, size: 14, color: kPrimaryContainer),
+                          const Icon(
+                            Icons.check_circle_rounded,
+                            size: 14,
+                            color: kPrimaryContainer,
+                          ),
                         ],
                       ),
                       const SizedBox(height: 6),
@@ -3138,10 +3498,15 @@ class _AppliedBanner extends ConsumerWidget {
                         spacing: 8,
                         runSpacing: 4,
                         children: [
-                          if (documents?.isLoading == true) _receiptTag('Loading attachments'),
-                          if (documents?.hasError == true) _receiptTag('Could not load attachments'),
-                          for (final doc in documents?.valueOrNull ?? []) _receiptTag(doc.fileName),
-                          if (documents?.hasValue == true && documents!.valueOrNull!.isEmpty) _receiptTag('No documents attached'),
+                          if (documents?.isLoading == true)
+                            _receiptTag('Loading attachments'),
+                          if (documents?.hasError == true)
+                            _receiptTag('Could not load attachments'),
+                          for (final doc in documents?.valueOrNull ?? [])
+                            _receiptTag(doc.fileName),
+                          if (documents?.hasValue == true &&
+                              documents!.valueOrNull!.isEmpty)
+                            _receiptTag('No documents attached'),
                         ],
                       ),
                     ],
@@ -3156,14 +3521,21 @@ class _AppliedBanner extends ConsumerWidget {
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          const Icon(Icons.lock_rounded, size: 13, color: kPrimaryContainer),
+                          const Icon(
+                            Icons.lock_rounded,
+                            size: 13,
+                            color: kPrimaryContainer,
+                          ),
                           const SizedBox(width: 4),
                           Flexible(
                             child: Text(
                               'Submitted: ${application?.appliedAt?.toLocal() ?? 'Not available'}',
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
-                              style: outfit(fontSize: 10, color: const Color(0xFF404942)),
+                              style: outfit(
+                                fontSize: 10,
+                                color: const Color(0xFF404942),
+                              ),
                             ),
                           ),
                         ],
@@ -3174,7 +3546,11 @@ class _AppliedBanner extends ConsumerWidget {
                       application == null
                           ? 'Status unavailable'
                           : ApplicationStatusUi.of(application.status).label,
-                      style: outfit(fontSize: 10, fontWeight: FontWeight.w600, color: kPrimaryContainer),
+                      style: outfit(
+                        fontSize: 10,
+                        fontWeight: FontWeight.w600,
+                        color: kPrimaryContainer,
+                      ),
                     ),
                   ],
                 ),
@@ -3186,7 +3562,9 @@ class _AppliedBanner extends ConsumerWidget {
                     style: OutlinedButton.styleFrom(
                       foregroundColor: kPrimaryContainer,
                       side: const BorderSide(color: kPrimaryContainer),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
                       padding: const EdgeInsets.symmetric(vertical: 12),
                     ),
                     onPressed: () => context.go('/applications'),
@@ -3200,8 +3578,14 @@ class _AppliedBanner extends ConsumerWidget {
                 const SizedBox(height: 8),
                 Center(
                   child: TextButton.icon(
-                    onPressed: application == null ? null : () => context.push('/application/${application.id}'),
-                    icon: const Icon(Icons.receipt_long_rounded, size: 16, color: kPrimaryContainer),
+                    onPressed: application == null
+                        ? null
+                        : () => context.push('/application/${application.id}'),
+                    icon: const Icon(
+                      Icons.receipt_long_rounded,
+                      size: 16,
+                      color: kPrimaryContainer,
+                    ),
                     label: Text(
                       'View Application Status',
                       style: outfit(
@@ -3315,20 +3699,29 @@ class _ReadinessReason extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final maxWidth = (MediaQuery.sizeOf(context).width - 90).clamp(180.0, 480.0);
+    final maxWidth = (MediaQuery.sizeOf(context).width - 90).clamp(
+      180.0,
+      480.0,
+    );
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: const Color(0xFF5F6368).withValues(alpha: 0.25)),
+        border: Border.all(
+          color: const Color(0xFF5F6368).withValues(alpha: 0.25),
+        ),
       ),
       child: ConstrainedBox(
         constraints: BoxConstraints(maxWidth: maxWidth),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(Icons.remove_circle_outline, size: 14, color: Color(0xFF5F6368)),
+            const Icon(
+              Icons.remove_circle_outline,
+              size: 14,
+              color: Color(0xFF5F6368),
+            ),
             const SizedBox(width: 5),
             Flexible(
               child: Text(

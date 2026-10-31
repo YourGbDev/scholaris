@@ -129,7 +129,9 @@ void main() {
     testWidgets('renders the request form and back-to-login link', (
       tester,
     ) async {
-      await tester.pumpWidget(const MaterialApp(home: ForgotPasswordScreen()));
+      await tester.pumpWidget(
+        ProviderScope(child: const MaterialApp(home: ForgotPasswordScreen())),
+      );
 
       expect(find.text('Forgot Password?'), findsOneWidget);
       expect(find.text('Email'), findsOneWidget);
@@ -138,11 +140,15 @@ void main() {
     });
 
     testWidgets('rejects an invalid email before any API call', (tester) async {
-      await tester.pumpWidget(const MaterialApp(home: ForgotPasswordScreen()));
+      await tester.pumpWidget(
+        ProviderScope(child: const MaterialApp(home: ForgotPasswordScreen())),
+      );
       await tester.pumpAndSettle();
 
       await tester.enterText(find.byType(TextFormField).at(0), 'not-an-email');
-      await tester.ensureVisible(find.widgetWithText(ElevatedButton, 'Send reset code'));
+      await tester.ensureVisible(
+        find.widgetWithText(ElevatedButton, 'Send reset code'),
+      );
       await tester.tap(find.widgetWithText(ElevatedButton, 'Send reset code'));
       await tester.pumpAndSettle();
 
@@ -150,10 +156,14 @@ void main() {
     });
 
     testWidgets('rejects an empty email', (tester) async {
-      await tester.pumpWidget(const MaterialApp(home: ForgotPasswordScreen()));
+      await tester.pumpWidget(
+        ProviderScope(child: const MaterialApp(home: ForgotPasswordScreen())),
+      );
       await tester.pumpAndSettle();
 
-      await tester.ensureVisible(find.widgetWithText(ElevatedButton, 'Send reset code'));
+      await tester.ensureVisible(
+        find.widgetWithText(ElevatedButton, 'Send reset code'),
+      );
       await tester.tap(find.widgetWithText(ElevatedButton, 'Send reset code'));
       await tester.pumpAndSettle();
 
@@ -165,7 +175,9 @@ void main() {
     testWidgets('renders the set-new-password form and sign-out link', (
       tester,
     ) async {
-      await tester.pumpWidget(const MaterialApp(home: ResetPasswordScreen()));
+      await tester.pumpWidget(
+        ProviderScope(child: const MaterialApp(home: ResetPasswordScreen())),
+      );
 
       // Stitch treatment: Credential update chip + verified account card + form
       expect(find.text('CREDENTIAL UPDATE'), findsOneWidget);
@@ -180,7 +192,9 @@ void main() {
     testWidgets('rejects empty, short and mismatched passwords locally', (
       tester,
     ) async {
-      await tester.pumpWidget(const MaterialApp(home: ResetPasswordScreen()));
+      await tester.pumpWidget(
+        ProviderScope(child: const MaterialApp(home: ResetPasswordScreen())),
+      );
 
       // The button sits below the fold on the default test viewport (the V1
       // hero takes the top band); scroll it into view before tapping.
@@ -399,27 +413,29 @@ void main() {
     });
 
     group('provider role routing', () {
-      test('role=provider lands on /provider-home regardless of profile state',
-          () {
-        // setupComplete false must NOT route a provider through the student
-        // wizard — this is the bug the pre-profileComplete branch prevents.
-        for (final complete in [true, false]) {
-          expect(
-            authRedirectDecision(
-              location: '/login',
-              isLoggedIn: true,
-              recoveryActive: false,
-              onAuthRoute: true,
-              onSetupRoute: false,
-              profileLoading: false,
-              profileComplete: complete,
-              role: 'provider',
-            ),
-            '/provider-home',
-            reason: 'provider routing must ignore setupComplete ($complete)',
-          );
-        }
-      });
+      test(
+        'role=provider lands on /provider-home regardless of profile state',
+        () {
+          // setupComplete false must NOT route a provider through the student
+          // wizard — this is the bug the pre-profileComplete branch prevents.
+          for (final complete in [true, false]) {
+            expect(
+              authRedirectDecision(
+                location: '/login',
+                isLoggedIn: true,
+                recoveryActive: false,
+                onAuthRoute: true,
+                onSetupRoute: false,
+                profileLoading: false,
+                profileComplete: complete,
+                role: 'provider',
+              ),
+              '/provider-home',
+              reason: 'provider routing must ignore setupComplete ($complete)',
+            );
+          }
+        },
+      );
 
       test('a provider may stay on /provider-home', () {
         expect(
@@ -627,7 +643,9 @@ void main() {
         ],
       );
 
-      await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+      await tester.pumpWidget(
+        ProviderScope(child: MaterialApp.router(routerConfig: router)),
+      );
 
       await tester.tap(find.text('Forgot password?'));
       await tester.pumpAndSettle();

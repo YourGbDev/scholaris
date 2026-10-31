@@ -1,3 +1,4 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 // Day 19 tests: the GraduationCeremony widget lifecycle and the CeremonyScreen
 // navigation hand-off. The ceremony Lottie asset (scholaris_ceremony.json — a
 // minimal placeholder for build/test) is bundled, but tests also inject
@@ -27,8 +28,11 @@ void main() {
 
   /// Advances [ms] of fake time in fixed small steps so the Lottie ticker
   /// actually makes progress.
-  Future<void> pumpSteps(WidgetTester tester, int ms,
-      {int stepMs = 200}) async {
+  Future<void> pumpSteps(
+    WidgetTester tester,
+    int ms, {
+    int stepMs = 200,
+  }) async {
     var remaining = ms;
     while (remaining > 0) {
       final step = remaining < stepMs ? remaining : stepMs;
@@ -43,11 +47,13 @@ void main() {
     ) async {
       var completed = 0;
       await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
-            body: GraduationCeremony(
-              assetPath: kCeremonyAsset,
-              onCompleted: () => completed++,
+        ProviderScope(
+          child: MaterialApp(
+            home: Scaffold(
+              body: GraduationCeremony(
+                assetPath: kCeremonyAsset,
+                onCompleted: () => completed++,
+              ),
             ),
           ),
         ),
@@ -65,9 +71,11 @@ void main() {
     testWidgets('completion fires exactly once', (tester) async {
       var completed = 0;
       await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
-            body: GraduationCeremony(onCompleted: () => completed++),
+        ProviderScope(
+          child: MaterialApp(
+            home: Scaffold(
+              body: GraduationCeremony(onCompleted: () => completed++),
+            ),
           ),
         ),
       );
@@ -89,9 +97,11 @@ void main() {
       useReducedMotion(tester);
       var completed = 0;
       await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
-            body: GraduationCeremony(onCompleted: () => completed++),
+        ProviderScope(
+          child: MaterialApp(
+            home: Scaffold(
+              body: GraduationCeremony(onCompleted: () => completed++),
+            ),
           ),
         ),
       );
@@ -105,11 +115,13 @@ void main() {
     testWidgets('asset failure completes without a fallback', (tester) async {
       var completed = 0;
       await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
-            body: GraduationCeremony(
-              assetPath: 'assets/animations/does_not_exist.json',
-              onCompleted: () => completed++,
+        ProviderScope(
+          child: MaterialApp(
+            home: Scaffold(
+              body: GraduationCeremony(
+                assetPath: 'assets/animations/does_not_exist.json',
+                onCompleted: () => completed++,
+              ),
             ),
           ),
         ),
@@ -122,16 +134,18 @@ void main() {
 
     testWidgets('disposal does not crash', (tester) async {
       await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
-            body: GraduationCeremony(onCompleted: () {}),
+        ProviderScope(
+          child: MaterialApp(
+            home: Scaffold(body: GraduationCeremony(onCompleted: () {})),
           ),
         ),
       );
       await tester.pump(); // load starts
       await tester.pump(); // composition resolves, forward()
       // Dispose mid-playback by replacing the widget tree.
-      await tester.pumpWidget(const MaterialApp(home: Text('disposed')));
+      await tester.pumpWidget(
+        ProviderScope(child: const MaterialApp(home: Text('disposed'))),
+      );
       // No exception should have been thrown.
       expect(tester.takeException(), isNull);
     });
@@ -139,20 +153,23 @@ void main() {
     testWidgets('disposed widget does not invoke completion', (tester) async {
       var completed = 0;
       await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
-            body: GraduationCeremony(onCompleted: () => completed++),
+        ProviderScope(
+          child: MaterialApp(
+            home: Scaffold(
+              body: GraduationCeremony(onCompleted: () => completed++),
+            ),
           ),
         ),
       );
       await tester.pump(); // load starts
       await tester.pump(); // composition resolves, forward()
       // Dispose before the ceremony finishes.
-      await tester.pumpWidget(const MaterialApp(home: Text('disposed')));
+      await tester.pumpWidget(
+        ProviderScope(child: const MaterialApp(home: Text('disposed'))),
+      );
       await tester.pump();
 
-      expect(completed, 0,
-          reason: 'completion must not fire after disposal');
+      expect(completed, 0, reason: 'completion must not fire after disposal');
     });
   });
 
@@ -174,8 +191,11 @@ void main() {
         ],
       );
 
-      await tester.pumpWidget(MaterialApp.router(routerConfig: router));
-      await tester.pump(); // ceremony errorBuilder fires → onCompleted scheduled
+      await tester.pumpWidget(
+        ProviderScope(child: MaterialApp.router(routerConfig: router)),
+      );
+      await tester
+          .pump(); // ceremony errorBuilder fires → onCompleted scheduled
       await tester.pump(); // onCompleted post-frame → context.go('/login')
       await tester.pump(); // router processes navigation
       await tester.pump(); // login screen renders

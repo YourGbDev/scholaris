@@ -13,34 +13,46 @@ final bookmarkRepositoryProvider = Provider<BookmarkRepository>(
   (ref) => BookmarkRepository(),
 );
 
-final bookmarksProvider =
-    AsyncNotifierProvider<BookmarksNotifier, Set<String>>(
+final bookmarksProvider = AsyncNotifierProvider<BookmarksNotifier, Set<String>>(
   BookmarksNotifier.new,
 );
 
 class BookmarksNotifier extends AsyncNotifier<Set<String>> {
+  int _generation = 0;
   @override
   Future<Set<String>> build() async {
+    _generation++;
+    ref.onDispose(() => _generation++);
     // Bound to the authenticated user: rebuilt (and refetched) on every auth
     // transition, so a previous user's saved set can never leak to the next.
     ref.watch(currentUserIdProvider);
-    final ids = await ref.watch(bookmarkRepositoryProvider).fetchBookmarkedIds();
+    final ids = await ref
+        .watch(bookmarkRepositoryProvider)
+        .fetchBookmarkedIds();
     return ids.toSet();
   }
 
   /// Toggles the bookmark for [scholarshipId]. Returns the new state (true =
   /// bookmarked after the call).
   Future<bool> toggle(String scholarshipId) async {
+    final generation = _generation;
+    final user = ref.read(currentUserIdProvider);
     final repo = ref.read(bookmarkRepositoryProvider);
     final current = state.valueOrNull ?? <String>{};
 
     if (current.contains(scholarshipId)) {
       await repo.remove(scholarshipId);
-      state = AsyncData(Set<String>.of(current)..remove(scholarshipId));
+      if (generation == _generation &&
+          user == ref.read(currentUserIdProvider)) {
+        state = AsyncData(Set<String>.of(current)..remove(scholarshipId));
+      }
       return false;
     } else {
       await repo.add(scholarshipId);
-      state = AsyncData(Set<String>.of(current)..add(scholarshipId));
+      if (generation == _generation &&
+          user == ref.read(currentUserIdProvider)) {
+        state = AsyncData(Set<String>.of(current)..add(scholarshipId));
+      }
       return true;
     }
   }

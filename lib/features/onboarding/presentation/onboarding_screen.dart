@@ -295,23 +295,13 @@ class _Slide1Ecosystem extends StatelessWidget {
                       // Headline
                       Text(
                         'Find Your Scholarship',
-                        style: geist(
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
-                          color: const Color(0xFF00351C),
-                          letterSpacing: -0.5,
-                          height: 1.15,
-                        ),
+                        style: appHeading(fontSize: 28, color: const Color(0xFF00351C)),
                       ),
-                      const SizedBox(height: 5),
+                      const SizedBox(height: 12),
                       // Narrative
                       Text(
                         'Discover scholarships suited to your academic background, region, and financial needs.',
-                        style: geist(
-                          fontSize: 13,
-                          color: const Color(0xFF404942),
-                          height: 1.35,
-                        ),
+                        style: appSupporting(fontSize: 16),
                       ),
                       const SizedBox(height: 10),
                       // Metric Bento
@@ -507,13 +497,7 @@ class _Slide2Matching extends StatelessWidget {
                       // Headline
                       Text.rich(
                         TextSpan(
-                          style: geist(
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold,
-                            color: const Color(0xFF161C27),
-                            letterSpacing: -0.5,
-                            height: 1.15,
-                          ),
+                          style: appHeading(fontSize: 28, color: const Color(0xFF161C27)),
                           children: const [
                             TextSpan(text: 'Get Matched,\n'),
                             TextSpan(
@@ -523,15 +507,11 @@ class _Slide2Matching extends StatelessWidget {
                           ],
                         ),
                       ),
-                      const SizedBox(height: 5),
+                      const SizedBox(height: 12),
                       // Narrative
                       Text(
                         'Spend less time searching. Scholaris compares your profile with scholarship criteria to highlight opportunities that may suit you.',
-                        style: geist(
-                          fontSize: 13,
-                          color: const Color(0xFF404942),
-                          height: 1.35,
-                        ),
+                        style: appSupporting(fontSize: 16),
                       ),
                       const SizedBox(height: 10),
                       // Trust Features
@@ -709,23 +689,13 @@ class _Slide3AuditTrail extends StatelessWidget {
                       // Headline
                       Text(
                         'Track Every Step',
-                        style: geist(
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
-                          color: const Color(0xFF161C27),
-                          letterSpacing: -0.5,
-                          height: 1.15,
-                        ),
+                        style: appHeading(fontSize: 28, color: const Color(0xFF161C27)),
                       ),
-                      const SizedBox(height: 5),
+                      const SizedBox(height: 12),
                       // Narrative
                       Text(
                         'Follow your application from draft and submission through to a decision.',
-                        style: geist(
-                          fontSize: 13,
-                          color: const Color(0xFF404942),
-                          height: 1.35,
-                        ),
+                        style: appSupporting(fontSize: 16),
                       ),
                       const SizedBox(height: 10),
                       // Reassurance Banner

@@ -4,7 +4,7 @@
 // Academic Momentum design specifications (`academic_momentum/DESIGN.md`).
 //
 // Typography:
-// - UI headings, labels, body copy, and metrics: bundled Open Runde
+// - Bundled Geist Sans on every platform; explicit weights 400–800.
 // - Legacy font helpers share the same family to preserve existing call sites.
 
 import 'package:flutter/material.dart';
@@ -82,14 +82,14 @@ const Color kOutlineVariant = Color(0xFFC0C9C0);
 const Color kBorderLight = Color(0xFFE2E8E5);
 const Color kPrimaryLight = Color(0xFFB3F1C6);
 
-const Color kTextPrimary = Color(0xFF161C27);
+const Color kTextPrimary = Color(0xFF111827);
 const Color kTextSecondary = Color(0xFF404942);
 // Substantial gray supporting copy, distinct from headings and status colors.
-const Color kTextSupporting = Color(0xFF626A73);
+const Color kTextSupporting = Color(0xFF64748B);
 
 // Informational benefit/qualification tags, separate from status and filter colors.
 const Color kScholarshipTagBackground = Color(0xFFEAEAEA);
-const Color kScholarshipTagForeground = Color(0xFF252525);
+const Color kScholarshipTagForeground = Color(0xFF374151);
 
 // Backward-compatible alias tokens
 const Color kLumiGold = Color(0xFFFABC28);
@@ -142,7 +142,59 @@ const LinearGradient kHeroSurface = LinearGradient(
 
 // --- Typography Helpers -----------------------------------------------------
 
-/// Legacy helper name; now selects bundled Open Runde, including offline.
+FontWeight _geistWeight(FontWeight requested) {
+  if (requested.value > 800) return FontWeight.w800;
+  if (requested.value < 400) return FontWeight.w400;
+  return requested;
+}
+
+TextStyle appGreeting({double fontSize = 28}) => geist(
+  fontSize: fontSize, fontWeight: FontWeight.w800,
+  letterSpacing: -.8, height: 1.15, color: const Color(0xFF0F172A),
+);
+
+/// Strong title/action roles; smaller medium labels keep their hierarchy.
+FontWeight appTitleWeight(FontWeight requested, double fontSize) =>
+    requested.value >= 700 || (fontSize >= 14 && requested.value >= 600)
+        ? FontWeight.w800 : requested;
+
+TextStyle appHeading({required double fontSize, Color? color}) => geist(
+  fontSize: fontSize, fontWeight: FontWeight.w800,
+  letterSpacing: -.6,
+  height: 1.2, color: color ?? const Color(0xFF0F172A),
+);
+
+TextStyle appCardTitle({double fontSize = 17}) => geist(
+  fontSize: fontSize, fontWeight: FontWeight.w800,
+  letterSpacing: -.35, height: 1.25, color: kTextPrimary,
+);
+
+TextStyle appSupporting({double fontSize = 14, Color? color}) => geist(
+  fontSize: fontSize, fontWeight: FontWeight.w600,
+  letterSpacing: -.1, height: 1.4, color: color ?? kTextSupporting,
+);
+
+TextStyle appAmount({double fontSize = 22}) => geist(
+  fontSize: fontSize, fontWeight: FontWeight.w800,
+  letterSpacing: -.4, height: 1.2, color: kPrimary,
+);
+
+TextStyle appStatusLabel({Color? color}) => geist(
+  fontSize: 12, fontWeight: FontWeight.w600,
+  letterSpacing: -.15, height: 1.25, color: color,
+);
+
+TextStyle appAttributeLabel() => geist(
+  fontSize: 11.5, fontWeight: FontWeight.w700,
+  letterSpacing: -.1, height: 1.3, color: kScholarshipTagForeground,
+);
+
+TextStyle appOverline() => geist(
+  fontSize: 11, fontWeight: FontWeight.w600,
+  letterSpacing: .6, height: 1.3, color: kTextSupporting,
+);
+
+/// Legacy helper name; selects bundled Geist without platform or network font switching.
 TextStyle geist({
   TextStyle? textStyle,
   Color? color,
@@ -168,12 +220,12 @@ TextStyle geist({
   color: color,
   backgroundColor: backgroundColor,
   fontSize: fontSize,
-  fontWeight: fontWeight ?? textStyle?.fontWeight ?? FontWeight.w500,
+  fontWeight: _geistWeight(fontWeight ?? textStyle?.fontWeight ?? FontWeight.w400),
   fontStyle: fontStyle,
-  letterSpacing: letterSpacing,
+  letterSpacing: letterSpacing ?? textStyle?.letterSpacing ?? -.1,
   wordSpacing: wordSpacing,
   textBaseline: textBaseline,
-  height: height,
+  height: height ?? textStyle?.height ?? 1.4,
   locale: locale,
   foreground: foreground,
   background: background,
@@ -187,8 +239,8 @@ TextStyle geist({
 
 
 
-/// Compatibility helper; headings and labels use the shared rounded family.
-/// Natural tracking and relaxed heading leading preserve the rounded shapes.
+/// Compatibility helper; headings and labels use the shared Geist family.
+/// Tight tracking and leading distinguish titles from supporting copy.
 TextStyle outfit({
   TextStyle? textStyle,
   Color? color,
@@ -214,12 +266,12 @@ TextStyle outfit({
   color: color,
   backgroundColor: backgroundColor,
   fontSize: fontSize,
-  fontWeight: fontWeight,
+  fontWeight: appTitleWeight(fontWeight ?? textStyle?.fontWeight ?? FontWeight.w600, fontSize ?? textStyle?.fontSize ?? 14),
   fontStyle: fontStyle,
-  letterSpacing: letterSpacing ?? 0,
+  letterSpacing: letterSpacing ?? (fontSize != null && fontSize >= 18 ? -.6 : -.3),
   wordSpacing: wordSpacing,
   textBaseline: textBaseline,
-  height: height ?? 1.3,
+  height: height ?? 1.25,
   locale: locale,
   foreground: foreground,
   background: background,
@@ -231,8 +283,8 @@ TextStyle outfit({
   decorationThickness: decorationThickness,
 );
 
-/// Compatibility helper; body copy uses the shared rounded family.
-/// Defaults to natural tracking and relaxed body leading (1.45–1.50).
+/// Compatibility helper; body copy uses the shared Geist family.
+/// Supporting copy keeps the fuller semibold weight and current tracking.
 TextStyle openSans({
   TextStyle? textStyle,
   Color? color,
@@ -258,12 +310,12 @@ TextStyle openSans({
   color: color,
   backgroundColor: backgroundColor,
   fontSize: fontSize,
-  fontWeight: fontWeight,
+  fontWeight: fontWeight ?? textStyle?.fontWeight ?? FontWeight.w600,
   fontStyle: fontStyle,
-  letterSpacing: letterSpacing ?? 0,
+  letterSpacing: letterSpacing ?? -.1,
   wordSpacing: wordSpacing,
   textBaseline: textBaseline,
-  height: height ?? (fontSize != null ? opticalLeading(fontSize, isBody: true) : null),
+  height: height ?? 1.4,
   locale: locale,
   foreground: foreground,
   background: background,
@@ -275,7 +327,7 @@ TextStyle openSans({
   decorationThickness: decorationThickness,
 );
 
-/// Compatibility helper; wordmarks and headers use Open Runde.
+/// Compatibility helper; wordmarks and headers use the shared Geist face.
 TextStyle poppins({
   TextStyle? textStyle,
   Color? color,
@@ -301,12 +353,12 @@ TextStyle poppins({
   color: color,
   backgroundColor: backgroundColor,
   fontSize: fontSize,
-  fontWeight: fontWeight,
+  fontWeight: appTitleWeight(fontWeight ?? textStyle?.fontWeight ?? FontWeight.w700, fontSize ?? textStyle?.fontSize ?? 14),
   fontStyle: fontStyle,
-  letterSpacing: letterSpacing ?? 0,
+  letterSpacing: letterSpacing ?? -.6,
   wordSpacing: wordSpacing,
   textBaseline: textBaseline,
-  height: height ?? 1.3,
+  height: height ?? 1.2,
   locale: locale,
   foreground: foreground,
   background: background,
@@ -344,12 +396,12 @@ TextStyle inter({
   color: color,
   backgroundColor: backgroundColor,
   fontSize: fontSize,
-  fontWeight: fontWeight,
+  fontWeight: fontWeight ?? textStyle?.fontWeight ?? FontWeight.w500,
   fontStyle: fontStyle,
-  letterSpacing: letterSpacing ?? 0,
+  letterSpacing: letterSpacing ?? -.1,
   wordSpacing: wordSpacing,
   textBaseline: textBaseline,
-  height: height ?? (fontSize != null && fontSize <= 16 ? 1.45 : 1.3),
+  height: height ?? 1.4,
   locale: locale,
   foreground: foreground,
   background: background,
@@ -378,17 +430,20 @@ ThemeData scholarisTheme() {
   );
 
   final baseTextTheme = TextTheme(
-    displayLarge: outfit(fontSize: 36, fontWeight: FontWeight.w700),
-    headlineLarge: outfit(fontSize: 28, fontWeight: FontWeight.w700),
-    headlineMedium: outfit(fontSize: 22, fontWeight: FontWeight.w600),
-    headlineSmall: outfit(fontSize: 18, fontWeight: FontWeight.w600),
-    titleMedium: outfit(fontSize: 16, fontWeight: FontWeight.w600),
-    bodyLarge: openSans(fontSize: 16, fontWeight: FontWeight.w500),
-    bodyMedium: openSans(fontSize: 14, fontWeight: FontWeight.w500),
-    bodySmall: openSans(fontSize: 12, fontWeight: FontWeight.w500),
+    displayLarge: appGreeting(fontSize: 36),
+    displayMedium: appGreeting(fontSize: 32),
+    displaySmall: appGreeting(),
+    headlineLarge: appHeading(fontSize: 28),
+    headlineMedium: appHeading(fontSize: 24),
+    headlineSmall: appHeading(fontSize: 20),
+    titleLarge: appHeading(fontSize: 18),
+    titleMedium: appCardTitle(fontSize: 16),
+    bodyLarge: geist(fontSize: 16, fontWeight: FontWeight.w500, color: kTextSupporting),
+    bodyMedium: geist(fontSize: 14, fontWeight: FontWeight.w500, color: kTextSupporting),
+    bodySmall: geist(fontSize: 12, fontWeight: FontWeight.w500, color: kTextSupporting),
     labelLarge: outfit(fontSize: 14, fontWeight: FontWeight.w600),
-    labelMedium: outfit(fontSize: 12, fontWeight: FontWeight.w600),
-    labelSmall: outfit(fontSize: 11, fontWeight: FontWeight.w700),
+    labelMedium: geist(fontSize: 12, fontWeight: FontWeight.w500, letterSpacing: -.1),
+    labelSmall: appOverline(),
   );
 
   return ThemeData(
@@ -401,7 +456,7 @@ ThemeData scholarisTheme() {
       backgroundColor: kSurfaceContainerLowest,
       elevation: 0,
       centerTitle: false,
-      titleTextStyle: outfit(fontSize: 18, fontWeight: FontWeight.w700, color: kOnSurface, letterSpacing: -0.2),
+      titleTextStyle: appHeading(fontSize: 18, color: kOnSurface),
       iconTheme: const IconThemeData(color: kOnSurface),
     ),
     elevatedButtonTheme: ElevatedButtonThemeData(
@@ -451,7 +506,7 @@ ThemeData scholarisTheme() {
     ),
     snackBarTheme: SnackBarThemeData(
       backgroundColor: kOnSurface,
-      contentTextStyle: openSans(color: Colors.white, fontSize: 13, letterSpacing: 0.1),
+      contentTextStyle: openSans(color: Colors.white, fontSize: 13, letterSpacing: -.1),
       behavior: SnackBarBehavior.floating,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(kRadiusInput),

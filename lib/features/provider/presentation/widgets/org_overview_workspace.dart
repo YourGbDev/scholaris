@@ -82,7 +82,7 @@ class OrgOverviewWorkspace extends StatelessWidget {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(s.title, style: orgHeadline(fontSize: 16)),
+                              Text(s.title, style: orgHeadline(fontWeight: FontWeight.w800, fontSize: 16)),
                               const SizedBox(height: 10),
                               Wrap(
                                 spacing: 16,
@@ -170,7 +170,7 @@ class OrgOverviewWorkspace extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(s.title, style: orgLabel(fontSize: 13)),
+                        Text(s.title, style: orgLabel(fontWeight: FontWeight.w800, fontSize: 13)),
                         const SizedBox(height: 6),
                         Text(
                           MaterialLocalizations.of(context)

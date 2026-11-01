@@ -113,7 +113,7 @@ class ApplicationDecisionLetter extends StatelessWidget {
                             textAlign: TextAlign.center,
                             style: outfit(
                               fontSize: 21,
-                              fontWeight: FontWeight.w600,
+                              fontWeight: FontWeight.w800,
                             ),
                           ),
                           if (providerName?.trim().isNotEmpty == true) ...[

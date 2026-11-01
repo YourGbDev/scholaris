@@ -135,7 +135,7 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
                 StudentTabReveal(
                   order: 2,
                   structural: true,
-                  child: _buildFeedHeader(),
+                  child: _buildFeedHeader(filteredMatches),
                 ),
                 const SizedBox(height: 12),
 
@@ -222,12 +222,7 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
                   const SizedBox(width: 8),
                   Text(
                     'Scholaris',
-                    style: outfit(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      color: const Color(0xFF161C27),
-                      letterSpacing: -0.5,
-                    ),
+                    style: appHeading(fontSize: 24),
                   ),
                 ],
               ),
@@ -418,14 +413,17 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
   }
 
   // --- 5. Opportunity Feed Header ---
-  Widget _buildFeedHeader() => Text(
-    'Matched for you',
-    style: outfit(
-      fontSize: 18,
-      fontWeight: FontWeight.bold,
-      color: const Color(0xFF161C27),
-      letterSpacing: 0,
-    ),
+  Widget _buildFeedHeader(AsyncValue<List<Scholarship>> matches) => Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      Text('Matched for you', style: appHeading(fontSize: 24)),
+      const SizedBox(height: 6),
+      Text(matches.when(
+        data: (items) => '${items.length} ${items.length == 1 ? 'opportunity' : 'opportunities'} to explore',
+        loading: () => 'Finding opportunities…',
+        error: (_, _) => 'Matches unavailable',
+      ), style: appSupporting()),
+    ],
   );
 
   // --- 6. Feed Cards Container ---
@@ -917,10 +915,10 @@ class _SearchFieldState extends ConsumerState<_SearchField> {
         onChanged: (value) =>
             ref.read(discoveryFilterProvider.notifier).setQuery(value),
         textInputAction: TextInputAction.search,
-        style: openSans(fontSize: 14, color: const Color(0xFF161C27)),
+        style: openSans(fontSize: 16, color: kTextPrimary),
         decoration: InputDecoration(
           hintText: 'Search scholarships',
-          hintStyle: openSans(fontSize: 13, color: const Color(0xFF707971)),
+          hintStyle: openSans(fontSize: 16, fontWeight: FontWeight.w500, color: kTextSupporting),
           prefixIcon: const Icon(
             Icons.search_rounded,
             color: Color(0xFF404942),
@@ -987,7 +985,7 @@ class _FilterButton extends ConsumerWidget {
                   Text(
                     'Filter',
                     style: outfit(
-                      fontSize: 12,
+                      fontSize: 15,
                       fontWeight: FontWeight.w600,
                       color: const Color(0xFF436084),
                     ),

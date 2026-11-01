@@ -287,7 +287,7 @@ class IndividualGrantTab extends ConsumerWidget {
                                 ],
                               ),
                               const SizedBox(height: 6),
-                              Text(s.title, style: orgHeadline(fontSize: 16)),
+                              Text(s.title, style: orgHeadline(fontWeight: FontWeight.w800, fontSize: 16)),
                               const SizedBox(height: 2),
                               Text(
                                 s.description ?? '',

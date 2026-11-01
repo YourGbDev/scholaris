@@ -263,7 +263,7 @@ class _ProviderApplicationDetailScreenState
                     const SizedBox(height: 2),
                     Text(
                       programTitle,
-                      style: openSans(
+                      style: openSans(fontWeight: FontWeight.w800,
                         fontSize: 13,
                         color: Colors.black54,
                       ),

@@ -293,7 +293,7 @@ class _DetailBodyState extends ConsumerState<_DetailBody> {
                                   overflow: TextOverflow.ellipsis,
                                   style: poppins(
                                     fontSize: 17,
-                                    fontWeight: FontWeight.w700,
+                                    fontWeight: FontWeight.w800,
                                     color: kPrimary,
                                   ),
                                 ),

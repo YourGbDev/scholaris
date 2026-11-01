@@ -700,21 +700,13 @@ class _StudentApplicationGuideState extends State<StudentApplicationGuide>
                           liveRegion: true,
                           child: Text(
                             _stop.title,
-                            style: geist(
-                              fontSize: 20,
-                              height: 1.2,
-                              fontWeight: FontWeight.w700,
-                            ),
+                            style: appHeading(fontSize: 20),
                           ),
                         ),
                         const SizedBox(height: 10),
                         Text(
                           _stop.tip,
-                          style: geist(
-                            fontSize: 15,
-                            height: 1.45,
-                            color: kTextSecondary,
-                          ),
+                          style: appSupporting(),
                         ),
                         if (_step == 7 &&
                             widget.exampleScholarship == null) ...[

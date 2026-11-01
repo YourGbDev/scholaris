@@ -253,8 +253,9 @@ class ScholarshipCard extends StatelessWidget {
                                       Flexible(child: Text(
                                         '$matchPct% Fit',
                                         style: outfit(
-                                          fontSize: 12.5,
-                                          fontWeight: FontWeight.w700,
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.w600,
+                                          letterSpacing: -.15,
                                           color: matchPct >= 90
                                               ? kPrimary
                                               : const Color(0xFF404942),
@@ -287,7 +288,7 @@ class ScholarshipCard extends StatelessWidget {
                           ],
                         ],
                       ),
-                      const SizedBox(height: 10),
+                      const SizedBox(height: 12),
 
                       // Keep the award beside the title only when both can breathe.
                       LayoutBuilder(builder: (context, constraints) {
@@ -297,26 +298,32 @@ class ScholarshipCard extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(scholarship.title,
-                              style: outfit(fontSize: 17, fontWeight: FontWeight.w700,
-                                color: kTextPrimary, letterSpacing: 0, height: 1.3)),
+                              style: appCardTitle()),
                             const SizedBox(height: 8),
                             Row(children: [
                               Icon(Icons.account_balance_outlined, size: 15, color: providerTypeColor(scholarship.provider)),
                               const SizedBox(width: 5),
                               Expanded(child: Text(scholarship.provider ?? 'Scholarship Provider',
-                                style: openSans(fontSize: 14, height: 1.45, color: kTextSupporting, fontWeight: FontWeight.w600))),
+                                style: appSupporting())),
                             ]),
                           ],
                         );
-                        final amountText = Text(amount, style: outfit(fontSize: 18, fontWeight: FontWeight.w700,
-                          color: kPrimary, letterSpacing: 0));
-                        final frequencyText = Text(scholarship.formattedFrequency, style: openSans(fontSize: 12.5,
-                          color: kTextSupporting, fontWeight: FontWeight.w500));
-                        final award = sideBySide
-                            ? Column(crossAxisAlignment: CrossAxisAlignment.end, mainAxisSize: MainAxisSize.min,
-                                children: [amountText, frequencyText])
-                            : Wrap(spacing: 6, runSpacing: 2, crossAxisAlignment: WrapCrossAlignment.center,
-                                children: [const Icon(Icons.school_outlined, size: 17, color: Color(0xFF657168)), amountText, frequencyText]);
+                        final amountText = Text.rich(
+                          TextSpan(children: [
+                            TextSpan(text: amount),
+                            TextSpan(text: ' ${scholarship.formattedFrequency.replaceFirst('/ ', '/\u00a0')}',
+                              style: appSupporting(fontSize: 13)),
+                          ]),
+                          style: appAmount(),
+                        );
+                        final award = sideBySide ? amountText : Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Icon(Icons.school_outlined, size: 17, color: Color(0xFF657168)),
+                            const SizedBox(width: 6),
+                            Expanded(child: amountText),
+                          ],
+                        );
                         if (sideBySide) {
                           return Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
                             Expanded(child: heading),
@@ -326,11 +333,11 @@ class ScholarshipCard extends StatelessWidget {
                         }
                         return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                           heading,
-                          const SizedBox(height: 14),
+                          const SizedBox(height: 18),
                           award,
                         ]);
                       }),
-                      const SizedBox(height: 10),
+                      const SizedBox(height: 16),
                       Wrap(spacing: 5, runSpacing: 5, children: [
                         Container(
                           padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 4),
@@ -338,8 +345,7 @@ class ScholarshipCard extends StatelessWidget {
                             color: kScholarshipTagBackground,
                             borderRadius: BorderRadius.circular(999),
                           ),
-                          child: Text(benefit.text, style: outfit(fontSize: 11, fontWeight: FontWeight.w600,
-                            color: kScholarshipTagForeground)),
+                          child: Text(benefit.text, style: appAttributeLabel()),
                         ),
                         ...criteriaChips.map((c) {
                           return Container(
@@ -353,27 +359,23 @@ class ScholarshipCard extends StatelessWidget {
                             ),
                             child: Text(
                               c,
-                              style: outfit(
-                                fontSize: 11,
-                                fontWeight: FontWeight.w600,
-                                color: kScholarshipTagForeground,
-                              ),
+                              style: appAttributeLabel(),
                             ),
                           );
                         }),
                       ]),
-                      const SizedBox(height: 12),
+                      const SizedBox(height: 16),
 
                       Row(children: [
                         Icon(requirements.icon, size: 15, color: const Color(0xFF404942)),
                         const SizedBox(width: 6),
                         Expanded(child: Text(requirements.text,
-                          style: openSans(fontSize: 13, height: 1.45, fontWeight: FontWeight.w600, color: kTextSupporting))),
+                          style: appSupporting(fontSize: 14))),
                       ]),
                       const SizedBox(height: 12),
                       Row(children: [
                         Expanded(child: PressableScale(
-                          child: SizedBox(key: viewDetailsKey, height: 44, child: TextButton(
+                          child: ConstrainedBox(key: viewDetailsKey, constraints: const BoxConstraints(minHeight: 48), child: TextButton(
                             onPressed: () => context.push(
                               '/scholarship/${scholarship.id}',
                               extra: scholarship,
@@ -387,7 +389,7 @@ class ScholarshipCard extends StatelessWidget {
                             ),
                             child: Text(
                               'View Details',
-                              style: outfit(fontSize: 13, fontWeight: FontWeight.w600),
+                              style: outfit(fontSize: 15, fontWeight: FontWeight.w700),
                             ),
                           )),
                         )),
@@ -602,8 +604,9 @@ class _DeadlineChip extends StatelessWidget {
           Flexible(child: Text(
             label,
             style: outfit(
-              fontSize: 10.5,
+              fontSize: 12,
               fontWeight: FontWeight.w600,
+              letterSpacing: -.15,
               color: fg,
             ),
           )),
@@ -637,8 +640,9 @@ class _AppliedChip extends StatelessWidget {
           Flexible(child: Text(
             'Applied',
             style: outfit(
-              fontSize: 11.5,
+              fontSize: 12,
               fontWeight: FontWeight.w600,
+              letterSpacing: -.15,
               color: const Color(0xFF345B40),
             ),
           )),

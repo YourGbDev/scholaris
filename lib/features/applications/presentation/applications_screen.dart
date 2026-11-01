@@ -465,6 +465,9 @@ class _PotentialAwardCard extends StatelessWidget {
             a.status != ApplicationStatus.withdrawn)
         .length;
 
+    // Let enlarged text use the card width instead of splitting an amount.
+    final stackAward = MediaQuery.textScalerOf(context).scale(21) > 28 &&
+        MediaQuery.sizeOf(context).width < 480;
     final approvedCount = counts[ApplicationStatus.approved] ?? 0;
     final underReviewCount = counts[ApplicationStatus.underReview] ?? 0;
 
@@ -512,10 +515,15 @@ class _PotentialAwardCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
               children: [
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
+                Flex(
+                  direction: stackAward ? Axis.vertical : Axis.horizontal,
+                  crossAxisAlignment: stackAward
+                      ? CrossAxisAlignment.start : CrossAxisAlignment.center,
+                  mainAxisSize: MainAxisSize.min,
                   children: [
-                    Expanded(
+                    Flexible(
+                      flex: stackAward ? 0 : 1,
+                      fit: FlexFit.tight,
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         mainAxisSize: MainAxisSize.min,
@@ -557,7 +565,7 @@ class _PotentialAwardCard extends StatelessWidget {
                         ],
                       ),
                     ),
-                  const SizedBox(width: 8),
+                  const SizedBox(width: 8, height: 8),
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                     decoration: BoxDecoration(
@@ -1024,7 +1032,7 @@ class _ApplicationCard extends StatelessWidget {
                   overflow: TextOverflow.ellipsis,
                   style: outfit(
                     fontSize: 16,
-                    fontWeight: FontWeight.bold,
+                    fontWeight: FontWeight.w800,
                     color: const Color(0xFF161C27),
                     letterSpacing: -0.2,
                   ),

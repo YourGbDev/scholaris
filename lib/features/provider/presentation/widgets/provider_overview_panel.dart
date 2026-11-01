@@ -432,7 +432,7 @@ class ProviderOverviewPanel extends StatelessWidget {
                                   children: [
                                     Text(
                                       scholarship.title,
-                                      style: orgHeadline(fontSize: 16),
+                                      style: orgHeadline(fontWeight: FontWeight.w800, fontSize: 16),
                                     ),
                                     const SizedBox(height: 8),
                                     Text(

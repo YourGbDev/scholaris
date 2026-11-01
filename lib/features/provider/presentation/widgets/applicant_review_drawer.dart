@@ -924,7 +924,7 @@ class _ApplicantReviewDrawerState extends ConsumerState<ApplicantReviewDrawer> {
                         overflow: TextOverflow.ellipsis,
                         style: orgBody(
                           fontSize: 12,
-                          fontWeight: FontWeight.w500,
+                          fontWeight: FontWeight.w800,
                           color: kOrgPrimary,
                         ),
                       ),

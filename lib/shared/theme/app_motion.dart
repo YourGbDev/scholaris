@@ -883,10 +883,11 @@ void showScholarisToast(
               Flexible(
                 child: Text(
                   message,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontFamily: kAppFontFamily,
                     fontSize: 13.5,
-                    fontWeight: FontWeight.w600,
+                    fontWeight: FontWeight.w500,
+                    letterSpacing: -.1,
                     color: Colors.white,
                   ),
                   maxLines: 2,

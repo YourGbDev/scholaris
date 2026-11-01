@@ -148,7 +148,7 @@ class IndividualSupportTab extends ConsumerWidget {
               spacing: 16,
               runSpacing: 8,
               children: [
-                Text(program.title, style: orgHeadline(fontSize: 22)),
+                Text(program.title, style: orgHeadline(fontWeight: FontWeight.w800, fontSize: 22)),
                 OutlinedButton.icon(
                   onPressed: () => _edit(
                     context,

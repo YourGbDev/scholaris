@@ -633,7 +633,7 @@ class _ScholarshipCard extends StatelessWidget {
                         s.title,
                         style: poppins(
                           fontSize: 15,
-                          fontWeight: FontWeight.w600,
+                          fontWeight: FontWeight.w800,
                           color: isActive ? kPrimary : Colors.black54,
                         ),
                       ),

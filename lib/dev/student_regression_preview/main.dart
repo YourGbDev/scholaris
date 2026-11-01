@@ -79,6 +79,15 @@ Future<void> main() async {
               },
             )
             .toList();
+  // Local screenshot fixture only; production repositories are never touched.
+  if (params['sample'] == 'rehearsal' && rows.isNotEmpty) {
+    rows[0] = {
+      ...rows[0],
+      'title': 'Scholaris Final Cycle Rehearsal — 19 Oct 2026',
+      'provider': 'Scholaris Demo Organization',
+      'deadline': '2026-12-18',
+    };
+  }
   final scope = ProviderContainer(
     overrides: [
       currentUserIdProvider.overrideWithValue(user),

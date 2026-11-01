@@ -321,7 +321,7 @@ class _StudentSafetyReportDialogState
             overflow: TextOverflow.ellipsis,
             style: const TextStyle(
               fontSize: 13,
-              fontWeight: FontWeight.normal,
+              fontWeight: FontWeight.w800,
               color: Color(0xFF555D58),
             ),
           ),
@@ -657,7 +657,7 @@ class StudentSafetyReportHistoryDialog extends ConsumerWidget {
                           child: Text(
                             r.scholarshipTitle ?? 'Scholarship concern',
                             style: const TextStyle(
-                              fontWeight: FontWeight.w600,
+                              fontWeight: FontWeight.w800,
                               fontSize: 14,
                             ),
                           ),

@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'helpers/load_app_fonts.dart';
 
 import 'package:scholaris/features/applications/providers/applications_provider.dart';
 import 'package:scholaris/features/applications/repositories/application_repository.dart';
@@ -141,8 +142,19 @@ void main() {
       expect(tester.getBottomRight(list).dy - tester.getBottomRight(cards.last).dy, closeTo(0, 1));
     }
   });
-  setUpAll(() {
+  setUpAll(() async {
     GoogleFonts.config.allowRuntimeFetching = false;
+    await loadAppFonts();
+  });
+
+  testWidgets('Discover uses a strong heading with a real opportunity subtitle', (tester) async {
+    await tester.pumpWidget(_wrap(child: const DiscoverScreen()));
+    await tester.pumpAndSettle();
+    expect(find.text('2 opportunities to explore'), findsOneWidget);
+    final heading = tester.widget<Text>(find.text('Matched for you'));
+    expect(heading.style?.fontSize, 24);
+    expect(heading.style?.fontWeight, FontWeight.w800);
+    expect(tester.takeException(), isNull);
   });
 
   group('HomeScreen shell', () {

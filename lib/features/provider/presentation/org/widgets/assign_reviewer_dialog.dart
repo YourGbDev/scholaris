@@ -162,7 +162,7 @@ class _AssignReviewerDialogState extends ConsumerState<AssignReviewerDialog> {
                           const SizedBox(height: 2),
                           Text(
                             widget.scholarship.title,
-                            style: orgLabel(
+                            style: orgLabel(fontWeight: FontWeight.w800,
                               fontSize: 12,
                               color: kOrgTextSecondary,
                             ),

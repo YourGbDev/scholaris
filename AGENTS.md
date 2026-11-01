@@ -2,16 +2,17 @@
 
 These rules apply to every contributor and agent, including Codex and Archi. Read them before changing UI or producing an IPA.
 
-## Typography: bundled Open Runde everywhere
+## Typography: bundled Geist Sans on every platform
 
-User-approved November 1, 2026: Open Runde replaces the former Geist-only requirement. Bundle all four weights locally; preserve natural letter spacing, bold headings, and readable medium/semibold supporting text.
+User-approved November 1, 2026: the pasted Geist crisp-contrast brief supersedes SF Pro Rounded, Nunito and Open Runde. Every app-owned text surface (including landing, student, provider, super admin, forms, dialogs, tours and previews) uses locally bundled Geist. No native/system font switch or GoogleFonts override. Preserve the landing icon font separately.
 
-- Every app-owned screen and text surface must use the bundled **Open Runde** family, registered as `OpenRunde` in `pubspec.yaml`.
-- Use the shared `geist(...)` compatibility helper (its historical name now selects Open Runde) and the existing Open Runde-based application themes. Legacy helpers in `lib/shared/theme/app_theme.dart` delegate to Open Runde; their names do not authorize another font.
-- This includes student, provider and admin screens, onboarding/tours, chat, dialogs, sheets, forms, validation messages, buttons, labels, receipts and preview apps. Do not introduce a different font through `GoogleFonts`, local `ThemeData`, `TextStyle`, or a component override.
-- Keep appropriate Open Runde weights, line height, accessible text scaling and wrapping. Do not replace text with an image or shrink it to hide an overflow.
-- Platform-owned keyboards/system UI and essential missing-glyph fallback are outside this app-owned typography requirement. Otherwise, a font exception requires the user's explicit instruction.
-- Before handoff, inspect changed themes/styles, run the relevant UI/typography tests, and verify the actual rendered result when device/browser access is available. Do not claim a video alone proves the font family.
+- Register the real Geist 400/500/600/700/800 faces. Do not synthesize Black900; shared helpers cap unsupported weights at800. Use `geist(...)`, `appGreeting(...)`, `appHeading(...)`, `appCardTitle(...)`, `appSupporting(...)` and shared themes; historical helper names do not authorize another family.
+- Greetings:800, tracking-.8, height1.15, dark0F172A. Section headers:800, tracking-.6, height1.2. Card/action titles:16–17px,800, tracking-.35, height1.25, dark111827. Latest approved scholarship-title exception:800 across cards, Tracker, saved suggestions, details, provider/admin lists and related dialogs/receipts. Preserve each surface’s existing size, tracking, leading and color; shared title/action roles now resolve to800 for strong titles, while small medium labels remain unchanged. Dashboard Saved/In Progress/Up to date labels use700.
+- Latest user-approved phone-reference correction: supporting captions/provider names/requirements/frequency suffixes use Geist600 for more weight. Keep13–14px, tracking-.1, height1.4 and the existing slate64748B unchanged. Shared compatibility supporting helpers (including Tracker, profile, provider and admin) default to600 and honor explicitly requested weights without a500 cap. Theme body defaults500; explicitly regular prose stays400. This supersedes the pasted brief’s earlier subtitle400/500 cap; preserve current sizes, tracking, leading and colors.
+- Amounts:700/800, tracking-.4, brandgreen. Financial suffixes use an explicitly separate Geist600 muted TextSpan.
+- Status pills:12px600, tracking-.15. Latest phone-reference eligibility chips:11.5–12px700, tracking-.1, slate374151. Overlines only:11px600, positive tracking.6. Secondary/nav labels500; selected nav600/700.
+- Preserve readable wrapping, accessibility scaling and meaningful status colors. Do not replace text with images or shrink it to hide overflow. Native system UI and essential missing-glyph fallback are exceptions; other font exceptions require explicit user instruction.
+- Run relevant typography/UI tests and inspect actual rendered results before handoff. Do not claim native device verification without a device.
 
 ## Consistent content-card surfaces
 

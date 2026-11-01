@@ -129,7 +129,7 @@ void main() {
             .widget<Text>(find.text('View saved scholarships'))
             .style
             ?.fontFamily,
-        'OpenRunde',
+        'Geist',
       );
       await tester.tap(find.text('View saved scholarships'));
       await tester.pumpAndSettle();

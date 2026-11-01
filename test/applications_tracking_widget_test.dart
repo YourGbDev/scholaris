@@ -405,6 +405,12 @@ void main() {
       expect(find.text('Under review (0)'), findsOneWidget);
       expect(find.text('Approved (1)'), findsOneWidget);
       expect(find.text('Rejected (0)'), findsOneWidget);
+      final title = tester.widget<Text>(
+        find.text('DOST-SEI Undergraduate Scholarship').first,
+      );
+      expect(title.style?.fontWeight, FontWeight.w800);
+      expect(title.style?.fontSize, 16);
+      expect(title.style?.letterSpacing, -.2);
     });
 
     testWidgets('tapping a status chip narrows the list reactively',

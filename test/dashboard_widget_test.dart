@@ -301,6 +301,10 @@ void main() {
     final container = ProviderScope.containerOf(tester.element(find.byType(HomeScreen)));
     expect(container.read(homeTabIndexProvider), 0);
     expect(find.byKey(const ValueKey('stat-chip-saved')), findsOneWidget);
+    final savedLabel = tester.widget<Text>(find.text('Saved').first);
+    expect(savedLabel.style?.fontWeight, FontWeight.w700);
+    expect(savedLabel.style?.fontSize, 13);
+    expect(savedLabel.style?.letterSpacing, -.1);
     expect(tester.takeException(), isNull);
   });
   setUpAll(() async {

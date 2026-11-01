@@ -698,7 +698,7 @@ class _SuggestedGrantCard extends ConsumerWidget {
                           overflow: TextOverflow.ellipsis,
                           style: geist(
                             fontSize: 14.5,
-                            fontWeight: FontWeight.bold,
+                            fontWeight: FontWeight.w800,
                             color: const Color(0xFF161C27),
                           ),
                         ),

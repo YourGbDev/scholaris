@@ -56,7 +56,7 @@ void main() {
       expect(homeText.style?.color, equals(kStudentNavSelectedGreen));
 
       final discoverText = tester.widget<Text>(find.text('Discover'));
-      expect(discoverText.style?.color, equals(const Color(0xFF25282B)));
+      expect(discoverText.style?.color, equals(const Color(0xFF64748B)));
 
       // Switch to Discover (Tab 1)
       await tester.tap(find.byKey(const ValueKey('student-nav-discover')));
@@ -66,7 +66,7 @@ void main() {
       expect(discoverTextSelected.style?.color, equals(kStudentNavSelectedGreen));
 
       final homeTextUnselected = tester.widget<Text>(find.text('Home'));
-      expect(homeTextUnselected.style?.color, equals(const Color(0xFF25282B)));
+      expect(homeTextUnselected.style?.color, equals(const Color(0xFF64748B)));
 
       // Switch to Tracker (Tab 2)
       await tester.tap(find.byKey(const ValueKey('student-nav-tracker')));

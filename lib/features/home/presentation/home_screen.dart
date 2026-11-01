@@ -1228,7 +1228,7 @@ class _StudentNavItemState extends State<_StudentNavItem>
   @override
   Widget build(BuildContext context) => TweenAnimationBuilder<Color?>(
     tween: ColorTween(
-      end: widget.selected ? kStudentNavSelectedGreen : const Color(0xFF25282B),
+      end: widget.selected ? kStudentNavSelectedGreen : kTextSupporting,
     ),
     duration: isReducedMotion(context)
         ? Duration.zero
@@ -1246,7 +1246,7 @@ class _StudentNavItemState extends State<_StudentNavItem>
         text: widget.label,
         style: outfit(
           fontSize: kStudentNavBaseFontSize,
-          fontWeight: FontWeight.w600,
+          fontWeight: widget.selected ? FontWeight.w600 : FontWeight.w500,
           letterSpacing: -.1,
         ),
       ),
@@ -1363,7 +1363,7 @@ class _StudentNavItemState extends State<_StudentNavItem>
                                 softWrap: false,
                                 style: outfit(
                                   fontSize: kStudentNavBaseFontSize,
-                                  fontWeight: FontWeight.w600,
+                                  fontWeight: widget.selected ? FontWeight.w600 : FontWeight.w500,
                                   letterSpacing: -.1,
                                   color: ink,
                                 ),

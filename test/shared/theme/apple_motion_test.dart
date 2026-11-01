@@ -203,19 +203,19 @@ void main() {
       expect(opticalLeading(11), equals(1.30));
     });
 
-    test('ThemeData gives rounded type natural tracking and relaxed leading', () {
+    test('ThemeData gives Geist the approved compact tracking and leading', () {
       final theme = scholarisTheme();
       final textTheme = theme.textTheme;
 
-      expect(textTheme.displayLarge?.letterSpacing, 0);
-      expect(textTheme.displayLarge?.height, 1.3);
+      expect(textTheme.displayLarge?.letterSpacing, -.8);
+      expect(textTheme.displayLarge?.height, 1.15);
 
-      // Body text has neutral letter spacing and relaxed leading
-      expect(textTheme.bodyLarge?.letterSpacing, equals(0.0));
-      expect(textTheme.bodyLarge?.height, inInclusiveRange(1.45, 1.55));
+      // Body text retains its readable, tighter Geist metrics.
+      expect(textTheme.bodyLarge?.letterSpacing, equals(-.1));
+      expect(textTheme.bodyLarge?.height, 1.4);
 
       expect(textTheme.bodyLarge?.fontWeight, FontWeight.w500);
-      expect(textTheme.labelSmall?.letterSpacing, 0);
+      expect(textTheme.labelSmall?.letterSpacing, .6);
     });
   });
 }

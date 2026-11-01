@@ -31,7 +31,7 @@ const Color kAdminHairline = Color(0xFFE8E8E8);
 const Color kAdminTextPrimary = Color(0xFF1A1B1F);
 
 /// Muted secondary text for labels and captions (#5E6D66 / #707971).
-const Color kAdminTextSecondary = Color(0xFF5E6D66);
+const Color kAdminTextSecondary = Color(0xFF64748B);
 
 /// White sidebar surface, matching the provider workspace.
 const Color kAdminSidebarBackground = Color(0xFFFFFFFF);
@@ -43,7 +43,7 @@ const Color kAdminActiveNavBackground = Color(0xFF0F4D2E);
 const Color kAdminActiveNavText = Color(0xFFFFFFFF);
 
 /// Inactive navigation item text color (#404942).
-const Color kAdminInactiveNavText = Color(0xFF404942);
+const Color kAdminInactiveNavText = Color(0xFF64748B);
 
 // --- Border Radius Tokens ----------------------------------------------------
 
@@ -96,7 +96,7 @@ TextStyle adminLabelStyle({
 
 TextStyle adminBodyStyle({
   double fontSize = 14,
-  FontWeight fontWeight = FontWeight.w400,
+  FontWeight fontWeight = FontWeight.w600,
   Color color = kAdminTextPrimary,
 }) =>
     geist(
@@ -152,7 +152,7 @@ const Color kSeqSurfaceContainer = Color(0xFFF0F0F0);
 const Color kSeqSurfaceContainerHigh = Color(0xFFEAEAEA);
 const Color kSeqSurfaceContainerHighest = Color(0xFFE3E3E3);
 const Color kSeqOnSurface = Color(0xFF1A1B1F);
-const Color kSeqOnSurfaceVariant = Color(0xFF404942);
+const Color kSeqOnSurfaceVariant = Color(0xFF64748B);
 const Color kSeqOutline = Color(0xFF5A625B);
 const Color kSeqOutlineVariant = Color(0xFFC0C9C0);
 const Color kSeqPrimary = Color(0xFF00351C);
@@ -182,87 +182,87 @@ const Color kSeqOnError = Color(0xFFFFFFFF);
 const Color kSeqErrorContainer = Color(0xFFFFDAD6);
 const Color kSeqOnErrorContainer = Color(0xFF93000A);
 
-// Sequoia Typography (Inter)
+// Shared Geist typography roles
 TextStyle seqDisplay({
   FontWeight fontWeight = FontWeight.w700,
   Color color = kSeqOnSurface,
 }) =>
     geist(
       fontSize: 40,
-      height: 48 / 40,
-      letterSpacing: -0.022 * 40,
+      height: 1.15,
+      letterSpacing: -.8,
       fontWeight: fontWeight,
       color: color,
     );
 
 TextStyle seqHeadlineLg({
-  FontWeight fontWeight = FontWeight.w600,
+  FontWeight fontWeight = FontWeight.w700,
   Color color = kSeqOnSurface,
 }) =>
     geist(
       fontSize: 32,
-      height: 38 / 32,
-      letterSpacing: -0.021 * 32,
-      fontWeight: fontWeight,
+      height: 1.2,
+      letterSpacing: -.6,
+      fontWeight: appTitleWeight(fontWeight, 17),
       color: color,
     );
 
 TextStyle seqHeadlineMd({
-  FontWeight fontWeight = FontWeight.w600,
+  FontWeight fontWeight = FontWeight.w700,
   Color color = kSeqOnSurface,
 }) =>
     geist(
       fontSize: 24,
-      height: 30 / 24,
-      letterSpacing: -0.019 * 24,
-      fontWeight: fontWeight,
+      height: 1.2,
+      letterSpacing: -.6,
+      fontWeight: appTitleWeight(fontWeight, 17),
       color: color,
     );
 
 TextStyle seqHeadlineSm({
-  FontWeight fontWeight = FontWeight.w600,
+  FontWeight fontWeight = FontWeight.w700,
   Color color = kSeqOnSurface,
 }) =>
     geist(
-      fontSize: 19,
-      height: 24 / 19,
-      letterSpacing: -0.015 * 19,
-      fontWeight: fontWeight,
+      fontSize: 17,
+      height: 1.25,
+      letterSpacing: -.35,
+      fontWeight: appTitleWeight(fontWeight, 17),
       color: color,
     );
 
 TextStyle seqBodyLg({
-  FontWeight fontWeight = FontWeight.w400,
-  Color color = kSeqOnSurface,
+  FontWeight fontWeight = FontWeight.w600,
+  Color color = kTextSupporting,
 }) =>
     geist(
       fontSize: 16,
-      height: 24 / 16,
-      letterSpacing: -0.011 * 16,
+      height: 1.4,
+      letterSpacing: -.1,
       fontWeight: fontWeight,
       color: color,
     );
 
 TextStyle seqBodyMd({
-  FontWeight fontWeight = FontWeight.w400,
-  Color color = kSeqOnSurface,
+  FontWeight fontWeight = FontWeight.w600,
+  Color color = kTextSupporting,
 }) =>
     geist(
       fontSize: 14,
-      height: 20 / 14,
-      letterSpacing: -0.006 * 14,
+      height: 1.4,
+      letterSpacing: -.1,
       fontWeight: fontWeight,
       color: color,
     );
 
 TextStyle seqBodySm({
-  FontWeight fontWeight = FontWeight.w400,
-  Color color = kSeqOnSurface,
+  FontWeight fontWeight = FontWeight.w600,
+  Color color = kTextSupporting,
 }) =>
     geist(
-      fontSize: 12,
-      height: 16 / 12,
-      letterSpacing: 0,
+      fontSize: 13,
+      height: 1.4,
+      letterSpacing: -.1,
       fontWeight: fontWeight,
       color: color,
     );

@@ -664,6 +664,7 @@ class _StudentDashboardScreenState
                   'Recommended for you',
                   key: widget.recommendationsGuideKey,
                   style: appHeading(fontSize: 22),
+                ),
               ),
               const SizedBox(width: 8),
               PressableScale(
@@ -846,7 +847,7 @@ class _StudentDashboardScreenState
               const SizedBox(width: 6),
               Expanded(
                 child: Text(
-                  'Closing Soon ()',
+                  'Closing Soon (${info.closingSoonCount})',
                   style: outfit(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,

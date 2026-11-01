@@ -1,4 +1,4 @@
-﻿import 'package:flutter_riverpod/flutter_riverpod.dart';
+﻿// Focused widget tests for the Verify Email screen (Day 13).
 //
 // The screen is rendered offline through a tiny GoRouter harness so that
 // "Back to login" navigation can be exercised without a real router, and the
@@ -11,6 +11,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -61,13 +62,13 @@ void main() {
         ),
       ],
     );
-    return MaterialApp.router(routerConfig: router);
+    return ProviderScope(child: MaterialApp.router(routerConfig: router));
   }
 
   testWidgets('renders heading, email, resend, and back-to-login', (
     tester,
   ) async {
-    await tester.pumpWidget(ProviderScope(child: harness(email: 'a@b.com')));
+    await tester.pumpWidget(harness(email: 'a@b.com'));
     await tester.pumpAndSettle();
 
     expect(find.text('Verify your email'), findsOneWidget);
@@ -77,7 +78,7 @@ void main() {
   });
 
   testWidgets('resend email is disabled when email is null', (tester) async {
-    await tester.pumpWidget(ProviderScope(child: harness(email: null)));
+    await tester.pumpWidget(harness(email: null));
     await tester.pumpAndSettle();
 
     final resendButton = tester.widget<ElevatedButton>(
@@ -92,7 +93,7 @@ void main() {
   testWidgets('rejects an incomplete code before contacting Supabase', (
     tester,
   ) async {
-    await tester.pumpWidget(ProviderScope(child: harness(email: 'a@b.com')));
+    await tester.pumpWidget(harness(email: 'a@b.com'));
     await tester.pumpAndSettle();
     await tester.enterText(find.byType(TextFormField), '123');
     await tester.ensureVisible(find.text('Verify code'));
@@ -139,13 +140,7 @@ void main() {
         );
         addTearDown(subscription.cancel);
         await tester.pumpWidget(
-          ProviderScope(
-            child: harness(
-              email: 'a@b.com',
-              client: client,
-              recovery: recovery,
-            ),
-          ),
+          harness(email: 'a@b.com', client: client, recovery: recovery),
         );
         await tester.pumpAndSettle();
         await tester.enterText(find.byType(TextFormField), '12345678');
@@ -190,13 +185,7 @@ void main() {
         );
         addTearDown(client.dispose);
         await tester.pumpWidget(
-          ProviderScope(
-            child: harness(
-              email: 'a@b.com',
-              client: client,
-              recovery: recovery,
-            ),
-          ),
+          harness(email: 'a@b.com', client: client, recovery: recovery),
         );
         await tester.pumpAndSettle();
         await tester.enterText(find.byType(TextFormField), '12345678');
@@ -233,11 +222,7 @@ void main() {
         }),
       );
       addTearDown(client.dispose);
-      await tester.pumpWidget(
-        ProviderScope(
-          child: harness(email: 'a@b.com', client: client),
-        ),
-      );
+      await tester.pumpWidget(harness(email: 'a@b.com', client: client));
       await tester.pumpAndSettle();
       await tester.ensureVisible(find.text('Resend email'));
       await tester.tap(find.text('Resend email'));
@@ -251,7 +236,7 @@ void main() {
   );
 
   testWidgets('back to login navigates to the login screen', (tester) async {
-    await tester.pumpWidget(ProviderScope(child: harness(email: 'a@b.com')));
+    await tester.pumpWidget(harness(email: 'a@b.com'));
     await tester.pumpAndSettle();
 
     // The back link sits below the fold on the default test viewport (the V1
@@ -263,3 +248,122 @@ void main() {
     expect(find.text('Welcome Back'), findsOneWidget);
   });
 
+  testWidgets(
+    'submitting 3 consecutive invalid codes locks verification and prompts resend',
+    (tester) async {
+      tester.view.physicalSize = const Size(800, 1000);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+
+      int attempts = 0;
+      final client = GoTrueClient(
+        url: 'https://example.com/auth/v1',
+        autoRefreshToken: false,
+        flowType: AuthFlowType.implicit,
+        httpClient: MockClient((request) async {
+          attempts++;
+          return http.Response(
+            jsonEncode({
+              'msg': 'Token has expired or is invalid',
+              'code': 'otp_expired',
+            }),
+            403,
+          );
+        }),
+      );
+      addTearDown(client.dispose);
+
+      await tester.pumpWidget(harness(email: 'student@example.ph', client: client));
+      await tester.pumpAndSettle();
+
+      final verifyButton = find.widgetWithText(ElevatedButton, 'Verify code');
+      await tester.enterText(find.byType(TextFormField), '11111111');
+
+      // Attempt 1
+      await tester.ensureVisible(verifyButton);
+      await tester.tap(verifyButton);
+      await tester.pumpAndSettle();
+      expect(attempts, 1);
+      expect(find.text('That code is invalid or has expired. Try again or request a new code.'), findsOneWidget);
+
+      // Attempt 2
+      await tester.ensureVisible(verifyButton);
+      await tester.tap(verifyButton);
+      await tester.pumpAndSettle();
+      expect(attempts, 2);
+
+      // Attempt 3
+      await tester.ensureVisible(verifyButton);
+      await tester.tap(verifyButton);
+      await tester.pumpAndSettle();
+      expect(attempts, 3);
+      expect(find.text('Maximum verification attempts reached (3/3). Please request a new code.'), findsOneWidget);
+
+      // Button is now disabled
+      final btnWidget = tester.widget<ElevatedButton>(verifyButton);
+      expect(btnWidget.onPressed, isNull);
+    },
+  );
+
+  testWidgets(
+    'resending code resets attempt counter and allows new verification attempts',
+    (tester) async {
+      tester.view.physicalSize = const Size(800, 1000);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+
+      int verifyAttempts = 0;
+      int resendAttempts = 0;
+      final client = GoTrueClient(
+        url: 'https://example.com/auth/v1',
+        autoRefreshToken: false,
+        flowType: AuthFlowType.implicit,
+        httpClient: MockClient((request) async {
+          if (request.url.path.contains('verify')) {
+            verifyAttempts++;
+            return http.Response(
+              jsonEncode({
+                'msg': 'Token has expired or is invalid',
+                'code': 'otp_expired',
+              }),
+              403,
+            );
+          } else if (request.url.path.contains('resend')) {
+            resendAttempts++;
+            return http.Response('{}', 200);
+          }
+          return http.Response('Not Found', 404);
+        }),
+      );
+      addTearDown(client.dispose);
+
+      await tester.pumpWidget(harness(email: 'student@example.ph', client: client));
+      await tester.pumpAndSettle();
+
+      final verifyButton = find.widgetWithText(ElevatedButton, 'Verify code');
+      await tester.enterText(find.byType(TextFormField), '11111111');
+
+      // Exhaust 3 attempts
+      for (int i = 0; i < 3; i++) {
+        await tester.ensureVisible(verifyButton);
+        await tester.tap(verifyButton);
+        await tester.pumpAndSettle();
+      }
+      expect(verifyAttempts, 3);
+      expect(tester.widget<ElevatedButton>(verifyButton).onPressed, isNull);
+
+      // Tap Resend email
+      final resendButton = find.widgetWithText(ElevatedButton, 'Resend email');
+      await tester.ensureVisible(resendButton);
+      await tester.tap(resendButton);
+      await tester.pumpAndSettle();
+      expect(resendAttempts, 1);
+
+      // Verify button is now re-enabled
+      await tester.ensureVisible(verifyButton);
+      expect(tester.widget<ElevatedButton>(verifyButton).onPressed, isNotNull);
+    },
+  );
+}

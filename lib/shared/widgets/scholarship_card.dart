@@ -175,23 +175,20 @@ class ScholarshipCard extends StatelessWidget {
     final requirements = formatScholarshipRequirements(scholarship);
     final canShowApply = matchPct >= 90 && !isApplied && readiness.canApply;
 
-    // Collect criteria chips
+    // Curate criteria chips: keep essential qualifications on 1 clean row (anti-slop)
     final criteriaChips = <String>[];
     if (scholarship.requiredCourses != null && scholarship.requiredCourses!.isNotEmpty) {
-      criteriaChips.addAll(scholarship.requiredCourses!.take(2));
-    } else {
-      criteriaChips.add('All Majors');
+      criteriaChips.add(scholarship.requiredCourses!.first);
     }
     if (scholarship.minGpa > 0) {
       criteriaChips.add('GPA ${scholarship.minGpa.toStringAsFixed(1)}+');
     }
-    if (scholarship.maxMonthlyIncome != null) {
-      criteriaChips.add('Need-Based');
-    } else {
-      criteriaChips.add('Merit-Based');
-    }
-    if (scholarship.requiredYearLevels != null && scholarship.requiredYearLevels!.isNotEmpty) {
-      criteriaChips.add('College');
+    if (criteriaChips.isEmpty) {
+      if (scholarship.maxMonthlyIncome != null) {
+        criteriaChips.add('Need-Based');
+      } else {
+        criteriaChips.add('Merit-Based');
+      }
     }
 
     return Semantics(
@@ -291,7 +288,7 @@ class ScholarshipCard extends StatelessWidget {
                           ],
                         ],
                       ),
-                      const SizedBox(height: 10),
+                      const SizedBox(height: 8),
 
                       // Keep the award beside the title only when both can breathe.
                       LayoutBuilder(builder: (context, constraints) {
@@ -370,12 +367,14 @@ class ScholarshipCard extends StatelessWidget {
                       const SizedBox(height: 8),
 
                       Row(children: [
-                        Icon(requirements.icon, size: 15, color: const Color(0xFF475569)),
-                        const SizedBox(width: 6),
+                        Icon(requirements.icon, size: 14, color: const Color(0xFF64748B)),
+                        const SizedBox(width: 5),
                         Expanded(child: Text(requirements.text,
-                          style: appSupporting(fontSize: 13.5, color: const Color(0xFF475569)))),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: appSupporting(fontSize: 12.5, color: const Color(0xFF64748B)))),
                       ]),
-                      const SizedBox(height: 10),
+                      const SizedBox(height: 8),
                       Row(children: [
                         Expanded(child: PressableScale(
                           child: SizedBox(key: viewDetailsKey, height: 44, child: TextButton(

@@ -383,7 +383,7 @@ class _StudentDashboardScreenState
         const SizedBox(height: 3),
         Text(
           greetingStr,
-          style: appGreeting(fontSize: 32),
+          style: appGreeting(fontSize: 28),
         ),
       ],
     );
@@ -455,17 +455,16 @@ class _StudentDashboardScreenState
       children: [
         Text(
           'Find your next opportunity.',
-          style: appHeading(fontSize: 24),
+          style: appHeading(fontSize: 17),
         ),
-        const SizedBox(height: 12),
+        const SizedBox(height: 4),
         Text(
           countLabel,
           key: const ValueKey('stat-count-matches'),
-          style: appSupporting(fontSize: 14.5, color: const Color(0xFF334155)),
+          style: appSupporting(fontSize: 13, color: const Color(0xFF475569)),
         ),
-        const SizedBox(height: 18),
-        Padding(
-          padding: const EdgeInsets.only(left: 12),
+        const SizedBox(height: 10),
+        PressableScale(
           child: FilledButton(
             onPressed: () {
               HapticFeedback.lightImpact();
@@ -474,16 +473,28 @@ class _StudentDashboardScreenState
             style: FilledButton.styleFrom(
               backgroundColor: kPrimary,
               foregroundColor: Colors.white,
-              minimumSize: const Size(0, 44),
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              minimumSize: const Size(0, 38),
+              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(19)),
             ),
-            child: Text(
-              'Explore matches',
-              style: outfit(
-                fontSize: 15,
-                fontWeight: FontWeight.w800,
-                color: Colors.white,
-                letterSpacing: -0.3,
+            child: FittedBox(
+              fit: BoxFit.scaleDown,
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    'Explore matches',
+                    style: outfit(
+                      fontSize: 13.5,
+                      fontWeight: FontWeight.w800,
+                      color: Colors.white,
+                      letterSpacing: -0.2,
+                    ),
+                  ),
+                  const SizedBox(width: 4),
+                  const Icon(Icons.arrow_forward_rounded, size: 14),
+                ],
               ),
             ),
           ),
@@ -502,74 +513,54 @@ class _StudentDashboardScreenState
       ),
     );
     return Padding(
-      padding: const EdgeInsets.only(top: 18),
+      padding: const EdgeInsets.only(top: 14),
       child: LayoutBuilder(
         builder: (context, box) {
           final stacked =
               box.maxWidth < 320 ||
-              MediaQuery.textScalerOf(context).scale(14) > 20;
-          return Stack(
-            clipBehavior: Clip.none,
-            children: [
-              Positioned.fill(
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(kRadiusCard),
-                  child: Stack(
-                    children: [
-                      const Positioned.fill(
-                        child: ColoredBox(color: Color(0xFFEDF4EF)),
+              MediaQuery.textScalerOf(context).scale(14) > 18;
+          return Container(
+            decoration: BoxDecoration(
+              color: const Color(0xFFEDF4EF),
+              borderRadius: BorderRadius.circular(kRadiusCard),
+              border: Border.all(color: const Color(0xFFE0EDE1), width: 1.2),
+            ),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(kRadiusCard),
+              child: stacked
+                  ? Padding(
+                      padding: const EdgeInsets.fromLTRB(16, 16, 16, 16),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Center(child: portrait(110)),
+                          const SizedBox(height: 10),
+                          summary,
+                        ],
                       ),
-                      Positioned(
-                        left: -65,
-                        top: -20,
-                        width: 280,
-                        height: 360,
-                        child: DecoratedBox(
-                          decoration: BoxDecoration(
-                            color: const Color(0xFFE0EDE1),
-                            borderRadius: BorderRadius.circular(160),
+                    )
+                  : Row(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        SizedBox(
+                          width: 100,
+                          height: 125,
+                          child: ClipRRect(
+                            borderRadius: const BorderRadius.only(
+                              bottomLeft: Radius.circular(kRadiusCard),
+                            ),
+                            child: portrait(125),
                           ),
                         ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              if (stacked)
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(20, 0, 20, 24),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Center(
-                        child: Transform.translate(
-                          offset: const Offset(0, -24),
-                          child: portrait(210),
+                        Expanded(
+                          child: Padding(
+                            padding: const EdgeInsets.fromLTRB(8, 14, 16, 14),
+                            child: summary,
+                          ),
                         ),
-                      ),
-                      summary,
-                    ],
-                  ),
-                )
-              else ...[
-                Padding(
-                  padding: EdgeInsets.fromLTRB(box.maxWidth * .5, 24, 16, 20),
-                  child: summary,
-                ),
-                Positioned(
-                  left: 0,
-                  top: -18,
-                  bottom: 0,
-                  width: box.maxWidth * .55,
-                  child: ClipRRect(
-                    borderRadius: const BorderRadius.only(
-                      bottomLeft: Radius.circular(kRadiusCard),
+                      ],
                     ),
-                    child: portrait(290),
-                  ),
-                ),
-              ],
-            ],
+            ),
           );
         },
       ),
@@ -673,10 +664,15 @@ class _StudentDashboardScreenState
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Expanded(
-                child: Text(
-                  'Recommended for you',
-                  key: widget.recommendationsGuideKey,
-                  style: appHeading(fontSize: 24),
+                child: FittedBox(
+                  fit: BoxFit.scaleDown,
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    'Recommended for you',
+                    key: widget.recommendationsGuideKey,
+                    maxLines: 1,
+                    style: appHeading(fontSize: 20),
+                  ),
                 ),
               ),
               const SizedBox(width: 8),

@@ -136,21 +136,21 @@ class _StudentDashboardScreenState
               ),
               padding: EdgeInsets.fromLTRB(
                 20,
-                16,
+                4,
                 20,
                 MediaQuery.of(context).padding.bottom + 64 + 16,
               ),
               children: [
                 // 1. Sticky Header
                 _wrapSection(index: 0, child: _buildHeader(context)),
-                const SizedBox(height: 16),
+                const SizedBox(height: 10),
 
                 // 2. Date & Dynamic Tagalog Greeting
                 _wrapSection(
                   index: 1,
                   child: _buildDateAndGreeting(greetingName),
                 ),
-                const SizedBox(height: 6),
+                const SizedBox(height: 8),
 
                 // 3. Free-Floating Mascot Hero Section
                 _wrapSection(
@@ -320,7 +320,7 @@ class _StudentDashboardScreenState
           },
           borderRadius: BorderRadius.circular(kRadiusCard),
           child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
             decoration: kSoftCardDecoration,
             child: Row(
               children: [
@@ -332,7 +332,7 @@ class _StudentDashboardScreenState
                         : bgColor.withValues(alpha: 0.25),
                     shape: BoxShape.circle,
                   ),
-                  child: Icon(icon, size: 16, color: iconColor),
+                  child: Icon(icon, size: 15, color: iconColor),
                 ),
                 const SizedBox(width: 10),
                 Expanded(
@@ -341,12 +341,12 @@ class _StudentDashboardScreenState
                     children: [
                       Text(
                         title,
-                        style: appCardTitle(fontSize: 17.5),
+                        style: appCardTitle(fontSize: 15),
                       ),
                       const SizedBox(height: 2),
                       Text(
                         subtitle,
-                        style: appSupporting(fontSize: 14, color: const Color(0xFF475569)),
+                        style: appSupporting(fontSize: 12.5, color: const Color(0xFF475569)),
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                       ),
@@ -455,15 +455,15 @@ class _StudentDashboardScreenState
       children: [
         Text(
           'Find your next opportunity.',
-          style: appHeading(fontSize: 17),
+          style: appHeading(fontSize: 21),
         ),
-        const SizedBox(height: 4),
+        const SizedBox(height: 5),
         Text(
           countLabel,
           key: const ValueKey('stat-count-matches'),
-          style: appSupporting(fontSize: 13, color: const Color(0xFF475569)),
+          style: appSupporting(fontSize: 14, color: const Color(0xFF475569)),
         ),
-        const SizedBox(height: 10),
+        const SizedBox(height: 12),
         PressableScale(
           child: FilledButton(
             onPressed: () {
@@ -473,10 +473,10 @@ class _StudentDashboardScreenState
             style: FilledButton.styleFrom(
               backgroundColor: kPrimary,
               foregroundColor: Colors.white,
-              minimumSize: const Size(0, 38),
+              minimumSize: const Size(0, 42),
               tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(19)),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(21)),
             ),
             child: FittedBox(
               fit: BoxFit.scaleDown,
@@ -486,14 +486,14 @@ class _StudentDashboardScreenState
                   Text(
                     'Explore matches',
                     style: outfit(
-                      fontSize: 13.5,
+                      fontSize: 14,
                       fontWeight: FontWeight.w800,
                       color: Colors.white,
                       letterSpacing: -0.2,
                     ),
                   ),
-                  const SizedBox(width: 4),
-                  const Icon(Icons.arrow_forward_rounded, size: 14),
+                  const SizedBox(width: 5),
+                  const Icon(Icons.arrow_forward_rounded, size: 15),
                 ],
               ),
             ),
@@ -513,7 +513,7 @@ class _StudentDashboardScreenState
       ),
     );
     return Padding(
-      padding: const EdgeInsets.only(top: 14),
+      padding: const EdgeInsets.only(top: 12),
       child: LayoutBuilder(
         builder: (context, box) {
           final stacked =
@@ -533,8 +533,8 @@ class _StudentDashboardScreenState
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Center(child: portrait(110)),
-                          const SizedBox(height: 10),
+                          Center(child: portrait(125)),
+                          const SizedBox(height: 12),
                           summary,
                         ],
                       ),
@@ -543,18 +543,18 @@ class _StudentDashboardScreenState
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
                         SizedBox(
-                          width: 100,
-                          height: 125,
+                          width: 118,
+                          height: 155,
                           child: ClipRRect(
                             borderRadius: const BorderRadius.only(
                               bottomLeft: Radius.circular(kRadiusCard),
                             ),
-                            child: portrait(125),
+                            child: portrait(155),
                           ),
                         ),
                         Expanded(
                           child: Padding(
-                            padding: const EdgeInsets.fromLTRB(8, 14, 16, 14),
+                            padding: const EdgeInsets.fromLTRB(10, 16, 16, 16),
                             child: summary,
                           ),
                         ),
@@ -1022,7 +1022,7 @@ class _StatCard extends StatelessWidget {
             onTap();
           },
           child: Container(
-            padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
+            padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 8),
             decoration: kSoftCardDecoration,
             child: Column(
               mainAxisSize: MainAxisSize.min,
@@ -1031,19 +1031,19 @@ class _StatCard extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Container(
-                      width: 26,
-                      height: 26,
+                      width: 24,
+                      height: 24,
                       decoration: BoxDecoration(
                         color: isUrgent ? const Color(0xFFFEF3D6) : iconBg,
                         shape: BoxShape.circle,
                       ),
                       child: Icon(
                         icon,
-                        size: 16,
+                        size: 14,
                         color: isUrgent ? const Color(0xFFD97706) : iconColor,
                       ),
                     ),
-                    const SizedBox(width: 8),
+                    const SizedBox(width: 6),
                     Flexible(
                       child: FittedBox(
                         fit: BoxFit.scaleDown,
@@ -1051,9 +1051,9 @@ class _StatCard extends StatelessWidget {
                           unknown ? '—' : '$numericValue',
                           semanticsLabel: unknown ? 'Loading' : '$numericValue',
                           style: outfit(
-                            fontSize: 26,
+                            fontSize: 20,
                             fontWeight: FontWeight.w800,
-                            letterSpacing: -0.5,
+                            letterSpacing: -0.4,
                             color: const Color(0xFF0F172A),
                           ),
                         ),
@@ -1076,7 +1076,7 @@ class _StatCard extends StatelessWidget {
                       ),
                     ),
                   ),
-                const SizedBox(height: 8),
+                const SizedBox(height: 6),
                 Text(
                   label,
                   textAlign: TextAlign.center,

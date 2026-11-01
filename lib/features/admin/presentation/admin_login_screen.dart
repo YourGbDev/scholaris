@@ -1,4 +1,4 @@
-// lib/features/admin/presentation/admin_login_screen.dart
+﻿// lib/features/admin/presentation/admin_login_screen.dart
 //
 // Dedicated Super Admin Login Portal for Scholaris.
 // Institutional Governance & Disbursement Console aesthetic:
@@ -99,7 +99,8 @@ class _AdminLoginScreenState extends ConsumerState<AdminLoginScreen> {
     if (!_formKey.currentState!.validate()) return;
 
     final email = _emailController.text.trim();
-    final lockoutCheck = LoginLockoutService.instance.checkLockout(email);
+    final lockoutCheck = await LoginLockoutService.instance.checkLockoutRemote(email);
+    if (!mounted) return;
     if (lockoutCheck.isLocked) {
       _startLockoutCountdown(lockoutCheck);
       _showErrorSnackBar(lockoutCheck.lockoutMessage);

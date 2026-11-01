@@ -49,6 +49,7 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
   final _code = TextEditingController();
   Timer? _resendTimer;
   int _secondsLeft = 0;
+  int _failedAttempts = 0;
 
   GoTrueClient get _client => widget.client ?? Supabase.instance.client.auth;
 
@@ -61,6 +62,12 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
 
   Future<void> _onVerify() async {
     if (_isLoading || !_formKey.currentState!.validate()) return;
+    if (_failedAttempts >= 3) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        _snackBar('Maximum verification attempts reached (3/3). Please request a new code.'),
+      );
+      return;
+    }
     final email = widget.email;
     if (email == null || email.isEmpty) return;
     setState(() => _isLoading = true);
@@ -86,11 +93,16 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
         context.go(widget.successLocation ?? ProfileSetupRoute.personal);
       }
     } on AuthException catch (error) {
+      _failedAttempts++;
       if (mounted) {
-        ScaffoldMessenger.of(context)
-            .showSnackBar(_snackBar(_friendlyError(error)));
+        final msg = _failedAttempts >= 3
+            ? 'Maximum verification attempts reached (3/3). Please request a new code.'
+            : _friendlyError(error);
+        ScaffoldMessenger.of(context).clearSnackBars();
+        ScaffoldMessenger.of(context).showSnackBar(_snackBar(msg));
       }
     } catch (_) {
+      _failedAttempts++;
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           _snackBar(
@@ -138,15 +150,23 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
         );
       }
       if (!mounted) return;
-      setState(() => _resent = true);
+      setState(() {
+        _resent = true;
+        _failedAttempts = 0;
+      });
       _startCooldown();
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(_snackBar('Verification email sent. Check your inbox.'));
     } on AuthException catch (error) {
-      if (!mounted) return;
-      ScaffoldMessenger.of(context)
-          .showSnackBar(_snackBar(_friendlyError(error)));
+      _failedAttempts++;
+      if (mounted) {
+        final msg = _failedAttempts >= 3
+            ? 'Maximum verification attempts reached (3/3). Please request a new code.'
+            : _friendlyError(error);
+        ScaffoldMessenger.of(context).clearSnackBars();
+        ScaffoldMessenger.of(context).showSnackBar(_snackBar(msg));
+      }
     } catch (_) {
       if (!mounted) return;
       ScaffoldMessenger.of(context)
@@ -472,7 +492,7 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
                         ),
                         const SizedBox(height: 12),
                         ElevatedButton(
-                          onPressed: hasEmail && !_isLoading ? _onVerify : null,
+                          onPressed: (hasEmail && !_isLoading && _failedAttempts < 3) ? _onVerify : null,
                           child: const Text('Verify code'),
                         ),
                         const SizedBox(height: 12),

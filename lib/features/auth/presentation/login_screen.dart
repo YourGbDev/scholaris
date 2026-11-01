@@ -1,4 +1,4 @@
-// lib/features/auth/presentation/login_screen.dart
+﻿// lib/features/auth/presentation/login_screen.dart
 //
 // Rebuilt LoginScreen based on the Stitch design reference (academic momentum,
 // Philippine trust network, institutional SSO, provider portal).
@@ -136,7 +136,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
     final email = _emailController.text.trim();
     final password = _passwordController.text;
     final epoch = _loginEpoch;
-    final lockoutCheck = LoginLockoutService.instance.checkLockout(email);
+    final lockoutCheck = await LoginLockoutService.instance.checkLockoutRemote(email);
+    if (!mounted) return;
     if (lockoutCheck.isLocked) {
       _startLockoutCountdown(lockoutCheck);
       ScaffoldMessenger.of(context)

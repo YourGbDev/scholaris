@@ -15,6 +15,8 @@ import 'package:scholaris/features/provider/models/provider_verification.dart';
 import 'package:scholaris/features/provider/providers/provider_verification_provider.dart';
 import 'package:scholaris/shared/theme/app_motion.dart';
 import 'package:scholaris/shared/widgets/state_views.dart';
+import 'package:scholaris/core/security/login_lockout_service.dart';
+import 'package:scholaris/features/auth/controllers/auth_controller.dart';
 
 import 'admin_theme.dart';
 import 'admin_users_provider.dart';
@@ -1444,6 +1446,31 @@ class _AdminUsersTabState extends ConsumerState<AdminUsersTab> {
   }
 
   Widget _buildVerificationBadge(StudentProfile u, ProviderVerification? v) {
+    final isLocked = LoginLockoutService.instance.isAccountLocked(u.email ?? '');
+    if (isLocked) {
+      return FittedBox(
+        fit: BoxFit.scaleDown,
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+          decoration: BoxDecoration(
+            color: const Color(0xFFFFF3E0),
+            borderRadius: BorderRadius.circular(999),
+            border: Border.all(color: const Color(0xFFFFB74D), width: 0.8),
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Icon(Icons.lock_rounded, size: 11, color: Color(0xFFE65100)),
+              const SizedBox(width: 4),
+              Text(
+                'Locked (3+ Failed Logins)',
+                style: seqLabelSm(color: const Color(0xFFE65100), fontWeight: FontWeight.w700),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
     // Semantic status pill palette (green=active, red=suspended, amber=pending)
     const activeBg = Color(0xFFE8F5E9);
     const activeFg = Color(0xFF1B5E20);
@@ -1637,6 +1664,8 @@ class _AdminUsersTabState extends ConsumerState<AdminUsersTab> {
           _showEditUserModal(context, u);
         } else if (val == 'deactivate') {
           _confirmDeactivate(context, u);
+        } else if (val == 'unlock') {
+          _confirmUnlock(context, u);
         } else if (val == 'delete') {
           _confirmDelete(context, u);
         }
@@ -1645,6 +1674,19 @@ class _AdminUsersTabState extends ConsumerState<AdminUsersTab> {
         PopupMenuItem(
           value: 'edit',
           child: Text('Edit Role / Status', style: seqBodySm()),
+        ),
+        PopupMenuItem(
+          value: 'unlock',
+          child: Row(
+            children: [
+              const Icon(Icons.lock_open_rounded, size: 16, color: Color(0xFF0F4D2E)),
+              const SizedBox(width: 8),
+              Text(
+                'Unlock Account',
+                style: seqBodySm(color: const Color(0xFF0F4D2E), fontWeight: FontWeight.w600),
+              ),
+            ],
+          ),
         ),
         PopupMenuItem(
           value: 'deactivate',
@@ -2265,6 +2307,66 @@ class _AdminUsersTabState extends ConsumerState<AdminUsersTab> {
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  void _confirmUnlock(BuildContext context, StudentProfile user) {
+    final isDesktop = MediaQuery.sizeOf(context).width >= 768;
+    final email = (user.email != null && user.email!.isNotEmpty) ? user.email! : user.id;
+
+    showDialog<void>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        backgroundColor: kSeqSurfaceContainerLowest,
+        insetPadding: EdgeInsets.symmetric(
+          horizontal: isDesktop ? 40 : 16,
+          vertical: 24,
+        ),
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(Radius.circular(16)),
+        ),
+        title: Row(
+          children: [
+            const Icon(Icons.lock_open_rounded, color: Color(0xFF0F4D2E), size: 22),
+            const SizedBox(width: 8),
+            Text('Unlock Account', style: seqHeadlineSm(fontWeight: FontWeight.w700)),
+          ],
+        ),
+        content: Text(
+          'Are you sure you want to clear failed login attempts and unlock the account for ${user.fullName.isNotEmpty ? user.fullName : email}?',
+          style: seqBodyMd(),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(dialogContext).pop(),
+            child: Text('Cancel', style: seqLabelMd(color: kSeqOutline)),
+          ),
+          FilledButton(
+            style: FilledButton.styleFrom(
+              backgroundColor: const Color(0xFF0F4D2E),
+              foregroundColor: Colors.white,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+            ),
+            onPressed: () async {
+              Navigator.of(dialogContext).pop();
+              await LoginLockoutService.instance.unlockAccount(
+                email,
+                adminEmail: ref.read(currentUserIdProvider) ?? 'admin@scholaris.ph',
+              );
+              if (context.mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text('Account lockout cleared for ${user.fullName.isNotEmpty ? user.fullName : email}.'),
+                    backgroundColor: const Color(0xFF0F4D2E),
+                  ),
+                );
+              }
+              setState(() {});
+            },
+            child: const Text('Unlock Account'),
+          ),
+        ],
       ),
     );
   }

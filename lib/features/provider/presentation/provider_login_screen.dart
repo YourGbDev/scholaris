@@ -1,4 +1,4 @@
-// lib/features/provider/presentation/provider_login_screen.dart
+﻿// lib/features/provider/presentation/provider_login_screen.dart
 //
 // Scholaris Provider Portal Login Screen.
 // Designed with 100% fidelity to the Stitch Apple Sequoia Provider Console mockups:
@@ -115,7 +115,8 @@ class _ProviderLoginScreenState extends ConsumerState<ProviderLoginScreen> {
     if (!_formKey.currentState!.validate()) return;
 
     final email = _emailController.text.trim();
-    final lockoutCheck = LoginLockoutService.instance.checkLockout(email);
+    final lockoutCheck = await LoginLockoutService.instance.checkLockoutRemote(email);
+    if (!mounted) return;
     if (lockoutCheck.isLocked) {
       _startLockoutCountdown(lockoutCheck);
       _showSnackBar(lockoutCheck.lockoutMessage, isError: true);

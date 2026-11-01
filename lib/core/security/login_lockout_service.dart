@@ -1,4 +1,4 @@
-// lib/core/security/login_lockout_service.dart
+﻿// lib/core/security/login_lockout_service.dart
 //
 // IAS Account Lockout & Audit Trail Service:
 // - Tracks failed login attempts per email.
@@ -7,6 +7,7 @@
 //     * 4 failed attempts  -> 15 minutes
 //     * 5+ failed attempts -> 60 minutes
 // - Clears failed attempts upon successful login.
+// - Authoritative cross-client lockout & admin unlock via Supabase login_attempts.
 // - Persists attempts and audit events to Supabase when available.
 
 import 'dart:async';
@@ -120,7 +121,7 @@ class LoginLockoutService {
     }
   }
 
-  /// Checks if an email is currently locked out.
+  /// Checks if an email is currently locked out locally.
   LockoutStatus checkLockout(String email) {
     final key = email.trim().toLowerCase();
     DateTime? until = _lockedUntil[key];
@@ -159,7 +160,7 @@ class LoginLockoutService {
     );
   }
 
-  /// Checks lockout status with remote Supabase fallback if online.
+  /// Checks lockout status with remote Supabase authoritative fallback.
   Future<LockoutStatus> checkLockoutRemote(String email) async {
     final localStatus = checkLockout(email);
     try {
@@ -192,10 +193,65 @@ class LoginLockoutService {
             remainingTime: remaining,
             lockedUntil: lockedUntil,
           );
+        } else {
+          // Authoritative server state reports unlocked: synchronize and clear local lockout
+          final key = email.trim().toLowerCase();
+          if (_lockedUntil.containsKey(key)) {
+            _lockedUntil.remove(key);
+            _failedAttempts.remove(key);
+            _clearFromPrefs(key);
+          }
+          return LockoutStatus(
+            isLocked: false,
+            failedAttempts: failedAttempts,
+          );
         }
       }
     } catch (_) {}
     return localStatus;
+  }
+
+  /// Checks if an email is currently locked out synchronously.
+  bool isAccountLocked(String email) => checkLockout(email).isLocked;
+
+  /// Checks if an email is currently locked out authoritatively from remote state.
+  Future<bool> isAccountLockedRemote(String email) async =>
+      (await checkLockoutRemote(email)).isLocked;
+
+  /// Unlocks an account by clearing failed attempts and lockout timers authoritatively.
+  /// Resets remote lockout state so other client instances observe the unlock.
+  Future<bool> unlockAccount(String email, {String? adminEmail}) async {
+    final key = email.trim().toLowerCase();
+    _failedAttempts.remove(key);
+    _lockedUntil.remove(key);
+    _clearFromPrefs(key);
+
+    bool remoteReset = false;
+    try {
+      final client = Supabase.instance.client;
+      await client.rpc('admin_unlock_account', params: {'p_email': key});
+      remoteReset = true;
+    } catch (e) {
+      // Security rule: Do NOT fall back to direct login_attempts insert.
+      // An unprivileged client must not be able to bypass RPC authorization
+      // by inserting success=true rows.
+      debugPrint('[LoginLockoutService] admin_unlock_account RPC failed: $e');
+      remoteReset = false;
+    }
+
+    await logAuditEvent(
+      action: 'ADMIN_USER_UNLOCKED',
+      targetType: 'user_account',
+      targetId: key,
+      details: {
+        'unlocked_email': key,
+        'authoritative_reset': remoteReset,
+      },
+      actorEmail: adminEmail ?? 'admin@scholaris.ph',
+      actorRole: 'admin',
+    );
+
+    return remoteReset;
   }
 
   /// Records a failed login attempt and calculates escalating lockout duration.

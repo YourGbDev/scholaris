@@ -1,5 +1,4 @@
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-// Focused widget tests for the Verify Email screen (Day 13).
+﻿import 'package:flutter_riverpod/flutter_riverpod.dart';
 //
 // The screen is rendered offline through a tiny GoRouter harness so that
 // "Back to login" navigation can be exercised without a real router, and the
@@ -15,7 +14,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
+// ignore: depend_on_referenced_packages
 import 'package:http/http.dart' as http;
+// ignore: depend_on_referenced_packages
 import 'package:http/testing.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -261,4 +262,4 @@ void main() {
 
     expect(find.text('Welcome Back'), findsOneWidget);
   });
-}
+

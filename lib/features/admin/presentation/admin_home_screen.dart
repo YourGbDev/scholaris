@@ -1,4 +1,4 @@
-import 'package:scholaris/shared/theme/app_theme.dart';
+﻿import 'package:scholaris/shared/theme/app_theme.dart';
 import 'package:scholaris/admin/screens/reports_safety_screen.dart';
 import 'package:scholaris/shared/theme/app_motion.dart';
 import 'package:scholaris/features/safety/presentation/student_safety_report.dart';
@@ -21,6 +21,7 @@ import 'admin_theme.dart';
 import 'admin_users_tab.dart';
 
 import 'package:scholaris/admin/screens/admin_settings_screen.dart';
+import 'package:scholaris/admin/screens/admin_backup_screen.dart';
 import 'package:scholaris/admin/screens/disbursements_oversight_screen.dart';
 
 class AdminTabIndexNotifier extends Notifier<int> {
@@ -63,6 +64,7 @@ class _AdminHomeScreenState extends ConsumerState<AdminHomeScreen> {
     const AdminAuditLogsTab(),
     const AdminSettingsScreen(),
     const ReportsSafetyScreen(),
+    const AdminBackupScreen(),
   ];
 
   @override
@@ -365,6 +367,7 @@ class _AdminHomeScreenState extends ConsumerState<AdminHomeScreen> {
             link('Analytics', Icons.insights_outlined, 6),
             link('Audit Logs', Icons.fact_check_outlined, 7),
             link('Settings', Icons.settings_outlined, 8),
+            link('Database & Backups', Icons.cloud_sync_outlined, 10),
             const Divider(height: 32),
             const Padding(
               padding: EdgeInsets.symmetric(horizontal: 16),

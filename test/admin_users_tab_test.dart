@@ -294,4 +294,50 @@ void main() {
     expect(find.text('Provider Org'), findsOneWidget);
     expect(find.text('Student Applicant'), findsOneWidget);
   });
+
+  testWidgets('AdminUsersTab displays locked badge and unlocks user with authoritative audit logging', (tester) async {
+    tester.view.physicalSize = const Size(1280, 900);
+    tester.view.devicePixelRatio = 1.0;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    // Simulate 3 failed login attempts for student@up.edu.ph
+    LoginLockoutService.instance.recordFailedAttempt('student@up.edu.ph');
+    LoginLockoutService.instance.recordFailedAttempt('student@up.edu.ph');
+    final lockout = LoginLockoutService.instance.recordFailedAttempt('student@up.edu.ph');
+    expect(lockout.isLocked, isTrue);
+    expect(LoginLockoutService.instance.isAccountLocked('student@up.edu.ph'), isTrue);
+
+    final fakeProfileDs = makeSampleDataSource();
+    await tester.pumpWidget(buildApp(fakeProfileDs));
+    await tester.pumpAndSettle();
+
+    // Verify Locked badge is displayed
+    expect(find.text('Locked (3+ Failed Logins)'), findsOneWidget);
+
+    // Open popup menu on student user (3rd user)
+    await tester.tap(find.byTooltip('User actions').at(2));
+    await tester.pumpAndSettle();
+
+    // Tap Unlock Account menu item
+    await tester.tap(find.text('Unlock Account'));
+    await tester.pumpAndSettle();
+
+    // Verify confirmation dialog
+    expect(find.textContaining('Are you sure you want to clear failed login attempts and unlock'), findsOneWidget);
+
+    // Confirm unlock
+    await tester.tap(find.widgetWithText(FilledButton, 'Unlock Account'));
+    await tester.pumpAndSettle();
+
+    // Verify SnackBar notice
+    expect(find.textContaining('Account lockout cleared for'), findsOneWidget);
+
+    // Verify account is now unlocked
+    expect(LoginLockoutService.instance.isAccountLocked('student@up.edu.ph'), isFalse);
+
+    // Verify authoritative audit trail recorded event
+    final logs = LoginLockoutService.instance.inMemoryAuditLogs;
+    expect(logs.any((l) => l['action'] == 'ADMIN_USER_UNLOCKED' && l['target_id'] == 'student@up.edu.ph'), isTrue);
+  });
 }

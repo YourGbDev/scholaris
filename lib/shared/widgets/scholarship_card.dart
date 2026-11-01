@@ -213,7 +213,7 @@ class ScholarshipCard extends StatelessWidget {
             child: Stack(
               children: [
                 Padding(
-                  padding: const EdgeInsets.fromLTRB(20, 20, 20, 20),
+                  padding: const EdgeInsets.fromLTRB(16, 14, 16, 14),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -291,7 +291,7 @@ class ScholarshipCard extends StatelessWidget {
                           ],
                         ],
                       ),
-                      const SizedBox(height: 12),
+                      const SizedBox(height: 10),
 
                       // Keep the award beside the title only when both can breathe.
                       LayoutBuilder(builder: (context, constraints) {
@@ -302,7 +302,7 @@ class ScholarshipCard extends StatelessWidget {
                           children: [
                             Text(scholarship.title,
                               style: appCardTitle()),
-                            const SizedBox(height: 8),
+                            const SizedBox(height: 4),
                             Row(children: [
                               Icon(Icons.account_balance_outlined, size: 15, color: providerTypeColor(scholarship.provider)),
                               const SizedBox(width: 5),
@@ -336,11 +336,11 @@ class ScholarshipCard extends StatelessWidget {
                         }
                         return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                           heading,
-                          const SizedBox(height: 18),
+                          const SizedBox(height: 8),
                           award,
                         ]);
                       }),
-                      const SizedBox(height: 16),
+                      const SizedBox(height: 8),
                       Wrap(spacing: 5, runSpacing: 5, children: [
                         Container(
                           padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 4),
@@ -367,7 +367,7 @@ class ScholarshipCard extends StatelessWidget {
                           );
                         }),
                       ]),
-                      const SizedBox(height: 16),
+                      const SizedBox(height: 8),
 
                       Row(children: [
                         Icon(requirements.icon, size: 15, color: const Color(0xFF475569)),
@@ -375,10 +375,10 @@ class ScholarshipCard extends StatelessWidget {
                         Expanded(child: Text(requirements.text,
                           style: appSupporting(fontSize: 13.5, color: const Color(0xFF475569)))),
                       ]),
-                      const SizedBox(height: 12),
+                      const SizedBox(height: 10),
                       Row(children: [
                         Expanded(child: PressableScale(
-                          child: ConstrainedBox(key: viewDetailsKey, constraints: const BoxConstraints(minHeight: 48), child: TextButton(
+                          child: SizedBox(key: viewDetailsKey, height: 44, child: TextButton(
                             onPressed: () => context.push(
                               '/scholarship/${scholarship.id}',
                               extra: scholarship,
@@ -386,13 +386,14 @@ class ScholarshipCard extends StatelessWidget {
                             style: TextButton.styleFrom(
                               backgroundColor: const Color(0xFFF4F6F8),
                               foregroundColor: const Color(0xFF161C27),
+                              padding: EdgeInsets.zero,
                               shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(16),
+                                borderRadius: BorderRadius.circular(12),
                               ),
                             ),
                             child: Text(
                               'View Details',
-                              style: outfit(fontSize: 15, fontWeight: FontWeight.w700),
+                              style: outfit(fontSize: 14, fontWeight: FontWeight.w700),
                             ),
                           )),
                         )),
@@ -403,7 +404,7 @@ class ScholarshipCard extends StatelessWidget {
                             style: ElevatedButton.styleFrom(
                               backgroundColor: const Color(0xFF0F4D2E), foregroundColor: Colors.white,
                               elevation: 0, padding: const EdgeInsets.symmetric(horizontal: 6),
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                             ),
                             child: FittedBox(child: Row(mainAxisSize: MainAxisSize.min, children: [
                               Text('Apply Now', style: outfit(fontSize: 14, fontWeight: FontWeight.w800, color: Colors.white, letterSpacing: -0.2)),

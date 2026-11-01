@@ -103,7 +103,7 @@ const Color kMatchGoldText = Color(0xFF5D4200);
 // --- Shape & Elevation Tokens -----------------------------------------------
 
 const double kRadiusInput = 12.0;
-const double kRadiusCard = 26.0;
+const double kRadiusCard = 20.0;
 const double kRadiusCardFeatured = kRadiusCard;
 const double kSpaceMd = 24.0;
 

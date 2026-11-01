@@ -450,7 +450,7 @@ class _SavedEmptyState extends ConsumerWidget {
                   textAlign: TextAlign.center,
                   style: geist(
                     fontSize: 18,
-                    fontWeight: FontWeight.bold,
+                    fontWeight: FontWeight.w800,
                     color: const Color(0xFF161C27),
                     letterSpacing: -0.2,
                   ),
@@ -709,6 +709,7 @@ class _SuggestedGrantCard extends ConsumerWidget {
                           overflow: TextOverflow.ellipsis,
                           style: geist(
                             fontSize: 12,
+                            fontWeight: FontWeight.w600,
                             color: const Color(0xFF404942),
                           ),
                         ),

@@ -621,7 +621,7 @@ class _HeroCard extends ConsumerWidget {
                 _grantSubtext(scholarship),
                 style: openSans(
                   fontSize: 13,
-                  fontWeight: FontWeight.w500,
+                  fontWeight: FontWeight.w600,
                   color: kOnSurface,
                 ),
               ),

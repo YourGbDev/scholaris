@@ -7,6 +7,47 @@ import 'package:scholaris/features/provider/presentation/org/org_provider_theme.
 import 'package:scholaris/shared/theme/app_theme.dart';
 
 void main() {
+  test('all five bundled Geist fonts declare unified family name Geist for iOS CoreText', () async {
+    for (final weight in ['Regular', 'Medium', 'SemiBold', 'Bold', 'ExtraBold']) {
+      final data = await rootBundle.load('assets/fonts/geist/Geist-$weight.ttf');
+      final bytes = data.buffer.asByteData();
+      final numTables = bytes.getUint16(4);
+      int nameOffset = 0;
+      for (int i = 0; i < numTables; i++) {
+        final tag = String.fromCharCodes([
+          bytes.getUint8(12 + i * 16),
+          bytes.getUint8(12 + i * 16 + 1),
+          bytes.getUint8(12 + i * 16 + 2),
+          bytes.getUint8(12 + i * 16 + 3),
+        ]);
+        if (tag == 'name') {
+          nameOffset = bytes.getUint32(12 + i * 16 + 8);
+          break;
+        }
+      }
+      expect(nameOffset, greaterThan(0));
+      final count = bytes.getUint16(nameOffset + 2);
+      final stringOffset = nameOffset + bytes.getUint16(nameOffset + 4);
+      String? familyName;
+      for (int i = 0; i < count; i++) {
+        final rec = nameOffset + 6 + i * 12;
+        final nameID = bytes.getUint16(rec + 6);
+        if (nameID == 1) {
+          final len = bytes.getUint16(rec + 8);
+          final off = bytes.getUint16(rec + 10);
+          final strBytes = Uint8List.view(data.buffer, stringOffset + off, len);
+          final chars = <int>[];
+          for (int j = 0; j < len; j += 2) {
+            chars.add((strBytes[j] << 8) | strBytes[j + 1]);
+          }
+          familyName = String.fromCharCodes(chars);
+          break;
+        }
+      }
+      expect(familyName, 'Geist', reason: 'Font Geist-$weight.ttf must have nameID 1 equal to Geist for CoreText');
+    }
+  });
+
   setUpAll(() => GoogleFonts.config.allowRuntimeFetching = false);
 
   test('all five Geist weights are bundled and load without fetching', () async {

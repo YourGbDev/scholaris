@@ -370,10 +370,10 @@ class ScholarshipCard extends StatelessWidget {
                       const SizedBox(height: 16),
 
                       Row(children: [
-                        Icon(requirements.icon, size: 15, color: const Color(0xFF404942)),
+                        Icon(requirements.icon, size: 15, color: const Color(0xFF475569)),
                         const SizedBox(width: 6),
                         Expanded(child: Text(requirements.text,
-                          style: appSupporting(fontSize: 14))),
+                          style: appSupporting(fontSize: 13.5, color: const Color(0xFF475569)))),
                       ]),
                       const SizedBox(height: 12),
                       Row(children: [
@@ -406,7 +406,7 @@ class ScholarshipCard extends StatelessWidget {
                               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
                             ),
                             child: FittedBox(child: Row(mainAxisSize: MainAxisSize.min, children: [
-                              Text('Apply Now', style: outfit(fontSize: 13, fontWeight: FontWeight.w600, color: Colors.white)),
+                              Text('Apply Now', style: outfit(fontSize: 14, fontWeight: FontWeight.w800, color: Colors.white, letterSpacing: -0.2)),
                               const SizedBox(width: 4),
                               const Icon(Icons.arrow_forward_rounded, size: 15),
                             ])),

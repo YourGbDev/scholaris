@@ -288,6 +288,19 @@ void main() {
     }
   });
 
+  testWidgets('holding the Home brand opens read-only typography diagnostics', (tester) async {
+    await tester.pumpWidget(_wrap(child: const HomeScreen()));
+    await tester.pumpAndSettle();
+    await tester.longPress(find.text('Scholaris').first);
+    await tester.pumpAndSettle();
+    expect(find.text('Typography check'), findsOneWidget);
+    expect(find.text('Diagnostic: type-probe-1'), findsOneWidget);
+    await tester.tap(find.text('Close'));
+    await tester.pumpAndSettle();
+    expect(find.text('Typography check'), findsNothing);
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets('Saved opened from Home returns to Home with Back', (tester) async {
     await tester.pumpWidget(_wrap(child: const HomeScreen()));
     await tester.pumpAndSettle();

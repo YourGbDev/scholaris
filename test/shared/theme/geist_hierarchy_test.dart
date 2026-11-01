@@ -17,11 +17,11 @@ void main() {
 
   test('greeting, section and card roles use the approved tight Geist scale', () {
     expect(appGreeting().fontWeight, FontWeight.w800);
-    expect(appGreeting().letterSpacing, -.8);
-    expect(appGreeting().height, 1.15);
+    expect(appGreeting().letterSpacing, -1.0);
+    expect(appGreeting().height, 1.12);
     expect(appGreeting().color, const Color(0xFF0F172A));
     expect(appHeading(fontSize: 24).fontWeight, FontWeight.w800);
-    expect(appHeading(fontSize: 24).letterSpacing, -.6);
+    expect(appHeading(fontSize: 24).letterSpacing, -.8);
     expect(appCardTitle().fontSize, 17);
     expect(appCardTitle().fontWeight, FontWeight.w800);
     expect(appCardTitle().letterSpacing, -.35);
@@ -42,7 +42,7 @@ void main() {
     expect(body.color, const Color(0xFF64748B));
     expect(openSans(fontSize: 14, fontWeight: FontWeight.w600).fontWeight, FontWeight.w600);
     expect(geist(fontWeight: FontWeight.w900).fontWeight, FontWeight.w800);
-    expect(appAmount().letterSpacing, -.4);
+    expect(appAmount().letterSpacing, -.5);
     expect(openSans().fontWeight, FontWeight.w600);
     expect(openSans(fontWeight: FontWeight.w400).fontWeight, FontWeight.w400);
     expect(openSans(fontWeight: FontWeight.w700).fontWeight, FontWeight.w700);

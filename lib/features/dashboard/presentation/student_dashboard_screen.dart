@@ -33,6 +33,7 @@ import 'package:scholaris/shared/theme/app_motion.dart';
 import 'package:scholaris/shared/theme/app_theme.dart';
 import 'package:scholaris/shared/widgets/responsive_container.dart';
 import 'package:scholaris/shared/widgets/scholarship_card.dart';
+import 'package:scholaris/shared/widgets/typography_diagnostics.dart';
 
 class StudentDashboardScreen extends ConsumerStatefulWidget {
   const StudentDashboardScreen({
@@ -254,9 +255,12 @@ class _StudentDashboardScreenState
                     ),
                   ),
                   const SizedBox(width: 8),
-                  Text(
-                    'Scholaris',
-                    style: appHeading(fontSize: 24),
+                  GestureDetector(
+                    onLongPress: () => showTypographyDiagnostics(context),
+                    child: Text(
+                      'Scholaris',
+                      style: appHeading(fontSize: 26),
+                    ),
                   ),
                 ],
               ),
@@ -337,11 +341,12 @@ class _StudentDashboardScreenState
                     children: [
                       Text(
                         title,
-                        style: appCardTitle(fontSize: 16),
+                        style: appCardTitle(fontSize: 17.5),
                       ),
+                      const SizedBox(height: 2),
                       Text(
                         subtitle,
-                        style: appSupporting(),
+                        style: appSupporting(fontSize: 14, color: const Color(0xFF475569)),
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                       ),
@@ -378,7 +383,7 @@ class _StudentDashboardScreenState
         const SizedBox(height: 3),
         Text(
           greetingStr,
-          style: appGreeting(),
+          style: appGreeting(fontSize: 32),
         ),
       ],
     );
@@ -450,13 +455,13 @@ class _StudentDashboardScreenState
       children: [
         Text(
           'Find your next opportunity.',
-          style: appHeading(fontSize: 22),
+          style: appHeading(fontSize: 24),
         ),
         const SizedBox(height: 12),
         Text(
           countLabel,
           key: const ValueKey('stat-count-matches'),
-          style: appSupporting(),
+          style: appSupporting(fontSize: 14.5, color: const Color(0xFF334155)),
         ),
         const SizedBox(height: 18),
         Padding(
@@ -472,7 +477,15 @@ class _StudentDashboardScreenState
               minimumSize: const Size(0, 44),
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             ),
-            child: const Text('Explore matches'),
+            child: Text(
+              'Explore matches',
+              style: outfit(
+                fontSize: 15,
+                fontWeight: FontWeight.w800,
+                color: Colors.white,
+                letterSpacing: -0.3,
+              ),
+            ),
           ),
         ),
       ],
@@ -663,7 +676,7 @@ class _StudentDashboardScreenState
                 child: Text(
                   'Recommended for you',
                   key: widget.recommendationsGuideKey,
-                  style: appHeading(fontSize: 22),
+                  style: appHeading(fontSize: 24),
                 ),
               ),
               const SizedBox(width: 8),
@@ -693,9 +706,10 @@ class _StudentDashboardScreenState
                                 ? 'See all ($totalCount)'
                                 : 'See all',
                             style: outfit(
-                              fontSize: 12.5,
-                              fontWeight: FontWeight.w600,
+                              fontSize: 14,
+                              fontWeight: FontWeight.w800,
                               color: const Color(0xFF0F4D2E),
+                              letterSpacing: -0.2,
                             ),
                           ),
                           const Icon(
@@ -1041,9 +1055,10 @@ class _StatCard extends StatelessWidget {
                           unknown ? '—' : '$numericValue',
                           semanticsLabel: unknown ? 'Loading' : '$numericValue',
                           style: outfit(
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold,
-                            color: const Color(0xFF161C27),
+                            fontSize: 26,
+                            fontWeight: FontWeight.w800,
+                            letterSpacing: -0.5,
+                            color: const Color(0xFF0F172A),
                           ),
                         ),
                       ),

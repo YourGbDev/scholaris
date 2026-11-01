@@ -148,9 +148,9 @@ FontWeight _geistWeight(FontWeight requested) {
   return requested;
 }
 
-TextStyle appGreeting({double fontSize = 28}) => geist(
+TextStyle appGreeting({double fontSize = 32}) => geist(
   fontSize: fontSize, fontWeight: FontWeight.w800,
-  letterSpacing: -.8, height: 1.15, color: const Color(0xFF0F172A),
+  letterSpacing: -1.0, height: 1.12, color: const Color(0xFF0F172A),
 );
 
 /// Strong title/action roles; smaller medium labels keep their hierarchy.
@@ -160,13 +160,13 @@ FontWeight appTitleWeight(FontWeight requested, double fontSize) =>
 
 TextStyle appHeading({required double fontSize, Color? color}) => geist(
   fontSize: fontSize, fontWeight: FontWeight.w800,
-  letterSpacing: -.6,
-  height: 1.2, color: color ?? const Color(0xFF0F172A),
+  letterSpacing: fontSize >= 24 ? -.8 : -.6,
+  height: 1.15, color: color ?? const Color(0xFF0F172A),
 );
 
 TextStyle appCardTitle({double fontSize = 17}) => geist(
   fontSize: fontSize, fontWeight: FontWeight.w800,
-  letterSpacing: -.35, height: 1.25, color: kTextPrimary,
+  letterSpacing: -.35, height: 1.25, color: const Color(0xFF0F172A),
 );
 
 TextStyle appSupporting({double fontSize = 14, Color? color}) => geist(
@@ -174,9 +174,9 @@ TextStyle appSupporting({double fontSize = 14, Color? color}) => geist(
   letterSpacing: -.1, height: 1.4, color: color ?? kTextSupporting,
 );
 
-TextStyle appAmount({double fontSize = 22}) => geist(
+TextStyle appAmount({double fontSize = 24}) => geist(
   fontSize: fontSize, fontWeight: FontWeight.w800,
-  letterSpacing: -.4, height: 1.2, color: kPrimary,
+  letterSpacing: -.5, height: 1.15, color: kPrimary,
 );
 
 TextStyle appStatusLabel({Color? color}) => geist(

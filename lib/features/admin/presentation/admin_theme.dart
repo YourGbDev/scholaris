@@ -105,7 +105,7 @@ TextStyle adminBodyStyle({
       color: color,
     );
 
-/// Compatibility helper; counts, metrics, timestamps, and IDs use Geist Sans.
+/// Compatibility helper; counts, metrics, timestamps, and IDs use Open Runde.
 TextStyle adminDataMono({
   double fontSize = 13,
   FontWeight fontWeight = FontWeight.w500,
@@ -125,7 +125,7 @@ TextStyle seqTabularFigures(TextStyle base) => base.copyWith(
       ],
     );
 
-/// Geist Sans pill container helper for IDs, hashes, and IP addresses.
+/// Open Runde pill container helper for IDs, hashes, and IP addresses.
 Widget adminIdPill(String idText) => Container(
       padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
       decoration: BoxDecoration(

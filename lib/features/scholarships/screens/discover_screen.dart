@@ -424,7 +424,7 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
       fontSize: 18,
       fontWeight: FontWeight.bold,
       color: const Color(0xFF161C27),
-      letterSpacing: -0.3,
+      letterSpacing: 0,
     ),
   );
 

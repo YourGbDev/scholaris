@@ -1,3 +1,4 @@
+import 'package:scholaris/shared/theme/app_font.dart';
 import 'package:scholaris/features/applications/providers/application_document_provider.dart';
 import 'package:scholaris/features/applications/models/application_document.dart';
 import 'package:scholaris/features/provider/repositories/support_concern_repository.dart';
@@ -164,7 +165,7 @@ Widget buildApp({bool? individualPreview}) {
         child: child!,
       ),
       theme: ThemeData(
-        fontFamily: 'Geist',
+        fontFamily: kAppFontFamily,
         colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF0F4D2E)),
       ),
       home: showAdminSupport

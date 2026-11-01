@@ -2,12 +2,14 @@
 
 These rules apply to every contributor and agent, including Codex and Archi. Read them before changing UI or producing an IPA.
 
-## Typography: bundled Geist Sans everywhere
+## Typography: bundled Open Runde everywhere
 
-- Every app-owned screen and text surface must use the bundled **Geist Sans** family, registered as `Geist` in `pubspec.yaml`.
-- Use the shared `geist(...)` helper and the existing Geist-based application themes. Legacy helpers in `lib/shared/theme/app_theme.dart` delegate to Geist; their names do not authorize another font.
+User-approved November 1, 2026: Open Runde replaces the former Geist-only requirement. Bundle all four weights locally; preserve natural letter spacing, bold headings, and readable medium/semibold supporting text.
+
+- Every app-owned screen and text surface must use the bundled **Open Runde** family, registered as `OpenRunde` in `pubspec.yaml`.
+- Use the shared `geist(...)` compatibility helper (its historical name now selects Open Runde) and the existing Open Runde-based application themes. Legacy helpers in `lib/shared/theme/app_theme.dart` delegate to Open Runde; their names do not authorize another font.
 - This includes student, provider and admin screens, onboarding/tours, chat, dialogs, sheets, forms, validation messages, buttons, labels, receipts and preview apps. Do not introduce a different font through `GoogleFonts`, local `ThemeData`, `TextStyle`, or a component override.
-- Keep appropriate Geist weights, line height, accessible text scaling and wrapping. Do not replace text with an image or shrink it to hide an overflow.
+- Keep appropriate Open Runde weights, line height, accessible text scaling and wrapping. Do not replace text with an image or shrink it to hide an overflow.
 - Platform-owned keyboards/system UI and essential missing-glyph fallback are outside this app-owned typography requirement. Otherwise, a font exception requires the user's explicit instruction.
 - Before handoff, inspect changed themes/styles, run the relevant UI/typography tests, and verify the actual rendered result when device/browser access is available. Do not claim a video alone proves the font family.
 

@@ -6,7 +6,7 @@
 // Card anatomy:
 // 1. Top row: Match % badge (e.g. "98% Match" with star) + Urgency countdown pill
 //    (e.g. "5 days left" with hourglass) + Bookmark button
-// 2. Title in Outfit bold
+// 2. Title in bundled Open Runde bold
 // 3. Verified provider row with verified_user emblem
 // 4. Bold grant amount in ₱ with frequency/renewal subtitle
 // 5. Criteria chips (degree, need-based, year level, etc.)
@@ -296,23 +296,22 @@ class ScholarshipCard extends StatelessWidget {
                         final heading = Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(scholarship.title, maxLines: 2, overflow: TextOverflow.ellipsis,
-                              style: outfit(fontSize: 16, fontWeight: FontWeight.w700,
-                                color: const Color(0xFF161C27), letterSpacing: -0.25, height: 1.25)),
-                            const SizedBox(height: 4),
+                            Text(scholarship.title,
+                              style: outfit(fontSize: 17, fontWeight: FontWeight.w700,
+                                color: kTextPrimary, letterSpacing: 0, height: 1.3)),
+                            const SizedBox(height: 8),
                             Row(children: [
                               Icon(Icons.account_balance_outlined, size: 15, color: providerTypeColor(scholarship.provider)),
                               const SizedBox(width: 5),
                               Expanded(child: Text(scholarship.provider ?? 'Scholarship Provider',
-                                maxLines: 2, overflow: TextOverflow.ellipsis,
-                                style: openSans(fontSize: 14, height: 1.4, color: const Color(0xFF4E5C53), fontWeight: FontWeight.w600))),
+                                style: openSans(fontSize: 14, height: 1.45, color: kTextSupporting, fontWeight: FontWeight.w600))),
                             ]),
                           ],
                         );
                         final amountText = Text(amount, style: outfit(fontSize: 18, fontWeight: FontWeight.w700,
-                          color: kPrimary, letterSpacing: -0.4));
+                          color: kPrimary, letterSpacing: 0));
                         final frequencyText = Text(scholarship.formattedFrequency, style: openSans(fontSize: 12.5,
-                          color: const Color(0xFF4E5C53), fontWeight: FontWeight.w600));
+                          color: kTextSupporting, fontWeight: FontWeight.w500));
                         final award = sideBySide
                             ? Column(crossAxisAlignment: CrossAxisAlignment.end, mainAxisSize: MainAxisSize.min,
                                 children: [amountText, frequencyText])
@@ -327,7 +326,7 @@ class ScholarshipCard extends StatelessWidget {
                         }
                         return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                           heading,
-                          const SizedBox(height: 10),
+                          const SizedBox(height: 14),
                           award,
                         ]);
                       }),
@@ -363,13 +362,13 @@ class ScholarshipCard extends StatelessWidget {
                           );
                         }),
                       ]),
-                      const SizedBox(height: 8),
+                      const SizedBox(height: 12),
 
                       Row(children: [
                         Icon(requirements.icon, size: 15, color: const Color(0xFF404942)),
                         const SizedBox(width: 6),
-                        Expanded(child: Text(requirements.text, maxLines: 2, overflow: TextOverflow.ellipsis,
-                          style: openSans(fontSize: 13, height: 1.45, fontWeight: FontWeight.w600, color: const Color(0xFF4E5C53)))),
+                        Expanded(child: Text(requirements.text,
+                          style: openSans(fontSize: 13, height: 1.45, fontWeight: FontWeight.w600, color: kTextSupporting))),
                       ]),
                       const SizedBox(height: 12),
                       Row(children: [

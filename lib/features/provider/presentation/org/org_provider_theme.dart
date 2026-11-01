@@ -57,7 +57,7 @@ const BorderRadius kOrgPillRadius = BorderRadius.all(Radius.circular(20));
 // Shadows
 const List<BoxShadow> kOrgCardShadow = kCardElevationCrisp;
 
-// Typography Helpers adhering to Apple HIG Optical Typography (Section 15)
+// Typography Helpers for the shared rounded hierarchy
 TextStyle orgHeadline({
   double fontSize = 18,
   FontWeight fontWeight = FontWeight.w700,
@@ -69,13 +69,13 @@ TextStyle orgHeadline({
       fontSize: fontSize,
       fontWeight: fontWeight,
       color: color,
-      letterSpacing: letterSpacing ?? opticalTracking(fontSize),
-      height: height ?? opticalLeading(fontSize, isBody: false),
+      letterSpacing: letterSpacing ?? 0,
+      height: height ?? 1.3,
     );
 
 TextStyle orgBody({
   double fontSize = 13.5,
-  FontWeight fontWeight = FontWeight.w400,
+  FontWeight fontWeight = FontWeight.w500,
   Color color = kOrgTextPrimary,
   double? letterSpacing,
   double? height,
@@ -84,7 +84,7 @@ TextStyle orgBody({
       fontSize: fontSize,
       fontWeight: fontWeight,
       color: color,
-      letterSpacing: letterSpacing ?? opticalTracking(fontSize),
+      letterSpacing: letterSpacing ?? 0,
       height: height ?? (fontSize <= 16 ? 1.45 : opticalLeading(fontSize, isBody: true)),
     );
 
@@ -99,11 +99,11 @@ TextStyle orgLabel({
       fontSize: fontSize,
       fontWeight: fontWeight,
       color: color,
-      letterSpacing: letterSpacing ?? opticalTracking(fontSize),
-      height: height ?? opticalLeading(fontSize, isBody: false),
+      letterSpacing: letterSpacing ?? 0,
+      height: height ?? 1.3,
     );
 
-/// Compatibility helper; counts, metrics, timestamps, and IDs use Geist Sans.
+/// Compatibility helper; counts, metrics, timestamps, and IDs use Open Runde.
 TextStyle orgDataMono({
   double fontSize = 12.5,
   FontWeight fontWeight = FontWeight.w500,
@@ -123,7 +123,7 @@ TextStyle orgTabularFigures(TextStyle base) => base.copyWith(
       ],
     );
 
-/// Geist Sans pill container helper for IDs, hashes, and reference codes.
+/// Open Runde pill container helper for IDs, hashes, and reference codes.
 Widget orgIdPill(String idText) => Container(
       padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
       decoration: BoxDecoration(

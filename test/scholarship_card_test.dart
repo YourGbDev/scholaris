@@ -1,3 +1,4 @@
+import 'helpers/load_app_fonts.dart';
 // Focused tests for the shared ScholarshipCard bookmark toggle: which icon
 // renders for the saved/unsaved state, that tapping fires the toggle callback,
 // and that the touch target meets the 44x44 accessibility minimum. Also covers
@@ -6,7 +7,6 @@
 // deadline is "Closed" — never "Closing soon — Closed".
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:go_router/go_router.dart';
@@ -44,11 +44,6 @@ Widget _wrap({required ScholarshipCard card}) =>
 
 void main() {
   testWidgets('deadline and Applied remain adjacent on a phone with a bookmark', (tester) async {
-    final fonts = FontLoader('Geist')
-      ..addFont(rootBundle.load('assets/fonts/geist/Geist-Regular.ttf'))
-      ..addFont(rootBundle.load('assets/fonts/geist/Geist-SemiBold.ttf'))
-      ..addFont(rootBundle.load('assets/fonts/geist/Geist-Bold.ttf'));
-    await fonts.load();
     tester.view.physicalSize = const Size(390, 1100);
     tester.view.devicePixelRatio = 1;
     addTearDown(tester.view.reset);
@@ -158,8 +153,9 @@ void main() {
     expect(tester.getTopLeft(find.text(scholarship.title)).dy,
       greaterThanOrEqualTo(tester.getBottomRight(find.byType(IconButton)).dy));
   });
-  setUpAll(() {
+  setUpAll(() async {
     GoogleFonts.config.allowRuntimeFetching = false;
+    await loadAppFonts();
   });
 
   testWidgets('unsaved card shows the outline icon and tapping calls back',

@@ -203,20 +203,19 @@ void main() {
       expect(opticalLeading(11), equals(1.30));
     });
 
-    test('ThemeData integrates optical typography', () {
+    test('ThemeData gives rounded type natural tracking and relaxed leading', () {
       final theme = scholarisTheme();
       final textTheme = theme.textTheme;
 
-      // Display text has negative letter spacing and tight leading
-      expect(textTheme.displayLarge?.letterSpacing, lessThan(0.0));
-      expect(textTheme.displayLarge?.height, inInclusiveRange(1.05, 1.15));
+      expect(textTheme.displayLarge?.letterSpacing, 0);
+      expect(textTheme.displayLarge?.height, 1.3);
 
       // Body text has neutral letter spacing and relaxed leading
       expect(textTheme.bodyLarge?.letterSpacing, equals(0.0));
       expect(textTheme.bodyLarge?.height, inInclusiveRange(1.45, 1.55));
 
-      // Micro labels have positive letter spacing
-      expect(textTheme.labelSmall?.letterSpacing, greaterThan(0.0));
+      expect(textTheme.bodyLarge?.fontWeight, FontWeight.w500);
+      expect(textTheme.labelSmall?.letterSpacing, 0);
     });
   });
 }

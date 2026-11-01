@@ -1,5 +1,5 @@
+import 'helpers/load_app_fonts.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:scholaris/features/home/presentation/widgets/student_action_sheet.dart';
@@ -8,10 +8,7 @@ void main() {
   testWidgets(
     'three-action menu stays narrow and concise at normal phone text size',
     (tester) async {
-      await (FontLoader('Geist')
-            ..addFont(rootBundle.load('assets/fonts/geist/Geist-Regular.ttf'))
-            ..addFont(rootBundle.load('assets/fonts/geist/Geist-SemiBold.ttf')))
-          .load();
+      await loadAppFonts();
       tester.view.physicalSize = const Size(390, 844);
       tester.view.devicePixelRatio = 1;
       addTearDown(tester.view.reset);

@@ -345,7 +345,7 @@ class _StudentDashboardScreenState
                           fontSize: 14,
                           fontWeight: FontWeight.w600,
                           height: 1.4,
-                          color: const Color(0xFF404942),
+                          color: kTextSupporting,
                         ),
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
@@ -457,15 +457,12 @@ class _StudentDashboardScreenState
     final countLabel = matchesFailed ? 'Matches unavailable' : matchCount == null
         ? 'Finding matches…' : '$matchCount ${matchCount == 1 ? 'scholarship matches' : 'scholarships match'} your profile.';
     final summary = Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.min, children: [
-      Text('YOUR NEXT CHAPTER', style: geist(fontSize: 11, fontWeight: FontWeight.w600,
-        color: const Color(0xFF485356), letterSpacing: .15)),
-      const SizedBox(height: 8),
       Text('Find your next opportunity.',
-        style: geist(fontSize: 22, fontWeight: FontWeight.w700, color: kPrimary, height: 1.15, letterSpacing: -.5)),
-      const SizedBox(height: 10),
-      Text(countLabel, key: const ValueKey('stat-count-matches'),
-        style: geist(fontSize: 13, fontWeight: FontWeight.w600, height: 1.4, color: const Color(0xFF485356))),
+        style: geist(fontSize: 22, fontWeight: FontWeight.w700, color: kPrimary, height: 1.3, letterSpacing: 0)),
       const SizedBox(height: 12),
+      Text(countLabel, key: const ValueKey('stat-count-matches'),
+        style: geist(fontSize: 14, fontWeight: FontWeight.w600, height: 1.45, color: kTextSupporting)),
+      const SizedBox(height: 18),
       Padding(
         padding: const EdgeInsets.only(left: 12),
         child: FilledButton(

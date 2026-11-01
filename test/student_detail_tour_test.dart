@@ -1,5 +1,5 @@
+import 'helpers/load_app_fonts.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -53,11 +53,7 @@ Widget wrap(Widget child) => ProviderScope(
 void main() {
   setUpAll(() async {
     GoogleFonts.config.allowRuntimeFetching = false;
-    await (FontLoader('Geist')
-          ..addFont(rootBundle.load('assets/fonts/geist/Geist-Regular.ttf'))
-          ..addFont(rootBundle.load('assets/fonts/geist/Geist-SemiBold.ttf'))
-          ..addFont(rootBundle.load('assets/fonts/geist/Geist-Bold.ttf')))
-        .load();
+    await loadAppFonts();
   });
   testWidgets(
     'real detail allows manual exploration and returns to the real demo apply action',

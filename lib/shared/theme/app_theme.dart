@@ -4,11 +4,13 @@
 // Academic Momentum design specifications (`academic_momentum/DESIGN.md`).
 //
 // Typography:
-// - UI headings, labels, body copy, and metrics: bundled Geist Sans
-// - Legacy font helpers delegate to Geist to preserve existing call sites.
+// - UI headings, labels, body copy, and metrics: bundled Open Runde
+// - Legacy font helpers share the same family to preserve existing call sites.
 
 import 'package:flutter/material.dart';
+import 'app_font.dart';
 import 'app_motion.dart';
+export 'app_font.dart';
 
 // --- Stitch Color Tokens ----------------------------------------------------
 
@@ -82,6 +84,8 @@ const Color kPrimaryLight = Color(0xFFB3F1C6);
 
 const Color kTextPrimary = Color(0xFF161C27);
 const Color kTextSecondary = Color(0xFF404942);
+// Substantial gray supporting copy, distinct from headings and status colors.
+const Color kTextSupporting = Color(0xFF626A73);
 
 // Informational benefit/qualification tags, separate from status and filter colors.
 const Color kScholarshipTagBackground = Color(0xFFEAEAEA);
@@ -138,7 +142,7 @@ const LinearGradient kHeroSurface = LinearGradient(
 
 // --- Typography Helpers -----------------------------------------------------
 
-/// Scholaris UI typography. Bundled locally for consistent offline rendering.
+/// Legacy helper name; now selects bundled Open Runde, including offline.
 TextStyle geist({
   TextStyle? textStyle,
   Color? color,
@@ -160,11 +164,11 @@ TextStyle geist({
   TextDecorationStyle? decorationStyle,
   double? decorationThickness,
 }) => (textStyle ?? const TextStyle()).copyWith(
-  fontFamily: 'Geist',
+  fontFamily: kAppFontFamily,
   color: color,
   backgroundColor: backgroundColor,
   fontSize: fontSize,
-  fontWeight: fontWeight,
+  fontWeight: fontWeight ?? textStyle?.fontWeight ?? FontWeight.w500,
   fontStyle: fontStyle,
   letterSpacing: letterSpacing,
   wordSpacing: wordSpacing,
@@ -183,8 +187,8 @@ TextStyle geist({
 
 
 
-/// Compatibility helper; headlines and labels use Geist Sans.
-/// Defaults to Apple HIG optical tracking and leading if unspecified.
+/// Compatibility helper; headings and labels use the shared rounded family.
+/// Natural tracking and relaxed heading leading preserve the rounded shapes.
 TextStyle outfit({
   TextStyle? textStyle,
   Color? color,
@@ -212,10 +216,10 @@ TextStyle outfit({
   fontSize: fontSize,
   fontWeight: fontWeight,
   fontStyle: fontStyle,
-  letterSpacing: letterSpacing ?? (fontSize != null ? opticalTracking(fontSize) : null),
+  letterSpacing: letterSpacing ?? 0,
   wordSpacing: wordSpacing,
   textBaseline: textBaseline,
-  height: height ?? (fontSize != null ? opticalLeading(fontSize, isBody: false) : null),
+  height: height ?? 1.3,
   locale: locale,
   foreground: foreground,
   background: background,
@@ -227,8 +231,8 @@ TextStyle outfit({
   decorationThickness: decorationThickness,
 );
 
-/// Compatibility helper; body copy uses Geist Sans.
-/// Defaults to Apple HIG optical tracking and relaxed body leading (1.45–1.50).
+/// Compatibility helper; body copy uses the shared rounded family.
+/// Defaults to natural tracking and relaxed body leading (1.45–1.50).
 TextStyle openSans({
   TextStyle? textStyle,
   Color? color,
@@ -256,7 +260,7 @@ TextStyle openSans({
   fontSize: fontSize,
   fontWeight: fontWeight,
   fontStyle: fontStyle,
-  letterSpacing: letterSpacing ?? (fontSize != null ? opticalTracking(fontSize) : null),
+  letterSpacing: letterSpacing ?? 0,
   wordSpacing: wordSpacing,
   textBaseline: textBaseline,
   height: height ?? (fontSize != null ? opticalLeading(fontSize, isBody: true) : null),
@@ -271,7 +275,7 @@ TextStyle openSans({
   decorationThickness: decorationThickness,
 );
 
-/// Compatibility helper; wordmarks and headers use Geist Sans.
+/// Compatibility helper; wordmarks and headers use Open Runde.
 TextStyle poppins({
   TextStyle? textStyle,
   Color? color,
@@ -299,10 +303,10 @@ TextStyle poppins({
   fontSize: fontSize,
   fontWeight: fontWeight,
   fontStyle: fontStyle,
-  letterSpacing: letterSpacing ?? (fontSize != null ? opticalTracking(fontSize) : null),
+  letterSpacing: letterSpacing ?? 0,
   wordSpacing: wordSpacing,
   textBaseline: textBaseline,
-  height: height ?? (fontSize != null ? opticalLeading(fontSize, isBody: false) : null),
+  height: height ?? 1.3,
   locale: locale,
   foreground: foreground,
   background: background,
@@ -342,10 +346,10 @@ TextStyle inter({
   fontSize: fontSize,
   fontWeight: fontWeight,
   fontStyle: fontStyle,
-  letterSpacing: letterSpacing ?? (fontSize != null ? opticalTracking(fontSize) : null),
+  letterSpacing: letterSpacing ?? 0,
   wordSpacing: wordSpacing,
   textBaseline: textBaseline,
-  height: height ?? (fontSize != null ? opticalLeading(fontSize, isBody: (fontSize <= 16)) : null),
+  height: height ?? (fontSize != null && fontSize <= 16 ? 1.45 : 1.3),
   locale: locale,
   foreground: foreground,
   background: background,
@@ -379,9 +383,9 @@ ThemeData scholarisTheme() {
     headlineMedium: outfit(fontSize: 22, fontWeight: FontWeight.w600),
     headlineSmall: outfit(fontSize: 18, fontWeight: FontWeight.w600),
     titleMedium: outfit(fontSize: 16, fontWeight: FontWeight.w600),
-    bodyLarge: openSans(fontSize: 16, fontWeight: FontWeight.w400),
-    bodyMedium: openSans(fontSize: 14, fontWeight: FontWeight.w400),
-    bodySmall: openSans(fontSize: 12, fontWeight: FontWeight.w400),
+    bodyLarge: openSans(fontSize: 16, fontWeight: FontWeight.w500),
+    bodyMedium: openSans(fontSize: 14, fontWeight: FontWeight.w500),
+    bodySmall: openSans(fontSize: 12, fontWeight: FontWeight.w500),
     labelLarge: outfit(fontSize: 14, fontWeight: FontWeight.w600),
     labelMedium: outfit(fontSize: 12, fontWeight: FontWeight.w600),
     labelSmall: outfit(fontSize: 11, fontWeight: FontWeight.w700),
@@ -391,8 +395,8 @@ ThemeData scholarisTheme() {
     useMaterial3: true,
     colorScheme: colorScheme,
     scaffoldBackgroundColor: kBackground,
-    fontFamily: 'Geist',
-    textTheme: applyOpticalTypography(baseTextTheme),
+    fontFamily: kAppFontFamily,
+    textTheme: baseTextTheme,
     appBarTheme: AppBarTheme(
       backgroundColor: kSurfaceContainerLowest,
       elevation: 0,

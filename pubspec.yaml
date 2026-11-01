@@ -39,6 +39,16 @@ dev_dependencies:
 flutter:
   uses-material-design: true
   fonts:
+    - family: OpenRunde
+      fonts:
+        - asset: assets/fonts/open_runde/OpenRunde-Regular.otf
+          weight: 400
+        - asset: assets/fonts/open_runde/OpenRunde-Medium.otf
+          weight: 500
+        - asset: assets/fonts/open_runde/OpenRunde-Semibold.otf
+          weight: 600
+        - asset: assets/fonts/open_runde/OpenRunde-Bold.otf
+          weight: 700
     - family: Geist
       fonts:
         - asset: assets/fonts/geist/Geist-Regular.ttf
@@ -52,6 +62,7 @@ flutter:
   shaders:
     - shaders/student_glass_lens.frag
   assets:
+    - assets/fonts/open_runde/OFL.txt
     - assets/animations/scholaris_ceremony.json
     - assets/animations/onboarding_slide1.json
     - assets/animations/onboarding_slide2_hero.json

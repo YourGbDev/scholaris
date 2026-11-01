@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'helpers/load_app_fonts.dart';
 
 import 'package:scholaris/features/applications/providers/applications_provider.dart';
 import 'package:scholaris/features/applications/repositories/application_repository.dart';
@@ -83,8 +84,9 @@ Widget _buildTestApp({
 }
 
 void main() {
-  setUpAll(() {
+  setUpAll(() async {
     GoogleFonts.config.allowRuntimeFetching = false;
+    await loadAppFonts();
   });
 
   group('Student Dashboard Hero Section', () {

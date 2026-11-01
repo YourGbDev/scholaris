@@ -485,6 +485,7 @@ class _SubmissionConfirmationReceiptScreenState
             label: 'Grant Opportunity',
             value: widget.scholarship.title,
             bold: true,
+            fontWeight: FontWeight.w800,
           ),
           const Divider(height: 14),
           _receiptRow(
@@ -667,6 +668,7 @@ class _SubmissionConfirmationReceiptScreenState
     String? subvalue,
     Color? valueColor,
     bool bold = false,
+    FontWeight? fontWeight,
   }) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -689,7 +691,7 @@ class _SubmissionConfirmationReceiptScreenState
                 textAlign: TextAlign.end,
                 style: outfit(
                   fontSize: 13,
-                  fontWeight: bold ? FontWeight.bold : FontWeight.w600,
+                  fontWeight: fontWeight ?? (bold ? FontWeight.bold : FontWeight.w600),
                   color: valueColor ?? kOnSurface,
                 ),
               ),

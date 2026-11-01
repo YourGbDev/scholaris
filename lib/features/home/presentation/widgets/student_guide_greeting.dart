@@ -103,21 +103,13 @@ class StudentGuideGreeting extends StatelessWidget {
                                   liveRegion: true,
                                   child: Text(
                                     title,
-                                    style: geist(
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.w700,
-                                      height: 1.15,
-                                    ),
+                                    style: appHeading(fontSize: 20),
                                   ),
                                 ),
                                 const SizedBox(height: 12),
                                 Text(
                                   message,
-                                  style: geist(
-                                    fontSize: 15,
-                                    height: 1.45,
-                                    color: kTextSecondary,
-                                  ),
+                                  style: appSupporting(),
                                 ),
                                 if (explicitContinue) ...[
                                   const SizedBox(height: 18),

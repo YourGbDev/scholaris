@@ -175,7 +175,8 @@ class _ReportsSafetyScreenState extends ConsumerState<ReportsSafetyScreen> {
             : null,
         context: context,
         builder: (ctx) => AlertDialog(
-          title: Text(group.scholarshipTitle),
+          title: Text(group.scholarshipTitle,
+              style: const TextStyle(fontWeight: FontWeight.w800)),
           content: SizedBox(
             width: 600,
             child: SingleChildScrollView(
@@ -538,7 +539,9 @@ class _ReportsSafetyScreenState extends ConsumerState<ReportsSafetyScreen> {
                   ),
                 Text(
                   g.scholarshipTitle,
-                  style: Theme.of(context).textTheme.titleLarge,
+                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                    fontWeight: FontWeight.w800,
+                  ),
                 ),
                 const SizedBox(height: 4),
                 Text(g.providerName),

@@ -593,7 +593,7 @@ class _HeroCard extends ConsumerWidget {
             scholarship.title,
             style: outfit(
               fontSize: 22,
-              fontWeight: FontWeight.w700,
+              fontWeight: FontWeight.w800,
               color: kOnSurface,
               letterSpacing: -0.3,
               height: 1.25,

@@ -7,7 +7,6 @@
 import 'package:scholaris/shared/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 
-import '../../../../shared/theme/app_motion.dart';
 
 // Brand & Institutional Colors
 const kOrgPrimary = Color(0xFF0F4D2E); // Bridge Green
@@ -25,9 +24,9 @@ const kOrgSurfaceWhite = Color(0xFFFFFFFF);
 const kOrgBorder = Color(0xFFE5E7EB);
 const kOrgHairline = Color(0xFFE4E7EC);
 const kOrgBorderDark = Color(0xFFD1D5DB);
-const kOrgTextPrimary = Color(0xFF1A1C1B);
-const kOrgTextSecondary = Color(0xFF5A645C);
-const kOrgTextMuted = Color(0xFF545D56);
+const kOrgTextPrimary = Color(0xFF111827);
+const kOrgTextSecondary = Color(0xFF64748B);
+const kOrgTextMuted = Color(0xFF64748B);
 const kOrgError = Color(0xFFBA1A1A);
 const kOrgSuccess = Color(0xFF27C93F);
 
@@ -57,7 +56,7 @@ const BorderRadius kOrgPillRadius = BorderRadius.all(Radius.circular(20));
 // Shadows
 const List<BoxShadow> kOrgCardShadow = kCardElevationCrisp;
 
-// Typography Helpers adhering to Apple HIG Optical Typography (Section 15)
+// Typography Helpers for the shared Geist hierarchy
 TextStyle orgHeadline({
   double fontSize = 18,
   FontWeight fontWeight = FontWeight.w700,
@@ -67,15 +66,15 @@ TextStyle orgHeadline({
 }) =>
     geist(
       fontSize: fontSize,
-      fontWeight: fontWeight,
+      fontWeight: appTitleWeight(fontWeight, fontSize),
       color: color,
-      letterSpacing: letterSpacing ?? opticalTracking(fontSize),
-      height: height ?? opticalLeading(fontSize, isBody: false),
+      letterSpacing: letterSpacing ?? -.6,
+      height: height ?? 1.2,
     );
 
 TextStyle orgBody({
   double fontSize = 13.5,
-  FontWeight fontWeight = FontWeight.w400,
+  FontWeight fontWeight = FontWeight.w600,
   Color color = kOrgTextPrimary,
   double? letterSpacing,
   double? height,
@@ -84,13 +83,13 @@ TextStyle orgBody({
       fontSize: fontSize,
       fontWeight: fontWeight,
       color: color,
-      letterSpacing: letterSpacing ?? opticalTracking(fontSize),
-      height: height ?? (fontSize <= 16 ? 1.45 : opticalLeading(fontSize, isBody: true)),
+      letterSpacing: letterSpacing ?? -.1,
+      height: height ?? 1.4,
     );
 
 TextStyle orgLabel({
   double fontSize = 11.5,
-  FontWeight fontWeight = FontWeight.w600,
+  FontWeight fontWeight = FontWeight.w500,
   Color color = kOrgTextSecondary,
   double? letterSpacing,
   double? height,
@@ -99,11 +98,11 @@ TextStyle orgLabel({
       fontSize: fontSize,
       fontWeight: fontWeight,
       color: color,
-      letterSpacing: letterSpacing ?? opticalTracking(fontSize),
-      height: height ?? opticalLeading(fontSize, isBody: false),
+      letterSpacing: letterSpacing ?? -.1,
+      height: height ?? 1.3,
     );
 
-/// Compatibility helper; counts, metrics, timestamps, and IDs use Geist Sans.
+/// Compatibility helper; counts, metrics, timestamps, and IDs use the shared Geist family.
 TextStyle orgDataMono({
   double fontSize = 12.5,
   FontWeight fontWeight = FontWeight.w500,
@@ -123,7 +122,7 @@ TextStyle orgTabularFigures(TextStyle base) => base.copyWith(
       ],
     );
 
-/// Geist Sans pill container helper for IDs, hashes, and reference codes.
+/// Shared rounded pill container helper for IDs, hashes, and reference codes.
 Widget orgIdPill(String idText) => Container(
       padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
       decoration: BoxDecoration(

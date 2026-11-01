@@ -1,3 +1,4 @@
+import 'package:scholaris/shared/theme/app_font.dart';
 import 'package:scholaris/features/home/presentation/widgets/student_tab_entrance.dart';
 // lib/dev/student_navbar_preview/main.dart
 //
@@ -28,7 +29,7 @@ class StudentNavbarPreviewApp extends StatelessWidget {
       title: 'Scholaris Student Navbar Preview',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        fontFamily: 'Geist',
+        fontFamily: kAppFontFamily,
         useMaterial3: true,
         scaffoldBackgroundColor: const Color(0xFF1E242B), // Dark outer preview canvas
       ),

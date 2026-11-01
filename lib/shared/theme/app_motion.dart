@@ -1,3 +1,4 @@
+import 'package:scholaris/shared/theme/app_font.dart';
 // lib/shared/theme/app_motion.dart
 //
 // Centralized Scholaris Motion System Tokens & Components
@@ -882,10 +883,11 @@ void showScholarisToast(
               Flexible(
                 child: Text(
                   message,
-                  style: const TextStyle(
-                    fontFamily: 'Geist',
+                  style: TextStyle(
+                    fontFamily: kAppFontFamily,
                     fontSize: 13.5,
-                    fontWeight: FontWeight.w600,
+                    fontWeight: FontWeight.w500,
+                    letterSpacing: -.1,
                     color: Colors.white,
                   ),
                   maxLines: 2,

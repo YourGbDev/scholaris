@@ -1221,7 +1221,7 @@ class _OrgScholarshipsTabState extends ConsumerState<OrgScholarshipsTab> {
                   scholarship.title,
                   style: orgHeadline(
                     fontSize: 17,
-                    fontWeight: FontWeight.w700,
+                    fontWeight: FontWeight.w800,
                     color: kOrgTextPrimary,
                   ),
                 ),

@@ -1,3 +1,4 @@
+import 'helpers/load_app_fonts.dart';
 // Focused tests for the shared ScholarshipCard bookmark toggle: which icon
 // renders for the saved/unsaved state, that tapping fires the toggle callback,
 // and that the touch target meets the 44x44 accessibility minimum. Also covers
@@ -6,7 +7,6 @@
 // deadline is "Closed" — never "Closing soon — Closed".
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:go_router/go_router.dart';
@@ -43,12 +43,30 @@ Widget _wrap({required ScholarshipCard card}) =>
     MaterialApp(home: Scaffold(body: card));
 
 void main() {
+  testWidgets('card title and supporting text keep the approved visual hierarchy', (tester) async {
+    await tester.pumpWidget(_wrap(card: ScholarshipCard(scholarship: _scholarship(), matchPercentage: 98, isApplied: true)));
+    await tester.pumpAndSettle();
+    final title = tester.widget<Text>(find.text(_scholarship().title));
+    final provider = tester.widget<Text>(find.text('Department of Science and Technology'));
+    expect(title.style?.fontSize, 17);
+    expect(title.style?.fontWeight, FontWeight.w800);
+    expect(provider.style?.fontSize, 14);
+    expect(provider.style?.fontWeight, FontWeight.w600);
+    expect(title.style?.letterSpacing, -.35);
+    expect(provider.style?.color, const Color(0xFF64748B));
+    final fit = tester.widget<Text>(find.text('98% Fit'));
+    final attribute = tester.widget<Text>(find.text('Tuition + Allowance'));
+    expect(fit.style?.fontSize, 12);
+    expect(fit.style?.fontWeight, FontWeight.w600);
+    expect(attribute.style?.fontWeight, FontWeight.w700);
+    expect(attribute.style?.letterSpacing, -.1);
+    final award = tester.widget<Text>(find.textContaining('₱50,000'));
+    final suffix = (award.textSpan! as TextSpan).children!.last as TextSpan;
+    expect(award.style?.fontWeight, FontWeight.w800);
+    expect(suffix.style?.fontWeight, FontWeight.w600);
+    expect(suffix.style?.color, const Color(0xFF64748B));
+  });
   testWidgets('deadline and Applied remain adjacent on a phone with a bookmark', (tester) async {
-    final fonts = FontLoader('Geist')
-      ..addFont(rootBundle.load('assets/fonts/geist/Geist-Regular.ttf'))
-      ..addFont(rootBundle.load('assets/fonts/geist/Geist-SemiBold.ttf'))
-      ..addFont(rootBundle.load('assets/fonts/geist/Geist-Bold.ttf'));
-    await fonts.load();
     tester.view.physicalSize = const Size(390, 1100);
     tester.view.devicePixelRatio = 1;
     addTearDown(tester.view.reset);
@@ -74,10 +92,10 @@ void main() {
     }
     addTearDown(tester.view.reset);
     await renderAt(600);
-    expect(tester.getTopLeft(find.text('₱50,000')).dx, greaterThan(tester.getTopLeft(find.text('DOST-SEI Undergraduate Scholarship')).dx + 100));
+    expect(tester.getTopLeft(find.textContaining('₱50,000')).dx, greaterThan(tester.getTopLeft(find.text('DOST-SEI Undergraduate Scholarship')).dx + 100));
     expect(find.text('Apply Now'), findsOneWidget);
     await renderAt(320);
-    expect(tester.getTopLeft(find.text('₱50,000')).dy, greaterThan(tester.getBottomLeft(find.text('DOST-SEI Undergraduate Scholarship')).dy));
+    expect(tester.getTopLeft(find.textContaining('₱50,000')).dy, greaterThan(tester.getBottomLeft(find.text('DOST-SEI Undergraduate Scholarship')).dy));
     expect(tester.takeException(), isNull);
   });
   testWidgets('Apply Now carries the application intent, View Details does not', (tester) async {
@@ -142,7 +160,7 @@ void main() {
       child: ScholarshipCard(scholarship: _scholarship()),
     ))));
     await tester.pumpAndSettle();
-    final amount = find.text('₱50,000');
+    final amount = find.textContaining('₱50,000');
     expect(tester.getBottomRight(amount).dy - tester.getTopLeft(amount).dy, greaterThanOrEqualTo(18));
     expect(tester.takeException(), isNull);
   });
@@ -158,8 +176,9 @@ void main() {
     expect(tester.getTopLeft(find.text(scholarship.title)).dy,
       greaterThanOrEqualTo(tester.getBottomRight(find.byType(IconButton)).dy));
   });
-  setUpAll(() {
+  setUpAll(() async {
     GoogleFonts.config.allowRuntimeFetching = false;
+    await loadAppFonts();
   });
 
   testWidgets('unsaved card shows the outline icon and tapping calls back',

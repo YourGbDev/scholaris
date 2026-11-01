@@ -1,4 +1,4 @@
-import 'dart:async';
+﻿import 'dart:async';
 import 'dart:math' as math;
 
 import 'package:flutter/gestures.dart';
@@ -972,11 +972,7 @@ class _StudentApplicationGuideState extends State<StudentApplicationGuide>
                           liveRegion: true,
                           child: Text(
                             _stop.title,
-                            style: geist(
-                              fontSize: 20,
-                              height: 1.2,
-                              fontWeight: FontWeight.w700,
-                            ),
+                            style: appHeading(fontSize: 20),
                           ),
                         ),
                         const SizedBox(height: 10),
@@ -986,11 +982,7 @@ class _StudentApplicationGuideState extends State<StudentApplicationGuide>
                                   widget.discoverCard != null
                               ? 'Swipe up to find View Details, then tap that button to review this scholarship.'
                               : _tip,
-                          style: geist(
-                            fontSize: 15,
-                            height: 1.45,
-                            color: kTextSecondary,
-                          ),
+                          style: appSupporting(fontSize: 15),
                         ),
                         if (_step == 7 &&
                             widget.exampleScholarship == null) ...[

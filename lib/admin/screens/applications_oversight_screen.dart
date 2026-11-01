@@ -936,7 +936,7 @@ class _ApplicationsOversightScreenState
                           scholarshipTitleText,
                           style: seqBodyMd(
                             color: kSeqOnSurfaceVariant,
-                            fontWeight: FontWeight.w500,
+                            fontWeight: FontWeight.w800,
                           ),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,

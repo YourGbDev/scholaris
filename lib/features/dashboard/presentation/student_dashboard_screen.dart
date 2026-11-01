@@ -1,4 +1,4 @@
-import 'package:scholaris/features/home/presentation/widgets/student_tab_entrance.dart';
+﻿import 'package:scholaris/features/home/presentation/widgets/student_tab_entrance.dart';
 // lib/features/dashboard/presentation/student_dashboard_screen.dart
 //
 // 100% Stitch V2 Student Dashboard Screen.
@@ -256,12 +256,7 @@ class _StudentDashboardScreenState
                   const SizedBox(width: 8),
                   Text(
                     'Scholaris',
-                    style: outfit(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      color: const Color(0xFF161C27),
-                      letterSpacing: -0.5,
-                    ),
+                    style: appHeading(fontSize: 24),
                   ),
                 ],
               ),
@@ -342,20 +337,11 @@ class _StudentDashboardScreenState
                     children: [
                       Text(
                         title,
-                        style: outfit(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: const Color(0xFF161C27),
-                        ),
+                        style: appCardTitle(fontSize: 16),
                       ),
                       Text(
                         subtitle,
-                        style: openSans(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w600,
-                          height: 1.4,
-                          color: const Color(0xFF404942),
-                        ),
+                        style: appSupporting(),
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                       ),
@@ -387,22 +373,12 @@ class _StudentDashboardScreenState
       children: [
         Text(
           dateStr,
-          style: outfit(
-            fontSize: 12,
-            fontWeight: FontWeight.w500,
-            color: const Color(0xFF657168),
-            letterSpacing: 0.8,
-          ),
+          style: appOverline(),
         ),
         const SizedBox(height: 3),
         Text(
           greetingStr,
-          style: outfit(
-            fontSize: 28,
-            fontWeight: FontWeight.w700,
-            color: const Color(0xFF0F4D2E),
-            letterSpacing: -0.5,
-          ),
+          style: appGreeting(),
         ),
       ],
     );
@@ -473,37 +449,16 @@ class _StudentDashboardScreenState
       mainAxisSize: MainAxisSize.min,
       children: [
         Text(
-          'YOUR NEXT CHAPTER',
-          style: geist(
-            fontSize: 11,
-            fontWeight: FontWeight.w600,
-            color: const Color(0xFF485356),
-            letterSpacing: .15,
-          ),
-        ),
-        const SizedBox(height: 8),
-        Text(
           'Find your next opportunity.',
-          style: geist(
-            fontSize: 22,
-            fontWeight: FontWeight.w700,
-            color: kPrimary,
-            height: 1.15,
-            letterSpacing: -.5,
-          ),
+          style: appHeading(fontSize: 22),
         ),
-        const SizedBox(height: 10),
+        const SizedBox(height: 12),
         Text(
           countLabel,
           key: const ValueKey('stat-count-matches'),
-          style: geist(
-            fontSize: 13,
-            fontWeight: FontWeight.w600,
-            height: 1.4,
-            color: const Color(0xFF485356),
-          ),
+          style: appSupporting(),
         ),
-        const SizedBox(height: 12),
+        const SizedBox(height: 18),
         Padding(
           padding: const EdgeInsets.only(left: 12),
           child: FilledButton(
@@ -708,13 +663,7 @@ class _StudentDashboardScreenState
                 child: Text(
                   'Recommended for you',
                   key: widget.recommendationsGuideKey,
-                  style: outfit(
-                    fontSize: 21,
-                    fontWeight: FontWeight.w700,
-                    color: const Color(0xFF161C27),
-                    letterSpacing: -0.34,
-                  ),
-                ),
+                  style: appHeading(fontSize: 22),
               ),
               const SizedBox(width: 8),
               PressableScale(
@@ -897,18 +846,19 @@ class _StudentDashboardScreenState
               const SizedBox(width: 6),
               Expanded(
                 child: Text(
-                  'Closing Soon (${info.closingSoonCount})',
+                  'Closing Soon ()',
                   style: outfit(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
                     color: const Color(0xFFC62828),
-                    letterSpacing: -0.32,
+                    letterSpacing: 0,
                   ),
                 ),
               ),
             ],
           ),
         ),
+
         const SizedBox(height: 10),
         ListView.separated(
           shrinkWrap: true,
@@ -1122,10 +1072,9 @@ class _StatCard extends StatelessWidget {
                   overflow: TextOverflow.ellipsis,
                   style: openSans(
                     fontSize: 13,
-                    fontWeight: FontWeight.w600,
-                    color: isUrgent
-                        ? const Color(0xFF8A5B00)
-                        : const Color(0xFF263D2C),
+                    fontWeight: FontWeight.w700,
+                    letterSpacing: -.1,
+                    color: isUrgent ? const Color(0xFF8A5B00) : kTextSupporting,
                   ),
                 ),
               ],

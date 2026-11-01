@@ -80,7 +80,7 @@ class _ScholarshipQrDialogState extends State<_ScholarshipQrDialog> {
                           s.title,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
-                          style: geist(
+                          style: geist(fontWeight: FontWeight.w800,
                             fontSize: 12.5,
                             color: const Color(0xFF707971),
                           ),

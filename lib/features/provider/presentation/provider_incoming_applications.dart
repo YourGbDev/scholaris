@@ -363,7 +363,7 @@ class _IncomingApplicationRow extends ConsumerWidget {
                           overflow: TextOverflow.ellipsis,
                           style: poppins(
                             fontSize: 15,
-                            fontWeight: FontWeight.w600,
+                            fontWeight: FontWeight.w800,
                             color: Colors.black87,
                           ),
                         ),

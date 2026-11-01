@@ -73,7 +73,7 @@ class _OrgTeamViewState extends ConsumerState<OrgTeamView> {
                     s.title,
                     style: orgHeadline(
                       fontSize: 13,
-                      fontWeight: FontWeight.w600,
+                      fontWeight: FontWeight.w800,
                     ),
                   ),
                   subtitle: Text(

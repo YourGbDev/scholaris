@@ -11,6 +11,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'helpers/load_app_fonts.dart';
 
 import 'package:scholaris/features/applications/providers/applications_provider.dart';
 import 'package:scholaris/features/account/presentation/account_settings_screen.dart';
@@ -300,10 +301,15 @@ void main() {
     final container = ProviderScope.containerOf(tester.element(find.byType(HomeScreen)));
     expect(container.read(homeTabIndexProvider), 0);
     expect(find.byKey(const ValueKey('stat-chip-saved')), findsOneWidget);
+    final savedLabel = tester.widget<Text>(find.text('Saved').first);
+    expect(savedLabel.style?.fontWeight, FontWeight.w700);
+    expect(savedLabel.style?.fontSize, 13);
+    expect(savedLabel.style?.letterSpacing, -.1);
     expect(tester.takeException(), isNull);
   });
-  setUpAll(() {
+  setUpAll(() async {
     GoogleFonts.config.allowRuntimeFetching = false;
+    await loadAppFonts();
   });
 
   testWidgets('female login never paints a male hero while profile loads', (tester) async {

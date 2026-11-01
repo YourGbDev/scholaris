@@ -23,7 +23,7 @@ void main() {
       );
       await tester.pumpWidget(host(0));
       Color ink() => tester.widget<Text>(find.text('Discover')).style!.color!;
-      const inactive = Color(0xFF25282B);
+      const inactive = Color(0xFF64748B);
       await tester.pumpWidget(host(1));
       await tester.pump(const Duration(milliseconds: 70));
       final midway = ink();

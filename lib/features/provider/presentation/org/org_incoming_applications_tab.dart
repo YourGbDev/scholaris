@@ -1692,7 +1692,7 @@ class _OrgIncomingApplicationsTabState
           scholarship?.title ?? 'Grant Intake Track',
           style: orgHeadline(
             fontSize: 13,
-            fontWeight: FontWeight.w600,
+            fontWeight: FontWeight.w800,
             color: kOrgTextPrimary,
           ),
           maxLines: 1,

@@ -1,5 +1,5 @@
+import 'helpers/load_app_fonts.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:scholaris/features/scholarships/presentation/scholarship_detail_screen.dart';
 import 'package:scholaris/features/applications/presentation/submit_application_review_dialog.dart';
 
@@ -13,11 +13,7 @@ import 'package:scholaris/features/home/presentation/widgets/student_swipe_cue.d
 
 void main() {
   setUpAll(() async {
-    await (FontLoader('Geist')
-          ..addFont(rootBundle.load('assets/fonts/geist/Geist-Regular.ttf'))
-          ..addFont(rootBundle.load('assets/fonts/geist/Geist-SemiBold.ttf'))
-          ..addFont(rootBundle.load('assets/fonts/geist/Geist-Bold.ttf')))
-        .load();
+    await loadAppFonts();
   });
   setUp(() {
     GoogleFonts.config.allowRuntimeFetching = false;

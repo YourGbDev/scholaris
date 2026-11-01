@@ -590,9 +590,11 @@ class _AdminUsersTabState extends ConsumerState<AdminUsersTab> {
                 style: seqTabularFigures(seqDisplay(fontWeight: FontWeight.w700)),
               ),
               const SizedBox(width: 8),
-              Text(
-                subtext,
-                style: seqBodySm(color: kSeqOutline),
+              Flexible(
+                child: Text(
+                  subtext,
+                  style: seqBodySm(color: kTextSupporting),
+                ),
               ),
             ],
           ),

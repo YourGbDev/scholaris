@@ -322,6 +322,29 @@ class LoginLockoutService {
     }
   }
 
+  /// Records an audit log event into the in-memory ledger without direct table writes.
+  void recordInMemoryAuditLog({
+    required String action,
+    required String targetType,
+    String? targetId,
+    Map<String, dynamic>? details,
+    String? actorEmail,
+    String? actorRole,
+  }) {
+    final now = DateTime.now();
+    final logEntry = {
+      'id': 'log-${now.millisecondsSinceEpoch}',
+      'action': action,
+      'target_type': targetType,
+      'target_id': targetId,
+      'details': details ?? {},
+      'actor_email': actorEmail ?? 'system@scholaris.ph',
+      'actor_role': actorRole ?? 'system',
+      'created_at': now.toIso8601String(),
+    };
+    _inMemoryAuditLogs.insert(0, logEntry);
+  }
+
   /// Records an audit log event.
   Future<void> logAuditEvent({
     required String action,

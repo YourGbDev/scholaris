@@ -56,22 +56,26 @@ Future<void> logAdminAuditEvent({
   String? targetId,
   Map<String, dynamic>? details,
 }) async {
+  bool isInitialized = false;
   try {
+    isInitialized = Supabase.instance.isInitialized;
+  } catch (_) {
+    isInitialized = false;
+  }
+
+  if (isInitialized) {
     final result = await Supabase.instance.client.rpc('log_audit_event', params: {
       'p_action': action,
       'p_target_type': targetType,
       'p_target_id': targetId,
       'p_details': details ?? {},
     });
-    if (action == 'scholarship_flagged' && (result is! String || result.isEmpty)) {
-      throw StateError('The scholarship flag could not be confirmed.');
+    if (result is! String || result.isEmpty) {
+      throw StateError('The audit event could not be confirmed.');
     }
-  } catch (_) {
-    // Non-fatal if offline
   }
 
-  // Record into audit ledger (in-memory + Supabase)
-  await LoginLockoutService.instance.logAuditEvent(
+  LoginLockoutService.instance.recordInMemoryAuditLog(
     action: action,
     targetType: targetType,
     targetId: targetId,

@@ -129,7 +129,7 @@ class _CeremonyScreenState extends State<CeremonyScreen> {
                           Text(
                             widget.title!,
                             style: outfit(
-                              fontSize: 16,
+                              fontSize: 15,
                               fontWeight: FontWeight.w700,
                               color: const Color(0xFF0F4D2E),
                             ),

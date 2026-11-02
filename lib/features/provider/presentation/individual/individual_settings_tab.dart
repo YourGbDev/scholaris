@@ -148,7 +148,7 @@ class _IndividualSettingsTabState extends ConsumerState<IndividualSettingsTab> {
         padding: const EdgeInsets.fromLTRB(16, 16, 16, 32),
         children: [
           // Header
-          Text('Profile & settings', style: orgHeadline(fontSize: 28)),
+          Text('Profile & settings', style: orgHeadline(fontSize: MediaQuery.sizeOf(context).width >= 900 ? 24 : 20)),
           const SizedBox(height: 2),
           Text(
             'Your provider details and account preferences.',

@@ -24,7 +24,7 @@ class IndividualSupportTab extends ConsumerWidget {
     return ListView(
       padding: EdgeInsets.all(MediaQuery.sizeOf(context).width < 600 ? 20 : 32),
       children: [
-        Text('Budget & support', style: orgHeadline(fontSize: 28)),
+        Text('Budget & support', style: orgHeadline(fontSize: MediaQuery.sizeOf(context).width >= 900 ? 24 : 20)),
         const SizedBox(height: 8),
         Text(
           'Know what you have set aside, promised, and recorded as sent.',
@@ -40,7 +40,7 @@ class IndividualSupportTab extends ConsumerWidget {
               children: [
                 Text(
                   'Support records could not load',
-                  style: orgHeadline(fontSize: 20),
+                  style: orgHeadline(fontSize: 17),
                 ),
                 const SizedBox(height: 8),
                 const Text(
@@ -82,7 +82,7 @@ class IndividualSupportTab extends ConsumerWidget {
             children: [
               Text(
                 'Safer ways to support students',
-                style: orgHeadline(fontSize: 19),
+                style: orgHeadline(fontSize: 17),
               ),
               const SizedBox(height: 10),
               const Text(
@@ -100,7 +100,7 @@ class IndividualSupportTab extends ConsumerWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('Your support assistant', style: orgHeadline(fontSize: 19)),
+              Text('Your support assistant', style: orgHeadline(fontSize: 17)),
               const SizedBox(height: 8),
               const Text(
                 'Budget insights above are calculated from your records. AI assistance is not connected yet. When enabled, it can help draft program details and explain recorded information; you will still approve every decision. Student private chats will not be shared here.',
@@ -148,7 +148,7 @@ class IndividualSupportTab extends ConsumerWidget {
               spacing: 16,
               runSpacing: 8,
               children: [
-                Text(program.title, style: orgHeadline(fontWeight: FontWeight.w800, fontSize: 22)),
+                Text(program.title, style: orgHeadline(fontWeight: FontWeight.w700, fontSize: 15)),
                 OutlinedButton.icon(
                   onPressed: () => _edit(
                     context,
@@ -235,7 +235,7 @@ class IndividualSupportTab extends ConsumerWidget {
             const Divider(height: 32),
             Text(
               'Students & payment records',
-              style: orgHeadline(fontSize: 18),
+              style: orgHeadline(fontSize: 17),
             ),
             if (accepted.isEmpty)
               const Padding(

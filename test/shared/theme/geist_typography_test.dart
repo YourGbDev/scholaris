@@ -8,8 +8,16 @@ import 'package:scholaris/shared/theme/app_theme.dart';
 
 void main() {
   test('all five bundled Geist fonts declare unified family name Geist for iOS CoreText', () async {
-    for (final weight in ['Regular', 'Medium', 'SemiBold', 'Bold', 'ExtraBold']) {
-      final data = await rootBundle.load('assets/fonts/geist/Geist-$weight.ttf');
+    for (final weight in [
+      'Regular',
+      'Medium',
+      'SemiBold',
+      'Bold',
+      'ExtraBold',
+    ]) {
+      final data = await rootBundle.load(
+        'assets/fonts/geist/Geist-$weight.ttf',
+      );
       final bytes = data.buffer.asByteData();
       final numTables = bytes.getUint16(4);
       int nameOffset = 0;
@@ -44,21 +52,37 @@ void main() {
           break;
         }
       }
-      expect(familyName, 'Geist', reason: 'Font Geist-$weight.ttf must have nameID 1 equal to Geist for CoreText');
+      expect(
+        familyName,
+        'Geist',
+        reason:
+            'Font Geist-$weight.ttf must have nameID 1 equal to Geist for CoreText',
+      );
     }
   });
 
   setUpAll(() => GoogleFonts.config.allowRuntimeFetching = false);
 
-  test('all five Geist weights are bundled and load without fetching', () async {
-    final fonts = FontLoader('Geist');
-    for (final weight in ['Regular', 'Medium', 'SemiBold', 'Bold', 'ExtraBold']) {
-      final data = await rootBundle.load('assets/fonts/geist/Geist-$weight.ttf');
-      expect(data.lengthInBytes, greaterThan(10000), reason: weight);
-      fonts.addFont(Future.value(data));
-    }
-    await fonts.load();
-  });
+  test(
+    'all five Geist weights are bundled and load without fetching',
+    () async {
+      final fonts = FontLoader('Geist');
+      for (final weight in [
+        'Regular',
+        'Medium',
+        'SemiBold',
+        'Bold',
+        'ExtraBold',
+      ]) {
+        final data = await rootBundle.load(
+          'assets/fonts/geist/Geist-$weight.ttf',
+        );
+        expect(data.lengthInBytes, greaterThan(10000), reason: weight);
+        fonts.addFont(Future.value(data));
+      }
+      await fonts.load();
+    },
+  );
 
   testWidgets('admin and provider reference pills use bundled Geist offline', (
     tester,
@@ -101,9 +125,14 @@ void main() {
 
   test('Geist adapters use role tracking and explicit overrides', () {
     for (final style in [
-      openSans(fontSize: 12), poppins(fontSize: 28), inter(fontSize: 24),
-      orgHeadline(fontSize: 24), orgBody(), orgLabel(),
+      openSans(fontSize: 12),
+      inter(fontSize: 24),
+      orgBody(),
+      orgLabel(),
     ]) {
+      expect(style.letterSpacing, 0);
+    }
+    for (final style in [poppins(fontSize: 28), orgHeadline(fontSize: 24)]) {
       expect(style.letterSpacing, lessThan(0));
     }
     expect(orgHeadline(fontSize: 24).height, 1.2);

@@ -381,7 +381,7 @@ Widget _buildSkeletonLoader(BuildContext context) {
         // Title
         Text(
           'System Audit Trail',
-          style: seqHeadlineLg(
+          style: seqPageTitle(context,
             fontWeight: FontWeight.w700,
             color: kSeqOnSurface,
           ),

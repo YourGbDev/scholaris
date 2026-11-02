@@ -55,68 +55,70 @@ class ApplicationsScreen extends ConsumerWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              StudentTabReveal(order: 0,
+              StudentTabReveal(
+                order: 0,
                 immediate: true,
                 child: Padding(
-                padding: const EdgeInsets.fromLTRB(20, 16, 20, 8),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Expanded(
+                  padding: const EdgeInsets.fromLTRB(20, 16, 20, 8),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Expanded(
                         child: StudentTabReveal(
                           order: 0,
                           child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'My Applications',
-                            style: outfit(
-                              fontSize: 11,
-                              fontWeight: FontWeight.w700,
-                              color: kSecondary,
-                              letterSpacing: 0.8,
-                            ),
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'My Applications',
+                                style: outfit(
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.w700,
+                                  color: kSecondary,
+                                  letterSpacing: 0.8,
+                                ),
+                              ),
+                              const SizedBox(height: 2),
+                              Text(
+                                'Application Tracker',
+                                style: outfit(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                  color: kOnSurface,
+                                  letterSpacing: -0.3,
+                                ),
+                              ),
+                              const SizedBox(height: 2),
+                              Text(
+                                'Track deadlines, submission proofs, and award decisions.',
+                                style: openSans(
+                                  fontSize: 12.5,
+                                  color: kOnSurfaceVariant,
+                                ),
+                              ),
+                            ],
                           ),
-                          const SizedBox(height: 2),
-                          Text(
-                            'Application Tracker',
-                            style: outfit(
-                              fontSize: 24,
-                              fontWeight: FontWeight.bold,
-                              color: kOnSurface,
-                              letterSpacing: -0.3,
-                            ),
-                          ),
-                          const SizedBox(height: 2),
-                          Text(
-                            'Track deadlines, submission proofs, and award decisions.',
-                            style: openSans(
-                              fontSize: 12.5,
-                              color: kOnSurfaceVariant,
-                            ),
-                          ),
-                        ],
+                        ),
                       ),
-                    ),
-                    ),
-                    const SizedBox(width: 8),
-                    Container(
-                      width: 40,
-                      height: 40,
-                      decoration: const BoxDecoration(
-                        color: Color(0xFFF0F0F0),
-                        shape: BoxShape.circle,
+                      const SizedBox(width: 8),
+                      Container(
+                        width: 40,
+                        height: 40,
+                        decoration: const BoxDecoration(
+                          color: Color(0xFFF0F0F0),
+                          shape: BoxShape.circle,
+                        ),
+                        child: const Icon(
+                          Icons.analytics_outlined,
+                          size: 22,
+                          color: kPrimaryContainer,
+                        ),
                       ),
-                      child: const Icon(
-                        Icons.analytics_outlined,
-                        size: 22,
-                        color: kPrimaryContainer,
-                      ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              )),
+              ),
               Expanded(child: body),
             ],
           ),
@@ -142,7 +144,7 @@ class ApplicationsScreen extends ConsumerWidget {
             Text(
               'Application Tracker',
               style: outfit(
-                fontSize: 18,
+                fontSize: 17,
                 fontWeight: FontWeight.bold,
                 color: kOnSurface,
               ),
@@ -160,16 +162,22 @@ class ApplicationsScreen extends ConsumerWidget {
     final filteredAsync = ref.watch(filteredApplicationsProvider);
 
     return applicationsAsync.when(
-      loading: () => StudentTabReveal(order: 3, child: CrossFadeLoading(
-        key: const Key('loading-indicator'),
-        isLoading: true,
-        skeleton: _buildTrackerSkeleton(),
-        child: const SizedBox.shrink(),
-      )),
-      error: (_, _) => StudentTabReveal(order: 3, child: ErrorView(
-        message: 'Could not load your applications.',
-        onRetry: () => ref.invalidate(applicationsProvider),
-      )),
+      loading: () => StudentTabReveal(
+        order: 3,
+        child: CrossFadeLoading(
+          key: const Key('loading-indicator'),
+          isLoading: true,
+          skeleton: _buildTrackerSkeleton(),
+          child: const SizedBox.shrink(),
+        ),
+      ),
+      error: (_, _) => StudentTabReveal(
+        order: 3,
+        child: ErrorView(
+          message: 'Could not load your applications.',
+          onRetry: () => ref.invalidate(applicationsProvider),
+        ),
+      ),
       data: (applications) {
         if (applications.isEmpty) {
           return RefreshIndicator(
@@ -179,7 +187,10 @@ class ApplicationsScreen extends ConsumerWidget {
               ref.invalidate(scholarshipsProvider);
               await ref.read(applicationsProvider.future);
             },
-            child: const StudentTabReveal(order: 3, child: _EmptyApplicationsState()),
+            child: const StudentTabReveal(
+              order: 3,
+              child: _EmptyApplicationsState(),
+            ),
           );
         }
 
@@ -187,8 +198,11 @@ class ApplicationsScreen extends ConsumerWidget {
         final status = ref.watch(applicationFilterProvider).status;
         final filtered = filteredAsync.valueOrNull ?? const <Application>[];
 
-        final allScholarships = scholarshipsAsync.valueOrNull ?? const <Scholarship>[];
-        final byId = <String, Scholarship>{for (final s in allScholarships) s.id: s};
+        final allScholarships =
+            scholarshipsAsync.valueOrNull ?? const <Scholarship>[];
+        final byId = <String, Scholarship>{
+          for (final s in allScholarships) s.id: s,
+        };
 
         // Calculate total potential value: sum of estimated scholarship grant values
         double totalPotential = 0;
@@ -214,7 +228,8 @@ class ApplicationsScreen extends ConsumerWidget {
           }
         }
 
-        final compactTextLayout = MediaQuery.sizeOf(context).width < 380 &&
+        final compactTextLayout =
+            MediaQuery.sizeOf(context).width < 380 &&
             MediaQuery.textScalerOf(context).scale(14) > 16;
         if (compactTextLayout) {
           return RefreshIndicator(
@@ -225,57 +240,113 @@ class ApplicationsScreen extends ConsumerWidget {
               await ref.read(applicationsProvider.future);
             },
             child: CustomScrollView(
-              physics: const AlwaysScrollableScrollPhysics(parent: AppleBouncingScrollPhysics()),
+              physics: const AlwaysScrollableScrollPhysics(
+                parent: AppleBouncingScrollPhysics(),
+              ),
               slivers: [
                 SliverPadding(
                   padding: const EdgeInsets.symmetric(horizontal: 20),
-                  sliver: SliverToBoxAdapter(child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const SizedBox(height: 4),
-                      StudentTabReveal(order: 1, structural: true, child: _PotentialAwardCard(
-                        totalPotential: totalPotential, applications: applications, counts: counts, immediate: embedded,
-                      )),
-                      const SizedBox(height: 10),
-                      StudentTabReveal(order: 1, structural: true, child: _SummaryBar(applications: applications)),
-                      const SizedBox(height: 10),
-                      StudentTabReveal(order: 2, structural: true, child: _StatusFilterBar(
-                        counts: counts, selected: status,
-                        onSelect: (s) => ref.read(applicationFilterProvider.notifier).select(s),
-                      )),
-                      const SizedBox(height: 10),
-                    ],
-                  )),
+                  sliver: SliverToBoxAdapter(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const SizedBox(height: 4),
+                        StudentTabReveal(
+                          order: 1,
+                          structural: true,
+                          child: _PotentialAwardCard(
+                            totalPotential: totalPotential,
+                            applications: applications,
+                            counts: counts,
+                            immediate: embedded,
+                          ),
+                        ),
+                        const SizedBox(height: 10),
+                        StudentTabReveal(
+                          order: 1,
+                          structural: true,
+                          child: _SummaryBar(applications: applications),
+                        ),
+                        const SizedBox(height: 10),
+                        StudentTabReveal(
+                          order: 2,
+                          structural: true,
+                          child: _StatusFilterBar(
+                            counts: counts,
+                            selected: status,
+                            onSelect: (s) => ref
+                                .read(applicationFilterProvider.notifier)
+                                .select(s),
+                          ),
+                        ),
+                        const SizedBox(height: 10),
+                      ],
+                    ),
+                  ),
                 ),
                 SliverPadding(
-                  padding: EdgeInsets.fromLTRB(20, 0, 20, MediaQuery.of(context).padding.bottom + 80),
+                  padding: EdgeInsets.fromLTRB(
+                    20,
+                    0,
+                    20,
+                    MediaQuery.of(context).padding.bottom + 80,
+                  ),
                   sliver: filtered.isEmpty
-                      ? SliverToBoxAdapter(child: StudentTabReveal(order: 3, child: _buildFilteredEmpty(context, ref, status)))
+                      ? SliverToBoxAdapter(
+                          child: StudentTabReveal(
+                            order: 3,
+                            child: _buildFilteredEmpty(context, ref, status),
+                          ),
+                        )
                       : scholarshipsAsync.when(
-                          loading: () => const SliverToBoxAdapter(child: StudentTabReveal(order: 3, child: LoadingView())),
-                          error: (_, _) => SliverToBoxAdapter(child: StudentTabReveal(order: 3, child: ErrorView(
-                            message: 'Could not load scholarship details.',
-                            onRetry: () => ref.invalidate(scholarshipsProvider),
-                          ))),
+                          loading: () => const SliverToBoxAdapter(
+                            child: StudentTabReveal(
+                              order: 3,
+                              child: LoadingView(),
+                            ),
+                          ),
+                          error: (_, _) => SliverToBoxAdapter(
+                            child: StudentTabReveal(
+                              order: 3,
+                              child: ErrorView(
+                                message: 'Could not load scholarship details.',
+                                onRetry: () =>
+                                    ref.invalidate(scholarshipsProvider),
+                              ),
+                            ),
+                          ),
                           data: (_) => SliverList.builder(
-                            itemCount: filtered.length + (urgentApp != null ? 1 : 0),
+                            itemCount:
+                                filtered.length + (urgentApp != null ? 1 : 0),
                             itemBuilder: (context, index) {
                               final order = index + 1;
-                              if (urgentApp != null && urgentScholarship != null) {
+                              if (urgentApp != null &&
+                                  urgentScholarship != null) {
                                 if (index == 0) {
                                   return Padding(
                                     padding: const EdgeInsets.only(bottom: 12),
-                                    child: StudentTabReveal(order: order, child: _UrgentDeadlineBanner(
-                                      application: urgentApp, scholarship: urgentScholarship,
-                                    )),
+                                    child: StudentTabReveal(
+                                      order: order,
+                                      child: _UrgentDeadlineBanner(
+                                        application: urgentApp,
+                                        scholarship: urgentScholarship,
+                                      ),
+                                    ),
                                   );
                                 }
                                 index--;
                               }
-                              return StudentTabReveal(order: order, child: Padding(
-                                padding: const EdgeInsets.only(bottom: 12),
-                                child: _ApplicationCard(application: filtered[index], scholarship: byId[filtered[index].scholarshipId]),
-                              ));
+                              return StudentTabReveal(
+                                order: order,
+                                child: Padding(
+                                  padding: const EdgeInsets.only(bottom: 12),
+                                  child: _ApplicationCard(
+                                    application: filtered[index],
+                                    scholarship:
+                                        byId[filtered[index].scholarshipId],
+                                  ),
+                                ),
+                              );
                             },
                           ),
                         ),
@@ -290,22 +361,33 @@ class ApplicationsScreen extends ConsumerWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const SizedBox(height: 4),
-              StudentTabReveal(order: 1, structural: true, child: _PotentialAwardCard(
-                totalPotential: totalPotential,
-                applications: applications,
-                counts: counts,
-                immediate: embedded,
-              )),
+              StudentTabReveal(
+                order: 1,
+                structural: true,
+                child: _PotentialAwardCard(
+                  totalPotential: totalPotential,
+                  applications: applications,
+                  counts: counts,
+                  immediate: embedded,
+                ),
+              ),
               const SizedBox(height: 10),
-              StudentTabReveal(order: 1, structural: true, child: _SummaryBar(applications: applications)),
+              StudentTabReveal(
+                order: 1,
+                structural: true,
+                child: _SummaryBar(applications: applications),
+              ),
               const SizedBox(height: 10),
-              StudentTabReveal(order: 2,
-                structural: true, child: _StatusFilterBar(
-                counts: counts,
-                selected: status,
-                onSelect: (s) =>
-                    ref.read(applicationFilterProvider.notifier).select(s),
-              )),
+              StudentTabReveal(
+                order: 2,
+                structural: true,
+                child: _StatusFilterBar(
+                  counts: counts,
+                  selected: status,
+                  onSelect: (s) =>
+                      ref.read(applicationFilterProvider.notifier).select(s),
+                ),
+              ),
               const SizedBox(height: 10),
               Expanded(
                 child: RefreshIndicator(
@@ -323,16 +405,30 @@ class ApplicationsScreen extends ConsumerWidget {
                           children: [
                             SizedBox(
                               height: 360,
-                              child: StudentTabReveal(order: 3, child: _buildFilteredEmpty(context, ref, status)),
+                              child: StudentTabReveal(
+                                order: 3,
+                                child: _buildFilteredEmpty(
+                                  context,
+                                  ref,
+                                  status,
+                                ),
+                              ),
                             ),
                           ],
                         )
                       : scholarshipsAsync.when(
-                          loading: () => const StudentTabReveal(order: 3, child: LoadingView()),
-                          error: (_, _) => StudentTabReveal(order: 3, child: ErrorView(
-                            message: 'Could not load scholarship details.',
-                            onRetry: () => ref.invalidate(scholarshipsProvider),
-                          )),
+                          loading: () => const StudentTabReveal(
+                            order: 3,
+                            child: LoadingView(),
+                          ),
+                          error: (_, _) => StudentTabReveal(
+                            order: 3,
+                            child: ErrorView(
+                              message: 'Could not load scholarship details.',
+                              onRetry: () =>
+                                  ref.invalidate(scholarshipsProvider),
+                            ),
+                          ),
                           data: (_) {
                             return ListView.builder(
                               physics: const AlwaysScrollableScrollPhysics(
@@ -341,21 +437,30 @@ class ApplicationsScreen extends ConsumerWidget {
                               // ignore: deprecated_member_use
                               cacheExtent: 1500.0,
                               padding: EdgeInsets.only(
-                                bottom: MediaQuery.of(context).padding.bottom + 64 + 16,
+                                bottom:
+                                    MediaQuery.of(context).padding.bottom +
+                                    64 +
+                                    16,
                               ),
-                              itemCount: filtered.length +
-                                  (urgentApp != null ? 1 : 0),
+                              itemCount:
+                                  filtered.length + (urgentApp != null ? 1 : 0),
                               itemBuilder: (context, index) {
                                 final revealOrder = index + 1;
                                 // If urgent banner exists, render it at index 0
-                                if (urgentApp != null && urgentScholarship != null) {
+                                if (urgentApp != null &&
+                                    urgentScholarship != null) {
                                   if (index == 0) {
                                     return Padding(
-                                      padding: const EdgeInsets.only(bottom: 12),
-                                      child: StudentTabReveal(order: revealOrder, child: _UrgentDeadlineBanner(
-                                        application: urgentApp,
-                                        scholarship: urgentScholarship,
-                                      )),
+                                      padding: const EdgeInsets.only(
+                                        bottom: 12,
+                                      ),
+                                      child: StudentTabReveal(
+                                        order: revealOrder,
+                                        child: _UrgentDeadlineBanner(
+                                          application: urgentApp,
+                                          scholarship: urgentScholarship,
+                                        ),
+                                      ),
                                     );
                                   }
                                   index--;
@@ -374,8 +479,8 @@ class ApplicationsScreen extends ConsumerWidget {
                                 );
                               },
                             );
-                        },
-                      ),
+                          },
+                        ),
                 ),
               ),
             ],
@@ -463,13 +568,16 @@ class _PotentialAwardCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final activeCount = applications
-        .where((a) =>
-            a.status != ApplicationStatus.rejected &&
-            a.status != ApplicationStatus.withdrawn)
+        .where(
+          (a) =>
+              a.status != ApplicationStatus.rejected &&
+              a.status != ApplicationStatus.withdrawn,
+        )
         .length;
 
     // Let enlarged text use the card width instead of splitting an amount.
-    final stackAward = MediaQuery.textScalerOf(context).scale(21) > 28 &&
+    final stackAward =
+        MediaQuery.textScalerOf(context).scale(21) > 28 &&
         MediaQuery.sizeOf(context).width < 480;
     final approvedCount = counts[ApplicationStatus.approved] ?? 0;
     final underReviewCount = counts[ApplicationStatus.underReview] ?? 0;
@@ -521,7 +629,8 @@ class _PotentialAwardCard extends StatelessWidget {
                 Flex(
                   direction: stackAward ? Axis.vertical : Axis.horizontal,
                   crossAxisAlignment: stackAward
-                      ? CrossAxisAlignment.start : CrossAxisAlignment.center,
+                      ? CrossAxisAlignment.start
+                      : CrossAxisAlignment.center,
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Flexible(
@@ -546,15 +655,15 @@ class _PotentialAwardCard extends StatelessWidget {
                             crossAxisAlignment: WrapCrossAlignment.center,
                             children: [
                               CountUpAnimation(
-                                  targetValue: totalPotential.toInt(),
-                                  prefix: '₱',
-                                  immediate: immediate,
-                                  style: outfit(
-                                    fontSize: 21,
-                                    fontWeight: FontWeight.w800,
-                                    color: Colors.white,
-                                    letterSpacing: -0.5,
-                                  ),
+                                targetValue: totalPotential.toInt(),
+                                prefix: '₱',
+                                immediate: immediate,
+                                style: outfit(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.w700,
+                                  color: Colors.white,
+                                  letterSpacing: -0.5,
+                                ),
                               ),
                               Text(
                                 'applied value',
@@ -569,53 +678,56 @@ class _PotentialAwardCard extends StatelessWidget {
                         ],
                       ),
                     ),
-                  const SizedBox(width: 8, height: 8),
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                    decoration: BoxDecoration(
-                      color: Colors.white.withValues(alpha: 0.18),
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Container(
-                          width: 6,
-                          height: 6,
-                          decoration: const BoxDecoration(
-                            color: Color(0xFFFABC28), // Golden amber pulse
-                            shape: BoxShape.circle,
+                    const SizedBox(width: 8, height: 8),
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 4,
+                      ),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withValues(alpha: 0.18),
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Container(
+                            width: 6,
+                            height: 6,
+                            decoration: const BoxDecoration(
+                              color: Color(0xFFFABC28), // Golden amber pulse
+                              shape: BoxShape.circle,
+                            ),
                           ),
-                        ),
-                        const SizedBox(width: 5),
-                        Text(
-                          '$activeCount Active',
-                          style: outfit(
-                            fontSize: 11.5,
-                            fontWeight: FontWeight.w700,
-                            color: Colors.white,
+                          const SizedBox(width: 5),
+                          Text(
+                            '$activeCount Active',
+                            style: outfit(
+                              fontSize: 11.5,
+                              fontWeight: FontWeight.w700,
+                              color: Colors.white,
+                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 6),
-              Text(
-                '$approvedCount Approved • $underReviewCount Under Review',
-                style: openSans(
-                  fontSize: 10.5,
-                  fontWeight: FontWeight.w600,
-                  color: const Color(0xFFB3F1C6),
+                  ],
                 ),
-              ),
-            ],
-          ),
-        ],
+                const SizedBox(height: 6),
+                Text(
+                  '$approvedCount Approved • $underReviewCount Under Review',
+                  style: openSans(
+                    fontSize: 10.5,
+                    fontWeight: FontWeight.w600,
+                    color: const Color(0xFFB3F1C6),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
-    ),
-  );
+    );
   }
 }
 
@@ -826,7 +938,9 @@ class _UrgentDeadlineBanner extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final daysLeft = scholarship.deadline.difference(DateTime.now()).inDays;
-    final timeLabel = daysLeft <= 1 ? 'Due in 24 Hours' : 'Due in $daysLeft Days';
+    final timeLabel = daysLeft <= 1
+        ? 'Due in 24 Hours'
+        : 'Due in $daysLeft Days';
 
     return PressableScale(
       child: Container(
@@ -834,7 +948,9 @@ class _UrgentDeadlineBanner extends StatelessWidget {
         decoration: BoxDecoration(
           color: const Color(0xFFFFDAD6).withValues(alpha: 0.6),
           borderRadius: BorderRadius.circular(14),
-          border: Border.all(color: const Color(0xFFBA1A1A).withValues(alpha: 0.3)),
+          border: Border.all(
+            color: const Color(0xFFBA1A1A).withValues(alpha: 0.3),
+          ),
           boxShadow: const [
             BoxShadow(
               color: Color(0x08BA1A1A),
@@ -853,7 +969,11 @@ class _UrgentDeadlineBanner extends StatelessWidget {
                 color: Color(0xFFBA1A1A),
                 shape: BoxShape.circle,
               ),
-              child: const Icon(Icons.alarm_rounded, size: 18, color: Colors.white),
+              child: const Icon(
+                Icons.alarm_rounded,
+                size: 18,
+                color: Colors.white,
+              ),
             ),
             const SizedBox(width: 10),
             Expanded(
@@ -870,7 +990,7 @@ class _UrgentDeadlineBanner extends StatelessWidget {
                           overflow: TextOverflow.ellipsis,
                           style: outfit(
                             fontSize: 10.5,
-                            fontWeight: FontWeight.w800,
+                            fontWeight: FontWeight.w700,
                             color: const Color(0xFFBA1A1A),
                             letterSpacing: 0.6,
                           ),
@@ -923,8 +1043,11 @@ class _UrgentDeadlineBanner extends StatelessWidget {
                           ),
                         ),
                         const SizedBox(width: 4),
-                        const Icon(Icons.arrow_forward_rounded,
-                            size: 14, color: Color(0xFFBA1A1A)),
+                        const Icon(
+                          Icons.arrow_forward_rounded,
+                          size: 14,
+                          color: Color(0xFFBA1A1A),
+                        ),
                       ],
                     ),
                   ),
@@ -951,7 +1074,8 @@ class _ApplicationCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final scholarshipKnown = scholarship != null;
-    final isApproved = application.status == ApplicationStatus.approved ||
+    final isApproved =
+        application.status == ApplicationStatus.approved ||
         application.status == ApplicationStatus.awarded;
     final isDraft = application.status == ApplicationStatus.draft;
 
@@ -966,124 +1090,130 @@ class _ApplicationCard extends StatelessWidget {
         child: Material(
           color: Colors.white,
           borderRadius: BorderRadius.circular(kRadiusCard),
-        child: InkWell(
-          borderRadius: BorderRadius.circular(kRadiusCard),
-          onTap: () => _openApplicationDetail(context),
-          child: Container(
-            padding: const EdgeInsets.all(20),
-            decoration: kSoftCardDecoration.copyWith(border: Border.all(
-                color: isApproved
-                    ? const Color(0xFFB3F1C6)
-                    : kHairlineBorderSide.color,
-                width: .5,
-              )),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Top Row: Status chip + Amount
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Expanded(
-                      child: Wrap(
-                        crossAxisAlignment: WrapCrossAlignment.center,
-                        spacing: 8,
-                        children: [
-                          ApplicationStatusChip(status: application.status),
-                          if (application.appliedAt != null)
-                            Text(
-                              _formatDate(application.appliedAt!),
-                              style: openSans(
-                                fontSize: 11.5,
-                                color: const Color(0xFF404942),
+          child: InkWell(
+            borderRadius: BorderRadius.circular(kRadiusCard),
+            onTap: () => _openApplicationDetail(context),
+            child: Container(
+              padding: const EdgeInsets.all(20),
+              decoration: kSoftCardDecoration.copyWith(
+                border: Border.all(
+                  color: isApproved
+                      ? const Color(0xFFB3F1C6)
+                      : kHairlineBorderSide.color,
+                  width: .5,
+                ),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Top Row: Status chip + Amount
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Expanded(
+                        child: Wrap(
+                          crossAxisAlignment: WrapCrossAlignment.center,
+                          spacing: 8,
+                          children: [
+                            ApplicationStatusChip(status: application.status),
+                            if (application.appliedAt != null)
+                              Text(
+                                _formatDate(application.appliedAt!),
+                                style: openSans(
+                                  fontSize: 11.5,
+                                  color: const Color(0xFF404942),
+                                ),
                               ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          Text(
+                            formattedAmount,
+                            style: outfit(
+                              fontSize: 15,
+                              fontWeight: FontWeight.bold,
+                              color: isApproved
+                                  ? const Color(0xFF00351C)
+                                  : kOnSurface,
                             ),
+                          ),
+                          Text(
+                            'Per Annum',
+                            style: outfit(
+                              fontSize: 9.5,
+                              fontWeight: FontWeight.w600,
+                              color: kOnSurfaceVariant,
+                              letterSpacing: 0.3,
+                            ),
+                          ),
                         ],
                       ),
+                    ],
+                  ),
+                  const SizedBox(height: 10),
+
+                  // Scholarship Title
+                  Text(
+                    scholarship?.title ?? 'Scholarship unavailable',
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: outfit(
+                      fontSize: 15,
+                      fontWeight: FontWeight.w700,
+                      color: const Color(0xFF161C27),
+                      letterSpacing: -0.2,
                     ),
-                    const SizedBox(width: 8),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.end,
+                  ),
+                  const SizedBox(height: 2),
+
+                  // Provider & Proof ID
+                  Text.rich(
+                    TextSpan(
+                      text:
+                          '${scholarship?.provider ?? "National Scholarship Council"} ',
+                      style: openSans(
+                        fontSize: 12,
+                        color: const Color(0xFF404942),
+                      ),
                       children: [
-                        Text(
-                          formattedAmount,
+                        const TextSpan(text: '• Proof: '),
+                        TextSpan(
+                          text:
+                              '#REC-${application.id.substring(0, application.id.length.clamp(0, 6)).toUpperCase()}',
                           style: outfit(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            color: isApproved ? const Color(0xFF00351C) : kOnSurface,
-                          ),
-                        ),
-                        Text(
-                          'Per Annum',
-                          style: outfit(
-                            fontSize: 9.5,
+                            fontSize: 11.5,
                             fontWeight: FontWeight.w600,
-                            color: kOnSurfaceVariant,
-                            letterSpacing: 0.3,
+                            color: kSecondary,
                           ),
                         ),
                       ],
                     ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+
+                  const SizedBox(height: 12),
+
+                  // Status-Specific Body Content
+                  if (application.status == ApplicationStatus.underReview) ...[
+                    _buildUnderReviewSection(context),
+                  ] else if (isApproved) ...[
+                    _buildApprovedSection(context),
+                  ] else if (isDraft) ...[
+                    _buildDraftSection(context),
+                  ] else ...[
+                    _buildDefaultSection(context, scholarshipKnown),
                   ],
-                ),
-                const SizedBox(height: 10),
-
-                // Scholarship Title
-                Text(
-                  scholarship?.title ?? 'Scholarship unavailable',
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                  style: outfit(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w800,
-                    color: const Color(0xFF161C27),
-                    letterSpacing: -0.2,
-                  ),
-                ),
-                const SizedBox(height: 2),
-
-                // Provider & Proof ID
-                Text.rich(
-                  TextSpan(
-                    text: '${scholarship?.provider ?? "National Scholarship Council"} ',
-                    style: openSans(
-                      fontSize: 12,
-                      color: const Color(0xFF404942),
-                    ),
-                    children: [
-                      const TextSpan(text: '• Proof: '),
-                      TextSpan(
-                        text: '#REC-${application.id.substring(0, application.id.length.clamp(0, 6)).toUpperCase()}',
-                        style: outfit(
-                          fontSize: 11.5,
-                          fontWeight: FontWeight.w600,
-                          color: kSecondary,
-                        ),
-                      ),
-                    ],
-                  ),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-
-                const SizedBox(height: 12),
-
-                // Status-Specific Body Content
-                if (application.status == ApplicationStatus.underReview) ...[
-                  _buildUnderReviewSection(context),
-                ] else if (isApproved) ...[
-                  _buildApprovedSection(context),
-                ] else if (isDraft) ...[
-                  _buildDraftSection(context),
-                ] else ...[
-                  _buildDefaultSection(context, scholarshipKnown),
                 ],
-              ],
+              ),
             ),
           ),
         ),
-      ),
       ),
     );
   }
@@ -1112,7 +1242,11 @@ class _ApplicationCard extends StatelessWidget {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const Icon(Icons.description_outlined, size: 15, color: kSecondary),
+                      const Icon(
+                        Icons.description_outlined,
+                        size: 15,
+                        color: kSecondary,
+                      ),
                       const SizedBox(width: 4),
                       Flexible(
                         child: Text(
@@ -1144,7 +1278,9 @@ class _ApplicationCard extends StatelessWidget {
                 ),
                 onPressed: () {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Contacting DOST Scholarship Liaison...')),
+                    const SnackBar(
+                      content: Text('Contacting DOST Scholarship Liaison...'),
+                    ),
                   );
                 },
                 child: Row(
@@ -1154,10 +1290,7 @@ class _ApplicationCard extends StatelessWidget {
                     const SizedBox(width: 4),
                     Text(
                       'Liaison',
-                      style: outfit(
-                        fontSize: 11,
-                        fontWeight: FontWeight.w600,
-                      ),
+                      style: outfit(fontSize: 11, fontWeight: FontWeight.w600),
                     ),
                   ],
                 ),
@@ -1183,7 +1316,11 @@ class _ApplicationCard extends StatelessWidget {
           ),
           child: Row(
             children: [
-              const Icon(Icons.event_available_rounded, size: 18, color: Color(0xFF583F00)),
+              const Icon(
+                Icons.event_available_rounded,
+                size: 18,
+                color: Color(0xFF583F00),
+              ),
               const SizedBox(width: 8),
               Expanded(
                 child: Column(
@@ -1231,10 +1368,7 @@ class _ApplicationCard extends StatelessWidget {
               fit: BoxFit.scaleDown,
               child: Text(
                 'Accept & Sign Award Package',
-                style: outfit(
-                  fontSize: 13,
-                  fontWeight: FontWeight.bold,
-                ),
+                style: outfit(fontSize: 13, fontWeight: FontWeight.bold),
               ),
             ),
           ),
@@ -1268,7 +1402,11 @@ class _ApplicationCard extends StatelessWidget {
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const Icon(Icons.timelapse_rounded, size: 15, color: Color(0xFFBA1A1A)),
+                  const Icon(
+                    Icons.timelapse_rounded,
+                    size: 15,
+                    color: Color(0xFFBA1A1A),
+                  ),
                   const SizedBox(width: 4),
                   Flexible(
                     child: Text(
@@ -1295,16 +1433,16 @@ class _ApplicationCard extends StatelessWidget {
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(8),
                 ),
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 6,
+                ),
               ),
               onPressed: () => _openApplicationDetail(context),
               icon: const Icon(Icons.arrow_forward_rounded, size: 15),
               label: Text(
                 'Continue',
-                style: outfit(
-                  fontSize: 12,
-                  fontWeight: FontWeight.bold,
-                ),
+                style: outfit(fontSize: 12, fontWeight: FontWeight.bold),
               ),
             ),
           ],
@@ -1343,10 +1481,7 @@ class _ApplicationCard extends StatelessWidget {
                 'Review rounds commence in 8 days',
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
-                style: openSans(
-                  fontSize: 11.5,
-                  color: kOnSurfaceVariant,
-                ),
+                style: openSans(fontSize: 11.5, color: kOnSurfaceVariant),
               ),
             ),
             const SizedBox(width: 8),
@@ -1364,7 +1499,11 @@ class _ApplicationCard extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(width: 4),
-                  const Icon(Icons.open_in_new_rounded, size: 14, color: kSecondary),
+                  const Icon(
+                    Icons.open_in_new_rounded,
+                    size: 14,
+                    color: kSecondary,
+                  ),
                 ],
               ),
             ),
@@ -1387,8 +1526,18 @@ class _ApplicationCard extends StatelessWidget {
 
   String _formatDate(DateTime date) {
     const months = [
-      'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec',
     ];
     return '${months[date.month - 1]} ${date.day}, ${date.year}';
   }
@@ -1474,28 +1623,31 @@ class _ApplicationTimelineStepper extends StatelessWidget {
             runSpacing: 6,
             crossAxisAlignment: WrapCrossAlignment.center,
             children: [
-              Row(mainAxisSize: MainAxisSize.min, children: [
-              Icon(
-                status == ApplicationStatus.underReview
-                    ? Icons.hourglass_top_rounded
-                    : Icons.info_outline_rounded,
-                size: 14,
-                color: const Color(0xFF436084),
-              ),
-              const SizedBox(width: 4),
-              Flexible(
-                child: Text(
-                  _microStatusText(),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: openSans(
-                    fontSize: 11,
-                    color: const Color(0xFF404942),
-                    fontWeight: FontWeight.w500,
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    status == ApplicationStatus.underReview
+                        ? Icons.hourglass_top_rounded
+                        : Icons.info_outline_rounded,
+                    size: 14,
+                    color: const Color(0xFF436084),
                   ),
-                ),
+                  const SizedBox(width: 4),
+                  Flexible(
+                    child: Text(
+                      _microStatusText(),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: openSans(
+                        fontSize: 11,
+                        color: const Color(0xFF404942),
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ),
+                ],
               ),
-              ]),
               Text(
                 status == ApplicationStatus.underReview
                     ? 'Est. Decision: Oct 20'
@@ -1544,7 +1696,7 @@ class _StepNode extends StatelessWidget {
         ),
       );
     } else {
-      circleColor = const Color(0xFFE3E8F9);
+      circleColor = kSurfaceContainerHigh;
       child = Container(
         width: 5,
         height: 5,
@@ -1658,10 +1810,7 @@ class _EmptyApplicationsState extends ConsumerWidget {
             child: Column(
               children: [
                 // Consoling Mascot Hero
-                const MascotPoseView(
-                  pose: MascotPose.consoling,
-                  height: 110,
-                ),
+                const MascotPoseView(pose: MascotPose.consoling, height: 110),
                 const SizedBox(height: 16),
                 Text(
                   'No applications yet',
@@ -1677,7 +1826,7 @@ class _EmptyApplicationsState extends ConsumerWidget {
                   "You haven't applied to anything yet",
                   textAlign: TextAlign.center,
                   style: outfit(
-                    fontSize: 14,
+                    fontSize: 13,
                     fontWeight: FontWeight.w600,
                     color: const Color(0xFF0F4D2E),
                   ),
@@ -1716,7 +1865,7 @@ class _EmptyApplicationsState extends ConsumerWidget {
                           Text(
                             'Start applying',
                             style: outfit(
-                              fontSize: 14,
+                              fontSize: 13,
                               fontWeight: FontWeight.w700,
                             ),
                           ),
@@ -1732,7 +1881,11 @@ class _EmptyApplicationsState extends ConsumerWidget {
                   alignment: WrapAlignment.center,
                   crossAxisAlignment: WrapCrossAlignment.center,
                   children: [
-                    const Icon(Icons.verified_rounded, size: 16, color: Color(0xFF0F4D2E)),
+                    const Icon(
+                      Icons.verified_rounded,
+                      size: 16,
+                      color: Color(0xFF0F4D2E),
+                    ),
                     const SizedBox(width: 6),
                     Text(
                       '$count Grants eligible for your profile',
@@ -1751,13 +1904,17 @@ class _EmptyApplicationsState extends ConsumerWidget {
           // Educational Roadmap: What happens when you apply
           Row(
             children: [
-              const Icon(Icons.flag_rounded, size: 20, color: Color(0xFF0F4D2E)),
+              const Icon(
+                Icons.flag_rounded,
+                size: 20,
+                color: Color(0xFF0F4D2E),
+              ),
               const SizedBox(width: 8),
               Expanded(
                 child: Text(
                   'What happens when you apply',
                   style: outfit(
-                    fontSize: 16,
+                    fontSize: 15,
                     fontWeight: FontWeight.w700,
                     color: const Color(0xFF161C27),
                   ),
@@ -1779,8 +1936,7 @@ class _EmptyApplicationsState extends ConsumerWidget {
                   number: '1',
                   color: const Color(0xFF00351C),
                   title: 'Browse matched Philippine grants',
-                  description:
-                      'Discover government & private awards from DOST-SEI, CHED Merit, and regional LGU subsidies matched to your field.',
+                  description: 'Discover government & private awards from DOST-SEI, CHED Merit, and regional LGU subsidies matched to your field.',
                 ),
                 Container(
                   width: 2,
@@ -1792,8 +1948,7 @@ class _EmptyApplicationsState extends ConsumerWidget {
                   number: '2',
                   color: const Color(0xFF0F4D2E),
                   title: 'One-tap credential submission',
-                  description:
-                      'Fast-track applications using your verified Philippine university credentials, authenticated CRS grades, and uploaded TCG.',
+                  description: 'Fast-track applications using your verified Philippine university credentials, authenticated CRS grades, and uploaded TCG.',
                 ),
                 Container(
                   width: 2,
@@ -1805,8 +1960,7 @@ class _EmptyApplicationsState extends ConsumerWidget {
                   number: '3',
                   color: const Color(0xFF436084),
                   title: 'Track live review deliberation',
-                  description:
-                      'Receive real-time timestamp updates as evaluation committees screen requirements, schedule interviews, and release stipends.',
+                  description: 'Receive real-time timestamp updates as evaluation committees screen requirements, schedule interviews, and release stipends.',
                 ),
               ],
             ),
@@ -1850,7 +2004,7 @@ class _EmptyApplicationsState extends ConsumerWidget {
                       Text(
                         'Preparing grades & certs?',
                         style: outfit(
-                          fontSize: 14,
+                          fontSize: 13,
                           fontWeight: FontWeight.w600,
                           color: const Color(0xFF161C27),
                         ),
@@ -1880,7 +2034,7 @@ class _EmptyApplicationsState extends ConsumerWidget {
               Text(
                 'Suggested For You',
                 style: outfit(
-                  fontSize: 16,
+                  fontSize: 15,
                   fontWeight: FontWeight.bold,
                   color: const Color(0xFF161C27),
                 ),
@@ -1917,7 +2071,7 @@ class _EmptyApplicationsState extends ConsumerWidget {
                       TextSpan(
                         text: '₱40,000',
                         style: outfit(
-                          fontSize: 18,
+                          fontSize: 17,
                           fontWeight: FontWeight.bold,
                           color: const Color(0xFF0F4D2E),
                         ),
@@ -1934,7 +2088,10 @@ class _EmptyApplicationsState extends ConsumerWidget {
                       ),
                     ),
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 3,
+                      ),
                       decoration: BoxDecoration(
                         color: const Color(0xFFF0F0F0),
                         borderRadius: BorderRadius.circular(12),
@@ -1975,10 +2132,7 @@ class _EmptyApplicationsState extends ConsumerWidget {
                 const SizedBox(height: 2),
                 Text(
                   'Department of Science and Technology',
-                  style: openSans(
-                    fontSize: 12,
-                    color: const Color(0xFF404942),
-                  ),
+                  style: openSans(fontSize: 12, color: const Color(0xFF404942)),
                 ),
                 const SizedBox(height: 12),
                 Wrap(
@@ -1990,7 +2144,11 @@ class _EmptyApplicationsState extends ConsumerWidget {
                     Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        const Icon(Icons.schedule_rounded, size: 14, color: Color(0xFFBA1A1A)),
+                        const Icon(
+                          Icons.schedule_rounded,
+                          size: 14,
+                          color: Color(0xFFBA1A1A),
+                        ),
                         const SizedBox(width: 4),
                         Flexible(
                           child: Text(
@@ -2011,7 +2169,10 @@ class _EmptyApplicationsState extends ConsumerWidget {
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8),
                         ),
-                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 6,
+                        ),
                       ),
                       onPressed: () {
                         ref.read(homeTabIndexProvider.notifier).selectTab(1);
@@ -2056,10 +2217,7 @@ class _RoadmapStep extends StatelessWidget {
         Container(
           width: 30,
           height: 30,
-          decoration: BoxDecoration(
-            color: color,
-            shape: BoxShape.circle,
-          ),
+          decoration: BoxDecoration(color: color, shape: BoxShape.circle),
           alignment: Alignment.center,
           child: Text(
             number,
@@ -2078,7 +2236,7 @@ class _RoadmapStep extends StatelessWidget {
               Text(
                 title,
                 style: outfit(
-                  fontSize: 14,
+                  fontSize: 13,
                   fontWeight: FontWeight.w600,
                   color: const Color(0xFF161C27),
                 ),

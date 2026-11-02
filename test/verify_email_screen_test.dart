@@ -1,4 +1,4 @@
-﻿// Focused widget tests for the Verify Email screen (Day 13).
+// Focused widget tests for the Verify Email screen (Day 13).
 //
 // The screen is rendered offline through a tiny GoRouter harness so that
 // "Back to login" navigation can be exercised without a real router, and the
@@ -245,7 +245,7 @@ void main() {
     await tester.tap(find.text('Back to login'));
     await tester.pumpAndSettle();
 
-    expect(find.text('Welcome Back'), findsOneWidget);
+    expect(find.text('Welcome back'), findsOneWidget);
   });
 
   testWidgets(
@@ -274,7 +274,9 @@ void main() {
       );
       addTearDown(client.dispose);
 
-      await tester.pumpWidget(harness(email: 'student@example.ph', client: client));
+      await tester.pumpWidget(
+        harness(email: 'student@example.ph', client: client),
+      );
       await tester.pumpAndSettle();
 
       final verifyButton = find.widgetWithText(ElevatedButton, 'Verify code');
@@ -285,7 +287,12 @@ void main() {
       await tester.tap(verifyButton);
       await tester.pumpAndSettle();
       expect(attempts, 1);
-      expect(find.text('That code is invalid or has expired. Try again or request a new code.'), findsOneWidget);
+      expect(
+        find.text(
+          'That code is invalid or has expired. Try again or request a new code.',
+        ),
+        findsOneWidget,
+      );
 
       // Attempt 2
       await tester.ensureVisible(verifyButton);
@@ -298,7 +305,12 @@ void main() {
       await tester.tap(verifyButton);
       await tester.pumpAndSettle();
       expect(attempts, 3);
-      expect(find.text('Maximum verification attempts reached (3/3). Please request a new code.'), findsOneWidget);
+      expect(
+        find.text(
+          'Maximum verification attempts reached (3/3). Please request a new code.',
+        ),
+        findsOneWidget,
+      );
 
       // Button is now disabled
       final btnWidget = tester.widget<ElevatedButton>(verifyButton);
@@ -339,7 +351,9 @@ void main() {
       );
       addTearDown(client.dispose);
 
-      await tester.pumpWidget(harness(email: 'student@example.ph', client: client));
+      await tester.pumpWidget(
+        harness(email: 'student@example.ph', client: client),
+      );
       await tester.pumpAndSettle();
 
       final verifyButton = find.widgetWithText(ElevatedButton, 'Verify code');

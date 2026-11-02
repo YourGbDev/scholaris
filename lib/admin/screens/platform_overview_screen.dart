@@ -262,7 +262,7 @@ class PlatformOverviewScreen extends ConsumerWidget {
         // Title
         Text(
           'Platform overview',
-          style: seqHeadlineLg(
+          style: seqPageTitle(context,
             fontWeight: FontWeight.w700,
             color: kSeqOnSurface,
           ),
@@ -388,7 +388,7 @@ class PlatformOverviewScreen extends ConsumerWidget {
                       '₱',
                       style: seqTabularFigures(
                         geist(
-                          fontSize: 26,
+                          fontSize: 20,
                           fontWeight: FontWeight.w700,
                           color: kSeqOnSurface,
                         ),
@@ -401,8 +401,8 @@ class PlatformOverviewScreen extends ConsumerWidget {
                         duration: const Duration(milliseconds: 800),
                         style: seqTabularFigures(
                           geist(
-                            fontSize: 36,
-                            fontWeight: FontWeight.w800,
+                            fontSize: 28,
+                            fontWeight: FontWeight.w700,
                             height: 1.0,
                             color: kSeqOnSurface,
                             letterSpacing: -0.5,
@@ -417,8 +417,8 @@ class PlatformOverviewScreen extends ConsumerWidget {
                   duration: const Duration(milliseconds: 800),
                   style: seqTabularFigures(
                     geist(
-                      fontSize: 38,
-                      fontWeight: FontWeight.w800,
+                      fontSize: 28,
+                      fontWeight: FontWeight.w700,
                       height: 1.0,
                       color: kSeqOnSurface,
                       letterSpacing: -0.5,

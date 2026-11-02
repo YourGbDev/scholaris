@@ -152,8 +152,8 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('2 opportunities to explore'), findsOneWidget);
     final heading = tester.widget<Text>(find.text('Matched for you'));
-    expect(heading.style?.fontSize, 24);
-    expect(heading.style?.fontWeight, FontWeight.w800);
+    expect(heading.style?.fontSize, 17);
+    expect(heading.style?.fontWeight, FontWeight.w700);
     expect(tester.takeException(), isNull);
   });
 

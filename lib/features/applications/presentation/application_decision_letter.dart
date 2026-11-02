@@ -69,7 +69,7 @@ class ApplicationDecisionLetter extends StatelessWidget {
                             'SCHOLARIS',
                             textAlign: TextAlign.center,
                             style: outfit(
-                              fontSize: 14,
+                              fontSize: 13,
                               fontWeight: FontWeight.w700,
                               color: const Color(0xFF0F4D2E),
                               letterSpacing: 2,
@@ -80,7 +80,7 @@ class ApplicationDecisionLetter extends StatelessWidget {
                             title,
                             textAlign: TextAlign.center,
                             style: outfit(
-                              fontSize: 28,
+                              fontSize: 20,
                               fontWeight: FontWeight.w700,
                               color: const Color(0xFF0F4D2E),
                             ),
@@ -91,7 +91,7 @@ class ApplicationDecisionLetter extends StatelessWidget {
                               studentName!.trim(),
                               textAlign: TextAlign.center,
                               style: outfit(
-                                fontSize: 22,
+                                fontSize: 20,
                                 fontWeight: FontWeight.w600,
                               ),
                             ),
@@ -103,7 +103,7 @@ class ApplicationDecisionLetter extends StatelessWidget {
                                 : 'Your application has been approved for',
                             textAlign: TextAlign.center,
                             style: openSans(
-                              fontSize: 14,
+                              fontSize: 13,
                               color: const Color(0xFF404942),
                             ),
                           ),
@@ -112,8 +112,8 @@ class ApplicationDecisionLetter extends StatelessWidget {
                             scholarshipTitle,
                             textAlign: TextAlign.center,
                             style: outfit(
-                              fontSize: 21,
-                              fontWeight: FontWeight.w800,
+                              fontSize: 18,
+                              fontWeight: FontWeight.w700,
                             ),
                           ),
                           if (providerName?.trim().isNotEmpty == true) ...[
@@ -122,7 +122,7 @@ class ApplicationDecisionLetter extends StatelessWidget {
                               providerName!.trim(),
                               textAlign: TextAlign.center,
                               style: openSans(
-                                fontSize: 14,
+                                fontSize: 13,
                                 color: const Color(0xFF707971),
                               ),
                             ),

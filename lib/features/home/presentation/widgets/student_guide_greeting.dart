@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../../shared/theme/app_theme.dart';
+import '../../../../shared/widgets/mascot_pose_view.dart';
 
 /// The companion peeks from the edge with its lower body outside the viewport.
 class StudentGuideGreeting extends StatelessWidget {
@@ -27,9 +28,7 @@ class StudentGuideGreeting extends StatelessWidget {
     final female = gender?.trim().toLowerCase() == 'female';
     final asset = celebrating
         ? 'assets/mascots/mascot_${female ? 'female' : 'male'}_celebrating.png'
-        : female
-        ? 'assets/images/mascot_female.png'
-        : 'assets/images/mascot_male_welcome_wave.png';
+        : getMascotGreetingAssetPath(gender: gender);
     return LayoutBuilder(
       builder: (context, constraints) {
         final portraitHeight = constraints.maxHeight < 500 ? 115.0 : 205.0;
@@ -107,10 +106,7 @@ class StudentGuideGreeting extends StatelessWidget {
                                   ),
                                 ),
                                 const SizedBox(height: 12),
-                                Text(
-                                  message,
-                                  style: appSupporting(),
-                                ),
+                                Text(message, style: appSupporting()),
                                 if (explicitContinue) ...[
                                   const SizedBox(height: 18),
                                   Wrap(
@@ -159,7 +155,7 @@ class StudentGuideGreeting extends StatelessWidget {
                               'Tap anywhere to continue',
                               textAlign: TextAlign.center,
                               style: geist(
-                                fontSize: 14,
+                                fontSize: 13,
                                 height: 1.3,
                                 fontWeight: FontWeight.w600,
                                 color: Colors.white,

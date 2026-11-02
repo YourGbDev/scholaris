@@ -21,11 +21,11 @@ void main() {
         ProviderScope(child: const MaterialApp(home: LoginScreen())),
       );
 
-      expect(find.text('Welcome Back'), findsOneWidget);
+      expect(find.text('Welcome back'), findsOneWidget);
       expect(find.text('Email'), findsOneWidget);
       expect(find.text('Password'), findsOneWidget);
       expect(find.text('Forgot password?'), findsOneWidget);
-      expect(find.text('Log in'), findsOneWidget);
+      expect(find.text('Sign in'), findsOneWidget);
     });
 
     testWidgets('rejects an invalid email before calling the API', (
@@ -37,7 +37,7 @@ void main() {
 
       await tester.enterText(find.byType(TextFormField).at(0), 'not-an-email');
       await tester.enterText(find.byType(TextFormField).at(1), 'secret123');
-      await tester.tap(find.widgetWithText(ElevatedButton, 'Log in'));
+      await tester.tap(find.widgetWithText(ElevatedButton, 'Sign in'));
       await tester.pumpAndSettle();
 
       expect(find.text('Enter a valid email address.'), findsOneWidget);
@@ -52,7 +52,7 @@ void main() {
         find.byType(TextFormField).at(0),
         'student@example.com',
       );
-      await tester.tap(find.widgetWithText(ElevatedButton, 'Log in'));
+      await tester.tap(find.widgetWithText(ElevatedButton, 'Sign in'));
       await tester.pumpAndSettle();
 
       expect(find.text('Enter your password.'), findsOneWidget);

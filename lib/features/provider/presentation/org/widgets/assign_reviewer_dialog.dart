@@ -162,7 +162,7 @@ class _AssignReviewerDialogState extends ConsumerState<AssignReviewerDialog> {
                           const SizedBox(height: 2),
                           Text(
                             widget.scholarship.title,
-                            style: orgLabel(fontWeight: FontWeight.w800,
+                            style: orgLabel(fontWeight: FontWeight.w700,
                               fontSize: 12,
                               color: kOrgTextSecondary,
                             ),
@@ -185,7 +185,7 @@ class _AssignReviewerDialogState extends ConsumerState<AssignReviewerDialog> {
               // Sub-header guidance
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                color: const Color(0xFFF9F9FB),
+                color: const Color(0xFFF7F9F7),
                 child: Row(
                   children: [
                     const Icon(Icons.info_outline_rounded,
@@ -281,7 +281,7 @@ class _AssignReviewerDialogState extends ConsumerState<AssignReviewerDialog> {
                             radius: 18,
                             backgroundColor: isAssigned
                                 ? kOrgPrimary
-                                : const Color(0xFFE3E2E7),
+                                : const Color(0xFFDEE4DE),
                             child: Text(
                               member.fullName.isNotEmpty
                                   ? member.fullName[0].toUpperCase()

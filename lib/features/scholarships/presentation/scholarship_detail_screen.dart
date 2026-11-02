@@ -185,7 +185,7 @@ class _ScholarshipDetailScreenState
               Text(
                 'Scholaris',
                 style: poppins(
-                  fontSize: 18,
+                  fontSize: 17,
                   fontWeight: FontWeight.bold,
                   letterSpacing: -0.5,
                   color: const Color(0xFF0F172A),
@@ -592,8 +592,8 @@ class _HeroCard extends ConsumerWidget {
           Text(
             scholarship.title,
             style: outfit(
-              fontSize: 22,
-              fontWeight: FontWeight.w800,
+              fontSize: 20,
+              fontWeight: FontWeight.w700,
               color: kOnSurface,
               letterSpacing: -0.3,
               height: 1.25,
@@ -611,7 +611,7 @@ class _HeroCard extends ConsumerWidget {
                 child: Text(
                   _grantValue(scholarship),
                   style: outfit(
-                    fontSize: 26,
+                    fontSize: 20,
                     fontWeight: FontWeight.bold,
                     color: kPrimaryContainer,
                   ),
@@ -894,7 +894,7 @@ class _CapacityStatusCard extends ConsumerWidget {
                     child: Text(
                       'Slot Capacity & Seat Accounting',
                       style: outfit(
-                        fontSize: 14,
+                        fontSize: 13,
                         fontWeight: FontWeight.bold,
                         color: isFull ? const Color(0xFFC62828) : kOnSurface,
                       ),
@@ -1287,7 +1287,7 @@ class _AlgorithmicFitCard extends ConsumerWidget {
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
                 gradient: const LinearGradient(
-                  colors: [Color(0xFFB3F1C6), Color(0xFFE8EEFF)],
+                  colors: [Color(0xFFB3F1C6), kSurfaceContainer],
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                 ),
@@ -1315,7 +1315,7 @@ class _AlgorithmicFitCard extends ConsumerWidget {
                           ),
                           suffix: '% Match',
                           style: outfit(
-                            fontSize: 22,
+                            fontSize: 20,
                             fontWeight: FontWeight.bold,
                             color: const Color(0xFF00351C),
                           ),
@@ -1367,7 +1367,7 @@ class _AlgorithmicFitCard extends ConsumerWidget {
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: outfit(
-                      fontSize: 16,
+                      fontSize: 15,
                       fontWeight: FontWeight.bold,
                       color: kOnSurface,
                     ),
@@ -1600,7 +1600,7 @@ class _AwardOverviewCard extends StatelessWidget {
           Text(
             'Award Overview & Impact',
             style: outfit(
-              fontSize: 16,
+              fontSize: 15,
               fontWeight: FontWeight.bold,
               color: kOnSurface,
             ),
@@ -1644,7 +1644,7 @@ class _AwardOverviewCard extends StatelessWidget {
           Text(
             'About',
             style: outfit(
-              fontSize: 14,
+              fontSize: 13,
               fontWeight: FontWeight.bold,
               color: kOnSurface,
             ),
@@ -1790,7 +1790,7 @@ class _EligibilityCard extends ConsumerWidget {
           Text(
             'Eligibility',
             style: outfit(
-              fontSize: 16,
+              fontSize: 15,
               fontWeight: FontWeight.bold,
               color: kOnSurface,
             ),
@@ -1929,7 +1929,7 @@ class _ApplicationMaterialsCardState
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: outfit(
-                    fontSize: 16,
+                    fontSize: 15,
                     fontWeight: FontWeight.bold,
                     color: kOnSurface,
                   ),
@@ -1946,7 +1946,7 @@ class _ApplicationMaterialsCardState
                   decoration: BoxDecoration(
                     color: readyCount == 3
                         ? const Color(0xFFB3F1C6)
-                        : const Color(0xFFE8EEFF),
+                        : kSurfaceContainer,
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Text(
@@ -3141,7 +3141,7 @@ class _DraftBanner extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: BoxDecoration(
-                  color: const Color(0xFFE8EEFF),
+                  color: kSurfaceContainer,
                   borderRadius: BorderRadius.circular(6),
                 ),
                 child: Row(
@@ -3180,7 +3180,7 @@ class _DraftBanner extends StatelessWidget {
           Text(
             'You have a saved draft',
             style: outfit(
-              fontSize: 16,
+              fontSize: 15,
               fontWeight: FontWeight.w700,
               color: const Color(0xFF161C27),
             ),
@@ -3212,7 +3212,7 @@ class _DraftBanner extends StatelessWidget {
               icon: const Icon(Icons.arrow_forward_rounded, size: 18),
               label: Text(
                 'Continue Application',
-                style: outfit(fontSize: 14, fontWeight: FontWeight.w600),
+                style: outfit(fontSize: 13, fontWeight: FontWeight.w600),
               ),
             ),
           ),
@@ -3337,7 +3337,7 @@ class _AppliedBanner extends ConsumerWidget {
                             width: 32,
                             height: 32,
                             decoration: BoxDecoration(
-                              color: const Color(0xFFE8EEFF),
+                              color: kSurfaceContainer,
                               borderRadius: BorderRadius.circular(8),
                             ),
                             child: const Icon(
@@ -3406,7 +3406,7 @@ class _AppliedBanner extends ConsumerWidget {
                     vertical: 8,
                   ),
                   decoration: BoxDecoration(
-                    color: const Color(0xFFF1F3FF),
+                    color: kSurfaceContainerLow,
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Row(
@@ -3608,7 +3608,7 @@ class _AppliedBanner extends ConsumerWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
       decoration: BoxDecoration(
-        color: const Color(0xFFE8EEFF),
+        color: kSurfaceContainer,
         borderRadius: BorderRadius.circular(4),
       ),
       child: Text(

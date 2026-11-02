@@ -1,4 +1,4 @@
-﻿// lib/features/provider/presentation/provider_login_screen.dart
+// lib/features/provider/presentation/provider_login_screen.dart
 //
 // Scholaris Provider Portal Login Screen.
 // Designed with 100% fidelity to the Stitch Apple Sequoia Provider Console mockups:
@@ -493,7 +493,7 @@ class _ProviderLoginScreenState extends ConsumerState<ProviderLoginScreen> {
         Container(
           padding: const EdgeInsets.all(4),
           decoration: BoxDecoration(
-            color: const Color(0xFFEEEDF3),
+            color: const Color(0xFFE8ECE8),
             borderRadius: BorderRadius.circular(14),
           ),
           child: Row(
@@ -654,7 +654,7 @@ class _ProviderLoginScreenState extends ConsumerState<ProviderLoginScreen> {
           isOrg ? 'Organization Provider Portal' : 'Individual Provider Portal',
           textAlign: TextAlign.center,
           style: geist(
-            fontSize: 24,
+            fontSize: 20,
             fontWeight: FontWeight.w700,
             color: const Color(0xFF1A1B1F),
             letterSpacing: -0.5,
@@ -762,7 +762,7 @@ class _ProviderLoginScreenState extends ConsumerState<ProviderLoginScreen> {
               color: Color(0xFF707971),
             ),
             filled: true,
-            fillColor: const Color(0xFFF4F3F8),
+            fillColor: const Color(0xFFF2F4F2),
             contentPadding:
                 const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
             border: OutlineInputBorder(
@@ -845,7 +845,7 @@ class _ProviderLoginScreenState extends ConsumerState<ProviderLoginScreen> {
               },
             ),
             filled: true,
-            fillColor: const Color(0xFFF4F3F8),
+            fillColor: const Color(0xFFF2F4F2),
             contentPadding:
                 const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
             border: OutlineInputBorder(
@@ -965,7 +965,7 @@ class _ProviderLoginScreenState extends ConsumerState<ProviderLoginScreen> {
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: const Color(0xFFF4F3F8),
+        color: const Color(0xFFF2F4F2),
         borderRadius: BorderRadius.circular(12),
       ),
       child: Row(
@@ -1021,7 +1021,7 @@ class _ProviderLoginScreenState extends ConsumerState<ProviderLoginScreen> {
   Widget _buildIndividualOnboardingAccordion() {
     return Container(
       decoration: BoxDecoration(
-        color: const Color(0xFFF4F3F8),
+        color: const Color(0xFFF2F4F2),
         borderRadius: BorderRadius.circular(14),
       ),
       padding: const EdgeInsets.all(14),
@@ -1201,7 +1201,7 @@ class _ProviderLoginScreenState extends ConsumerState<ProviderLoginScreen> {
                 onPressed: () =>
                     context.go('/become-provider?type=individual'),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFFE3E2E7),
+                  backgroundColor: const Color(0xFFDEE4DE),
                   foregroundColor: const Color(0xFF0F4D2E),
                   elevation: 0,
                   shape: RoundedRectangleBorder(

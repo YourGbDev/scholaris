@@ -9,6 +9,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:scholaris/shared/theme/app_motion.dart';
 import 'package:scholaris/shared/theme/app_theme.dart';
+
 import '../../../scholarships/models/scholarship.dart';
 import '../../../scholarships/providers/scholarships_provider.dart';
 import '../../providers/application_document_provider.dart';
@@ -26,17 +27,13 @@ Future<void> showDocumentUploadSheet(
     shape: const RoundedRectangleBorder(
       borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
     ),
-    builder: (ctx) => DocumentUploadSheet(
-      preselectedApplicationId: preselectedApplicationId,
-    ),
+    builder: (ctx) =>
+        DocumentUploadSheet(preselectedApplicationId: preselectedApplicationId),
   );
 }
 
 class DocumentUploadSheet extends ConsumerStatefulWidget {
-  const DocumentUploadSheet({
-    super.key,
-    this.preselectedApplicationId,
-  });
+  const DocumentUploadSheet({super.key, this.preselectedApplicationId});
 
   final String? preselectedApplicationId;
 
@@ -146,8 +143,7 @@ class _DocumentUploadSheetState extends ConsumerState<DocumentUploadSheet> {
       } else if (ext == 'png') {
         mime = 'image/png';
       } else if (ext == 'docx') {
-        mime =
-            'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
+        mime = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
       }
 
       await ref
@@ -255,8 +251,10 @@ class _DocumentUploadSheetState extends ConsumerState<DocumentUploadSheet> {
             const SizedBox(height: 8),
             appsAsync.when(
               loading: () => const LinearProgressIndicator(),
-              error: (e, _) => Text('Could not load applications: $e',
-                  style: const TextStyle(color: Colors.red, fontSize: 12)),
+              error: (e, _) => Text(
+                'Could not load applications: $e',
+                style: const TextStyle(color: Colors.red, fontSize: 12),
+              ),
               data: (apps) {
                 if (apps.isEmpty) {
                   return Container(
@@ -299,7 +297,8 @@ class _DocumentUploadSheetState extends ConsumerState<DocumentUploadSheet> {
                               (s) => s?.id == app.scholarshipId,
                               orElse: () => null,
                             );
-                        final title = sch?.title ?? 'Application (${app.status.dbValue})';
+                        final title =
+                            sch?.title ?? 'Application (${app.status.dbValue})';
                         return DropdownMenuItem<String>(
                           value: app.id,
                           child: Text(
@@ -364,10 +363,12 @@ class _DocumentUploadSheetState extends ConsumerState<DocumentUploadSheet> {
                     backgroundColor: const Color(0xFFF4F3F8),
                     labelStyle: outfit(
                       fontSize: 12,
-                      fontWeight:
-                          isSelected ? FontWeight.w700 : FontWeight.w500,
-                      color:
-                          isSelected ? Colors.white : const Color(0xFF404942),
+                      fontWeight: isSelected
+                          ? FontWeight.w700
+                          : FontWeight.w500,
+                      color: isSelected
+                          ? Colors.white
+                          : const Color(0xFF404942),
                     ),
                     side: BorderSide(
                       color: isSelected
@@ -441,7 +442,8 @@ class _DocumentUploadSheetState extends ConsumerState<DocumentUploadSheet> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              _pickedFile?.name ?? 'Tap to select document file',
+                              _pickedFile?.name ??
+                                  'Tap to select document file',
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                               style: outfit(
@@ -516,10 +518,7 @@ class _DocumentUploadSheetState extends ConsumerState<DocumentUploadSheet> {
                     : const Icon(Icons.cloud_upload_outlined, size: 20),
                 label: Text(
                   _isUploading ? 'Uploading Document...' : 'Upload Document',
-                  style: outfit(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w700,
-                  ),
+                  style: outfit(fontSize: 13, fontWeight: FontWeight.w700),
                 ),
               ),
             ),

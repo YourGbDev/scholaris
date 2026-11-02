@@ -11,6 +11,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:google_fonts/google_fonts.dart';
+
 import 'helpers/load_app_fonts.dart';
 
 import 'package:scholaris/features/applications/providers/applications_provider.dart';
@@ -39,107 +40,107 @@ import 'helpers/fake_scholarship_data_source.dart';
 DateTime _inDays(int days) => DateTime.now().add(Duration(days: days));
 
 StudentProfile _student() => StudentProfile(
-      id: 'user-a',
-      fullName: 'Maria Santos',
-      nationality: 'Filipino',
-      region: 'NCR',
-      gpa: 3.2,
-      yearLevel: 2,
-      course: 'BS Computer Science',
-      monthlyFamilyIncome: 15000,
-      setupComplete: true,
-    );
+  id: 'user-a',
+  fullName: 'Maria Santos',
+  nationality: 'Filipino',
+  region: 'NCR',
+  gpa: 3.2,
+  yearLevel: 2,
+  course: 'BS Computer Science',
+  monthlyFamilyIncome: 15000,
+  setupComplete: true,
+);
 
 /// Matches: DOST, CHED (both eligible for the NCR student).
 /// Browse: BARMM Scholars Fund (2d), BARMM Study Grant (5d), TESDA (25d).
 /// Closing-soon window surfaces BARMM Scholars Fund then BARMM Study Grant.
 List<Map<String, dynamic>> _rows() => [
-      {
-        'id': 'sch-dost',
-        'title': 'DOST-SEI Scholarship',
-        'provider': 'DOST',
-        'description': 'Supports students in priority STEM programs.',
-        'min_gpa': 2.0,
-        'required_year_levels': [1, 2, 3, 4, 5],
-        'required_courses': <String>[],
-        'location_restriction': null,
-        'max_monthly_income': null,
-        'for_pwd': false,
-        'for_indigenous': false,
-        'slots': 8000,
-        'deadline': _inDays(10).toIso8601String().split('T').first,
-        'application_url': 'https://dost.gov.ph/scholarships',
-        'is_active': true,
-      },
-      {
-        'id': 'sch-ched',
-        'title': 'CHED Merit Scholarship',
-        'provider': 'CHED',
-        'description': 'A national merit scholarship for strong students.',
-        'min_gpa': 3.0,
-        'required_year_levels': [1, 2, 3, 4, 5],
-        'required_courses': <String>[],
-        'location_restriction': null,
-        'max_monthly_income': 15000,
-        'for_pwd': false,
-        'for_indigenous': false,
-        'slots': 2000,
-        'deadline': _inDays(30).toIso8601String().split('T').first,
-        'application_url': 'https://ched.gov.ph/scholarships',
-        'is_active': true,
-      },
-      {
-        'id': 'sch-mar',
-        'title': 'BARMM Scholars Fund',
-        'provider': 'BARMM Ministry',
-        'description': 'Support for qualified BARMM students.',
-        'min_gpa': 2.0,
-        'required_year_levels': [1, 2, 3, 4, 5],
-        'required_courses': <String>[],
-        'location_restriction': 'BARMM',
-        'max_monthly_income': null,
-        'for_pwd': false,
-        'for_indigenous': false,
-        'slots': 200,
-        'deadline': _inDays(2).toIso8601String().split('T').first,
-        'application_url': 'https://barmm.gov.ph/scholarships',
-        'is_active': true,
-      },
-      {
-        'id': 'sch-barmm',
-        'title': 'BARMM Study Grant',
-        'provider': 'BARMM Ministry',
-        'description': 'Support for qualified BARMM students.',
-        'min_gpa': 2.0,
-        'required_year_levels': [1, 2, 3, 4, 5],
-        'required_courses': <String>[],
-        'location_restriction': 'BARMM',
-        'max_monthly_income': null,
-        'for_pwd': false,
-        'for_indigenous': false,
-        'slots': 200,
-        'deadline': _inDays(5).toIso8601String().split('T').first,
-        'application_url': 'https://barmm.gov.ph/scholarships',
-        'is_active': true,
-      },
-      {
-        'id': 'sch-tes',
-        'title': 'TESDA Skills Grant',
-        'provider': 'TESDA',
-        'description': 'Technical skills training financial support.',
-        'min_gpa': 2.5,
-        'required_year_levels': [1, 2, 3, 4, 5],
-        'required_courses': <String>[],
-        'location_restriction': 'Region VII',
-        'max_monthly_income': null,
-        'for_pwd': false,
-        'for_indigenous': false,
-        'slots': 300,
-        'deadline': _inDays(25).toIso8601String().split('T').first,
-        'application_url': 'https://tesda.gov.ph/scholarships',
-        'is_active': true,
-      },
-    ];
+  {
+    'id': 'sch-dost',
+    'title': 'DOST-SEI Scholarship',
+    'provider': 'DOST',
+    'description': 'Supports students in priority STEM programs.',
+    'min_gpa': 2.0,
+    'required_year_levels': [1, 2, 3, 4, 5],
+    'required_courses': <String>[],
+    'location_restriction': null,
+    'max_monthly_income': null,
+    'for_pwd': false,
+    'for_indigenous': false,
+    'slots': 8000,
+    'deadline': _inDays(10).toIso8601String().split('T').first,
+    'application_url': 'https://dost.gov.ph/scholarships',
+    'is_active': true,
+  },
+  {
+    'id': 'sch-ched',
+    'title': 'CHED Merit Scholarship',
+    'provider': 'CHED',
+    'description': 'A national merit scholarship for strong students.',
+    'min_gpa': 3.0,
+    'required_year_levels': [1, 2, 3, 4, 5],
+    'required_courses': <String>[],
+    'location_restriction': null,
+    'max_monthly_income': 15000,
+    'for_pwd': false,
+    'for_indigenous': false,
+    'slots': 2000,
+    'deadline': _inDays(30).toIso8601String().split('T').first,
+    'application_url': 'https://ched.gov.ph/scholarships',
+    'is_active': true,
+  },
+  {
+    'id': 'sch-mar',
+    'title': 'BARMM Scholars Fund',
+    'provider': 'BARMM Ministry',
+    'description': 'Support for qualified BARMM students.',
+    'min_gpa': 2.0,
+    'required_year_levels': [1, 2, 3, 4, 5],
+    'required_courses': <String>[],
+    'location_restriction': 'BARMM',
+    'max_monthly_income': null,
+    'for_pwd': false,
+    'for_indigenous': false,
+    'slots': 200,
+    'deadline': _inDays(2).toIso8601String().split('T').first,
+    'application_url': 'https://barmm.gov.ph/scholarships',
+    'is_active': true,
+  },
+  {
+    'id': 'sch-barmm',
+    'title': 'BARMM Study Grant',
+    'provider': 'BARMM Ministry',
+    'description': 'Support for qualified BARMM students.',
+    'min_gpa': 2.0,
+    'required_year_levels': [1, 2, 3, 4, 5],
+    'required_courses': <String>[],
+    'location_restriction': 'BARMM',
+    'max_monthly_income': null,
+    'for_pwd': false,
+    'for_indigenous': false,
+    'slots': 200,
+    'deadline': _inDays(5).toIso8601String().split('T').first,
+    'application_url': 'https://barmm.gov.ph/scholarships',
+    'is_active': true,
+  },
+  {
+    'id': 'sch-tes',
+    'title': 'TESDA Skills Grant',
+    'provider': 'TESDA',
+    'description': 'Technical skills training financial support.',
+    'min_gpa': 2.5,
+    'required_year_levels': [1, 2, 3, 4, 5],
+    'required_courses': <String>[],
+    'location_restriction': 'Region VII',
+    'max_monthly_income': null,
+    'for_pwd': false,
+    'for_indigenous': false,
+    'slots': 300,
+    'deadline': _inDays(25).toIso8601String().split('T').first,
+    'application_url': 'https://tesda.gov.ph/scholarships',
+    'is_active': true,
+  },
+];
 
 ProviderScope _wrap({
   Widget? child,
@@ -180,9 +181,7 @@ ProviderScope _wrap({
       ),
     ],
     child: MaterialApp(
-      home: Scaffold(
-        body: child ?? const StudentDashboardScreen(),
-      ),
+      home: Scaffold(body: child ?? const StudentDashboardScreen()),
     ),
   );
 }
@@ -196,19 +195,107 @@ Future<void> _pumpDiscover(
   tester.view.physicalSize = size;
   tester.view.devicePixelRatio = 1.0;
   addTearDown(tester.view.reset);
-  await tester.pumpWidget(_wrap(
-    bookmarks: bookmarks,
-    applications: applications,
-  ));
+  await tester.pumpWidget(
+    _wrap(bookmarks: bookmarks, applications: applications),
+  );
   await tester.pumpAndSettle();
 }
 
 Finder _inClosingSoon(Finder inner) => find.descendant(
-      of: find.byKey(const ValueKey('closing-soon-section')),
-      matching: inner,
-    );
+  of: find.byKey(const ValueKey('closing-soon-section')),
+  matching: inner,
+);
 
 void main() {
+  for (final width in [320.0, 390.0]) {
+    testWidgets('See all stays at the trailing side of the heading at $width', (
+      tester,
+    ) async {
+      tester.view.physicalSize = Size(width, 1200);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.reset);
+      await tester.pumpWidget(_wrap());
+      await tester.pumpAndSettle();
+      final heading = find.text('Recommended for you');
+      await tester.scrollUntilVisible(
+        heading,
+        160,
+        scrollable: find
+            .descendant(
+              of: find.byType(StudentDashboardScreen),
+              matching: find.byType(Scrollable),
+            )
+            .first,
+      );
+      await tester.pumpAndSettle();
+      final action = find.text('See all (2)');
+      final button = find.ancestor(
+        of: action,
+        matching: find.byType(TextButton),
+      );
+      final headingRect = tester.getRect(heading);
+      expect(
+        tester.getRect(action).center.dy,
+        inInclusiveRange(headingRect.top, headingRect.bottom),
+      );
+      expect(tester.getRect(button).right, closeTo(width - 20, 1));
+      expect(tester.getSize(button).height, greaterThanOrEqualTo(44));
+      expect(tester.takeException(), isNull);
+    });
+  }
+  testWidgets(
+    'summary tiles use full rows at enlarged text on a narrow phone',
+    (tester) async {
+      tester.view.physicalSize = const Size(320, 1200);
+      tester.view.devicePixelRatio = 1;
+      tester.platformDispatcher.textScaleFactorTestValue = 2;
+      addTearDown(tester.view.reset);
+      addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
+      await tester.pumpWidget(_wrap());
+      await tester.pumpAndSettle();
+      final saved = find.byKey(const ValueKey('stat-chip-saved'));
+      expect(tester.getSize(saved).width, greaterThanOrEqualTo(280));
+      expect(
+        tester.getTopLeft(find.byKey(const ValueKey('stat-chip-applied'))).dy,
+        greaterThan(tester.getBottomLeft(saved).dy),
+      );
+      expect(tester.takeException(), isNull);
+    },
+  );
+  testWidgets(
+    'recommendation heading reflows at large text without scaling down',
+    (tester) async {
+      tester.view.physicalSize = const Size(320, 1200);
+      tester.view.devicePixelRatio = 1;
+      tester.platformDispatcher.textScaleFactorTestValue = 2;
+      addTearDown(tester.view.reset);
+      addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
+      await tester.pumpWidget(_wrap());
+      await tester.pumpAndSettle();
+      final heading = find.text('Recommended for you');
+      await tester.scrollUntilVisible(
+        heading,
+        180,
+        scrollable: find
+            .descendant(
+              of: find.byType(StudentDashboardScreen),
+              matching: find.byType(Scrollable),
+            )
+            .first,
+      );
+      await tester.pumpAndSettle();
+      expect(
+        find.ancestor(of: heading, matching: find.byType(FittedBox)),
+        findsNothing,
+      );
+      final action = find.text('See all (2)');
+      expect(
+        tester.getTopLeft(action).dy,
+        greaterThan(tester.getBottomLeft(heading).dy),
+      );
+      expect(tester.takeException(), isNull);
+    },
+  );
   for (final tab in ['Home', 'Discover']) {
     testWidgets('$tab header Settings opens account settings', (tester) async {
       await tester.pumpWidget(_wrap(child: const HomeScreen()));
@@ -221,8 +308,14 @@ void main() {
       for (final tooltip in ['Notifications', 'Settings']) {
         final button = find.byTooltip(tooltip);
         expect(tester.getSize(button).shortestSide, greaterThanOrEqualTo(44));
-        expect(tester.widget<Icon>(find.descendant(of: button,
-          matching: find.byType(Icon))).color, kPrimary);
+        expect(
+          tester
+              .widget<Icon>(
+                find.descendant(of: button, matching: find.byType(Icon)),
+              )
+              .color,
+          kPrimary,
+        );
       }
       await tester.tap(find.byTooltip('Settings'));
       await tester.pumpAndSettle();
@@ -230,65 +323,109 @@ void main() {
     });
   }
   for (final gender in ['male', 'female']) {
-  testWidgets('$gender hero keeps shared recommendations and a working Explore action', (tester) async {
-    tester.view.physicalSize = const Size(390, 844);
-    tester.view.devicePixelRatio = 1;
-    addTearDown(tester.view.reset);
-    await tester.pumpWidget(_wrap(child: const HomeScreen(),
-      profileFuture: Future.value(_student().copyWith(gender: gender))));
-    await tester.pumpAndSettle();
-    expect(find.text('Matches for your profile'), findsNothing);
-    expect(find.text('MATCH REVEAL'), findsNothing);
-    expect(find.byKey(const ValueKey('stat-count-matches')), findsOneWidget);
-    await tester.scrollUntilVisible(find.text('Recommended for you'), 160,
-      scrollable: find.descendant(of: find.byType(StudentDashboardScreen),
-        matching: find.byType(Scrollable)).first);
-    expect(find.text('Recommended for you'), findsOneWidget);
-    await tester.scrollUntilVisible(find.text('Explore matches'), -160,
-      scrollable: find.descendant(of: find.byType(StudentDashboardScreen),
-        matching: find.byType(Scrollable)).first);
-    await tester.pumpAndSettle();
-    await tester.tap(find.text('Explore matches'));
-    await tester.pumpAndSettle();
-    final container = ProviderScope.containerOf(tester.element(find.byType(HomeScreen)));
-    expect(container.read(homeTabIndexProvider), 1);
-  });
+    testWidgets(
+      '$gender hero keeps shared recommendations and a working Explore action',
+      (tester) async {
+        tester.view.physicalSize = const Size(390, 844);
+        tester.view.devicePixelRatio = 1;
+        addTearDown(tester.view.reset);
+        await tester.pumpWidget(
+          _wrap(
+            child: const HomeScreen(),
+            profileFuture: Future.value(_student().copyWith(gender: gender)),
+          ),
+        );
+        await tester.pumpAndSettle();
+        expect(find.text('Matches for your profile'), findsNothing);
+        expect(find.text('MATCH REVEAL'), findsNothing);
+        expect(
+          find.byKey(const ValueKey('stat-count-matches')),
+          findsOneWidget,
+        );
+        await tester.scrollUntilVisible(
+          find.text('Recommended for you'),
+          160,
+          scrollable: find
+              .descendant(
+                of: find.byType(StudentDashboardScreen),
+                matching: find.byType(Scrollable),
+              )
+              .first,
+        );
+        expect(find.text('Recommended for you'), findsOneWidget);
+        await tester.scrollUntilVisible(
+          find.text('Explore matches'),
+          -160,
+          scrollable: find
+              .descendant(
+                of: find.byType(StudentDashboardScreen),
+                matching: find.byType(Scrollable),
+              )
+              .first,
+        );
+        await tester.pumpAndSettle();
+        await tester.tap(find.text('Explore matches'));
+        await tester.pumpAndSettle();
+        final container = ProviderScope.containerOf(
+          tester.element(find.byType(HomeScreen)),
+        );
+        expect(container.read(homeTabIndexProvider), 1);
+      },
+    );
 
-  testWidgets('$gender hero reflows on a narrow phone with enlarged text', (tester) async {
-    tester.view.physicalSize = const Size(320, 568);
-    tester.view.devicePixelRatio = 1;
-    addTearDown(tester.view.reset);
-    tester.platformDispatcher.textScaleFactorTestValue = 2;
-    addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
-    await tester.pumpWidget(_wrap(profileFuture: Future.value(_student().copyWith(gender: gender))));
-    await tester.pumpAndSettle();
-    await tester.ensureVisible(find.text('Explore matches'));
-    await tester.pumpAndSettle();
-    expect(find.text('Explore matches').hitTestable(), findsOneWidget);
-    expect(tester.takeException(), isNull);
-  });
+    testWidgets('$gender hero reflows on a narrow phone with enlarged text', (
+      tester,
+    ) async {
+      tester.view.physicalSize = const Size(320, 568);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.reset);
+      tester.platformDispatcher.textScaleFactorTestValue = 2;
+      addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
+      await tester.pumpWidget(
+        _wrap(profileFuture: Future.value(_student().copyWith(gender: gender))),
+      );
+      await tester.pumpAndSettle();
+      await tester.ensureVisible(find.text('Explore matches'));
+      await tester.pumpAndSettle();
+      expect(find.text('Explore matches').hitTestable(), findsOneWidget);
+      expect(tester.takeException(), isNull);
+    });
   }
 
-  testWidgets('Home lists do not repeat dock clearance between sections', (tester) async {
+  testWidgets('Home lists do not repeat dock clearance between sections', (
+    tester,
+  ) async {
     tester.view.physicalSize = const Size(440, 12000);
     tester.view.devicePixelRatio = 1;
     addTearDown(tester.view.reset);
-    await tester.pumpWidget(_wrap(child: const MediaQuery(
-      data: MediaQueryData(padding: EdgeInsets.only(bottom: 144)),
-      child: StudentDashboardScreen(),
-    )));
+    await tester.pumpWidget(
+      _wrap(
+        child: const MediaQuery(
+          data: MediaQueryData(padding: EdgeInsets.only(bottom: 144)),
+          child: StudentDashboardScreen(),
+        ),
+      ),
+    );
     await tester.pumpAndSettle();
     final lists = find.byWidgetPredicate((w) => w is ListView && w.shrinkWrap);
     expect(lists, findsNWidgets(2));
     for (final element in lists.evaluate()) {
       final list = find.byWidget(element.widget);
-      final cards = find.descendant(of: list, matching: find.byType(ScholarshipCard));
+      final cards = find.descendant(
+        of: list,
+        matching: find.byType(ScholarshipCard),
+      );
       expect(cards, findsWidgets);
-      expect(tester.getBottomRight(list).dy - tester.getBottomRight(cards.last).dy, closeTo(0, 1));
+      expect(
+        tester.getBottomRight(list).dy - tester.getBottomRight(cards.last).dy,
+        closeTo(0, 1),
+      );
     }
   });
 
-  testWidgets('holding the Home brand opens read-only typography diagnostics', (tester) async {
+  testWidgets('holding the Home brand opens read-only typography diagnostics', (
+    tester,
+  ) async {
     await tester.pumpWidget(_wrap(child: const HomeScreen()));
     await tester.pumpAndSettle();
     await tester.longPress(find.text('Scholaris').first);
@@ -301,7 +438,9 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('Saved opened from Home returns to Home with Back', (tester) async {
+  testWidgets('Saved opened from Home returns to Home with Back', (
+    tester,
+  ) async {
     await tester.pumpWidget(_wrap(child: const HomeScreen()));
     await tester.pumpAndSettle();
     await tester.ensureVisible(find.byKey(const ValueKey('stat-chip-saved')));
@@ -311,11 +450,13 @@ void main() {
     expect(find.byType(SavedScreen), findsOneWidget);
     await tester.tap(find.byTooltip('Back'));
     await tester.pumpAndSettle();
-    final container = ProviderScope.containerOf(tester.element(find.byType(HomeScreen)));
+    final container = ProviderScope.containerOf(
+      tester.element(find.byType(HomeScreen)),
+    );
     expect(container.read(homeTabIndexProvider), 0);
     expect(find.byKey(const ValueKey('stat-chip-saved')), findsOneWidget);
     final savedLabel = tester.widget<Text>(find.text('Saved').first);
-    expect(savedLabel.style?.fontWeight, FontWeight.w700);
+    expect(savedLabel.style?.fontWeight, FontWeight.w500);
     expect(savedLabel.style?.fontSize, 13);
     expect(savedLabel.style?.letterSpacing, -.1);
     expect(tester.takeException(), isNull);
@@ -325,27 +466,48 @@ void main() {
     await loadAppFonts();
   });
 
-  testWidgets('female login never paints a male hero while profile loads', (tester) async {
+  testWidgets('female login never paints a male hero while profile loads', (
+    tester,
+  ) async {
     final pending = Completer<StudentProfile?>();
     await tester.pumpWidget(_wrap(profileFuture: pending.future));
     await tester.pump(const Duration(milliseconds: 100));
-    Finder banner(String name) => find.byWidgetPredicate((w) =>
-      w is Image && w.image is AssetImage &&
-      (w.image as AssetImage).assetName == 'assets/images/$name');
+    Finder banner(String name) => find.byWidgetPredicate(
+      (w) =>
+          w is Image &&
+          w.image is AssetImage &&
+          (w.image as AssetImage).assetName == 'assets/images/$name',
+    );
     expect(banner('student_hero_graduate_campus.png'), findsNothing);
-    expect(find.byKey(const ValueKey('student-hero-loading')), findsOneWidget);
+    expect(
+      find.byKey(const ValueKey('student-overview-loading')),
+      findsOneWidget,
+    );
     pending.complete(_student().copyWith(gender: 'female'));
     await tester.pumpAndSettle();
     expect(banner('student_hero_graduate_campus.png'), findsNothing);
     expect(banner('student_hero_graduate_campus_female.png'), findsOneWidget);
+    expect(find.textContaining('Maria!'), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('explicit male gender wins over a name containing Maria', (tester) async {
-    await tester.pumpWidget(_wrap(profileFuture: Future.value(_student().copyWith(gender: 'male'))));
+  testWidgets('Home selects the campus mascot using the stored gender', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      _wrap(profileFuture: Future.value(_student().copyWith(gender: 'male'))),
+    );
     await tester.pumpAndSettle();
-    expect(find.byWidgetPredicate((w) => w is Image && w.image is AssetImage &&
-      (w.image as AssetImage).assetName == 'assets/images/student_hero_graduate_campus.png'), findsOneWidget);
+    expect(
+      find.byWidgetPredicate(
+        (w) =>
+            w is Image &&
+            w.image is AssetImage &&
+            (w.image as AssetImage).assetName ==
+                'assets/images/student_hero_graduate_campus.png',
+      ),
+      findsOneWidget,
+    );
   });
 
   group('Dashboard summary', () {
@@ -359,22 +521,24 @@ void main() {
         'status': 'submitted',
       });
 
-      await _pumpDiscover(tester, bookmarks: bookmarks, applications: applications);
+      await _pumpDiscover(
+        tester,
+        bookmarks: bookmarks,
+        applications: applications,
+      );
 
       // Stat tiles expose their counts via stable keys; the number itself is
       // the tile's primary text.
       int countOf(String statKey) => int.parse(
-            tester
-                .widget<Text>(
-                  find.byKey(ValueKey('stat-count-$statKey')),
-                )
-                .data!.split(' ').first,
-          );
+        tester
+            .widget<Text>(find.byKey(ValueKey('stat-count-$statKey')))
+            .data!
+            .split(' ')
+            .first,
+      );
 
-      expect(countOf('matches'), 2);
-      expect(find.text('Find your next opportunity.'), findsOneWidget);
-      expect(tester.widget<Text>(find.byKey(const ValueKey('stat-count-matches'))).data,
-          '2 scholarships match your profile.');
+      expect(find.text('Application Submitted'), findsOneWidget);
+      expect(find.text('Explore matches'), findsOneWidget);
       expect(countOf('closing-soon'), 2);
       expect(countOf('saved'), 1);
       expect(countOf('applied'), 1);
@@ -382,16 +546,18 @@ void main() {
   });
 
   group('Closing Soon section', () {
-    testWidgets('shows browse scholarships inside the closing window',
-        (tester) async {
+    testWidgets('shows browse scholarships inside the closing window', (
+      tester,
+    ) async {
       await _pumpDiscover(tester);
 
       expect(_inClosingSoon(find.text('BARMM Scholars Fund')), findsOneWidget);
       expect(_inClosingSoon(find.text('BARMM Study Grant')), findsOneWidget);
     });
 
-    testWidgets('excludes scholarships outside the closing window',
-        (tester) async {
+    testWidgets('excludes scholarships outside the closing window', (
+      tester,
+    ) async {
       await _pumpDiscover(tester);
 
       // TESDA closes in 25 days → not in the urgency surface.
@@ -406,8 +572,9 @@ void main() {
       expect(_inClosingSoon(find.text('DOST-SEI Scholarship')), findsNothing);
     });
 
-    testWidgets('orders closing-soon scholarships by deadline urgency',
-        (tester) async {
+    testWidgets('orders closing-soon scholarships by deadline urgency', (
+      tester,
+    ) async {
       await _pumpDiscover(tester);
 
       final fund = tester.getTopLeft(
@@ -423,7 +590,9 @@ void main() {
 
   group('Applied state', () {
     for (final status in ['approved', 'awarded']) {
-      testWidgets('dashboard distinguishes $status applications', (tester) async {
+      testWidgets('dashboard distinguishes $status applications', (
+        tester,
+      ) async {
         final applications = FakeApplicationDataSource();
         await applications.insertApplication('user-a', {
           'user_id': 'user-a',
@@ -431,17 +600,23 @@ void main() {
           'status': status,
         });
         await _pumpDiscover(tester, applications: applications);
-        expect(find.text(status == 'approved'
-            ? 'Application Approved'
-            : 'Scholarship Awarded!'), findsOneWidget);
+        expect(
+          find.text(
+            status == 'approved'
+                ? 'Application Approved'
+                : 'Scholarship Awarded!',
+          ),
+          findsOneWidget,
+        );
         if (status == 'approved') {
           expect(find.text('Scholarship Awarded!'), findsNothing);
         }
       });
     }
 
-    testWidgets('a closing-soon card shows the applied indicator',
-        (tester) async {
+    testWidgets('a closing-soon card shows the applied indicator', (
+      tester,
+    ) async {
       final applications = FakeApplicationDataSource();
       await applications.insertApplication('user-a', {
         'user_id': 'user-a',
@@ -474,14 +649,17 @@ void main() {
         of: find.text('DOST-SEI Scholarship'),
         matching: find.byType(ScholarshipCard),
       );
-      expect(find.descendant(of: dostCard, matching: find.text('Applied')),
-          findsOneWidget);
+      expect(
+        find.descendant(of: dostCard, matching: find.text('Applied')),
+        findsOneWidget,
+      );
     });
   });
 
   group('Responsive layout', () {
-    testWidgets('dashboard does not overflow on a narrow screen',
-        (tester) async {
+    testWidgets('dashboard does not overflow on a narrow screen', (
+      tester,
+    ) async {
       await _pumpDiscover(tester, size: const Size(360, 720));
 
       expect(find.byKey(const ValueKey('stat-count-matches')), findsOneWidget);
@@ -490,8 +668,9 @@ void main() {
   });
 
   group('Dashboard advice card', () {
-    testWidgets('shows closing scholarships without a repeated alert',
-        (tester) async {
+    testWidgets('shows closing scholarships without a repeated alert', (
+      tester,
+    ) async {
       await _pumpDiscover(tester);
 
       expect(find.byKey(const ValueKey('eli-advice-card')), findsNothing);

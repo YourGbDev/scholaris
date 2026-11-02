@@ -25,7 +25,7 @@ class AdminSettingsScreen extends StatelessWidget {
             // --- Header (No Live data tag per instructions) ---
             Text(
               'Admin Settings',
-              style: seqHeadlineLg(
+              style: seqPageTitle(context,
                 fontWeight: FontWeight.w700,
                 color: kSeqOnSurface,
               ),

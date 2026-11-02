@@ -668,7 +668,7 @@ class _ProviderSignupScreenState extends ConsumerState<ProviderSignupScreen> {
     return Container(
       padding: const EdgeInsets.all(4),
       decoration: BoxDecoration(
-        color: const Color(0xFFEEEDF3),
+        color: const Color(0xFFE8ECE8),
         borderRadius: BorderRadius.circular(14),
       ),
       child: Row(
@@ -1258,7 +1258,7 @@ class _ProviderSignupScreenState extends ConsumerState<ProviderSignupScreen> {
           'Application submitted.',
           textAlign: TextAlign.center,
           style: geist(
-            fontSize: 22,
+            fontSize: 20,
             fontWeight: FontWeight.w700,
             color: const Color(0xFF1A1B1F),
           ),
@@ -1962,7 +1962,7 @@ class _ProviderSignupScreenState extends ConsumerState<ProviderSignupScreen> {
           'Submitted for accreditation.',
           textAlign: TextAlign.center,
           style: geist(
-            fontSize: 22,
+            fontSize: 20,
             fontWeight: FontWeight.w700,
             color: const Color(0xFF1A1B1F),
           ),
@@ -2070,7 +2070,7 @@ class _ProviderSignupScreenState extends ConsumerState<ProviderSignupScreen> {
           child: LinearProgressIndicator(
             value: currentStep / totalSteps,
             minHeight: 5,
-            backgroundColor: const Color(0xFFEEEDF3),
+            backgroundColor: const Color(0xFFE8ECE8),
             valueColor: const AlwaysStoppedAnimation<Color>(Color(0xFF0F4D2E)),
           ),
         ),
@@ -2140,7 +2140,7 @@ class _ProviderSignupScreenState extends ConsumerState<ProviderSignupScreen> {
           : null,
       suffixIcon: suffixIcon,
       filled: true,
-      fillColor: const Color(0xFFF4F3F8),
+      fillColor: const Color(0xFFF2F4F2),
       contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(10),
@@ -2166,7 +2166,7 @@ class _ProviderSignupScreenState extends ConsumerState<ProviderSignupScreen> {
         decoration: BoxDecoration(
           color: isUploaded
               ? const Color(0xFFB3F1C6).withValues(alpha: 0.2)
-              : const Color(0xFFF4F3F8),
+              : const Color(0xFFF2F4F2),
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
             color: isUploaded
@@ -2231,7 +2231,7 @@ class _ProviderSignupScreenState extends ConsumerState<ProviderSignupScreen> {
                       ? (passwordStrength >= 3
                             ? const Color(0xFF0F4D2E)
                             : const Color(0xFFF99A00))
-                      : const Color(0xFFEEEDF3),
+                      : const Color(0xFFE8ECE8),
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
@@ -2270,7 +2270,7 @@ class _ProviderSignupScreenState extends ConsumerState<ProviderSignupScreen> {
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
           decoration: BoxDecoration(
-            color: const Color(0xFFF4F3F8),
+            color: const Color(0xFFF2F4F2),
             borderRadius: BorderRadius.circular(8),
           ),
           child: Column(
@@ -2333,7 +2333,7 @@ class _ProviderSignupScreenState extends ConsumerState<ProviderSignupScreen> {
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: const Color(0xFFF4F3F8),
+        color: const Color(0xFFF2F4F2),
         borderRadius: BorderRadius.circular(12),
       ),
       child: Column(
@@ -2443,7 +2443,7 @@ class _ProviderSignupScreenState extends ConsumerState<ProviderSignupScreen> {
             'Confirm Your Email Address',
             textAlign: TextAlign.center,
             style: geist(
-              fontSize: 22,
+              fontSize: 20,
               fontWeight: FontWeight.w700,
               color: const Color(0xFF1A1B1F),
               letterSpacing: -0.5,

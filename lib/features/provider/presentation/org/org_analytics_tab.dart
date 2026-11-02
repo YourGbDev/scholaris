@@ -570,7 +570,7 @@ class _OrgAnalyticsTabState extends ConsumerState<OrgAnalyticsTab> {
         Text(
           'Scholarship Analytics & Impact',
           style: inter(
-            fontSize: isDesktop ? 26 : 21,
+            fontSize: isDesktop ? 24 : 20,
             fontWeight: FontWeight.w700,
             color: kOrgTextPrimary,
 
@@ -779,7 +779,7 @@ class _OrgAnalyticsTabState extends ConsumerState<OrgAnalyticsTab> {
       child: _buildKpiCard(
         title: 'RETENTION RATE',
         icon: Icons.all_inclusive_rounded,
-        iconBg: const Color(0xFFE3E2E7),
+        iconBg: const Color(0xFFDEE4DE),
         iconColor: kOrgTextPrimary,
         value: totalScholars > 0 ? '100%' : '--',
         unit: totalScholars > 0 ? 'Zero Attrition' : 'No Cohort Data',
@@ -1033,7 +1033,7 @@ class _OrgAnalyticsTabState extends ConsumerState<OrgAnalyticsTab> {
               Container(
                 padding: const EdgeInsets.all(3),
                 decoration: BoxDecoration(
-                  color: const Color(0xFFF4F3F8),
+                  color: const Color(0xFFF2F4F2),
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Row(
@@ -1107,7 +1107,7 @@ class _OrgAnalyticsTabState extends ConsumerState<OrgAnalyticsTab> {
             height: 180,
             width: double.infinity,
             decoration: BoxDecoration(
-              color: const Color(0xFFF9F8FD),
+              color: const Color(0xFFF7F9F7),
               borderRadius: BorderRadius.circular(12),
             ),
             child: Stack(
@@ -1340,7 +1340,7 @@ class _OrgAnalyticsTabState extends ConsumerState<OrgAnalyticsTab> {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 3),
                 decoration: BoxDecoration(
-                  color: const Color(0xFFF4F3F8),
+                  color: const Color(0xFFF2F4F2),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Text(
@@ -1422,7 +1422,7 @@ class _OrgAnalyticsTabState extends ConsumerState<OrgAnalyticsTab> {
                         child: Container(
                           height: 7,
                           width: double.infinity,
-                          color: const Color(0xFFEEEDF3),
+                          color: const Color(0xFFE8ECE8),
                           child: Align(
                             alignment: Alignment.centerLeft,
                             child: FractionallySizedBox(
@@ -1445,7 +1445,7 @@ class _OrgAnalyticsTabState extends ConsumerState<OrgAnalyticsTab> {
                 margin: const EdgeInsets.only(top: 4, bottom: 8),
                 padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
                 decoration: BoxDecoration(
-                  color: const Color(0xFFF4F3F8),
+                  color: const Color(0xFFF2F4F2),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Row(
@@ -1542,7 +1542,7 @@ class _OrgAnalyticsTabState extends ConsumerState<OrgAnalyticsTab> {
       segments.add(Expanded(flex: mindanaoCount, child: Container(color: const Color(0xFF98D4AB))));
     }
     if (segments.isEmpty) {
-      segments.add(Expanded(child: Container(color: const Color(0xFFEEEDF3))));
+      segments.add(Expanded(child: Container(color: const Color(0xFFE8ECE8))));
     }
 
     return Container(
@@ -1591,7 +1591,7 @@ class _OrgAnalyticsTabState extends ConsumerState<OrgAnalyticsTab> {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 3),
                 decoration: BoxDecoration(
-                  color: const Color(0xFFF4F3F8),
+                  color: const Color(0xFFF2F4F2),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Row(
@@ -1745,7 +1745,7 @@ class _OrgAnalyticsTabState extends ConsumerState<OrgAnalyticsTab> {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: const Color(0xFFF9F8FD),
+        color: const Color(0xFFF7F9F7),
         borderRadius: BorderRadius.circular(12),
       ),
       child: Column(
@@ -1920,7 +1920,7 @@ class _OrgAnalyticsTabState extends ConsumerState<OrgAnalyticsTab> {
                     Container(
                       padding: const EdgeInsets.all(10),
                       decoration: BoxDecoration(
-                        color: const Color(0xFFF9F8FD),
+                        color: const Color(0xFFF7F9F7),
                         borderRadius: BorderRadius.circular(10),
                       ),
                       child: Column(
@@ -1975,7 +1975,7 @@ class _OrgAnalyticsTabState extends ConsumerState<OrgAnalyticsTab> {
                     Container(
                       padding: const EdgeInsets.all(10),
                       decoration: BoxDecoration(
-                        color: const Color(0xFFF9F8FD),
+                        color: const Color(0xFFF7F9F7),
                         borderRadius: BorderRadius.circular(10),
                       ),
                       child: Column(
@@ -2133,7 +2133,7 @@ class _OrgAnalyticsTabState extends ConsumerState<OrgAnalyticsTab> {
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                     decoration: BoxDecoration(
-                      color: const Color(0xFFF4F3F8),
+                      color: const Color(0xFFF2F4F2),
                       borderRadius: BorderRadius.circular(10),
                     ),
                     child: Row(
@@ -2181,7 +2181,7 @@ class _OrgAnalyticsTabState extends ConsumerState<OrgAnalyticsTab> {
             child: ConstrainedBox(
               constraints: BoxConstraints(minWidth: isDesktop ? 960 : 800),
               child: DataTable(
-                headingRowColor: WidgetStateProperty.all(const Color(0xFFF9F8FD)),
+                headingRowColor: WidgetStateProperty.all(const Color(0xFFF7F9F7)),
                 dataRowMinHeight: 56,
                 dataRowMaxHeight: 64,
                 horizontalMargin: 12,
@@ -2238,7 +2238,7 @@ class _OrgAnalyticsTabState extends ConsumerState<OrgAnalyticsTab> {
                             : 'School Pending';
                         final gwa = (p != null && p.gpa > 0) ? p.gpa : 0.0;
                         final gwaTier = gwa > 0 ? (gwa <= 1.25 ? 'Summa Cum Laude' : (gwa <= 1.50 ? 'Magna Cum Laude' : 'Cum Laude')) : 'Pending Review';
-                        final Color gwaBadgeColor = gwa > 0 ? (gwa <= 1.25 ? const Color(0xFFB3F1C6) : const Color(0xFFD8E2FF)) : const Color(0xFFF4F3F8);
+                        final Color gwaBadgeColor = gwa > 0 ? (gwa <= 1.25 ? const Color(0xFFB3F1C6) : const Color(0xFFD8E2FF)) : const Color(0xFFF2F4F2);
                         final Color gwaTextColor = gwa > 0 ? (gwa <= 1.25 ? const Color(0xFF00351C) : const Color(0xFF004493)) : kOrgTextSecondary;
                         // gwaBadgeColor and gwaTextColor set above
 
@@ -2467,7 +2467,7 @@ class _GwaBellCurvePainter extends CustomPainter {
 
     // 1. Background grid lines
     final gridPaint = Paint()
-      ..color = const Color(0xFFE3E2E7).withValues(alpha: 0.5)
+      ..color = const Color(0xFFDEE4DE).withValues(alpha: 0.5)
       ..strokeWidth = 1.0;
     for (int i = 1; i <= 3; i++) {
       final y = h * (i / 4.0);
@@ -2575,7 +2575,7 @@ class _IncomeDonutPainter extends CustomPainter {
 
     // 1. Background ring
     final bgPaint = Paint()
-      ..color = const Color(0xFFEEEDF3)
+      ..color = const Color(0xFFE8ECE8)
       ..strokeWidth = strokeWidth
       ..style = PaintingStyle.stroke;
     canvas.drawCircle(center, radius, bgPaint);

@@ -432,7 +432,7 @@ class _ApplicationsOversightScreenState
         // Title
         Text(
           'Applications Oversight',
-          style: seqHeadlineLg(fontWeight: FontWeight.w700),
+          style: seqPageTitle(context, fontWeight: FontWeight.w700),
         ),
         const SizedBox(height: 4),
 
@@ -936,7 +936,7 @@ class _ApplicationsOversightScreenState
                           scholarshipTitleText,
                           style: seqBodyMd(
                             color: kSeqOnSurfaceVariant,
-                            fontWeight: FontWeight.w800,
+                            fontWeight: FontWeight.w700,
                           ),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,

@@ -64,7 +64,9 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
     if (_isLoading || !_formKey.currentState!.validate()) return;
     if (_failedAttempts >= 3) {
       ScaffoldMessenger.of(context).showSnackBar(
-        _snackBar('Maximum verification attempts reached (3/3). Please request a new code.'),
+        _snackBar(
+          'Maximum verification attempts reached (3/3). Please request a new code.',
+        ),
       );
       return;
     }
@@ -234,7 +236,7 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
                   Text(
                     'Scholaris',
                     style: poppins(
-                      fontSize: 18,
+                      fontSize: 17,
                       fontWeight: FontWeight.w700,
                       color: kPrimary,
                       letterSpacing: -0.5,
@@ -298,7 +300,7 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
                               vertical: 4,
                             ),
                             decoration: BoxDecoration(
-                              color: const Color(0xFFE8EEFF),
+                              color: kSurfaceContainer,
                               borderRadius: BorderRadius.circular(20),
                             ),
                             child: Row(
@@ -335,7 +337,7 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
                               : 'Verify your email',
                           textAlign: TextAlign.center,
                           style: poppins(
-                            fontSize: 26,
+                            fontSize: 20,
                             fontWeight: FontWeight.w700,
                             color: kPrimary,
                             height: 1.2,
@@ -376,7 +378,7 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
                                 width: 40,
                                 height: 40,
                                 decoration: const BoxDecoration(
-                                  color: Color(0xFFF1F3FF),
+                                  color: kSurfaceContainerLow,
                                   shape: BoxShape.circle,
                                 ),
                                 child: const Icon(
@@ -403,7 +405,7 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
                                           : 'No email address specified',
                                       overflow: TextOverflow.ellipsis,
                                       style: poppins(
-                                        fontSize: 14,
+                                        fontSize: 13,
                                         fontWeight: FontWeight.w600,
                                         color: kTextPrimary,
                                       ),
@@ -427,7 +429,7 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
                                       vertical: 5,
                                     ),
                                     decoration: BoxDecoration(
-                                      color: const Color(0xFFE8EEFF),
+                                      color: kSurfaceContainer,
                                       borderRadius: BorderRadius.circular(8),
                                     ),
                                     child: Row(
@@ -492,7 +494,10 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
                         ),
                         const SizedBox(height: 12),
                         ElevatedButton(
-                          onPressed: (hasEmail && !_isLoading && _failedAttempts < 3) ? _onVerify : null,
+                          onPressed:
+                              (hasEmail && !_isLoading && _failedAttempts < 3)
+                              ? _onVerify
+                              : null,
                           child: const Text('Verify code'),
                         ),
                         const SizedBox(height: 12),
@@ -579,9 +584,9 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
                         Container(
                           padding: const EdgeInsets.all(12),
                           decoration: BoxDecoration(
-                            color: const Color(0xFFF1F3FF),
+                            color: kSurfaceContainerLow,
                             borderRadius: BorderRadius.circular(14),
-                            border: Border.all(color: const Color(0xFFDDE2F3)),
+                            border: Border.all(color: kSurfaceContainerHighest),
                           ),
                           child: Row(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -686,7 +691,7 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
                   width: 40,
                   height: 4,
                   decoration: BoxDecoration(
-                    color: const Color(0xFFDDE2F3),
+                    color: kSurfaceContainerHighest,
                     borderRadius: BorderRadius.circular(2),
                   ),
                 ),
@@ -695,7 +700,7 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
               Text(
                 'Verification Help & Support',
                 style: poppins(
-                  fontSize: 18,
+                  fontSize: 17,
                   fontWeight: FontWeight.w700,
                   color: kTextPrimary,
                 ),
@@ -759,7 +764,7 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
         decoration: BoxDecoration(
           color: const Color(0xFFF9F9FF),
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: const Color(0xFFDDE2F3)),
+          border: Border.all(color: kSurfaceContainerHighest),
         ),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -805,4 +810,3 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
     );
   }
 }
-

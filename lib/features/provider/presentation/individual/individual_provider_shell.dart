@@ -303,7 +303,7 @@ class _IndividualProviderShellState
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: BoxDecoration(
-                  color: const Color(0xFFE3E2E7),
+                  color: const Color(0xFFDEE4DE),
                   borderRadius: BorderRadius.circular(6),
                 ),
                 child: Text(

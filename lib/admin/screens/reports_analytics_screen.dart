@@ -303,7 +303,7 @@ Widget _buildSkeletonLoader(BuildContext context) {
         // Title
         Text(
           'Reports & Analytics',
-          style: seqHeadlineLg(fontWeight: FontWeight.w700),
+          style: seqPageTitle(context, fontWeight: FontWeight.w700),
         ),
         const SizedBox(height: 4),
 
@@ -362,7 +362,7 @@ Widget _buildSkeletonLoader(BuildContext context) {
               Text(
                 '₱',
                 style: seqTabularFigures(geist(
-                  fontSize: 26,
+                  fontSize: 20,
                   fontWeight: FontWeight.w700,
                   color: kSeqPrimary,
                 )),
@@ -371,8 +371,8 @@ Widget _buildSkeletonLoader(BuildContext context) {
               Text(
                 _formatCurrencyValue(data.totalScholarshipValue),
                 style: seqTabularFigures(geist(
-                  fontSize: 36,
-                  fontWeight: FontWeight.w800,
+                  fontSize: 28,
+                  fontWeight: FontWeight.w700,
                   color: kSeqPrimary,
                   height: 1.1,
                   letterSpacing: -0.5,

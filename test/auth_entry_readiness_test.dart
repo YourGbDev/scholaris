@@ -85,7 +85,7 @@ void main() {
         'demo@example.test',
       );
       await tester.enterText(find.byType(TextFormField).at(1), 'Password123!');
-      await tester.tap(find.text('Log in'));
+      await tester.tap(find.text('Sign in'));
       await tester.pump();
       auth.login();
       await tester.pump();

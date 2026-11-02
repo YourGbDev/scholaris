@@ -14,10 +14,7 @@ import '../../providers/avatar_provider.dart';
 import 'avatar_display.dart';
 
 class AvatarSelectorSheet extends ConsumerWidget {
-  const AvatarSelectorSheet({
-    super.key,
-    required this.userId,
-  });
+  const AvatarSelectorSheet({super.key, required this.userId});
 
   final String userId;
 
@@ -65,7 +62,7 @@ class AvatarSelectorSheet extends ConsumerWidget {
                       Text(
                         'Profile Avatar',
                         style: poppins(
-                          fontSize: 18,
+                          fontSize: 17,
                           fontWeight: FontWeight.w700,
                           color: kNavyTrust,
                         ),
@@ -82,7 +79,10 @@ class AvatarSelectorSheet extends ConsumerWidget {
                 ),
                 IconButton(
                   icon: const Icon(Icons.close_rounded),
-                  constraints: const BoxConstraints(minWidth: 44, minHeight: 44),
+                  constraints: const BoxConstraints(
+                    minWidth: 44,
+                    minHeight: 44,
+                  ),
                   padding: const EdgeInsets.all(10),
                   onPressed: () => Navigator.of(context).pop(),
                 ),
@@ -99,12 +99,19 @@ class AvatarSelectorSheet extends ConsumerWidget {
               ),
               child: Row(
                 children: [
-                  const Icon(Icons.info_outline_rounded, size: 16, color: Color(0xFF8D6E63)),
+                  const Icon(
+                    Icons.info_outline_rounded,
+                    size: 16,
+                    color: Color(0xFF8D6E63),
+                  ),
                   const SizedBox(width: 8),
                   Expanded(
                     child: Text(
                       'Note: Doodle avatars are great for browsing, but submitting applications requires a verified face photo for scholarship committee deliberation.',
-                      style: openSans(fontSize: 11, color: const Color(0xFF5D4037)),
+                      style: openSans(
+                        fontSize: 11,
+                        color: const Color(0xFF5D4037),
+                      ),
                     ),
                   ),
                 ],
@@ -169,7 +176,8 @@ class AvatarSelectorSheet extends ConsumerWidget {
                 itemBuilder: (context, index) {
                   final preset = AvatarItem.presets[index];
                   final isSelected =
-                      !avatarState.isRealPhoto && avatarState.avatarId == preset.id;
+                      !avatarState.isRealPhoto &&
+                      avatarState.avatarId == preset.id;
 
                   return PressableScale(
                     child: Semantics(
@@ -184,46 +192,48 @@ class AvatarSelectorSheet extends ConsumerWidget {
                         },
                         child: Container(
                           width: 72,
-                        padding: const EdgeInsets.symmetric(vertical: 6),
-                        decoration: BoxDecoration(
-                          color: isSelected
-                              ? kPrimary.withValues(alpha: 0.08)
-                              : Colors.transparent,
-                          borderRadius: BorderRadius.circular(12),
-                          border: Border.all(
-                            color: isSelected ? kPrimary : Colors.transparent,
-                            width: 2,
+                          padding: const EdgeInsets.symmetric(vertical: 6),
+                          decoration: BoxDecoration(
+                            color: isSelected
+                                ? kPrimary.withValues(alpha: 0.08)
+                                : Colors.transparent,
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(
+                              color: isSelected ? kPrimary : Colors.transparent,
+                              width: 2,
+                            ),
                           ),
-                        ),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            AvatarDisplay(
-                              avatarId: preset.id,
-                              isRealPhoto: false,
-                              size: 46,
-                              showVerifiedBadge: false,
-                            ),
-                            const SizedBox(height: 4),
-                            Text(
-                              preset.name.split(' ').first,
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: openSans(
-                                fontSize: 10,
-                                fontWeight: isSelected
-                                    ? FontWeight.w700
-                                    : FontWeight.w500,
-                                color: isSelected ? kPrimary : const Color(0xFF404942),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              AvatarDisplay(
+                                avatarId: preset.id,
+                                isRealPhoto: false,
+                                size: 46,
+                                showVerifiedBadge: false,
                               ),
-                            ),
-                          ],
+                              const SizedBox(height: 4),
+                              Text(
+                                preset.name.split(' ').first,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: openSans(
+                                  fontSize: 10,
+                                  fontWeight: isSelected
+                                      ? FontWeight.w700
+                                      : FontWeight.w500,
+                                  color: isSelected
+                                      ? kPrimary
+                                      : const Color(0xFF404942),
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                );
-              },
+                  );
+                },
               ),
             ),
             const SizedBox(height: 18),
@@ -239,10 +249,7 @@ class AvatarSelectorSheet extends ConsumerWidget {
             const SizedBox(height: 4),
             Text(
               'Scholarship providers require a real photograph for official verification.',
-              style: openSans(
-                fontSize: 11,
-                color: const Color(0xFF707971),
-              ),
+              style: openSans(fontSize: 11, color: const Color(0xFF707971)),
             ),
             const SizedBox(height: 10),
 
@@ -259,7 +266,11 @@ class AvatarSelectorSheet extends ConsumerWidget {
                           borderRadius: BorderRadius.circular(10),
                         ),
                       ),
-                      icon: const Icon(Icons.camera_alt_rounded, size: 18, color: kPrimary),
+                      icon: const Icon(
+                        Icons.camera_alt_rounded,
+                        size: 18,
+                        color: kPrimary,
+                      ),
                       label: Text(
                         'Take Photo',
                         style: poppins(
@@ -270,11 +281,15 @@ class AvatarSelectorSheet extends ConsumerWidget {
                       ),
                       onPressed: () async {
                         HapticFeedback.lightImpact();
-                        await notifier.uploadRealPhoto(path: 'camera_photo_$userId.jpg');
+                        await notifier.uploadRealPhoto(
+                          path: 'camera_photo_$userId.jpg',
+                        );
                         if (context.mounted) {
                           ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(
-                              content: Text('Verified real photo set successfully!'),
+                              content: Text(
+                                'Verified real photo set successfully!',
+                              ),
                               backgroundColor: Color(0xFF145131),
                             ),
                           );
@@ -307,11 +322,15 @@ class AvatarSelectorSheet extends ConsumerWidget {
                       ),
                       onPressed: () async {
                         HapticFeedback.lightImpact();
-                        await notifier.uploadRealPhoto(path: 'gallery_photo_$userId.jpg');
+                        await notifier.uploadRealPhoto(
+                          path: 'gallery_photo_$userId.jpg',
+                        );
                         if (context.mounted) {
                           ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(
-                              content: Text('Verified real photo uploaded successfully!'),
+                              content: Text(
+                                'Verified real photo uploaded successfully!',
+                              ),
                               backgroundColor: Color(0xFF145131),
                             ),
                           );

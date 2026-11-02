@@ -35,7 +35,7 @@ class SectionHeader extends StatelessWidget {
         Flexible(
           child: Text(
             title,
-            style: outfit(fontSize: 18, fontWeight: FontWeight.bold),
+            style: outfit(fontSize: 17, fontWeight: FontWeight.bold),
           ),
         ),
         if (count != null) ...[
@@ -56,10 +56,7 @@ class SectionHeader extends StatelessWidget {
             ),
           ),
         ],
-        if (trailing != null) ...[
-          const Spacer(),
-          trailing!,
-        ],
+        if (trailing != null) ...[const Spacer(), trailing!],
       ],
     );
   }

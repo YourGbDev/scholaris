@@ -293,7 +293,7 @@ class _DetailBodyState extends ConsumerState<_DetailBody> {
                                   overflow: TextOverflow.ellipsis,
                                   style: poppins(
                                     fontSize: 17,
-                                    fontWeight: FontWeight.w800,
+                                    fontWeight: FontWeight.w700,
                                     color: kPrimary,
                                   ),
                                 ),
@@ -332,7 +332,7 @@ class _DetailBodyState extends ConsumerState<_DetailBody> {
               decoration: kSoftCardDecoration,
               child: Text(
                 'This scholarship is no longer active.',
-                style: openSans(fontSize: 14, color: const Color(0xFF404942)),
+                style: openSans(fontSize: 13, color: const Color(0xFF404942)),
               ),
             ),
           ),
@@ -458,7 +458,7 @@ class _StatusSection extends StatelessWidget {
                 Text(
                   ui.label,
                   style: poppins(
-                    fontSize: 16,
+                    fontSize: 15,
                     fontWeight: FontWeight.w600,
                     color: ui.foreground,
                   ),
@@ -488,7 +488,9 @@ class _DecisionLetterCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.all(18),
-      decoration: kSoftCardDecoration.copyWith(border: Border.all(color: const Color(0xFFD4AF37), width: 1.5)),
+      decoration: kSoftCardDecoration.copyWith(
+        border: Border.all(color: const Color(0xFFD4AF37), width: 1.5),
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -533,7 +535,7 @@ class _DecisionLetterCard extends StatelessWidget {
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                       style: outfit(
-                        fontSize: 16,
+                        fontSize: 15,
                         fontWeight: FontWeight.w700,
                         color: const Color(0xFF0F4D2E),
                       ),
@@ -574,7 +576,7 @@ class _DecisionLetterCard extends StatelessWidget {
                   child: Text(
                     awarded ? 'View Award Certificate' : 'View Approval Letter',
                     style: outfit(
-                      fontSize: 14,
+                      fontSize: 13,
                       fontWeight: FontWeight.bold,
                       letterSpacing: 0.2,
                     ),
@@ -964,7 +966,7 @@ class _NotesCard extends StatelessWidget {
                 color: const Color(0xFF707971),
               ),
               filled: true,
-              fillColor: const Color(0xFFF1F3FF),
+              fillColor: kSurfaceContainerLow,
               contentPadding: const EdgeInsets.all(12),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(10),
@@ -1078,7 +1080,7 @@ class _TerminalNote extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: const Color(0xFFF1F3FF),
+        color: kSurfaceContainerLow,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(color: const Color(0xFFE2E8E5), width: 1.0),
       ),
@@ -1156,7 +1158,7 @@ class _ContinueApplicationCard extends StatelessWidget {
                 icon: const Icon(Icons.arrow_forward_rounded, size: 18),
                 label: Text(
                   'Continue Application',
-                  style: poppins(fontSize: 14, fontWeight: FontWeight.w600),
+                  style: poppins(fontSize: 13, fontWeight: FontWeight.w600),
                 ),
               ),
             ),

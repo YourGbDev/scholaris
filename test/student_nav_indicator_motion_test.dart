@@ -1,3 +1,4 @@
+import 'package:scholaris/shared/theme/app_theme.dart';
 import 'package:scholaris/features/home/presentation/widgets/liquid_glass_pill.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
@@ -23,7 +24,7 @@ void main() {
       );
       await tester.pumpWidget(host(0));
       Color ink() => tester.widget<Text>(find.text('Discover')).style!.color!;
-      const inactive = Color(0xFF64748B);
+      const inactive = kTextSupporting;
       await tester.pumpWidget(host(1));
       await tester.pump(const Duration(milliseconds: 70));
       final midway = ink();

@@ -86,14 +86,11 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   }
 
   SnackBar _snackBar(String message) => SnackBar(
-        content: Text(
-          message,
-          style: openSans(color: Colors.white, fontSize: 13),
-        ),
-        backgroundColor: const Color(0xFF161C27),
-        behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      );
+    content: Text(message, style: openSans(color: Colors.white, fontSize: 13)),
+    backgroundColor: const Color(0xFF161C27),
+    behavior: SnackBarBehavior.floating,
+    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -108,7 +105,10 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
               child: Row(
                 children: [
                   IconButton(
-                    icon: const Icon(Icons.arrow_back_rounded, color: kTextPrimary),
+                    icon: const Icon(
+                      Icons.arrow_back_rounded,
+                      color: kTextPrimary,
+                    ),
                     onPressed: () {
                       if (Navigator.of(context).canPop()) {
                         Navigator.of(context).pop();
@@ -122,7 +122,10 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                   const ScholarisLogo(compact: true),
                   const Spacer(),
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 10,
+                      vertical: 5,
+                    ),
                     decoration: BoxDecoration(
                       color: kSurfaceCard,
                       borderRadius: BorderRadius.circular(16),
@@ -131,7 +134,11 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        const Icon(Icons.help_outline_rounded, size: 16, color: kTextSecondary),
+                        const Icon(
+                          Icons.help_outline_rounded,
+                          size: 16,
+                          color: kTextSecondary,
+                        ),
                         const SizedBox(width: 4),
                         Text(
                           'Help',
@@ -192,7 +199,9 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                                     shape: BoxShape.circle,
                                     boxShadow: [
                                       BoxShadow(
-                                        color: Colors.black.withValues(alpha: 0.08),
+                                        color: Colors.black.withValues(
+                                          alpha: 0.08,
+                                        ),
                                         blurRadius: 10,
                                         offset: const Offset(0, 3),
                                       ),
@@ -212,9 +221,12 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                           // Account Recovery Pill
                           Center(
                             child: Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 12,
+                                vertical: 4,
+                              ),
                               decoration: BoxDecoration(
-                                color: const Color(0xFFE8EEFF),
+                                color: kSurfaceContainer,
                                 borderRadius: BorderRadius.circular(20),
                               ),
                               child: Row(
@@ -249,7 +261,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                             'Forgot Password?',
                             textAlign: TextAlign.center,
                             style: poppins(
-                              fontSize: 26,
+                              fontSize: 20,
                               fontWeight: FontWeight.w700,
                               color: kPrimary,
                               height: 1.2,
@@ -286,7 +298,8 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                               crossAxisAlignment: CrossAxisAlignment.stretch,
                               children: [
                                 Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
                                   children: [
                                     Text(
                                       'Email',
@@ -311,11 +324,17 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                                   keyboardType: TextInputType.emailAddress,
                                   textInputAction: TextInputAction.done,
                                   onFieldSubmitted: (_) => _onSubmit(),
-                                  style: openSans(fontSize: 14, color: kTextPrimary),
+                                  style: openSans(
+                                    fontSize: 13,
+                                    color: kTextPrimary,
+                                  ),
                                   validator: _validateEmail,
                                   decoration: InputDecoration(
                                     hintText: 'e.g. maya.santos@up.edu.ph',
-                                    hintStyle: openSans(fontSize: 13, color: Colors.black38),
+                                    hintStyle: openSans(
+                                      fontSize: 13,
+                                      color: Colors.black38,
+                                    ),
                                     prefixIcon: const Icon(
                                       Icons.alternate_email_rounded,
                                       size: 20,
@@ -329,23 +348,35 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                                     ),
                                     border: OutlineInputBorder(
                                       borderRadius: BorderRadius.circular(12),
-                                      borderSide: BorderSide(color: kBorderLight),
+                                      borderSide: BorderSide(
+                                        color: kBorderLight,
+                                      ),
                                     ),
                                     enabledBorder: OutlineInputBorder(
                                       borderRadius: BorderRadius.circular(12),
-                                      borderSide: BorderSide(color: kBorderLight),
+                                      borderSide: BorderSide(
+                                        color: kBorderLight,
+                                      ),
                                     ),
                                     focusedBorder: OutlineInputBorder(
                                       borderRadius: BorderRadius.circular(12),
-                                      borderSide: const BorderSide(color: kPrimary, width: 1.5),
+                                      borderSide: const BorderSide(
+                                        color: kPrimary,
+                                        width: 1.5,
+                                      ),
                                     ),
                                     errorBorder: OutlineInputBorder(
                                       borderRadius: BorderRadius.circular(12),
-                                      borderSide: const BorderSide(color: Colors.redAccent),
+                                      borderSide: const BorderSide(
+                                        color: Colors.redAccent,
+                                      ),
                                     ),
                                     focusedErrorBorder: OutlineInputBorder(
                                       borderRadius: BorderRadius.circular(12),
-                                      borderSide: const BorderSide(color: Colors.redAccent, width: 1.5),
+                                      borderSide: const BorderSide(
+                                        color: Colors.redAccent,
+                                        width: 1.5,
+                                      ),
                                     ),
                                   ),
                                 ),
@@ -358,9 +389,11 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                           Container(
                             padding: const EdgeInsets.all(14),
                             decoration: BoxDecoration(
-                              color: const Color(0xFFF1F3FF),
+                              color: kSurfaceContainerLow,
                               borderRadius: BorderRadius.circular(14),
-                              border: Border.all(color: const Color(0xFFDDE2F3)),
+                              border: Border.all(
+                                color: kSurfaceContainerHighest,
+                              ),
                             ),
                             child: Row(
                               crossAxisAlignment: CrossAxisAlignment.start,
@@ -381,7 +414,8 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                                 const SizedBox(width: 10),
                                 Expanded(
                                   child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
                                       Text(
                                         'Need recovery via mobile?',
@@ -441,7 +475,10 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                                         ),
                                       ),
                                       const SizedBox(width: 6),
-                                      const Icon(Icons.arrow_forward_rounded, size: 18),
+                                      const Icon(
+                                        Icons.arrow_forward_rounded,
+                                        size: 18,
+                                      ),
                                     ],
                                   ),
                           ),
@@ -453,11 +490,17 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                               decoration: BoxDecoration(
                                 color: kPrimaryLight.withValues(alpha: 0.3),
                                 borderRadius: BorderRadius.circular(12),
-                                border: Border.all(color: kPrimary.withValues(alpha: 0.2)),
+                                border: Border.all(
+                                  color: kPrimary.withValues(alpha: 0.2),
+                                ),
                               ),
                               child: Row(
                                 children: [
-                                  const Icon(Icons.mark_email_read_rounded, color: kPrimary, size: 20),
+                                  const Icon(
+                                    Icons.mark_email_read_rounded,
+                                    color: kPrimary,
+                                    size: 20,
+                                  ),
                                   const SizedBox(width: 8),
                                   Expanded(
                                     child: Text(
@@ -492,7 +535,8 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                                 style: TextButton.styleFrom(
                                   padding: EdgeInsets.zero,
                                   minimumSize: Size.zero,
-                                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                  tapTargetSize:
+                                      MaterialTapTargetSize.shrinkWrap,
                                 ),
                                 child: Text(
                                   'Log in',
@@ -511,15 +555,22 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                           // Trust Badge
                           Center(
                             child: Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 12,
+                                vertical: 6,
+                              ),
                               decoration: BoxDecoration(
-                                color: const Color(0xFFE8EEFF),
+                                color: kSurfaceContainer,
                                 borderRadius: BorderRadius.circular(12),
                               ),
                               child: Row(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
-                                  const Icon(Icons.shield_outlined, size: 14, color: kNavyTrust),
+                                  const Icon(
+                                    Icons.shield_outlined,
+                                    size: 14,
+                                    color: kNavyTrust,
+                                  ),
                                   const SizedBox(width: 6),
                                   Flexible(
                                     child: Text(

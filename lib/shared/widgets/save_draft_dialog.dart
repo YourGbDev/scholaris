@@ -6,11 +6,7 @@
 import 'package:flutter/material.dart';
 import 'package:scholaris/shared/theme/app_theme.dart';
 
-enum SaveDraftExitAction {
-  saveAsDraft,
-  discard,
-  cancel,
-}
+enum SaveDraftExitAction { saveAsDraft, discard, cancel }
 
 /// Prompts the student with "Save your progress?" and provides three options:
 /// 1. Save as Draft (persists form state as draft and navigates away)
@@ -25,18 +21,14 @@ Future<SaveDraftExitAction?> showSaveDraftExitDialog(BuildContext context) {
       title: Text(
         'Save your progress?',
         style: geist(
-          fontSize: 18,
+          fontSize: 17,
           fontWeight: FontWeight.w700,
           color: kNavyTrust,
         ),
       ),
       content: Text(
         'You have unsaved progress in your application. Would you like to save it as a draft so you can return to it later, or discard your progress?',
-        style: geist(
-          fontSize: 14,
-          color: const Color(0xFF404942),
-          height: 1.4,
-        ),
+        style: geist(fontSize: 13, color: const Color(0xFF404942), height: 1.4),
       ),
       actions: [
         TextButton(
@@ -46,7 +38,7 @@ Future<SaveDraftExitAction?> showSaveDraftExitDialog(BuildContext context) {
           child: Text(
             'Cancel',
             style: geist(
-              fontSize: 14,
+              fontSize: 13,
               fontWeight: FontWeight.w600,
               color: const Color(0xFF707971),
             ),
@@ -59,7 +51,7 @@ Future<SaveDraftExitAction?> showSaveDraftExitDialog(BuildContext context) {
           child: Text(
             'Discard',
             style: geist(
-              fontSize: 14,
+              fontSize: 13,
               fontWeight: FontWeight.w600,
               color: kError,
             ),
@@ -79,10 +71,7 @@ Future<SaveDraftExitAction?> showSaveDraftExitDialog(BuildContext context) {
               Navigator.of(dialogContext).pop(SaveDraftExitAction.saveAsDraft),
           child: Text(
             'Save as Draft',
-            style: geist(
-              fontSize: 14,
-              fontWeight: FontWeight.w600,
-            ),
+            style: geist(fontSize: 13, fontWeight: FontWeight.w600),
           ),
         ),
       ],

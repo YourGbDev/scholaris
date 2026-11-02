@@ -212,7 +212,7 @@ class _ProviderScholarshipsTabState
                           Text(
                             'My Scholarships',
                             style: poppins(
-                              fontSize: 22,
+                              fontSize: 15,
                               fontWeight: FontWeight.w700,
                               color: kPrimary,
                             ),
@@ -633,7 +633,7 @@ class _ScholarshipCard extends StatelessWidget {
                         s.title,
                         style: poppins(
                           fontSize: 15,
-                          fontWeight: FontWeight.w800,
+                          fontWeight: FontWeight.w700,
                           color: isActive ? kPrimary : Colors.black54,
                         ),
                       ),

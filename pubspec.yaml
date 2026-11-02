@@ -68,6 +68,7 @@ flutter:
     - assets/animations/Successfully Done.json
     - assets/images/scholaris_hero_student.png
     - assets/mascots/
+    - assets/mascots/onboarding/
     - assets/images/mascot_male.png
     - assets/images/mascot_male_welcome_wave.png
     - assets/images/student_hero_graduate_campus.png

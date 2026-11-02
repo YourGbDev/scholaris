@@ -331,7 +331,7 @@ class _DisbursementsOversightScreenState
         const SizedBox(height: 8),
         Text(
           'Disbursements Oversight',
-          style: seqHeadlineLg(
+          style: seqPageTitle(context,
             fontWeight: FontWeight.w700,
             color: kSeqOnSurface,
           ),

@@ -94,7 +94,7 @@ class IndividualGrantTab extends ConsumerWidget {
                           children: [
                             Text(
                               'My scholarships',
-                              style: orgHeadline(fontSize: 28),
+                              style: orgHeadline(fontSize: MediaQuery.sizeOf(context).width >= 900 ? 24 : 20),
                             ),
                             const SizedBox(height: 2),
                             Text(
@@ -287,7 +287,7 @@ class IndividualGrantTab extends ConsumerWidget {
                                 ],
                               ),
                               const SizedBox(height: 6),
-                              Text(s.title, style: orgHeadline(fontWeight: FontWeight.w800, fontSize: 16)),
+                              Text(s.title, style: orgHeadline(fontWeight: FontWeight.w700, fontSize: 16)),
                               const SizedBox(height: 2),
                               Text(
                                 s.description ?? '',

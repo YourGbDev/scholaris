@@ -45,7 +45,7 @@ class ProviderIncomingApplications extends ConsumerWidget {
                 Text(
                   'Incoming Applications',
                   style: poppins(
-                    fontSize: 22,
+                    fontSize: 20,
                     fontWeight: FontWeight.w700,
                     color: kPrimary,
                   ),
@@ -363,7 +363,7 @@ class _IncomingApplicationRow extends ConsumerWidget {
                           overflow: TextOverflow.ellipsis,
                           style: poppins(
                             fontSize: 15,
-                            fontWeight: FontWeight.w800,
+                            fontWeight: FontWeight.w700,
                             color: Colors.black87,
                           ),
                         ),

@@ -3,20 +3,4 @@
 @font-face { font-family: 'Geist'; src: url('Geist-SemiBold.ttf') format('truetype'); font-style: normal; font-weight: 600; font-display: swap; }
 @font-face { font-family: 'Geist'; src: url('Geist-Bold.ttf') format('truetype'); font-style: normal; font-weight: 700; font-display: swap; }
 @font-face { font-family: 'Geist'; src: url('Geist-ExtraBold.ttf') format('truetype'); font-style: normal; font-weight: 800; font-display: swap; }
-body, button, input, select, textarea { font-family: 'Geist', sans-serif; }
-.font-black { font-weight: 800 !important; }
-h1, .text-display-lg, .text-display-lg-mobile {
-  font-weight: 800 !important; letter-spacing: -.8px !important; line-height: 1.15 !important;
-}
-h2, .text-headline-lg, .text-headline-md {
-  font-weight: 800 !important; letter-spacing: -.6px !important; line-height: 1.2 !important;
-}
-h3, h4, h5, h6, .text-headline-sm {
-  font-weight: 800 !important; letter-spacing: -.35px !important; line-height: 1.25 !important;
-}
-p, .text-body-lg, .text-body-md, .text-body-sm {
-  font-weight: 600 !important; letter-spacing: -.1px !important; line-height: 1.4 !important;
-}
-.text-currency-stat {
-  font-weight: 800 !important; letter-spacing: -.4px !important;
-}
+body { font-family: 'Geist', sans-serif; }

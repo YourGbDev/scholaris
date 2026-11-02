@@ -15,7 +15,7 @@ class IndividualSupportSummary extends ConsumerWidget {
     return ProviderOverviewCard(
       heading: Text(
         'Your support at a glance',
-        style: orgHeadline(fontSize: 18),
+        style: orgHeadline(fontSize: 17),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

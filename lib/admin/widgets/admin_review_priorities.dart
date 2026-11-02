@@ -146,7 +146,7 @@ class AdminReviewPriorities extends ConsumerWidget {
       children: [
         Text(
           'Needs your attention',
-          style: adminHeaderStyle(fontSize: 20, fontWeight: FontWeight.w700),
+          style: adminHeaderStyle(fontSize: 17, fontWeight: FontWeight.w700),
         ),
         const SizedBox(height: 8),
         const Text(

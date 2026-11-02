@@ -373,7 +373,7 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
         Text(
           'Organization settings',
           style: inter(
-            fontSize: isDesktop ? 32 : 26,
+            fontSize: isDesktop ? 24 : 20,
             fontWeight: FontWeight.w700,
             color: kOrgTextPrimary,
           ),
@@ -397,7 +397,7 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
         PressableScale(
           scale: 0.97,
           child: Material(
-            color: const Color(0xFFEEEDF3),
+            color: const Color(0xFFE8ECE8),
             borderRadius: BorderRadius.circular(12),
             child: InkWell(
               borderRadius: BorderRadius.circular(12),
@@ -501,7 +501,7 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
     return Container(
       padding: const EdgeInsets.all(4),
       decoration: BoxDecoration(
-        color: const Color(0xFFEEEDF3),
+        color: const Color(0xFFE8ECE8),
         borderRadius: BorderRadius.circular(12),
       ),
       child: LayoutBuilder(
@@ -654,18 +654,7 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
     return Container(
       key: key,
       padding: const EdgeInsets.all(24),
-      decoration: BoxDecoration(
-        color: kOrgSurfaceWhite,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: kOrgBorder),
-        boxShadow: const [
-          BoxShadow(
-            color: Color(0x06000000),
-            blurRadius: 8,
-            offset: Offset(0, 2),
-          ),
-        ],
-      ),
+      decoration: kSoftCardDecoration,
       child: LayoutBuilder(
         builder: (context, constraints) {
           final isNarrow = constraints.maxWidth < 500;
@@ -691,9 +680,9 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
                   initials,
                   style: inter(
                     fontSize: isNarrow ? 22 : 24,
-                    fontWeight: FontWeight.w900,
+                    fontWeight: FontWeight.w700,
                     color: Colors.white,
-                    letterSpacing: -1,
+                    letterSpacing: -.4,
                   ),
                 ),
                 const SizedBox(height: 2),
@@ -760,7 +749,7 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
               Wrap(
                 children: [
                   Material(
-                    color: const Color(0xFFE3E2E7),
+                    color: const Color(0xFFDEE4DE),
                     borderRadius: BorderRadius.circular(8),
                     child: InkWell(
                       borderRadius: BorderRadius.circular(8),
@@ -812,7 +801,7 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
           final brandingUnit = Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: const Color(0xFFF7F6FB),
+              color: const Color(0xFFF6F8F6),
               borderRadius: BorderRadius.circular(14),
             ),
             child: isNarrow
@@ -846,7 +835,7 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
                 decoration: InputDecoration(
                   isDense: true,
                   filled: true,
-                  fillColor: const Color(0xFFF7F6FB),
+                  fillColor: const Color(0xFFF6F8F6),
                   hintText: 'Not yet registered / Incomplete',
                   hintStyle: inter(fontSize: 12, color: kOrgTextMuted),
                   contentPadding: const EdgeInsets.symmetric(
@@ -874,7 +863,7 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
                 decoration: InputDecoration(
                   isDense: true,
                   filled: true,
-                  fillColor: const Color(0xFFF7F6FB),
+                  fillColor: const Color(0xFFF6F8F6),
                   hintText: 'Not yet provided',
                   hintStyle: inter(fontSize: 12, color: kOrgTextMuted),
                   contentPadding: const EdgeInsets.symmetric(
@@ -917,7 +906,7 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
                         width: 36,
                         height: 36,
                         decoration: BoxDecoration(
-                          color: const Color(0xFFEEEDF3),
+                          color: const Color(0xFFE8ECE8),
                           borderRadius: BorderRadius.circular(10),
                         ),
                         child: const Icon(
@@ -955,7 +944,7 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
                       vertical: 4,
                     ),
                     decoration: BoxDecoration(
-                      color: const Color(0xFFEEEDF3),
+                      color: const Color(0xFFE8ECE8),
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Text(
@@ -986,7 +975,7 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
                 decoration: InputDecoration(
                   isDense: true,
                   filled: true,
-                  fillColor: const Color(0xFFF7F6FB),
+                  fillColor: const Color(0xFFF6F8F6),
                   contentPadding: const EdgeInsets.symmetric(
                     horizontal: 14,
                     vertical: 12,
@@ -1015,7 +1004,7 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
                   vertical: 4,
                 ),
                 decoration: BoxDecoration(
-                  color: const Color(0xFFF7F6FB),
+                  color: const Color(0xFFF6F8F6),
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Row(
@@ -1065,7 +1054,7 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
                 decoration: InputDecoration(
                   isDense: true,
                   filled: true,
-                  fillColor: const Color(0xFFF7F6FB),
+                  fillColor: const Color(0xFFF6F8F6),
                   hintText: 'Not yet provided (Corporate address unlisted)',
                   hintStyle: inter(fontSize: 12, color: kOrgTextMuted),
                   suffixIcon: const Padding(
@@ -1108,7 +1097,7 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
                 decoration: InputDecoration(
                   isDense: true,
                   filled: true,
-                  fillColor: const Color(0xFFF7F6FB),
+                  fillColor: const Color(0xFFF6F8F6),
                   hintText: 'Enter your organization\'s mission statement and granting mandate for Filipino scholars (up to 500 characters)...',
                   hintStyle: inter(fontSize: 12, color: kOrgTextMuted),
                   contentPadding: const EdgeInsets.symmetric(
@@ -1138,18 +1127,7 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
     return Container(
       key: key,
       padding: const EdgeInsets.all(24),
-      decoration: BoxDecoration(
-        color: kOrgSurfaceWhite,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: kOrgBorder),
-        boxShadow: const [
-          BoxShadow(
-            color: Color(0x06000000),
-            blurRadius: 8,
-            offset: Offset(0, 2),
-          ),
-        ],
-      ),
+      decoration: kSoftCardDecoration,
       child: LayoutBuilder(
         builder: (context, constraints) {
           final isNarrow = constraints.maxWidth < 500;
@@ -1166,7 +1144,7 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
                 decoration: InputDecoration(
                   isDense: true,
                   filled: true,
-                  fillColor: const Color(0xFFF7F6FB),
+                  fillColor: const Color(0xFFF6F8F6),
                   hintText: 'Lead Administrator (Not yet specified)',
                   hintStyle: inter(fontSize: 12, color: kOrgTextMuted),
                   contentPadding: const EdgeInsets.symmetric(
@@ -1194,7 +1172,7 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
                 decoration: InputDecoration(
                   isDense: true,
                   filled: true,
-                  fillColor: const Color(0xFFF7F6FB),
+                  fillColor: const Color(0xFFF6F8F6),
                   hintText: 'Lead Grant Administrator',
                   hintStyle: inter(fontSize: 12, color: kOrgTextMuted),
                   contentPadding: const EdgeInsets.symmetric(
@@ -1261,7 +1239,7 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
                 decoration: InputDecoration(
                   isDense: true,
                   filled: true,
-                  fillColor: const Color(0xFFF7F6FB),
+                  fillColor: const Color(0xFFF6F8F6),
                   suffixIcon: const Icon(
                     Icons.alternate_email_rounded,
                     size: 16,
@@ -1292,7 +1270,7 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
                 decoration: InputDecoration(
                   isDense: true,
                   filled: true,
-                  fillColor: const Color(0xFFF7F6FB),
+                  fillColor: const Color(0xFFF6F8F6),
                   hintText: 'Not yet provided',
                   hintStyle: inter(fontSize: 12, color: kOrgTextMuted),
                   suffixIcon: const Icon(
@@ -1333,7 +1311,7 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
           final pkiSignatureCard = Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: const Color(0xFFF7F6FB),
+              color: const Color(0xFFF6F8F6),
               borderRadius: BorderRadius.circular(14),
             ),
             child: isNarrow
@@ -1346,7 +1324,7 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
                             width: 36,
                             height: 36,
                             decoration: BoxDecoration(
-                              color: const Color(0xFFE3E2E7),
+                              color: const Color(0xFFDEE4DE),
                               borderRadius: BorderRadius.circular(10),
                             ),
                             child: const Icon(
@@ -1375,7 +1353,7 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
                       ),
                       const SizedBox(height: 12),
                       Material(
-                        color: const Color(0xFFE3E2E7),
+                        color: const Color(0xFFDEE4DE),
                         borderRadius: BorderRadius.circular(8),
                         child: InkWell(
                           borderRadius: BorderRadius.circular(8),
@@ -1404,7 +1382,7 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
                         width: 38,
                         height: 38,
                         decoration: BoxDecoration(
-                          color: const Color(0xFFE3E2E7),
+                          color: const Color(0xFFDEE4DE),
                           borderRadius: BorderRadius.circular(10),
                         ),
                         child: const Icon(
@@ -1438,7 +1416,7 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
                       ),
                       const SizedBox(width: 12),
                       Material(
-                        color: const Color(0xFFE3E2E7),
+                        color: const Color(0xFFDEE4DE),
                         borderRadius: BorderRadius.circular(8),
                         child: InkWell(
                           borderRadius: BorderRadius.circular(8),
@@ -1477,7 +1455,7 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
                         width: 36,
                         height: 36,
                         decoration: BoxDecoration(
-                          color: const Color(0xFFEEEDF3),
+                          color: const Color(0xFFE8ECE8),
                           borderRadius: BorderRadius.circular(10),
                         ),
                         child: const Icon(
@@ -1560,18 +1538,7 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
     return Container(
       key: key,
       padding: const EdgeInsets.all(24),
-      decoration: BoxDecoration(
-        color: kOrgSurfaceWhite,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: kOrgBorder),
-        boxShadow: const [
-          BoxShadow(
-            color: Color(0x06000000),
-            blurRadius: 8,
-            offset: Offset(0, 2),
-          ),
-        ],
-      ),
+      decoration: kSoftCardDecoration,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -1586,7 +1553,7 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
                     width: 36,
                     height: 36,
                     decoration: BoxDecoration(
-                      color: const Color(0xFFEEEDF3),
+                      color: const Color(0xFFE8ECE8),
                       borderRadius: BorderRadius.circular(10),
                     ),
                     child: const Icon(
@@ -1627,7 +1594,7 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
             ],
           ),
           const SizedBox(height: 16),
-          const Divider(height: 1, color: Color(0xFFEEEDF3)),
+          const Divider(height: 1, color: Color(0xFFE8ECE8)),
 
           // Toggle 1
           _buildToggleRow(
@@ -1636,7 +1603,7 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
             value: _alertGwa150,
             onChanged: (val) => setState(() => _alertGwa150 = val),
           ),
-          const Divider(height: 1, color: Color(0xFFEEEDF3)),
+          const Divider(height: 1, color: Color(0xFFE8ECE8)),
 
           // Toggle 2
           _buildToggleRow(
@@ -1645,7 +1612,7 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
             value: _weeklyDigest,
             onChanged: (val) => setState(() => _weeklyDigest = val),
           ),
-          const Divider(height: 1, color: Color(0xFFEEEDF3)),
+          const Divider(height: 1, color: Color(0xFFE8ECE8)),
 
           // Toggle 3
           _buildToggleRow(
@@ -1654,7 +1621,7 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
             value: _duplicateLrnAlert,
             onChanged: (val) => setState(() => _duplicateLrnAlert = val),
           ),
-          const Divider(height: 1, color: Color(0xFFEEEDF3)),
+          const Divider(height: 1, color: Color(0xFFE8ECE8)),
 
           // Toggle 4
           _buildToggleRow(
@@ -1708,7 +1675,7 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
             value: value,
             activeTrackColor: kOrgPrimary,
             activeThumbColor: Colors.white,
-            inactiveTrackColor: const Color(0xFFE3E2E7),
+            inactiveTrackColor: const Color(0xFFDEE4DE),
             inactiveThumbColor: Colors.white,
             onChanged: null,
           ),
@@ -1787,7 +1754,7 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
             children: [
               // Sign Out of All Active Consoles
               Material(
-                color: const Color(0xFFEEEDF3),
+                color: const Color(0xFFE8ECE8),
                 borderRadius: BorderRadius.circular(10),
                 child: InkWell(
                   borderRadius: BorderRadius.circular(10),
@@ -1900,11 +1867,7 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
   // ---------------------------------------------------------------------------
   Widget _buildAccreditationStatusCard() => Container(
     padding: const EdgeInsets.all(20),
-    decoration: BoxDecoration(
-      color: kOrgSurfaceWhite,
-      borderRadius: BorderRadius.circular(16),
-      border: Border.all(color: kOrgBorder),
-    ),
+    decoration: kSoftCardDecoration,
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -1933,18 +1896,7 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
   Widget _buildHeadquartersCard() {
     return Container(
       padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: kOrgSurfaceWhite,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: kOrgBorder),
-        boxShadow: const [
-          BoxShadow(
-            color: Color(0x06000000),
-            blurRadius: 8,
-            offset: Offset(0, 2),
-          ),
-        ],
-      ),
+      decoration: kSoftCardDecoration,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -2045,11 +1997,7 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
   // ---------------------------------------------------------------------------
   Widget _buildFundEnvelopeCard({required int displayBudget}) => Container(
     padding: const EdgeInsets.all(20),
-    decoration: BoxDecoration(
-      color: kOrgSurfaceWhite,
-      borderRadius: BorderRadius.circular(16),
-      border: Border.all(color: kOrgBorder),
-    ),
+    decoration: kSoftCardDecoration,
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -2075,7 +2023,7 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: const Color(0xFFEEEDF3),
+        color: const Color(0xFFE8ECE8),
         borderRadius: BorderRadius.circular(14),
       ),
       child: Row(
@@ -2196,7 +2144,7 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
                     decoration: BoxDecoration(
                       color: activeType == 'organization'
                           ? kOrgPrimary
-                          : const Color(0xFFF7F6FB),
+                          : const Color(0xFFF6F8F6),
                       borderRadius: BorderRadius.circular(8),
                       border: Border.all(
                         color: activeType == 'organization'
@@ -2231,7 +2179,7 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
                     decoration: BoxDecoration(
                       color: activeType == 'individual'
                           ? kOrgPrimary
-                          : const Color(0xFFF7F6FB),
+                          : const Color(0xFFF6F8F6),
                       borderRadius: BorderRadius.circular(8),
                       border: Border.all(
                         color: activeType == 'individual'

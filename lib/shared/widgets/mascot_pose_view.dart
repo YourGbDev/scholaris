@@ -23,6 +23,18 @@ String getMascotAssetPath(MascotPose pose, {String? gender}) {
 String getMascotName({String? gender}) =>
     gender?.trim().toLowerCase() == 'female' ? 'Ari' : 'Ariel';
 
+/// The same welcoming artwork is used in Home and the guided introduction.
+String getMascotGreetingAssetPath({String? gender}) =>
+    gender?.trim().toLowerCase() == 'female'
+    ? 'assets/images/mascot_female.png'
+    : 'assets/images/mascot_male_welcome_wave.png';
+
+/// Campus setting for the Home welcome card; identity follows the same gender rule.
+String getMascotCampusAssetPath({String? gender}) =>
+    gender?.trim().toLowerCase() == 'female'
+    ? 'assets/images/student_hero_graduate_campus_female.png'
+    : 'assets/images/student_hero_graduate_campus.png';
+
 /// A responsive widget displaying the appropriate mascot pose graphic.
 class MascotPoseView extends StatelessWidget {
   const MascotPoseView({

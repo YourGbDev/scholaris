@@ -161,7 +161,7 @@ class _IndividualApplicationsTabState
                 ),
                 padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
                 children: [
-                  Text('Applications', style: orgHeadline(fontSize: 28)),
+                  Text('Applications', style: orgHeadline(fontSize: MediaQuery.sizeOf(context).width >= 900 ? 24 : 20)),
                   const SizedBox(height: 8),
                   Text(
                     'Get to know your applicants and review their requirements.',

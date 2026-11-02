@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 //
 // Exercises the end-to-end path:
 //   /ceremony → GraduationCeremony plays → onCompleted → /login →
-//   EmptyStage + login form
+//   focused login form
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -35,9 +35,7 @@ void main() {
     }
   }
 
-  testWidgets('ceremony → completion → login → empty stage → login form', (
-    tester,
-  ) async {
+  testWidgets('ceremony → completion → focused login form', (tester) async {
     final router = GoRouter(
       initialLocation: '/ceremony',
       routes: [
@@ -65,13 +63,13 @@ void main() {
     await tester.pump(); // login screen builds
 
     // The login screen should now be visible with:
-    // - EmptyStage behind the form
-    expect(find.byType(EmptyStage), findsOneWidget);
-    // - The locked headline
-    expect(find.text('Your future starts somewhere.'), findsOneWidget);
+    // - No decorative stage behind the form
+    expect(find.byType(EmptyStage), findsNothing);
+    // - A returning-student welcome
+    expect(find.text('Welcome back'), findsOneWidget);
     // - Standard login fields
     expect(find.text('Email'), findsOneWidget);
     expect(find.text('Password'), findsOneWidget);
-    expect(find.text('Log in'), findsOneWidget);
+    expect(find.text('Sign in'), findsOneWidget);
   });
 }

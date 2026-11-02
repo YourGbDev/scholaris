@@ -936,7 +936,7 @@ class _AdminScholarshipsTabState extends ConsumerState<AdminScholarshipsTab> {
                       children: [
                         Text(
                           s.title,
-                          style: seqHeadlineSm(fontWeight: FontWeight.w800),
+                          style: seqHeadlineSm(fontWeight: FontWeight.w700),
                         ),
                         // Status Pill
                         Container(
@@ -1165,7 +1165,7 @@ class _AdminScholarshipsTabState extends ConsumerState<AdminScholarshipsTab> {
             style: seqTabularFigures(geist(
               fontSize: 18,
               color: valColor,
-              fontWeight: FontWeight.w800,
+              fontWeight: FontWeight.w700,
               letterSpacing: -0.3,
             )),
           ),
@@ -1636,7 +1636,7 @@ class _AdminScholarshipsTabState extends ConsumerState<AdminScholarshipsTab> {
             Expanded(
               child: Text(
                 s.title,
-                style: seqHeadlineSm(fontWeight: FontWeight.w800),
+                style: seqHeadlineSm(fontWeight: FontWeight.w700),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
               ),
@@ -1802,7 +1802,7 @@ class _AdminScholarshipsTabState extends ConsumerState<AdminScholarshipsTab> {
                               s.title,
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
-                              style: seqBodyMd(fontWeight: FontWeight.w800, color: kSeqOnSurface),
+                              style: seqBodyMd(fontWeight: FontWeight.w700, color: kSeqOnSurface),
                             ),
                           ))
                       .toList(),

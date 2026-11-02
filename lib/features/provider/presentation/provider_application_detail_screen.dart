@@ -255,7 +255,7 @@ class _ProviderApplicationDetailScreenState
                     Text(
                       profile.fullName,
                       style: poppins(
-                        fontSize: 22,
+                        fontSize: 17,
                         fontWeight: FontWeight.w700,
                         color: Colors.black87,
                       ),
@@ -263,7 +263,7 @@ class _ProviderApplicationDetailScreenState
                     const SizedBox(height: 2),
                     Text(
                       programTitle,
-                      style: openSans(fontWeight: FontWeight.w800,
+                      style: openSans(fontWeight: FontWeight.w700,
                         fontSize: 13,
                         color: Colors.black54,
                       ),
@@ -400,7 +400,7 @@ class _ProviderApplicationDetailScreenState
                                   gpa > 0 ? gpa.toStringAsFixed(2) : 'N/A',
                                   style: poppins(
                                     fontSize: 26,
-                                    fontWeight: FontWeight.w800,
+                                    fontWeight: FontWeight.w700,
                                     color: gpa > 0 ? kPrimary : Colors.black45,
                                   ),
                                 ),

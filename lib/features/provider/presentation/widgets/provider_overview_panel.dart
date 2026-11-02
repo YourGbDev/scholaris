@@ -213,7 +213,7 @@ class ProviderOverviewPanel extends StatelessWidget {
                     ? 'You’re all caught up'
                     : 'Start your first scholarship',
                 style: orgHeadline(
-                  fontSize: compact ? 20 : 23,
+                  fontSize: 17,
                   color: kOrgPrimary,
                 ),
               ),
@@ -270,7 +270,7 @@ class ProviderOverviewPanel extends StatelessWidget {
                         ? 'Hi, $firstName — a little support. A new beginning.'
                         : 'Organization overview',
                     style: orgHeadline(
-                      fontSize: compact ? 24 : 28,
+                      fontSize: compact ? 20 : 24,
                       color: kOrgPrimary,
                     ),
                   ),
@@ -387,7 +387,7 @@ class ProviderOverviewPanel extends StatelessWidget {
                     children: [
                       Text(
                         'Your scholarship programs',
-                        style: orgHeadline(fontSize: 21),
+                        style: orgHeadline(fontSize: 17),
                       ),
                       OutlinedButton.icon(
                         style: OutlinedButton.styleFrom(
@@ -408,7 +408,7 @@ class ProviderOverviewPanel extends StatelessWidget {
                         children: [
                           Text(
                             'Your first opportunity starts here.',
-                            style: orgHeadline(fontSize: 18),
+                            style: orgHeadline(fontSize: 17),
                           ),
                           const SizedBox(height: 8),
                           Text(
@@ -432,7 +432,7 @@ class ProviderOverviewPanel extends StatelessWidget {
                                   children: [
                                     Text(
                                       scholarship.title,
-                                      style: orgHeadline(fontWeight: FontWeight.w800, fontSize: 16),
+                                      style: orgHeadline(fontWeight: FontWeight.w700, fontSize: 15),
                                     ),
                                     const SizedBox(height: 8),
                                     Text(
@@ -505,7 +505,7 @@ class ProviderOverviewPanel extends StatelessWidget {
           child: OrgMetricCount(
             motionId: 'individual-overview.$label',
             targetValue: value,
-            style: orgHeadline(fontSize: 30),
+            style: orgHeadline(fontSize: 28),
           ),
         ),
       ),

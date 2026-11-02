@@ -73,7 +73,7 @@ class StudentChatScreen extends ConsumerWidget {
                                     ? 'Hi there!'
                                     : 'Hi, $firstName!',
                                 style: geist(
-                                  fontSize: 28,
+                                  fontSize: 20,
                                   fontWeight: FontWeight.w600,
                                   color: kPrimary,
                                   height: 1.2,
@@ -86,7 +86,7 @@ class StudentChatScreen extends ConsumerWidget {
                         Text(
                           'I’m ${getMascotName(gender: profile?.gender)}. A little guidance for your next step.',
                           style: geist(
-                            fontSize: 22,
+                            fontSize: 20,
                             fontWeight: FontWeight.w500,
                             color: kOnSurface,
                             height: 1.35,
@@ -96,7 +96,7 @@ class StudentChatScreen extends ConsumerWidget {
                         Text(
                           'Scholarship chat is coming soon. It will be a place to ask about scholarships and your applications.',
                           style: geist(
-                            fontSize: 16,
+                            fontSize: 15,
                             color: kOnSurfaceVariant,
                             height: 1.5,
                           ),
@@ -105,7 +105,7 @@ class StudentChatScreen extends ConsumerWidget {
                         Text(
                           'AI replies are not connected yet.',
                           style: geist(
-                            fontSize: 14,
+                            fontSize: 13,
                             fontWeight: FontWeight.w600,
                             color: kPrimary,
                             height: 1.4,
@@ -140,7 +140,7 @@ class StudentChatScreen extends ConsumerWidget {
                                       ? 2
                                       : 4,
                                   style: geist(
-                                    fontSize: 16,
+                                    fontSize: 15,
                                     color: kOnSurface,
                                     height: 1.4,
                                   ),
@@ -150,7 +150,7 @@ class StudentChatScreen extends ConsumerWidget {
                                   decoration: InputDecoration(
                                     hintText: 'Write a scholarship question…',
                                     hintStyle: geist(
-                                      fontSize: 16,
+                                      fontSize: 15,
                                       color: kOnSurfaceVariant,
                                       height: 1.4,
                                     ),
@@ -203,7 +203,7 @@ class StudentChatScreen extends ConsumerWidget {
         title: Text(
           'About scholarship chat',
           style: geist(
-            fontSize: 22,
+            fontSize: 20,
             fontWeight: FontWeight.w600,
             color: kOnSurface,
           ),
@@ -211,7 +211,7 @@ class StudentChatScreen extends ConsumerWidget {
         content: SingleChildScrollView(
           child: Text(
             'Chat is being prepared to help you understand scholarship eligibility, document requirements, and application steps.\n\nAI replies are not connected yet. You can type a draft here, but it cannot be sent. Drafts are cleared when you leave Chat.\n\nAlways check deadlines and requirements with the scholarship provider.',
-            style: geist(fontSize: 16, color: kOnSurfaceVariant, height: 1.5),
+            style: geist(fontSize: 15, color: kOnSurfaceVariant, height: 1.5),
           ),
         ),
         actions: [
@@ -220,7 +220,7 @@ class StudentChatScreen extends ConsumerWidget {
             child: Text(
               'Got it',
               style: geist(
-                fontSize: 16,
+                fontSize: 15,
                 fontWeight: FontWeight.w600,
                 color: kPrimary,
               ),

@@ -329,7 +329,10 @@ final routerProvider = Provider<GoRouter>((ref) {
         name: 'onboarding',
         pageBuilder: (context, state) => _fadeRisePage(
           state,
-          child: const OnboardingScreen(),
+          child: OnboardingScreen(
+            initialPage:
+                int.tryParse(state.uri.queryParameters['step'] ?? '') ?? 0,
+          ),
           outgoingEnd: 0.8,
         ),
       ),

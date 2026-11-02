@@ -1,3 +1,4 @@
+import 'package:scholaris/shared/theme/app_theme.dart' show kSoftCardDecoration;
 // lib/features/provider/presentation/org/org_incoming_applications_tab.dart
 //
 // Institutional Incoming Applications Tab faithfully matching Stitch mockup
@@ -452,7 +453,7 @@ class _OrgIncomingApplicationsTabState
               ? 'Grant Intake & Decisioning'
               : 'Incoming Applications',
           style: orgHeadline(
-            fontSize: isDesktop ? 32 : 26,
+            fontSize: isDesktop ? 24 : 20,
             fontWeight: FontWeight.w700,
             color: kOrgTextPrimary,
           ),
@@ -580,7 +581,7 @@ class _OrgIncomingApplicationsTabState
         badgeWidget: Container(
           padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
           decoration: BoxDecoration(
-            color: const Color(0xFFEEEDF3),
+            color: const Color(0xFFE8ECE8),
             borderRadius: BorderRadius.circular(10),
           ),
           child: Text(
@@ -687,7 +688,7 @@ class _OrgIncomingApplicationsTabState
         color: kOrgSurfaceWhite,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: isSelected ? kOrgPrimary : const Color(0xFFEEEDF3),
+          color: isSelected ? kOrgPrimary : const Color(0xFFE8ECE8),
           width: isSelected ? 1.5 : 1.0,
         ),
         boxShadow: [
@@ -725,7 +726,7 @@ class _OrgIncomingApplicationsTabState
                 decoration: BoxDecoration(
                   color: isSelected
                       ? kOrgPrimary.withValues(alpha: 0.10)
-                      : const Color(0xFFF4F3F8),
+                      : const Color(0xFFF2F4F2),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Center(
@@ -782,7 +783,7 @@ class _OrgIncomingApplicationsTabState
             child: LinearProgressIndicator(
               value: progressValue,
               minHeight: 5,
-              backgroundColor: const Color(0xFFE9E7ED),
+              backgroundColor: const Color(0xFFE3E8E3),
               valueColor: AlwaysStoppedAnimation<Color>(progressColor),
             ),
           ),
@@ -799,7 +800,7 @@ class _OrgIncomingApplicationsTabState
           child: InkWell(
             borderRadius: BorderRadius.circular(16),
             onTap: onTap,
-            hoverColor: const Color(0xFFFAF9FD),
+            hoverColor: const Color(0xFFF7F9F7),
             child: cardContent,
           ),
         ),
@@ -837,7 +838,7 @@ class _OrgIncomingApplicationsTabState
     final segmentCapsule = Container(
       padding: const EdgeInsets.all(4),
       decoration: BoxDecoration(
-        color: const Color(0xFFF4F3F8),
+        color: const Color(0xFFF2F4F2),
         borderRadius: BorderRadius.circular(16),
       ),
       child: SingleChildScrollView(
@@ -904,8 +905,8 @@ class _OrgIncomingApplicationsTabState
                           ),
                           decoration: BoxDecoration(
                             color: isSelected
-                                ? const Color(0xFFEEEDF3)
-                                : const Color(0xFFE9E7ED)
+                                ? const Color(0xFFE8ECE8)
+                                : const Color(0xFFE3E8E3)
                                       .withValues(alpha: 0.6),
                             borderRadius: BorderRadius.circular(10),
                           ),
@@ -943,7 +944,7 @@ class _OrgIncomingApplicationsTabState
       decoration: BoxDecoration(
         color: kOrgSurfaceWhite,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: const Color(0xFFEEEDF3)),
+        border: Border.all(color: const Color(0xFFE8ECE8)),
         boxShadow: const [
           BoxShadow(
             color: Color(0x06000000),
@@ -965,7 +966,7 @@ class _OrgIncomingApplicationsTabState
                         height: 38,
                         padding: const EdgeInsets.symmetric(horizontal: 10),
                         decoration: BoxDecoration(
-                          color: const Color(0xFFF4F3F8),
+                          color: const Color(0xFFF2F4F2),
                           borderRadius: BorderRadius.circular(10),
                         ),
                         child: TextField(
@@ -1080,7 +1081,7 @@ class _OrgIncomingApplicationsTabState
                       ),
                       selected: _assignedToMe,
                       selectedColor: kOrgPrimary,
-                      backgroundColor: const Color(0xFFF4F3F8),
+                      backgroundColor: const Color(0xFFF2F4F2),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(8),
                         side: BorderSide(
@@ -1118,7 +1119,7 @@ class _OrgIncomingApplicationsTabState
                       height: 38,
                       padding: const EdgeInsets.symmetric(horizontal: 10),
                       decoration: BoxDecoration(
-                        color: const Color(0xFFF4F3F8),
+                        color: const Color(0xFFF2F4F2),
                         borderRadius: BorderRadius.circular(10),
                       ),
                       child: TextField(
@@ -1236,7 +1237,7 @@ class _OrgIncomingApplicationsTabState
                             ),
                             selected: _assignedToMe,
                             selectedColor: kOrgPrimary,
-                            backgroundColor: const Color(0xFFF4F3F8),
+                            backgroundColor: const Color(0xFFF2F4F2),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(8),
                               side: BorderSide(
@@ -1295,7 +1296,7 @@ class _OrgIncomingApplicationsTabState
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
         decoration: BoxDecoration(
-          color: const Color(0xFFF4F3F8),
+          color: const Color(0xFFF2F4F2),
           borderRadius: BorderRadius.circular(10),
         ),
         child: Row(
@@ -1439,7 +1440,7 @@ class _OrgIncomingApplicationsTabState
         ApplicationStatus.draft => 'Draft',
         _ => 'Under Review',
       };
-      statusBg = const Color(0xFFEEEDF3);
+      statusBg = const Color(0xFFE8ECE8);
       statusTextColor = kOrgTextPrimary;
       pulseDot = true;
     }
@@ -1692,7 +1693,7 @@ class _OrgIncomingApplicationsTabState
           scholarship?.title ?? 'Grant Intake Track',
           style: orgHeadline(
             fontSize: 13,
-            fontWeight: FontWeight.w800,
+            fontWeight: FontWeight.w700,
             color: kOrgTextPrimary,
           ),
           maxLines: 1,
@@ -1776,7 +1777,7 @@ class _OrgIncomingApplicationsTabState
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 1.5),
           decoration: BoxDecoration(
-            color: const Color(0xFFEEEDF3),
+            color: const Color(0xFFE8ECE8),
             borderRadius: BorderRadius.circular(8),
           ),
           child: Text(
@@ -1889,7 +1890,7 @@ class _OrgIncomingApplicationsTabState
       decoration: BoxDecoration(
         color: kOrgSurfaceWhite,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: const Color(0xFFEEEDF3)),
+        border: Border.all(color: const Color(0xFFE8ECE8)),
         boxShadow: const [
           BoxShadow(
             color: Color(0x06000000),
@@ -1928,7 +1929,7 @@ class _OrgIncomingApplicationsTabState
             ),
           ],
           const SizedBox(height: 16),
-          const Divider(height: 1, color: Color(0xFFEEEDF3)),
+          const Divider(height: 1, color: Color(0xFFE8ECE8)),
           const SizedBox(height: 14),
           if (isDesktop) metricsDesktop else metricsMobile,
           const SizedBox(height: 10),
@@ -1979,7 +1980,7 @@ class _OrgIncomingApplicationsTabState
                 decoration: BoxDecoration(
                   color: const Color(0xFFF8F7FC),
                   borderRadius: BorderRadius.circular(10),
-                  border: Border.all(color: const Color(0xFFEEEDF3)),
+                  border: Border.all(color: const Color(0xFFE8ECE8)),
                 ),
                 child: Row(
                   children: [
@@ -2047,7 +2048,7 @@ class _OrgIncomingApplicationsTabState
     final regulatoryBadge = Container(
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 9),
       decoration: BoxDecoration(
-        color: const Color(0xFFF4F3F8),
+        color: const Color(0xFFF2F4F2),
         borderRadius: BorderRadius.circular(12),
       ),
       child: Row(
@@ -2083,7 +2084,7 @@ class _OrgIncomingApplicationsTabState
           width: 32,
           height: 32,
           decoration: BoxDecoration(
-            color: const Color(0xFFF4F3F8),
+            color: const Color(0xFFF2F4F2),
             borderRadius: BorderRadius.circular(8),
           ),
           child: const Center(
@@ -2118,7 +2119,7 @@ class _OrgIncomingApplicationsTabState
           width: 32,
           height: 32,
           decoration: BoxDecoration(
-            color: const Color(0xFFF4F3F8),
+            color: const Color(0xFFF2F4F2),
             borderRadius: BorderRadius.circular(8),
           ),
           child: const Center(
@@ -2156,11 +2157,7 @@ class _OrgIncomingApplicationsTabState
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.symmetric(vertical: 48, horizontal: 24),
-      decoration: BoxDecoration(
-        color: kOrgSurfaceWhite,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: const Color(0xFFEEEDF3)),
-      ),
+      decoration: kSoftCardDecoration,
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -2168,7 +2165,7 @@ class _OrgIncomingApplicationsTabState
             width: 56,
             height: 56,
             decoration: BoxDecoration(
-              color: const Color(0xFFF4F3F8),
+              color: const Color(0xFFF2F4F2),
               borderRadius: BorderRadius.circular(16),
             ),
             child: const Center(

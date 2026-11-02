@@ -1,4 +1,4 @@
-﻿import 'dart:async';
+import 'dart:async';
 import 'dart:math' as math;
 
 import 'package:flutter/gestures.dart';
@@ -195,9 +195,7 @@ class _StudentApplicationGuideState extends State<StudentApplicationGuide>
   Timer? _settleTimer;
   Drag? _drag;
   bool _browsing = false, _positioning = false;
-  double _lastOffset = 0,
-      _userProgress = 0,
-      _browseThreshold = 400;
+  double _lastOffset = 0, _userProgress = 0, _browseThreshold = 400;
   bool _browseComplete = false;
   bool _ready = false;
   bool _actionPending = false;
@@ -516,8 +514,8 @@ class _StudentApplicationGuideState extends State<StudentApplicationGuide>
         (_step == 6
             ? _browseComplete
             : (_step == 11
-                ? (visible || atEnd)
-                : (_stop.end ? atEnd : visible)));
+                  ? (visible || atEnd)
+                  : (_stop.end ? atEnd : visible)));
     if (rect != _rect || cardRect != _cardRect || ready != _ready) {
       setState(() {
         _rect = rect;
@@ -810,17 +808,31 @@ class _StudentApplicationGuideState extends State<StudentApplicationGuide>
                                           math.max(0, size.height - 80),
                                         );
                                         final rawTarget = _cardRect ?? target;
-                                        final safeTarget = (rawTarget != null && rawTarget.overlaps(viewBounds))
+                                        final safeTarget =
+                                            (rawTarget != null &&
+                                                rawTarget.overlaps(viewBounds))
                                             ? rawTarget.intersect(viewBounds)
                                             : null;
-                                        final validTarget = (safeTarget != null && !safeTarget.isEmpty && safeTarget.width > 0 && safeTarget.height > 0)
+                                        final validTarget =
+                                            (safeTarget != null &&
+                                                !safeTarget.isEmpty &&
+                                                safeTarget.width > 0 &&
+                                                safeTarget.height > 0)
                                             ? safeTarget
                                             : null;
-                                        final rawAction = _step == 7 ? target : null;
-                                        final safeAction = (rawAction != null && rawAction.overlaps(viewBounds))
+                                        final rawAction = _step == 7
+                                            ? target
+                                            : null;
+                                        final safeAction =
+                                            (rawAction != null &&
+                                                rawAction.overlaps(viewBounds))
                                             ? rawAction.intersect(viewBounds)
                                             : null;
-                                        final validAction = (safeAction != null && !safeAction.isEmpty && safeAction.width > 0 && safeAction.height > 0)
+                                        final validAction =
+                                            (safeAction != null &&
+                                                !safeAction.isEmpty &&
+                                                safeAction.width > 0 &&
+                                                safeAction.height > 0)
                                             ? safeAction
                                             : null;
                                         return CustomPaint(
@@ -831,7 +843,9 @@ class _StudentApplicationGuideState extends State<StudentApplicationGuide>
                                                 ? 0
                                                 : math
                                                       .sin(
-                                                        _cue.value * math.pi * 4,
+                                                        _cue.value *
+                                                            math.pi *
+                                                            4,
                                                       )
                                                       .abs(),
                                           ),
@@ -840,7 +854,9 @@ class _StudentApplicationGuideState extends State<StudentApplicationGuide>
                                     ),
                                   ),
                                 ),
-                                if (target != null && _stop.action != null && (!_stop.scroll || _ready))
+                                if (target != null &&
+                                    _stop.action != null &&
+                                    (!_stop.scroll || _ready))
                                   Positioned.fromRect(
                                     rect: target,
                                     child: Semantics(
@@ -936,120 +952,120 @@ class _StudentApplicationGuideState extends State<StudentApplicationGuide>
     style: IconButton.styleFrom(backgroundColor: Colors.white),
     icon: const Icon(Icons.arrow_back_rounded, color: kPrimary),
   );
-  Widget _bubble(double height, Rect? target, bool above, bool below) =>
-      Listener(
-        onPointerSignal: (event) {
-          if (event is PointerScrollEvent) _scrollBy(event.scrollDelta.dy);
-        },
-        child: GestureDetector(
-          behavior: HitTestBehavior.opaque,
-          onTap: _advance,
-          onVerticalDragStart: _stop.scroll ? _dragStart : null,
-          onVerticalDragUpdate: _stop.scroll ? _dragUpdate : null,
-          onVerticalDragEnd: _stop.scroll ? _dragEnd : null,
-          onVerticalDragCancel: _stop.scroll ? _dragCancel : null,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              if (below) _pointer(target!, false),
-              Material(
-                key: const ValueKey('guide-note'),
-                color: Colors.white,
-                elevation: 8,
-                shadowColor: const Color(0x30000000),
-                borderRadius: BorderRadius.circular(22),
-                clipBehavior: Clip.antiAlias,
-                child: ConstrainedBox(
-                  constraints: BoxConstraints(maxHeight: height),
-                  child: SingleChildScrollView(
-                    padding: const EdgeInsets.all(18),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Semantics(
-                          header: true,
-                          liveRegion: true,
-                          child: Text(
-                            _stop.title,
-                            style: appHeading(fontSize: 20),
-                          ),
-                        ),
-                        const SizedBox(height: 10),
-                        Text(
-                          _step == 7 &&
-                                  target == null &&
-                                  widget.discoverCard != null
-                              ? 'Swipe up to find View Details, then tap that button to review this scholarship.'
-                              : _tip,
-                          style: appSupporting(fontSize: 15),
-                        ),
-                        if (_step == 7 &&
-                            widget.exampleScholarship == null) ...[
-                          const SizedBox(height: 10),
-                          Text(
-                            'No scholarship is available right now. Skip the guide and try again when listings load.',
-                            style: geist(fontSize: 14),
-                          ),
-                        ] else if (_stop.action != null &&
-                            target == null &&
-                            !(_step == 7 && widget.discoverCard != null)) ...[
-                          const SizedBox(height: 12),
-                          Semantics(
-                            label: 'Guide action: ${_stop.action}',
-                            button: true,
-                            child: FilledButton(
-                              onPressed: _action,
-                              child: Text(
-                                _stop.action!,
-                                style: geist(fontWeight: FontWeight.w600),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ],
+  Widget _bubble(
+    double height,
+    Rect? target,
+    bool above,
+    bool below,
+  ) => Listener(
+    onPointerSignal: (event) {
+      if (event is PointerScrollEvent) _scrollBy(event.scrollDelta.dy);
+    },
+    child: GestureDetector(
+      behavior: HitTestBehavior.opaque,
+      onTap: _advance,
+      onVerticalDragStart: _stop.scroll ? _dragStart : null,
+      onVerticalDragUpdate: _stop.scroll ? _dragUpdate : null,
+      onVerticalDragEnd: _stop.scroll ? _dragEnd : null,
+      onVerticalDragCancel: _stop.scroll ? _dragCancel : null,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          if (below) _pointer(target!, false),
+          Material(
+            key: const ValueKey('guide-note'),
+            color: Colors.white,
+            elevation: 8,
+            shadowColor: const Color(0x30000000),
+            borderRadius: BorderRadius.circular(22),
+            clipBehavior: Clip.antiAlias,
+            child: ConstrainedBox(
+              constraints: BoxConstraints(maxHeight: height),
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.all(18),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Semantics(
+                      header: true,
+                      liveRegion: true,
+                      child: Text(_stop.title, style: appHeading(fontSize: 20)),
                     ),
-                  ),
-                ),
-              ),
-              if (above) _pointer(target!, true),
-              const SizedBox(height: 14),
-              Semantics(
-                button: true,
-                enabled: !_stop.scroll || _ready,
-                label: _stop.action != null
-                    ? 'Tap the highlighted button'
-                    : 'Continue tour',
-                child: InkWell(
-                  key: const ValueKey('guide-advance'),
-                  onTap: _advance,
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 8),
-                    child: Text(
-                      _stop.action != null
-                          ? (_stop.scroll && !_ready
-                              ? 'Swipe up to review and submit'
-                              : 'Tap the highlighted button')
-                          : _stop.scroll && !_ready
-                          ? 'Swipe up to explore'
-                          : _step == _stops.length - 1
-                          ? 'Tap anywhere to finish'
-                          : 'Tap anywhere to continue',
-                      textAlign: TextAlign.center,
-                      style: geist(
-                        fontSize: 15,
-                        height: 1.3,
-                        fontWeight: FontWeight.w700,
-                        color: Colors.white,
+                    const SizedBox(height: 10),
+                    Text(
+                      _step == 7 &&
+                              target == null &&
+                              widget.discoverCard != null
+                          ? 'Swipe up to find View Details, then tap that button to review this scholarship.'
+                          : _tip,
+                      style: appSupporting(fontSize: 15),
+                    ),
+                    if (_step == 7 && widget.exampleScholarship == null) ...[
+                      const SizedBox(height: 10),
+                      Text(
+                        'No scholarship is available right now. Skip the guide and try again when listings load.',
+                        style: geist(fontSize: 13),
                       ),
-                    ),
+                    ] else if (_stop.action != null &&
+                        target == null &&
+                        !(_step == 7 && widget.discoverCard != null)) ...[
+                      const SizedBox(height: 12),
+                      Semantics(
+                        label: 'Guide action: ${_stop.action}',
+                        button: true,
+                        child: FilledButton(
+                          onPressed: _action,
+                          child: Text(
+                            _stop.action!,
+                            style: geist(fontWeight: FontWeight.w600),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ],
+                ),
+              ),
+            ),
+          ),
+          if (above) _pointer(target!, true),
+          const SizedBox(height: 14),
+          Semantics(
+            button: true,
+            enabled: !_stop.scroll || _ready,
+            label: _stop.action != null
+                ? 'Tap the highlighted button'
+                : 'Continue tour',
+            child: InkWell(
+              key: const ValueKey('guide-advance'),
+              onTap: _advance,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8),
+                child: Text(
+                  _stop.action != null
+                      ? (_stop.scroll && !_ready
+                            ? 'Swipe up to review and submit'
+                            : 'Tap the highlighted button')
+                      : _stop.scroll && !_ready
+                      ? 'Swipe up to explore'
+                      : _step == _stops.length - 1
+                      ? 'Tap anywhere to finish'
+                      : 'Tap anywhere to continue',
+                  textAlign: TextAlign.center,
+                  style: geist(
+                    fontSize: 15,
+                    height: 1.3,
+                    fontWeight: FontWeight.w700,
+                    color: Colors.white,
                   ),
                 ),
               ),
-            ],
+            ),
           ),
-        ),
-      );
+        ],
+      ),
+    ),
+  );
   Widget _pointer(Rect target, bool down) => Align(
     alignment: Alignment(
       ((target.center.dx - 28) / (MediaQuery.sizeOf(context).width - 56) * 2 -
@@ -1072,7 +1088,10 @@ class _SpotlightPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final path = Path()..addRect(Offset.zero & size);
-    if (target != null && !target!.isEmpty && target!.width > 0 && target!.height > 0) {
+    if (target != null &&
+        !target!.isEmpty &&
+        target!.width > 0 &&
+        target!.height > 0) {
       path.addRRect(
         RRect.fromRectAndRadius(
           target!.inflate(4),
@@ -1082,9 +1101,18 @@ class _SpotlightPainter extends CustomPainter {
     }
     path.fillType = PathFillType.evenOdd;
     canvas.drawPath(path, Paint()..color = const Color(0xA31A2920));
-    final pulseTarget = action != null && !action!.isEmpty && action!.width > 0 && action!.height > 0
+    final pulseTarget =
+        action != null &&
+            !action!.isEmpty &&
+            action!.width > 0 &&
+            action!.height > 0
         ? action!
-        : (target != null && !target!.isEmpty && target!.width > 0 && target!.height > 0 ? target : null);
+        : (target != null &&
+                  !target!.isEmpty &&
+                  target!.width > 0 &&
+                  target!.height > 0
+              ? target
+              : null);
     if (pulseTarget != null) {
       canvas.drawRRect(
         RRect.fromRectAndRadius(

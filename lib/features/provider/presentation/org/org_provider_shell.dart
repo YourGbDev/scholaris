@@ -361,13 +361,13 @@ class _OrgProviderShellState extends ConsumerState<OrgProviderShell> {
                   child: InkWell(
                     borderRadius: BorderRadius.circular(10),
                     onTap: () => _openCommandPalette(context),
-                    hoverColor: const Color(0xFFEBEAF0),
+                    hoverColor: const Color(0xFFE8ECE8),
                     child: Container(
                       constraints: const BoxConstraints(maxWidth: 280),
                       height: 36,
                       padding: const EdgeInsets.symmetric(horizontal: 12),
                       decoration: BoxDecoration(
-                        color: const Color(0xFFF4F3F8),
+                        color: const Color(0xFFF2F4F2),
                         borderRadius: BorderRadius.circular(10),
                         border: Border.all(color: kOrgHairline),
                       ),
@@ -405,7 +405,7 @@ class _OrgProviderShellState extends ConsumerState<OrgProviderShell> {
             decoration: BoxDecoration(
               color: identity.isFinance
                   ? const Color(0xFFE8F5E9)
-                  : const Color(0xFFF4F3F8),
+                  : const Color(0xFFF2F4F2),
               borderRadius: BorderRadius.circular(20),
               border: Border.all(
                 color: identity.isFinance
@@ -580,7 +580,7 @@ class _OrgProviderShellState extends ConsumerState<OrgProviderShell> {
                   decoration: BoxDecoration(
                     color: identity.isFinance
                         ? const Color(0xFFE8F5E9)
-                        : const Color(0xFFE3E2E7),
+                        : const Color(0xFFDEE4DE),
                     borderRadius: BorderRadius.circular(6),
                     border: Border.all(
                       color: identity.isFinance
@@ -896,7 +896,7 @@ class _OrgProviderShellState extends ConsumerState<OrgProviderShell> {
             focusColor: kOrgPrimary.withValues(alpha: 0.16),
             hoverColor: isSelected
                 ? Colors.transparent
-                : const Color(0xFFE9E7ED),
+                : const Color(0xFFE3E8E3),
             onTap: () {
               setState(() => _selectedTab = index);
               if (isDrawer) Navigator.of(context).pop();
@@ -1314,7 +1314,7 @@ class _OrgCommandPaletteDialogState
                           vertical: 3,
                         ),
                         decoration: BoxDecoration(
-                          color: const Color(0xFFF4F3F8),
+                          color: const Color(0xFFF2F4F2),
                           borderRadius: BorderRadius.circular(6),
                           border: Border.all(color: kOrgHairline),
                         ),
@@ -1425,7 +1425,7 @@ class _OrgCommandPaletteDialogState
                     vertical: 10,
                   ),
                   decoration: const BoxDecoration(
-                    color: Color(0xFFFAF9FD),
+                    color: Color(0xFFF7F9F7),
                     borderRadius: BorderRadius.vertical(
                       bottom: Radius.circular(16),
                     ),
@@ -1439,7 +1439,7 @@ class _OrgCommandPaletteDialogState
                           vertical: 1.5,
                         ),
                         decoration: BoxDecoration(
-                          color: const Color(0xFFEEEDF3),
+                          color: const Color(0xFFE8ECE8),
                           borderRadius: BorderRadius.circular(4),
                         ),
                         child: Text(
@@ -1463,7 +1463,7 @@ class _OrgCommandPaletteDialogState
                           vertical: 1.5,
                         ),
                         decoration: BoxDecoration(
-                          color: const Color(0xFFEEEDF3),
+                          color: const Color(0xFFE8ECE8),
                           borderRadius: BorderRadius.circular(4),
                         ),
                         child: Text(
@@ -1487,7 +1487,7 @@ class _OrgCommandPaletteDialogState
                           vertical: 1.5,
                         ),
                         decoration: BoxDecoration(
-                          color: const Color(0xFFEEEDF3),
+                          color: const Color(0xFFE8ECE8),
                           borderRadius: BorderRadius.circular(4),
                         ),
                         child: Text(
@@ -1573,7 +1573,7 @@ class _OrgCommandPaletteDialogState
                   decoration: BoxDecoration(
                     color: isSelected
                         ? kOrgPrimary.withValues(alpha: 0.15)
-                        : const Color(0xFFF4F3F8),
+                        : const Color(0xFFF2F4F2),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Icon(
@@ -1621,7 +1621,7 @@ class _OrgCommandPaletteDialogState
                         vertical: 2,
                       ),
                       decoration: BoxDecoration(
-                        color: const Color(0xFFEEEDF3),
+                        color: const Color(0xFFE8ECE8),
                         borderRadius: BorderRadius.circular(6),
                       ),
                       child: Text(

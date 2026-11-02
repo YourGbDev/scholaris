@@ -32,10 +32,7 @@ Future<void> showMatchingPowerSheet(
 }
 
 class MatchingPowerSheet extends StatelessWidget {
-  const MatchingPowerSheet({
-    super.key,
-    required this.report,
-  });
+  const MatchingPowerSheet({super.key, required this.report});
 
   final MatchingPowerReport report;
 
@@ -47,15 +44,13 @@ class MatchingPowerSheet extends StatelessWidget {
 
     // First incomplete item to route to
     final firstIncomplete = report.items.cast<MatchingPowerItem?>().firstWhere(
-          (i) => i != null && !i.isComplete,
-          orElse: () => null,
-        );
+      (i) => i != null && !i.isComplete,
+      orElse: () => null,
+    );
 
     return Container(
       key: const ValueKey('matching-power-sheet'),
-      constraints: BoxConstraints(
-        maxHeight: mediaQuery.size.height * 0.85,
-      ),
+      constraints: BoxConstraints(maxHeight: mediaQuery.size.height * 0.85),
       padding: EdgeInsets.fromLTRB(20, 8, 20, mediaQuery.padding.bottom + 16),
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -71,7 +66,7 @@ class MatchingPowerSheet extends StatelessWidget {
                     Text(
                       'Matching Power Diagnostics',
                       style: poppins(
-                        fontSize: 18,
+                        fontSize: 17,
                         fontWeight: FontWeight.w700,
                         color: kPrimary,
                       ),
@@ -79,10 +74,7 @@ class MatchingPowerSheet extends StatelessWidget {
                     const SizedBox(height: 2),
                     Text(
                       '${report.completedCount} of ${report.totalCount} criteria optimized',
-                      style: openSans(
-                        fontSize: 12,
-                        color: Colors.black54,
-                      ),
+                      style: openSans(fontSize: 12, color: Colors.black54),
                     ),
                   ],
                 ),
@@ -102,9 +94,7 @@ class MatchingPowerSheet extends StatelessWidget {
             decoration: BoxDecoration(
               color: kPrimarySoft.withValues(alpha: 0.5),
               borderRadius: BorderRadius.circular(kRadiusCard),
-              border: Border.all(
-                color: accentColor.withValues(alpha: 0.3),
-              ),
+              border: Border.all(color: accentColor.withValues(alpha: 0.3)),
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -114,7 +104,7 @@ class MatchingPowerSheet extends StatelessWidget {
                     Text(
                       'Profile Matching Power',
                       style: poppins(
-                        fontSize: 14,
+                        fontSize: 13,
                         fontWeight: FontWeight.w600,
                         color: kPrimary,
                       ),
@@ -156,11 +146,7 @@ class MatchingPowerSheet extends StatelessWidget {
                 const SizedBox(height: 10),
                 Text(
                   report.advice,
-                  style: openSans(
-                    fontSize: 12,
-                    color: kPrimary,
-                    height: 1.35,
-                  ),
+                  style: openSans(fontSize: 12, color: kPrimary, height: 1.35),
                 ),
                 if (isComplete) ...[
                   const SizedBox(height: 12),
@@ -169,7 +155,9 @@ class MatchingPowerSheet extends StatelessWidget {
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: kPrimary.withValues(alpha: 0.25)),
+                      border: Border.all(
+                        color: kPrimary.withValues(alpha: 0.25),
+                      ),
                     ),
                     child: Row(
                       children: [
@@ -186,7 +174,7 @@ class MatchingPowerSheet extends StatelessWidget {
                               Text(
                                 '100% Matching Power!',
                                 style: poppins(
-                                  fontSize: 14,
+                                  fontSize: 13,
                                   fontWeight: FontWeight.w700,
                                   color: kPrimary,
                                 ),
@@ -215,7 +203,7 @@ class MatchingPowerSheet extends StatelessWidget {
           Text(
             'Criteria Breakdown',
             style: poppins(
-              fontSize: 14,
+              fontSize: 13,
               fontWeight: FontWeight.w600,
               color: kPrimary,
             ),
@@ -228,7 +216,8 @@ class MatchingPowerSheet extends StatelessWidget {
               physics: const AppleBouncingScrollPhysics(),
               shrinkWrap: true,
               itemCount: report.items.length,
-              separatorBuilder: (_, _) => const Divider(height: 1, color: Color(0xFFEEEEEE)),
+              separatorBuilder: (_, _) =>
+                  const Divider(height: 1, color: Color(0xFFEEEEEE)),
               itemBuilder: (context, index) {
                 final item = report.items[index];
                 final done = item.isComplete;
@@ -244,7 +233,10 @@ class MatchingPowerSheet extends StatelessWidget {
                       },
                       borderRadius: BorderRadius.circular(8),
                       child: Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 4),
+                        padding: const EdgeInsets.symmetric(
+                          vertical: 10,
+                          horizontal: 4,
+                        ),
                         child: Row(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -252,7 +244,7 @@ class MatchingPowerSheet extends StatelessWidget {
                               padding: const EdgeInsets.all(4),
                               decoration: BoxDecoration(
                                 color: done
-                                     ? kPrimary.withValues(alpha: 0.12)
+                                    ? kPrimary.withValues(alpha: 0.12)
                                     : kAccent.withValues(alpha: 0.16),
                                 shape: BoxShape.circle,
                               ),
@@ -286,7 +278,9 @@ class MatchingPowerSheet extends StatelessWidget {
                                         style: openSans(
                                           fontSize: 11,
                                           fontWeight: FontWeight.w600,
-                                          color: done ? kPrimary : kMatchGoldText,
+                                          color: done
+                                              ? kPrimary
+                                              : kMatchGoldText,
                                         ),
                                       ),
                                     ],
@@ -344,7 +338,7 @@ class MatchingPowerSheet extends StatelessWidget {
                     ? 'Great Job! Return to Discover'
                     : 'Complete Missing Details',
                 style: poppins(
-                  fontSize: 14,
+                  fontSize: 13,
                   fontWeight: FontWeight.w600,
                   color: Colors.white,
                 ),

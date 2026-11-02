@@ -17,9 +17,7 @@ class ScholarshipQrScannerScreen extends StatefulWidget {
 
   static Future<void> show(BuildContext context) {
     return Navigator.of(context).push(
-      ScholarisPageRoute(
-        builder: (_) => const ScholarshipQrScannerScreen(),
-      ),
+      ScholarisPageRoute(builder: (_) => const ScholarshipQrScannerScreen()),
     );
   }
 
@@ -147,7 +145,10 @@ class _ScholarshipQrScannerScreenState
                   children: [
                     PressableScale(
                       child: IconButton(
-                        icon: const Icon(Icons.arrow_back_rounded, color: Colors.white),
+                        icon: const Icon(
+                          Icons.arrow_back_rounded,
+                          color: Colors.white,
+                        ),
                         tooltip: 'Back',
                         onPressed: () {
                           HapticFeedback.lightImpact();
@@ -173,7 +174,9 @@ class _ScholarshipQrScannerScreenState
                           builder: (context, state, _) {
                             final isOn = state.torchState == TorchState.on;
                             return Icon(
-                              isOn ? Icons.flash_on_rounded : Icons.flash_off_rounded,
+                              isOn
+                                  ? Icons.flash_on_rounded
+                                  : Icons.flash_off_rounded,
                               color: isOn ? Colors.amber : Colors.white,
                             );
                           },
@@ -187,7 +190,10 @@ class _ScholarshipQrScannerScreenState
                     ),
                     PressableScale(
                       child: IconButton(
-                        icon: const Icon(Icons.flip_camera_ios_rounded, color: Colors.white),
+                        icon: const Icon(
+                          Icons.flip_camera_ios_rounded,
+                          color: Colors.white,
+                        ),
                         tooltip: 'Switch Camera',
                         onPressed: () {
                           HapticFeedback.lightImpact();
@@ -219,7 +225,8 @@ class _ScholarshipQrScannerScreenState
                       Container(
                         padding: const EdgeInsets.all(12),
                         decoration: BoxDecoration(
-                          color: const Color(0xFFBA1A1A).withValues(alpha: 0.92),
+                          color: const Color(0xFFBA1A1A)
+                              .withValues(alpha: 0.92),
                           borderRadius: BorderRadius.circular(12),
                           border: Border.all(color: Colors.white24),
                         ),
@@ -229,14 +236,17 @@ class _ScholarshipQrScannerScreenState
                           children: [
                             Row(
                               children: [
-                                const Icon(Icons.error_outline_rounded,
-                                    color: Colors.white, size: 20),
+                                const Icon(
+                                  Icons.error_outline_rounded,
+                                  color: Colors.white,
+                                  size: 20,
+                                ),
                                 const SizedBox(width: 8),
                                 Expanded(
                                   child: Text(
                                     'Invalid QR Payload',
                                     style: outfit(
-                                      fontSize: 14,
+                                      fontSize: 13,
                                       fontWeight: FontWeight.bold,
                                       color: Colors.white,
                                     ),
@@ -261,10 +271,15 @@ class _ScholarshipQrScannerScreenState
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(8),
                                   ),
-                                  padding: const EdgeInsets.symmetric(vertical: 8),
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: 8,
+                                  ),
                                 ),
                                 onPressed: _resetScan,
-                                icon: const Icon(Icons.refresh_rounded, size: 16),
+                                icon: const Icon(
+                                  Icons.refresh_rounded,
+                                  size: 16,
+                                ),
                                 label: const Text('Scan Again'),
                               ),
                             ),
@@ -305,7 +320,9 @@ class _ScholarshipQrScannerScreenState
                             borderRadius: BorderRadius.circular(20),
                           ),
                           padding: const EdgeInsets.symmetric(
-                              horizontal: 16, vertical: 8),
+                            horizontal: 16,
+                            vertical: 8,
+                          ),
                         ),
                         onPressed: () {
                           HapticFeedback.lightImpact();
@@ -339,13 +356,16 @@ class _ScholarshipQrScannerScreenState
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(24),
           border: Border.all(
-            color: _errorMessage != null ? Colors.redAccent : const Color(0xFFB3F1C6),
+            color: _errorMessage != null
+                ? Colors.redAccent
+                : const Color(0xFFB3F1C6),
             width: 2.5,
           ),
           boxShadow: [
             BoxShadow(
-              color: (_errorMessage != null ? Colors.red : const Color(0xFF0F4D2E))
-                  .withValues(alpha: 0.35),
+              color:
+                  (_errorMessage != null ? Colors.red : const Color(0xFF0F4D2E))
+                      .withValues(alpha: 0.35),
               blurRadius: 20,
               spreadRadius: 2,
             ),
@@ -423,8 +443,11 @@ class _ScholarshipQrScannerScreenState
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(Icons.videocam_off_outlined,
-                size: 48, color: Colors.white54),
+            const Icon(
+              Icons.videocam_off_outlined,
+              size: 48,
+              color: Colors.white54,
+            ),
             const SizedBox(height: 12),
             Text(
               'Camera Unavailable',
@@ -438,10 +461,7 @@ class _ScholarshipQrScannerScreenState
             Text(
               'Camera hardware or permission is not active. You can still enter or paste a scholarship code directly.',
               textAlign: TextAlign.center,
-              style: openSans(
-                fontSize: 13,
-                color: Colors.white70,
-              ),
+              style: openSans(fontSize: 13, color: Colors.white70),
             ),
             const SizedBox(height: 16),
             PressableScale(
@@ -449,8 +469,10 @@ class _ScholarshipQrScannerScreenState
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFF0F4D2E),
                   foregroundColor: Colors.white,
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 20,
+                    vertical: 10,
+                  ),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
@@ -476,7 +498,7 @@ class _ScholarshipQrScannerScreenState
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         title: Text(
           'Enter Scholarship Code',
-          style: outfit(fontWeight: FontWeight.bold, fontSize: 18),
+          style: outfit(fontWeight: FontWeight.bold, fontSize: 17),
         ),
         content: Column(
           mainAxisSize: MainAxisSize.min,
@@ -498,7 +520,10 @@ class _ScholarshipQrScannerScreenState
                   borderRadius: BorderRadius.circular(10),
                   borderSide: BorderSide.none,
                 ),
-                contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                contentPadding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 10,
+                ),
               ),
             ),
           ],

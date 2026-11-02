@@ -200,7 +200,7 @@ void main() {
       await tester.pump(); // router processes navigation
       await tester.pump(); // login screen renders
 
-      expect(find.text('Your future starts somewhere.'), findsOneWidget);
+      expect(find.text('Welcome back'), findsOneWidget);
     });
   });
 }

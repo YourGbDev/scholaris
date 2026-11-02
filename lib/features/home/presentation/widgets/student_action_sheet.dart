@@ -93,7 +93,7 @@ class StudentActionSheet extends StatelessWidget {
                   child: Text(
                     'Quick Actions',
                     style: geist(
-                      fontSize: 14,
+                      fontSize: 13,
                       fontWeight: FontWeight.w600,
                       color: const Color(0xFF59635D),
                     ),
@@ -171,7 +171,7 @@ class StudentActionSheet extends StatelessWidget {
                 Text(
                   title,
                   style: geist(
-                    fontSize: 16,
+                    fontSize: 15,
                     fontWeight: FontWeight.w600,
                     color: kOnSurface,
                     height: 1.25,

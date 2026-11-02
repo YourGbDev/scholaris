@@ -61,31 +61,28 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
   bool _isSchoolSelectorExpanded = false;
 
   int get _stepIndex => switch (widget.step) {
-        'personal' => 1,
-        'academic' => 2,
-        _ => 3,
-      };
+    'personal' => 1,
+    'academic' => 2,
+    _ => 3,
+  };
 
   String get _stepTitle => switch (widget.step) {
-        'personal' => 'Personal Information',
-        'academic' => 'Academic Information',
-        _ => 'Financial Information',
-      };
+    'personal' => 'Personal Information',
+    'academic' => 'Academic Information',
+    _ => 'Financial Information',
+  };
 
   String get _stepSubtitle => switch (widget.step) {
-        'personal' =>
-          'We use these verified academic details to match you with university grants, CHED UniFAST subsidies, and private endowments tailored to you.',
-        'academic' =>
-          'We use this to match scholarships for your university and major program.',
-        _ =>
-          'Many of the biggest grants in the Philippines are need-based subsidies (such as CHED TES, UniFAST, and foundation grants) built specifically to uplift deserving students.',
-      };
+    'personal' => 'We use these verified academic details to match you with university grants, CHED UniFAST subsidies, and private endowments tailored to you.',
+    'academic' => 'We use this to match scholarships for your university and major program.',
+    _ => 'Many of the biggest grants in the Philippines are need-based subsidies (such as CHED TES, UniFAST, and foundation grants) built specifically to uplift deserving students.',
+  };
 
   String get _stepTrackerCategory => switch (widget.step) {
-        'personal' => 'Academics & Basics',
-        'academic' => 'Residency & Location',
-        _ => 'Financial Matching',
-      };
+    'personal' => 'Academics & Basics',
+    'academic' => 'Residency & Location',
+    _ => 'Financial Matching',
+  };
 
   @override
   void initState() {
@@ -99,8 +96,7 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
     _courseController = TextEditingController(text: state.course);
     _schoolController = TextEditingController(text: state.school);
     _gpaController = TextEditingController(text: state.gpa);
-    _incomeController =
-        TextEditingController(text: state.monthlyFamilyIncome);
+    _incomeController = TextEditingController(text: state.monthlyFamilyIncome);
     _provinceController = TextEditingController(text: state.province);
     _cityController = TextEditingController(text: state.cityMunicipality);
     _selectedGpaScale = state.gpaScale;
@@ -112,15 +108,22 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
 
   Future<void> _loadSchoolId(String userId) async {
     try {
-      final sId = await ref.read(profileRepositoryProvider).fetchSchoolId(userId);
+      final sId = await ref
+          .read(profileRepositoryProvider)
+          .fetchSchoolId(userId);
       if (sId != null && mounted) {
         setState(() => _selectedSchoolId = sId);
       }
     } catch (e) {
-      if (e is AssertionError || (e is StateError && e.message.contains('initialized'))) {
-        debugPrint('[ProfileSetup] Supabase uninitialized in test environment: $e');
+      if (e is AssertionError ||
+          (e is StateError && e.message.contains('initialized'))) {
+        debugPrint(
+          '[ProfileSetup] Supabase uninitialized in test environment: $e',
+        );
       } else {
-        debugPrint('[ProfileSetup] Offline or network error fetching school_id: $e');
+        debugPrint(
+          '[ProfileSetup] Offline or network error fetching school_id: $e',
+        );
       }
     }
   }
@@ -197,7 +200,7 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
                 'Profile Setup',
                 style: poppins(
                   color: kPrimary,
-                  fontSize: 16,
+                  fontSize: 15,
                   fontWeight: FontWeight.w600,
                 ),
               ),
@@ -206,12 +209,18 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
         ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.help_outline_rounded, color: kTextSecondary, size: 22),
+            icon: const Icon(
+              Icons.help_outline_rounded,
+              color: kTextSecondary,
+              size: 22,
+            ),
             tooltip: 'Help and Support',
             onPressed: () {
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(
-                  content: Text('Need help? Contact support@scholaris.ph or your university scholarship office.'),
+                  content: Text(
+                    'Need help? Contact support@scholaris.ph or your university scholarship office.',
+                  ),
                   duration: Duration(seconds: 3),
                 ),
               );
@@ -249,7 +258,7 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
                       _stepTitle,
                       style: outfit(
                         color: kTextPrimary,
-                        fontSize: 22,
+                        fontSize: 20,
                         fontWeight: FontWeight.w700,
                       ),
                     ),
@@ -358,7 +367,9 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
                   child: Container(
                     height: 5,
                     decoration: BoxDecoration(
-                      color: _stepIndex >= 2 ? kPrimary : const Color(0xFFDDE2F3),
+                      color: _stepIndex >= 2
+                          ? kPrimary
+                          : kSurfaceContainerHighest,
                       borderRadius: BorderRadius.circular(3),
                     ),
                   ),
@@ -368,7 +379,9 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
                   child: Container(
                     height: 5,
                     decoration: BoxDecoration(
-                      color: _stepIndex >= 3 ? kPrimary : const Color(0xFFDDE2F3),
+                      color: _stepIndex >= 3
+                          ? kPrimary
+                          : kSurfaceContainerHighest,
                       borderRadius: BorderRadius.circular(3),
                     ),
                   ),
@@ -432,7 +445,7 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
       return Container(
         padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 3),
         decoration: BoxDecoration(
-          color: const Color(0xFFDDE2F3),
+          color: kSurfaceContainerHighest,
           borderRadius: BorderRadius.circular(12),
         ),
         child: Text(
@@ -476,9 +489,9 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
       return Container(
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
-          color: const Color(0xFFF1F3FF),
+          color: kSurfaceContainerLow,
           borderRadius: BorderRadius.circular(14),
-          border: Border.all(color: const Color(0xFFDDE2F3)),
+          border: Border.all(color: kSurfaceContainerHighest),
         ),
         child: Row(
           children: [
@@ -510,10 +523,7 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
                   ),
                   Text(
                     'DOST-SEI, UniFAST, LGU subsidies, and private foundations open.',
-                    style: openSans(
-                      fontSize: 11,
-                      color: kTextSecondary,
-                    ),
+                    style: openSans(fontSize: 11, color: kTextSecondary),
                   ),
                 ],
               ),
@@ -527,9 +537,9 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
       return Container(
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
-          color: const Color(0xFFF1F3FF),
+          color: kSurfaceContainerLow,
           borderRadius: BorderRadius.circular(14),
-          border: Border.all(color: const Color(0xFFDDE2F3)),
+          border: Border.all(color: kSurfaceContainerHighest),
         ),
         child: Row(
           children: [
@@ -561,10 +571,7 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
                   ),
                   Text(
                     'DOST Priority S&T, CHED UniFAST, and university partner endowments.',
-                    style: openSans(
-                      fontSize: 11,
-                      color: kTextSecondary,
-                    ),
+                    style: openSans(fontSize: 11, color: kTextSecondary),
                   ),
                 ],
               ),
@@ -580,9 +587,9 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
         Container(
           padding: const EdgeInsets.all(14),
           decoration: BoxDecoration(
-            color: const Color(0xFFF1F3FF),
+            color: kSurfaceContainerLow,
             borderRadius: BorderRadius.circular(14),
-            border: Border.all(color: const Color(0xFFDDE2F3)),
+            border: Border.all(color: kSurfaceContainerHighest),
           ),
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -608,7 +615,7 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
                     Text(
                       '100% Confidential & Protected',
                       style: outfit(
-                        fontSize: 14,
+                        fontSize: 13,
                         fontWeight: FontWeight.w700,
                         color: kPrimary,
                       ),
@@ -641,124 +648,124 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
   ) {
     return switch (widget.step) {
       'personal' => [
-          _buildAvatarSetupCard(context),
-          const SizedBox(height: 20),
-          _textField(
-            label: 'Full Name',
-            controller: _fullNameController,
-            onChanged: notifier.setFullName,
-            required: true,
-            hintText: 'e.g. Juan P. Dela Cruz',
-            prefixIcon: Icons.badge_outlined,
-            helperText: 'Matches official school enrollment records, PSA birth certificate, and national ID.',
-            validator: (_) => _fieldError((e) => e.fullName),
-          ),
-          const SizedBox(height: 16),
-          _textField(
-            label: 'Nationality',
-            controller: _nationalityController,
-            onChanged: notifier.setNationality,
-            required: true,
-            hintText: 'e.g. Filipino',
-            prefixIcon: Icons.flag_outlined,
-            helperText: 'Required for Philippine republic grants, LGU subsidies, and state university funds.',
-            validator: (_) => _fieldError((e) => e.nationality),
-          ),
-          const SizedBox(height: 16),
-          _birthDateField(context, notifier, state),
-          const SizedBox(height: 16),
-          _buildGenderSelector(notifier, state),
-          const SizedBox(height: 20),
-          _buildTrustMicroPanel(),
-        ],
+        _buildAvatarSetupCard(context),
+        const SizedBox(height: 20),
+        _textField(
+          label: 'Full Name',
+          controller: _fullNameController,
+          onChanged: notifier.setFullName,
+          required: true,
+          hintText: 'e.g. Juan P. Dela Cruz',
+          prefixIcon: Icons.badge_outlined,
+          helperText: 'Matches official school enrollment records, PSA birth certificate, and national ID.',
+          validator: (_) => _fieldError((e) => e.fullName),
+        ),
+        const SizedBox(height: 16),
+        _textField(
+          label: 'Nationality',
+          controller: _nationalityController,
+          onChanged: notifier.setNationality,
+          required: true,
+          hintText: 'e.g. Filipino',
+          prefixIcon: Icons.flag_outlined,
+          helperText: 'Required for Philippine republic grants, LGU subsidies, and state university funds.',
+          validator: (_) => _fieldError((e) => e.nationality),
+        ),
+        const SizedBox(height: 16),
+        _birthDateField(context, notifier, state),
+        const SizedBox(height: 16),
+        _buildGenderSelector(notifier, state),
+        const SizedBox(height: 20),
+        _buildTrustMicroPanel(),
+      ],
       'academic' => [
-          _buildYearLevelSelector(notifier, state),
-          const SizedBox(height: 16),
-          _textField(
-            label: 'Course',
-            controller: _courseController,
-            onChanged: notifier.setCourse,
-            required: true,
-            hintText: 'e.g. BS Computer Science, BA Communication',
-            prefixIcon: Icons.school_outlined,
-            helperText: 'DOST Priority S&T courses, Agri-Fisheries, and Tech-Voc endowments match automatically to this field.',
-            validator: (_) => _fieldError((e) => e.course),
-          ),
-          const SizedBox(height: 16),
-          _buildSchoolSelector(notifier, state),
-          const SizedBox(height: 16),
-          _buildGpaCard(notifier, state),
-        ],
+        _buildYearLevelSelector(notifier, state),
+        const SizedBox(height: 16),
+        _textField(
+          label: 'Course',
+          controller: _courseController,
+          onChanged: notifier.setCourse,
+          required: true,
+          hintText: 'e.g. BS Computer Science, BA Communication',
+          prefixIcon: Icons.school_outlined,
+          helperText: 'DOST Priority S&T courses, Agri-Fisheries, and Tech-Voc endowments match automatically to this field.',
+          validator: (_) => _fieldError((e) => e.course),
+        ),
+        const SizedBox(height: 16),
+        _buildSchoolSelector(notifier, state),
+        const SizedBox(height: 16),
+        _buildGpaCard(notifier, state),
+      ],
       _ => [
-          // Subsidies Unlocked Visualizer Tile
-          _buildSubsidiesUnlockedTile(state),
-          const SizedBox(height: 18),
+        // Subsidies Unlocked Visualizer Tile
+        _buildSubsidiesUnlockedTile(state),
+        const SizedBox(height: 18),
 
-          // Monthly Family Income
-          _buildIncomeField(notifier, state),
-          const SizedBox(height: 10),
+        // Monthly Family Income
+        _buildIncomeField(notifier, state),
+        const SizedBox(height: 10),
 
-          // Low-pressure opt-out card
-          _buildOptOutTile(notifier, state),
-          const SizedBox(height: 20),
+        // Low-pressure opt-out card
+        _buildOptOutTile(notifier, state),
+        const SizedBox(height: 20),
 
-          // Regional Context Accent Card
-          _buildLocationContextCard(),
-          const SizedBox(height: 14),
+        // Regional Context Accent Card
+        _buildLocationContextCard(),
+        const SizedBox(height: 14),
 
-          _dropdown<String>(
-            label: 'Region',
-            required: true,
-            value: state.region,
-            hint: 'Select your Philippine region',
-            prefixIcon: Icons.map_outlined,
-            helperText: 'Connects you with regional CHED and DOST chapter priority allotments.',
-            items: kPhilippineRegions
-                .map(
-                  (region) => DropdownMenuItem(
-                    value: region,
-                    child: Text(region, style: openSans()),
-                  ),
-                )
-                .toList(),
-            validator: (_) => _fieldError((e) => e.region),
-            onChanged: (value) {
-              if (value != null) notifier.setRegion(value);
-            },
-          ),
-          const SizedBox(height: 14),
-          _textField(
-            label: 'Province',
-            controller: _provinceController,
-            onChanged: notifier.setProvince,
-            optional: true,
-            hintText: 'e.g. Metro Manila, Cebu, Laguna',
-            prefixIcon: Icons.location_on_outlined,
-            helperText: 'Matches provincial council educational assistance & governor grants.',
-          ),
-          const SizedBox(height: 14),
-          _textField(
-            label: 'City / Municipality',
-            controller: _cityController,
-            onChanged: notifier.setCityMunicipality,
-            optional: true,
-            hintText: 'e.g. Quezon City, Manila, Cebu City',
-            prefixIcon: Icons.location_city_outlined,
-            helperText: 'Unlocks dedicated City Hall LGU grants (e.g., QC Youth Development Scholarship).',
-          ),
-          const SizedBox(height: 14),
+        _dropdown<String>(
+          label: 'Region',
+          required: true,
+          value: state.region,
+          hint: 'Select your Philippine region',
+          prefixIcon: Icons.map_outlined,
+          helperText: 'Connects you with regional CHED and DOST chapter priority allotments.',
+          items: kPhilippineRegions
+              .map(
+                (region) => DropdownMenuItem(
+                  value: region,
+                  child: Text(region, style: openSans()),
+                ),
+              )
+              .toList(),
+          validator: (_) => _fieldError((e) => e.region),
+          onChanged: (value) {
+            if (value != null) notifier.setRegion(value);
+          },
+        ),
+        const SizedBox(height: 14),
+        _textField(
+          label: 'Province',
+          controller: _provinceController,
+          onChanged: notifier.setProvince,
+          optional: true,
+          hintText: 'e.g. Metro Manila, Cebu, Laguna',
+          prefixIcon: Icons.location_on_outlined,
+          helperText: 'Matches provincial council educational assistance & governor grants.',
+        ),
+        const SizedBox(height: 14),
+        _textField(
+          label: 'City / Municipality',
+          controller: _cityController,
+          onChanged: notifier.setCityMunicipality,
+          optional: true,
+          hintText: 'e.g. Quezon City, Manila, Cebu City',
+          prefixIcon: Icons.location_city_outlined,
+          helperText: 'Unlocks dedicated City Hall LGU grants (e.g., QC Youth Development Scholarship).',
+        ),
+        const SizedBox(height: 14),
 
-          // LGU Funding Insight Tip Card
-          _buildLguFundingInsightCard(),
-          const SizedBox(height: 20),
+        // LGU Funding Insight Tip Card
+        _buildLguFundingInsightCard(),
+        const SizedBox(height: 20),
 
-          // Government & Foundation Qualifiers Section
-          _buildGovernmentQualifiersSection(notifier, state),
-          const SizedBox(height: 16),
+        // Government & Foundation Qualifiers Section
+        _buildGovernmentQualifiersSection(notifier, state),
+        const SizedBox(height: 16),
 
-          // Security & Data Privacy Act Micro-Footer
-          _buildDataPrivacyFooter(),
-        ],
+        // Security & Data Privacy Act Micro-Footer
+        _buildDataPrivacyFooter(),
+      ],
     };
   }
 
@@ -774,13 +781,9 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: const Color(0xFFDDE2F3)),
+        border: Border.all(color: kSurfaceContainerHighest),
         boxShadow: const [
-          BoxShadow(
-            color: kCardShadow,
-            blurRadius: 8,
-            offset: Offset(0, 2),
-          ),
+          BoxShadow(color: kCardShadow, blurRadius: 8, offset: Offset(0, 2)),
         ],
       ),
       child: Column(
@@ -796,7 +799,7 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
                     Text(
                       'Choose Your Avatar',
                       style: outfit(
-                        fontSize: 14,
+                        fontSize: 13,
                         fontWeight: FontWeight.w700,
                         color: kNavyTrust,
                       ),
@@ -804,10 +807,7 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
                     const SizedBox(height: 2),
                     Text(
                       'Pick a doodle for now • Formal photo required for deliberation',
-                      style: openSans(
-                        fontSize: 11,
-                        color: kTextSecondary,
-                      ),
+                      style: openSans(fontSize: 11, color: kTextSecondary),
                     ),
                   ],
                 ),
@@ -816,7 +816,10 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
               TextButton(
                 key: const ValueKey('avatar-setup-later'),
                 style: TextButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 4,
+                  ),
                   minimumSize: Size.zero,
                   tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                 ),
@@ -825,7 +828,9 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
                   if (context.mounted) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
-                        content: Text('Default doodle avatar assigned. You can change this anytime in your profile.'),
+                        content: Text(
+                          'Default doodle avatar assigned. You can change this anytime in your profile.',
+                        ),
                         duration: Duration(seconds: 2),
                       ),
                     );
@@ -860,7 +865,9 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
                     separatorBuilder: (_, _) => const SizedBox(width: 8),
                     itemBuilder: (context, index) {
                       final preset = AvatarItem.presets[index];
-                      final isSelected = !avatarState.isRealPhoto && avatarState.avatarId == preset.id;
+                      final isSelected =
+                          !avatarState.isRealPhoto &&
+                          avatarState.avatarId == preset.id;
                       return PressableScale(
                         child: GestureDetector(
                           key: ValueKey('avatar-setup-option-${preset.id}'),
@@ -871,7 +878,9 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
                             decoration: BoxDecoration(
                               shape: BoxShape.circle,
                               border: Border.all(
-                                color: isSelected ? kPrimary : Colors.transparent,
+                                color: isSelected
+                                    ? kPrimary
+                                    : Colors.transparent,
                                 width: 2.5,
                               ),
                             ),
@@ -926,7 +935,7 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
         child: Text(
           birthDate == null ? 'Select date' : formatDate(birthDate),
           style: openSans(
-            fontSize: 14,
+            fontSize: 13,
             color: birthDate == null ? Colors.black38 : kTextPrimary,
           ),
         ),
@@ -934,7 +943,10 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
     );
   }
 
-  Widget _buildGenderSelector(ProfileSetupNotifier notifier, ProfileSetupState state) {
+  Widget _buildGenderSelector(
+    ProfileSetupNotifier notifier,
+    ProfileSetupState state,
+  ) {
     final selectedGender = state.gender?.trim().toLowerCase();
 
     return Column(
@@ -963,26 +975,35 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
                   onTap: () => notifier.setGender('male'),
                   borderRadius: BorderRadius.circular(12),
                   child: Container(
-                    padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 12),
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 12,
+                      horizontal: 12,
+                    ),
                     decoration: BoxDecoration(
-                      color: selectedGender == 'male' ? kPrimaryLight : Colors.white,
+                      color: selectedGender == 'male'
+                          ? kPrimaryLight
+                          : Colors.white,
                       borderRadius: BorderRadius.circular(12),
                       border: Border.all(
-                        color: selectedGender == 'male' ? kPrimary : const Color(0xFFDDE2F3),
+                        color: selectedGender == 'male'
+                            ? kPrimary
+                            : kSurfaceContainerHighest,
                         width: selectedGender == 'male' ? 2 : 1,
                       ),
                     ),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        const Text('👨', style: TextStyle(fontSize: 16)),
+                        const Text('👨', style: TextStyle(fontSize: 15)),
                         const SizedBox(width: 8),
                         Text(
                           'Male',
                           style: outfit(
                             fontSize: 13,
                             fontWeight: FontWeight.w600,
-                            color: selectedGender == 'male' ? kPrimary : kTextPrimary,
+                            color: selectedGender == 'male'
+                                ? kPrimary
+                                : kTextPrimary,
                           ),
                         ),
                       ],
@@ -998,26 +1019,35 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
                   onTap: () => notifier.setGender('female'),
                   borderRadius: BorderRadius.circular(12),
                   child: Container(
-                    padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 12),
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 12,
+                      horizontal: 12,
+                    ),
                     decoration: BoxDecoration(
-                      color: selectedGender == 'female' ? kPrimaryLight : Colors.white,
+                      color: selectedGender == 'female'
+                          ? kPrimaryLight
+                          : Colors.white,
                       borderRadius: BorderRadius.circular(12),
                       border: Border.all(
-                        color: selectedGender == 'female' ? kPrimary : const Color(0xFFDDE2F3),
+                        color: selectedGender == 'female'
+                            ? kPrimary
+                            : kSurfaceContainerHighest,
                         width: selectedGender == 'female' ? 2 : 1,
                       ),
                     ),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        const Text('👩', style: TextStyle(fontSize: 16)),
+                        const Text('👩', style: TextStyle(fontSize: 15)),
                         const SizedBox(width: 8),
                         Text(
                           'Female',
                           style: outfit(
                             fontSize: 13,
                             fontWeight: FontWeight.w600,
-                            color: selectedGender == 'female' ? kPrimary : kTextPrimary,
+                            color: selectedGender == 'female'
+                                ? kPrimary
+                                : kTextPrimary,
                           ),
                         ),
                       ],
@@ -1041,9 +1071,9 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       decoration: BoxDecoration(
-        color: const Color(0xFFF1F3FF),
+        color: kSurfaceContainerLow,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: const Color(0xFFDDE2F3)),
+        border: Border.all(color: kSurfaceContainerHighest),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -1053,7 +1083,11 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
           Flexible(
             child: Text(
               'Protected by 256-bit encryption • Only matched with accredited partners',
-              style: outfit(fontSize: 11, fontWeight: FontWeight.w500, color: kTextSecondary),
+              style: outfit(
+                fontSize: 11,
+                fontWeight: FontWeight.w500,
+                color: kTextSecondary,
+              ),
               textAlign: TextAlign.center,
               overflow: TextOverflow.ellipsis,
             ),
@@ -1065,7 +1099,10 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
 
   // --- Step 2 Widgets -------------------------------------------------------
 
-  Widget _buildYearLevelSelector(ProfileSetupNotifier notifier, ProfileSetupState state) {
+  Widget _buildYearLevelSelector(
+    ProfileSetupNotifier notifier,
+    ProfileSetupState state,
+  ) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -1099,10 +1136,30 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
           crossAxisSpacing: 8,
           childAspectRatio: 3.2,
           children: [
-            _yearPill(level: 1, title: '1st Year (Freshman)', isSelected: state.yearLevel == 1, onTap: () => notifier.setYearLevel(1)),
-            _yearPill(level: 2, title: '2nd Year (Sophomore)', isSelected: state.yearLevel == 2, onTap: () => notifier.setYearLevel(2)),
-            _yearPill(level: 3, title: '3rd Year (Junior)', isSelected: state.yearLevel == 3, onTap: () => notifier.setYearLevel(3)),
-            _yearPill(level: 4, title: '4th Year+ / Graduating', isSelected: state.yearLevel >= 4, onTap: () => notifier.setYearLevel(4)),
+            _yearPill(
+              level: 1,
+              title: '1st Year (Freshman)',
+              isSelected: state.yearLevel == 1,
+              onTap: () => notifier.setYearLevel(1),
+            ),
+            _yearPill(
+              level: 2,
+              title: '2nd Year (Sophomore)',
+              isSelected: state.yearLevel == 2,
+              onTap: () => notifier.setYearLevel(2),
+            ),
+            _yearPill(
+              level: 3,
+              title: '3rd Year (Junior)',
+              isSelected: state.yearLevel == 3,
+              onTap: () => notifier.setYearLevel(3),
+            ),
+            _yearPill(
+              level: 4,
+              title: '4th Year+ / Graduating',
+              isSelected: state.yearLevel >= 4,
+              onTap: () => notifier.setYearLevel(4),
+            ),
           ],
         ),
         const SizedBox(height: 4),
@@ -1134,7 +1191,7 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
         side: BorderSide(
-          color: isSelected ? kPrimary : const Color(0xFFDDE2F3),
+          color: isSelected ? kPrimary : kSurfaceContainerHighest,
           width: 1,
         ),
       ),
@@ -1152,7 +1209,9 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
                 height: 7,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: isSelected ? kPrimaryFixedDim : const Color(0xFFDDE2F3),
+                  color: isSelected
+                      ? kPrimaryFixedDim
+                      : kSurfaceContainerHighest,
                 ),
               ),
               const SizedBox(width: 6),
@@ -1178,9 +1237,9 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: const Color(0xFFF1F3FF),
+        color: kSurfaceContainerLow,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: const Color(0xFFDDE2F3)),
+        border: Border.all(color: kSurfaceContainerHighest),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -1223,7 +1282,7 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
           Container(
             padding: const EdgeInsets.all(3),
             decoration: BoxDecoration(
-              color: const Color(0xFFE8EEFF),
+              color: kSurfaceContainer,
               borderRadius: BorderRadius.circular(10),
             ),
             child: Row(
@@ -1265,11 +1324,15 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(10),
-              border: Border.all(color: const Color(0xFFDDE2F3)),
+              border: Border.all(color: kSurfaceContainerHighest),
             ),
             child: Row(
               children: [
-                const Icon(Icons.workspace_premium_rounded, color: kPrimary, size: 18),
+                const Icon(
+                  Icons.workspace_premium_rounded,
+                  color: kPrimary,
+                  size: 18,
+                ),
                 const SizedBox(width: 8),
                 Expanded(
                   child: RichText(
@@ -1278,9 +1341,14 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
                       children: const [
                         TextSpan(
                           text: 'DOST-SEI & Megaworld Foundation ',
-                          style: TextStyle(fontWeight: FontWeight.w700, color: kPrimary),
+                          style: TextStyle(
+                            fontWeight: FontWeight.w700,
+                            color: kPrimary,
+                          ),
                         ),
-                        TextSpan(text: 'cutoff met for your academic standing.'),
+                        TextSpan(
+                          text: 'cutoff met for your academic standing.',
+                        ),
                       ],
                     ),
                   ),
@@ -1341,9 +1409,9 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: const Color(0xFFE8EEFF),
+        color: kSurfaceContainer,
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: const Color(0xFFDDE2F3)),
+        border: Border.all(color: kSurfaceContainerHighest),
       ),
       child: Row(
         children: [
@@ -1378,9 +1446,11 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
                         ),
                       ),
                       Text(
-                        isUndisclosed ? 'Merit Only Filter Active' : '₱60,000+ Potential / yr',
+                        isUndisclosed
+                            ? 'Merit Only Filter Active'
+                            : '₱60,000+ Potential / yr',
                         style: outfit(
-                          fontSize: 14,
+                          fontSize: 13,
                           fontWeight: FontWeight.w700,
                           color: kPrimary,
                         ),
@@ -1427,7 +1497,10 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
     );
   }
 
-  Widget _buildIncomeField(ProfileSetupNotifier notifier, ProfileSetupState state) {
+  Widget _buildIncomeField(
+    ProfileSetupNotifier notifier,
+    ProfileSetupState state,
+  ) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -1440,7 +1513,11 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
           inputFormatters: [
             FilteringTextInputFormatter.allow(RegExp(r'[0-9.]')),
           ],
-          style: outfit(fontSize: 16, fontWeight: FontWeight.w700, color: kTextPrimary),
+          style: outfit(
+            fontSize: 15,
+            fontWeight: FontWeight.w700,
+            color: kTextPrimary,
+          ),
           decoration: InputDecoration(
             labelText: 'Monthly Family Income *',
             labelStyle: openSans(color: kTextSecondary, fontSize: 13),
@@ -1449,11 +1526,23 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
             helperText: 'Combined gross monthly income of parents, guardians, or breadwinners living in your home.',
             helperStyle: openSans(color: kTextSecondary, fontSize: 11),
             prefixText: '₱ ',
-            prefixStyle: outfit(color: kPrimary, fontWeight: FontWeight.w700, fontSize: 16),
-            prefixIcon: const Icon(Icons.payments_outlined, size: 20, color: kTextSecondary),
+            prefixStyle: outfit(
+              color: kPrimary,
+              fontWeight: FontWeight.w700,
+              fontSize: 15,
+            ),
+            prefixIcon: const Icon(
+              Icons.payments_outlined,
+              size: 20,
+              color: kTextSecondary,
+            ),
             suffixIcon: _incomeController.text.isNotEmpty
                 ? IconButton(
-                    icon: const Icon(Icons.close_rounded, size: 18, color: kTextSecondary),
+                    icon: const Icon(
+                      Icons.close_rounded,
+                      size: 18,
+                      color: kTextSecondary,
+                    ),
                     onPressed: () {
                       _incomeController.clear();
                       notifier.setMonthlyFamilyIncome('');
@@ -1461,15 +1550,20 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
                   )
                 : null,
             filled: true,
-            fillColor: state.incomeUndisclosed ? const Color(0xFFF1F3FF) : Colors.white,
-            contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+            fillColor: state.incomeUndisclosed
+                ? kSurfaceContainerLow
+                : Colors.white,
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: 14,
+              vertical: 12,
+            ),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
-              borderSide: const BorderSide(color: Color(0xFFDDE2F3)),
+              borderSide: const BorderSide(color: kSurfaceContainerHighest),
             ),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
-              borderSide: const BorderSide(color: Color(0xFFDDE2F3)),
+              borderSide: const BorderSide(color: kSurfaceContainerHighest),
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
@@ -1482,7 +1576,11 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
         // Quick Select Bracket Pills
         Text(
           'Quick Select Bracket',
-          style: outfit(fontSize: 11, fontWeight: FontWeight.w600, color: kTextSecondary),
+          style: outfit(
+            fontSize: 11,
+            fontWeight: FontWeight.w600,
+            color: kTextSecondary,
+          ),
         ),
         const SizedBox(height: 6),
         Wrap(
@@ -1499,7 +1597,12 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
     );
   }
 
-  Widget _bracketPill(String label, String amount, ProfileSetupNotifier notifier, ProfileSetupState state) {
+  Widget _bracketPill(
+    String label,
+    String amount,
+    ProfileSetupNotifier notifier,
+    ProfileSetupState state,
+  ) {
     final isSelected = _incomeController.text == amount;
     return PressableScale(
       child: GestureDetector(
@@ -1515,7 +1618,7 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
             color: isSelected ? kPrimary : Colors.white,
             borderRadius: BorderRadius.circular(8),
             border: Border.all(
-              color: isSelected ? kPrimary : const Color(0xFFDDE2F3),
+              color: isSelected ? kPrimary : kSurfaceContainerHighest,
             ),
           ),
           child: Text(
@@ -1531,12 +1634,15 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
     );
   }
 
-  Widget _buildOptOutTile(ProfileSetupNotifier notifier, ProfileSetupState state) {
+  Widget _buildOptOutTile(
+    ProfileSetupNotifier notifier,
+    ProfileSetupState state,
+  ) {
     return Material(
       color: Colors.white,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(14),
-        side: const BorderSide(color: Color(0xFFDDE2F3)),
+        side: const BorderSide(color: kSurfaceContainerHighest),
       ),
       child: CheckboxListTile(
         contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
@@ -1544,7 +1650,11 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
         activeColor: kPrimary,
         title: Text(
           'Prefer not to say',
-          style: outfit(fontSize: 13, fontWeight: FontWeight.w700, color: kTextPrimary),
+          style: outfit(
+            fontSize: 13,
+            fontWeight: FontWeight.w700,
+            color: kTextPrimary,
+          ),
         ),
         subtitle: Text(
           'You will still see 100% of academic, merit, STEM, creative, and leadership grants. Need-based filters will simply pause until you wish to update this.',
@@ -1564,9 +1674,9 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
       decoration: BoxDecoration(
-        color: const Color(0xFFF1F3FF),
+        color: kSurfaceContainerLow,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: const Color(0xFFDDE2F3)),
+        border: Border.all(color: kSurfaceContainerHighest),
       ),
       child: Row(
         children: [
@@ -1575,7 +1685,11 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
           Flexible(
             child: Text(
               'Targeting Philippine Local Subsidies',
-              style: outfit(fontSize: 12, fontWeight: FontWeight.w700, color: kNavyTrust),
+              style: outfit(
+                fontSize: 12,
+                fontWeight: FontWeight.w700,
+                color: kNavyTrust,
+              ),
               overflow: TextOverflow.ellipsis,
             ),
           ),
@@ -1588,9 +1702,9 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: const Color(0xFFE8EEFF),
+        color: kSurfaceContainer,
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: const Color(0xFFDDE2F3)),
+        border: Border.all(color: kSurfaceContainerHighest),
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -1615,19 +1729,34 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
               children: [
                 Text(
                   'LGU Funding Insight',
-                  style: outfit(fontSize: 12, fontWeight: FontWeight.w700, color: kSecondary),
+                  style: outfit(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w700,
+                    color: kSecondary,
+                  ),
                 ),
                 const SizedBox(height: 2),
                 RichText(
                   text: TextSpan(
-                    style: openSans(fontSize: 11, color: kTextPrimary, height: 1.35),
+                    style: openSans(
+                      fontSize: 11,
+                      color: kTextPrimary,
+                      height: 1.35,
+                    ),
                     children: const [
-                      TextSpan(text: 'LGUs like Quezon City, Pasig, and Manila offer up to '),
+                      TextSpan(
+                        text: 'LGUs like Quezon City, Pasig, and Manila offer up to ',
+                      ),
                       TextSpan(
                         text: '₱10,000–₱25,000/sem',
-                        style: TextStyle(fontWeight: FontWeight.w700, color: kPrimary),
+                        style: TextStyle(
+                          fontWeight: FontWeight.w700,
+                          color: kPrimary,
+                        ),
                       ),
-                      TextSpan(text: ' specifically for registered local students. Keep your Barangay Indigency or Residency Certificate handy!'),
+                      TextSpan(
+                        text: ' specifically for registered local students. Keep your Barangay Indigency or Residency Certificate handy!',
+                      ),
                     ],
                   ),
                 ),
@@ -1639,13 +1768,20 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
     );
   }
 
-  Widget _buildGovernmentQualifiersSection(ProfileSetupNotifier notifier, ProfileSetupState state) {
+  Widget _buildGovernmentQualifiersSection(
+    ProfileSetupNotifier notifier,
+    ProfileSetupState state,
+  ) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           'Government & Foundation Qualifiers',
-          style: outfit(fontSize: 14, fontWeight: FontWeight.w700, color: kTextPrimary),
+          style: outfit(
+            fontSize: 13,
+            fontWeight: FontWeight.w700,
+            color: kTextPrimary,
+          ),
         ),
         const SizedBox(height: 2),
         Text(
@@ -1708,7 +1844,7 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
         side: BorderSide(
-          color: value ? kPrimary : const Color(0xFFDDE2F3),
+          color: value ? kPrimary : kSurfaceContainerHighest,
           width: value ? 1.5 : 1,
         ),
       ),
@@ -1719,7 +1855,7 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
           width: 32,
           height: 32,
           decoration: BoxDecoration(
-            color: value ? kPrimaryLight : const Color(0xFFF1F3FF),
+            color: value ? kPrimaryLight : kSurfaceContainerLow,
             borderRadius: BorderRadius.circular(8),
           ),
           child: Icon(icon, color: value ? kPrimary : kSecondary, size: 18),
@@ -1753,7 +1889,11 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
             Flexible(
               child: Text(
                 'Next: We will calculate your matched scholarship pool in real-time!',
-                style: outfit(fontSize: 11, fontWeight: FontWeight.w600, color: kPrimary),
+                style: outfit(
+                  fontSize: 11,
+                  fontWeight: FontWeight.w600,
+                  color: kPrimary,
+                ),
                 textAlign: TextAlign.center,
                 overflow: TextOverflow.ellipsis,
               ),
@@ -1764,7 +1904,11 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(Icons.lock_outline_rounded, size: 13, color: kTextSecondary),
+            const Icon(
+              Icons.lock_outline_rounded,
+              size: 13,
+              color: kTextSecondary,
+            ),
             const SizedBox(width: 4),
             Flexible(
               child: Text(
@@ -1811,7 +1955,7 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
       validator: validator,
       keyboardType: keyboardType,
       inputFormatters: inputFormatters,
-      style: openSans(fontSize: 14, color: kTextPrimary),
+      style: openSans(fontSize: 13, color: kTextPrimary),
       decoration: _fieldDecoration(
         label: label,
         required: required,
@@ -1835,7 +1979,9 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
     String? helperText,
     IconData? prefixIcon,
   }) {
-    final effectiveValue = items.any((item) => item.value == value) ? value : null;
+    final effectiveValue = items.any((item) => item.value == value)
+        ? value
+        : null;
     return DropdownButtonFormField<T>(
       key: ValueKey(effectiveValue),
       isExpanded: true,
@@ -1846,7 +1992,7 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
       onChanged: onChanged,
       items: items,
       validator: validator,
-      style: openSans(fontSize: 14, color: kTextPrimary),
+      style: openSans(fontSize: 13, color: kTextPrimary),
       decoration: _fieldDecoration(
         label: label,
         required: required,
@@ -1868,8 +2014,8 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
     final labelText = required
         ? '$label *'
         : optional
-            ? '$label (optional)'
-            : label;
+        ? '$label (optional)'
+        : label;
     return InputDecoration(
       labelText: labelText,
       labelStyle: openSans(color: kTextSecondary, fontSize: 13),
@@ -1878,18 +2024,24 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
       helperText: helperText,
       helperStyle: openSans(color: kTextSecondary, fontSize: 11),
       prefixText: prefixText,
-      prefixStyle: outfit(color: kTextPrimary, fontWeight: FontWeight.w600, fontSize: 14),
-      prefixIcon: prefixIcon != null ? Icon(prefixIcon, size: 20, color: kTextSecondary) : null,
+      prefixStyle: outfit(
+        color: kTextPrimary,
+        fontWeight: FontWeight.w600,
+        fontSize: 13,
+      ),
+      prefixIcon: prefixIcon != null
+          ? Icon(prefixIcon, size: 20, color: kTextSecondary)
+          : null,
       filled: true,
       fillColor: Colors.white,
       contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
-        borderSide: const BorderSide(color: Color(0xFFDDE2F3)),
+        borderSide: const BorderSide(color: kSurfaceContainerHighest),
       ),
       enabledBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
-        borderSide: const BorderSide(color: Color(0xFFDDE2F3)),
+        borderSide: const BorderSide(color: kSurfaceContainerHighest),
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
@@ -1919,10 +2071,7 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
           const Icon(Icons.error_outline_rounded, color: kError, size: 20),
           const SizedBox(width: 8),
           Expanded(
-            child: Text(
-              message,
-              style: openSans(color: kError, fontSize: 13),
-            ),
+            child: Text(message, style: openSans(color: kError, fontSize: 13)),
           ),
         ],
       ),
@@ -1946,7 +2095,10 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
                 onPressed: () => context.go(backRoute),
                 style: OutlinedButton.styleFrom(
                   foregroundColor: kSecondary,
-                  side: const BorderSide(color: Color(0xFFDDE2F3), width: 1.5),
+                  side: const BorderSide(
+                    color: kSurfaceContainerHighest,
+                    width: 1.5,
+                  ),
                   backgroundColor: Colors.white,
                   padding: const EdgeInsets.symmetric(vertical: 14),
                   shape: RoundedRectangleBorder(
@@ -1960,7 +2112,7 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
                     const SizedBox(width: 6),
                     Text(
                       'Back',
-                      style: outfit(fontSize: 14, fontWeight: FontWeight.w600),
+                      style: outfit(fontSize: 13, fontWeight: FontWeight.w600),
                     ),
                   ],
                 ),
@@ -2011,7 +2163,9 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
                         ),
                         const SizedBox(width: 6),
                         Icon(
-                          isLastStep ? Icons.check_circle_rounded : Icons.arrow_forward_rounded,
+                          isLastStep
+                              ? Icons.check_circle_rounded
+                              : Icons.arrow_forward_rounded,
                           size: 18,
                         ),
                       ],
@@ -2036,7 +2190,11 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
       children: [
         Row(
           children: [
-            const Icon(Icons.account_balance_outlined, size: 16, color: kPrimary),
+            const Icon(
+              Icons.account_balance_outlined,
+              size: 16,
+              color: kPrimary,
+            ),
             const SizedBox(width: 6),
             Expanded(
               child: Row(
@@ -2130,10 +2288,15 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
                   ),
                 ),
                 TextButton(
-                  onPressed: () => setState(() => _isSchoolSelectorExpanded = true),
+                  onPressed: () =>
+                      setState(() => _isSchoolSelectorExpanded = true),
                   child: Text(
                     'Change',
-                    style: openSans(fontSize: 12, fontWeight: FontWeight.w600, color: kPrimary),
+                    style: openSans(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w600,
+                      color: kPrimary,
+                    ),
                   ),
                 ),
               ],
@@ -2159,7 +2322,11 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
                     isDense: true,
                     hintText: 'Search Philippine universities & colleges...',
                     hintStyle: openSans(fontSize: 12, color: Colors.black38),
-                    prefixIcon: const Icon(Icons.search, size: 18, color: Colors.black45),
+                    prefixIcon: const Icon(
+                      Icons.search,
+                      size: 18,
+                      color: Colors.black45,
+                    ),
                     suffixIcon: _schoolSearchController.text.isNotEmpty
                         ? IconButton(
                             icon: const Icon(Icons.clear, size: 16),
@@ -2169,14 +2336,25 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
                             },
                           )
                         : (hasSelectedSchool
-                            ? TextButton(
-                                onPressed: () => setState(() => _isSchoolSelectorExpanded = false),
-                                child: Text('Done', style: openSans(fontSize: 11, color: kPrimary)),
-                              )
-                            : null),
+                              ? TextButton(
+                                  onPressed: () => setState(
+                                    () => _isSchoolSelectorExpanded = false,
+                                  ),
+                                  child: Text(
+                                    'Done',
+                                    style: openSans(
+                                      fontSize: 11,
+                                      color: kPrimary,
+                                    ),
+                                  ),
+                                )
+                              : null),
                     filled: true,
                     fillColor: const Color(0xFFF9FAFB),
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                    contentPadding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 10,
+                    ),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8),
                       borderSide: const BorderSide(color: Colors.black12),
@@ -2215,11 +2393,16 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
                       if (query.isEmpty) return true;
                       if (s.name.toLowerCase().contains(query)) return true;
                       if (s.normalizedName.contains(query)) return true;
-                      return s.aliases.any((a) => a.toLowerCase().contains(query));
+                      return s.aliases.any(
+                        (a) => a.toLowerCase().contains(query),
+                      );
                     }).toList();
 
-                    final hasExactMatch = query.isNotEmpty &&
-                        allSchools.any((s) => s.name.trim().toLowerCase() == query);
+                    final hasExactMatch =
+                        query.isNotEmpty &&
+                        allSchools.any(
+                          (s) => s.name.trim().toLowerCase() == query,
+                        );
 
                     return Column(
                       children: [
@@ -2227,11 +2410,16 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
                           constraints: const BoxConstraints(maxHeight: 180),
                           child: filtered.isEmpty
                               ? Padding(
-                                  padding: const EdgeInsets.symmetric(vertical: 16),
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: 16,
+                                  ),
                                   child: Center(
                                     child: Text(
                                       'No matching institutions found.',
-                                      style: openSans(fontSize: 12, color: Colors.black45),
+                                      style: openSans(
+                                        fontSize: 12,
+                                        color: Colors.black45,
+                                      ),
                                     ),
                                   ),
                                 )
@@ -2242,8 +2430,11 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
                                       const Divider(height: 1, indent: 40),
                                   itemBuilder: (context, index) {
                                     final school = filtered[index];
-                                    final isSelected = _selectedSchoolId == school.id ||
-                                        _schoolController.text.trim().toLowerCase() ==
+                                    final isSelected =
+                                        _selectedSchoolId == school.id ||
+                                        _schoolController.text
+                                                .trim()
+                                                .toLowerCase() ==
                                             school.name.trim().toLowerCase();
 
                                     return ListTile(
@@ -2251,24 +2442,37 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
                                       leading: Icon(
                                         Icons.account_balance_outlined,
                                         size: 18,
-                                        color: isSelected ? kPrimary : Colors.black45,
+                                        color: isSelected
+                                            ? kPrimary
+                                            : Colors.black45,
                                       ),
                                       title: Text(
                                         school.name,
                                         style: openSans(
                                           fontSize: 12,
-                                          fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
-                                          color: isSelected ? kPrimary : Colors.black87,
+                                          fontWeight: isSelected
+                                              ? FontWeight.w600
+                                              : FontWeight.w400,
+                                          color: isSelected
+                                              ? kPrimary
+                                              : Colors.black87,
                                         ),
                                       ),
                                       subtitle: !school.isCurated
                                           ? Text(
                                               'Custom institution',
-                                              style: openSans(fontSize: 10, color: Colors.black45),
+                                              style: openSans(
+                                                fontSize: 10,
+                                                color: Colors.black45,
+                                              ),
                                             )
                                           : null,
                                       trailing: isSelected
-                                          ? const Icon(Icons.check, size: 16, color: kPrimary)
+                                          ? const Icon(
+                                              Icons.check,
+                                              size: 16,
+                                              color: kPrimary,
+                                            )
                                           : null,
                                       onTap: () => _onSchoolSelected(school),
                                     );
@@ -2279,7 +2483,11 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
                           const Divider(height: 1),
                           ListTile(
                             dense: true,
-                            leading: const Icon(Icons.add_circle_outline, color: kPrimary, size: 20),
+                            leading: const Icon(
+                              Icons.add_circle_outline,
+                              color: kPrimary,
+                              size: 20,
+                            ),
                             title: Text(
                               'Add "${_schoolSearchController.text.trim()}"',
                               style: poppins(
@@ -2290,7 +2498,10 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
                             ),
                             subtitle: Text(
                               'Register a new higher education institution',
-                              style: openSans(fontSize: 11, color: Colors.black54),
+                              style: openSans(
+                                fontSize: 11,
+                                color: Colors.black54,
+                              ),
                             ),
                             onTap: () => _showAddSchoolDialog(
                               context,
@@ -2321,18 +2532,23 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
     if (userId != null) {
       ref.read(profileSetupProvider(userId).notifier).setSchool(school.name);
       try {
-        await ref.read(profileRepositoryProvider).updateSchoolId(
-          userId,
-          schoolId: school.id,
-          schoolName: school.name,
-        );
+        await ref
+            .read(profileRepositoryProvider)
+            .updateSchoolId(
+              userId,
+              schoolId: school.id,
+              schoolName: school.name,
+            );
       } catch (e) {
         debugPrint('[ProfileSetup] Failed to update school_id: $e');
       }
     }
   }
 
-  Future<void> _showAddSchoolDialog(BuildContext context, {String? initialName}) async {
+  Future<void> _showAddSchoolDialog(
+    BuildContext context, {
+    String? initialName,
+  }) async {
     final nameController = TextEditingController(text: initialName ?? '');
     final formKey = GlobalKey<FormState>();
     bool isSubmitting = false;
@@ -2341,10 +2557,16 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
       context: context,
       builder: (dialogCtx) => StatefulBuilder(
         builder: (ctx, setDialogState) => AlertDialog(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
           title: Text(
             'Add Higher Education Institution',
-            style: poppins(fontSize: 16, fontWeight: FontWeight.w700, color: kPrimary),
+            style: poppins(
+              fontSize: 15,
+              fontWeight: FontWeight.w700,
+              color: kPrimary,
+            ),
           ),
           content: Form(
             key: formKey,
@@ -2365,7 +2587,9 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
                     labelText: 'Institution Name *',
                     labelStyle: openSans(fontSize: 12),
                     hintText: 'e.g. Pamantasan ng Lungsod ng Maynila',
-                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
                   ),
                   validator: (v) {
                     if (v == null || v.trim().isEmpty) {
@@ -2382,14 +2606,21 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
           ),
           actions: [
             TextButton(
-              onPressed: isSubmitting ? null : () => Navigator.of(dialogCtx).pop(),
-              child: Text('Cancel', style: openSans(fontSize: 13, color: Colors.black54)),
+              onPressed: isSubmitting
+                  ? null
+                  : () => Navigator.of(dialogCtx).pop(),
+              child: Text(
+                'Cancel',
+                style: openSans(fontSize: 13, color: Colors.black54),
+              ),
             ),
             ElevatedButton(
               style: ElevatedButton.styleFrom(
                 backgroundColor: kPrimary,
                 foregroundColor: Colors.white,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
               ),
               onPressed: isSubmitting
                   ? null
@@ -2410,7 +2641,9 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
                         );
                         if (context.mounted) {
                           ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text('Added and linked "$name".')),
+                            SnackBar(
+                              content: Text('Added and linked "$name".'),
+                            ),
                           );
                         }
                       } catch (err) {
@@ -2429,9 +2662,18 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
                   ? const SizedBox(
                       width: 16,
                       height: 16,
-                      child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        color: Colors.white,
+                      ),
                     )
-                  : Text('Add Institution', style: openSans(fontSize: 13, fontWeight: FontWeight.w600)),
+                  : Text(
+                      'Add Institution',
+                      style: openSans(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
             ),
           ],
         ),
@@ -2454,12 +2696,13 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
       if (success) {
         if (_selectedSchoolId != null) {
           try {
-            await ref.read(profileRepositoryProvider).updateSchoolId(
-              userId,
-              schoolId: _selectedSchoolId,
-            );
+            await ref
+                .read(profileRepositoryProvider)
+                .updateSchoolId(userId, schoolId: _selectedSchoolId);
           } catch (e) {
-            debugPrint('[ProfileSetup] Failed to persist school_id checkpoint: $e');
+            debugPrint(
+              '[ProfileSetup] Failed to persist school_id checkpoint: $e',
+            );
           }
         }
         if (!mounted) return;
@@ -2480,12 +2723,13 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
       ref.invalidate(currentProfileProvider);
       if (_selectedSchoolId != null) {
         try {
-          await ref.read(profileRepositoryProvider).updateSchoolId(
-            userId,
-            schoolId: _selectedSchoolId,
-          );
+          await ref
+              .read(profileRepositoryProvider)
+              .updateSchoolId(userId, schoolId: _selectedSchoolId);
         } catch (e) {
-          debugPrint('[ProfileSetup] Failed to persist school_id checkpoint: $e');
+          debugPrint(
+            '[ProfileSetup] Failed to persist school_id checkpoint: $e',
+          );
         }
       }
       if (!mounted) return;

@@ -12,33 +12,26 @@ const String _onboardingMarker = 'ONBOARDING STUB';
 const String _loginMarker = 'LOGIN STUB';
 
 GoRouter _testRouter() => GoRouter(
-      initialLocation: '/intro',
-      routes: [
-        GoRoute(
-          path: '/intro',
-          builder: (context, state) => const IntroScreen(),
-        ),
-        GoRoute(
-          path: '/onboarding',
-          builder: (context, state) =>
-              const Scaffold(body: Center(child: Text(_onboardingMarker))),
-        ),
-        GoRoute(
-          path: '/login',
-          builder: (context, state) =>
-              const Scaffold(body: Center(child: Text(_loginMarker))),
-        ),
-      ],
-    );
+  initialLocation: '/intro',
+  routes: [
+    GoRoute(path: '/intro', builder: (context, state) => const IntroScreen()),
+    GoRoute(
+      path: '/onboarding',
+      builder: (context, state) =>
+          const Scaffold(body: Center(child: Text(_onboardingMarker))),
+    ),
+    GoRoute(
+      path: '/login',
+      builder: (context, state) =>
+          const Scaffold(body: Center(child: Text(_loginMarker))),
+    ),
+  ],
+);
 
 Future<void> _pumpIntro(WidgetTester tester) async {
   SharedPreferences.setMockInitialValues({});
   await tester.pumpWidget(
-    ProviderScope(
-      child: MaterialApp.router(
-        routerConfig: _testRouter(),
-      ),
-    ),
+    ProviderScope(child: MaterialApp.router(routerConfig: _testRouter())),
   );
   await tester.pumpAndSettle();
 }
@@ -49,7 +42,9 @@ void main() {
   });
 
   group('IntroScreen UI Elements', () {
-    testWidgets('renders all required elements and no dots or skip', (tester) async {
+    testWidgets('renders all required elements and no dots or skip', (
+      tester,
+    ) async {
       await _pumpIntro(tester);
 
       // 1. Scholaris brand lockup
@@ -61,63 +56,81 @@ void main() {
       expect(imageFinder, findsOneWidget);
       final Image imageWidget = tester.widget(imageFinder);
       expect(
-        (imageWidget.image as AssetImage).assetName,
-        'assets/images/intro_scene.png',
+        ((imageWidget.image is ResizeImage
+                    ? (imageWidget.image as ResizeImage).imageProvider
+                    : imageWidget.image)
+                as AssetImage)
+            .assetName,
+        'assets/mascots/onboarding/welcome.png',
       );
 
       // 3. Headline & subtext
-      expect(find.text('Your Dream,\nOur Mission.'), findsOneWidget);
+      expect(find.text('Your next chapter starts here.'), findsOneWidget);
       expect(
         find.text(
-          'Scholaris helps Filipino students find the scholarship they truly deserve.',
+          'Find scholarships, understand your options, and take your next step with Scholaris.',
         ),
         findsOneWidget,
       );
 
       // 4. CTAs
-      expect(find.byKey(const ValueKey('intro-get-started-button')), findsOneWidget);
+      expect(
+        find.byKey(const ValueKey('intro-get-started-button')),
+        findsOneWidget,
+      );
       expect(find.text('Get Started'), findsOneWidget);
-      expect(find.byIcon(Icons.arrow_forward_rounded), findsOneWidget);
-      expect(find.byKey(const ValueKey('intro-sign-in-button')), findsOneWidget);
-      expect(find.text('Already have an account? Sign In.'), findsOneWidget);
+      expect(find.byIcon(Icons.arrow_forward_rounded), findsNothing);
+      expect(
+        find.byKey(const ValueKey('intro-sign-in-button')),
+        findsOneWidget,
+      );
+      expect(find.text('Log in'), findsOneWidget);
 
       // 5. Explicitly NO dot indicators, NO skip button
       expect(find.text('Skip'), findsNothing);
       expect(find.text('Next'), findsNothing);
     });
 
-    testWidgets('tapping Get Started marks intro_seen and navigates to onboarding',
-        (tester) async {
-      await _pumpIntro(tester);
+    testWidgets(
+      'tapping Get Started marks intro_seen and navigates to onboarding',
+      (tester) async {
+        await _pumpIntro(tester);
 
-      final getStarted = find.byKey(const ValueKey('intro-get-started-button'));
-      expect(getStarted, findsOneWidget);
+        final getStarted = find.byKey(
+          const ValueKey('intro-get-started-button'),
+        );
+        expect(getStarted, findsOneWidget);
 
-      await tester.tap(getStarted);
-      await tester.pumpAndSettle();
+        await tester.ensureVisible(getStarted);
+        await tester.tap(getStarted);
+        await tester.pumpAndSettle();
 
-      expect(find.text(_onboardingMarker), findsOneWidget);
+        expect(find.text(_onboardingMarker), findsOneWidget);
 
-      final prefs = await SharedPreferences.getInstance();
-      expect(prefs.getBool(kIntroSeenKey), isTrue);
-    });
+        final prefs = await SharedPreferences.getInstance();
+        expect(prefs.getBool(kIntroSeenKey), isTrue);
+      },
+    );
 
-    testWidgets('tapping Sign In marks intro_seen and onboarding_seen and navigates to login',
-        (tester) async {
-      await _pumpIntro(tester);
+    testWidgets(
+      'tapping Sign In marks intro_seen and onboarding_seen and navigates to login',
+      (tester) async {
+        await _pumpIntro(tester);
 
-      final signIn = find.byKey(const ValueKey('intro-sign-in-button'));
-      expect(signIn, findsOneWidget);
+        final signIn = find.byKey(const ValueKey('intro-sign-in-button'));
+        expect(signIn, findsOneWidget);
 
-      await tester.tap(signIn);
-      await tester.pumpAndSettle();
+        await tester.ensureVisible(signIn);
+        await tester.tap(signIn);
+        await tester.pumpAndSettle();
 
-      expect(find.text(_loginMarker), findsOneWidget);
+        expect(find.text(_loginMarker), findsOneWidget);
 
-      final prefs = await SharedPreferences.getInstance();
-      expect(prefs.getBool(kIntroSeenKey), isTrue);
-      expect(prefs.getBool(kOnboardingSeenKey), isTrue);
-    });
+        final prefs = await SharedPreferences.getInstance();
+        expect(prefs.getBool(kIntroSeenKey), isTrue);
+        expect(prefs.getBool(kOnboardingSeenKey), isTrue);
+      },
+    );
   });
 
   group('IntroScreen Viewport Responsiveness', () {
@@ -127,18 +140,20 @@ void main() {
       const Size(440, 956),
       const Size(1024, 768),
     ]) {
-      testWidgets('no overflow at ${size.width.toInt()}x${size.height.toInt()}',
-          (tester) async {
-        tester.view.physicalSize = size;
-        tester.view.devicePixelRatio = 1.0;
-        addTearDown(() {
-          tester.view.resetPhysicalSize();
-          tester.view.resetDevicePixelRatio();
-        });
+      testWidgets(
+        'no overflow at ${size.width.toInt()}x${size.height.toInt()}',
+        (tester) async {
+          tester.view.physicalSize = size;
+          tester.view.devicePixelRatio = 1.0;
+          addTearDown(() {
+            tester.view.resetPhysicalSize();
+            tester.view.resetDevicePixelRatio();
+          });
 
-        await _pumpIntro(tester);
-        expect(tester.takeException(), isNull);
-      });
+          await _pumpIntro(tester);
+          expect(tester.takeException(), isNull);
+        },
+      );
     }
   });
 

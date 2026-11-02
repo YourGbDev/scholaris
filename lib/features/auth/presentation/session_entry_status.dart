@@ -30,7 +30,7 @@ class SessionEntryStatus extends ConsumerWidget {
                       ? 'We couldn’t load your account.'
                       : 'Preparing your account…',
                   textAlign: TextAlign.center,
-                  style: geist(fontSize: 18, fontWeight: FontWeight.w600),
+                  style: geist(fontSize: 17, fontWeight: FontWeight.w600),
                 ),
                 if (failed) ...[
                   const SizedBox(height: 12),

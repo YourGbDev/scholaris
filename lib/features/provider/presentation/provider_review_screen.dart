@@ -38,7 +38,7 @@ class ProviderReviewScreen extends StatelessWidget {
                     'Application Under Review',
                     textAlign: TextAlign.center,
                     style: poppins(
-                      fontSize: 28,
+                      fontSize: 20,
                       fontWeight: FontWeight.w700,
                       color: kPrimary,
                     ),

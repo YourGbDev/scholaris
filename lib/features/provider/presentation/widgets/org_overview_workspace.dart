@@ -82,7 +82,7 @@ class OrgOverviewWorkspace extends StatelessWidget {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(s.title, style: orgHeadline(fontWeight: FontWeight.w800, fontSize: 16)),
+                              Text(s.title, style: orgHeadline(fontWeight: FontWeight.w700, fontSize: 16)),
                               const SizedBox(height: 10),
                               Wrap(
                                 spacing: 16,
@@ -160,7 +160,7 @@ class OrgOverviewWorkspace extends StatelessWidget {
                         ),
                         Text(
                           '${s.deadline.day}',
-                          style: orgHeadline(fontSize: 21, color: kOrgPrimary),
+                          style: orgHeadline(fontSize: 17, color: kOrgPrimary),
                         ),
                       ],
                     ),
@@ -170,7 +170,7 @@ class OrgOverviewWorkspace extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(s.title, style: orgLabel(fontWeight: FontWeight.w800, fontSize: 13)),
+                        Text(s.title, style: orgLabel(fontWeight: FontWeight.w700, fontSize: 13)),
                         const SizedBox(height: 6),
                         Text(
                           MaterialLocalizations.of(context)
@@ -189,7 +189,7 @@ class OrgOverviewWorkspace extends StatelessWidget {
           const SizedBox(height: 20),
           const Divider(color: kOrgBorder),
           const SizedBox(height: 20),
-          Text('Workspace', style: orgHeadline(fontSize: 18)),
+          Text('Workspace', style: orgHeadline(fontSize: 17)),
           const SizedBox(height: 12),
           if (onTeam != null)
             _workspaceAction(
@@ -228,7 +228,7 @@ class OrgOverviewWorkspace extends StatelessWidget {
                         children: [
                           Text(
                             'Organization overview',
-                            style: orgHeadline(fontSize: compact ? 28 : 32),
+                            style: orgHeadline(fontSize: compact ? 20 : 24),
                           ),
                           const SizedBox(height: 8),
                           Text(
@@ -285,7 +285,7 @@ class OrgOverviewWorkspace extends StatelessWidget {
                             ? 'No applications awaiting review'
                             : '$pendingCount ${pendingCount == 1 ? 'application' : 'applications'} awaiting review',
                         style: orgHeadline(
-                          fontSize: compact ? 20 : 23,
+                          fontSize: 17,
                           color: kOrgPrimary,
                         ),
                       ),
@@ -352,7 +352,7 @@ class OrgOverviewWorkspace extends StatelessWidget {
     spacing: 16,
     runSpacing: 4,
     children: [
-      Text(title, style: orgHeadline(fontSize: 19)),
+      Text(title, style: orgHeadline(fontSize: 17)),
       ?action,
     ],
   );

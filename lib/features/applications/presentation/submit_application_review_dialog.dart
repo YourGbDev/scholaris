@@ -281,7 +281,7 @@ class _SubmitApplicationReviewDialogState
                     Text(
                       'Submit Application',
                       style: geist(
-                        fontSize: 22,
+                        fontSize: 20,
                         fontWeight: FontWeight.bold,
                         color: kOnSurface,
                         letterSpacing: -0.2,
@@ -302,10 +302,7 @@ class _SubmitApplicationReviewDialogState
                       '${widget.scholarship.title} • ${widget.scholarship.provider ?? "National Science Endowment"}',
 
                       overflow: TextOverflow.ellipsis,
-                      style: geist(
-                        fontSize: 12,
-                        color: kOnSurfaceVariant,
-                      ),
+                      style: geist(fontSize: 12, color: kOnSurfaceVariant),
                     ),
                   ],
                 ),
@@ -555,10 +552,7 @@ class _SubmitApplicationReviewDialogState
                     const SizedBox(height: 3),
                     Text(
                       '4-Year Renewable',
-                      style: geist(
-                        fontSize: 10,
-                        color: kOnSurfaceVariant,
-                      ),
+                      style: geist(fontSize: 10, color: kOnSurfaceVariant),
                     ),
                   ],
                 ),
@@ -707,10 +701,7 @@ class _SubmitApplicationReviewDialogState
         children: [
           Text(
             'Application Packet',
-            style: geist(
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-            ),
+            style: geist(fontSize: 15, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 8),
           Text(
@@ -801,7 +792,7 @@ class _SubmitApplicationReviewDialogState
 
                   overflow: TextOverflow.ellipsis,
                   style: geist(
-                    fontSize: 16,
+                    fontSize: 15,
                     fontWeight: FontWeight.bold,
                     color: kOnSurface,
                   ),
@@ -871,11 +862,7 @@ class _SubmitApplicationReviewDialogState
             Expanded(
               child: Text(
                 text,
-                style: geist(
-                  fontSize: 12,
-                  color: kOnSurface,
-                  height: 1.4,
-                ),
+                style: geist(fontSize: 12, color: kOnSurface, height: 1.4),
               ),
             ),
           ],
@@ -959,7 +946,7 @@ class _SubmitApplicationReviewDialogState
 
                             overflow: TextOverflow.ellipsis,
                             style: geist(
-                              fontSize: 22,
+                              fontSize: 20,
                               fontWeight: FontWeight.bold,
                               fontStyle: FontStyle.italic,
                               color: kPrimaryDark,
@@ -985,10 +972,7 @@ class _SubmitApplicationReviewDialogState
                         'Submission time is saved after successful submission.',
 
                         overflow: TextOverflow.ellipsis,
-                        style: geist(
-                          fontSize: 10,
-                          color: kOnSurfaceVariant,
-                        ),
+                        style: geist(fontSize: 10, color: kOnSurfaceVariant),
                       ),
                     ),
                     const SizedBox(width: 8),
@@ -1020,10 +1004,7 @@ class _SubmitApplicationReviewDialogState
                 Expanded(
                   child: Text(
                     'A submission is complete only after it is saved successfully.',
-                    style: geist(
-                      fontSize: 11,
-                      color: kOnSurfaceVariant,
-                    ),
+                    style: geist(fontSize: 11, color: kOnSurfaceVariant),
                   ),
                 ),
               ],
@@ -1079,8 +1060,8 @@ class _SubmitApplicationReviewDialogState
               ),
               onPressed: _allAffirmationsChecked && !_isSavingDraft
                   ? widget.tour != null
-                      ? widget.tour!.onSubmit ?? () {}
-                      : () => Navigator.of(context).pop(true)
+                        ? widget.tour!.onSubmit ?? () {}
+                        : () => Navigator.of(context).pop(true)
                   : null,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -1092,10 +1073,7 @@ class _SubmitApplicationReviewDialogState
                     child: Text(
                       'Submit Application (Final)',
                       textAlign: TextAlign.center,
-                      style: geist(
-                        fontSize: 14,
-                        fontWeight: FontWeight.bold,
-                      ),
+                      style: geist(fontSize: 13, fontWeight: FontWeight.bold),
                     ),
                   ),
                 ],
@@ -1129,7 +1107,9 @@ class _SubmitApplicationReviewDialogState
               // Save Progress Button
               TextButton(
                 key: const ValueKey('apply-save-draft'),
-                onPressed: widget.tour != null || _isSavingDraft ? null : _handleSaveDraftDirectly,
+                onPressed: widget.tour != null || _isSavingDraft
+                    ? null
+                    : _handleSaveDraftDirectly,
                 child: _isSavingDraft
                     ? const SizedBox(
                         width: 16,
@@ -1153,11 +1133,7 @@ class _SubmitApplicationReviewDialogState
             textAlign: TextAlign.center,
 
             overflow: TextOverflow.ellipsis,
-            style: geist(
-              fontSize: 10,
-              color: kOnSurfaceVariant,
-              height: 1.3,
-            ),
+            style: geist(fontSize: 10, color: kOnSurfaceVariant, height: 1.3),
           ),
         ],
       ),

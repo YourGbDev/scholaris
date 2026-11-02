@@ -5,6 +5,7 @@
 // Fully compliant with RA 10173 student privacy protections.
 
 import 'dart:typed_data';
+
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -93,7 +94,8 @@ class _StudentSafetyReportDialogState
   String? _persistedReportId;
   int _seq = 0;
   final Set<String> _attachedIds = {};
-  final List<({String id, String name, Uint8List bytes, int size})> _attachedFiles = [];
+  final List<({String id, String name, Uint8List bytes, int size})>
+  _attachedFiles = [];
 
   @override
   void initState() {
@@ -147,15 +149,19 @@ class _StudentSafetyReportDialogState
         final file = result.files.first;
         if (file.bytes != null) {
           if (file.size > 5 * 1024 * 1024) {
-            setState(() =>
-                _errorMessage = 'File "${file.name}" exceeds 5 MB limit.');
+            setState(
+              () => _errorMessage = 'File "${file.name}" exceeds 5 MB limit.',
+            );
             return;
           }
           setState(() {
             _errorMessage = null;
-            _attachedFiles.add(
-              (id: 'att_${++_seq}', name: file.name, bytes: file.bytes!, size: file.size),
-            );
+            _attachedFiles.add((
+              id: 'att_${++_seq}',
+              name: file.name,
+              bytes: file.bytes!,
+              size: file.size,
+            ));
           });
         }
       }
@@ -243,18 +249,14 @@ class _StudentSafetyReportDialogState
         _submitting = false;
         final msg = e.toString();
         if (_persistedReportId != null) {
-          _errorMessage =
-              'Report recorded, but evidence upload failed. Tap "Retry Evidence Upload" to complete attaching files.';
+          _errorMessage = 'Report recorded, but evidence upload failed. Tap "Retry Evidence Upload" to complete attaching files.';
         } else if (msg.contains('Daily report submission limit')) {
-          _errorMessage =
-              'You have reached the daily report limit (5 reports per 24 hours). If you need immediate assistance, contact support.';
+          _errorMessage = 'You have reached the daily report limit (5 reports per 24 hours). If you need immediate assistance, contact support.';
         } else if (msg.contains('one_open_safety_report') ||
             msg.contains('duplicate')) {
-          _errorMessage =
-              'You already have an active report for this scholarship and category. Our platform team is reviewing it.';
+          _errorMessage = 'You already have an active report for this scholarship and category. Our platform team is reviewing it.';
         } else {
-          _errorMessage =
-              'Could not submit report. Your draft has been preserved. Please try again.';
+          _errorMessage = 'Could not submit report. Your draft has been preserved. Please try again.';
         }
       });
     }
@@ -309,7 +311,7 @@ class _StudentSafetyReportDialogState
               const Expanded(
                 child: Text(
                   'Report safety or integrity concern',
-                  style: TextStyle(fontSize: 18),
+                  style: TextStyle(fontSize: 17),
                 ),
               ),
             ],
@@ -321,7 +323,7 @@ class _StudentSafetyReportDialogState
             overflow: TextOverflow.ellipsis,
             style: const TextStyle(
               fontSize: 13,
-              fontWeight: FontWeight.w800,
+              fontWeight: FontWeight.w700,
               color: Color(0xFF555D58),
             ),
           ),
@@ -345,7 +347,11 @@ class _StudentSafetyReportDialogState
                   ),
                   child: const Row(
                     children: [
-                      Icon(Icons.lock_outline, size: 18, color: Color(0xFF0F4D2E)),
+                      Icon(
+                        Icons.lock_outline,
+                        size: 18,
+                        color: Color(0xFF0F4D2E),
+                      ),
                       SizedBox(width: 8),
                       Expanded(
                         child: Text(
@@ -378,15 +384,21 @@ class _StudentSafetyReportDialogState
                     ),
                   ),
                   items: _categories
-                      .map((c) => DropdownMenuItem(
-                            value: c.key,
-                            child: Text(c.value, style: const TextStyle(fontSize: 14)),
-                          ))
+                      .map(
+                        (c) => DropdownMenuItem(
+                          value: c.key,
+                          child: Text(
+                            c.value,
+                            style: const TextStyle(fontSize: 13),
+                          ),
+                        ),
+                      )
                       .toList(),
                   onChanged: _submitting || _persistedReportId != null
                       ? null
                       : (val) {
-                          if (val != null) setState(() => _selectedCategory = val);
+                          if (val != null)
+                            setState(() => _selectedCategory = val);
                         },
                 ),
                 const SizedBox(height: 16),
@@ -408,15 +420,21 @@ class _StudentSafetyReportDialogState
                     ),
                   ),
                   items: _relationships
-                      .map((r) => DropdownMenuItem(
-                            value: r.key,
-                            child: Text(r.value, style: const TextStyle(fontSize: 14)),
-                          ))
+                      .map(
+                        (r) => DropdownMenuItem(
+                          value: r.key,
+                          child: Text(
+                            r.value,
+                            style: const TextStyle(fontSize: 13),
+                          ),
+                        ),
+                      )
                       .toList(),
                   onChanged: _submitting || _persistedReportId != null
                       ? null
                       : (val) {
-                          if (val != null) setState(() => _selectedRelationship = val);
+                          if (val != null)
+                            setState(() => _selectedRelationship = val);
                         },
                 ),
                 const SizedBox(height: 16),
@@ -425,7 +443,10 @@ class _StudentSafetyReportDialogState
                   children: [
                     const Text(
                       'Incident date (optional)',
-                      style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13),
+                      style: TextStyle(
+                        fontWeight: FontWeight.w600,
+                        fontSize: 13,
+                      ),
                     ),
                     TextButton.icon(
                       onPressed: _submitting || _persistedReportId != null
@@ -453,8 +474,7 @@ class _StudentSafetyReportDialogState
                   minLines: 3,
                   maxLines: 6,
                   decoration: InputDecoration(
-                    hintText:
-                        'Please describe what occurred in detail. Minimum 10 characters.',
+                    hintText: 'Please describe what occurred in detail. Minimum 10 characters.',
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8),
                     ),
@@ -471,8 +491,10 @@ class _StudentSafetyReportDialogState
                   },
                 ),
                 const SizedBox(height: 16),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                Wrap(
+                  spacing: 12,
+                  runSpacing: 8,
+                  crossAxisAlignment: WrapCrossAlignment.center,
                   children: [
                     const Text(
                       'Evidence files (optional, up to 3)',
@@ -502,19 +524,26 @@ class _StudentSafetyReportDialogState
                       for (var i = 0; i < _attachedFiles.length; i++)
                         Chip(
                           avatar: _attachedIds.contains(_attachedFiles[i].id)
-                              ? const Icon(Icons.check_circle_rounded, size: 16, color: Color(0xFF0F4D2E))
+                              ? const Icon(
+                                  Icons.check_circle_rounded,
+                                  size: 16,
+                                  color: Color(0xFF0F4D2E),
+                                )
                               : null,
                           label: Text(
                             _attachedFiles[i].name,
                             style: const TextStyle(fontSize: 12),
                           ),
-                          deleteIcon: _attachedIds.contains(_attachedFiles[i].id)
+                          deleteIcon:
+                              _attachedIds.contains(_attachedFiles[i].id)
                               ? null
                               : const Icon(Icons.close, size: 14),
-                          onDeleted: (_submitting || _attachedIds.contains(_attachedFiles[i].id))
+                          onDeleted:
+                              (_submitting ||
+                                  _attachedIds.contains(_attachedFiles[i].id))
                               ? null
                               : () =>
-                                  setState(() => _attachedFiles.removeAt(i)),
+                                    setState(() => _attachedFiles.removeAt(i)),
                         ),
                     ],
                   ),
@@ -564,7 +593,9 @@ class _StudentSafetyReportDialogState
       ),
       actions: [
         TextButton(
-          onPressed: _submitting ? null : () => Navigator.pop(context, _persistedReportId != null),
+          onPressed: _submitting
+              ? null
+              : () => Navigator.pop(context, _persistedReportId != null),
           child: Text(_persistedReportId != null ? 'Close' : 'Cancel'),
         ),
         FilledButton(
@@ -572,7 +603,11 @@ class _StudentSafetyReportDialogState
             backgroundColor: const Color(0xFF93000A),
           ),
           onPressed: _submitting ? null : _submit,
-          child: Text(_persistedReportId != null ? 'Retry Evidence Upload' : 'Submit report'),
+          child: Text(
+            _persistedReportId != null
+                ? 'Retry Evidence Upload'
+                : 'Submit report',
+          ),
         ),
       ],
     );
@@ -657,8 +692,8 @@ class StudentSafetyReportHistoryDialog extends ConsumerWidget {
                           child: Text(
                             r.scholarshipTitle ?? 'Scholarship concern',
                             style: const TextStyle(
-                              fontWeight: FontWeight.w800,
-                              fontSize: 14,
+                              fontWeight: FontWeight.w700,
+                              fontSize: 13,
                             ),
                           ),
                         ),
@@ -671,8 +706,8 @@ class StudentSafetyReportHistoryDialog extends ConsumerWidget {
                             color: r.isResolved
                                 ? const Color(0xFFE8F5E9)
                                 : r.isDismissed
-                                    ? const Color(0xFFF5F5F5)
-                                    : const Color(0xFFFFF3E0),
+                                ? const Color(0xFFF5F5F5)
+                                : const Color(0xFFFFF3E0),
                             borderRadius: BorderRadius.circular(4),
                           ),
                           child: Text(
@@ -683,8 +718,8 @@ class StudentSafetyReportHistoryDialog extends ConsumerWidget {
                               color: r.isResolved
                                   ? const Color(0xFF2E7D32)
                                   : r.isDismissed
-                                      ? const Color(0xFF616161)
-                                      : const Color(0xFFE65100),
+                                  ? const Color(0xFF616161)
+                                  : const Color(0xFFE65100),
                             ),
                           ),
                         ),

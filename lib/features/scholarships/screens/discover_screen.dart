@@ -184,56 +184,47 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
 
   // --- 1. Sticky Top Bar ---
   Widget _buildHeader(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        // Scholaris Brand Logo
-        Expanded(
-          child: StudentTabReveal(
-            order: 0,
-            immediate: true,
-            child: FittedBox(
-              fit: BoxFit.scaleDown,
-              alignment: Alignment.centerLeft,
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Container(
-                    width: 36,
-                    height: 36,
-                    decoration: BoxDecoration(
-                      color: const Color(0xFF0F4D2E), // primary-container
-                      borderRadius: BorderRadius.circular(12),
-                      boxShadow: [
-                        BoxShadow(
-                          color: const Color(0xFF0F4D2E)
-                              .withValues(alpha: 0.15),
-                          blurRadius: 6,
-                          offset: const Offset(0, 2),
-                        ),
-                      ],
-                    ),
-                    child: const Center(
-                      child: Icon(
-                        Icons.school_rounded,
-                        size: 20,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  Text(
-                    'Scholaris',
-                    style: appHeading(fontSize: 24),
-                  ),
-                ],
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final brand = Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: 36,
+              height: 36,
+              decoration: BoxDecoration(
+                color: kPrimary,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: const Icon(
+                Icons.school_rounded,
+                color: Colors.white,
+                size: 20,
               ),
             ),
-          ),
-        ),
-
-        const StudentHeaderActions(),
-      ],
+            const SizedBox(width: 8),
+            Flexible(child: Text('Scholaris', style: appHeading(fontSize: 18))),
+          ],
+        );
+        if (MediaQuery.textScalerOf(context).scale(20) > 26) {
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              brand,
+              const Align(
+                alignment: Alignment.centerRight,
+                child: StudentHeaderActions(),
+              ),
+            ],
+          );
+        }
+        return Row(
+          children: [
+            Expanded(child: brand),
+            const StudentHeaderActions(),
+          ],
+        );
+      },
     );
   }
 
@@ -402,7 +393,7 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
             onPressed: () => ref.read(discoveryFilterProvider.notifier).reset(),
             child: Text(
               'Clear all',
-              style: outfit(
+              style: geist(
                 fontSize: 12,
                 fontWeight: FontWeight.w600,
                 color: const Color(0xFF0F4D2E),
@@ -418,13 +409,17 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
   Widget _buildFeedHeader(AsyncValue<List<Scholarship>> matches) => Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
-      Text('Matched for you', style: appHeading(fontSize: 24)),
+      Text('Matched for you', style: appHeading(fontSize: 17)),
       const SizedBox(height: 6),
-      Text(matches.when(
-        data: (items) => '${items.length} ${items.length == 1 ? 'opportunity' : 'opportunities'} to explore',
-        loading: () => 'Finding opportunities…',
-        error: (_, _) => 'Matches unavailable',
-      ), style: appSupporting()),
+      Text(
+        matches.when(
+          data: (items) =>
+              '${items.length} ${items.length == 1 ? 'opportunity' : 'opportunities'} to explore',
+          loading: () => 'Finding opportunities…',
+          error: (_, _) => 'Matches unavailable',
+        ),
+        style: appSupporting(),
+      ),
     ],
   );
 
@@ -567,7 +562,7 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
               order: 0,
               child: Text(
                 'Showing ${browse.length} scholarships',
-                style: openSans(fontSize: 13, color: const Color(0xFF404942)),
+                style: geist(fontSize: 13, color: const Color(0xFF404942)),
               ),
             ),
             const SizedBox(height: 12),
@@ -650,8 +645,8 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
           Text(
             'Looking for more niche grants?',
             textAlign: TextAlign.center,
-            style: outfit(
-              fontSize: 18,
+            style: geist(
+              fontSize: 17,
               fontWeight: FontWeight.bold,
               color: const Color(0xFF161C27),
             ),
@@ -660,7 +655,7 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
           Text(
             'Connect your local community college, regional foundation, or alumni affinity groups to unlock hyper-local aid.',
             textAlign: TextAlign.center,
-            style: openSans(
+            style: geist(
               fontSize: 13,
               color: const Color(0xFF404942),
               height: 1.4,
@@ -693,7 +688,7 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
                     const SizedBox(width: 8),
                     Text(
                       'Update Eligibility Filters',
-                      style: outfit(fontSize: 13, fontWeight: FontWeight.bold),
+                      style: geist(fontSize: 13, fontWeight: FontWeight.bold),
                     ),
                   ],
                 ),
@@ -719,8 +714,8 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
             Text(
               'No scholarships found',
               textAlign: TextAlign.center,
-              style: outfit(
-                fontSize: 18,
+              style: geist(
+                fontSize: 17,
                 fontWeight: FontWeight.w700,
                 color: const Color(0xFF161C27),
               ),
@@ -729,7 +724,7 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
             Text(
               'No scholarships match your current search and filters. Try adjusting your filters to see more results.',
               textAlign: TextAlign.center,
-              style: openSans(
+              style: geist(
                 fontSize: 13.5,
                 color: const Color(0xFF404942),
                 height: 1.45,
@@ -753,7 +748,7 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
               ),
               child: Text(
                 'Clear search & filters',
-                style: outfit(
+                style: geist(
                   fontSize: 13.5,
                   fontWeight: FontWeight.w600,
                   color: Colors.white,
@@ -782,7 +777,7 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
             decoration: BoxDecoration(
               color: const Color(0xFFF0F0F0),
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: const Color(0xFFDDE2F3)),
+              border: Border.all(color: kSurfaceContainerHighest),
             ),
             child: Row(
               children: [
@@ -795,7 +790,7 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
                 Expanded(
                   child: Text(
                     'No scholarships in your matches match the current search and filters.',
-                    style: openSans(
+                    style: geist(
                       fontSize: 13,
                       color: const Color(0xFF404942),
                       height: 1.35,
@@ -824,7 +819,7 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
               Text(
                 'No matches found for your profile yet',
                 textAlign: TextAlign.center,
-                style: outfit(
+                style: geist(
                   fontSize: 17,
                   fontWeight: FontWeight.w700,
                   color: const Color(0xFF161C27),
@@ -834,7 +829,7 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
               Text(
                 'Complete your profile with your course, university, and GWA to unlock targeted grants and scholarships.',
                 textAlign: TextAlign.center,
-                style: openSans(
+                style: geist(
                   fontSize: 13,
                   color: const Color(0xFF404942),
                   height: 1.4,
@@ -857,7 +852,7 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
                 ),
                 child: Text(
                   'Complete your profile',
-                  style: outfit(
+                  style: geist(
                     fontSize: 13.5,
                     fontWeight: FontWeight.w600,
                     color: Colors.white,
@@ -927,10 +922,14 @@ class _SearchFieldState extends ConsumerState<_SearchField> {
         onChanged: (value) =>
             ref.read(discoveryFilterProvider.notifier).setQuery(value),
         textInputAction: TextInputAction.search,
-        style: openSans(fontSize: 16, color: kTextPrimary),
+        style: geist(fontSize: 15, color: kTextPrimary),
         decoration: InputDecoration(
           hintText: 'Search scholarships',
-          hintStyle: openSans(fontSize: 16, fontWeight: FontWeight.w500, color: kTextSupporting),
+          hintStyle: openSans(
+            fontSize: 15,
+            fontWeight: FontWeight.w500,
+            color: kTextSupporting,
+          ),
           prefixIcon: const Icon(
             Icons.search_rounded,
             color: Color(0xFF404942),
@@ -996,7 +995,7 @@ class _FilterButton extends ConsumerWidget {
                   const SizedBox(width: 5),
                   Text(
                     'Filter',
-                    style: outfit(
+                    style: geist(
                       fontSize: 15,
                       fontWeight: FontWeight.w600,
                       color: const Color(0xFF436084),
@@ -1015,7 +1014,7 @@ class _FilterButton extends ConsumerWidget {
                       ),
                       child: Text(
                         '$count',
-                        style: outfit(
+                        style: geist(
                           fontSize: 10,
                           fontWeight: FontWeight.bold,
                           color: Colors.white,
@@ -1102,7 +1101,7 @@ class _StitchCarouselChip extends StatelessWidget {
                 ],
                 Text(
                   label,
-                  style: outfit(
+                  style: geist(
                     fontSize: 12,
                     fontWeight: FontWeight.w600,
                     color: fg,
@@ -1144,7 +1143,7 @@ class _ActiveFilterChip extends StatelessWidget {
             padding: const EdgeInsets.only(left: 12),
             child: Text(
               label,
-              style: openSans(
+              style: geist(
                 fontSize: 12,
                 fontWeight: FontWeight.w600,
                 color: const Color(0xFF0F4D2E),

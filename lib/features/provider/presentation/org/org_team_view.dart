@@ -1,3 +1,4 @@
+import 'package:scholaris/shared/theme/app_theme.dart' show kSoftCardDecoration;
 // lib/features/provider/presentation/org/org_team_view.dart
 //
 // Institutional Organization Team & Reviewers Management View.
@@ -73,7 +74,7 @@ class _OrgTeamViewState extends ConsumerState<OrgTeamView> {
                     s.title,
                     style: orgHeadline(
                       fontSize: 13,
-                      fontWeight: FontWeight.w800,
+                      fontWeight: FontWeight.w700,
                     ),
                   ),
                   subtitle: Text(
@@ -286,7 +287,7 @@ class _OrgTeamViewState extends ConsumerState<OrgTeamView> {
         Text(
           'Team & Reviewers',
           style: orgHeadline(
-            fontSize: isDesktop ? 32 : 26,
+            fontSize: isDesktop ? 24 : 20,
             fontWeight: FontWeight.w700,
             color: kOrgTextPrimary,
           ),
@@ -386,7 +387,7 @@ class _OrgTeamViewState extends ConsumerState<OrgTeamView> {
       decoration: BoxDecoration(
         color: kOrgSurfaceWhite,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: const Color(0xFFEEEDF3)),
+        border: Border.all(color: const Color(0xFFE8ECE8)),
         boxShadow: const [
           BoxShadow(
             color: Color(0x06000000),
@@ -449,25 +450,14 @@ class _OrgTeamViewState extends ConsumerState<OrgTeamView> {
 
     return Container(
       padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: kOrgSurfaceWhite,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: const Color(0xFFEEEDF3)),
-        boxShadow: const [
-          BoxShadow(
-            color: Color(0x06000000),
-            blurRadius: 8,
-            offset: Offset(0, 2),
-          ),
-        ],
-      ),
+      decoration: kSoftCardDecoration,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
             height: 38,
             decoration: BoxDecoration(
-              color: const Color(0xFFF4F3F8),
+              color: const Color(0xFFF2F4F2),
               borderRadius: BorderRadius.circular(10),
             ),
             child: TextField(
@@ -511,7 +501,7 @@ class _OrgTeamViewState extends ConsumerState<OrgTeamView> {
                     ),
                     selected: isSelected,
                     selectedColor: kOrgPrimary,
-                    backgroundColor: const Color(0xFFF4F3F8),
+                    backgroundColor: const Color(0xFFF2F4F2),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8),
                       side: BorderSide(
@@ -536,11 +526,7 @@ class _OrgTeamViewState extends ConsumerState<OrgTeamView> {
   Widget _buildEmptyState() {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 48, horizontal: 24),
-      decoration: BoxDecoration(
-        color: kOrgSurfaceWhite,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: const Color(0xFFEEEDF3)),
-      ),
+      decoration: kSoftCardDecoration,
       child: Center(
         child: Column(
           children: [
@@ -575,18 +561,7 @@ class _OrgTeamViewState extends ConsumerState<OrgTeamView> {
     required bool isDesktop,
   }) {
     return Container(
-      decoration: BoxDecoration(
-        color: kOrgSurfaceWhite,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: const Color(0xFFEEEDF3)),
-        boxShadow: const [
-          BoxShadow(
-            color: Color(0x06000000),
-            blurRadius: 8,
-            offset: Offset(0, 2),
-          ),
-        ],
-      ),
+      decoration: kSoftCardDecoration,
       child: ListView.separated(
         shrinkWrap: true,
         physics: const NeverScrollableScrollPhysics(),

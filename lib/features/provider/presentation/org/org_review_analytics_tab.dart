@@ -139,7 +139,7 @@ class _ReviewAnalyticsPanelState extends State<ReviewAnalyticsPanel> {
                   Text(
                     'Application analytics',
                     style: orgHeadline(
-                      fontSize: narrow ? 28 : 34,
+                      fontSize: narrow ? 20 : 24,
                       color: kOrgPrimary,
                     ),
                   ),
@@ -197,7 +197,7 @@ class _ReviewAnalyticsPanelState extends State<ReviewAnalyticsPanel> {
                                 value: s.id,
                                 child: Text(
                                   s.title,
-                                  style: const TextStyle(fontWeight: FontWeight.w800),
+                                  style: const TextStyle(fontWeight: FontWeight.w700),
                                   overflow: TextOverflow.ellipsis,
                                 ),
                               ),
@@ -267,7 +267,7 @@ class _ReviewAnalyticsPanelState extends State<ReviewAnalyticsPanel> {
                       children: [
                         Text(
                           'Where applications stand',
-                          style: orgHeadline(fontSize: 21),
+                          style: orgHeadline(fontSize: 17),
                         ),
                         const SizedBox(height: 8),
                         Text(
@@ -316,7 +316,7 @@ class _ReviewAnalyticsPanelState extends State<ReviewAnalyticsPanel> {
                   const SizedBox(height: 28),
                   Text(
                     'Program comparison',
-                    style: orgHeadline(fontSize: 21),
+                    style: orgHeadline(fontSize: 17),
                   ),
                   const SizedBox(height: 16),
                   if (programs.isEmpty)
@@ -340,7 +340,7 @@ class _ReviewAnalyticsPanelState extends State<ReviewAnalyticsPanel> {
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(s.title, style: orgHeadline(fontWeight: FontWeight.w800, fontSize: 17)),
+                            Text(s.title, style: orgHeadline(fontWeight: FontWeight.w700, fontSize: 17)),
                             const SizedBox(height: 14),
                             Wrap(
                               spacing: 28,

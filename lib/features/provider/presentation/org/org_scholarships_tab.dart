@@ -1,3 +1,4 @@
+import 'package:scholaris/shared/theme/app_theme.dart' show kSoftCardDecoration;
 // lib/features/provider/presentation/org/org_scholarships_tab.dart
 //
 // Institutional "My Scholarships" Management Tab faithfully matching Stitch mockup
@@ -353,7 +354,7 @@ class _OrgScholarshipsTabState extends ConsumerState<OrgScholarshipsTab> {
         Text(
           'Scholarship programs',
           style: orgHeadline(
-            fontSize: isDesktop ? 32 : 26,
+            fontSize: isDesktop ? 24 : 20,
             fontWeight: FontWeight.w700,
             color: kOrgTextPrimary,
           ),
@@ -535,7 +536,7 @@ class _OrgScholarshipsTabState extends ConsumerState<OrgScholarshipsTab> {
                     ? (awardedCount / totalQuota).clamp(0.0, 1.0)
                     : 0.0,
                 minHeight: 5,
-                backgroundColor: const Color(0xFFE9E7ED),
+                backgroundColor: const Color(0xFFE3E8E3),
                 valueColor: const AlwaysStoppedAnimation<Color>(
                   Color(0xFF0070EB),
                 ),
@@ -583,7 +584,7 @@ class _OrgScholarshipsTabState extends ConsumerState<OrgScholarshipsTab> {
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
               decoration: BoxDecoration(
-                color: const Color(0xFFEEEDF3),
+                color: const Color(0xFFE8ECE8),
                 borderRadius: BorderRadius.circular(10),
               ),
               child: Text(
@@ -663,7 +664,7 @@ class _OrgScholarshipsTabState extends ConsumerState<OrgScholarshipsTab> {
         color: kOrgSurfaceWhite,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: isSelected ? kOrgPrimary : const Color(0xFFEEEDF3),
+          color: isSelected ? kOrgPrimary : const Color(0xFFE8ECE8),
           width: isSelected ? 1.5 : 1.0,
         ),
         boxShadow: [
@@ -702,7 +703,7 @@ class _OrgScholarshipsTabState extends ConsumerState<OrgScholarshipsTab> {
                 decoration: BoxDecoration(
                   color: isSelected
                       ? kOrgPrimary.withValues(alpha: 0.10)
-                      : const Color(0xFFF4F3F8),
+                      : const Color(0xFFF2F4F2),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Center(
@@ -759,7 +760,7 @@ class _OrgScholarshipsTabState extends ConsumerState<OrgScholarshipsTab> {
           child: InkWell(
             borderRadius: BorderRadius.circular(16),
             onTap: onTap,
-            hoverColor: const Color(0xFFFAF9FD),
+            hoverColor: const Color(0xFFF7F9F7),
             child: cardContent,
           ),
         ),
@@ -789,7 +790,7 @@ class _OrgScholarshipsTabState extends ConsumerState<OrgScholarshipsTab> {
     final pills = Container(
       padding: const EdgeInsets.all(3),
       decoration: BoxDecoration(
-        color: const Color(0xFFEEEDF3),
+        color: const Color(0xFFE8ECE8),
         borderRadius: BorderRadius.circular(12),
       ),
       child: Row(
@@ -1065,18 +1066,7 @@ class _OrgScholarshipsTabState extends ConsumerState<OrgScholarshipsTab> {
         : null;
 
     return Container(
-      decoration: BoxDecoration(
-        color: kOrgSurfaceWhite,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: const Color(0xFFEEEDF3)),
-        boxShadow: const [
-          BoxShadow(
-            color: Color(0x06000000),
-            blurRadius: 8,
-            offset: Offset(0, 2),
-          ),
-        ],
-      ),
+      decoration: kSoftCardDecoration,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -1136,7 +1126,7 @@ class _OrgScholarshipsTabState extends ConsumerState<OrgScholarshipsTab> {
                           vertical: 3,
                         ),
                         decoration: BoxDecoration(
-                          color: const Color(0xFFE9E7ED),
+                          color: const Color(0xFFE3E8E3),
                           borderRadius: BorderRadius.circular(20),
                         ),
                         child: Row(
@@ -1168,7 +1158,7 @@ class _OrgScholarshipsTabState extends ConsumerState<OrgScholarshipsTab> {
                           vertical: 3,
                         ),
                         decoration: BoxDecoration(
-                          color: const Color(0xFFE9E7ED),
+                          color: const Color(0xFFE3E8E3),
                           borderRadius: BorderRadius.circular(20),
                         ),
                         child: Text(
@@ -1221,7 +1211,7 @@ class _OrgScholarshipsTabState extends ConsumerState<OrgScholarshipsTab> {
                   scholarship.title,
                   style: orgHeadline(
                     fontSize: 17,
-                    fontWeight: FontWeight.w800,
+                    fontWeight: FontWeight.w700,
                     color: kOrgTextPrimary,
                   ),
                 ),
@@ -1251,7 +1241,7 @@ class _OrgScholarshipsTabState extends ConsumerState<OrgScholarshipsTab> {
                     vertical: 12,
                   ),
                   decoration: BoxDecoration(
-                    color: const Color(0xFFF4F3F8),
+                    color: const Color(0xFFF2F4F2),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Row(
@@ -1407,7 +1397,7 @@ class _OrgScholarshipsTabState extends ConsumerState<OrgScholarshipsTab> {
                       child: LinearProgressIndicator(
                         value: hasSlots ? fillRatio : 0.0,
                         minHeight: 6,
-                        backgroundColor: const Color(0xFFE9E7ED),
+                        backgroundColor: const Color(0xFFE3E8E3),
                         valueColor: const AlwaysStoppedAnimation<Color>(
                           kOrgPrimary,
                         ),
@@ -1426,7 +1416,7 @@ class _OrgScholarshipsTabState extends ConsumerState<OrgScholarshipsTab> {
               color: Color(0xFFF7F6FA),
               borderRadius: BorderRadius.vertical(bottom: Radius.circular(16)),
               border: Border(
-                top: BorderSide(color: Color(0xFFEEEDF3), width: 1),
+                top: BorderSide(color: Color(0xFFE8ECE8), width: 1),
               ),
             ),
             child: Wrap(
@@ -1474,7 +1464,7 @@ class _OrgScholarshipsTabState extends ConsumerState<OrgScholarshipsTab> {
                   runSpacing: 8,
                   children: [
                     Material(
-                      color: const Color(0xFFE3E2E7).withValues(alpha: 0.6),
+                      color: const Color(0xFFDEE4DE).withValues(alpha: 0.6),
                       borderRadius: BorderRadius.circular(8),
                       child: InkWell(
                         borderRadius: BorderRadius.circular(8),
@@ -1509,7 +1499,7 @@ class _OrgScholarshipsTabState extends ConsumerState<OrgScholarshipsTab> {
                     ),
                     const SizedBox(width: 8),
                     Material(
-                      color: const Color(0xFFE3E2E7).withValues(alpha: 0.6),
+                      color: const Color(0xFFDEE4DE).withValues(alpha: 0.6),
                       borderRadius: BorderRadius.circular(8),
                       child: InkWell(
                         borderRadius: BorderRadius.circular(8),
@@ -1544,7 +1534,7 @@ class _OrgScholarshipsTabState extends ConsumerState<OrgScholarshipsTab> {
                     ),
                     const SizedBox(width: 8),
                     Material(
-                      color: const Color(0xFFE3E2E7).withValues(alpha: 0.6),
+                      color: const Color(0xFFDEE4DE).withValues(alpha: 0.6),
                       borderRadius: BorderRadius.circular(8),
                       child: InkWell(
                         borderRadius: BorderRadius.circular(8),
@@ -1567,7 +1557,7 @@ class _OrgScholarshipsTabState extends ConsumerState<OrgScholarshipsTab> {
                     ),
                     const SizedBox(width: 8),
                     Material(
-                      color: const Color(0xFFE3E2E7).withValues(alpha: 0.6),
+                      color: const Color(0xFFDEE4DE).withValues(alpha: 0.6),
                       borderRadius: BorderRadius.circular(8),
                       child: InkWell(
                         borderRadius: BorderRadius.circular(8),
@@ -1614,7 +1604,7 @@ class _OrgScholarshipsTabState extends ConsumerState<OrgScholarshipsTab> {
       Container(
         padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
-          color: const Color(0xFFF4F3F8),
+          color: const Color(0xFFF2F4F2),
           borderRadius: BorderRadius.circular(16),
         ),
         child: Text(
@@ -1626,11 +1616,7 @@ class _OrgScholarshipsTabState extends ConsumerState<OrgScholarshipsTab> {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.symmetric(vertical: 48, horizontal: 24),
-      decoration: BoxDecoration(
-        color: kOrgSurfaceWhite,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: const Color(0xFFEEEDF3)),
-      ),
+      decoration: kSoftCardDecoration,
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -1638,7 +1624,7 @@ class _OrgScholarshipsTabState extends ConsumerState<OrgScholarshipsTab> {
             width: 56,
             height: 56,
             decoration: BoxDecoration(
-              color: const Color(0xFFF4F3F8),
+              color: const Color(0xFFF2F4F2),
               borderRadius: BorderRadius.circular(16),
             ),
             child: const Center(

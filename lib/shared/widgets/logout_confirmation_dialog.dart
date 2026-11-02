@@ -20,7 +20,7 @@ Future<bool> showLogoutConfirmationDialog(
       title: Text(
         'Log out',
         style: poppins(
-          fontSize: 18,
+          fontSize: 17,
           fontWeight: FontWeight.bold,
           color: kNavyTrust,
         ),
@@ -28,7 +28,7 @@ Future<bool> showLogoutConfirmationDialog(
       content: Text(
         message,
         style: openSans(
-          fontSize: 14,
+          fontSize: 13,
           color: const Color(0xFF404944),
           height: 1.4,
         ),
@@ -40,7 +40,7 @@ Future<bool> showLogoutConfirmationDialog(
           child: Text(
             'Cancel',
             style: poppins(
-              fontSize: 14,
+              fontSize: 13,
               fontWeight: FontWeight.w600,
               color: const Color(0xFF707971),
             ),
@@ -52,7 +52,7 @@ Future<bool> showLogoutConfirmationDialog(
           child: Text(
             'Log Out',
             style: poppins(
-              fontSize: 14,
+              fontSize: 13,
               fontWeight: FontWeight.w600,
               color: kError,
             ),

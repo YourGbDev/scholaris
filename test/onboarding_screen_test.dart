@@ -1,224 +1,162 @@
-// Widget tests for the first-launch onboarding screen (Scholaris V2).
-//
-// Covers the composition (Stitch V2 canvas graphics, Outfit titles, Open Sans
-// narrative, stepper dots, responsive buttons, skip, log-in link), the
-// once-only persistence contract (completing / skipping / logging in all
-// flip `onboarding_seen` before navigating to login), and the absence of
-// overflow at every required breakpoint.
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
 import 'package:scholaris/features/onboarding/controllers/onboarding_controller.dart';
 import 'package:scholaris/features/onboarding/presentation/onboarding_screen.dart';
+import 'package:scholaris/shared/theme/app_theme.dart';
 
-const String _loginMarker = 'LOGIN STUB';
-
-GoRouter _router() => GoRouter(
-  initialLocation: '/',
-  routes: [
-    GoRoute(path: '/', builder: (context, state) => const OnboardingScreen()),
-    GoRoute(
-      path: '/login',
-      builder: (context, state) =>
-          const Scaffold(body: Center(child: Text(_loginMarker))),
-    ),
-  ],
-);
-
-/// Pumps onboarding inside its router harness with a fresh prefs store.
-Future<void> _pumpOnboarding(WidgetTester tester) async {
+Future<void> pumpEntry(
+  WidgetTester tester, {
+  Size size = const Size(390, 844),
+  double scale = 1,
+}) async {
+  tester.view.physicalSize = size;
+  tester.view.devicePixelRatio = 1;
+  tester.platformDispatcher.textScaleFactorTestValue = scale;
+  addTearDown(tester.view.reset);
+  addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
   SharedPreferences.setMockInitialValues({});
+  final router = GoRouter(
+    routes: [
+      GoRoute(path: '/', builder: (_, _) => const OnboardingScreen()),
+      GoRoute(
+        path: '/login',
+        builder: (_, _) => const Scaffold(body: Text('LOGIN STUB')),
+      ),
+    ],
+  );
+  addTearDown(router.dispose);
   await tester.pumpWidget(
-    ProviderScope(child: MaterialApp.router(routerConfig: _router())),
+    ProviderScope(
+      child: MaterialApp.router(theme: scholarisTheme(), routerConfig: router),
+    ),
   );
   await tester.pumpAndSettle();
 }
 
+Future<void> next(WidgetTester tester) async {
+  await tester.tap(find.byKey(const ValueKey('onboarding-next')));
+  await tester.pumpAndSettle();
+}
+
 void main() {
-  setUpAll(() {
-    GoogleFonts.config.allowRuntimeFetching = false;
-  });
-
-  testWidgets('first slide shows Stitch V2 ecosystem canvas, copy, dots, next and skip', (
+  testWidgets('welcome introduces Scholaris without promotional badges', (
     tester,
   ) async {
-    await _pumpOnboarding(tester);
-
-    expect(find.text('Find Your Scholarship'), findsOneWidget);
+    await pumpEntry(tester);
+    expect(find.text('Your next chapter starts here.'), findsOneWidget);
     expect(
-      find.textContaining('Discover scholarships suited'),
+      find.byKey(const ValueKey('intro-get-started-button')),
       findsOneWidget,
     );
-    expect(find.text('SIMULAN ANG PANGARAP'), findsOneWidget);
-    expect(find.text('Explore scholarship opportunities'), findsOneWidget);
-
-    // Dots: one active pill + two inactive dots.
-    expect(find.byType(AnimatedContainer), findsNWidgets(3));
-
-    // Next button present; Get Started / log-in link absent.
-    expect(find.byIcon(Icons.arrow_forward_rounded), findsOneWidget);
-    expect(find.text('Get Started'), findsNothing);
-    expect(find.text('Skip'), findsOneWidget);
+    expect(find.text('Log in'), findsOneWidget);
+    expect(find.text('GRANT ENGINE'), findsNothing);
   });
-
-  testWidgets('next advances through all three slides', (tester) async {
-    await _pumpOnboarding(tester);
-
-    // Slide 1 → 2.
-    await tester.tap(find.byIcon(Icons.arrow_forward_rounded));
-    await tester.pumpAndSettle();
-    expect(find.textContaining('Get Matched'), findsOneWidget);
-    expect(find.text('SMART CRITERIA MATCHING'), findsOneWidget);
-    expect(find.text('Skip'), findsOneWidget);
-    expect(find.text('Back'), findsOneWidget);
-
-    // Slide 2 → 3.
-    await tester.tap(find.text('Continue'));
-    await tester.pumpAndSettle();
-    expect(find.text('Track Every Step'), findsOneWidget);
-    expect(find.text('RADICAL TRANSPARENCY'), findsOneWidget);
-
-    // Last slide: full-width CTA + log-in link, no skip.
-    expect(find.text('Get Started'), findsOneWidget);
-    expect(find.textContaining('Already have an account?'), findsOneWidget);
-    expect(find.text('Skip'), findsNothing);
-  });
-
-  testWidgets('swiping left advances the slides', (tester) async {
-    await _pumpOnboarding(tester);
-
-    await tester.drag(find.byType(PageView), const Offset(-400, 0));
-    await tester.pumpAndSettle();
-    expect(find.textContaining('Get Matched'), findsOneWidget);
-  });
-
-  testWidgets('Get Started persists the flag and lands on login', (
-    tester,
-  ) async {
-    await _pumpOnboarding(tester);
-
-    // Reach the last slide.
-    await tester.tap(find.byIcon(Icons.arrow_forward_rounded));
-    await tester.pumpAndSettle();
-    await tester.tap(find.text('Continue'));
-    await tester.pumpAndSettle();
-
-    await tester.tap(find.text('Get Started'));
-    await tester.pumpAndSettle();
-
-    expect(find.text(_loginMarker), findsOneWidget);
-    final prefs = await SharedPreferences.getInstance();
-    expect(prefs.getBool(kOnboardingSeenKey), isTrue);
-  });
-
-  testWidgets('Skip completes onboarding without visiting every slide', (
-    tester,
-  ) async {
-    await _pumpOnboarding(tester);
-
-    await tester.tap(find.text('Skip'));
-    await tester.pumpAndSettle();
-
-    expect(find.text(_loginMarker), findsOneWidget);
-    final prefs = await SharedPreferences.getInstance();
-    expect(prefs.getBool(kOnboardingSeenKey), isTrue);
-  });
-
-  testWidgets('"Log In" link on the last slide completes onboarding', (
-    tester,
-  ) async {
-    await _pumpOnboarding(tester);
-    await tester.tap(find.byIcon(Icons.arrow_forward_rounded));
-    await tester.pumpAndSettle();
-    await tester.tap(find.text('Continue'));
-    await tester.pumpAndSettle();
-
-    await tester.tap(find.textContaining('Already have an account?'));
-    await tester.pumpAndSettle();
-
-    expect(find.text(_loginMarker), findsOneWidget);
-    final prefs = await SharedPreferences.getInstance();
-    expect(prefs.getBool(kOnboardingSeenKey), isTrue);
-  });
-
-  group('Responsive layout', () {
-    for (final (label, width, height) in [
-      ('phone 360x800', 360.0, 800.0),
-      ('phone 390x844', 390.0, 844.0),
-      ('phone 440x956', 440.0, 956.0),
-      ('tablet 1024x768', 1024.0, 768.0),
-      ('desktop 1280x900', 1280.0, 900.0),
-    ]) {
-      testWidgets('no overflow on any slide at $label', (tester) async {
-        tester.view.physicalSize = Size(width, height);
-        tester.view.devicePixelRatio = 1.0;
-        addTearDown(tester.view.reset);
-
-        await _pumpOnboarding(tester);
+  testWidgets(
+    'four features follow welcome with a distinct mascot and consistent controls',
+    (tester) async {
+      await pumpEntry(tester);
+      await tester.tap(find.byKey(const ValueKey('intro-get-started-button')));
+      await tester.pumpAndSettle();
+      const titles = [
+        'Find your scholarship',
+        'See what fits your profile',
+        'Know your next step',
+        'Meet your scholarship companion',
+      ];
+      const poses = ['discover', 'match', 'track', 'companion'];
+      for (var i = 0; i < titles.length; i++) {
+        expect(find.text(titles[i]), findsOneWidget);
+        expect(
+          find.byWidgetPredicate(
+            (w) =>
+                w is Image &&
+                (w.image is AssetImage || w.image is ResizeImage) &&
+                ((w.image is ResizeImage
+                                ? (w.image as ResizeImage).imageProvider
+                                : w.image)
+                            as AssetImage)
+                        .assetName ==
+                    'assets/mascots/onboarding/${poses[i]}.png',
+          ),
+          findsOneWidget,
+        );
+        expect(find.text('${i + 1} of 4'), findsOneWidget);
+        if (i < 3) await next(tester);
+      }
+      expect(find.text('Coming soon'), findsOneWidget);
+      await next(tester);
+      expect(find.text('LOGIN STUB'), findsOneWidget);
+      final prefs = await SharedPreferences.getInstance();
+      expect(prefs.getBool(kOnboardingSeenKey), isTrue);
+      expect(prefs.getBool(kIntroSeenKey), isTrue);
+    },
+  );
+  testWidgets(
+    'skip and returning-user login persist completion before entering login',
+    (tester) async {
+      await pumpEntry(tester);
+      await tester.tap(find.text('Log in'));
+      await tester.pumpAndSettle();
+      expect(find.text('LOGIN STUB'), findsOneWidget);
+      expect(
+        (await SharedPreferences.getInstance()).getBool(kOnboardingSeenKey),
+        isTrue,
+      );
+      await pumpEntry(tester);
+      await tester.tap(find.byKey(const ValueKey('intro-get-started-button')));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Skip'));
+      await tester.pumpAndSettle();
+      expect(find.text('LOGIN STUB'), findsOneWidget);
+      expect(
+        (await SharedPreferences.getInstance()).getBool(kOnboardingSeenKey),
+        isTrue,
+      );
+    },
+  );
+  testWidgets(
+    'reduced-motion controls and swipes preserve progress without completing',
+    (tester) async {
+      tester.platformDispatcher.accessibilityFeaturesTestValue =
+          const FakeAccessibilityFeatures(disableAnimations: true);
+      addTearDown(
+        tester.platformDispatcher.clearAccessibilityFeaturesTestValue,
+      );
+      await pumpEntry(tester);
+      await tester.tap(find.byKey(const ValueKey('intro-get-started-button')));
+      await tester.pumpAndSettle();
+      await tester.drag(find.byType(PageView), const Offset(-400, 0));
+      await tester.pumpAndSettle();
+      expect(find.text('See what fits your profile'), findsOneWidget);
+      await tester.tap(find.text('Back'));
+      await tester.pumpAndSettle();
+      expect(find.text('Find your scholarship'), findsOneWidget);
+      expect(
+        (await SharedPreferences.getInstance()).getBool(kOnboardingSeenKey),
+        isNot(true),
+      );
+    },
+  );
+  for (final (size, scale) in [
+    (const Size(320, 568), 1.0),
+    (const Size(320, 568), 2.0),
+    (const Size(1024, 768), 1.0),
+  ]) {
+    testWidgets('all pages reflow at $size and text $scale', (tester) async {
+      await pumpEntry(tester, size: size, scale: scale);
+      final start = find.byKey(const ValueKey('intro-get-started-button'));
+      await tester.ensureVisible(start);
+      await tester.tap(start);
+      await tester.pumpAndSettle();
+      for (var page = 0; page < 4; page++) {
         expect(tester.takeException(), isNull);
-
-        // Slide 2.
-        await tester.tap(find.byIcon(Icons.arrow_forward_rounded));
-        await tester.pumpAndSettle();
-        expect(tester.takeException(), isNull);
-
-        // Slide 3 (full-width CTA + log-in link — the densest slide).
-        await tester.tap(find.text('Continue'));
-        await tester.pumpAndSettle();
-        expect(find.text('Get Started'), findsOneWidget);
-        expect(tester.takeException(), isNull);
-      });
-    }
-  });
-
-  testWidgets('renders all 3 mascot images on their respective slides', (
-    tester,
-  ) async {
-    await _pumpOnboarding(tester);
-
-    // Slide 1: female pointing mascot
-    expect(
-      find.byWidgetPredicate(
-        (w) =>
-            w is Image &&
-            w.image is AssetImage &&
-            (w.image as AssetImage).assetName ==
-                'assets/images/mascot_female_pointing.png',
-      ),
-      findsOneWidget,
-    );
-
-    // Slide 2: male thinking mascot
-    await tester.tap(find.byIcon(Icons.arrow_forward_rounded));
-    await tester.pumpAndSettle();
-    expect(
-      find.byWidgetPredicate(
-        (w) =>
-            w is Image &&
-            w.image is AssetImage &&
-            (w.image as AssetImage).assetName ==
-                'assets/images/mascot_male_thinking.png',
-      ),
-      findsOneWidget,
-    );
-
-    // Slide 3: couple with magnifier mascot
-    await tester.tap(find.text('Continue'));
-    await tester.pumpAndSettle();
-    expect(
-      find.byWidgetPredicate(
-        (w) =>
-            w is Image &&
-            w.image is AssetImage &&
-            (w.image as AssetImage).assetName ==
-                'assets/images/mascot_couple_magnifier.png',
-      ),
-      findsOneWidget,
-    );
-  });
+        final button = find.byKey(const ValueKey('onboarding-next'));
+        expect(tester.getSize(button).height, greaterThanOrEqualTo(44));
+        if (page < 3) await next(tester);
+      }
+    });
+  }
 }

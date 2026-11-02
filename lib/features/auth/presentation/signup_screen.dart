@@ -21,10 +21,7 @@ import 'package:scholaris/shared/widgets/success_overlay.dart';
 final _emailPattern = RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$');
 
 class SignupScreen extends StatefulWidget {
-  const SignupScreen({
-    super.key,
-    this.client,
-  });
+  const SignupScreen({super.key, this.client});
 
   final GoTrueClient? client;
 
@@ -131,7 +128,10 @@ class _SignupScreenState extends State<SignupScreen> {
       ScaffoldMessenger.of(context)
           .showSnackBar(_snackBar(_friendlyError(error)));
     } catch (_) {
-      if (mounted) ScaffoldMessenger.of(context).showSnackBar(_snackBar('Could not complete the security check. Please try again.'));
+      if (mounted)
+        ScaffoldMessenger.of(context).showSnackBar(
+          _snackBar('Could not complete the security check. Please try again.'),
+        );
     } finally {
       if (mounted) setState(() => _isLoading = false);
     }
@@ -161,7 +161,10 @@ class _SignupScreenState extends State<SignupScreen> {
       PasswordValidator.validatePassword(value);
 
   String? _validateConfirmPassword(String? value) =>
-      PasswordValidator.validateConfirmPassword(value, _passwordController.text);
+      PasswordValidator.validateConfirmPassword(
+        value,
+        _passwordController.text,
+      );
 
   Widget _requirementRow(String label, bool met) {
     return Padding(
@@ -169,7 +172,9 @@ class _SignupScreenState extends State<SignupScreen> {
       child: Row(
         children: [
           Icon(
-            met ? Icons.check_circle_rounded : Icons.radio_button_unchecked_rounded,
+            met
+                ? Icons.check_circle_rounded
+                : Icons.radio_button_unchecked_rounded,
             size: 13,
             color: met ? kPrimary : const Color(0xFF9E9E9E),
           ),
@@ -191,19 +196,19 @@ class _SignupScreenState extends State<SignupScreen> {
   }
 
   SnackBar _snackBar(String message) => SnackBar(
-        content: Text(
-          message,
-          style: openSans(color: Colors.white, fontSize: 13),
-        ),
-        backgroundColor: const Color(0xFF161C27),
-        behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      );
+    content: Text(message, style: openSans(color: Colors.white, fontSize: 13)),
+    backgroundColor: const Color(0xFF161C27),
+    behavior: SnackBarBehavior.floating,
+    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+  );
 
   @override
   Widget build(BuildContext context) {
-    final passwordStrength = _calculatePasswordStrength(_passwordController.text);
-    final passwordsMatch = _passwordController.text.isNotEmpty &&
+    final passwordStrength = _calculatePasswordStrength(
+      _passwordController.text,
+    );
+    final passwordsMatch =
+        _passwordController.text.isNotEmpty &&
         _passwordController.text == _confirmPasswordController.text;
 
     return Scaffold(
@@ -217,7 +222,10 @@ class _SignupScreenState extends State<SignupScreen> {
               child: Row(
                 children: [
                   IconButton(
-                    icon: const Icon(Icons.arrow_back_rounded, color: kTextPrimary),
+                    icon: const Icon(
+                      Icons.arrow_back_rounded,
+                      color: kTextPrimary,
+                    ),
                     onPressed: () {
                       if (Navigator.of(context).canPop()) {
                         Navigator.of(context).pop();
@@ -239,7 +247,10 @@ class _SignupScreenState extends State<SignupScreen> {
                   FittedBox(
                     fit: BoxFit.scaleDown,
                     child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 5,
+                      ),
                       decoration: BoxDecoration(
                         color: kSurfaceCard,
                         borderRadius: BorderRadius.circular(16),
@@ -248,7 +259,11 @@ class _SignupScreenState extends State<SignupScreen> {
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          const Icon(Icons.help_outline_rounded, size: 16, color: kTextSecondary),
+                          const Icon(
+                            Icons.help_outline_rounded,
+                            size: 16,
+                            color: kTextSecondary,
+                          ),
                           const SizedBox(width: 4),
                           Text(
                             'Help',
@@ -283,7 +298,10 @@ class _SignupScreenState extends State<SignupScreen> {
                           Align(
                             alignment: Alignment.centerLeft,
                             child: Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 10,
+                                vertical: 4,
+                              ),
                               decoration: BoxDecoration(
                                 color: kPrimaryLight,
                                 borderRadius: BorderRadius.circular(20),
@@ -319,7 +337,7 @@ class _SignupScreenState extends State<SignupScreen> {
                           Text(
                             'Create your account',
                             style: poppins(
-                              fontSize: 24,
+                              fontSize: 20,
                               fontWeight: FontWeight.w700,
                               color: kTextPrimary,
                               height: 1.2,
@@ -358,14 +376,22 @@ class _SignupScreenState extends State<SignupScreen> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
                                   children: [
                                     Flexible(
                                       child: Container(
-                                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                                        padding: const EdgeInsets.symmetric(
+                                          horizontal: 8,
+                                          vertical: 3,
+                                        ),
                                         decoration: BoxDecoration(
-                                          color: Colors.white.withValues(alpha: 0.15),
-                                          borderRadius: BorderRadius.circular(12),
+                                          color: Colors.white.withValues(
+                                            alpha: 0.15,
+                                          ),
+                                          borderRadius: BorderRadius.circular(
+                                            12,
+                                          ),
                                         ),
                                         child: Row(
                                           mainAxisSize: MainAxisSize.min,
@@ -503,7 +529,8 @@ class _SignupScreenState extends State<SignupScreen> {
                           const SizedBox(height: 6),
                           _formTextField(
                             controller: _emailController,
-                            hintText: 'e.g. maya.santos@up.edu.ph or personal email',
+                            hintText:
+                                'e.g. maya.santos@up.edu.ph or personal email',
                             prefixIcon: Icons.alternate_email_rounded,
                             keyboardType: TextInputType.emailAddress,
                             textInputAction: TextInputAction.next,
@@ -525,15 +552,20 @@ class _SignupScreenState extends State<SignupScreen> {
                             children: [
                               Container(
                                 height: 46,
-                                padding: const EdgeInsets.symmetric(horizontal: 10),
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 10,
+                                ),
                                 decoration: BoxDecoration(
-                                  color: const Color(0xFFE8EEFF),
+                                  color: kSurfaceContainer,
                                   borderRadius: BorderRadius.circular(12),
                                   border: Border.all(color: kBorderLight),
                                 ),
                                 child: Row(
                                   children: [
-                                    const Text('🇵🇭', style: TextStyle(fontSize: 14)),
+                                    const Text(
+                                      '🇵🇭',
+                                      style: TextStyle(fontSize: 13),
+                                    ),
                                     const SizedBox(width: 4),
                                     Text(
                                       '+63',
@@ -579,11 +611,15 @@ class _SignupScreenState extends State<SignupScreen> {
                             validator: _validatePassword,
                             suffixIcon: IconButton(
                               icon: Icon(
-                                _obscurePassword ? Icons.visibility_off : Icons.visibility,
+                                _obscurePassword
+                                    ? Icons.visibility_off
+                                    : Icons.visibility,
                                 color: kTextSecondary,
                                 size: 20,
                               ),
-                              onPressed: () => setState(() => _obscurePassword = !_obscurePassword),
+                              onPressed: () => setState(
+                                () => _obscurePassword = !_obscurePassword,
+                              ),
                             ),
                           ),
                           const SizedBox(height: 6),
@@ -597,8 +633,8 @@ class _SignupScreenState extends State<SignupScreen> {
                                   decoration: BoxDecoration(
                                     color: passwordStrength >= 1
                                         ? (passwordStrength == 1
-                                            ? Colors.orange
-                                            : kPrimary)
+                                              ? Colors.orange
+                                              : kPrimary)
                                         : Colors.black12,
                                     borderRadius: BorderRadius.circular(2),
                                   ),
@@ -609,7 +645,9 @@ class _SignupScreenState extends State<SignupScreen> {
                                 child: Container(
                                   height: 4,
                                   decoration: BoxDecoration(
-                                    color: passwordStrength >= 2 ? kPrimary : Colors.black12,
+                                    color: passwordStrength >= 2
+                                        ? kPrimary
+                                        : Colors.black12,
                                     borderRadius: BorderRadius.circular(2),
                                   ),
                                 ),
@@ -619,7 +657,9 @@ class _SignupScreenState extends State<SignupScreen> {
                                 child: Container(
                                   height: 4,
                                   decoration: BoxDecoration(
-                                    color: passwordStrength >= 3 ? kPrimary : Colors.black12,
+                                    color: passwordStrength >= 3
+                                        ? kPrimary
+                                        : Colors.black12,
                                     borderRadius: BorderRadius.circular(2),
                                   ),
                                 ),
@@ -632,35 +672,70 @@ class _SignupScreenState extends State<SignupScreen> {
                             children: [
                               Text(
                                 'Password Complexity',
-                                style: openSans(fontSize: 11, color: kTextSecondary),
+                                style: openSans(
+                                  fontSize: 11,
+                                  color: kTextSecondary,
+                                ),
                               ),
                               Text(
-                                PasswordValidator.strengthLabel(passwordStrength),
+                                PasswordValidator.strengthLabel(
+                                  passwordStrength,
+                                ),
                                 style: openSans(
                                   fontSize: 11,
                                   fontWeight: FontWeight.w600,
                                   color: passwordStrength >= 3
                                       ? kPrimary
-                                      : (passwordStrength == 2 ? Colors.orange : const Color(0xFFBA1A1A)),
+                                      : (passwordStrength == 2
+                                            ? Colors.orange
+                                            : const Color(0xFFBA1A1A)),
                                 ),
                               ),
                             ],
                           ),
                           const SizedBox(height: 6),
                           Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 10,
+                              vertical: 8,
+                            ),
                             decoration: BoxDecoration(
                               color: const Color(0xFFF6F8FA),
                               borderRadius: BorderRadius.circular(8),
-                              border: Border.all(color: const Color(0xFFE2E8E5)),
+                              border: Border.all(
+                                color: const Color(0xFFE2E8E5),
+                              ),
                             ),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                _requirementRow('At least 8 characters', PasswordValidator.hasMinLength(_passwordController.text)),
-                                _requirementRow('Uppercase & lowercase letters', PasswordValidator.hasUppercase(_passwordController.text) && PasswordValidator.hasLowercase(_passwordController.text)),
-                                _requirementRow('At least one number (0-9)', PasswordValidator.hasDigit(_passwordController.text)),
-                                _requirementRow('Special character (!@#\$%^&*)', PasswordValidator.hasSpecialChar(_passwordController.text)),
+                                _requirementRow(
+                                  'At least 8 characters',
+                                  PasswordValidator.hasMinLength(
+                                    _passwordController.text,
+                                  ),
+                                ),
+                                _requirementRow(
+                                  'Uppercase & lowercase letters',
+                                  PasswordValidator.hasUppercase(
+                                        _passwordController.text,
+                                      ) &&
+                                      PasswordValidator.hasLowercase(
+                                        _passwordController.text,
+                                      ),
+                                ),
+                                _requirementRow(
+                                  'At least one number (0-9)',
+                                  PasswordValidator.hasDigit(
+                                    _passwordController.text,
+                                  ),
+                                ),
+                                _requirementRow(
+                                  'Special character (!@#\$%^&*)',
+                                  PasswordValidator.hasSpecialChar(
+                                    _passwordController.text,
+                                  ),
+                                ),
                               ],
                             ),
                           ),
@@ -681,7 +756,11 @@ class _SignupScreenState extends State<SignupScreen> {
                               if (passwordsMatch)
                                 Row(
                                   children: [
-                                    const Icon(Icons.check_circle_rounded, size: 14, color: kPrimary),
+                                    const Icon(
+                                      Icons.check_circle_rounded,
+                                      size: 14,
+                                      color: kPrimary,
+                                    ),
                                     const SizedBox(width: 4),
                                     Text(
                                       'Passwords match',
@@ -707,18 +786,24 @@ class _SignupScreenState extends State<SignupScreen> {
                             validator: _validateConfirmPassword,
                             suffixIcon: IconButton(
                               icon: Icon(
-                                _obscureConfirm ? Icons.visibility_off : Icons.visibility,
+                                _obscureConfirm
+                                    ? Icons.visibility_off
+                                    : Icons.visibility,
                                 color: kTextSecondary,
                                 size: 20,
                               ),
-                              onPressed: () => setState(() => _obscureConfirm = !_obscureConfirm),
+                              onPressed: () => setState(
+                                () => _obscureConfirm = !_obscureConfirm,
+                              ),
                             ),
                           ),
                           const SizedBox(height: 12),
 
                           // RA 10173 Consent Checkbox
                           GestureDetector(
-                            onTap: () => setState(() => _agreedToPrivacy = !_agreedToPrivacy),
+                            onTap: () => setState(
+                              () => _agreedToPrivacy = !_agreedToPrivacy,
+                            ),
                             child: Row(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
@@ -732,7 +817,9 @@ class _SignupScreenState extends State<SignupScreen> {
                                       borderRadius: BorderRadius.circular(4),
                                     ),
                                     onChanged: (val) {
-                                      setState(() => _agreedToPrivacy = val ?? false);
+                                      setState(
+                                        () => _agreedToPrivacy = val ?? false,
+                                      );
                                     },
                                   ),
                                 ),
@@ -815,13 +902,18 @@ class _SignupScreenState extends State<SignupScreen> {
                                       ' — Create Free Account',
                                       overflow: TextOverflow.ellipsis,
                                       style: poppins(
-                                        fontSize: 14,
+                                        fontSize: 13,
                                         fontWeight: FontWeight.w500,
-                                        color: Colors.white.withValues(alpha: 0.9),
+                                        color: Colors.white.withValues(
+                                          alpha: 0.9,
+                                        ),
                                       ),
                                     ),
                                     const SizedBox(width: 6),
-                                    const Icon(Icons.arrow_forward_rounded, size: 18),
+                                    const Icon(
+                                      Icons.arrow_forward_rounded,
+                                      size: 18,
+                                    ),
                                   ],
                                 ),
                               ),
@@ -898,16 +990,21 @@ class _SignupScreenState extends State<SignupScreen> {
       keyboardType: keyboardType,
       onChanged: onChanged,
       onFieldSubmitted: onFieldSubmitted,
-      style: openSans(fontSize: 14, color: kTextPrimary),
+      style: openSans(fontSize: 13, color: kTextPrimary),
       validator: validator,
       decoration: InputDecoration(
         hintText: hintText,
         hintStyle: openSans(fontSize: 13, color: Colors.black38),
-        prefixIcon: prefixIcon != null ? Icon(prefixIcon, size: 20, color: kTextSecondary) : null,
+        prefixIcon: prefixIcon != null
+            ? Icon(prefixIcon, size: 20, color: kTextSecondary)
+            : null,
         suffixIcon: suffixIcon,
         filled: true,
         fillColor: Colors.white,
-        contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 14,
+          vertical: 12,
+        ),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
           borderSide: BorderSide(color: kBorderLight),
@@ -943,14 +1040,19 @@ class _SignupScreenState extends State<SignupScreen> {
       controller: controller,
       textInputAction: textInputAction,
       keyboardType: keyboardType,
-      style: openSans(fontSize: 14, color: kTextPrimary),
+      style: openSans(fontSize: 13, color: kTextPrimary),
       decoration: InputDecoration(
         hintText: hintText,
         hintStyle: openSans(fontSize: 13, color: Colors.black38),
-        prefixIcon: prefixIcon != null ? Icon(prefixIcon, size: 20, color: kTextSecondary) : null,
+        prefixIcon: prefixIcon != null
+            ? Icon(prefixIcon, size: 20, color: kTextSecondary)
+            : null,
         filled: true,
         fillColor: Colors.white,
-        contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 14,
+          vertical: 12,
+        ),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
           borderSide: BorderSide(color: kBorderLight),

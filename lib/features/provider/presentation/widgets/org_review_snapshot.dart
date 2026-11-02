@@ -36,7 +36,7 @@ class OrgReviewSnapshot extends StatelessWidget {
                 ? 'No applications awaiting review'
                 : '$pending ${pending == 1 ? 'application' : 'applications'}\nawaiting review',
             style: orgHeadline(
-              fontSize: compact ? 25 : 30,
+              fontSize: 17,
               color: Colors.white,
             ),
           ),

@@ -18,6 +18,8 @@ const mimeTypes = {
   '.woff2': 'font/woff2',
   '.woff': 'font/woff',
   '.ttf': 'font/ttf',
+  '.mp4': 'video/mp4',
+  '.vtt': 'text/vtt; charset=utf-8',
 };
 
 const server = http.createServer((req, res) => {

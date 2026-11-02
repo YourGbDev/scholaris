@@ -1,28 +1,6 @@
 <!DOCTYPE html><html lang="en" style=""><head><meta charset="utf-8"><meta content="width=device-width, initial-scale=1.0" name="viewport"><title>Scholaris — Philippine Academic Scholarship Infrastructure</title>
 <link rel="icon" type="image/png" href="assets/images/hero_mascot.png"><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"><link href="https://fonts.googleapis.com" rel="preconnect"><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect">
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}
-@keyframes marqueeGlide {
-  0% {
-    transform: translateX(0);
-  }
-  100% {
-    transform: translateX(-50%);
-  }
-}
-.marquee-track {
-  display: flex;
-  width: max-content;
-  animation: marqueeGlide 35s linear infinite;
-  will-change: transform;
-}
-.marquee-container:hover .marquee-track {
-  animation-play-state: paused;
-}
-.marquee-mask {
-  mask-image: linear-gradient(to right, transparent 0%, black 4%, black 96%, transparent 100%);
-  -webkit-mask-image: linear-gradient(to right, transparent 0%, black 4%, black 96%, transparent 100%);
-}
-
 /* Material Symbols Font Face & Ligatures */
 @font-face {
   font-family: 'Material Symbols Outlined';
@@ -155,51 +133,21 @@
   }
 }
 
-/* Optical Typography System (Apple HIG / Scholaris App Theme Foundation) */
-h1, .font-display-lg, .text-display-lg {
-  letter-spacing: -0.020em !important;
-  line-height: 1.12 !important;
-}
-.display-lg-mobile, .text-display-lg-mobile {
-  letter-spacing: -0.018em !important;
-  line-height: 1.15 !important;
-}
-h2, .font-headline-lg, .text-headline-lg {
-  letter-spacing: -0.015em !important;
-  line-height: 1.18 !important;
-}
-.font-headline-md, .text-headline-md, .font-currency-stat, .text-currency-stat {
-  letter-spacing: -0.010em !important;
-  line-height: 1.22 !important;
-}
-h3, h4, .font-headline-sm, .text-headline-sm {
-  letter-spacing: -0.005em !important;
-  line-height: 1.25 !important;
-}
-.font-body-lg, .text-body-lg {
-  letter-spacing: 0.000em !important;
-  line-height: 1.48 !important;
-}
-.font-body-md, .text-body-md {
-  letter-spacing: 0.000em !important;
-  line-height: 1.45 !important;
-}
-.font-body-sm, .text-body-sm, .font-label-md, .text-label-md {
-  letter-spacing: 0.018em !important;
-  line-height: 1.32 !important;
-}
-.font-label-sm, .text-label-sm {
-  letter-spacing: 0.028em !important;
-  line-height: 1.30 !important;
-}
-
+/* Shared Geist hierarchy: display, titles, prose, metadata and controls. */
+h1, .font-display-lg, .text-display-lg, .display-lg-mobile, .text-display-lg-mobile { letter-spacing: -.02em !important; line-height: 1.12 !important; }
+h2, .font-headline-lg, .text-headline-lg { letter-spacing: -.02em !important; line-height: 1.18 !important; }
+.font-headline-md, .text-headline-md, .font-currency-stat, .text-currency-stat { letter-spacing: -.3px !important; line-height: 1.25 !important; }
+h4, .font-headline-sm, .text-headline-sm { letter-spacing: -.15px !important; line-height: 1.35 !important; }
+.font-body-lg, .text-body-lg, .font-body-md, .text-body-md, .font-body-sm, .text-body-sm { letter-spacing: 0 !important; }
+.font-label-lg, .text-label-lg, .font-label-md, .text-label-md, .font-label-sm, .text-label-sm { letter-spacing: 0; }
+.uppercase { letter-spacing: .6px !important; }
 </style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = {
   darkMode: "class",
   theme: {
     extend: {
       "colors": {
         "on-surface-variant": "#404942",
-        "secondary-fixed": "#d2e4ff",
+        "secondary-fixed": "#e9ece9",
         "primary-fixed-dim": "#98d4ab",
         "on-error": "#ffffff",
         "error-container": "#ffdad6",
@@ -210,10 +158,10 @@ h3, h4, .font-headline-sm, .text-headline-sm {
         "on-secondary": "#ffffff",
         "on-primary-fixed": "#002110",
         "inverse-on-surface": "#f1f1ef",
-        "on-secondary-fixed": "#001c38",
+        "on-secondary-fixed": "#28332d",
         "surface-dim": "#dadad8",
         "on-primary-container": "#82bd95",
-        "on-secondary-fixed-variant": "#2b486b",
+        "on-secondary-fixed-variant": "#48554d",
         "inverse-surface": "#2f3130",
         "outline-variant": "#c0c9c0",
         "surface-container": "#eeeeec",
@@ -229,14 +177,14 @@ h3, h4, .font-headline-sm, .text-headline-sm {
         "surface-variant": "#e2e3e1",
         "on-primary-fixed-variant": "#145131",
         "surface-container-highest": "#e2e3e1",
-        "on-secondary-container": "#3f5b7f",
+        "on-secondary-container": "#4d5b52",
         "inverse-primary": "#98d4ab",
         "on-tertiary-fixed-variant": "#5d4200",
-        "secondary": "#436084",
-        "secondary-fixed-dim": "#abc9f2",
+        "secondary": "#4f6055",
+        "secondary-fixed-dim": "#d9dfda",
         "on-background": "#1a1c1b",
         "surface-container-high": "#e8e8e6",
-        "secondary-container": "#b6d4fe",
+        "secondary-container": "#e9ece9",
         "primary": "#00351c",
         "on-tertiary-container": "#e1a604",
         "error": "#ba1a1a",
@@ -266,8 +214,6 @@ h3, h4, .font-headline-sm, .text-headline-sm {
         "space-xl": "1.75rem"
       },
       "fontFamily": {
-        "sans": ["Geist", "sans-serif"],
-        "mono": ["Geist", "sans-serif"],
         "label-lg": [
           "Geist"
         ],
@@ -327,7 +273,7 @@ h3, h4, .font-headline-sm, .text-headline-sm {
           {
             "lineHeight": "1.25",
             "letterSpacing": "-0.005em",
-            "fontWeight": "600"
+            "fontWeight": "700"
           }
         ],
         "label-md": [
@@ -359,7 +305,7 @@ h3, h4, .font-headline-sm, .text-headline-sm {
           {
             "lineHeight": "1.22",
             "letterSpacing": "-0.010em",
-            "fontWeight": "800"
+            "fontWeight": "700"
           }
         ],
         "body-sm": [
@@ -383,7 +329,7 @@ h3, h4, .font-headline-sm, .text-headline-sm {
           {
             "lineHeight": "1.30",
             "letterSpacing": "0.028em",
-            "fontWeight": "700"
+            "fontWeight": "500"
           }
         ],
         "headline-md": [
@@ -391,7 +337,7 @@ h3, h4, .font-headline-sm, .text-headline-sm {
           {
             "lineHeight": "1.22",
             "letterSpacing": "-0.010em",
-            "fontWeight": "600"
+            "fontWeight": "700"
           }
         ],
         "body-md": [
@@ -405,322 +351,70 @@ h3, h4, .font-headline-sm, .text-headline-sm {
       }
     }
   }
-}</script><link rel="stylesheet" href="assets/fonts/geist/typography.css"></head><body class="bg-surface text-on-surface antialiased"><header class="fixed top-0 left-0 right-0 z-50 bg-surface/85 backdrop-blur-md border-b border-outline-variant/20 shadow-[0_1px_4px_rgba(0,0,0,0.03)] transition-all"><div class="h-20 max-w-7xl mx-auto px-6 lg:px-12 flex items-center justify-between gap-space-lg"><a class="font-['Geist'] font-bold text-headline-lg tracking-tight text-primary transition-opacity hover:opacity-90" data-path="home" href="#hero">Scholaris</a><nav class="hidden lg:flex items-center gap-space-lg" data-active-classes="text-primary font-bold"><a aria-current="page" class="transition-colors text-primary font-bold" data-path="home" href="#">Home</a><a class="font-label-lg text-label-lg text-on-surface-variant hover:text-on-surface transition-colors" data-path="how-it-works" href="#how-it-works">How It Works</a><a class="font-label-lg text-label-lg text-on-surface-variant hover:text-on-surface transition-colors" data-path="for-providers" href="#provider-portal-section">For Providers</a><a class="font-label-lg text-label-lg text-on-surface-variant hover:text-on-surface transition-colors" data-path="impact-and-stats" href="#impact-section">Impact &amp; Stats</a><a class="font-label-lg text-label-lg text-on-surface-variant hover:text-on-surface transition-colors" data-path="about" href="#how-it-works">About</a></nav><div class="flex items-center gap-space-sm"><a class="hidden sm:inline-flex items-center gap-space-xs px-space-md py-space-xs rounded-full bg-surface-container-low text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface active:scale-95 transition-all font-label-md text-label-md pressable-tactile" data-path="provider-login" href="http://localhost:5000/provider/login"><span class="material-symbols-outlined text-[16px]">domain</span><span class="">Provider Login</span></a><a class="hidden sm:inline-flex items-center gap-space-xs px-space-lg py-space-xs rounded-full bg-primary-container text-on-primary font-label-md text-label-md shadow-[0_2px_8px_rgba(15,77,46,0.18)] hover:bg-primary active:scale-95 transition-all pressable-tactile" data-path="download-app" href="#download-app-section" onclick="openDownloadModal()"><span class="material-symbols-outlined text-[16px]">smartphone</span><span class="">Download App</span></a><a href="http://localhost:5000/provider/login" class="min-w-[44px] min-h-[44px] w-11 h-11 rounded-full bg-primary flex items-center justify-center text-on-primary hover:opacity-90 active:scale-95 transition-all shadow-sm" title="Provider Login">
-  <span class="material-symbols-outlined text-[20px]">person</span>
-</a>
-<button id="mobileMenuBtn" class="lg:hidden min-w-[44px] min-h-[44px] rounded-xl flex items-center justify-center text-on-surface-variant hover:text-on-surface hover:bg-surface-container-low active:scale-95 transition-all focus:outline-none" aria-label="Open menu" onclick="toggleMobileMenu()">
-  <span class="material-symbols-outlined text-[24px]">menu</span>
-</button>
-</div></div>
-<div id="mobileMenuDrawer" class="hidden lg:hidden border-t border-outline-variant/30 bg-surface/95 backdrop-blur-lg px-6 py-4 space-y-1.5 shadow-xl transition-all">
-  <a href="#hero" onclick="toggleMobileMenu(false)" class="flex items-center min-h-[44px] px-3 rounded-xl font-label-lg text-label-lg text-primary font-bold hover:bg-surface-container-low transition-colors">Home</a>
-  <a href="#how-it-works" onclick="toggleMobileMenu(false)" class="flex items-center min-h-[44px] px-3 rounded-xl font-label-lg text-label-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-container-low transition-colors">How It Works</a>
-  <a href="#provider-portal-section" onclick="toggleMobileMenu(false)" class="flex items-center min-h-[44px] px-3 rounded-xl font-label-lg text-label-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-container-low transition-colors">For Providers</a>
-  <a href="#impact-section" onclick="toggleMobileMenu(false)" class="flex items-center min-h-[44px] px-3 rounded-xl font-label-lg text-label-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-container-low transition-colors">Impact & Stats</a>
-  <a href="#download-app-section" onclick="toggleMobileMenu(false)" class="flex items-center min-h-[44px] px-3 rounded-xl font-label-lg text-label-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-container-low transition-colors">Student App</a>
-  <a href="#faq-section" onclick="toggleMobileMenu(false)" class="flex items-center min-h-[44px] px-3 rounded-xl font-label-lg text-label-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-container-low transition-colors">FAQ</a>
-  <div class="pt-3 border-t border-outline-variant/20 flex flex-col gap-2">
-    <a href="http://localhost:5000/provider/login" class="flex items-center justify-center gap-2 min-h-[44px] py-2.5 rounded-full bg-surface-container text-on-surface font-label-md text-label-md font-semibold active:scale-95 transition-all">
-      <span class="material-symbols-outlined text-[18px]">domain</span> Provider Login
-    </a>
-    <a href="#download-app-section" onclick="toggleMobileMenu(false); openDownloadModal();" class="flex items-center justify-center gap-2 min-h-[44px] py-2.5 rounded-full bg-primary text-on-primary font-label-md text-label-md font-semibold shadow-sm active:scale-95 transition-all">
-      <span class="material-symbols-outlined text-[18px]">smartphone</span> Download Student App
-    </a>
+}</script><link rel="stylesheet" href="landing.css"><link rel="stylesheet" href="assets/fonts/geist/typography.css"></head><body class="bg-surface text-on-surface antialiased"><header class="site-header">
+  <div class="site-header-inner">
+    <a class="site-brand" href="#hero" aria-label="Scholaris home"><span class="brand-mark material-symbols-outlined" aria-hidden="true">school</span>Scholaris</a>
+    <nav class="site-nav" aria-label="Main navigation">
+      <a href="#how-it-works">How it works</a><a href="#how-it-works">The app</a><a href="#provider-portal-section">For providers</a><a href="#faq-section">FAQ</a>
+    </nav>
+    <div class="site-actions">
+      <a class="site-login" data-path="provider-login" href="http://localhost:5000/provider/login">Provider login</a>
+      <a class="landing-button small" href="#how-it-works" onclick="openDownloadModal(event)">Get the app</a>
+      <button id="mobileMenuBtn" class="site-menu-button" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="mobileMenuDrawer" onclick="toggleMobileMenu()"><span class="material-symbols-outlined" aria-hidden="true">menu</span></button>
+    </div>
   </div>
-</div>
-</header><main class="w-full pt-20 bg-surface"><div class="flex flex-col w-full">
+  <nav id="mobileMenuDrawer" class="site-mobile-menu" aria-label="Mobile navigation" hidden>
+    <a href="#how-it-works" onclick="toggleMobileMenu(false)">How it works</a><a href="#how-it-works" onclick="toggleMobileMenu(false)">The app</a><a href="#provider-portal-section" onclick="toggleMobileMenu(false)">For providers</a><a href="#faq-section" onclick="toggleMobileMenu(false)">Frequently asked questions</a>
+    <a data-path="provider-login" href="http://localhost:5000/provider/login">Provider login <span class="material-symbols-outlined" aria-hidden="true">arrow_outward</span></a>
+  </nav>
+</header><main class="landing-main w-full bg-surface"><div class="flex flex-col w-full">
 <!-- HERO SECTION -->
-<section id="hero" class="relative w-full overflow-hidden pb-space-lg bg-surface">
-<!-- Ambient organic green/gold blurs -->
-<div class="pointer-events-none absolute -top-24 left-1/2 -translate-x-1/2 w-[900px] h-[500px] bg-primary-container/10 rounded-full blur-[140px] -z-10"></div>
-<div class="pointer-events-none absolute top-1/3 right-10 w-[380px] h-[380px] bg-tertiary-fixed/20 rounded-full blur-[110px] -z-10"></div>
-<div class="max-w-7xl mx-auto px-6 lg:px-12 pt-space-xl lg:pt-space-2xl">
-<!-- Overline Pill Tag -->
-<div class="flex items-center justify-center lg:justify-start mb-space-md scroll-rise">
-<div class="inline-flex items-center gap-space-xs px-space-md py-space-2xs rounded-full bg-primary-fixed/30 text-on-primary-fixed text-label-md font-label-md shadow-sm">
-<span class="inline-block w-2 h-2 rounded-full bg-primary animate-pulse"></span>
-<span class="">CHED Unified Aligned • 2025/2026 Academic Grants Active</span>
-<span class="material-symbols-outlined text-[14px]">arrow_forward</span>
-</div>
-</div>
-<div class="grid grid-cols-1 lg:grid-cols-12 gap-space-xl lg:gap-space-2xl items-center">
-<!-- Left Column: Copy & Dual Actions -->
-<div class="lg:col-span-7 flex flex-col items-center lg:items-start text-center lg:text-left">
-<h1 class="font-['Geist'] font-bold text-display-lg text-primary tracking-tight max-w-2xl leading-[1.12] scroll-rise stagger-1">
-            Empowering Filipino Ambition Through Accessible Scholarships.
-          </h1>
-<p class="font-body-lg text-body-lg text-on-surface-variant mt-space-md max-w-xl leading-relaxed scroll-rise stagger-2">
-            Scholaris bridges ambitious students across Luzon, Visayas, and Mindanao with vetted grants, while providing private foundations and benefactors a seamless portal to fund the nation’s future.
-          </p>
-<!-- Dual CTA Cluster -->
-<div class="flex flex-col sm:flex-row items-center gap-space-md mt-space-xl w-full sm:w-auto spring-reveal stagger-3">
-<!-- Student Action -->
-<a class="w-full sm:w-auto inline-flex items-center justify-center gap-space-xs px-space-xl py-3.5 rounded-full bg-primary text-on-primary font-label-lg text-label-lg shadow-md hover:bg-primary-container active:scale-95 transition-all hover:scale-[1.02] pressable-tactile" href="#download-app-section" onclick="openDownloadModal()">
-<span class="material-symbols-outlined text-[20px]">download</span>
-<span class="">Download Scholaris App</span>
-</a>
-<!-- Benefactor Portal Action -->
-<a class="w-full sm:w-auto inline-flex items-center justify-center gap-space-xs px-space-xl py-3.5 rounded-full bg-surface-container-lowest text-secondary font-label-lg text-label-lg shadow-sm hover:bg-surface-container active:scale-95 transition-all hover:scale-[1.02] pressable-tactile" href="#provider-portal-section">
-<span class="material-symbols-outlined text-[20px] text-secondary">lock</span>
-<span class="">Provider Portal Login</span>
-<span class="material-symbols-outlined text-[16px]">arrow_forward</span>
-</a>
-</div>
-
-</div>
-<!-- Right Column: Visual Centerpiece & Floating Apple-style Micro Cards -->
-<div class="lg:col-span-5 relative flex justify-center items-center spring-reveal stagger-2"><div class="relative w-full flex items-center justify-center"><img alt="Scholaris graduating Filipino scholars celebrating success in green academic regalia" class="w-full h-auto object-contain drop-shadow-md transition-transform duration-500 hover:scale-105" src="assets/images/hero_mascot.png"></div></div>
-</div>
-</div>
+<section id="hero" class="landing-hero depth-hero" aria-labelledby="heroTitle">
+  <div class="landing-hero-grid">
+    <div class="hero-copy">
+      <p class="landing-eyebrow">Your next chapter</p>
+      <h1 id="heroTitle" class="hero-title">Finding scholarships<br>shouldn’t be this hard.</h1>
+      <p class="hero-description">Discover scholarships, prepare your application, and follow every next step—in one place.</p>
+      <div class="hero-actions">
+        <a class="landing-button" href="#how-it-works" onclick="openDownloadModal(event)">Explore Scholaris <span class="material-symbols-outlined" aria-hidden="true">arrow_forward</span></a>
+        <a class="landing-link" href="#how-it-works"><span class="story-play" aria-hidden="true">↓</span>See how it works</a>
+      </div>
+      <p class="hero-footnote">Built for Filipino students.</p>
+    </div>
+    <figure class="hero-stage depth-stage" aria-label="Scholaris app preview with illustrated graduate companions">
+      <div class="depth-orbit" aria-hidden="true"></div>
+      <div class="depth-card depth-card-discover" aria-hidden="true"><span class="material-symbols-outlined">search</span><strong>Discover<br>opportunities</strong><p>Find scholarships that fit your next step.</p><span class="card-arrow">↗</span></div>
+      <div class="depth-card depth-card-track" aria-hidden="true"><span class="material-symbols-outlined">description</span><strong>Application<br>tracker</strong><p>A clearer view of where things stand.</p><div class="mini-timeline"><i></i><i></i><i></i></div><small>Submitted · Under review</small></div>
+      <div class="hero-phone"><img src="assets/images/app-dashboard.jpg" width="440" height="956" alt="Recorded Scholaris dashboard showing opportunities, saved scholarships and application progress" fetchpriority="high"></div>
+      <img class="hero-companions" src="assets/images/mascot_couple_wave.png" width="486" height="250" alt="" aria-hidden="true">
+      <figcaption>Actual app screens · recorded demo data</figcaption>
+    </figure>
+  </div>
+  <nav class="journey-strip" aria-label="Explore the student journey"><a href="#journey-discover"><span class="material-symbols-outlined" aria-hidden="true">travel_explore</span><span><strong>Discover</strong><small>Find your possibilities.</small></span></a><a href="#journey-apply"><span class="material-symbols-outlined" aria-hidden="true">description</span><span><strong>Apply</strong><small>Take your next step.</small></span></a><a href="#journey-track"><span class="material-symbols-outlined" aria-hidden="true">route</span><span><strong>Track</strong><small>Know where you stand.</small></span></a></nav>
 </section>
 <!-- HOW IT WORKS (FOR STUDENTS) -->
-<section class="w-full py-space-2xl bg-surface" id="how-it-works">
-<div class="max-w-7xl mx-auto px-6 lg:px-12">
-<div class="text-center max-w-2xl mx-auto mb-space-2xl">
-<span class="px-space-md py-space-2xs rounded-full bg-primary-fixed/40 text-on-primary-fixed font-label-md text-label-md uppercase tracking-wider font-bold inline-block scroll-rise">
-          Student Pathway
-        </span>
-<h2 class="font-['Geist'] font-bold text-display-lg text-primary mt-space-sm tracking-tight scroll-rise stagger-1">
-          Your Journey from Dream to Degree in 3 Simple Steps
-        </h2>
-<p class="font-body-lg text-body-lg text-on-surface-variant mt-space-xs scroll-rise stagger-2">
-          Engineered to dismantle Philippine bureaucratic roadblocks so you spend less time filling forms and more time excelling.
-        </p>
-</div>
-<!-- 3 Steps Interactive Grid -->
-<div class="grid grid-cols-1 lg:grid-cols-3 gap-space-lg">
-<!-- Step 1: Discover & Match -->
-<div class="bg-surface-container-lowest rounded-2xl p-space-lg shadow-sm card-hover-lift hover:shadow-lg transition-all flex flex-col justify-between group spring-reveal stagger-1">
-<div>
-<div class="flex items-center justify-between mb-space-md">
-<span class="w-10 h-10 rounded-full bg-primary-container text-on-primary flex items-center justify-center font-bold text-headline-sm">01</span>
-<span class="px-space-sm py-1 rounded-full bg-surface-container text-on-surface-variant text-label-sm font-bold">Smart Algorithm</span>
-</div>
-<div class="w-full rounded-xl overflow-hidden aspect-[1] bg-transparent mb-space-md relative flex items-center justify-center drop-shadow-sm"><img alt="Female graduate scholar inspecting scholarship match with magnifying glass" class="w-full h-full object-cover object-top transition-transform duration-500 group-hover:scale-105" src="assets/images/step1_mascot.png"><div class="absolute top-3 left-3 bg-surface-container-lowest border border-outline-variant px-2.5 py-1 rounded-lg shadow-sm flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-primary animate-ping"></span><span class="font-label-sm text-[10px] text-primary font-bold">GWA 1.25 Detected</span></div><div class="absolute top-3 right-3 bg-surface-container-lowest border border-outline-variant px-2.5 py-1 rounded-lg shadow-sm flex items-center gap-1.5"><span class="material-symbols-outlined text-[14px] text-primary">science</span><span class="font-label-sm text-[10px] text-on-surface font-bold">DOST-SEI Priority STEM</span></div><div class="absolute bottom-12 left-3 bg-surface-container-lowest border border-outline-variant px-2.5 py-1 rounded-lg shadow-sm flex items-center gap-1.5"><span class="material-symbols-outlined text-[14px] text-secondary">location_city</span><span class="font-label-sm text-[10px] text-on-surface font-bold">LGU Honors City &amp; Prov.</span></div><div class="absolute bottom-3 left-3 bg-surface-container-lowest border border-outline-variant px-2.5 py-1 rounded-lg shadow-sm flex items-center gap-1.5"><span class="material-symbols-outlined text-[14px] text-primary-container">school</span><span class="font-label-sm text-[10px] text-on-surface font-bold">CHED UniFAST Subsidy</span></div><div class="absolute bottom-3 right-3 bg-surface-container-lowest border border-outline-variant px-2.5 py-1 rounded-lg shadow-sm flex items-center gap-1.5"><span class="material-symbols-outlined text-[14px] text-tertiary-container">military_tech</span><span class="font-label-sm text-[10px] text-on-surface font-bold">Private Endowments</span></div></div>
-<h3 class="font-headline-md text-headline-md text-on-surface font-bold">Discover &amp; Match</h3>
-<p class="font-body-md text-body-md text-on-surface-variant mt-space-xs">
-              Input your GWA, Senior High Track, or college degree alongside your home province. Our AI indexes accredited grants matching your genuine academic qualification.
-            </p>
-</div>
-<div class="pt-space-md mt-space-md flex items-center gap-space-xs text-primary font-label-md text-label-md">
-<span class="">Filter by SUCs &amp; Private HEIs</span>
-<span class="material-symbols-outlined text-[16px]">chevron_right</span>
-</div>
-</div>
-<!-- Step 2: One-Click Application & Central Vault -->
-<div class="bg-surface-container-lowest rounded-2xl p-space-lg shadow-sm card-hover-lift hover:shadow-lg transition-all flex flex-col justify-between group spring-reveal stagger-2">
-<div>
-<div class="flex items-center justify-between mb-space-md">
-<span class="w-10 h-10 rounded-full bg-secondary text-on-secondary flex items-center justify-center font-bold text-headline-sm">02</span>
-<span class="px-space-sm py-1 rounded-full bg-secondary-fixed text-on-secondary-fixed font-label-sm text-label-sm font-bold">Centralized Vault</span>
-</div>
-<!-- Interactive Vault Visualization -->
-<div class="w-full rounded-xl overflow-hidden aspect-[1] bg-transparent mb-space-md relative flex items-center justify-center drop-shadow-sm"><img alt="Male Filipino scholar mascot in graduation toga holding up smartphone with green checkmark" class="w-full h-full object-cover object-top transition-transform duration-500 group-hover:scale-105" src="assets/images/step2_mascot.png"><div class="absolute top-3 left-3 bg-surface-container-lowest border border-outline-variant px-3 py-1.5 rounded-lg shadow-md flex items-center gap-1.5"><span class="material-symbols-outlined text-secondary text-[16px]">verified</span><span class="font-label-sm text-label-sm text-secondary font-bold">Smart Match Active</span></div></div>
-<h3 class="font-headline-md text-headline-md text-on-surface font-bold">One-Click Application</h3>
-<p class="font-body-md text-body-md text-on-surface-variant mt-space-xs">
-              Upload your Philippine documents once. Reuse your authenticated identity package across multiple concurrent foundations with no repetitive notarizations.
-            </p>
-</div>
-<div class="pt-space-md mt-space-md flex items-center gap-space-xs text-secondary font-label-md text-label-md">
-<span class="">Encrypted with National Privacy Standard</span>
-<span class="material-symbols-outlined text-[16px]">verified_user</span>
-</div>
-</div>
-<!-- Step 3: Get Funded & Thrive -->
-<div class="bg-surface-container-lowest rounded-2xl p-space-lg shadow-sm card-hover-lift hover:shadow-lg transition-all flex flex-col justify-between group spring-reveal stagger-3">
-<div>
-<div class="flex items-center justify-between mb-space-md">
-<span class="w-10 h-10 rounded-full bg-primary-container text-on-primary flex items-center justify-center font-bold text-headline-sm">03</span>
-<span class="px-space-sm py-1 rounded-full bg-tertiary-fixed text-on-tertiary-fixed text-label-sm font-bold">Direct Disbursement</span>
-</div>
-<div class="w-full rounded-xl overflow-hidden aspect-[1] bg-transparent mb-space-md relative flex items-center justify-center drop-shadow-sm"><img alt="Graduating Filipino scholars celebrating academic triumph with confetti" class="w-full h-full object-cover object-top transition-transform duration-500 group-hover:scale-105" src="assets/images/step3_mascot.png"><div class="absolute bottom-3 right-3 bg-surface-container-lowest border border-outline-variant px-3 py-1.5 rounded-lg shadow-md flex items-center gap-1.5"><span class="material-symbols-outlined text-primary text-[18px]">payments</span><span class="font-currency-stat text-label-md text-primary font-extrabold">Grant Credited</span></div></div>
-<h3 class="font-headline-md text-headline-md text-on-surface font-bold">Get Funded &amp; Thrive</h3>
-<p class="font-body-md text-body-md text-on-surface-variant mt-space-xs">
-              Receive semester stipends directly in Philippine Peso (₱). Track grade requirements, submit renewals, and unlock mentor networks until your graduation day.
-            </p>
-</div>
-<div class="pt-space-md mt-space-md flex items-center gap-space-xs text-primary font-label-md text-label-md">
-<span class="">Secure Disbursement Support</span>
-<span class="material-symbols-outlined text-[16px]">sync_alt</span>
-</div>
-</div>
-</div>
-</div>
+<section class="student-story" id="how-it-works" aria-labelledby="journeyTitle">
+  <div class="story-intro"><h2 id="journeyTitle">A little less searching.<br>A lot more possibility.</h2><p>From the first opportunity to your next update,<br class="desktop-break"> see how your journey comes together.</p></div>
+  <div class="story-layout">
+    <figure class="story-visual">
+      <div class="story-backdrop" aria-hidden="true"></div>
+      <div class="story-phone">
+        <div class="story-screen"><img class="is-active" data-story-screen="0" src="assets/images/app-discover.jpg" width="440" height="956" alt="Scholarship discovery screen" loading="lazy"><img class="full-capture" data-story-screen="1" src="assets/images/app-application.jpg" width="440" height="956" alt="Scholarship requirements and application details" loading="lazy"><img class="full-capture" data-story-screen="2" src="assets/images/app-receipt.jpg" width="440" height="956" alt="Saved application submission receipt" loading="lazy"><img data-story-screen="3" class="full-capture" src="assets/images/app-tracker-submitted.jpg" width="440" height="956" alt="Application tracker with current statuses" loading="lazy"></div>
+      </div>
+      <figcaption data-story-caption>Discover opportunities that fit your profile.</figcaption>
+    </figure>
+    <div class="story-chapters">
+      <article class="story-chapter is-active" id="journey-discover" data-story-step="0"><span class="chapter-label">Discover</span><h3>Find an opportunity<br>that fits.</h3><p>Explore scholarships, understand the eligibility criteria, and see the requirements before you begin.</p><ul><li>Discover opportunities relevant to your profile</li><li>Check deadlines and required documents</li><li>Save scholarships to return to later</li></ul><img class="story-mobile-screen" src="assets/images/app-discover.jpg" width="440" height="956" alt="Scholaris discovery screen, recorded demo" loading="lazy"></article>
+      <article class="story-chapter" id="journey-apply" data-story-step="1"><span class="chapter-label">Apply</span><h3>Apply.<br>Keep proof.</h3><p>Know what to prepare, review your information, and submit an application when you’re ready.</p><ul><li>Review the scholarship’s requirements</li><li>Prepare and check your application</li><li>Keep your submission receipt</li></ul><img class="story-mobile-screen" src="assets/images/app-application.jpg" width="440" height="956" alt="Scholaris scholarship details, recorded demo" loading="lazy"></article>
+<article class="story-chapter" id="journey-receipt" data-story-step="2"><span class="chapter-label">Submission saved</span><h3>Sent.<br>And saved.</h3><p>Your application has a receipt to return to. Keep the reference and follow what happens next.</p><ul><li>See confirmation of your submission</li><li>Return to the saved application record</li><li>Continue to your application tracker</li></ul><img class="story-mobile-screen" src="assets/images/app-receipt.jpg" width="440" height="956" alt="Saved submission receipt from the Scholaris demo" loading="lazy"></article>
+      <article class="story-chapter" id="journey-track" data-story-step="3"><span class="chapter-label">Track</span><h3>Know where your<br>application stands.</h3><p>Return to your tracker for recorded application progress and provider updates, all together.</p><ul><li>Follow your submitted applications</li><li>See recorded status updates</li><li>View approval details when available</li></ul><a class="landing-link" href="#how-it-works" onclick="openDownloadModal(event)">Find your next chapter <span class="material-symbols-outlined" aria-hidden="true">arrow_forward</span></a><div class="story-mobile-device"><div class="mobile-device-screen"><img src="assets/images/app-tracker-submitted.jpg" width="440" height="956" alt="Submitted application for the same demo scholarship" loading="lazy"></div></div></article>
+    </div>
+  </div>
+  <p class="story-note">Actual app screens with recorded demo data. Scholarship decisions remain with providers.</p>
 </section>
-<!-- IMPACT & STATS SECTION -->
-<section id="impact-section" class="w-full py-space-2xl bg-surface">
-<div class="max-w-7xl mx-auto px-6 lg:px-12">
-<!-- Section Header -->
-<div class="flex flex-col md:flex-row items-start md:items-end justify-between mb-space-xl gap-space-md">
-<div>
-<span class="font-label-sm text-label-sm uppercase tracking-widest text-primary font-bold inline-block scroll-rise">Archipelago Scale</span>
-<h2 class="font-['Geist'] font-bold text-display-lg text-on-surface mt-1 scroll-rise stagger-1">Measurable Academic Lift</h2>
-</div>
-<p class="font-body-md text-body-md text-on-surface-variant max-w-md scroll-rise stagger-2">
-          Connecting underserved academic talent with equitable private and institutional funding across the country.
-        </p>
-</div>
-<!-- Bento Grid Stats -->
-<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-space-md mb-space-xl">
-<div class="bg-surface-container-lowest rounded-2xl p-space-lg shadow-sm card-hover-lift spring-reveal stagger-1">
-<span class="material-symbols-outlined text-primary text-[32px] mb-2">payments</span>
-<div class="font-currency-stat text-[24px] leading-tight text-primary font-black">Direct Allowance</div>
-<p class="font-headline-sm text-headline-sm text-on-surface font-bold mt-1">Equitable Funding</p>
-<p class="font-body-sm text-body-sm text-on-surface-variant mt-1">Streamlining administrative workflows for student stipend tranches.</p>
-</div>
-<div class="bg-surface-container-lowest rounded-2xl p-space-lg shadow-sm card-hover-lift spring-reveal stagger-2">
-<span class="material-symbols-outlined text-secondary text-[32px] mb-2">map</span>
-<div class="font-currency-stat text-[24px] leading-tight text-secondary font-black">Nationwide</div>
-<p class="font-headline-sm text-headline-sm text-on-surface font-bold mt-1">Grant Access</p>
-<p class="font-body-sm text-body-sm text-on-surface-variant mt-1">Empowering students across Luzon, Visayas, Mindanao, and BARMM.</p>
-</div>
-<div class="bg-surface-container-lowest rounded-2xl p-space-lg shadow-sm card-hover-lift spring-reveal stagger-3">
-<span class="material-symbols-outlined text-tertiary-container text-[32px] mb-2">school</span>
-<div class="font-currency-stat text-[24px] leading-tight text-tertiary-container font-black">Partner SUCs</div>
-<p class="font-headline-sm text-headline-sm text-on-surface font-bold mt-1">State Universities &amp; HEIs</p>
-<p class="font-body-sm text-body-sm text-on-surface-variant mt-1">Standardized qualification framework aligned with CHED and UniFAST.</p>
-</div>
-<div class="bg-surface-container-lowest rounded-2xl p-space-lg shadow-sm card-hover-lift spring-reveal stagger-4">
-<span class="material-symbols-outlined text-primary-fixed-variant text-[32px] mb-2">task_alt</span>
-<div class="font-currency-stat text-[24px] leading-tight text-primary-container font-black">Streamlined</div>
-<p class="font-headline-sm text-headline-sm text-on-surface font-bold mt-1">Digital Completion</p>
-<p class="font-body-sm text-body-sm text-on-surface-variant mt-1">Single-vault filing dismantling repetitive paperwork.</p>
-</div>
-</div>
-<!-- Regional Distribution Callout Box -->
-<div class="bg-surface-container-lowest rounded-2xl p-space-lg shadow-sm card-hover-lift flex flex-col lg:flex-row items-center justify-between gap-space-lg spring-reveal stagger-2">
-<div class="flex items-center gap-space-md">
-<div class="w-14 h-14 rounded-2xl bg-primary-fixed/50 flex items-center justify-center text-primary">
-<span class="material-symbols-outlined text-[32px]">map</span>
-</div>
-<div>
-<h4 class="font-headline-sm text-headline-sm text-on-surface font-bold">Verified Presence Across The Country</h4>
-<p class="font-body-md text-body-md text-on-surface-variant">Top Scholar Hubs: National Capital Region (NCR), Region IV-A (CALABARZON), Region VII (Central Visayas), Region XI (Davao), and BARMM.</p>
-</div>
-</div>
-<div class="flex items-center gap-space-sm shrink-0">
-<span class="px-space-md py-space-xs rounded-full bg-surface-container text-on-surface font-label-md text-label-md">State Universities (SUCs)</span>
-<span class="px-space-md py-space-xs rounded-full bg-surface-container text-on-surface font-label-md text-label-md">Private HEIs</span>
-</div>
-</div>
-</div>
-</section>
-<!-- MOBILE APP SHOWCASE TEASER -->
-<section class="w-full py-space-2xl bg-surface" id="download-app-section"><div class="max-w-7xl mx-auto px-6 lg:px-12"><div class="bg-gradient-to-br from-primary-container via-primary to-primary-container rounded-3xl p-space-xl lg:p-space-2xl text-on-primary shadow-2xl relative overflow-hidden"><div class="pointer-events-none absolute -right-20 -top-20 w-96 h-96 bg-primary-fixed/20 rounded-full blur-3xl"></div><div class="pointer-events-none absolute left-1/3 -bottom-20 w-80 h-80 bg-tertiary-fixed/10 rounded-full blur-2xl"></div><div class="relative z-10 flex flex-col items-center text-center max-w-4xl mx-auto mb-space-2xl"><span class="inline-flex items-center gap-space-xs px-space-md py-space-2xs rounded-full bg-primary-fixed/20 border border-primary-fixed/30 text-primary-fixed font-label-sm text-[11px] font-bold uppercase tracking-wider mb-space-sm scroll-rise"><span class="w-2 h-2 rounded-full bg-primary-fixed animate-pulse"></span>STUDENT MOBILE APP • AVAILABLE ON IOS &amp; ANDROID</span><h2 class="font-['Geist'] font-bold text-display-lg-mobile lg:text-display-lg text-on-primary tracking-tight leading-[1.15] scroll-rise stagger-1">One Platform. Every Step Toward Education.</h2><p class="font-body-lg text-body-lg text-on-primary-container mt-space-sm max-w-2xl leading-relaxed scroll-rise stagger-2">Discover scholarships that match your profile, manage your applications, and stay on top of every opportunity with Scholaris.</p><div class="flex flex-wrap items-center justify-center gap-space-md mt-space-lg scroll-rise stagger-3"><a class="inline-flex items-center gap-space-xs px-space-lg py-2.5 rounded-full bg-surface-container-lowest text-primary font-label-md text-label-md shadow-sm hover:bg-surface-container active:scale-95 transition-all hover:scale-105 pressable-tactile" href="#download-app-section" onclick="openDownloadModal()"><span class="material-symbols-outlined text-[20px]">download</span><span class="">Download for iOS</span></a><a class="inline-flex items-center gap-space-xs px-space-lg py-2.5 rounded-full bg-surface-container-lowest text-primary font-label-md text-label-md shadow-sm hover:bg-surface-container active:scale-95 transition-all hover:scale-105 pressable-tactile" href="#download-app-section" onclick="openDownloadModal()"><span class="material-symbols-outlined text-[20px]">android</span><span class="">Download for Android</span></a></div></div><div class="relative z-10 max-w-7xl mx-auto w-full px-2 marquee-container spring-reveal stagger-2" id="mobile-carousel-container"><div class="flex items-center justify-between mb-space-md px-2 flex-wrap gap-2"><div class="flex items-center gap-2"><span class="text-on-tertiary-fixed font-label-sm text-[12px] font-bold tracking-widest uppercase">Interactive Mobile Preview</span><span class="px-2 py-0.5 rounded-full bg-primary-fixed/20 text-primary-fixed text-[11px] font-bold">6 Core Screens • Seamless Continuous Flow</span></div><button id="marqueeToggleBtn" onclick="toggleMarqueeAnimation()" class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-surface-container-lowest/20 hover:bg-surface-container-lowest/30 text-on-primary text-[11px] font-semibold transition-all active:scale-95" title="Toggle animation play/pause"><span id="marqueeToggleIcon" class="material-symbols-outlined text-[15px]">pause_circle</span><span id="marqueeToggleText">Pause Carousel</span></button></div><div class="w-full overflow-hidden marquee-mask py-2"><div class="marquee-track flex gap-space-lg select-none"><div class="shrink-0 w-[270px] sm:w-[285px] flex flex-col items-center group"><div class="w-full rounded-[32px] overflow-hidden shadow-2xl transition-all duration-300 group-hover:scale-[1.04] group-hover:-translate-y-1 group-hover:shadow-2xl border border-outline-variant/30 bg-surface-container-lowest relative"><img alt="Scholaris Smart Dashboard Screen" class="w-full h-auto block object-contain" src="assets/images/screen_dashboard.png" style="image-rendering: -webkit-optimize-contrast;"></div><div class="text-center mt-space-md w-full px-2"><span class="text-on-tertiary-container font-label-sm text-[11px] font-bold tracking-wider uppercase block mb-1">01 — DASHBOARD</span><h3 class="text-on-primary font-headline-sm text-headline-sm font-bold">Smart Dashboard</h3><p class="text-on-primary-container font-body-sm text-body-sm mt-1 leading-relaxed">Personalized matches &amp; deadline alerts</p></div></div><div class="shrink-0 w-[270px] sm:w-[285px] flex flex-col items-center group"><div class="w-full rounded-[32px] overflow-hidden shadow-2xl transition-all duration-300 group-hover:scale-[1.04] group-hover:-translate-y-1 group-hover:shadow-2xl border border-outline-variant/30 bg-surface-container-lowest relative"><img alt="Scholaris Grant Discovery Screen" class="w-full h-auto block object-contain" src="assets/images/screen_discover.png" style="image-rendering: -webkit-optimize-contrast;"></div><div class="text-center mt-space-md w-full px-2"><span class="text-on-tertiary-container font-label-sm text-[11px] font-bold tracking-wider uppercase block mb-1">02 — DISCOVER</span><h3 class="text-on-primary font-headline-sm text-headline-sm font-bold">Grant Discovery</h3><p class="text-on-primary-container font-body-sm text-body-sm mt-1 leading-relaxed">Filtered DOST, CHED &amp; institutional listings</p></div></div><div class="shrink-0 w-[270px] sm:w-[285px] flex flex-col items-center group"><div class="w-full rounded-[32px] overflow-hidden shadow-2xl transition-all duration-300 group-hover:scale-[1.04] group-hover:-translate-y-1 group-hover:shadow-2xl border border-outline-variant/30 bg-surface-container-lowest relative"><img alt="Scholaris Application Tracker Screen" class="w-full h-auto block object-contain" src="assets/images/screen_tracker.png" style="image-rendering: -webkit-optimize-contrast;"></div><div class="text-center mt-space-md w-full px-2"><span class="text-on-tertiary-container font-label-sm text-[11px] font-bold tracking-wider uppercase block mb-1">03 — TRACKER</span><h3 class="text-on-primary font-headline-sm text-headline-sm font-bold">Application Tracker</h3><p class="text-on-primary-container font-body-sm text-body-sm mt-1 leading-relaxed">Real-time milestone stages &amp; review timeline</p></div></div><div class="shrink-0 w-[270px] sm:w-[285px] flex flex-col items-center group"><div class="w-full rounded-[32px] overflow-hidden shadow-2xl transition-all duration-300 group-hover:scale-[1.04] group-hover:-translate-y-1 group-hover:shadow-2xl border border-outline-variant/30 bg-surface-container-lowest relative"><img alt="Scholaris Scholarship Details Screen" class="w-full h-auto block object-contain" src="assets/images/screen_detail.png" style="image-rendering: -webkit-optimize-contrast;"></div><div class="text-center mt-space-md w-full px-2"><span class="text-on-tertiary-container font-label-sm text-[11px] font-bold tracking-wider uppercase block mb-1">04 — SCHOLARSHIP DETAILS</span><h3 class="text-on-primary font-headline-sm text-headline-sm font-bold">Scholarship Details</h3><p class="text-on-primary-container font-body-sm text-body-sm mt-1 leading-relaxed">Institutional criteria, GWA cutoff &amp; award values</p></div></div><div class="shrink-0 w-[270px] sm:w-[285px] flex flex-col items-center group"><div class="w-full rounded-[32px] overflow-hidden shadow-2xl transition-all duration-300 group-hover:scale-[1.04] group-hover:-translate-y-1 group-hover:shadow-2xl border border-outline-variant/30 bg-surface-container-lowest relative"><img alt="Scholaris Document Vault &amp; Receipt Screen" class="w-full h-auto block object-contain" src="assets/images/screen_receipt.png" style="image-rendering: -webkit-optimize-contrast;"></div><div class="text-center mt-space-md w-full px-2"><span class="text-on-tertiary-container font-label-sm text-[11px] font-bold tracking-wider uppercase block mb-1">05 — DOCUMENT VAULT</span><h3 class="text-on-primary font-headline-sm text-headline-sm font-bold">Document Vault &amp; Receipt</h3><p class="text-on-primary-container font-body-sm text-body-sm mt-1 leading-relaxed">Tamper-proof digital token &amp; proof of filing</p></div></div><div class="shrink-0 w-[270px] sm:w-[285px] flex flex-col items-center group"><div class="w-full rounded-[32px] overflow-hidden shadow-2xl transition-all duration-300 group-hover:scale-[1.04] group-hover:-translate-y-1 group-hover:shadow-2xl border border-outline-variant/30 bg-surface-container-lowest relative"><img alt="Scholaris Profile &amp; Settings Screen" class="w-full h-auto block object-contain" src="assets/images/screen_profile.png" style="image-rendering: -webkit-optimize-contrast;"></div><div class="text-center mt-space-md w-full px-2"><span class="text-on-tertiary-container font-label-sm text-[11px] font-bold tracking-wider uppercase block mb-1">06 — PROFILE &amp; SETTINGS</span><h3 class="text-on-primary font-headline-sm text-headline-sm font-bold">Profile &amp; Settings</h3><p class="text-on-primary-container font-body-sm text-body-sm mt-1 leading-relaxed">Verified credentials, income tier &amp; preferences</p></div></div><div aria-hidden="true" class="shrink-0 w-[270px] sm:w-[285px] flex flex-col items-center group"><div class="w-full rounded-[32px] overflow-hidden shadow-2xl transition-all duration-300 group-hover:scale-[1.04] group-hover:-translate-y-1 group-hover:shadow-2xl border border-outline-variant/30 bg-surface-container-lowest relative"><img alt="Scholaris Smart Dashboard Screen" class="w-full h-auto block object-contain" src="assets/images/screen_dashboard.png" style="image-rendering: -webkit-optimize-contrast;"></div><div class="text-center mt-space-md w-full px-2"><span class="text-on-tertiary-container font-label-sm text-[11px] font-bold tracking-wider uppercase block mb-1">01 — DASHBOARD</span><h3 class="text-on-primary font-headline-sm text-headline-sm font-bold">Smart Dashboard</h3><p class="text-on-primary-container font-body-sm text-body-sm mt-1 leading-relaxed">Personalized matches &amp; deadline alerts</p></div></div><div aria-hidden="true" class="shrink-0 w-[270px] sm:w-[285px] flex flex-col items-center group"><div class="w-full rounded-[32px] overflow-hidden shadow-2xl transition-all duration-300 group-hover:scale-[1.04] group-hover:-translate-y-1 group-hover:shadow-2xl border border-outline-variant/30 bg-surface-container-lowest relative"><img alt="Scholaris Grant Discovery Screen" class="w-full h-auto block object-contain" src="assets/images/screen_discover.png" style="image-rendering: -webkit-optimize-contrast;"></div><div class="text-center mt-space-md w-full px-2"><span class="text-on-tertiary-container font-label-sm text-[11px] font-bold tracking-wider uppercase block mb-1">02 — DISCOVER</span><h3 class="text-on-primary font-headline-sm text-headline-sm font-bold">Grant Discovery</h3><p class="text-on-primary-container font-body-sm text-body-sm mt-1 leading-relaxed">Filtered DOST, CHED &amp; institutional listings</p></div></div><div aria-hidden="true" class="shrink-0 w-[270px] sm:w-[285px] flex flex-col items-center group"><div class="w-full rounded-[32px] overflow-hidden shadow-2xl transition-all duration-300 group-hover:scale-[1.04] group-hover:-translate-y-1 group-hover:shadow-2xl border border-outline-variant/30 bg-surface-container-lowest relative"><img alt="Scholaris Application Tracker Screen" class="w-full h-auto block object-contain" src="assets/images/screen_tracker.png" style="image-rendering: -webkit-optimize-contrast;"></div><div class="text-center mt-space-md w-full px-2"><span class="text-on-tertiary-container font-label-sm text-[11px] font-bold tracking-wider uppercase block mb-1">03 — TRACKER</span><h3 class="text-on-primary font-headline-sm text-headline-sm font-bold">Application Tracker</h3><p class="text-on-primary-container font-body-sm text-body-sm mt-1 leading-relaxed">Real-time milestone stages &amp; review timeline</p></div></div><div aria-hidden="true" class="shrink-0 w-[270px] sm:w-[285px] flex flex-col items-center group"><div class="w-full rounded-[32px] overflow-hidden shadow-2xl transition-all duration-300 group-hover:scale-[1.04] group-hover:-translate-y-1 group-hover:shadow-2xl border border-outline-variant/30 bg-surface-container-lowest relative"><img alt="Scholaris Scholarship Details Screen" class="w-full h-auto block object-contain" src="assets/images/screen_detail.png" style="image-rendering: -webkit-optimize-contrast;"></div><div class="text-center mt-space-md w-full px-2"><span class="text-on-tertiary-container font-label-sm text-[11px] font-bold tracking-wider uppercase block mb-1">04 — SCHOLARSHIP DETAILS</span><h3 class="text-on-primary font-headline-sm text-headline-sm font-bold">Scholarship Details</h3><p class="text-on-primary-container font-body-sm text-body-sm mt-1 leading-relaxed">Institutional criteria, GWA cutoff &amp; award values</p></div></div><div aria-hidden="true" class="shrink-0 w-[270px] sm:w-[285px] flex flex-col items-center group"><div class="w-full rounded-[32px] overflow-hidden shadow-2xl transition-all duration-300 group-hover:scale-[1.04] group-hover:-translate-y-1 group-hover:shadow-2xl border border-outline-variant/30 bg-surface-container-lowest relative"><img alt="Scholaris Document Vault &amp; Receipt Screen" class="w-full h-auto block object-contain" src="assets/images/screen_receipt.png" style="image-rendering: -webkit-optimize-contrast;"></div><div class="text-center mt-space-md w-full px-2"><span class="text-on-tertiary-container font-label-sm text-[11px] font-bold tracking-wider uppercase block mb-1">05 — DOCUMENT VAULT</span><h3 class="text-on-primary font-headline-sm text-headline-sm font-bold">Document Vault &amp; Receipt</h3><p class="text-on-primary-container font-body-sm text-body-sm mt-1 leading-relaxed">Tamper-proof digital token &amp; proof of filing</p></div></div><div aria-hidden="true" class="shrink-0 w-[270px] sm:w-[285px] flex flex-col items-center group"><div class="w-full rounded-[32px] overflow-hidden shadow-2xl transition-all duration-300 group-hover:scale-[1.04] group-hover:-translate-y-1 group-hover:shadow-2xl border border-outline-variant/30 bg-surface-container-lowest relative"><img alt="Scholaris Profile &amp; Settings Screen" class="w-full h-auto block object-contain" src="assets/images/screen_profile.png" style="image-rendering: -webkit-optimize-contrast;"></div><div class="text-center mt-space-md w-full px-2"><span class="text-on-tertiary-container font-label-sm text-[11px] font-bold tracking-wider uppercase block mb-1">06 — PROFILE &amp; SETTINGS</span><h3 class="text-on-primary font-headline-sm text-headline-sm font-bold">Profile &amp; Settings</h3><p class="text-on-primary-container font-body-sm text-body-sm mt-1 leading-relaxed">Verified credentials, income tier &amp; preferences</p></div></div></div></div></div><div class="relative z-10 mt-space-2xl pt-space-xl border-t border-outline-variant/20 max-w-4xl mx-auto w-full spring-reveal stagger-3"><div class="bg-surface-container-lowest/15 rounded-2xl p-space-lg border border-outline-variant/30 flex flex-col md:flex-row items-center justify-between gap-space-md"><div class="text-center md:text-left"><h4 class="font-headline-sm text-headline-sm font-bold text-on-primary flex items-center justify-center md:justify-start gap-2"><span class="material-symbols-outlined text-primary-fixed">corporate_fare</span>Are you a scholarship provider?</h4><p class="font-body-md text-body-md text-on-primary-container mt-1">Manage scholarship programs and connect with eligible students nationwide.</p></div><a class="inline-flex items-center gap-space-xs px-space-xl py-3 rounded-full bg-surface-container-lowest text-primary font-label-md text-label-md font-bold shadow-md hover:bg-surface-container transition-all hover:scale-105 shrink-0" href="#provider-portal-section"><span class="">Explore the Provider Portal</span><span class="material-symbols-outlined text-[18px]">arrow_forward</span></a></div></div></div></div></section>
-<!-- FOR PROVIDERS & BENEFACTORS PORTAL SECTION -->
-<section class="w-full py-space-2xl bg-surface" id="provider-portal-section">
-<div class="max-w-7xl mx-auto px-6 lg:px-12">
-<div class="grid grid-cols-1 lg:grid-cols-12 gap-space-xl items-center">
-<div class="lg:col-span-6 flex flex-col items-start">
-<span class="px-space-md py-space-2xs rounded-full bg-secondary-fixed text-on-secondary-fixed font-label-md text-label-md font-bold uppercase tracking-wider scroll-rise">
-            Corporate CSR, Foundations &amp; Benefactors
-          </span>
-<h2 class="font-['Geist'] font-bold text-display-lg text-on-surface mt-space-sm tracking-tight scroll-rise stagger-1">
-            Scale Your Educational Impact with Zero Administrative Friction.
-          </h2>
-<p class="font-body-lg text-body-lg text-on-surface-variant mt-space-sm scroll-rise stagger-2">
-            Managing scholarship endowments shouldn't require rooms of paper files and manual GWA validation. Scholaris gives Philippine philanthropists an audited, enterprise-grade disbursement infrastructure.
-          </p>
-<!-- Provider Benefits Grid -->
-<div class="grid grid-cols-1 sm:grid-cols-2 gap-space-md mt-space-xl w-full">
-<div class="p-space-md rounded-xl bg-surface-container-low">
-<span class="material-symbols-outlined text-primary text-[26px]">rule</span>
-<h4 class="font-headline-sm text-headline-sm text-on-surface font-bold mt-1">Automated GWA Checks</h4>
-<p class="font-body-sm text-body-sm text-on-surface-variant mt-1">Direct integration with State Universities &amp; Colleges (SUCs) registrar databases.</p>
-</div>
-<div class="p-space-md rounded-xl bg-surface-container-low">
-<span class="material-symbols-outlined text-secondary text-[26px]">account_balance</span>
-<h4 class="font-headline-sm text-headline-sm text-on-surface font-bold mt-1">Secure Disbursements</h4>
-<p class="font-body-sm text-body-sm text-on-surface-variant mt-1">Direct, timestamped disbursements for verified scholars.</p>
-</div>
-<div class="p-space-md rounded-xl bg-surface-container-low">
-<span class="material-symbols-outlined text-tertiary-container text-[26px]">monitoring</span>
-<h4 class="font-headline-sm text-headline-sm text-on-surface font-bold mt-1">Cohort Analytics</h4>
-<p class="font-body-sm text-body-sm text-on-surface-variant mt-1">Real-time scholar retention, grade metrics, and employment outcomes.</p>
-</div>
-<div class="p-space-md rounded-xl bg-surface-container-low">
-<span class="material-symbols-outlined text-primary-container text-[26px]">receipt_long</span>
-<h4 class="font-headline-sm text-headline-sm text-on-surface font-bold mt-1">BIR Tax Certificates</h4>
-<p class="font-body-sm text-body-sm text-on-surface-variant mt-1">Compliant certificates of donation and deduction receipts generated automatically.</p>
-</div>
-</div>
-<!-- Provider Call to Action Buttons -->
-<div class="flex flex-col sm:flex-row items-center gap-space-md mt-space-xl w-full sm:w-auto">
-<a class="w-full sm:w-auto inline-flex items-center justify-center gap-space-xs px-space-xl py-3.5 rounded-full bg-secondary text-on-secondary font-label-lg text-label-lg shadow-md hover:bg-on-secondary-fixed-variant active:scale-95 transition-all hover:scale-[1.02] pressable-tactile" data-path="provider-login" href="http://localhost:5000/provider/login?type=organization">
-<span class="material-symbols-outlined text-[20px]">admin_panel_settings</span>
-<span class="">Provider Portal Login</span>
-</a>
-<a class="w-full sm:w-auto inline-flex items-center justify-center gap-space-xs px-space-xl py-3.5 rounded-full bg-surface-container text-on-surface font-label-lg text-label-lg hover:bg-surface-container-high active:scale-95 transition-all pressable-tactile" data-path="for-providers" href="http://localhost:5000/become-provider?type=organization">
-<span class="">Schedule Foundation Demo</span>
-<span class="material-symbols-outlined text-[16px]">calendar_today</span>
-</a>
-</div>
-</div>
-<!-- Right: Ambassador Mascot & Enterprise Dashboard Preview -->
-<div class="lg:col-span-6 flex flex-col items-center spring-reveal stagger-2">
-<div class="relative w-full max-w-lg bg-surface-container-low rounded-3xl p-space-lg shadow-md">
-<!-- Header bar -->
-<div class="flex items-center justify-between mb-space-md">
-<div class="flex items-center gap-2">
-<span class="w-3 h-3 rounded-full bg-error"></span>
-<span class="w-3 h-3 rounded-full bg-tertiary-fixed-dim"></span>
-<span class="w-3 h-3 rounded-full bg-primary"></span>
-<span class="font-label-sm text-label-sm text-on-surface-variant font-bold ml-2">Ayala Foundation Endowment Portal</span>
-</div>
-<span class="px-2.5 py-0.5 rounded-full bg-primary-fixed text-on-primary-fixed font-label-sm text-[11px] font-bold">Active Cohort 2025</span>
-</div>
-<!-- Inner Provider Data Table Mockup -->
-<div class="bg-surface-container-lowest rounded-2xl p-space-md shadow-sm space-y-3">
-<div class="flex items-center justify-between pb-2 border-b border-surface-container">
-<div>
-<p class="font-label-md text-label-md font-bold text-on-surface">Batch 14: Engineering &amp; Data Science</p>
-<p class="font-body-sm text-[11px] text-on-surface-variant">Selected Scholars • Fully Retained</p>
-</div>
-<span class="font-currency-stat text-label-lg text-primary font-black">Fully Funded</span>
-</div>
-<!-- Candidate row 1 -->
-<div class="flex items-center justify-between py-1.5 px-2 rounded-lg hover:bg-surface-container-low transition-colors">
-<div class="flex items-center gap-2.5">
-<div class="w-8 h-8 rounded-full bg-primary-container text-on-primary text-[12px] font-bold flex items-center justify-center">GM</div>
-<div>
-<p class="font-label-md text-label-md text-on-surface font-semibold">Gilbert M.</p>
-<p class="font-body-sm text-[11px] text-on-surface-variant">BS Computer Science • UP Diliman</p>
-</div>
-</div>
-<div class="text-right">
-<span class="px-2 py-0.5 rounded-full bg-primary-fixed text-on-primary-fixed text-[10px] font-bold">GWA 1.22</span>
-<p class="text-[10px] text-on-surface-variant mt-0.5">Disbursed (₱10k)</p>
-</div>
-</div>
-<!-- Candidate row 2 -->
-<div class="flex items-center justify-between py-1.5 px-2 rounded-lg hover:bg-surface-container-low transition-colors">
-<div class="flex items-center gap-2.5">
-<div class="w-8 h-8 rounded-full bg-secondary text-on-secondary text-[12px] font-bold flex items-center justify-center">AC</div>
-<div>
-<p class="font-label-md text-label-md text-on-surface font-semibold">Alyssa C.</p>
-<p class="font-body-sm text-[11px] text-on-surface-variant">BS Civil Engineering • PUP Manila</p>
-</div>
-</div>
-<div class="text-right">
-<span class="px-2 py-0.5 rounded-full bg-primary-fixed text-on-primary-fixed text-[10px] font-bold">GWA 1.18</span>
-<p class="text-[10px] text-on-surface-variant mt-0.5">Disbursed (₱10k)</p>
-</div>
-</div>
-</div>
-<!-- Sponsor Banner note -->
-<div class="mt-space-md p-space-sm rounded-xl bg-secondary-fixed/50 flex items-center gap-3">
-<span class="material-symbols-outlined text-secondary text-[24px]">verified</span>
-<div>
-<p class="font-label-md text-label-md text-on-secondary-fixed font-bold">Official CHED Partner Standard</p>
-<p class="font-body-sm text-body-sm text-on-secondary-fixed-variant">All applicant data protected under Republic Act No. 10173 (Data Privacy Act of 2012).</p>
-</div>
-</div>
-</div>
-</div>
-</div>
-</div>
-</section><section class="w-full py-space-2xl bg-surface-container-low" id="provider-preview-section"><div class="max-w-7xl mx-auto px-6 lg:px-12"><div class="text-center max-w-3xl mx-auto mb-space-2xl"><div class="inline-flex items-center gap-space-xs px-space-md py-space-2xs rounded-full bg-primary-fixed/40 border border-primary-fixed/30 text-on-primary-fixed font-label-sm text-[11px] font-bold uppercase tracking-wider mb-space-sm scroll-rise"><span class="w-2 h-2 rounded-full bg-primary animate-pulse"></span><span class="">PROVIDER EXPERIENCE • BUILT FOR FOUNDATIONS &amp; LGUs</span></div><h2 class="font-['Geist'] font-bold text-display-lg-mobile lg:text-display-lg text-primary tracking-tight leading-[1.15] scroll-rise stagger-1">One Console. Total Visibility Over Every Peso.</h2><p class="font-body-lg text-body-lg text-on-surface-variant mt-space-sm max-w-2xl mx-auto leading-relaxed scroll-rise stagger-2">From cohort quotas to applicant reviews, the Org Provider Console gives foundations and LGUs a single, audited dashboard for every scholarship they fund.</p></div><div class="grid grid-cols-1 lg:grid-cols-2 gap-space-xl"><div class="flex flex-col bg-surface-container-lowest rounded-3xl p-space-md lg:p-space-lg shadow-sm border border-outline-variant/30 hover:shadow-xl transition-all card-hover-lift group spring-reveal stagger-1"><div class="w-full rounded-2xl overflow-hidden border border-outline-variant/30 bg-surface-container shadow-sm mb-space-md"><div class="bg-surface-container-high px-4 py-2.5 flex items-center gap-2 border-b border-outline-variant/20"><div class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-error inline-block"></span><span class="w-2.5 h-2.5 rounded-full bg-tertiary-fixed-dim inline-block"></span><span class="w-2.5 h-2.5 rounded-full bg-primary inline-block"></span></div><div class="flex-1 mx-3 px-3 py-1 rounded-md bg-surface-container-lowest text-[11px] text-on-surface-variant font-sans truncate border border-outline-variant/20 flex items-center gap-1.5"><span class="material-symbols-outlined text-[13px] text-primary">lock</span><span class="">console.scholaris.ph/providers/scholarships</span></div><span class="material-symbols-outlined text-outline text-[16px]">more_vert</span></div><div class="w-full overflow-hidden bg-surface-container-lowest relative"><img alt="Scholaris Provider Console - My Scholarships" class="w-full h-auto block object-cover transition-transform duration-500 group-hover:scale-[1.02]" src="assets/images/provider-my-scholarships.png"></div></div><div class="px-2"><div class="flex items-center gap-2 mb-1.5"><span class="px-2.5 py-0.5 rounded-full bg-primary-fixed/30 text-on-primary-fixed font-label-sm text-[11px] font-bold">My Scholarships</span></div><h3 class="font-headline-md text-headline-md font-bold text-on-surface">Manage Every Scholarship at a Glance</h3><p class="font-body-md text-body-md text-on-surface-variant mt-1">Cohort quotas, regional target scopes, and automated GWA &amp; document compliance.</p></div></div><div class="flex flex-col bg-surface-container-lowest rounded-3xl p-space-md lg:p-space-lg shadow-sm border border-outline-variant/30 hover:shadow-xl transition-all card-hover-lift group spring-reveal stagger-2"><div class="w-full rounded-2xl overflow-hidden border border-outline-variant/30 bg-surface-container shadow-sm mb-space-md"><div class="bg-surface-container-high px-4 py-2.5 flex items-center gap-2 border-b border-outline-variant/20"><div class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-error inline-block"></span><span class="w-2.5 h-2.5 rounded-full bg-tertiary-fixed-dim inline-block"></span><span class="w-2.5 h-2.5 rounded-full bg-primary inline-block"></span></div><div class="flex-1 mx-3 px-3 py-1 rounded-md bg-surface-container-lowest text-[11px] text-on-surface-variant font-sans truncate border border-outline-variant/20 flex items-center gap-1.5"><span class="material-symbols-outlined text-[13px] text-secondary">lock</span><span class="">console.scholaris.ph/providers/applications</span></div><span class="material-symbols-outlined text-outline text-[16px]">more_vert</span></div><div class="w-full overflow-hidden bg-surface-container-lowest relative"><img alt="Scholaris Provider Console - Applications" class="w-full h-auto block object-cover transition-transform duration-500 group-hover:scale-[1.02]" src="assets/images/provider-applications.png"></div></div><div class="px-2"><div class="flex items-center gap-2 mb-1.5"><span class="px-2.5 py-0.5 rounded-full bg-secondary-fixed text-on-secondary-fixed font-label-sm text-[11px] font-bold">Applications</span></div><h3 class="font-headline-md text-headline-md font-bold text-on-surface">Review Applicants Without the Paper Trail</h3><p class="font-body-md text-body-md text-on-surface-variant mt-1">Real-time submission tracking, verification status, and one-click endorsements.</p></div></div></div><div class="flex flex-col sm:flex-row items-center justify-center gap-space-md mt-space-2xl spring-reveal stagger-3"><a class="w-full sm:w-auto inline-flex items-center justify-center gap-space-xs px-space-xl py-3.5 rounded-full bg-primary text-on-primary font-label-lg text-label-lg shadow-md hover:bg-primary-container active:scale-95 transition-all hover:scale-[1.02] pressable-tactile" data-path="provider-login" href="http://localhost:5000/provider/login?type=organization"><span class="material-symbols-outlined text-[20px]">admin_panel_settings</span><span class="">Access Provider Console</span><span class="material-symbols-outlined text-[18px]">arrow_forward</span></a><a class="w-full sm:w-auto inline-flex items-center justify-center gap-space-xs px-space-xl py-3.5 rounded-full bg-surface-container-lowest text-secondary font-label-lg text-label-lg shadow-sm hover:bg-surface-container active:scale-95 transition-all hover:scale-[1.02] pressable-tactile" data-path="for-providers" href="http://localhost:5000/become-provider?type=organization"><span class="">Schedule Institutional Walkthrough</span><span class="material-symbols-outlined text-[18px]">arrow_forward</span></a></div></div></section>
-<!-- FREQUENTLY ASKED QUESTIONS SECTION -->
+<section class="student-breathing-room" id="your-next-chapter" aria-labelledby="nextChapterTitle"><div class="chapter-close-copy scroll-rise"><p class="chapter-close-kicker">Your application is a step. Your future is the story.</p><h2 id="nextChapterTitle">Less chasing updates.<br>More room for your<br class="chapter-close-break"> next chapter.</h2><p class="chapter-close-description">Discover opportunities, keep your submission receipt, and follow your application—all in one place.</p></div><figure class="chapter-close-art scroll-rise stagger-2"><img src="assets/images/mascot_couple_celebrating.png" width="683" height="1024" alt="The Scholaris graduate mascots celebrating together" loading="lazy"></figure></section>
+<section class="provider-story provider-split" id="provider-portal-section" aria-labelledby="providerTitle"><div class="provider-split-layout"><div class="provider-copy"><div class="provider-heading"><div><p class="landing-eyebrow">For the people opening doors</p><h2 id="providerTitle">Someone’s next chapter<br>could start with you.</h2></div><p>Help one student, or support a whole cohort. Bring opportunities, applications, and the next steps together.</p></div><div class="provider-audiences" role="group" aria-label="Choose provider preview"><button type="button" data-provider="individual" aria-pressed="true">Individual providers</button><button type="button" data-provider="organization" aria-pressed="false">Organizations</button></div><div class="provider-description"><h3 data-provider-heading>A scholarship with a personal purpose.</h3><p data-provider-description>Turn your wish to help into an opportunity. Set the support you can offer, review students’ stories and documents, and give applicants a clear next step.</p></div><div class="provider-next"><p>Clear criteria. Thoughtful reviews. Decisions made by people.</p><a class="landing-button" data-path="provider-login" href="http://localhost:5000/provider/login">Explore the provider portal <span class="material-symbols-outlined" aria-hidden="true">arrow_forward</span></a></div></div><figure class="provider-film"><video id="providerFilm" controls muted loop playsinline preload="metadata" poster="assets/provider-poster.png" aria-label="Individual provider concept demonstration: create a scholarship, review an application, record an approval"><source src="assets/provider-concept-v2.mp4" type="video/mp4"><track kind="captions" src="assets/provider-concept-v2.vtt" srclang="en" label="English"></video><figcaption data-provider-caption>Individual provider preview · Concept UI · Fictional demonstration data</figcaption></figure></div></section>
+
 <section id="faq-section" class="w-full py-space-2xl bg-surface">
 <div class="max-w-4xl mx-auto px-6 lg:px-12">
 <div class="text-center mb-space-xl">
@@ -782,7 +476,7 @@ h3, h4, .font-headline-sm, .text-headline-sm {
 <p class="font-body-md text-body-md text-on-surface-variant mt-1 scroll-rise stagger-1">Join thousands of scholars and benefactors building the Philippines’ future today.</p>
 </div>
 <div class="flex items-center gap-space-md shrink-0 scroll-rise stagger-2">
-<a class="px-space-xl py-3 rounded-full bg-primary text-on-primary font-label-lg text-label-lg hover:bg-primary-container active:scale-95 transition-all hover:scale-[1.02] pressable-tactile" href="#download-app-section" onclick="openDownloadModal()">
+<a class="px-space-xl py-3 rounded-full bg-primary text-on-primary font-label-lg text-label-lg hover:bg-primary-container active:scale-95 transition-all hover:scale-[1.02] pressable-tactile" href="#how-it-works" onclick="openDownloadModal()">
           Get Started as Scholar
         </a>
 <a class="px-space-xl py-3 rounded-full bg-surface-container-lowest text-secondary font-label-lg text-label-lg shadow-sm hover:bg-surface-container active:scale-95 transition-all hover:scale-[1.02] pressable-tactile" href="#provider-portal-section">
@@ -797,7 +491,7 @@ h3, h4, .font-headline-sm, .text-headline-sm {
 
 
 <!-- DOWNLOAD APP MODAL -->
-<div id="downloadModal" class="hidden fixed inset-0 z-[100] bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 transition-opacity duration-200">
+<div id="downloadModal" role="dialog" aria-modal="true" aria-labelledby="downloadTitle" class="hidden fixed inset-0 z-[100] bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 transition-opacity duration-200">
   <div class="bg-surface-container-lowest rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-2xl border border-outline-variant/30 text-center relative animate-in fade-in zoom-in-95 duration-200" onclick="event.stopPropagation()">
     <button onclick="closeDownloadModal()" class="absolute top-4 right-4 min-w-[44px] min-h-[44px] w-11 h-11 rounded-full bg-surface-container-low hover:bg-surface-container text-on-surface-variant flex items-center justify-center active:scale-95 transition-all" aria-label="Close modal">
       <span class="material-symbols-outlined text-[20px]">close</span>
@@ -805,7 +499,7 @@ h3, h4, .font-headline-sm, .text-headline-sm {
     <div class="w-16 h-16 rounded-2xl bg-primary-fixed/50 flex items-center justify-center text-primary mx-auto mb-4">
       <span class="material-symbols-outlined text-[32px]">smartphone</span>
     </div>
-    <h3 class="font-['Geist'] font-bold text-headline-md text-on-surface mb-2">Get Scholaris Mobile</h3>
+    <h3 id="downloadTitle" class="font-['Geist'] font-bold text-headline-md text-on-surface mb-2">Get Scholaris Mobile</h3>
     <p class="font-body-md text-body-md text-on-surface-variant mb-5 leading-relaxed">
       Discover curated grants, track stipend tranches, and manage your verified credential vault from your pocket.
     </p>
@@ -859,7 +553,7 @@ h3, h4, .font-headline-sm, .text-headline-sm {
 
     <div class="mt-4 pt-3 border-t border-outline-variant/20 flex items-center justify-between text-[11px] text-on-surface-variant">
       <span>Are you a provider?</span>
-      <a href="http://localhost:5000/login" class="text-primary font-bold hover:underline flex items-center gap-1">
+      <a href="http://localhost:5000/provider/login" class="text-primary font-bold hover:underline flex items-center gap-1">
         <span>Go to Provider Console</span>
         <span class="material-symbols-outlined text-[13px]">arrow_forward</span>
       </a>
@@ -942,7 +636,7 @@ h3, h4, .font-headline-sm, .text-headline-sm {
   document.addEventListener('DOMContentLoaded', () => {
     const faqContainer = document.getElementById('faq-container');
     if (faqContainer) {
-      const items = faqContainer.querySelectorAll('& > div');
+      const items = faqContainer.querySelectorAll(':scope > div');
       items.forEach((item, index) => {
         const btn = item.querySelector('button');
         const content = item.querySelector('div:not([class*="flex"])');
@@ -977,24 +671,6 @@ h3, h4, .font-headline-sm, .text-headline-sm {
     setTimeout(() => {
       successMsg.classList.add('hidden');
     }, 4500);
-  }
-
-  // Interactive Marquee Carousel Play / Pause
-  function toggleMarqueeAnimation() {
-    const track = document.querySelector('.marquee-track');
-    const icon = document.getElementById('marqueeToggleIcon');
-    const text = document.getElementById('marqueeToggleText');
-    if (!track) return;
-    const isPaused = track.style.animationPlayState === 'paused';
-    if (isPaused) {
-      track.style.animationPlayState = 'running';
-      if (icon) icon.textContent = 'pause_circle';
-      if (text) text.textContent = 'Pause Carousel';
-    } else {
-      track.style.animationPlayState = 'paused';
-      if (icon) icon.textContent = 'play_circle';
-      if (text) text.textContent = 'Play Carousel';
-    }
   }
 
   // Dynamic Flutter App URL synchronization
@@ -1062,4 +738,7 @@ h3, h4, .font-headline-sm, .text-headline-sm {
   })();
 </script>
 
+<link rel="stylesheet" href="vendor/lenis-1.3.27.css">
+<script src="vendor/lenis-1.3.27.min.js"></script>
+<script src="landing.js"></script>
 </body></html>

@@ -10,7 +10,7 @@ import 'package:flutter/material.dart';
 // --- Color Palette -----------------------------------------------------------
 
 /// Neutral canvas behind the white administration panels.
-const Color kAdminSurface = Color(0xFFFAFAFA);
+const Color kAdminSurface = Color(0xFFF6F8F6);
 
 /// Primary operational green — nav active fill (#0F4D2E), primary CTAs, active highlights.
 const Color kAdminBridgeGreen = Color(0xFF0F4D2E);
@@ -31,7 +31,7 @@ const Color kAdminHairline = Color(0xFFE8E8E8);
 const Color kAdminTextPrimary = Color(0xFF1A1B1F);
 
 /// Muted secondary text for labels and captions (#5E6D66 / #707971).
-const Color kAdminTextSecondary = Color(0xFF64748B);
+const Color kAdminTextSecondary = Color(0xFF5E6D66);
 
 /// White sidebar surface, matching the provider workspace.
 const Color kAdminSidebarBackground = Color(0xFFFFFFFF);
@@ -43,7 +43,7 @@ const Color kAdminActiveNavBackground = Color(0xFF0F4D2E);
 const Color kAdminActiveNavText = Color(0xFFFFFFFF);
 
 /// Inactive navigation item text color (#404942).
-const Color kAdminInactiveNavText = Color(0xFF64748B);
+const Color kAdminInactiveNavText = Color(0xFF5E6D66);
 
 // --- Border Radius Tokens ----------------------------------------------------
 
@@ -73,9 +73,9 @@ const BoxDecoration kAdminCardDecoration = kSoftCardDecoration;
 // --- Typography Helpers ------------------------------------------------------
 
 TextStyle adminHeaderStyle({
-  double fontSize = 18,
-  FontWeight fontWeight = FontWeight.w600,
-  Color color = kAdminNavyTrust,
+  double fontSize = 17,
+  FontWeight fontWeight = FontWeight.w700,
+  Color color = kAdminTextPrimary,
 }) =>
     geist(
       fontSize: fontSize,
@@ -84,7 +84,7 @@ TextStyle adminHeaderStyle({
     );
 
 TextStyle adminLabelStyle({
-  double fontSize = 13.5,
+  double fontSize = 13,
   FontWeight fontWeight = FontWeight.w500,
   Color color = kAdminTextSecondary,
 }) =>
@@ -96,7 +96,7 @@ TextStyle adminLabelStyle({
 
 TextStyle adminBodyStyle({
   double fontSize = 14,
-  FontWeight fontWeight = FontWeight.w600,
+  FontWeight fontWeight = FontWeight.w400,
   Color color = kAdminTextPrimary,
 }) =>
     geist(
@@ -105,7 +105,7 @@ TextStyle adminBodyStyle({
       color: color,
     );
 
-/// Compatibility helper; counts, metrics, timestamps, and IDs use Open Runde.
+/// Compatibility helper; counts, metrics, timestamps, and IDs use Geist.
 TextStyle adminDataMono({
   double fontSize = 13,
   FontWeight fontWeight = FontWeight.w500,
@@ -125,7 +125,7 @@ TextStyle seqTabularFigures(TextStyle base) => base.copyWith(
       ],
     );
 
-/// Open Runde pill container helper for IDs, hashes, and IP addresses.
+/// Geist pill container helper for IDs, hashes, and IP addresses.
 Widget adminIdPill(String idText) => Container(
       padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
       decoration: BoxDecoration(
@@ -152,7 +152,7 @@ const Color kSeqSurfaceContainer = Color(0xFFF0F0F0);
 const Color kSeqSurfaceContainerHigh = Color(0xFFEAEAEA);
 const Color kSeqSurfaceContainerHighest = Color(0xFFE3E3E3);
 const Color kSeqOnSurface = Color(0xFF1A1B1F);
-const Color kSeqOnSurfaceVariant = Color(0xFF64748B);
+const Color kSeqOnSurfaceVariant = Color(0xFF5E6D66);
 const Color kSeqOutline = Color(0xFF5A625B);
 const Color kSeqOutlineVariant = Color(0xFFC0C9C0);
 const Color kSeqPrimary = Color(0xFF00351C);
@@ -183,14 +183,26 @@ const Color kSeqErrorContainer = Color(0xFFFFDAD6);
 const Color kSeqOnErrorContainer = Color(0xFF93000A);
 
 // Shared Geist typography roles
+TextStyle seqPageTitle(
+  BuildContext context, {
+  FontWeight fontWeight = FontWeight.w700,
+  Color color = kSeqOnSurface,
+}) => geist(
+  fontSize: MediaQuery.sizeOf(context).width >= 900 ? 24 : 20,
+  fontWeight: fontWeight,
+  height: 1.2,
+  letterSpacing: -.3,
+  color: color,
+);
+
 TextStyle seqDisplay({
   FontWeight fontWeight = FontWeight.w700,
   Color color = kSeqOnSurface,
 }) =>
     geist(
-      fontSize: 40,
+      fontSize: 28,
       height: 1.15,
-      letterSpacing: -.8,
+      letterSpacing: -.5,
       fontWeight: fontWeight,
       color: color,
     );
@@ -200,9 +212,9 @@ TextStyle seqHeadlineLg({
   Color color = kSeqOnSurface,
 }) =>
     geist(
-      fontSize: 32,
+      fontSize: 24,
       height: 1.2,
-      letterSpacing: -.6,
+      letterSpacing: -.4,
       fontWeight: appTitleWeight(fontWeight, 17),
       color: color,
     );
@@ -212,9 +224,9 @@ TextStyle seqHeadlineMd({
   Color color = kSeqOnSurface,
 }) =>
     geist(
-      fontSize: 24,
+      fontSize: 20,
       height: 1.2,
-      letterSpacing: -.6,
+      letterSpacing: -.4,
       fontWeight: appTitleWeight(fontWeight, 17),
       color: color,
     );
@@ -226,43 +238,43 @@ TextStyle seqHeadlineSm({
     geist(
       fontSize: 17,
       height: 1.25,
-      letterSpacing: -.35,
+      letterSpacing: -.15,
       fontWeight: appTitleWeight(fontWeight, 17),
       color: color,
     );
 
 TextStyle seqBodyLg({
-  FontWeight fontWeight = FontWeight.w600,
-  Color color = kTextSupporting,
-}) =>
-    geist(
-      fontSize: 16,
-      height: 1.4,
-      letterSpacing: -.1,
-      fontWeight: fontWeight,
-      color: color,
-    );
-
-TextStyle seqBodyMd({
-  FontWeight fontWeight = FontWeight.w600,
+  FontWeight fontWeight = FontWeight.w400,
   Color color = kTextSupporting,
 }) =>
     geist(
       fontSize: 14,
       height: 1.4,
-      letterSpacing: -.1,
+      letterSpacing: 0,
+      fontWeight: fontWeight,
+      color: color,
+    );
+
+TextStyle seqBodyMd({
+  FontWeight fontWeight = FontWeight.w400,
+  Color color = kTextSupporting,
+}) =>
+    geist(
+      fontSize: 14,
+      height: 1.4,
+      letterSpacing: 0,
       fontWeight: fontWeight,
       color: color,
     );
 
 TextStyle seqBodySm({
-  FontWeight fontWeight = FontWeight.w600,
+  FontWeight fontWeight = FontWeight.w400,
   Color color = kTextSupporting,
 }) =>
     geist(
       fontSize: 13,
       height: 1.4,
-      letterSpacing: -.1,
+      letterSpacing: 0,
       fontWeight: fontWeight,
       color: color,
     );
@@ -272,9 +284,9 @@ TextStyle seqLabelLg({
   Color color = kSeqOnSurface,
 }) =>
     geist(
-      fontSize: 14,
-      height: 18 / 14,
-      letterSpacing: -0.008 * 14,
+      fontSize: 13,
+      height: 1.4,
+      letterSpacing: 0,
       fontWeight: fontWeight,
       color: color,
     );
@@ -286,19 +298,19 @@ TextStyle seqLabelMd({
     geist(
       fontSize: 12,
       height: 16 / 12,
-      letterSpacing: -0.002 * 12,
+      letterSpacing: 0,
       fontWeight: fontWeight,
       color: color,
     );
 
 TextStyle seqLabelSm({
-  FontWeight fontWeight = FontWeight.w600,
+  FontWeight fontWeight = FontWeight.w500,
   Color color = kSeqOnSurface,
 }) =>
     geist(
-      fontSize: 10,
-      height: 12 / 10,
-      letterSpacing: 0.03 * 10,
+      fontSize: 11,
+      height: 1.4,
+      letterSpacing: 0,
       fontWeight: fontWeight,
       color: color,
     );

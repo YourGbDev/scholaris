@@ -80,7 +80,7 @@ class _ScholarshipQrDialogState extends State<_ScholarshipQrDialog> {
                           s.title,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
-                          style: geist(fontWeight: FontWeight.w800,
+                          style: geist(fontWeight: FontWeight.w700,
                             fontSize: 12.5,
                             color: const Color(0xFF707971),
                           ),
@@ -124,7 +124,7 @@ class _ScholarshipQrDialogState extends State<_ScholarshipQrDialog> {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                 decoration: BoxDecoration(
-                  color: const Color(0xFFF4F3F8),
+                  color: const Color(0xFFF2F4F2),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Row(

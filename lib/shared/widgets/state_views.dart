@@ -4,10 +4,9 @@
 // a consistent, polished state instead of a raw spinner or exception.
 
 import 'package:flutter/material.dart';
+
 import '../theme/app_theme.dart';
 import 'mascot_pose_view.dart';
-
-
 
 class LoadingView extends StatelessWidget {
   const LoadingView({super.key});
@@ -58,10 +57,7 @@ class _LoadingSpinnerState extends State<_LoadingSpinner>
 
   @override
   Widget build(BuildContext context) {
-    return RotationTransition(
-      turns: _rotation,
-      child: const _LoadingArc(),
-    );
+    return RotationTransition(turns: _rotation, child: const _LoadingArc());
   }
 }
 
@@ -70,10 +66,7 @@ class _LoadingArc extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return CustomPaint(
-      size: const Size(32, 32),
-      painter: _LoadingArcPainter(),
-    );
+    return CustomPaint(size: const Size(32, 32), painter: _LoadingArcPainter());
   }
 }
 
@@ -221,54 +214,54 @@ class EmptyView extends StatelessWidget {
             children: [
               visualWidget,
               const SizedBox(height: 16),
-            Text(
-              title,
-              textAlign: TextAlign.center,
-              style: outfit(
-                fontSize: 17,
-                fontWeight: FontWeight.w700,
-                color: kTextPrimary,
-              ),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              message,
-              textAlign: TextAlign.center,
-              style: openSans(
-                fontSize: 13.5,
-                color: kTextSecondary,
-                height: 1.45,
-              ),
-            ),
-            if (actionLabel != null && onAction != null) ...[
-              const SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: onAction,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: kPrimary,
-                  foregroundColor: Colors.white,
-                  elevation: 0,
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 20,
-                    vertical: 12,
-                  ),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                ),
-                child: Text(
-                  actionLabel!,
-                  style: outfit(
-                    fontSize: 13.5,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.white,
-                  ),
+              Text(
+                title,
+                textAlign: TextAlign.center,
+                style: outfit(
+                  fontSize: 17,
+                  fontWeight: FontWeight.w700,
+                  color: kTextPrimary,
                 ),
               ),
+              const SizedBox(height: 8),
+              Text(
+                message,
+                textAlign: TextAlign.center,
+                style: openSans(
+                  fontSize: 13.5,
+                  color: kTextSecondary,
+                  height: 1.45,
+                ),
+              ),
+              if (actionLabel != null && onAction != null) ...[
+                const SizedBox(height: 20),
+                ElevatedButton(
+                  onPressed: onAction,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: kPrimary,
+                    foregroundColor: Colors.white,
+                    elevation: 0,
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 20,
+                      vertical: 12,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
+                  child: Text(
+                    actionLabel!,
+                    style: outfit(
+                      fontSize: 13.5,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+              ],
             ],
-          ],
+          ),
         ),
-      ),
       ),
     );
   }
@@ -296,13 +289,11 @@ class _SearchIconAnimationState extends State<_SearchIconAnimation>
       duration: const Duration(seconds: 1, milliseconds: 400),
       vsync: this,
     )..repeat(reverse: true);
-    _tilt = TweenSequence<double>(
-      [
-        TweenSequenceItem(tween: Tween(begin: 0, end: 0.18), weight: 1),
-        TweenSequenceItem(tween: Tween(begin: 0.18, end: -0.18), weight: 1),
-        TweenSequenceItem(tween: Tween(begin: -0.18, end: 0), weight: 1),
-      ],
-    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
+    _tilt = TweenSequence<double>([
+      TweenSequenceItem(tween: Tween(begin: 0, end: 0.18), weight: 1),
+      TweenSequenceItem(tween: Tween(begin: 0.18, end: -0.18), weight: 1),
+      TweenSequenceItem(tween: Tween(begin: -0.18, end: 0), weight: 1),
+    ]).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
   }
 
   @override
@@ -318,7 +309,11 @@ class _SearchIconAnimationState extends State<_SearchIconAnimation>
       builder: (context, child) {
         return Transform.rotate(
           angle: _tilt.value,
-          child: Icon(widget.icon, size: 24, color: widget.color ?? Colors.white),
+          child: Icon(
+            widget.icon,
+            size: 24,
+            color: widget.color ?? Colors.white,
+          ),
         );
       },
     );
@@ -348,15 +343,16 @@ class ErrorView extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const MascotPoseView(
-              pose: MascotPose.confused,
-              height: 100,
-            ),
+            const MascotPoseView(pose: MascotPose.confused, height: 100),
             const SizedBox(height: 16),
             Text(
               isOffline ? 'No internet connection' : title,
               textAlign: TextAlign.center,
-              style: outfit(fontSize: 18, fontWeight: FontWeight.w700, color: kTextPrimary),
+              style: outfit(
+                fontSize: 17,
+                fontWeight: FontWeight.w700,
+                color: kTextPrimary,
+              ),
             ),
             const SizedBox(height: 8),
             Text(
@@ -364,7 +360,11 @@ class ErrorView extends StatelessWidget {
                   ? 'Please check your Wi-Fi or cellular network settings and try again.'
                   : message,
               textAlign: TextAlign.center,
-              style: openSans(fontSize: 13.5, color: kTextSecondary, height: 1.4),
+              style: openSans(
+                fontSize: 13.5,
+                color: kTextSecondary,
+                height: 1.4,
+              ),
             ),
             if (onRetry != null) ...[
               const SizedBox(height: 20),
@@ -373,8 +373,13 @@ class ErrorView extends StatelessWidget {
                 style: ElevatedButton.styleFrom(
                   backgroundColor: kPrimary,
                   foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 20,
+                    vertical: 12,
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
                   elevation: 0,
                 ),
                 icon: const Icon(Icons.refresh_rounded, size: 18),
@@ -440,11 +445,7 @@ class InlineFormErrorBanner extends StatelessWidget {
                 ],
                 Text(
                   message,
-                  style: openSans(
-                    fontSize: 12.5,
-                    color: kError,
-                    height: 1.35,
-                  ),
+                  style: openSans(fontSize: 12.5, color: kError, height: 1.35),
                 ),
               ],
             ),

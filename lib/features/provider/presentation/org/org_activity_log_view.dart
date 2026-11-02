@@ -1,3 +1,4 @@
+import 'package:scholaris/shared/theme/app_theme.dart' show kSoftCardDecoration;
 // lib/features/provider/presentation/org/org_activity_log_view.dart
 //
 // Institutional Organization Activity Log Tab View.
@@ -244,7 +245,7 @@ class _OrgActivityLogViewState extends ConsumerState<OrgActivityLogView> {
         Text(
           'Organization Activity Log',
           style: orgHeadline(
-            fontSize: isDesktop ? 32 : 26,
+            fontSize: isDesktop ? 24 : 20,
             fontWeight: FontWeight.w700,
             color: kOrgTextPrimary,
           ),
@@ -269,18 +270,7 @@ class _OrgActivityLogViewState extends ConsumerState<OrgActivityLogView> {
 
     return Container(
       padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: kOrgSurfaceWhite,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: const Color(0xFFEEEDF3)),
-        boxShadow: const [
-          BoxShadow(
-            color: Color(0x06000000),
-            blurRadius: 8,
-            offset: Offset(0, 2),
-          ),
-        ],
-      ),
+      decoration: kSoftCardDecoration,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -291,7 +281,7 @@ class _OrgActivityLogViewState extends ConsumerState<OrgActivityLogView> {
                 child: Container(
                   height: 38,
                   decoration: BoxDecoration(
-                    color: const Color(0xFFF4F3F8),
+                    color: const Color(0xFFF2F4F2),
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: TextField(
@@ -343,7 +333,7 @@ class _OrgActivityLogViewState extends ConsumerState<OrgActivityLogView> {
                     ),
                     selected: isSelected,
                     selectedColor: kOrgPrimary,
-                    backgroundColor: const Color(0xFFF4F3F8),
+                    backgroundColor: const Color(0xFFF2F4F2),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8),
                       side: BorderSide(
@@ -368,11 +358,7 @@ class _OrgActivityLogViewState extends ConsumerState<OrgActivityLogView> {
   Widget _buildEmptyState() {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 48, horizontal: 24),
-      decoration: BoxDecoration(
-        color: kOrgSurfaceWhite,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: const Color(0xFFEEEDF3)),
-      ),
+      decoration: kSoftCardDecoration,
       child: Center(
         child: Column(
           children: [
@@ -404,18 +390,7 @@ class _OrgActivityLogViewState extends ConsumerState<OrgActivityLogView> {
 
   Widget _buildLogList(List<OrganizationActivityLog> logs) {
     return Container(
-      decoration: BoxDecoration(
-        color: kOrgSurfaceWhite,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: const Color(0xFFEEEDF3)),
-        boxShadow: const [
-          BoxShadow(
-            color: Color(0x06000000),
-            blurRadius: 8,
-            offset: Offset(0, 2),
-          ),
-        ],
-      ),
+      decoration: kSoftCardDecoration,
       child: ListView.separated(
         shrinkWrap: true,
         physics: const NeverScrollableScrollPhysics(),
@@ -514,7 +489,7 @@ class _OrgActivityLogViewState extends ConsumerState<OrgActivityLogView> {
                             vertical: 6,
                           ),
                           decoration: BoxDecoration(
-                            color: const Color(0xFFF4F3F8),
+                            color: const Color(0xFFF2F4F2),
                             borderRadius: BorderRadius.circular(8),
                           ),
                           child: Text(

@@ -19,14 +19,14 @@ const kOrgInactiveNavText = Color(0xFF404942); // Inactive dark gray nav text
 const kOrgAccentGold = Color(0xFFF1B41E); // Golden Opportunity
 const kOrgAccentGoldContainer = Color(0xFFFEBF2C);
 const kOrgCivicNavy = Color(0xFF1B3A5C); // Data series & tertiary
-const kOrgCanvas = Color(0xFFFFFFFF);
+const kOrgCanvas = Color(0xFFF6F8F6);
 const kOrgSurfaceWhite = Color(0xFFFFFFFF);
 const kOrgBorder = Color(0xFFE5E7EB);
 const kOrgHairline = Color(0xFFE4E7EC);
 const kOrgBorderDark = Color(0xFFD1D5DB);
 const kOrgTextPrimary = Color(0xFF111827);
-const kOrgTextSecondary = Color(0xFF64748B);
-const kOrgTextMuted = Color(0xFF64748B);
+const kOrgTextSecondary = Color(0xFF5E6D66);
+const kOrgTextMuted = Color(0xFF5E6D66);
 const kOrgError = Color(0xFFBA1A1A);
 const kOrgSuccess = Color(0xFF27C93F);
 
@@ -58,7 +58,7 @@ const List<BoxShadow> kOrgCardShadow = kCardElevationCrisp;
 
 // Typography Helpers for the shared Geist hierarchy
 TextStyle orgHeadline({
-  double fontSize = 18,
+  double fontSize = 17,
   FontWeight fontWeight = FontWeight.w700,
   Color color = kOrgTextPrimary,
   double? letterSpacing,
@@ -68,13 +68,14 @@ TextStyle orgHeadline({
       fontSize: fontSize,
       fontWeight: appTitleWeight(fontWeight, fontSize),
       color: color,
-      letterSpacing: letterSpacing ?? -.6,
+      letterSpacing: letterSpacing ??
+          (fontSize >= 20 ? -.3 : -.15),
       height: height ?? 1.2,
     );
 
 TextStyle orgBody({
   double fontSize = 13.5,
-  FontWeight fontWeight = FontWeight.w600,
+  FontWeight fontWeight = FontWeight.w400,
   Color color = kOrgTextPrimary,
   double? letterSpacing,
   double? height,
@@ -83,12 +84,12 @@ TextStyle orgBody({
       fontSize: fontSize,
       fontWeight: fontWeight,
       color: color,
-      letterSpacing: letterSpacing ?? -.1,
+      letterSpacing: letterSpacing ?? 0,
       height: height ?? 1.4,
     );
 
 TextStyle orgLabel({
-  double fontSize = 11.5,
+  double fontSize = 12,
   FontWeight fontWeight = FontWeight.w500,
   Color color = kOrgTextSecondary,
   double? letterSpacing,
@@ -98,7 +99,7 @@ TextStyle orgLabel({
       fontSize: fontSize,
       fontWeight: fontWeight,
       color: color,
-      letterSpacing: letterSpacing ?? -.1,
+      letterSpacing: letterSpacing ?? 0,
       height: height ?? 1.3,
     );
 
@@ -126,7 +127,7 @@ TextStyle orgTabularFigures(TextStyle base) => base.copyWith(
 Widget orgIdPill(String idText) => Container(
       padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
       decoration: BoxDecoration(
-        color: const Color(0xFFF4F3F8),
+        color: const Color(0xFFF2F4F2),
         borderRadius: BorderRadius.circular(6),
         border: Border.all(color: kOrgHairline),
       ),

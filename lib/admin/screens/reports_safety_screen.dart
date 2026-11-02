@@ -176,7 +176,7 @@ class _ReportsSafetyScreenState extends ConsumerState<ReportsSafetyScreen> {
         context: context,
         builder: (ctx) => AlertDialog(
           title: Text(group.scholarshipTitle,
-              style: const TextStyle(fontWeight: FontWeight.w800)),
+              style: const TextStyle(fontWeight: FontWeight.w700)),
           content: SizedBox(
             width: 600,
             child: SingleChildScrollView(
@@ -540,7 +540,7 @@ class _ReportsSafetyScreenState extends ConsumerState<ReportsSafetyScreen> {
                 Text(
                   g.scholarshipTitle,
                   style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                    fontWeight: FontWeight.w800,
+                    fontWeight: FontWeight.w700,
                   ),
                 ),
                 const SizedBox(height: 4),

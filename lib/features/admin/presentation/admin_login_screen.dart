@@ -367,7 +367,7 @@ class _AdminLoginScreenState extends ConsumerState<AdminLoginScreen> {
                                   Text(
                                     'Scholaris Admin Console',
                                     style: geist(
-                                      fontSize: 22,
+                                      fontSize: 20,
                                       fontWeight: FontWeight.bold,
                                       color: Colors.white,
                                       letterSpacing: -0.3,

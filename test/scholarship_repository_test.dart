@@ -20,7 +20,8 @@ void main() {
       final dostRow = FakeScholarshipDataSource.defaultRows.firstWhere((r) => r['id'] == 'sch-dost');
       expect(scholarships[0].deadline, DateTime.parse(dostRow['deadline'] as String));
       expect(scholarships[1].id, 'sch-ched');
-      expect(scholarships[1].deadline, DateTime(2026, 11, 30));
+      final chedRow = FakeScholarshipDataSource.defaultRows.firstWhere((r) => r['id'] == 'sch-ched');
+      expect(scholarships[1].deadline, DateTime.parse(chedRow['deadline'] as String));
       // Inactive row is excluded by the repository's data source contract.
       expect(scholarships.map((s) => s.id), isNot(contains('sch-inactive')));
     });

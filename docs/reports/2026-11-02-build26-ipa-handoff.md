@@ -3,8 +3,8 @@
 **Release Date & Time:** 2026-11-03T00:26:00+08:00  
 **Build Target:** Student Experience (iOS Release `.ipa`)  
 **UI Source Base Commit:** [`31a7f2fe38eb4e7505488c5283b307f75a069b2f`](https://github.com/YourGbDev/scholaris/commit/31a7f2fe38eb4e7505488c5283b307f75a069b2f)  
-**Test Fixes Commit:** [`d08585a0c325e64883ba526ea250f22f7b8ca5a2`](https://github.com/YourGbDev/scholaris/commit/d08585a0c325e64883ba526ea250f22f7b8ca5a2)  
-**Exact Release Commit SHA:** [`fbfd372e38b3400a4ceccdfc6692dc56aee0eeb5`](https://github.com/YourGbDev/scholaris/commit/fbfd372e38b3400a4ceccdfc6692dc56aee0eeb5)  
+**Test Fixes Commit:** [`d08585a904b5611390777ca4991a2b138e91ea61`](https://github.com/YourGbDev/scholaris/commit/d08585a904b5611390777ca4991a2b138e91ea61)  
+**Exact Release Commit SHA:** [`fbfd3728e5a80da2322f90bfdf0e98e3edc737c3`](https://github.com/YourGbDev/scholaris/commit/fbfd3728e5a80da2322f90bfdf0e98e3edc737c3)  
 **Version / Build:** `1.0.0+26`  
 **Branch:** `codex/auth-tour-polish`  
 **GitHub Actions Run:** [41475477781](https://github.com/YourGbDev/scholaris/actions/runs/41475477781)  

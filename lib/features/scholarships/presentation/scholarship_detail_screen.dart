@@ -865,11 +865,9 @@ class _CapacityStatusCard extends ConsumerWidget {
 
         return Container(
           decoration: kSoftCardDecoration.copyWith(
-            border: Border.all(
-              color: isFull
-                  ? const Color(0xFFFFCDD2)
-                  : kHairlineBorderSide.color,
-            ),
+            border: isFull
+                ? Border.all(color: const Color(0xFFFFCDD2))
+                : kCardBorderCrisp,
           ),
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
           child: Column(

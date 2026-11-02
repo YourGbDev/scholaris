@@ -9,6 +9,8 @@ import 'package:scholaris/features/auth/presentation/forgot_password_screen.dart
 import 'package:scholaris/features/intro/presentation/intro_screen.dart';
 import 'package:scholaris/features/onboarding/presentation/onboarding_screen.dart';
 import 'package:scholaris/shared/theme/app_theme.dart';
+import 'package:scholaris/features/provider/presentation/provider_login_screen.dart';
+import 'package:scholaris/features/provider/presentation/provider_signup_screen.dart';
 
 void main() {
   final params = Uri.base.queryParameters;
@@ -31,6 +33,8 @@ void main() {
         builder: (_, _) => const LoginScreen(showProviderCta: true),
       ),
       GoRoute(path: '/signup', builder: (_, _) => const SignupScreen()),
+      GoRoute(path: '/provider-login', builder: (_, _) => const ProviderLoginScreen()),
+      GoRoute(path: '/provider-signup', builder: (_, _) => const ProviderSignupScreen()),
       GoRoute(
         path: '/forgot-password',
         builder: (_, _) => const ForgotPasswordScreen(),

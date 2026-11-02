@@ -82,7 +82,7 @@ const Color kInverseSurface = Color(0xFF2A303D);
 const Color kInverseOnSurface = Color(0xFFECF0FF);
 const Color kOutline = Color(0xFF707971);
 const Color kOutlineVariant = Color(0xFFC0C9C0);
-const Color kBorderLight = Color(0xFFE2E8E5);
+const Color kBorderLight = Color(0xFFE2E4E3);
 const Color kPrimaryLight = Color(0xFFB3F1C6);
 
 const Color kTextPrimary = Color(0xFF111827);
@@ -112,17 +112,17 @@ const double kSpaceMd = 24.0;
 
 const Color kCardShadow = Color(0x0A1B3A5C);
 
-/// Faint neutral outline shared by the soft content-card surfaces.
+/// Neutral outline that keeps white cards distinct on a white canvas.
 const BorderSide kHairlineBorderSide = BorderSide(
-  color: Color(0x0A161C27),
-  width: 0.5,
+  color: Color(0xFFE2E4E3),
+  width: 0.75,
 );
 
 const Border kCardBorderCrisp = Border.fromBorderSide(kHairlineBorderSide);
 
 /// Shared soft elevation, matching the scholarship program cards.
 const List<BoxShadow> kCardElevationCrisp = [
-  BoxShadow(color: Color(0x050F172A), blurRadius: 16, offset: Offset(0, 4)),
+  BoxShadow(color: Color(0x08000000), blurRadius: 16, offset: Offset(0, 4)),
 ];
 
 /// Default for full-size content cards; status borders can override the border.

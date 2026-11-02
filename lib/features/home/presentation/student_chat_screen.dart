@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../shared/theme/app_theme.dart';
 import '../../applications/presentation/widgets/document_upload_sheet.dart';
@@ -9,14 +8,6 @@ import '../../profile/providers/profile_setup_provider.dart';
 import '../../scholarships/presentation/scholarship_qr_scanner_screen.dart';
 import 'home_screen.dart' show homeTabIndexProvider;
 import 'student_chat_guide.dart';
-
-final _chatGuideSeenProvider = FutureProvider.autoDispose.family<bool, String>((
-  ref,
-  user,
-) async {
-  final prefs = await SharedPreferences.getInstance();
-  return prefs.getBool('student_chat_guide_v1_$user') ?? false;
-});
 
 class StudentChatScreen extends ConsumerStatefulWidget {
   const StudentChatScreen({super.key});
@@ -35,30 +26,10 @@ class _StudentChatScreenState extends ConsumerState<StudentChatScreen> {
     super.dispose();
   }
 
-  Future<void> _finish(String user) async {
-    setState(() {
-      _dismissedUser = user;
-      _replayUser = null;
-    });
-    try {
-      final prefs = await SharedPreferences.getInstance();
-      if (!await prefs.setBool('student_chat_guide_v1_$user', true)) {
-        throw StateError('Preference not saved');
-      }
-      if (mounted) ref.invalidate(_chatGuideSeenProvider(user));
-    } catch (_) {
-      if (mounted && ref.read(currentProfileProvider).valueOrNull?.id == user) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              'Guide closed. We could not save this preference on this device.',
-              style: geist(fontSize: 13, color: Colors.white),
-            ),
-          ),
-        );
-      }
-    }
-  }
+  void _finish(String user) => setState(() {
+    _dismissedUser = user;
+    _replayUser = null;
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -67,11 +38,8 @@ class _StudentChatScreenState extends ConsumerState<StudentChatScreen> {
     });
     final profile = ref.watch(currentProfileProvider).valueOrNull;
     final user = profile?.id;
-    final seen = user == null ? null : ref.watch(_chatGuideSeenProvider(user));
     final guide =
-        user != null &&
-        (_replayUser == user ||
-            (seen?.valueOrNull == false && _dismissedUser != user));
+        user != null && (_replayUser == user || _dismissedUser != user);
     final name = profile?.fullName.trim() ?? '';
     final first = name.isEmpty ? 'there' : name.split(RegExp(r'\s+')).first;
     return Scaffold(
@@ -110,7 +78,8 @@ class _StudentChatScreenState extends ConsumerState<StudentChatScreen> {
         child: Center(
           child: ConstrainedBox(
             constraints: const BoxConstraints(maxWidth: 680),
-            child: user != null && seen?.isLoading == true && !guide
+            child:
+                profile == null && ref.watch(currentProfileProvider).isLoading
                 ? const Center(child: CircularProgressIndicator())
                 : guide
                 ? StudentChatGuide(

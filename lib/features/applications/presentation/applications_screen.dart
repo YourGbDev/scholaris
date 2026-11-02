@@ -1096,12 +1096,9 @@ class _ApplicationCard extends StatelessWidget {
             child: Container(
               padding: const EdgeInsets.all(20),
               decoration: kSoftCardDecoration.copyWith(
-                border: Border.all(
-                  color: isApproved
-                      ? const Color(0xFFB3F1C6)
-                      : kHairlineBorderSide.color,
-                  width: .5,
-                ),
+                border: isApproved
+                    ? Border.all(color: const Color(0xFFB3F1C6), width: .5)
+                    : kCardBorderCrisp,
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,

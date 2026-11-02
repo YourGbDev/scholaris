@@ -17,6 +17,7 @@ void main() {
     String name = 'Alex Reyes',
     double scale = 1,
     bool seen = true,
+    bool enterChat = true,
     String userId = 'student',
   }) async {
     SharedPreferences.setMockInitialValues(
@@ -51,7 +52,30 @@ void main() {
     await tester.pumpAndSettle();
     await tester.tap(find.text('Chat'));
     await tester.pumpAndSettle();
+    if (seen && enterChat) {
+      await tester.tap(find.text('Skip'));
+      await tester.pumpAndSettle();
+    }
   }
+
+  testWidgets(
+    'chat intro returns on every opening even after saved completion',
+    (tester) async {
+      await openChat(tester, enterChat: false);
+      expect(find.text('Meet Ari'), findsOneWidget);
+      await tester.tap(find.text('Skip'));
+      await tester.pumpAndSettle();
+      expect(find.byType(TextField), findsOneWidget);
+      await tester.tap(find.byTooltip('Back'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Open actions'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Chat'));
+      await tester.pumpAndSettle();
+      expect(find.text('Meet Ari'), findsOneWidget);
+      expect(find.text('1 of 3'), findsOneWidget);
+    },
+  );
 
   for (final gender in ['Male', 'Female']) {
     testWidgets(
@@ -130,7 +154,7 @@ void main() {
     },
   );
 
-  testWidgets('first use finishes only on skip or final start and can replay', (
+  testWidgets('each visit can finish on skip or final start and replay', (
     tester,
   ) async {
     await openChat(tester, seen: false, gender: 'Male');
@@ -146,7 +170,7 @@ void main() {
     expect(find.text('Tools for your next step'), findsOneWidget);
     await tester.tap(find.text('Start chat'));
     await tester.pumpAndSettle();
-    expect(prefs.getBool('student_chat_guide_v1_student'), isTrue);
+    expect(prefs.getBool('student_chat_guide_v1_student'), isNull);
     expect(find.byType(TextField), findsOneWidget);
     await tester.tap(find.byTooltip('Chat help'));
     await tester.pumpAndSettle();
@@ -156,12 +180,12 @@ void main() {
     expect(find.byType(TextField), findsOneWidget);
   });
 
-  testWidgets('completion is scoped to the current profile', (tester) async {
+  testWidgets('skipping does not persist a completion flag', (tester) async {
     await openChat(tester, seen: false, userId: 'second');
     await tester.tap(find.text('Skip'));
     await tester.pumpAndSettle();
     final prefs = await SharedPreferences.getInstance();
-    expect(prefs.getBool('student_chat_guide_v1_second'), isTrue);
+    expect(prefs.getBool('student_chat_guide_v1_second'), isNull);
     expect(prefs.getBool('student_chat_guide_v1_student'), isNull);
   });
 
@@ -214,6 +238,8 @@ void main() {
         child: MaterialApp.router(routerConfig: router),
       ),
     );
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Skip'));
     await tester.pumpAndSettle();
     await tester.tap(find.text('Find scholarships'));
     await tester.pumpAndSettle();

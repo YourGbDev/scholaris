@@ -295,33 +295,10 @@ class _ProviderLoginScreenState extends ConsumerState<ProviderLoginScreen> {
     final isLocked = _lockoutStatus?.isLocked ?? false;
 
     return Scaffold(
-      backgroundColor: const Color(0xFFFAF9FE),
+      backgroundColor: Colors.white,
       body: SafeArea(
         child: Stack(
           children: [
-            // Spatial ambience glow
-            Positioned(
-              top: -120,
-              left: 0,
-              right: 0,
-              child: Center(
-                child: Container(
-                  width: 720,
-                  height: 360,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    gradient: RadialGradient(
-                      colors: [
-                        const Color(0xFF0F4D2E).withValues(alpha: 0.12),
-                        const Color(0xFF0F4D2E).withValues(alpha: 0.03),
-                        Colors.transparent,
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-            ),
-
             // Main scrollable canvas
             SingleChildScrollView(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
@@ -337,20 +314,7 @@ class _ProviderLoginScreenState extends ConsumerState<ProviderLoginScreen> {
 
                       // Main Workstation Card
                       Container(
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(24),
-                          border: Border.all(
-                            color: const Color(0xFF1A1B1F).withValues(alpha: 0.06),
-                          ),
-                          boxShadow: const [
-                            BoxShadow(
-                              color: Color(0x0A000000),
-                              blurRadius: 20,
-                              offset: Offset(0, 4),
-                            ),
-                          ],
-                        ),
+                        decoration: kSoftCardDecoration,
                         padding: const EdgeInsets.all(24),
                         child: Form(
                           key: _formKey,
@@ -425,7 +389,7 @@ class _ProviderLoginScreenState extends ConsumerState<ProviderLoginScreen> {
         color: Colors.white.withValues(alpha: 0.85),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: const Color(0xFF1A1B1F).withValues(alpha: 0.06),
+          color: kBorderLight,
         ),
       ),
       child: Row(
@@ -495,6 +459,7 @@ class _ProviderLoginScreenState extends ConsumerState<ProviderLoginScreen> {
           decoration: BoxDecoration(
             color: const Color(0xFFE8ECE8),
             borderRadius: BorderRadius.circular(14),
+            border: kCardBorderCrisp,
           ),
           child: Row(
             children: [
@@ -767,7 +732,11 @@ class _ProviderLoginScreenState extends ConsumerState<ProviderLoginScreen> {
                 const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(10),
-              borderSide: BorderSide.none,
+              borderSide: kHairlineBorderSide,
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(10),
+              borderSide: kHairlineBorderSide,
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(10),
@@ -850,7 +819,11 @@ class _ProviderLoginScreenState extends ConsumerState<ProviderLoginScreen> {
                 const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(10),
-              borderSide: BorderSide.none,
+              borderSide: kHairlineBorderSide,
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(10),
+              borderSide: kHairlineBorderSide,
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(10),
@@ -1258,7 +1231,7 @@ class _ProviderLoginScreenState extends ConsumerState<ProviderLoginScreen> {
         color: Colors.white,
         borderRadius: BorderRadius.circular(10),
         border: Border.all(
-          color: const Color(0xFF1A1B1F).withValues(alpha: 0.05),
+          color: kBorderLight,
         ),
       ),
       child: Row(

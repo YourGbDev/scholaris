@@ -78,8 +78,8 @@ void main() {
           .where((d) => d.border != null);
       expect(outlines, hasLength(2));
       for (final outline in outlines) {
-        expect(outline.border!.top.width, .8);
-        expect(outline.border!.top.color, const Color(0xA6FFFFFF));
+        expect(outline.border!.top.width, .75);
+        expect(outline.border!.top.color, const Color(0xFFD4DAD7));
       }
       final label = tester.widget<Text>(find.text('Home'));
       expect(label.style!.fontSize, 10.5);

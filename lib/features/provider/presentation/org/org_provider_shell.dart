@@ -130,12 +130,19 @@ class _OrgProviderShellState extends ConsumerState<OrgProviderShell> {
   Widget build(BuildContext context) {
     final membership = ref.watch(organizationMembershipProvider);
     if (membership.isLoading) {
-      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+      return const Scaffold(
+        backgroundColor: kOrgCanvas,
+        body: Center(child: CircularProgressIndicator()),
+      );
     }
     final identity = ref.watch(providerSubRoleProvider);
     if (identity.role == ProviderSubRole.unavailable) {
       return Scaffold(
-        appBar: AppBar(title: const Text('Organization access')),
+        backgroundColor: kOrgCanvas,
+        appBar: AppBar(
+          backgroundColor: kOrgCanvas,
+          title: const Text('Organization access'),
+        ),
         body: Center(
           child: Column(
             mainAxisSize: MainAxisSize.min,

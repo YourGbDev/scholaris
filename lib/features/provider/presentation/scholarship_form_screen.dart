@@ -256,7 +256,7 @@ class _ScholarshipFormScreenState extends ConsumerState<ScholarshipFormScreen> {
     final titleText = widget.isEditing ? 'Edit Scholarship' : 'New Scholarship';
 
     return Scaffold(
-      backgroundColor: kBackground,
+      backgroundColor: Colors.white,
       appBar: AppBar(
         title: Text(
           titleText,
@@ -266,7 +266,7 @@ class _ScholarshipFormScreenState extends ConsumerState<ScholarshipFormScreen> {
             color: kPrimary,
           ),
         ),
-        backgroundColor: kBackground,
+        backgroundColor: Colors.white,
         elevation: 0,
         scrolledUnderElevation: 0,
         leading: IconButton(

@@ -375,14 +375,10 @@ class StudentNotificationsSheet extends ConsumerWidget {
         color: Colors.transparent,
         child: InkWell(
           onTap: item.onTap,
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(kRadiusCard),
           child: Container(
             padding: const EdgeInsets.all(14),
-            decoration: BoxDecoration(
-              color: const Color(0xFFFAFAFA),
-              borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: const Color(0xFFE5E7EB)),
-            ),
+            decoration: kSoftCardDecoration,
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [

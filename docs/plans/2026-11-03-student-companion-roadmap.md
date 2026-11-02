@@ -7,7 +7,7 @@ User-approved November 3, 2026.
 - Quiet student surfaces from the preceding polish remain.
 - Fix reproduced bookmark layout flicker and pending/error/concurrent-save state.
 - Repair existing Profile Edit routing rather than shipping a visible dead action. Existing validated personal, academic and financial forms now support save/cancel and return to Profile; initial setup stays a separate flow. Formal increment-four requirement is unconfirmed without the official rubric.
-- Three short skippable chat introduction screens, first-use completion per profile, replay from help, new transparent chest-up welcome/explain/tools poses for both companions.
+- Three short skippable chat introduction screens shown on EVERY Chat opening (latest November 3 user instruction), replay from help, new transparent chest-up welcome/explain/tools poses for both companions. Skip/Start dismiss only for that visit; ignore old completion preferences.
 - Explicit identity exception: boys see Ari in chat after Ariel's Home/tour; girls see Ariel in chat after Ari's Home/tour. Do not change the Home companion.
 - QR, upload and Find scholarships remain visible shortcuts with concise explanations and existing functional destinations. No duplicate full tutorial on every tool tap. AI replies are not connected and Send remains unavailable.
 

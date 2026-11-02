@@ -21,9 +21,11 @@ Every app-owned text surface (including landing, student, provider, super admin,
 
 ## Consistent content-card surfaces
 
-- Full-size content cards use the shared scholarship-card treatment: `kRadiusCard` (26 px), `kCardBorderCrisp` (faint 0.5 px border), and `kCardElevationCrisp` (soft ambient shadow). Reuse `kSoftCardDecoration` rather than introducing another neutral card style.
+- Full-size content cards use the shared scholarship-card treatment: `kRadiusCard` (26 px), `kCardBorderCrisp` (0.75 px neutral-gray border, strengthened November 3 for visibility on white), and `kCardElevationCrisp` (soft ambient shadow). Reuse `kSoftCardDecoration` rather than introducing another neutral card style.
 - Keep outer Material/InkWell/clip corners aligned with the card decoration. Preserve meaningful status borders and colors. Buttons, fields, pills, icon containers and nested rows keep their purpose-specific shapes; they are not full-size cards.
 - Use the shared card tokens in role-specific themes as well. Verify narrow layouts and enlarged text when changing padding.
+- White search fields and light controls must retain visible neutral edges. Keep purpose-specific shapes and semantic status colors. Header notification/settings shortcuts use the shared glass material with a visible rim on white and a solid high-contrast fallback; do not replace them with a borderless white capsule.
+- Provider entry pages and workspace canvases use white, including loading/access-error surfaces. Student authentication/recovery pages retain their white canvas and outlined fields. Landing keeps its existing warm off-white section canvas; do not flatten its composition as a side effect of app surface changes.
 
 ## Quiet student surfaces
 
@@ -51,3 +53,7 @@ Every app-owned text surface (including landing, student, provider, super admin,
 ## Mascot identity
 
 - Ariel is the male mascot; Ari is the female mascot. Resolve both name and artwork from the student's stored gender using the shared mascot helpers. Tour/Home keep this matching identity. User-approved November 3 exception: Chat introduces the OTHER companion (male/unset student → Ari, female student → Ariel), with the matching new chest-up chat artwork. Chat must not change the Home/tour identity.
+
+## Chat guide presentation
+
+- User-approved November 3: show all three chat introduction screens whenever Chat is opened, including returning users with an old completion preference. Skip and Start chat dismiss the guide for that visit only; Help can replay it. Preserve all six bust poses and the opposite-companion pairing. Do not restore first-use-only behavior without user approval.

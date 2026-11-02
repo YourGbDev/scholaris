@@ -118,7 +118,7 @@ void main() {
 
         // In high contrast mode, LiquidGlass must NOT be rendered in the nav dock
         final liquidGlassInStack = find.descendant(
-          of: find.byType(Stack),
+          of: find.byType(StudentBottomNav),
           matching: find.byType(LiquidGlassPill),
         );
         expect(
@@ -157,7 +157,7 @@ void main() {
 
         // Reduced motion preserves glass (distinguished from high contrast transparency removal)
         final liquidGlassInStack = find.descendant(
-          of: find.byType(Stack),
+          of: find.byType(StudentBottomNav),
           matching: find.byType(LiquidGlassPill),
         );
         expect(

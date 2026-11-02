@@ -84,12 +84,12 @@ class _ProviderApplicationDetailScreenState
     if (app == null) {
       if (incomingAppsAsync.isLoading) {
         return const Scaffold(
-          backgroundColor: kBackground,
+          backgroundColor: Colors.white,
           body: Center(child: LoadingView()),
         );
       }
       return Scaffold(
-        backgroundColor: kBackground,
+        backgroundColor: Colors.white,
         appBar: AppBar(title: const Text('Application Review')),
         body: const Center(
           child: EmptyView(
@@ -108,7 +108,7 @@ class _ProviderApplicationDetailScreenState
             );
 
     return Scaffold(
-      backgroundColor: kBackground,
+      backgroundColor: Colors.white,
       appBar: AppBar(
         title: Text(
           'Application Review',

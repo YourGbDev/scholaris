@@ -740,6 +740,7 @@ class ProfileTabScreen extends ConsumerWidget {
         decoration: BoxDecoration(
           color: kStudentSurfaceSubtle,
           borderRadius: BorderRadius.circular(14),
+          border: kCardBorderCrisp,
         ),
         child: Text(
           'Edit',

@@ -489,7 +489,7 @@ class _ProviderSignupScreenState extends ConsumerState<ProviderSignupScreen> {
     final isIndividual = _providerType == 'individual';
 
     return Scaffold(
-      backgroundColor: const Color(0xFFFAF9FE),
+      backgroundColor: Colors.white,
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
@@ -512,20 +512,7 @@ class _ProviderSignupScreenState extends ConsumerState<ProviderSignupScreen> {
 
                   // Card container
                   Container(
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(24),
-                      border: Border.all(
-                        color: const Color(0xFF1A1B1F).withValues(alpha: 0.06),
-                      ),
-                      boxShadow: const [
-                        BoxShadow(
-                          color: Color(0x0A000000),
-                          blurRadius: 20,
-                          offset: Offset(0, 4),
-                        ),
-                      ],
-                    ),
+                    decoration: kSoftCardDecoration,
                     padding: EdgeInsets.all(
                       MediaQuery.sizeOf(context).width < 400 ? 18 : 28,
                     ),
@@ -670,6 +657,7 @@ class _ProviderSignupScreenState extends ConsumerState<ProviderSignupScreen> {
       decoration: BoxDecoration(
         color: const Color(0xFFE8ECE8),
         borderRadius: BorderRadius.circular(14),
+        border: kCardBorderCrisp,
       ),
       child: Row(
         children: [
@@ -2144,7 +2132,11 @@ class _ProviderSignupScreenState extends ConsumerState<ProviderSignupScreen> {
       contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(10),
-        borderSide: BorderSide.none,
+        borderSide: kHairlineBorderSide,
+      ),
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(10),
+        borderSide: kHairlineBorderSide,
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(10),
@@ -2408,20 +2400,7 @@ class _ProviderSignupScreenState extends ConsumerState<ProviderSignupScreen> {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(24),
-        border: Border.all(
-          color: const Color(0xFF1A1B1F).withValues(alpha: 0.08),
-        ),
-        boxShadow: const [
-          BoxShadow(
-            color: Color(0x08000000),
-            blurRadius: 16,
-            offset: Offset(0, 4),
-          ),
-        ],
-      ),
+      decoration: kSoftCardDecoration,
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [

@@ -693,8 +693,8 @@ class _DeadlineChip extends StatelessWidget {
       fg = const Color(0xFFC62828);
       icon = Icons.hourglass_top_rounded;
     } else {
-      bg = const Color(0xFFF4F6F8);
-      fg = const Color(0xFF436084);
+      bg = const Color(0xFFEDF1F5);
+      fg = const Color(0xFF344E6B);
       icon = Icons.event_rounded;
     }
 
@@ -704,7 +704,7 @@ class _DeadlineChip extends StatelessWidget {
         color: bg,
         borderRadius: BorderRadius.circular(6),
         border: Border.all(
-          color: urgent ? const Color(0x33FF6F59) : const Color(0x0A161C27),
+          color: urgent ? const Color(0xFFE8B9B3) : const Color(0xFFCDD5DF),
           width: 0.75,
         ),
       ),
@@ -740,7 +740,7 @@ class _AppliedChip extends StatelessWidget {
       decoration: BoxDecoration(
         color: const Color(0xFFD7F0DF),
         borderRadius: BorderRadius.circular(6),
-        border: Border.all(color: const Color(0x0A161C27), width: 0.5),
+        border: Border.all(color: const Color(0xFFB9D8C5), width: .75),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,

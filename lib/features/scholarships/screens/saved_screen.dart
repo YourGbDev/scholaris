@@ -436,18 +436,7 @@ class _SavedEmptyState extends ConsumerWidget {
           // Hero Card with Dual Concentric Halo
           Container(
             padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: const Color(0xFFE2E8E5), width: 1.0),
-              boxShadow: const [
-                BoxShadow(
-                  color: Color(0x081B3A5C),
-                  blurRadius: 16,
-                  offset: Offset(0, 4),
-                ),
-              ],
-            ),
+            decoration: kSoftCardDecoration,
             child: Column(
               children: [
                 // Consoling Mascot Hero

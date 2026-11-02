@@ -1,3 +1,4 @@
+import '../../../../shared/theme/app_theme.dart' show kSoftCardDecoration;
 import 'individual_support_summary.dart';
 
 import 'package:flutter/material.dart';
@@ -162,18 +163,7 @@ class ProviderOverviewPanel extends StatelessWidget {
         final heroCard = Container(
           width: double.infinity,
           padding: EdgeInsets.all(compact ? 18 : 20),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(26),
-            border: Border.all(color: const Color(0xFFF0F0F0)),
-            boxShadow: const [
-              BoxShadow(
-                color: Color(0x08000000),
-                blurRadius: 20,
-                offset: Offset(0, 4),
-              ),
-            ],
-          ),
+          decoration: kSoftCardDecoration,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -212,10 +202,7 @@ class ProviderOverviewPanel extends StatelessWidget {
                     : hasActiveScholarship
                     ? 'You’re all caught up'
                     : 'Start your first scholarship',
-                style: orgHeadline(
-                  fontSize: 17,
-                  color: kOrgPrimary,
-                ),
+                style: orgHeadline(fontSize: 17, color: kOrgPrimary),
               ),
               const SizedBox(height: 6),
               Text(
@@ -432,7 +419,10 @@ class ProviderOverviewPanel extends StatelessWidget {
                                   children: [
                                     Text(
                                       scholarship.title,
-                                      style: orgHeadline(fontWeight: FontWeight.w700, fontSize: 15),
+                                      style: orgHeadline(
+                                        fontWeight: FontWeight.w700,
+                                        fontSize: 15,
+                                      ),
                                     ),
                                     const SizedBox(height: 8),
                                     Text(

@@ -20,7 +20,9 @@ import 'package:scholaris/features/auth/controllers/auth_controller.dart';
 import 'package:scholaris/features/profile/models/student_profile.dart';
 import 'package:scholaris/features/profile/presentation/profile_tab_screen.dart';
 import 'package:scholaris/features/profile/providers/profile_setup_provider.dart';
+
 import 'helpers/fake_account_data_source.dart';
+import 'helpers/load_app_fonts.dart';
 
 /// Controllable auth session notifier; initial state comes from build() so it
 /// is bound before any widget reads it.
@@ -36,28 +38,23 @@ class _TestAuthNotifier extends AuthSessionNotifier {
   final bool emailConfirmed;
 
   @override
-  AuthSession? build() => AuthSession(
-        userId: userId,
-        email: email,
-        emailConfirmed: emailConfirmed,
-      );
+  AuthSession? build() =>
+      AuthSession(userId: userId, email: email, emailConfirmed: emailConfirmed);
 }
 
 StudentProfile _profile() => const StudentProfile(
-      id: 'user-a',
-      fullName: 'Maria Santos',
-      nationality: 'Filipino',
-      region: 'NCR',
-      gpa: 3.2,
-      yearLevel: 2,
-      course: 'BS Computer Science',
-      monthlyFamilyIncome: 15000,
-      setupComplete: true,
-    );
+  id: 'user-a',
+  fullName: 'Maria Santos',
+  nationality: 'Filipino',
+  region: 'NCR',
+  gpa: 3.2,
+  yearLevel: 2,
+  course: 'BS Computer Science',
+  monthlyFamilyIncome: 15000,
+  setupComplete: true,
+);
 
-Widget _harness({
-  required Future<StudentProfile?> Function() profileFactory,
-}) {
+Widget _harness({required Future<StudentProfile?> Function() profileFactory}) {
   final auth = _TestAuthNotifier(
     userId: 'user-a',
     email: 'a@b.com',
@@ -83,20 +80,24 @@ Widget _harness({
 }
 
 void main() {
-  setUpAll(() {
+  setUpAll(() async {
     GoogleFonts.config.allowRuntimeFetching = false;
+    await loadAppFonts();
   });
 
-  testWidgets('profile remains readable on a narrow phone with larger text',
-      (tester) async {
+  testWidgets('profile remains readable on a narrow phone with larger text', (
+    tester,
+  ) async {
     tester.view.physicalSize = const Size(320, 800);
     tester.view.devicePixelRatio = 1.0;
     addTearDown(tester.view.reset);
 
-    await tester.pumpWidget(MediaQuery(
-      data: const MediaQueryData(textScaler: TextScaler.linear(1.3)),
-      child: _harness(profileFactory: () async => _profile()),
-    ));
+    await tester.pumpWidget(
+      MediaQuery(
+        data: const MediaQueryData(textScaler: TextScaler.linear(1.3)),
+        child: _harness(profileFactory: () async => _profile()),
+      ),
+    );
     await tester.pumpAndSettle();
     expect(find.text('Maria Santos'), findsOneWidget);
   });
@@ -113,8 +114,7 @@ void main() {
     expect(find.text('Email, verification and password'), findsOneWidget);
   });
 
-  testWidgets('tapping the entry opens AccountSettingsScreen',
-      (tester) async {
+  testWidgets('tapping the entry opens AccountSettingsScreen', (tester) async {
     tester.view.physicalSize = const Size(800, 1200);
     tester.view.devicePixelRatio = 1.0;
     addTearDown(tester.view.reset);
@@ -139,11 +139,12 @@ void main() {
     expect(find.byType(AccountSettingsScreen), findsNothing);
   });
 
-  testWidgets('profile load failure renders ErrorView, not EmptyView',
-      (tester) async {
-    await tester.pumpWidget(_harness(
-      profileFactory: () async => throw Exception('profiles down'),
-    ));
+  testWidgets('profile load failure renders ErrorView, not EmptyView', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      _harness(profileFactory: () async => throw Exception('profiles down')),
+    );
     await tester.pumpAndSettle();
 
     // Established ErrorView conventions: heading + retry affordance.
@@ -156,11 +157,15 @@ void main() {
 
   testWidgets('retry re-fetches the profile and recovers', (tester) async {
     var attempts = 0;
-    await tester.pumpWidget(_harness(profileFactory: () async {
-      attempts++;
-      if (attempts == 1) throw Exception('profiles down');
-      return _profile();
-    }));
+    await tester.pumpWidget(
+      _harness(
+        profileFactory: () async {
+          attempts++;
+          if (attempts == 1) throw Exception('profiles down');
+          return _profile();
+        },
+      ),
+    );
     await tester.pumpAndSettle();
     expect(find.text('Something went wrong'), findsOneWidget);
 
@@ -172,8 +177,7 @@ void main() {
   });
 
   group('Profile matching power milestone card', () {
-    testWidgets('renders avatar and milestone matching card',
-        (tester) async {
+    testWidgets('renders avatar and milestone matching card', (tester) async {
       tester.view.physicalSize = const Size(800, 1200);
       tester.view.devicePixelRatio = 1.0;
       addTearDown(tester.view.reset);
@@ -183,19 +187,24 @@ void main() {
 
       // Avatar in header + milestone card
       expect(find.byIcon(Icons.person_rounded), findsOneWidget);
-      expect(find.byIcon(Icons.trending_up_rounded), findsOneWidget);
-      expect(find.byKey(const ValueKey('profile-milestone-card')),
-          findsOneWidget);
-      expect(find.text('Matching Power'), findsOneWidget);
+      expect(find.text('High Fit'), findsNothing);
+      expect(find.textContaining('active Philippine grants'), findsNothing);
+      expect(
+        find.byKey(const ValueKey('profile-milestone-card')),
+        findsOneWidget,
+      );
+      expect(find.text('Profile completeness'), findsOneWidget);
+      expect(find.text('7 of 8 details provided'), findsOneWidget);
       expect(find.text('88%'), findsOneWidget);
       expect(
-          find.text(
-              'Scholaris Tip: Add your school or university to qualify for campus-partnered grants!'),
-          findsOneWidget);
+        find.text('Add your missing details to keep your profile up to date.'),
+        findsOneWidget,
+      );
     });
 
-    testWidgets('100% complete profile celebrates with full power',
-        (tester) async {
+    testWidgets('100% complete profile shows the real completed detail count', (
+      tester,
+    ) async {
       tester.view.physicalSize = const Size(800, 1200);
       tester.view.devicePixelRatio = 1.0;
       addTearDown(tester.view.reset);
@@ -213,20 +222,23 @@ void main() {
         setupComplete: true,
       );
 
-      await tester
-          .pumpWidget(_harness(profileFactory: () async => completeProfile));
+      await tester.pumpWidget(
+        _harness(profileFactory: () async => completeProfile),
+      );
       await tester.pumpAndSettle();
 
       expect(find.text('100%'), findsOneWidget);
-      expect(find.byIcon(Icons.workspace_premium_rounded), findsOneWidget);
+      expect(find.text('8 of 8 details provided'), findsOneWidget);
+      expect(find.text('View details'), findsOneWidget);
       expect(
-          find.text(
-              'Outstanding! Your matching profile is 100% complete. You have all the details unlocked to find your highest-match scholarships!'),
-          findsOneWidget);
+        find.text('Your profile details are complete. Keep them up to date.'),
+        findsOneWidget,
+      );
     });
 
-    testWidgets('renders profile details and labels unavailable actions',
-        (tester) async {
+    testWidgets('renders profile details and labels unavailable actions', (
+      tester,
+    ) async {
       tester.view.physicalSize = const Size(800, 2000);
       tester.view.devicePixelRatio = 1.0;
       addTearDown(tester.view.reset);
@@ -236,36 +248,43 @@ void main() {
 
       // Top bar & Header
       expect(find.text('My Profile'), findsOneWidget);
-      expect(find.text('Academic standing & grant eligibility'), findsOneWidget);
-      expect(find.text('Student profile'), findsOneWidget);
-      expect(find.text('Student ID / SUC:'), findsOneWidget);
+      expect(find.text('Your details and account'), findsOneWidget);
+      expect(find.text('Student profile'), findsNothing);
+      expect(find.text('Student ID / SUC:'), findsNothing);
 
       // Verified Credentials section
       expect(find.text('Profile details'), findsOneWidget);
-      expect(find.text('3 Categories Provided'), findsOneWidget);
+      expect(find.text('3 Categories Provided'), findsNothing);
       expect(find.text('Academic Information'), findsOneWidget);
-      expect(find.text('Institution not declared on profile'), findsOneWidget);
+      expect(find.text('Institution not declared on profile'), findsNothing);
       expect(find.text('Location & Residency'), findsOneWidget);
-      expect(find.text('Residency information added to your profile'), findsOneWidget);
+      expect(
+        find.text('Residency information added to your profile'),
+        findsNothing,
+      );
+      expect(find.text('Diliman, Quezon City'), findsNothing);
       expect(find.text('Financial Background'), findsOneWidget);
-      expect(find.text('Specific salary shielded per RA 10173 (Data Privacy)'),
-          findsOneWidget);
+      expect(
+        find.text('Scholarship requirements vary by program.'),
+        findsOneWidget,
+      );
 
       // Documents & Quick Actions
       expect(find.text('Documents & Quick Actions'), findsOneWidget);
-      expect(find.text('Download Scholaris Passport'), findsOneWidget);
-      expect(find.text('University transcript sync • Coming soon'),
-          findsOneWidget);
+      expect(find.text('Scholaris Passport'), findsOneWidget);
+      expect(find.text('University transcript sync'), findsOneWidget);
 
-      // Tap Download Scholaris Passport
-      await tester.tap(find.text('Download Scholaris Passport'));
-      await tester.pump();
-      expect(find.text('Scholaris Passport is not available yet.'),
-          findsOneWidget);
+      expect(find.text('Coming soon'), findsNWidgets(2));
+      final passport = find.ancestor(
+        of: find.text('Scholaris Passport'),
+        matching: find.byType(InkWell),
+      );
+      expect(passport, findsNothing);
     });
 
-    testWidgets('renders cleanly on narrow 360px screen with no overflow',
-        (tester) async {
+    testWidgets('renders cleanly on narrow 360px screen with no overflow', (
+      tester,
+    ) async {
       tester.view.physicalSize = const Size(360, 800);
       tester.view.devicePixelRatio = 1.0;
       addTearDown(tester.view.reset);

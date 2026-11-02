@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'helpers/load_app_fonts.dart';
 // Focused tests for the shared ScholarshipCard bookmark toggle: which icon
 // renders for the saved/unsaved state, that tapping fires the toggle callback,
@@ -44,6 +46,44 @@ Widget _wrap({required ScholarshipCard card}) =>
     MaterialApp(home: Scaffold(body: card));
 
 void main() {
+  testWidgets('pending removal immediately shows an unsaved bookmark', (
+    tester,
+  ) async {
+    final pending = Completer<void>();
+    await tester.pumpWidget(
+      _wrap(
+        card: ScholarshipCard(
+          scholarship: _scholarship(),
+          isBookmarked: true,
+          onToggleBookmark: () => pending.future,
+        ),
+      ),
+    );
+    await tester.tap(find.byTooltip('Remove from saved'));
+    await tester.pump();
+    expect(find.byTooltip('Save this scholarship'), findsOneWidget);
+    pending.complete();
+    await tester.pumpAndSettle();
+  });
+
+  testWidgets('failed save restores the unsaved bookmark', (tester) async {
+    final pending = Completer<void>();
+    await tester.pumpWidget(
+      _wrap(
+        card: ScholarshipCard(
+          scholarship: _scholarship(),
+          onToggleBookmark: () => pending.future,
+        ),
+      ),
+    );
+    await tester.tap(find.byTooltip('Save this scholarship'));
+    await tester.pump();
+    expect(find.byTooltip('Remove from saved'), findsOneWidget);
+    pending.completeError(Exception('offline'));
+    await tester.pumpAndSettle();
+    expect(find.byTooltip('Save this scholarship'), findsOneWidget);
+  });
+
   testWidgets('large text stacks card actions without shrinking their labels', (
     tester,
   ) async {
@@ -109,10 +149,10 @@ void main() {
       expect(provider.style?.fontSize, 13);
       expect(provider.style?.fontWeight, FontWeight.w400);
       expect(provider.style?.color, const Color(0xFF404942));
-      final fit = tester.widget<Text>(find.text('98% Fit'));
+      final fit = tester.widget<Text>(find.text('Check eligibility'));
       final attribute = tester.widget<Text>(find.text('Tuition + Allowance'));
       expect(fit.style?.fontSize, 12);
-      expect(fit.style?.fontWeight, FontWeight.w600);
+      expect(fit.style?.fontWeight, FontWeight.w500);
       expect(attribute.style?.fontWeight, FontWeight.w500);
       expect(attribute.style?.letterSpacing, -.1);
       final award = tester.widget<Text>(find.textContaining('₱50,000'));
@@ -265,7 +305,8 @@ void main() {
       ),
     );
     expect(find.text('Apply Now'), findsOneWidget);
-    expect(find.text('98% Fit'), findsOneWidget);
+    expect(find.text('Profile match'), findsOneWidget);
+    expect(find.text('98% Fit'), findsNothing);
     await tester.pumpWidget(
       _wrap(
         card: ScholarshipCard(
@@ -276,7 +317,7 @@ void main() {
       ),
     );
     expect(find.text('Apply Now'), findsNothing);
-    expect(find.text('69% Fit'), findsOneWidget);
+    expect(find.text('Review criteria'), findsOneWidget);
     expect(find.text('View Details'), findsOneWidget);
   });
   testWidgets('a closed scholarship does not offer quick apply', (
@@ -370,7 +411,7 @@ void main() {
       await tester.pumpAndSettle();
       final gap =
           tester.getTopLeft(find.text(scholarship.title)).dy -
-          tester.getBottomRight(find.text('94% Fit')).dy;
+          tester.getBottomRight(find.text('Check eligibility')).dy;
       expect(gap, lessThanOrEqualTo(16));
       expect(
         tester.getTopLeft(find.text(scholarship.title)).dy,
@@ -651,7 +692,7 @@ void main() {
       );
 
       // 1. Fit badge
-      expect(find.text('96% Fit'), findsOneWidget);
+      expect(find.text('Profile match'), findsOneWidget);
       expect(find.textContaining('Match'), findsNothing);
 
       // 2. Both actions are available for a qualified student.
@@ -677,7 +718,7 @@ void main() {
         );
 
         // 1. Fit badge
-        expect(find.text('88% Fit'), findsOneWidget);
+        expect(find.text('Check eligibility'), findsOneWidget);
         expect(find.textContaining('Match'), findsNothing);
 
         // 2. Only View Details button present; Apply Now is omitted

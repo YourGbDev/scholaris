@@ -197,11 +197,11 @@ class _DiscoveryFilterSheetState extends ConsumerState<DiscoveryFilterSheet> {
                           ),
                           selected: selected,
                           selectedColor: const Color(0xFF0F4D2E),
-                          backgroundColor: kSurfaceContainerLow,
+                          backgroundColor: kStudentSurfaceSubtle,
                           side: BorderSide(
                             color: selected
                                 ? const Color(0xFF0F4D2E)
-                                : kSurfaceContainerHighest,
+                                : kStudentDivider,
                           ),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(20),
@@ -267,11 +267,11 @@ class _DiscoveryFilterSheetState extends ConsumerState<DiscoveryFilterSheet> {
                           ),
                           selected: isSelected,
                           selectedColor: const Color(0xFF0F4D2E),
-                          backgroundColor: kSurfaceContainerLow,
+                          backgroundColor: kStudentSurfaceSubtle,
                           side: BorderSide(
                             color: isSelected
                                 ? const Color(0xFF0F4D2E)
-                                : kSurfaceContainerHighest,
+                                : kStudentDivider,
                           ),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(20),

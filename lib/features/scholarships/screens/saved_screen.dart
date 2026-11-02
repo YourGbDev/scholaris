@@ -92,7 +92,7 @@ class _SavedScreenState extends ConsumerState<SavedScreen> {
     final savedCount = bookmarksAsync.valueOrNull?.length ?? 0;
 
     return Scaffold(
-      backgroundColor: kBackground,
+      backgroundColor: kStudentCanvas,
       body: SafeArea(
         child: ResponsiveContainer(
           child: Column(
@@ -140,7 +140,7 @@ class _SavedScreenState extends ConsumerState<SavedScreen> {
                     PressableScale(
                       child: Material(
                         color: _searchOpen
-                            ? kSurfaceContainer
+                            ? kStudentSurfaceSubtle
                             : Colors.transparent,
                         shape: const CircleBorder(),
                         child: IconButton(
@@ -414,7 +414,7 @@ class _SavedScreenState extends ConsumerState<SavedScreen> {
         } catch (_) {}
       }
     } on Exception {
-      // Silent on card failure
+      rethrow;
     }
   }
 }
@@ -696,7 +696,7 @@ class _SuggestedGrantCard extends ConsumerWidget {
                             vertical: 2,
                           ),
                           decoration: BoxDecoration(
-                            color: kSurfaceContainerLow,
+                            color: kStudentSurfaceSubtle,
                             borderRadius: BorderRadius.circular(12),
                           ),
                           child: Text(
@@ -738,7 +738,7 @@ class _SuggestedGrantCard extends ConsumerWidget {
                     child: Material(
                       color: isSaved
                           ? const Color(0xFF0F4D2E)
-                          : kSurfaceContainerLow,
+                          : kStudentSurfaceSubtle,
                       shape: const CircleBorder(),
                       child: InkWell(
                         customBorder: const CircleBorder(),
@@ -808,7 +808,7 @@ class _SuggestedGrantCard extends ConsumerWidget {
                   vertical: 6,
                 ),
                 decoration: BoxDecoration(
-                  color: kSurfaceContainerLow.withValues(alpha: 0.6),
+                  color: kStudentSurfaceSubtle.withValues(alpha: 0.6),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Wrap(

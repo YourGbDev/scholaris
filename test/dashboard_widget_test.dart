@@ -27,6 +27,8 @@ import 'package:scholaris/features/profile/providers/profile_setup_provider.dart
 import 'package:scholaris/features/profile/repositories/profile_repository.dart';
 import 'package:scholaris/features/dashboard/presentation/student_dashboard_screen.dart';
 import 'package:scholaris/features/scholarships/providers/scholarships_provider.dart';
+import 'package:scholaris/features/scholarships/providers/dashboard_provider.dart';
+import 'package:scholaris/features/scholarships/models/scholarship.dart';
 import 'package:scholaris/features/scholarships/repositories/scholarship_repository.dart';
 import 'package:scholaris/shared/widgets/scholarship_card.dart';
 import 'package:scholaris/features/home/presentation/home_screen.dart';
@@ -147,12 +149,14 @@ ProviderScope _wrap({
   Future<StudentProfile?>? profileFuture,
   FakeBookmarkDataSource? bookmarks,
   FakeApplicationDataSource? applications,
+  Future<DashboardInfo> Function(Ref)? dashboard,
 }) {
   final profileSource = FakeProfileDataSource();
   profileSource.upsertProfile('user-a', _student().toDbRow());
 
   return ProviderScope(
     overrides: [
+      if (dashboard != null) dashboardProvider.overrideWith(dashboard),
       currentUserIdProvider.overrideWithValue('user-a'),
       if (profileFuture != null)
         currentProfileProvider.overrideWith((ref) => profileFuture),
@@ -207,6 +211,53 @@ Finder _inClosingSoon(Finder inner) => find.descendant(
 );
 
 void main() {
+  testWidgets(
+    'saving keeps the existing dashboard visible during recomputation',
+    (tester) async {
+      tester.view.physicalSize = const Size(900, 1600);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.reset);
+      final pending = Completer<DashboardInfo>();
+      final info = DashboardInfo(
+        matchCount: 2,
+        closingSoonCount: 1,
+        savedCount: 0,
+        appliedCount: 0,
+        pendingApplicationCount: 0,
+        closingSoonScholarships: [Scholarship.fromJson(_rows()[2])],
+      );
+      await tester.pumpWidget(
+        _wrap(
+          dashboard: (ref) async {
+            final bookmarks = ref.watch(bookmarksProvider);
+            return bookmarks.valueOrNull?.contains('sch-dost') == true
+                ? pending.future
+                : info;
+          },
+        ),
+      );
+      await tester.pumpAndSettle();
+      final closing = find.byKey(const ValueKey('closing-soon-section'));
+      expect(closing, findsOneWidget);
+      final position = tester.getTopLeft(closing);
+      final container = ProviderScope.containerOf(
+        tester.element(find.byType(StudentDashboardScreen)),
+      );
+      await container.read(bookmarksProvider.notifier).toggle('sch-dost');
+      await tester.pump();
+      expect(container.read(dashboardProvider).isLoading, isTrue);
+      expect(closing, findsOneWidget);
+      expect(tester.getTopLeft(closing), position);
+      expect(
+        tester
+            .widget<Text>(find.byKey(const ValueKey('stat-count-saved')))
+            .data,
+        '0',
+      );
+      pending.complete(info);
+      await tester.pumpAndSettle();
+    },
+  );
   for (final width in [320.0, 390.0]) {
     testWidgets('See all stays at the trailing side of the heading at $width', (
       tester,

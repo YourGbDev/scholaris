@@ -5,14 +5,12 @@
 // otherwise falls back to loading it by id.
 // The bookmark toggle in the app bar keeps the Saved tab in sync. When the
 // signed-in student's profile makes this scholarship an actual match, an
-// "Algorithmic Fit" card and "Criteria Checklist" section restate the reasons.
+// "Match details" section restates the matched criteria.
 // The Apply action is gated by pure application-readiness evaluation:
 // only an eligible student with an active, open scholarship gets an enabled
 // Apply button. Confirming the pre-apply review dialog sends the write through
 // the existing applications provider. Once applied, the screen renders an
-// official Digital Submission Token and confirmation receipt.
-
-import 'dart:math' as math;
+// application receipt.
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -144,7 +142,7 @@ class _ScholarshipDetailScreenState
     final saved = bookmarkIds.contains(widget.scholarshipId);
 
     return Scaffold(
-      backgroundColor: kSurface,
+      backgroundColor: kStudentCanvas,
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
@@ -410,16 +408,13 @@ class _DetailContent extends ConsumerWidget {
           ),
         if (!startApplication) const SizedBox(height: 14),
 
-        // 3. Algorithmic Fit & Criteria Checklist
+        // 3. Matched criteria
         if (reasons.isNotEmpty) ...[
           StaggeredListItem(
             index: 4,
             child: Container(
               key: checklistKey,
-              child: _AlgorithmicFitCard(
-                reasons: reasons,
-                scholarship: scholarship,
-              ),
+              child: _MatchDetailsCard(reasons: reasons),
             ),
           ),
           const SizedBox(height: 20),
@@ -1259,509 +1254,90 @@ class _SchoolEligibilityGuidanceCard extends ConsumerWidget {
   }
 }
 
-/// 3. Algorithmic Fit Card: Displays Match percentage with circular progress gauge,
-/// criteria checklist with 'Why this matches you' explainer, and High Probability Tier callout.
-class _AlgorithmicFitCard extends ConsumerWidget {
-  const _AlgorithmicFitCard({required this.reasons, required this.scholarship});
-
+/// Matched criteria describe the profile without predicting selection.
+class _MatchDetailsCard extends StatelessWidget {
+  const _MatchDetailsCard({required this.reasons});
   final List<String> reasons;
-  final Scholarship scholarship;
-
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final profile = ref.watch(currentProfileProvider).valueOrNull;
-    final userName =
-        (profile?.fullName != null && profile!.fullName.trim().isNotEmpty)
-        ? profile.fullName.trim().split(' ').first
-        : 'your';
-
-    return PressableScale(
-      child: Container(
-        decoration: kSoftCardDecoration,
-        padding: const EdgeInsets.all(18),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Algorithmic Fit banner with circular meter
-            Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                gradient: const LinearGradient(
-                  colors: [Color(0xFFB3F1C6), kSurfaceContainer],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                ),
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'ALGORITHMIC FIT',
-                          style: outfit(
-                            fontSize: 10,
-                            fontWeight: FontWeight.w700,
-                            color: const Color(0xFF145131),
-                            letterSpacing: 0.8,
-                          ),
-                        ),
-                        const SizedBox(height: 2),
-                        CountUpAnimation(
-                          targetValue: placeholderMatchPercentage(
-                            reasons.length,
-                          ),
-                          suffix: '% Match',
-                          style: outfit(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                            color: const Color(0xFF00351C),
-                          ),
-                        ),
-                        const SizedBox(height: 2),
-                        Text(
-                          'Demo score • Based on $userName\'s profile',
-                          style: openSans(
-                            fontSize: 11,
-                            fontWeight: FontWeight.w500,
-                            color: kOnSurface,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  SizedBox(
-                    width: 56,
-                    height: 56,
-                    child: Stack(
-                      alignment: Alignment.center,
-                      children: [
-                        CustomPaint(
-                          size: const Size(56, 56),
-                          painter: _FitGaugePainter(
-                            placeholderMatchPercentage(reasons.length),
-                          ),
-                        ),
-                        const Icon(
-                          Icons.verified_rounded,
-                          color: kPrimaryContainer,
-                          size: 24,
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 16),
-
-            // Criteria Checklist header & 'Why this matches you' explainer
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Flexible(
-                  child: Text(
-                    'Criteria Checklist',
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: outfit(
-                      fontSize: 15,
-                      fontWeight: FontWeight.bold,
-                      color: kOnSurface,
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 8),
-                FittedBox(
-                  fit: BoxFit.scaleDown,
-                  child: Text(
-                    '${reasons.length} of ${reasons.length} Met',
-                    style: outfit(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w600,
-                      color: kPrimaryContainer,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 2),
-            Text(
-              'Why this matches you',
-              style: openSans(
-                fontSize: 12,
-                fontWeight: FontWeight.w500,
-                color: kOnSurfaceVariant,
-              ),
-            ),
-            const SizedBox(height: 12),
-
-            // Checklist items
-            ...reasons.map((r) => _buildChecklistItem(r)),
-            const SizedBox(height: 10),
-
-            // High Probability Tier Callout (Stitch literal)
-            Container(
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: const Color(0xFFFFF7E6),
-                borderRadius: BorderRadius.circular(10),
-                border: Border.all(color: const Color(0xFFFFDEA3)),
-              ),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Icon(
-                    Icons.trending_up_rounded,
-                    size: 20,
-                    color: Color(0xFF5D4200),
-                  ),
-                  const SizedBox(width: 10),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'High Probability Tier',
-                          style: outfit(
-                            fontSize: 12,
-                            fontWeight: FontWeight.w700,
-                            color: const Color(0xFF5D4200),
-                          ),
-                        ),
-                        const SizedBox(height: 2),
-                        Text(
-                          'Your academic profile ranks in the top 5% of historical applicants for this endowment. Early submissions have an 18% higher acceptance yield.',
-                          style: openSans(
-                            fontSize: 11,
-                            color: kOnSurface,
-                            height: 1.4,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
+  Widget build(BuildContext context) => Container(
+    decoration: kSoftCardDecoration,
+    padding: const EdgeInsets.all(18),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Match details',
+          style: geist(
+            fontSize: 15,
+            fontWeight: FontWeight.w700,
+            color: kOnSurface,
+          ),
         ),
-      ),
-    );
-  }
-
-  Widget _buildChecklistItem(String title) {
-    final subtitle = _deriveCriterionSubtitle(title);
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 8),
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 9),
-        decoration: BoxDecoration(
-          color: kSurfaceContainerLow,
-          borderRadius: BorderRadius.circular(10),
-        ),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Container(
-              width: 22,
-              height: 22,
-              decoration: const BoxDecoration(
-                color: Color(0xFFB3F1C6),
-                shape: BoxShape.circle,
-              ),
-              child: const Icon(
-                Icons.check_rounded,
-                size: 14,
-                color: kPrimaryContainer,
-              ),
-            ),
-            const SizedBox(width: 10),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    title,
-                    style: outfit(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w600,
-                      color: kOnSurface,
-                    ),
-                  ),
-                  if (subtitle != null) ...[
-                    const SizedBox(height: 1),
-                    Text(
-                      subtitle,
-                      style: openSans(
-                        fontSize: 11,
-                        fontWeight: FontWeight.w500,
-                        color: kPrimaryContainer,
-                      ),
-                    ),
-                  ],
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  String? _deriveCriterionSubtitle(String reason) {
-    final lower = reason.toLowerCase();
-    if (lower.contains('gpa') || lower.contains('gwa')) {
-      return 'Based on the academic information in your profile';
-    } else if (lower.contains('course') ||
-        lower.contains('major') ||
-        lower.contains('track')) {
-      return 'Based on the course in your profile';
-    } else if (lower.contains('year') || lower.contains('level')) {
-      return 'Based on the year level in your profile';
-    } else if (lower.contains('citizen') ||
-        lower.contains('resident') ||
-        lower.contains('region')) {
-      return 'Based on the information in your profile';
-    } else if (lower.contains('income')) {
-      return 'Based on the income information in your profile';
-    }
-    return null;
-  }
-}
-
-class _FitGaugePainter extends CustomPainter {
-  _FitGaugePainter(this.percentage);
-  final int percentage;
-  @override
-  void paint(Canvas canvas, Size size) {
-    final center = Offset(size.width / 2, size.height / 2);
-    final radius = size.width / 2 - 3;
-
-    final bgPaint = Paint()
-      ..color = const Color(0xFFC0C9C0).withValues(alpha: 0.35)
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 4.5;
-
-    final primaryPaint = Paint()
-      ..color = const Color(0xFF0F4D2E)
-      ..style = PaintingStyle.stroke
-      ..strokeCap = StrokeCap.round
-      ..strokeWidth = 5.0;
-
-    final accentPaint = Paint()
-      ..color = const Color(0xFFFABC28)
-      ..style = PaintingStyle.stroke
-      ..strokeCap = StrokeCap.round
-      ..strokeWidth = 5.0;
-
-    canvas.drawCircle(center, radius, bgPaint);
-
-    // Green arc (98% match)
-    canvas.drawArc(
-      Rect.fromCircle(center: center, radius: radius),
-      -math.pi / 2,
-      2 * math.pi * percentage / 100,
-      false,
-      primaryPaint,
-    );
-
-    canvas.drawArc(
-      Rect.fromCircle(center: center, radius: radius),
-      -math.pi / 2 + 2 * math.pi * percentage / 100 - 0.05,
-      0.05,
-      false,
-      accentPaint,
-    );
-  }
-
-  @override
-  bool shouldRepaint(covariant _FitGaugePainter oldDelegate) =>
-      oldDelegate.percentage != percentage;
-}
-
-/// 4. Award Overview & Impact Card: 3-column metrics grid, description ('About'),
-/// and past recipient showcase.
-class _AwardOverviewCard extends StatelessWidget {
-  const _AwardOverviewCard({required this.scholarship});
-
-  final Scholarship scholarship;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      decoration: kSoftCardDecoration,
-      padding: const EdgeInsets.all(14),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            'Award Overview & Impact',
-            style: outfit(
-              fontSize: 15,
-              fontWeight: FontWeight.bold,
-              color: kOnSurface,
-            ),
-          ),
-          const SizedBox(height: 10),
-
-          // 3-Column Metrics Grid
-          Row(
-            children: [
-              Expanded(
-                child: _MetricTile(
-                  label: 'Total Pool',
-                  value:
-                      '₱${(((scholarship.slots != null && scholarship.slots! > 0) ? scholarship.slots! * scholarship.awardAmount : scholarship.awardAmount)).toString().replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (m) => '${m[1]},')}',
-                  caption: scholarship.slots != null
-                      ? '${scholarship.slots} grants'
-                      : 'Active grant',
-                ),
-              ),
-              const SizedBox(width: 8),
-              const Expanded(
-                child: _MetricTile(
-                  label: 'Acceptance',
-                  value: '~14%',
-                  caption: 'Selective',
-                ),
-              ),
-              const SizedBox(width: 8),
-              const Expanded(
-                child: _MetricTile(
-                  label: 'Disbursement',
-                  value: 'Direct',
-                  caption: 'To Bursar',
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 10),
-
-          // About Section
-          Text(
-            'About',
-            style: outfit(
-              fontSize: 13,
-              fontWeight: FontWeight.bold,
-              color: kOnSurface,
-            ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            scholarship.description ?? 'Established to empower next-generation technology pioneers from diverse socioeconomic backgrounds. Funds cover tuition, laboratory equipment supplies, and authorized academic conference research stipends throughout the degree program.',
-            style: openSans(
-              fontSize: 13,
-              height: 1.5,
-              color: kOnSurfaceVariant,
-            ),
-          ),
-          const SizedBox(height: 16),
-
-          // Past Recipient Showcase
-          Container(
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: kSurfaceContainerLow,
-              borderRadius: BorderRadius.circular(12),
-            ),
+        const SizedBox(height: 8),
+        for (var index = 0; index < reasons.length; index++) ...[
+          if (index > 0) const Divider(height: 1, color: kStudentDivider),
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 12),
             child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Container(
-                  width: 40,
-                  height: 40,
-                  decoration: const BoxDecoration(
-                    color: Color(0xFFD2E4FF),
-                    shape: BoxShape.circle,
-                  ),
-                  child: const Icon(
-                    Icons.school_rounded,
-                    color: kSecondary,
-                    size: 20,
-                  ),
+                const Icon(
+                  Icons.check_rounded,
+                  size: 18,
+                  color: kTextSecondary,
                 ),
                 const SizedBox(width: 10),
                 Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        '"This grant funded my senior neural compute capstone."',
-                        style: openSans(
-                          fontSize: 11,
-                          fontWeight: FontWeight.w600,
-                          fontStyle: FontStyle.italic,
-                          color: kOnSurface,
-                        ),
-                      ),
-                      const SizedBox(height: 2),
-                      Text(
-                        'Elena R. • 2024 Scholar, UP Diliman CS',
-                        style: openSans(fontSize: 10, color: kOnSurfaceVariant),
-                      ),
-                    ],
+                  child: Text(
+                    reasons[index],
+                    style: geist(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w500,
+                      color: kOnSurface,
+                    ),
                   ),
                 ),
               ],
             ),
           ),
         ],
-      ),
-    );
-  }
+        const SizedBox(height: 4),
+        Text(
+          'Matched criteria do not guarantee acceptance.',
+          style: geist(fontSize: 12, color: kTextSecondary, height: 1.45),
+        ),
+      ],
+    ),
+  );
 }
 
-class _MetricTile extends StatelessWidget {
-  const _MetricTile({
-    required this.label,
-    required this.value,
-    required this.caption,
-  });
-
-  final String label;
-  final String value;
-  final String caption;
-
+/// Scholarship information supplied by the provider.
+class _AwardOverviewCard extends StatelessWidget {
+  const _AwardOverviewCard({required this.scholarship});
+  final Scholarship scholarship;
   @override
   Widget build(BuildContext context) {
+    final description = scholarship.description?.trim();
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 10),
-      decoration: BoxDecoration(
-        color: kSurfaceContainerLow,
-        borderRadius: BorderRadius.circular(10),
-      ),
+      decoration: kSoftCardDecoration,
+      padding: const EdgeInsets.all(18),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            label,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            style: outfit(
-              fontSize: 10,
-              fontWeight: FontWeight.w600,
-              color: kOnSurfaceVariant,
+            'About this scholarship',
+            style: geist(
+              fontSize: 15,
+              fontWeight: FontWeight.w700,
+              color: kOnSurface,
             ),
           ),
-          const SizedBox(height: 3),
-          FittedBox(
-            fit: BoxFit.scaleDown,
-            child: Text(
-              value,
-              style: outfit(
-                fontSize: 15,
-                fontWeight: FontWeight.bold,
-                color: kSecondary,
-              ),
-            ),
-          ),
-          const SizedBox(height: 2),
+          const SizedBox(height: 10),
           Text(
-            caption,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            style: openSans(fontSize: 9, color: kOnSurfaceVariant),
+            description == null || description.isEmpty
+                ? 'No description provided.'
+                : description,
+            style: geist(fontSize: 13, height: 1.5, color: kTextSecondary),
           ),
         ],
       ),
@@ -1944,9 +1520,7 @@ class _ApplicationMaterialsCardState
                     vertical: 3,
                   ),
                   decoration: BoxDecoration(
-                    color: readyCount == 3
-                        ? const Color(0xFFB3F1C6)
-                        : kSurfaceContainer,
+                    color: Colors.white,
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Text(
@@ -1969,8 +1543,8 @@ class _ApplicationMaterialsCardState
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: kSurfaceContainerLow,
-              borderRadius: BorderRadius.circular(10),
+              color: Colors.white,
+              border: Border(bottom: BorderSide(color: kStudentDivider)),
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -1990,8 +1564,6 @@ class _ApplicationMaterialsCardState
                           Expanded(
                             child: Text(
                               '1. Personal Narrative Statement',
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
                               style: outfit(
                                 fontSize: 13,
                                 fontWeight: FontWeight.w600,
@@ -2008,19 +1580,17 @@ class _ApplicationMaterialsCardState
                         vertical: 2,
                       ),
                       decoration: BoxDecoration(
-                        color: hasEssay
-                            ? const Color(0xFFB3F1C6)
-                            : const Color(0xFFFFDAD6),
+                        color: Colors.white,
                         borderRadius: BorderRadius.circular(4),
                       ),
                       child: Text(
-                        hasEssay ? 'Draft Ready' : 'Incomplete',
+                        hasEssay ? 'Draft ready' : 'Not added',
                         style: outfit(
-                          fontSize: 10,
+                          fontSize: 12,
                           fontWeight: FontWeight.w600,
                           color: hasEssay
                               ? const Color(0xFF145131)
-                              : const Color(0xFF93000A),
+                              : kTextSecondary,
                         ),
                       ),
                     ),
@@ -2126,7 +1696,7 @@ class _ApplicationMaterialsCardState
                           child: Text(
                             hasEssay
                                 ? '$wordCount words composed'
-                                : 'No statement composed yet',
+                                : 'Not added',
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                             style: outfit(
@@ -2178,8 +1748,8 @@ class _ApplicationMaterialsCardState
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: kSurfaceContainerLow,
-              borderRadius: BorderRadius.circular(10),
+              color: Colors.white,
+              border: Border(bottom: BorderSide(color: kStudentDivider)),
             ),
             child: Row(
               children: [
@@ -2223,19 +1793,17 @@ class _ApplicationMaterialsCardState
                     vertical: 2,
                   ),
                   decoration: BoxDecoration(
-                    color: hasTranscript
-                        ? const Color(0xFFB3F1C6)
-                        : const Color(0xFFFFDAD6),
+                    color: Colors.white,
                     borderRadius: BorderRadius.circular(4),
                   ),
                   child: Text(
-                    hasTranscript ? 'Uploaded' : 'Incomplete',
+                    hasTranscript ? 'Profile added' : 'Not added',
                     style: outfit(
-                      fontSize: 10,
+                      fontSize: 12,
                       fontWeight: FontWeight.w600,
                       color: hasTranscript
                           ? const Color(0xFF145131)
-                          : const Color(0xFF93000A),
+                          : kTextSecondary,
                     ),
                   ),
                 ),
@@ -2248,8 +1816,8 @@ class _ApplicationMaterialsCardState
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: kSurfaceContainerLow,
-              borderRadius: BorderRadius.circular(10),
+              color: Colors.white,
+              border: Border(bottom: BorderSide(color: kStudentDivider)),
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -2263,14 +1831,12 @@ class _ApplicationMaterialsCardState
                           const Icon(
                             Icons.mail_outline_rounded,
                             size: 18,
-                            color: Color(0xFFE1A604),
+                            color: kTextSecondary,
                           ),
                           const SizedBox(width: 8),
                           Expanded(
                             child: Text(
                               '3. Faculty Recommendation',
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
                               style: outfit(
                                 fontSize: 13,
                                 fontWeight: FontWeight.w600,
@@ -2287,21 +1853,17 @@ class _ApplicationMaterialsCardState
                         vertical: 2,
                       ),
                       decoration: BoxDecoration(
-                        color: hasRec
-                            ? const Color(0xFFB3F1C6)
-                            : const Color(0xFFFFDEA3),
+                        color: Colors.white,
                         borderRadius: BorderRadius.circular(4),
                       ),
                       child: Text(
-                        hasRec
-                            ? '${recommenders.length} Linked'
-                            : '0 of 2 Linked',
+                        hasRec ? '${recommenders.length} Linked' : 'Not added',
                         style: outfit(
-                          fontSize: 10,
+                          fontSize: 12,
                           fontWeight: FontWeight.w600,
                           color: hasRec
                               ? const Color(0xFF145131)
-                              : const Color(0xFF5D4200),
+                              : kTextSecondary,
                         ),
                       ),
                     ),
@@ -3222,13 +2784,10 @@ class _DraftBanner extends StatelessWidget {
   }
 }
 
-/// Official Digital Tracking Receipt (Stitch scholaris_submission_confirmation_receipt).
-/// Replaces the apply button once applied, displaying "Application submitted".
+/// Receipt using the application's saved status and attachments.
 class _AppliedBanner extends ConsumerWidget {
   const _AppliedBanner({required this.scholarship});
-
   final Scholarship scholarship;
-
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final application = ref
@@ -3241,386 +2800,160 @@ class _AppliedBanner extends ConsumerWidget {
         : ref.watch(applicationDocumentsProvider(application.id));
     final savedStatus =
         application?.status.dbValue.replaceAll('_', ' ') ?? 'saved';
+    final submittedAt = application?.appliedAt?.toLocal();
+    final localizations = MaterialLocalizations.of(context);
+    final submittedLabel = submittedAt == null
+        ? 'Not available'
+        : '${localizations.formatMediumDate(submittedAt)} at ${localizations.formatTimeOfDay(TimeOfDay.fromDateTime(submittedAt))}';
     return Semantics(
       liveRegion: true,
       label: 'Application $savedStatus',
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          // Celebratory Hero Banner
-          Container(
-            padding: const EdgeInsets.all(20),
-            decoration: BoxDecoration(
-              gradient: const LinearGradient(
-                colors: [kPrimaryContainer, Color(0xFF00351C)],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
+      child: Container(
+        padding: const EdgeInsets.all(18),
+        decoration: kSoftCardDecoration,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Application receipt',
+              style: geist(
+                fontSize: 15,
+                fontWeight: FontWeight.w700,
+                color: kOnSurface,
               ),
-              borderRadius: BorderRadius.circular(kRadiusCard),
-              boxShadow: const [
-                BoxShadow(
-                  color: kCardShadow,
-                  blurRadius: 16,
-                  offset: Offset(0, 6),
-                ),
-              ],
             ),
-            child: Column(
+            const SizedBox(height: 8),
+            Text(
+              'Application $savedStatus',
+              style: geist(
+                fontSize: 13,
+                fontWeight: FontWeight.w600,
+                color: kPrimaryContainer,
+              ),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              'Your application has been saved. Check the tracker for its current status.',
+              style: geist(fontSize: 13, color: kTextSecondary, height: 1.45),
+            ),
+            const SizedBox(height: 16),
+            const Divider(height: 1, color: kStudentDivider),
+            const SizedBox(height: 12),
+            Text(
+              'Reference number',
+              style: geist(
+                fontSize: 12,
+                fontWeight: FontWeight.w500,
+                color: kTextSecondary,
+              ),
+            ),
+            Row(
               children: [
-                Container(
-                  width: 52,
-                  height: 52,
-                  decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: 0.15),
-                    shape: BoxShape.circle,
-                  ),
-                  child: const Icon(
-                    Icons.verified_rounded,
-                    color: Color(0xFFB3F1C6),
-                    size: 30,
-                  ),
-                ),
-                const SizedBox(height: 12),
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 10,
-                    vertical: 3,
-                  ),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFFB3F1C6).withValues(alpha: 0.2),
-                    borderRadius: BorderRadius.circular(20),
-                  ),
+                Expanded(
                   child: Text(
-                    'SUBMISSION SAVED',
-                    style: outfit(
-                      fontSize: 10,
-                      fontWeight: FontWeight.w700,
-                      color: const Color(0xFFB3F1C6),
-                      letterSpacing: 0.8,
+                    application?.id ?? 'Application unavailable',
+                    style: geist(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w600,
+                      color: kOnSurface,
                     ),
                   ),
                 ),
-                const SizedBox(height: 8),
-                Text(
-                  'Application $savedStatus',
-                  style: outfit(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
+                IconButton(
+                  tooltip: 'Copy Tracking ID',
+                  icon: const Icon(
+                    Icons.content_copy_rounded,
+                    size: 18,
+                    color: kTextSecondary,
                   ),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  'Your application has been saved. Check the tracker for its current status.',
-                  textAlign: TextAlign.center,
-                  style: openSans(fontSize: 13, color: const Color(0xFFB3F1C6)),
+                  onPressed: application == null
+                      ? null
+                      : () async {
+                          await Clipboard.setData(
+                            ClipboardData(text: application.id),
+                          );
+                          if (!context.mounted) return;
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('Receipt ID copied to clipboard.'),
+                            ),
+                          );
+                        },
                 ),
               ],
             ),
-          ),
-          const SizedBox(height: 14),
-
-          // Digital Submission Token Card
-          Container(
-            padding: const EdgeInsets.all(16),
-            decoration: kSoftCardDecoration,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Expanded(
-                      child: Row(
-                        children: [
-                          Container(
-                            width: 32,
-                            height: 32,
-                            decoration: BoxDecoration(
-                              color: kSurfaceContainer,
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            child: const Icon(
-                              Icons.receipt_long_rounded,
-                              size: 18,
-                              color: kSecondary,
-                            ),
-                          ),
-                          const SizedBox(width: 8),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  'INSTITUTIONAL DOSSIER',
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: outfit(
-                                    fontSize: 9,
-                                    fontWeight: FontWeight.w700,
-                                    color: const Color(0xFF404942),
-                                    letterSpacing: 0.5,
-                                  ),
-                                ),
-                                Text(
-                                  'Digital Submission Token',
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: outfit(
-                                    fontSize: 13,
-                                    fontWeight: FontWeight.w600,
-                                    color: const Color(0xFF161C27),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 8,
-                        vertical: 2,
-                      ),
-                      decoration: BoxDecoration(
-                        color: const Color(0xFFB3F1C6),
-                        borderRadius: BorderRadius.circular(6),
-                      ),
-                      child: Text(
-                        'VALID',
-                        style: outfit(
-                          fontSize: 10,
-                          fontWeight: FontWeight.bold,
-                          color: kPrimaryContainer,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 12),
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 12,
-                    vertical: 8,
-                  ),
-                  decoration: BoxDecoration(
-                    color: kSurfaceContainerLow,
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Reference Identifier',
-                              style: openSans(
-                                fontSize: 10,
-                                color: const Color(0xFF404942),
-                              ),
-                            ),
-                            Text(
-                              application?.id ?? 'Application unavailable',
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: outfit(
-                                fontSize: 12,
-                                fontWeight: FontWeight.w700,
-                                color: const Color(0xFF161C27),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(width: 8),
-                      IconButton(
-                        tooltip: 'Copy Tracking ID',
-                        icon: const Icon(
-                          Icons.content_copy_rounded,
-                          size: 16,
-                          color: kSecondary,
-                        ),
-                        onPressed: application == null
-                            ? null
-                            : () async {
-                                await Clipboard.setData(
-                                  ClipboardData(text: application.id),
-                                );
-                                if (!context.mounted) return;
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                    content: Text(
-                                      'Receipt ID copied to clipboard.',
-                                    ),
-                                  ),
-                                );
-                              },
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 12),
-                // Verified Attachments
-                Container(
-                  padding: const EdgeInsets.all(10),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFFF8FAF9),
-                    borderRadius: BorderRadius.circular(8),
-                    border: Border.all(color: const Color(0xFFE2E8E5)),
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            'UPLOADED ATTACHMENTS',
-                            style: outfit(
-                              fontSize: 10,
-                              fontWeight: FontWeight.w700,
-                              color: const Color(0xFF404942),
-                            ),
-                          ),
-                          const Icon(
-                            Icons.check_circle_rounded,
-                            size: 14,
-                            color: kPrimaryContainer,
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 6),
-                      Wrap(
-                        spacing: 8,
-                        runSpacing: 4,
-                        children: [
-                          if (documents?.isLoading == true)
-                            _receiptTag('Loading attachments'),
-                          if (documents?.hasError == true)
-                            _receiptTag('Could not load attachments'),
-                          for (final doc in documents?.valueOrNull ?? [])
-                            _receiptTag(doc.fileName),
-                          if (documents?.hasValue == true &&
-                              documents!.valueOrNull!.isEmpty)
-                            _receiptTag('No documents attached'),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 10),
-                // SHA-256 Ledger Audit Badge
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Flexible(
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          const Icon(
-                            Icons.lock_rounded,
-                            size: 13,
-                            color: kPrimaryContainer,
-                          ),
-                          const SizedBox(width: 4),
-                          Flexible(
-                            child: Text(
-                              'Submitted: ${application?.appliedAt?.toLocal() ?? 'Not available'}',
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: outfit(
-                                fontSize: 10,
-                                color: const Color(0xFF404942),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(width: 6),
-                    Text(
-                      application == null
-                          ? 'Status unavailable'
-                          : ApplicationStatusUi.of(application.status).label,
-                      style: outfit(
-                        fontSize: 10,
-                        fontWeight: FontWeight.w600,
-                        color: kPrimaryContainer,
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 14),
-                // Action: Monitor in Application Tracker
-                SizedBox(
-                  width: double.infinity,
-                  child: OutlinedButton.icon(
-                    style: OutlinedButton.styleFrom(
-                      foregroundColor: kPrimaryContainer,
-                      side: const BorderSide(color: kPrimaryContainer),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      padding: const EdgeInsets.symmetric(vertical: 12),
-                    ),
-                    onPressed: () => context.go('/applications'),
-                    icon: const Icon(Icons.track_changes_rounded, size: 18),
-                    label: Text(
-                      'Monitor in Application Tracker',
-                      style: outfit(fontWeight: FontWeight.w600, fontSize: 13),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Center(
-                  child: TextButton.icon(
-                    onPressed: application == null
-                        ? null
-                        : () => context.push('/application/${application.id}'),
-                    icon: const Icon(
-                      Icons.receipt_long_rounded,
-                      size: 16,
-                      color: kPrimaryContainer,
-                    ),
-                    label: Text(
-                      'View Application Status',
-                      style: outfit(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w600,
-                        color: kPrimaryContainer,
-                      ),
-                    ),
-                  ),
-                ),
-              ],
+            const Divider(height: 1, color: kStudentDivider),
+            const SizedBox(height: 12),
+            Text(
+              'Attachments',
+              style: geist(
+                fontSize: 13,
+                fontWeight: FontWeight.w600,
+                color: kOnSurface,
+              ),
             ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _receiptTag(String label) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-      decoration: BoxDecoration(
-        color: kSurfaceContainer,
-        borderRadius: BorderRadius.circular(4),
-      ),
-      child: Text(
-        label,
-        style: openSans(
-          fontSize: 10,
-          fontWeight: FontWeight.w600,
-          color: kSecondary,
+            const SizedBox(height: 6),
+            if (documents?.isLoading == true)
+              _attachment('Loading attachments'),
+            if (documents?.hasError == true)
+              _attachment('Could not load attachments'),
+            for (final doc in documents?.valueOrNull ?? [])
+              _attachment(doc.fileName),
+            if (documents?.hasValue == true && documents!.valueOrNull!.isEmpty)
+              _attachment('No documents attached'),
+            if (documents == null) _attachment('Attachments unavailable'),
+            const SizedBox(height: 12),
+            const Divider(height: 1, color: kStudentDivider),
+            const SizedBox(height: 12),
+            Text(
+              'Submitted: $submittedLabel',
+              style: geist(fontSize: 12, color: kTextSecondary),
+            ),
+            const SizedBox(height: 6),
+            Text(
+              application == null
+                  ? 'Status unavailable'
+                  : ApplicationStatusUi.of(application.status).label,
+              style: geist(
+                fontSize: 12,
+                fontWeight: FontWeight.w500,
+                color: kTextSecondary,
+              ),
+            ),
+            const SizedBox(height: 16),
+            SizedBox(
+              width: double.infinity,
+              child: OutlinedButton.icon(
+                onPressed: () => context.go('/applications'),
+                icon: const Icon(Icons.track_changes_rounded, size: 18),
+                label: Text(
+                  'Monitor in Application Tracker',
+                  style: geist(fontWeight: FontWeight.w600, fontSize: 13),
+                ),
+              ),
+            ),
+            Center(
+              child: TextButton.icon(
+                onPressed: application == null
+                    ? null
+                    : () => context.push('/application/${application.id}'),
+                icon: const Icon(Icons.receipt_long_rounded, size: 16),
+                label: Text(
+                  'View Application Status',
+                  style: geist(fontSize: 12, fontWeight: FontWeight.w600),
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );
   }
+
+  Widget _attachment(String label) => Padding(
+    padding: const EdgeInsets.symmetric(vertical: 4),
+    child: Text(label, style: geist(fontSize: 12, color: kTextSecondary)),
+  );
 }
 
 /// Unavailable / readiness explanation notice.

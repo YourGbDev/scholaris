@@ -127,7 +127,7 @@ class ApplicationsScreen extends ConsumerWidget {
     }
 
     return Scaffold(
-      backgroundColor: kBackground,
+      backgroundColor: kStudentCanvas,
       appBar: AppBar(
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,

@@ -271,7 +271,7 @@ class _AccountSettingsScreenState extends ConsumerState<AccountSettingsScreen> {
     final emailConfirmed = ref.watch(emailConfirmedProvider);
 
     return Scaffold(
-      backgroundColor: kSurfaceWarm,
+      backgroundColor: kStudentCanvas,
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0.5,
@@ -398,15 +398,15 @@ class _AccountSettingsScreenState extends ConsumerState<AccountSettingsScreen> {
             children: [
               // Email Row
               _buildEmailRow(email, emailConfirmed),
-              const Divider(height: 1, color: kSurfaceContainerLow),
+              const Divider(height: 1, color: kStudentSurfaceSubtle),
 
               // Change Password Card
               _buildChangePasswordSection(),
-              const Divider(height: 1, color: kSurfaceContainerLow),
+              const Divider(height: 1, color: kStudentSurfaceSubtle),
 
               // Phone Number Row
               _buildPhoneRow(),
-              const Divider(height: 1, color: kSurfaceContainerLow),
+              const Divider(height: 1, color: kStudentSurfaceSubtle),
 
               // SUC Integration Row
               _buildSucIntegrationRow(),
@@ -644,7 +644,7 @@ class _AccountSettingsScreenState extends ConsumerState<AccountSettingsScreen> {
                   Container(
                     padding: const EdgeInsets.all(10),
                     decoration: BoxDecoration(
-                      color: kSurfaceContainerLow,
+                      color: kStudentSurfaceSubtle,
                       borderRadius: BorderRadius.circular(10),
                       border: Border.all(
                         color: kPrimary.withValues(alpha: 0.3),
@@ -737,18 +737,18 @@ class _AccountSettingsScreenState extends ConsumerState<AccountSettingsScreen> {
           onPressed: onToggle,
         ),
         filled: true,
-        fillColor: const Color(0xFFF9F9FF),
+        fillColor: kStudentSurfaceSubtle,
         contentPadding: const EdgeInsets.symmetric(
           horizontal: 14,
           vertical: 10,
         ),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: kSurfaceContainerHighest),
+          borderSide: const BorderSide(color: kStudentDivider),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: kSurfaceContainerHighest),
+          borderSide: const BorderSide(color: kStudentDivider),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
@@ -909,7 +909,7 @@ class _AccountSettingsScreenState extends ConsumerState<AccountSettingsScreen> {
                   _savePreference('alert_deadline', v);
                 },
               ),
-              const Divider(height: 1, color: kSurfaceContainerLow),
+              const Divider(height: 1, color: kStudentSurfaceSubtle),
 
               _notificationSwitch(
                 title: 'New Scholarship Matches',
@@ -923,7 +923,7 @@ class _AccountSettingsScreenState extends ConsumerState<AccountSettingsScreen> {
                   _savePreference('alert_matches', v);
                 },
               ),
-              const Divider(height: 1, color: kSurfaceContainerLow),
+              const Divider(height: 1, color: kStudentSurfaceSubtle),
 
               _notificationSwitch(
                 title: 'Application Status Updates',
@@ -934,7 +934,7 @@ class _AccountSettingsScreenState extends ConsumerState<AccountSettingsScreen> {
                   _savePreference('alert_status', v);
                 },
               ),
-              const Divider(height: 1, color: kSurfaceContainerLow),
+              const Divider(height: 1, color: kStudentSurfaceSubtle),
 
               _notificationSwitch(
                 title: 'Weekly Grant Digest',
@@ -945,7 +945,7 @@ class _AccountSettingsScreenState extends ConsumerState<AccountSettingsScreen> {
                   _savePreference('alert_weekly', v);
                 },
               ),
-              const Divider(height: 1, color: kSurfaceContainerLow),
+              const Divider(height: 1, color: kStudentSurfaceSubtle),
 
               _notificationSwitch(
                 title: 'Email Notifications',
@@ -1089,7 +1089,7 @@ class _AccountSettingsScreenState extends ConsumerState<AccountSettingsScreen> {
               Container(
                 padding: const EdgeInsets.all(14),
                 decoration: const BoxDecoration(
-                  color: kSurfaceContainerLow,
+                  color: kStudentSurfaceSubtle,
                   borderRadius: BorderRadius.vertical(
                     top: Radius.circular(kRadiusCard - .5),
                   ),
@@ -1157,7 +1157,7 @@ class _AccountSettingsScreenState extends ConsumerState<AccountSettingsScreen> {
                   );
                 },
               ),
-              const Divider(height: 1, color: kSurfaceContainerLow),
+              const Divider(height: 1, color: kStudentSurfaceSubtle),
 
               _actionListTile(
                 icon: Icons.download_rounded,
@@ -1175,7 +1175,7 @@ class _AccountSettingsScreenState extends ConsumerState<AccountSettingsScreen> {
                   );
                 },
               ),
-              const Divider(height: 1, color: kSurfaceContainerLow),
+              const Divider(height: 1, color: kStudentSurfaceSubtle),
 
               _actionListTile(
                 icon: Icons.admin_panel_settings_outlined,
@@ -1290,7 +1290,7 @@ class _AccountSettingsScreenState extends ConsumerState<AccountSettingsScreen> {
                   );
                 },
               ),
-              const Divider(height: 1, color: kSurfaceContainerLow),
+              const Divider(height: 1, color: kStudentSurfaceSubtle),
 
               Padding(
                 padding: const EdgeInsets.all(14),
@@ -1330,7 +1330,7 @@ class _AccountSettingsScreenState extends ConsumerState<AccountSettingsScreen> {
                         vertical: 3,
                       ),
                       decoration: BoxDecoration(
-                        color: kSurfaceContainer,
+                        color: kStudentSurfaceSubtle,
                         borderRadius: BorderRadius.circular(6),
                       ),
                       child: Text(
@@ -1379,7 +1379,7 @@ class _AccountSettingsScreenState extends ConsumerState<AccountSettingsScreen> {
             ),
           ),
           style: OutlinedButton.styleFrom(
-            side: const BorderSide(color: kSurfaceContainerHighest, width: 1.5),
+            side: const BorderSide(color: kStudentDivider, width: 1.5),
             backgroundColor: Colors.white,
             minimumSize: const Size.fromHeight(48),
             shape: RoundedRectangleBorder(

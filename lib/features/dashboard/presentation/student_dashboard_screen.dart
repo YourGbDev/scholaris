@@ -78,10 +78,20 @@ class _StudentDashboardScreenState
       ref.watch(applicationsProvider).valueOrNull ?? const <Application>[],
     );
 
+    // A saved-set update briefly recomputes the aggregate. Keep its existing
+    // layout while the source data is ready, but hide retained data when an
+    // auth transition or real source refresh is still loading.
+    final sourcesReady = [
+      profileAsync,
+      matchesAsync,
+      ref.watch(scholarshipsProvider),
+      ref.watch(applicationsProvider),
+      ref.watch(bookmarksProvider),
+    ].every((value) => value.hasValue && !value.isLoading && !value.hasError);
     final summaryReady =
         dashboardAsync.hasValue &&
-        !dashboardAsync.isLoading &&
-        !dashboardAsync.hasError;
+        !dashboardAsync.hasError &&
+        (!dashboardAsync.isLoading || sourcesReady);
     final info =
         (summaryReady ? dashboardAsync.valueOrNull : null) ??
         const DashboardInfo(
@@ -806,8 +816,8 @@ class _StudentDashboardScreenState
     );
   }
 
-  void _toggleBookmark(WidgetRef ref, String scholarshipId) {
-    ref.read(bookmarksProvider.notifier).toggle(scholarshipId);
+  Future<void> _toggleBookmark(WidgetRef ref, String scholarshipId) async {
+    await ref.read(bookmarksProvider.notifier).toggle(scholarshipId);
   }
 
   Widget _buildClosingSoonSection(

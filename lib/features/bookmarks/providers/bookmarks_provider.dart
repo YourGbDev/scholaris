@@ -44,14 +44,18 @@ class BookmarksNotifier extends AsyncNotifier<Set<String>> {
       await repo.remove(scholarshipId);
       if (generation == _generation &&
           user == ref.read(currentUserIdProvider)) {
-        state = AsyncData(Set<String>.of(current)..remove(scholarshipId));
+        state = AsyncData(
+          Set<String>.of(state.valueOrNull ?? current)..remove(scholarshipId),
+        );
       }
       return false;
     } else {
       await repo.add(scholarshipId);
       if (generation == _generation &&
           user == ref.read(currentUserIdProvider)) {
-        state = AsyncData(Set<String>.of(current)..add(scholarshipId));
+        state = AsyncData(
+          Set<String>.of(state.valueOrNull ?? current)..add(scholarshipId),
+        );
       }
       return true;
     }

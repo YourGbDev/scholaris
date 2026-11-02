@@ -42,7 +42,7 @@ class StudentGuideGreeting extends StatelessWidget {
             child: Stack(
               fit: StackFit.expand,
               children: [
-                const ColoredBox(color: Color(0xA31A2920)),
+                const ColoredBox(color: Color(0x66000000)),
                 Positioned(
                   left: -24,
                   bottom: 0,

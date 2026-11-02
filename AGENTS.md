@@ -15,7 +15,7 @@ Every app-owned text surface (including landing, student, provider, super admin,
 - Home-specific hierarchy: recommendation heading17px700, summary counts16px700. Keep See all on the trailing side of the heading at standard phone sizes; wrap the heading rather than shrinking it. At enlarged text sizes, stack the action below and align it to the trailing edge. Keep the 44px touch target. Group overview surfaces with12px gaps and separate recommendations with28px.
 - User-approved final polish applies the same hierarchy to student, provider, super admin and landing surfaces: titles700, prose400, supporting metadata500 and actions600. Shared helpers honor explicit weights; do not automatically promote titles to800. Body and metadata use natural tracking0; titles use restrained negative tracking (about-.15 at16px and-.3 at20px). Keep positive tracking.6 for overlines. Use neutral surfaces for ordinary information; preserve meaningful status colors.
 - Desktop provider/super-admin page titles use24px700 and narrow layouts20px700; sections17, cards15, prose13–14, metadata12–13. Keep meaningful metrics24–28 and already-small labels readable. Landing marketing hero52px desktop/30–34px phone, sections32/24; its artwork labels and recorded screenshot text retain their own scale. Never apply a global textScaler reduction.
-- User-approved entry revamp: /onboarding contains Welcome followed by Discover, Match, Track and Companion; shared welcome content also supports /intro. New transparent poses live in assets/mascots/onboarding. Keep compact24px700 entry headlines,14px regular prose and13px600 actions, scrollable content and44+targets. Student login stays form-led and preserves CAPTCHA/session/lockout/recovery. Chat AI/QR/document integration remains planned; onboarding labels it Coming soon.
+- User-approved entry revamp: /onboarding contains Welcome followed by Discover, Match, Track and Companion; shared welcome content also supports /intro. New transparent poses live in assets/mascots/onboarding. Keep compact24px700 entry headlines,14px regular prose and13px600 actions, scrollable content and44+targets. Student login stays form-led and preserves CAPTCHA/session/lockout/recovery. AI replies remain planned; onboarding labels AI Coming soon. The chat first-use guide and QR/upload/Discover shortcuts are implemented with honest tool explanations and disabled AI sending.
 - Preserve readable wrapping, accessibility scaling and meaningful status colors. Do not replace text with images or shrink it to hide overflow. Native system UI and essential missing-glyph fallback are exceptions; other font exceptions require explicit user instruction.
 - Run relevant typography/UI tests and inspect actual rendered results before handoff. Do not claim native device verification without a device.
 
@@ -24,6 +24,11 @@ Every app-owned text surface (including landing, student, provider, super admin,
 - Full-size content cards use the shared scholarship-card treatment: `kRadiusCard` (26 px), `kCardBorderCrisp` (faint 0.5 px border), and `kCardElevationCrisp` (soft ambient shadow). Reuse `kSoftCardDecoration` rather than introducing another neutral card style.
 - Keep outer Material/InkWell/clip corners aligned with the card decoration. Preserve meaningful status borders and colors. Buttons, fields, pills, icon containers and nested rows keep their purpose-specific shapes; they are not full-size cards.
 - Use the shared card tokens in role-specific themes as well. Verify narrow layouts and enlarged text when changing padding.
+
+## Quiet student surfaces
+
+- User-approved November 3: student page canvases use `kStudentCanvas` (white); ordinary inset rows use neutral `kStudentSurfaceSubtle` and `kStudentDivider`. Keep the local green mascot hero and meaningful status colors. Guide scrims are neutral black, with white speech bubbles.
+- Match details describe actual matched criteria without simulated percentages or selection predictions. Profile completeness describes saved profile fields, not scholarship eligibility or invented grant counts. Requirements use quiet rows with genuine readiness labels; preserve neutral eligibility chips.
 
 ## Every IPA must enable CAPTCHA
 
@@ -45,4 +50,4 @@ Every app-owned text surface (including landing, student, provider, super admin,
 
 ## Mascot identity
 
-- Ariel is the male mascot; Ari is the female mascot. Resolve both name and artwork from the student's stored gender using the shared mascot helpers. Tour and Chat must use the same identity.
+- Ariel is the male mascot; Ari is the female mascot. Resolve both name and artwork from the student's stored gender using the shared mascot helpers. Tour/Home keep this matching identity. User-approved November 3 exception: Chat introduces the OTHER companion (male/unset student → Ari, female student → Ariel), with the matching new chest-up chat artwork. Chat must not change the Home/tour identity.

@@ -14,6 +14,8 @@ import 'package:scholaris/features/bookmarks/providers/bookmarks_provider.dart';
 import 'package:scholaris/features/bookmarks/repositories/bookmark_repository.dart';
 import 'package:scholaris/features/dashboard/presentation/widgets/student_notifications_sheet.dart';
 import 'package:scholaris/features/home/presentation/home_screen.dart';
+import 'package:scholaris/features/home/presentation/student_chat_screen.dart';
+import 'package:scholaris/features/profile/presentation/profile_setup_screen.dart';
 import 'package:scholaris/features/profile/models/student_profile.dart';
 import 'package:scholaris/features/profile/providers/profile_setup_provider.dart';
 import 'package:scholaris/features/profile/repositories/profile_repository.dart';
@@ -39,7 +41,9 @@ Future<void> main() async {
     user,
     StudentProfile(
       id: user,
-      fullName: params['gender']?.toLowerCase() == 'female' ? 'Maria Santos' : 'Gb',
+      fullName: params['gender']?.toLowerCase() == 'female'
+          ? 'Maria Santos'
+          : 'Gb',
       gender: params['gender'],
       nationality: 'Filipino',
       region: 'NCR',
@@ -138,11 +142,19 @@ Future<void> main() async {
   final router = GoRouter(
     routes: [
       GoRoute(path: '/', builder: (_, _) => const HomeScreen()),
+      GoRoute(path: '/chat', builder: (_, _) => const StudentChatScreen()),
+      GoRoute(
+        path: '/profile-setup/:step',
+        builder: (_, state) =>
+            ProfileSetupScreen(step: state.pathParameters['step']!),
+      ),
       GoRoute(path: '/saved', builder: (_, _) => const SavedScreen()),
       GoRoute(
         path: '/scholarship/:id',
-        builder: (_, state) =>
-            ScholarshipDetailScreen(scholarshipId: state.pathParameters['id']!, startApplication: state.uri.queryParameters['apply'] == '1'),
+        builder: (_, state) => ScholarshipDetailScreen(
+          scholarshipId: state.pathParameters['id']!,
+          startApplication: state.uri.queryParameters['apply'] == '1',
+        ),
       ),
       GoRoute(
         path: '/application/:id',

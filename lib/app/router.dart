@@ -908,8 +908,8 @@ String? authRedirectDecision({
   }
 
   if (profileComplete) {
+    // Completed students reuse these sections to edit their saved profile.
     if (onAuthRoute ||
-        onSetupRoute ||
         onVerifyRoute ||
         location == '/onboarding' ||
         location == '/splash') {

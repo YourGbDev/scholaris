@@ -1,19 +1,12 @@
-// lib/features/profile/presentation/matching_power_sheet.dart
-//
-// Bottom sheet modal displaying an itemized diagnostic breakdown of the student's
-// profile matching power, highlighting completed vs missing criteria and offering
-// direct navigation to complete missing details.
-
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../shared/theme/app_motion.dart';
 import '../../../shared/theme/app_theme.dart';
-import '../../../shared/widgets/mascot_pose_view.dart';
 import '../models/student_profile.dart';
 import '../services/matching_power_service.dart';
 
-/// Shows the Matching Power Diagnostics bottom sheet modal.
+/// Shows the saved and missing profile details without implying eligibility.
 Future<void> showMatchingPowerSheet(
   BuildContext context,
   StudentProfile? profile,
@@ -25,7 +18,7 @@ Future<void> showMatchingPowerSheet(
     showDragHandle: true,
     backgroundColor: Colors.white,
     shape: const RoundedRectangleBorder(
-      borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      borderRadius: BorderRadius.vertical(top: Radius.circular(kRadiusCard)),
     ),
     builder: (sheetContext) => MatchingPowerSheet(report: report),
   );
@@ -33,21 +26,15 @@ Future<void> showMatchingPowerSheet(
 
 class MatchingPowerSheet extends StatelessWidget {
   const MatchingPowerSheet({super.key, required this.report});
-
   final MatchingPowerReport report;
 
   @override
   Widget build(BuildContext context) {
     final mediaQuery = MediaQuery.of(context);
-    final isComplete = report.isFullyComplete;
-    final accentColor = isComplete ? kPrimary : kAccent;
-
-    // First incomplete item to route to
     final firstIncomplete = report.items.cast<MatchingPowerItem?>().firstWhere(
-      (i) => i != null && !i.isComplete,
+      (item) => item != null && !item.isComplete,
       orElse: () => null,
     );
-
     return Container(
       key: const ValueKey('matching-power-sheet'),
       constraints: BoxConstraints(maxHeight: mediaQuery.size.height * 0.85),
@@ -56,176 +43,96 @@ class MatchingPowerSheet extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          // Header title & close
           Row(
             children: [
               Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Matching Power Diagnostics',
-                      style: poppins(
-                        fontSize: 17,
-                        fontWeight: FontWeight.w700,
-                        color: kPrimary,
-                      ),
-                    ),
-                    const SizedBox(height: 2),
-                    Text(
-                      '${report.completedCount} of ${report.totalCount} criteria optimized',
-                      style: openSans(fontSize: 12, color: Colors.black54),
-                    ),
-                  ],
+                child: Text(
+                  'Profile completeness',
+                  style: geist(
+                    fontSize: 17,
+                    fontWeight: FontWeight.w700,
+                    color: kTextPrimary,
+                  ),
                 ),
               ),
               IconButton(
                 onPressed: () => Navigator.of(context).pop(),
-                icon: const Icon(Icons.close_rounded, color: Colors.black54),
+                icon: const Icon(Icons.close_rounded, color: kTextSecondary),
                 tooltip: 'Close',
               ),
             ],
           ),
-          const SizedBox(height: 14),
-
-          // Overview Score Card
-          Container(
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: kPrimarySoft.withValues(alpha: 0.5),
-              borderRadius: BorderRadius.circular(kRadiusCard),
-              border: Border.all(color: accentColor.withValues(alpha: 0.3)),
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    Text(
-                      'Profile Matching Power',
-                      style: poppins(
-                        fontSize: 13,
-                        fontWeight: FontWeight.w600,
-                        color: kPrimary,
+          const SizedBox(height: 8),
+          Flexible(
+            child: SingleChildScrollView(
+              physics: const AppleBouncingScrollPhysics(),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          '${report.completedCount} of ${report.totalCount} details provided',
+                          style: geist(fontSize: 12, color: kTextSecondary),
+                        ),
                       ),
-                    ),
-                    const Spacer(),
-                    Container(
-                      key: const ValueKey('matching-power-score-badge'),
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 10,
-                        vertical: 3,
-                      ),
-                      decoration: BoxDecoration(
-                        color: accentColor.withValues(alpha: 0.18),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: CountUpAnimation(
+                      const SizedBox(width: 8),
+                      CountUpAnimation(
+                        key: const ValueKey('matching-power-score-badge'),
                         targetValue: report.percentage,
                         suffix: '%',
-                        style: poppins(
+                        style: geist(
                           fontSize: 13,
                           fontWeight: FontWeight.w700,
-                          color: isComplete ? kPrimary : kMatchGoldText,
+                          color: kPrimary,
                         ),
                       ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 8),
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(4),
-                  child: LinearProgressIndicator(
-                    key: const ValueKey('matching-power-progress-bar'),
-                    value: report.ratio,
-                    minHeight: 8,
-                    backgroundColor: Colors.white,
-                    valueColor: AlwaysStoppedAnimation<Color>(accentColor),
+                    ],
                   ),
-                ),
-                const SizedBox(height: 10),
-                Text(
-                  report.advice,
-                  style: openSans(fontSize: 12, color: kPrimary, height: 1.35),
-                ),
-                if (isComplete) ...[
-                  const SizedBox(height: 12),
-                  Container(
-                    padding: const EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(
-                        color: kPrimary.withValues(alpha: 0.25),
-                      ),
-                    ),
-                    child: Row(
-                      children: [
-                        const MascotPoseView(
-                          pose: MascotPose.celebrating,
-                          height: 84,
-                          width: 84,
-                        ),
-                        const SizedBox(width: 14),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                '100% Matching Power!',
-                                style: poppins(
-                                  fontSize: 13,
-                                  fontWeight: FontWeight.w700,
-                                  color: kPrimary,
-                                ),
-                              ),
-                              const SizedBox(height: 2),
-                              Text(
-                                'Your profile is fully optimized for all Philippine scholarships and government grants.',
-                                style: openSans(
-                                  fontSize: 11.5,
-                                  color: const Color(0xFF404942),
-                                  height: 1.3,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
+                  const SizedBox(height: 10),
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(4),
+                    child: LinearProgressIndicator(
+                      key: const ValueKey('matching-power-progress-bar'),
+                      value: report.ratio,
+                      minHeight: 4,
+                      backgroundColor: kStudentDivider,
+                      valueColor: const AlwaysStoppedAnimation<Color>(kPrimary),
                     ),
                   ),
-                ],
-              ],
-            ),
-          ),
-          const SizedBox(height: 16),
-
-          Text(
-            'Criteria Breakdown',
-            style: poppins(
-              fontSize: 13,
-              fontWeight: FontWeight.w600,
-              color: kPrimary,
-            ),
-          ),
-          const SizedBox(height: 8),
-
-          // Diagnostic Items List
-          Flexible(
-            child: ListView.separated(
-              physics: const AppleBouncingScrollPhysics(),
-              shrinkWrap: true,
-              itemCount: report.items.length,
-              separatorBuilder: (_, _) =>
-                  const Divider(height: 1, color: Color(0xFFEEEEEE)),
-              itemBuilder: (context, index) {
-                final item = report.items[index];
-                final done = item.isComplete;
-
-                return StaggeredListItem(
-                  index: index,
-                  child: PressableScale(
-                    child: InkWell(
+                  const SizedBox(height: 10),
+                  Text(
+                    report.isFullyComplete
+                        ? 'Your profile details are complete. Keep them up to date.'
+                        : 'Add your missing details to keep your profile up to date.',
+                    style: geist(
+                      fontSize: 12,
+                      color: kTextSecondary,
+                      height: 1.45,
+                    ),
+                  ),
+                  const SizedBox(height: 6),
+                  Text(
+                    'Completeness does not guarantee scholarship eligibility.',
+                    style: geist(
+                      fontSize: 12,
+                      color: kTextSecondary,
+                      height: 1.45,
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  Text(
+                    'Profile details',
+                    style: geist(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w600,
+                      color: kTextPrimary,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  for (final item in report.items) ...[
+                    InkWell(
                       key: ValueKey('matching-power-item-${item.id}'),
                       onTap: () {
                         Navigator.of(context).pop();
@@ -234,114 +141,92 @@ class MatchingPowerSheet extends StatelessWidget {
                       borderRadius: BorderRadius.circular(8),
                       child: Padding(
                         padding: const EdgeInsets.symmetric(
-                          vertical: 10,
+                          vertical: 12,
                           horizontal: 4,
                         ),
                         child: Row(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Container(
-                              padding: const EdgeInsets.all(4),
-                              decoration: BoxDecoration(
-                                color: done
-                                    ? kPrimary.withValues(alpha: 0.12)
-                                    : kAccent.withValues(alpha: 0.16),
-                                shape: BoxShape.circle,
-                              ),
-                              child: Icon(
-                                done
-                                    ? Icons.check_rounded
-                                    : Icons.arrow_forward_rounded,
-                                size: 16,
-                                color: done ? kPrimary : kMatchGoldText,
-                              ),
+                            Icon(
+                              item.isComplete
+                                  ? Icons.check_rounded
+                                  : Icons.add_rounded,
+                              size: 20,
+                              color: item.isComplete
+                                  ? kPrimary
+                                  : kTextSecondary,
                             ),
                             const SizedBox(width: 12),
                             Expanded(
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Row(
-                                    children: [
-                                      Expanded(
-                                        child: Text(
-                                          item.title,
-                                          style: poppins(
-                                            fontSize: 13,
-                                            fontWeight: FontWeight.w600,
-                                            color: Colors.black87,
-                                          ),
-                                        ),
-                                      ),
-                                      Text(
-                                        done ? 'Verified' : 'Action needed',
-                                        style: openSans(
-                                          fontSize: 11,
-                                          fontWeight: FontWeight.w600,
-                                          color: done
-                                              ? kPrimary
-                                              : kMatchGoldText,
-                                        ),
-                                      ),
-                                    ],
+                                  Text(
+                                    item.title,
+                                    style: geist(
+                                      fontSize: 13,
+                                      fontWeight: FontWeight.w600,
+                                      color: kTextPrimary,
+                                    ),
                                   ),
                                   const SizedBox(height: 2),
                                   Text(
                                     item.subtitle,
-                                    style: openSans(
+                                    style: geist(
                                       fontSize: 12,
-                                      color: Colors.black54,
+                                      color: kTextSecondary,
                                     ),
                                   ),
-                                  const SizedBox(height: 3),
+                                  const SizedBox(height: 2),
                                   Text(
-                                    item.impactHint,
-                                    style: openSans(
+                                    item.isComplete
+                                        ? 'Provided'
+                                        : 'Missing details',
+                                    style: geist(
                                       fontSize: 11,
-                                      color: done ? Colors.black45 : kPrimary,
+                                      fontWeight: FontWeight.w500,
+                                      color: kTextSecondary,
                                     ),
                                   ),
                                 ],
                               ),
                             ),
+                            const SizedBox(width: 8),
+                            const Icon(
+                              Icons.chevron_right_rounded,
+                              size: 18,
+                              color: kTextSecondary,
+                            ),
                           ],
                         ),
                       ),
                     ),
-                  ),
-                );
-              },
+                    if (item != report.items.last)
+                      const Divider(height: 1, color: kStudentDivider),
+                  ],
+                ],
+              ),
             ),
           ),
-          const SizedBox(height: 16),
-
-          // Primary Action CTA Button
-          PressableScale(
-            child: ElevatedButton(
-              key: const ValueKey('matching-power-cta-button'),
-              onPressed: () {
-                Navigator.of(context).pop();
-                if (firstIncomplete != null) {
-                  context.go(firstIncomplete.routeTarget);
-                }
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: isComplete ? kPrimary : kPrimary,
-                foregroundColor: Colors.white,
-                minimumSize: const Size.fromHeight(48),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(kRadiusCard),
-                ),
-              ),
-              child: Text(
-                isComplete
-                    ? 'Great Job! Return to Discover'
-                    : 'Complete Missing Details',
-                style: poppins(
-                  fontSize: 13,
-                  fontWeight: FontWeight.w600,
-                  color: Colors.white,
-                ),
+          const SizedBox(height: 12),
+          TextButton(
+            key: const ValueKey('matching-power-cta-button'),
+            onPressed: () {
+              Navigator.of(context).pop();
+              if (firstIncomplete != null) {
+                context.go(firstIncomplete.routeTarget);
+              }
+            },
+            style: TextButton.styleFrom(
+              foregroundColor: kPrimary,
+              minimumSize: const Size.fromHeight(48),
+            ),
+            child: Text(
+              firstIncomplete == null ? 'Done' : 'Add missing details',
+              style: geist(
+                fontSize: 13,
+                fontWeight: FontWeight.w600,
+                color: kPrimary,
               ),
             ),
           ),

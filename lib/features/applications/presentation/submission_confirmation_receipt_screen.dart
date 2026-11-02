@@ -87,7 +87,7 @@ class _SubmissionConfirmationReceiptScreenState
         : null;
 
     return Scaffold(
-      backgroundColor: kBackground,
+      backgroundColor: kStudentCanvas,
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,

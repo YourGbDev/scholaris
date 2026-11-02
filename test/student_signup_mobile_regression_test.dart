@@ -299,15 +299,18 @@ void main() {
       );
       expect(afterCodeVerifiedDecision, ProfileSetupRoute.personal);
 
-      // 3. User completing profile setup lands on Dashboard (/home)
+      // 3. A verified returning student with a complete profile goes home.
+      // Initial setup completion navigates explicitly in ProfileSetupScreen;
+      // completed students can reopen setup sections to edit saved details.
       final completedProfileDecision = authRedirectDecision(
-        location: '/profile-setup/personal',
+        location: '/verify-email',
         isLoggedIn: true,
         recoveryActive: false,
         onAuthRoute: false,
-        onSetupRoute: true,
+        onSetupRoute: false,
         profileLoading: false,
         profileComplete: true,
+        onVerifyRoute: true,
       );
       expect(completedProfileDecision, '/home');
     });

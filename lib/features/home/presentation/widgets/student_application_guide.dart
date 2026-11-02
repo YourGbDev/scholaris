@@ -1100,7 +1100,7 @@ class _SpotlightPainter extends CustomPainter {
       );
     }
     path.fillType = PathFillType.evenOdd;
-    canvas.drawPath(path, Paint()..color = const Color(0xA31A2920));
+    canvas.drawPath(path, Paint()..color = const Color(0x66000000));
     final pulseTarget =
         action != null &&
             !action!.isEmpty &&
@@ -1120,7 +1120,7 @@ class _SpotlightPainter extends CustomPainter {
           const Radius.circular(16),
         ),
         Paint()
-          ..color = const Color(0xFFD5EBDC)
+          ..color = const Color(0xFFE8E8E8)
           ..style = PaintingStyle.stroke
           ..strokeWidth = 2,
       );

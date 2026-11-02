@@ -214,7 +214,7 @@ void main() {
       expect(find.text('DOST-SEI Undergraduate Scholarship'), findsOneWidget);
       expect(find.text('CHED Merit Scholarship (MSRS)'), findsOneWidget);
       // Feed cards show fit and a clear route to the full details.
-      expect(find.textContaining('Fit'), findsWidgets);
+      expect(find.text('Profile match'), findsWidgets);
       expect(find.text('View Details'), findsWidgets);
     });
 
@@ -298,19 +298,19 @@ void main() {
 
       expect(find.text('DOST-SEI Undergraduate Scholarship'), findsOneWidget);
       await tester.scrollUntilVisible(
-        find.text('Why this matches you'),
+        find.text('Match details'),
         200,
         scrollable: find.byType(Scrollable).first,
       );
-      expect(find.text('Why this matches you'), findsOneWidget);
+      expect(find.text('Match details'), findsOneWidget);
       // The reasons section pushes "About" below the fold on the default test
       // surface — scroll to it.
       await tester.scrollUntilVisible(
-        find.text('About'),
+        find.text('About this scholarship'),
         200,
         scrollable: find.byType(Scrollable).first,
       );
-      expect(find.text('About'), findsOneWidget);
+      expect(find.text('About this scholarship'), findsOneWidget);
       await tester.scrollUntilVisible(
         find.text('Eligibility'),
         200,
@@ -380,13 +380,13 @@ void main() {
       await tester.pumpAndSettle();
 
       // The section must not claim a match the engine would reject.
-      expect(find.text('Why this matches you'), findsNothing);
+      expect(find.text('Match details'), findsNothing);
       await tester.scrollUntilVisible(
-        find.text('About'),
+        find.text('About this scholarship'),
         200,
         scrollable: find.byType(Scrollable).first,
       );
-      expect(find.text('About'), findsOneWidget);
+      expect(find.text('About this scholarship'), findsOneWidget);
     });
 
     testWidgets('shows why the student cannot apply when ineligible',
@@ -437,7 +437,7 @@ void main() {
       );
       expect(find.text("Why you can't apply"), findsOneWidget);
       expect(find.text('Minimum GPA 3.50 — your GPA is 3.20'), findsOneWidget);
-      expect(find.text('Why this matches you'), findsNothing);
+      expect(find.text('Match details'), findsNothing);
     });
 
     testWidgets('hides match reasons when no profile is set up',
@@ -455,7 +455,7 @@ void main() {
       await tester.pumpAndSettle();
 
       // Without a signed-in profile there is nothing to explain a match.
-      expect(find.text('Why this matches you'), findsNothing);
+      expect(find.text('Match details'), findsNothing);
       expect(find.text('Your GPA qualifies'), findsNothing);
     });
   });

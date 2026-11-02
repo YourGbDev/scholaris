@@ -60,8 +60,10 @@ const Color kPrimarySoft = Color(0x140F4D2E);
 
 // Surfaces & Neutrals
 const Color kBackground = Color(0xFFF8FAF8);
-// Calmer student browsing canvas; other roles keep their existing surfaces.
-const Color kStudentCanvas = Color(0xFFF3F6F3);
+// Student pages and quiet nested surfaces use neutral whites and grays.
+const Color kStudentCanvas = Color(0xFFFFFFFF);
+const Color kStudentSurfaceSubtle = Color(0xFFF6F6F6);
+const Color kStudentDivider = Color(0xFFE8E8E8);
 const Color kSurface = Color(0xFFFFFFFF);
 const Color kSurfaceDim = Color(0xFFD9DFDB);
 const Color kSurfaceBright = Color(0xFFFFFFFF);

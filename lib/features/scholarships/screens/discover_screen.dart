@@ -262,17 +262,6 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
           ),
           const SizedBox(width: 8),
 
-          // Match >90% Chip with green dot
-          _StitchCarouselChip(
-            label: 'Match >90% • Demo',
-            hasDot: true,
-            isActive: state.highFitOnly,
-            onTap: () {
-              notifier.setHighFitOnly(!state.highFitOnly);
-            },
-          ),
-          const SizedBox(width: 8),
-
           // Deadline < 14 Days Chip
           _StitchCarouselChip(
             label: 'Deadline < 14 Days',
@@ -867,11 +856,7 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
   }
 
   Future<void> _toggleBookmark(WidgetRef ref, String id) async {
-    try {
-      await ref.read(bookmarksProvider.notifier).toggle(id);
-    } on Exception {
-      // Silent on card
-    }
+    await ref.read(bookmarksProvider.notifier).toggle(id);
   }
 }
 
@@ -1038,7 +1023,6 @@ class _StitchCarouselChip extends StatelessWidget {
     required this.onTap,
     this.isActive = false,
     this.isUrgent = false,
-    this.hasDot = false,
     this.icon,
   });
 
@@ -1046,7 +1030,6 @@ class _StitchCarouselChip extends StatelessWidget {
   final VoidCallback onTap;
   final bool isActive;
   final bool isUrgent;
-  final bool hasDot;
   final IconData? icon;
 
   @override
@@ -1085,16 +1068,6 @@ class _StitchCarouselChip extends StatelessWidget {
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                if (hasDot) ...[
-                  Container(
-                    width: 6,
-                    height: 6,
-                    decoration: const BoxDecoration(
-                      color: Color(0xFFB3F1C6), // primary-fixed
-                    ),
-                  ),
-                  const SizedBox(width: 5),
-                ],
                 if (icon != null) ...[
                   Icon(icon, size: 14, color: fg),
                   const SizedBox(width: 4),

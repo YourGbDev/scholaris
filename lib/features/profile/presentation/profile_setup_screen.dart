@@ -60,6 +60,16 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
   final TextEditingController _schoolSearchController = TextEditingController();
   bool _isSchoolSelectorExpanded = false;
 
+  bool get _isEditing =>
+      ref.read(currentProfileProvider).valueOrNull?.setupComplete == true;
+
+  void _returnToProfile() {
+    final userId = ref.read(currentUserIdProvider);
+    if (userId != null) ref.invalidate(profileSetupProvider(userId));
+    ref.read(homeTabIndexProvider.notifier).selectTab(3);
+    context.go('/home');
+  }
+
   int get _stepIndex => switch (widget.step) {
     'personal' => 1,
     'academic' => 2,
@@ -173,12 +183,18 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
     ref.listen(profileSetupProvider(userId), _syncHydration);
 
     return Scaffold(
-      backgroundColor: kSurfaceWarm,
+      backgroundColor: kStudentCanvas,
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0.5,
         centerTitle: true,
-        leading: widget.step != 'personal'
+        leading: _isEditing
+            ? IconButton(
+                tooltip: 'Back to profile',
+                icon: const Icon(Icons.arrow_back_rounded, color: kTextPrimary),
+                onPressed: _returnToProfile,
+              )
+            : widget.step != 'personal'
             ? IconButton(
                 icon: const Icon(Icons.arrow_back_rounded, color: kTextPrimary),
                 onPressed: () {
@@ -197,7 +213,7 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
               const ScholarisLogo(compact: true),
               const SizedBox(width: 8),
               Text(
-                'Profile Setup',
+                _isEditing ? 'Edit Profile' : 'Profile Setup',
                 style: poppins(
                   color: kPrimary,
                   fontSize: 15,
@@ -250,8 +266,10 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     // Step Tracker & Visual Meter
-                    _buildStepMeter(),
-                    const SizedBox(height: 18),
+                    if (!_isEditing) ...[
+                      _buildStepMeter(),
+                      const SizedBox(height: 18),
+                    ],
 
                     // Step Header Titles
                     Text(
@@ -367,9 +385,7 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
                   child: Container(
                     height: 5,
                     decoration: BoxDecoration(
-                      color: _stepIndex >= 2
-                          ? kPrimary
-                          : kSurfaceContainerHighest,
+                      color: _stepIndex >= 2 ? kPrimary : kStudentDivider,
                       borderRadius: BorderRadius.circular(3),
                     ),
                   ),
@@ -379,9 +395,7 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
                   child: Container(
                     height: 5,
                     decoration: BoxDecoration(
-                      color: _stepIndex >= 3
-                          ? kPrimary
-                          : kSurfaceContainerHighest,
+                      color: _stepIndex >= 3 ? kPrimary : kStudentDivider,
                       borderRadius: BorderRadius.circular(3),
                     ),
                   ),
@@ -445,7 +459,7 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
       return Container(
         padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 3),
         decoration: BoxDecoration(
-          color: kSurfaceContainerHighest,
+          color: kStudentDivider,
           borderRadius: BorderRadius.circular(12),
         ),
         child: Text(
@@ -489,9 +503,9 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
       return Container(
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
-          color: kSurfaceContainerLow,
+          color: kStudentSurfaceSubtle,
           borderRadius: BorderRadius.circular(14),
-          border: Border.all(color: kSurfaceContainerHighest),
+          border: Border.all(color: kStudentDivider),
         ),
         child: Row(
           children: [
@@ -537,9 +551,9 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
       return Container(
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
-          color: kSurfaceContainerLow,
+          color: kStudentSurfaceSubtle,
           borderRadius: BorderRadius.circular(14),
-          border: Border.all(color: kSurfaceContainerHighest),
+          border: Border.all(color: kStudentDivider),
         ),
         child: Row(
           children: [
@@ -587,9 +601,9 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
         Container(
           padding: const EdgeInsets.all(14),
           decoration: BoxDecoration(
-            color: kSurfaceContainerLow,
+            color: kStudentSurfaceSubtle,
             borderRadius: BorderRadius.circular(14),
-            border: Border.all(color: kSurfaceContainerHighest),
+            border: Border.all(color: kStudentDivider),
           ),
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -781,7 +795,7 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: kSurfaceContainerHighest),
+        border: Border.all(color: kStudentDivider),
         boxShadow: const [
           BoxShadow(color: kCardShadow, blurRadius: 8, offset: Offset(0, 2)),
         ],
@@ -987,7 +1001,7 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
                       border: Border.all(
                         color: selectedGender == 'male'
                             ? kPrimary
-                            : kSurfaceContainerHighest,
+                            : kStudentDivider,
                         width: selectedGender == 'male' ? 2 : 1,
                       ),
                     ),
@@ -1031,7 +1045,7 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
                       border: Border.all(
                         color: selectedGender == 'female'
                             ? kPrimary
-                            : kSurfaceContainerHighest,
+                            : kStudentDivider,
                         width: selectedGender == 'female' ? 2 : 1,
                       ),
                     ),
@@ -1071,9 +1085,9 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       decoration: BoxDecoration(
-        color: kSurfaceContainerLow,
+        color: kStudentSurfaceSubtle,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: kSurfaceContainerHighest),
+        border: Border.all(color: kStudentDivider),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -1115,14 +1129,6 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
                 fontSize: 13,
                 fontWeight: FontWeight.w600,
                 color: kTextPrimary,
-              ),
-            ),
-            Text(
-              'AY 2024-2025',
-              style: outfit(
-                fontSize: 11,
-                fontWeight: FontWeight.w500,
-                color: kTextSecondary,
               ),
             ),
           ],
@@ -1191,7 +1197,7 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
         side: BorderSide(
-          color: isSelected ? kPrimary : kSurfaceContainerHighest,
+          color: isSelected ? kPrimary : kStudentDivider,
           width: 1,
         ),
       ),
@@ -1209,9 +1215,7 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
                 height: 7,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: isSelected
-                      ? kPrimaryFixedDim
-                      : kSurfaceContainerHighest,
+                  color: isSelected ? kPrimaryFixedDim : kStudentDivider,
                 ),
               ),
               const SizedBox(width: 6),
@@ -1237,9 +1241,9 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: kSurfaceContainerLow,
+        color: kStudentSurfaceSubtle,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: kSurfaceContainerHighest),
+        border: Border.all(color: kStudentDivider),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -1282,7 +1286,7 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
           Container(
             padding: const EdgeInsets.all(3),
             decoration: BoxDecoration(
-              color: kSurfaceContainer,
+              color: kStudentSurfaceSubtle,
               borderRadius: BorderRadius.circular(10),
             ),
             child: Row(
@@ -1324,7 +1328,7 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(10),
-              border: Border.all(color: kSurfaceContainerHighest),
+              border: Border.all(color: kStudentDivider),
             ),
             child: Row(
               children: [
@@ -1409,9 +1413,9 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: kSurfaceContainer,
+        color: kStudentSurfaceSubtle,
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: kSurfaceContainerHighest),
+        border: Border.all(color: kStudentDivider),
       ),
       child: Row(
         children: [
@@ -1551,7 +1555,7 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
                 : null,
             filled: true,
             fillColor: state.incomeUndisclosed
-                ? kSurfaceContainerLow
+                ? kStudentSurfaceSubtle
                 : Colors.white,
             contentPadding: const EdgeInsets.symmetric(
               horizontal: 14,
@@ -1559,11 +1563,11 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
             ),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
-              borderSide: const BorderSide(color: kSurfaceContainerHighest),
+              borderSide: const BorderSide(color: kStudentDivider),
             ),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
-              borderSide: const BorderSide(color: kSurfaceContainerHighest),
+              borderSide: const BorderSide(color: kStudentDivider),
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
@@ -1617,9 +1621,7 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
           decoration: BoxDecoration(
             color: isSelected ? kPrimary : Colors.white,
             borderRadius: BorderRadius.circular(8),
-            border: Border.all(
-              color: isSelected ? kPrimary : kSurfaceContainerHighest,
-            ),
+            border: Border.all(color: isSelected ? kPrimary : kStudentDivider),
           ),
           child: Text(
             label,
@@ -1642,7 +1644,7 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
       color: Colors.white,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(14),
-        side: const BorderSide(color: kSurfaceContainerHighest),
+        side: const BorderSide(color: kStudentDivider),
       ),
       child: CheckboxListTile(
         contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
@@ -1674,9 +1676,9 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
       decoration: BoxDecoration(
-        color: kSurfaceContainerLow,
+        color: kStudentSurfaceSubtle,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: kSurfaceContainerHighest),
+        border: Border.all(color: kStudentDivider),
       ),
       child: Row(
         children: [
@@ -1702,9 +1704,9 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: kSurfaceContainer,
+        color: kStudentSurfaceSubtle,
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: kSurfaceContainerHighest),
+        border: Border.all(color: kStudentDivider),
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -1844,7 +1846,7 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
         side: BorderSide(
-          color: value ? kPrimary : kSurfaceContainerHighest,
+          color: value ? kPrimary : kStudentDivider,
           width: value ? 1.5 : 1,
         ),
       ),
@@ -1855,7 +1857,7 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
           width: 32,
           height: 32,
           decoration: BoxDecoration(
-            color: value ? kPrimaryLight : kSurfaceContainerLow,
+            color: value ? kPrimaryLight : kStudentSurfaceSubtle,
             borderRadius: BorderRadius.circular(8),
           ),
           child: Icon(icon, color: value ? kPrimary : kSecondary, size: 18),
@@ -2037,11 +2039,11 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
       contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
-        borderSide: const BorderSide(color: kSurfaceContainerHighest),
+        borderSide: const BorderSide(color: kStudentDivider),
       ),
       enabledBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
-        borderSide: const BorderSide(color: kSurfaceContainerHighest),
+        borderSide: const BorderSide(color: kStudentDivider),
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
@@ -2081,6 +2083,7 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
   // --- Buttons --------------------------------------------------------------
 
   Widget _buildButtons(BuildContext context, ProfileSetupState state) {
+    final isEditing = _isEditing;
     final isLastStep = widget.step == 'financial';
     final backRoute = widget.step == 'academic'
         ? ProfileSetupRoute.personal
@@ -2088,17 +2091,16 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
 
     return Row(
       children: [
-        if (widget.step != 'personal') ...[
+        if (isEditing || widget.step != 'personal') ...[
           Expanded(
             child: PressableScale(
               child: OutlinedButton(
-                onPressed: () => context.go(backRoute),
+                onPressed: isEditing
+                    ? _returnToProfile
+                    : () => context.go(backRoute),
                 style: OutlinedButton.styleFrom(
                   foregroundColor: kSecondary,
-                  side: const BorderSide(
-                    color: kSurfaceContainerHighest,
-                    width: 1.5,
-                  ),
+                  side: const BorderSide(color: kStudentDivider, width: 1.5),
                   backgroundColor: Colors.white,
                   padding: const EdgeInsets.symmetric(vertical: 14),
                   shape: RoundedRectangleBorder(
@@ -2152,7 +2154,11 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
                       children: [
                         Flexible(
                           child: Text(
-                            isLastStep ? 'Complete Profile' : 'Continue',
+                            isEditing
+                                ? 'Save Changes'
+                                : isLastStep
+                                ? 'Complete Profile'
+                                : 'Continue',
                             style: outfit(
                               fontSize: 15,
                               fontWeight: FontWeight.w600,
@@ -2682,6 +2688,7 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
   }
 
   Future<void> _handleNextOrSubmit(bool isLastStep) async {
+    final isEditing = _isEditing;
     final userId = ref.read(currentUserIdProvider);
     if (userId == null) return;
     final notifier = ref.read(profileSetupProvider(userId).notifier);
@@ -2690,7 +2697,7 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
     final isValid = _formKey.currentState?.validate() ?? false;
     if (!isValid) return;
 
-    if (isLastStep) {
+    if (isLastStep || isEditing) {
       final success = await notifier.submit();
       if (!mounted) return;
       if (success) {
@@ -2714,8 +2721,12 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
           await ref.read(profileCompleteProvider.future);
         } catch (_) {}
         if (!mounted) return;
-        ref.read(homeTabIndexProvider.notifier).selectTab(0);
-        context.go('/home');
+        if (isEditing) {
+          _returnToProfile();
+        } else {
+          ref.read(homeTabIndexProvider.notifier).selectTab(0);
+          context.go('/home');
+        }
       }
     } else {
       final saved = await notifier.saveCheckpoint(widget.step);

@@ -4,13 +4,15 @@
 // (`scholaris_student_dashboard/code.html` and `scholaris_discover_filters/code.html`).
 //
 // Card anatomy:
-// 1. Top row: Match % badge (e.g. "98% Match" with star) + Urgency countdown pill
+// 1. Top row: profile readiness label + deadline/status metadata
 //    (e.g. "5 days left" with hourglass) + Bookmark button
 // 2. Title in bundled Geist semibold
 // 3. Verified provider row with verified_user emblem
 // 4. Bold grant amount in ₱ with frequency/renewal subtitle
 // 5. Criteria chips (degree, need-based, year level, etc.)
 // 6. Quick Apply primary CTA button
+
+import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -147,7 +149,7 @@ class ScholarshipCard extends StatelessWidget {
   final bool isApplied;
 
   /// Optional bookmark toggle.
-  final VoidCallback? onToggleBookmark;
+  final FutureOr<void> Function()? onToggleBookmark;
 
   /// Optional quick apply callback.
   final VoidCallback? onQuickApply;
@@ -170,7 +172,7 @@ class ScholarshipCard extends StatelessWidget {
       scholarship: scholarship,
       referenceNow: now,
     );
-    // Placeholder score only; replace with a real scoring model when available.
+    // shortcut: legacy demo cutoff only gates quick apply; review it with action eligibility.
     final rawMatchPct = _effectiveMatchPercentage();
     final matchPct =
         readiness.state == ApplicationReadinessState.notEligible &&
@@ -232,50 +234,24 @@ class ScholarshipCard extends StatelessWidget {
                                 runSpacing: 4,
                                 crossAxisAlignment: WrapCrossAlignment.center,
                                 children: [
-                                  // Fit leads the metadata hierarchy; Applied remains a quiet confirmation.
-                                  Container(
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 9,
-                                      vertical: 4,
-                                    ),
-                                    decoration: BoxDecoration(
-                                      color: matchPct >= 90
-                                          ? const Color(
-                                              0xFFCBEDD5,
-                                            ) // Clear match emphasis
-                                          : const Color(0xFFF0F2F0),
-                                      borderRadius: BorderRadius.circular(20),
-                                    ),
-                                    child: Row(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        Container(
-                                          width: 6,
-                                          height: 6,
-                                          decoration: BoxDecoration(
-                                            color: matchPct >= 90
-                                                ? kPrimary
-                                                : const Color(
-                                                    0xFF436084,
-                                                  ), // kSecondary
-                                            shape: BoxShape.circle,
-                                          ),
-                                        ),
-                                        const SizedBox(width: 4.5),
-                                        Flexible(
-                                          child: Text(
-                                            '$matchPct% Fit',
-                                            style: geist(
-                                              fontSize: 12,
-                                              fontWeight: FontWeight.w600,
-                                              letterSpacing: -.15,
-                                              color: matchPct >= 90
-                                                  ? kPrimary
-                                                  : const Color(0xFF404942),
-                                            ),
-                                          ),
-                                        ),
-                                      ],
+                                  Text(
+                                    switch (readiness.state) {
+                                      ApplicationReadinessState.eligible =>
+                                        'Profile match',
+                                      ApplicationReadinessState.notEligible =>
+                                        'Review criteria',
+                                      ApplicationReadinessState
+                                          .profileIncomplete =>
+                                        'Check eligibility',
+                                      ApplicationReadinessState.closed =>
+                                        'Review details',
+                                      ApplicationReadinessState.inactive =>
+                                        'Unavailable',
+                                    },
+                                    style: geist(
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w500,
+                                      color: kTextSupporting,
                                     ),
                                   ),
 
@@ -581,7 +557,7 @@ class _BookmarkButton extends StatefulWidget {
   });
 
   final bool isBookmarked;
-  final VoidCallback onToggleBookmark;
+  final FutureOr<void> Function() onToggleBookmark;
 
   @override
   State<_BookmarkButton> createState() => _BookmarkButtonState();
@@ -589,8 +565,7 @@ class _BookmarkButton extends StatefulWidget {
 
 class _BookmarkButtonState extends State<_BookmarkButton>
     with SingleTickerProviderStateMixin {
-  bool _locallyBookmarked = false;
-  bool _animating = false;
+  bool? _pendingBookmark;
   late final AnimationController _burstController;
   late final Animation<double> _burstScale;
   late final Animation<Color?> _burstColor;
@@ -621,50 +596,39 @@ class _BookmarkButtonState extends State<_BookmarkButton>
     super.dispose();
   }
 
-  @override
-  void didUpdateWidget(covariant _BookmarkButton oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    if (widget.isBookmarked != oldWidget.isBookmarked) {
-      _locallyBookmarked = widget.isBookmarked;
-      if (!_animating && !_burstController.isAnimating) {
-        _burstController.reset();
-      }
-    }
-  }
-
-  void _handleTap() {
+  Future<void> _handleTap() async {
+    if (_pendingBookmark != null) return;
     HapticFeedback.lightImpact();
-    final willBookmark = !(widget.isBookmarked || _locallyBookmarked);
-
+    final willBookmark = !widget.isBookmarked;
+    setState(() => _pendingBookmark = willBookmark);
     if (willBookmark) {
-      setState(() {
-        _locallyBookmarked = true;
-        _animating = true;
-      });
       _burstController.forward(from: 0);
     } else {
-      setState(() {
-        _locallyBookmarked = false;
-      });
+      _burstController.reset();
     }
 
     try {
-      widget.onToggleBookmark();
+      await widget.onToggleBookmark();
     } on Exception {
-      setState(() {
-        _locallyBookmarked = !willBookmark;
-      });
-      if (willBookmark) {
-        _animating = false;
+      if (mounted) {
         _burstController.reset();
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text(
+              'Could not update saved scholarships. Please try again.',
+            ),
+          ),
+        );
       }
+    } finally {
+      if (mounted) setState(() => _pendingBookmark = null);
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    final showFilled = widget.isBookmarked || _locallyBookmarked;
-    final showBurst = _animating && _burstController.isAnimating && showFilled;
+    final showFilled = _pendingBookmark ?? widget.isBookmarked;
+    final showBurst = _burstController.isAnimating && showFilled;
 
     Widget icon;
     if (showBurst) {

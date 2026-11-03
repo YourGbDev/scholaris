@@ -303,7 +303,7 @@ class _DisbursementsOversightScreenState
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
           decoration: BoxDecoration(
-            color: kSeqPrimaryFixed,
+            color: kWorkspaceSubtle,
             borderRadius: BorderRadius.circular(999),
           ),
           child: Row(
@@ -321,7 +321,7 @@ class _DisbursementsOversightScreenState
               Text(
                 'Live data',
                 style: seqLabelSm(
-                  color: kSeqOnPrimaryFixedVariant,
+                  color: kWorkspaceInk,
                   fontWeight: FontWeight.w600,
                 ),
               ),
@@ -384,7 +384,7 @@ class _DisbursementsOversightScreenState
                       .state = key;
                 },
                 backgroundColor: kSeqSurfaceContainerLow,
-                selectedColor: kSeqPrimaryContainer,
+                selectedColor: kWorkspaceSelected,
                 labelStyle: seqLabelSm(
                   color: isSelected ? kSeqOnPrimary : kSeqOnSurfaceVariant,
                   fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
@@ -393,8 +393,8 @@ class _DisbursementsOversightScreenState
                   borderRadius: BorderRadius.circular(10),
                   side: BorderSide(
                     color: isSelected
-                        ? kSeqPrimaryContainer
-                        : kSeqOutlineVariant.withValues(alpha: 0.35),
+                        ? kWorkspaceSelected
+                        : kWorkspaceBorder,
                   ),
                 ),
                 showCheckmark: false,

@@ -135,7 +135,7 @@ class _AssignReviewerDialogState extends ConsumerState<AssignReviewerDialog> {
                       width: 40,
                       height: 40,
                       decoration: BoxDecoration(
-                        color: kOrgPrimary.withValues(alpha: 0.1),
+                        color: kWorkspaceSubtle,
                         borderRadius: BorderRadius.circular(10),
                       ),
                       child: const Center(
@@ -185,7 +185,7 @@ class _AssignReviewerDialogState extends ConsumerState<AssignReviewerDialog> {
               // Sub-header guidance
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                color: const Color(0xFFF7F9F7),
+                color: const Color(0xFFF8F8F8),
                 child: Row(
                   children: [
                     const Icon(Icons.info_outline_rounded,
@@ -281,7 +281,7 @@ class _AssignReviewerDialogState extends ConsumerState<AssignReviewerDialog> {
                             radius: 18,
                             backgroundColor: isAssigned
                                 ? kOrgPrimary
-                                : const Color(0xFFDEE4DE),
+                                : const Color(0xFFE2E4E3),
                             child: Text(
                               member.fullName.isNotEmpty
                                   ? member.fullName[0].toUpperCase()

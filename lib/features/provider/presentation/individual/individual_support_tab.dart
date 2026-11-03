@@ -11,6 +11,7 @@ import '../../models/support_ledger.dart';
 import '../../repositories/support_repository.dart';
 import '../../providers/provider_scholarships_provider.dart';
 import '../org/org_provider_theme.dart';
+import '../../../../shared/theme/app_theme.dart' show kSoftCardDecoration;
 
 class IndividualSupportTab extends ConsumerWidget {
   const IndividualSupportTab({super.key});
@@ -76,7 +77,6 @@ class IndividualSupportTab extends ConsumerWidget {
         ],
         const SizedBox(height: 24),
         _panel(
-          color: const Color(0xFFEDF2E6),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -391,11 +391,7 @@ class IndividualSupportTab extends ConsumerWidget {
   static Widget _panel({required Widget child, Color color = Colors.white}) =>
       Container(
         padding: const EdgeInsets.all(22),
-        decoration: BoxDecoration(
-          color: color,
-          border: Border.all(color: kOrgBorder),
-          borderRadius: BorderRadius.circular(16),
-        ),
+        decoration: kSoftCardDecoration.copyWith(color: color),
         child: child,
       );
   Future<void> _edit(

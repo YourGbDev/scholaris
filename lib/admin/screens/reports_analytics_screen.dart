@@ -341,7 +341,7 @@ Widget _buildSkeletonLoader(BuildContext context) {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: BoxDecoration(
-                  color: kSeqPrimaryFixed.withValues(alpha: 0.4),
+                  color: kWorkspaceSubtle,
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Text(

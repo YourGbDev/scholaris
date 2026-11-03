@@ -106,7 +106,7 @@ class _AdminHomeScreenState extends ConsumerState<AdminHomeScreen> {
     final isDesktop = MediaQuery.sizeOf(context).width >= 768;
 
     return Theme(
-      data: Theme.of(context).copyWith(
+      data: workspaceTheme(Theme.of(context)).copyWith(
         cardTheme: const CardThemeData(
           color: Colors.white,
           surfaceTintColor: Colors.transparent,

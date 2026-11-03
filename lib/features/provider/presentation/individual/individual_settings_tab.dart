@@ -203,7 +203,7 @@ class _IndividualSettingsTabState extends ConsumerState<IndividualSettingsTab> {
                                 child: Text('Individual Benefactor'),
                               ),
                               selected: activeType == 'individual',
-                              selectedColor: kOrgSidebarDark,
+                              selectedColor: kWorkspaceSelected,
                               labelStyle: orgLabel(
                                 color: activeType == 'individual'
                                     ? Colors.white
@@ -225,7 +225,7 @@ class _IndividualSettingsTabState extends ConsumerState<IndividualSettingsTab> {
                                 child: Text('Org Console'),
                               ),
                               selected: activeType == 'organization',
-                              selectedColor: kOrgSidebarDark,
+                              selectedColor: kWorkspaceSelected,
                               labelStyle: orgLabel(
                                 color: activeType == 'organization'
                                     ? Colors.white

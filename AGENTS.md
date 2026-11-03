@@ -32,6 +32,11 @@ Every app-owned text surface (including landing, student, provider, super admin,
 - User-approved November 3: student page canvases use `kStudentCanvas` (white); ordinary inset rows use neutral `kStudentSurfaceSubtle` and `kStudentDivider`. Keep the open white mascot hero and meaningful status colors. Guide scrims are neutral black, with white speech bubbles.
 - Match details describe actual matched criteria without simulated percentages or selection predictions. Profile completeness describes saved profile fields, not scholarship eligibility or invented grant counts. Requirements use quiet rows with genuine readiness labels; preserve neutral eligibility chips.
 
+## Neutral operational workspaces
+
+- User-approved November 3: individual provider, organization and admin workspaces use white canvases, neutral supporting surfaces, and charcoal-selected filters through the shared workspace theme. Keep Geist and visible crisp card/control edges. Do not restore seeded Material pastel chips, decorative green/blue/cream panels, or category-colored metric tiles.
+- Preserve green primary actions/navigation and meaningful success, warning, error, decision, safety and chart-series indicators. Informational guidance and ordinary metadata stay neutral; color does not substitute for a status label.
+
 ## Every IPA must enable CAPTCHA
 
 - **CAPTCHA is mandatory for every Scholaris IPA, including development, demo and sideload builds. Never build or hand off an IPA with CAPTCHA disabled.** Authentication must remain usable with the backend's CAPTCHA requirements.

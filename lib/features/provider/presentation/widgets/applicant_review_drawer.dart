@@ -1113,7 +1113,7 @@ class _ApplicantReviewDrawerState extends ConsumerState<ApplicantReviewDrawer> {
       width: double.infinity,
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: const Color(0xFFF2F4F2),
+        color: const Color(0xFFF6F6F6),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(color: const Color(0xFFE5E7EB)),
         boxShadow: const [
@@ -1131,7 +1131,7 @@ class _ApplicantReviewDrawerState extends ConsumerState<ApplicantReviewDrawer> {
             width: 44,
             height: 44,
             decoration: BoxDecoration(
-              color: const Color(0xFFE8ECE8),
+              color: const Color(0xFFE8E8E8),
               borderRadius: BorderRadius.circular(12),
             ),
             alignment: Alignment.center,
@@ -1184,7 +1184,7 @@ class _ApplicantReviewDrawerState extends ConsumerState<ApplicantReviewDrawer> {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: const Color(0xFFF2F4F2),
+        color: const Color(0xFFF6F6F6),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(color: const Color(0xFFE5E7EB)),
         boxShadow: const [
@@ -1424,7 +1424,7 @@ class _ApplicantReviewDrawerState extends ConsumerState<ApplicantReviewDrawer> {
                 icon: Icons.pending_outlined,
                 text: 'External ID Attestation: Pending',
                 iconColor: const Color(0xFF707971),
-                bgColor: const Color(0xFFE8ECE8),
+                bgColor: const Color(0xFFE8E8E8),
               ),
               _buildTrustPill(
                 icon: Icons.receipt_long_outlined,
@@ -1804,7 +1804,7 @@ class _ApplicantReviewDrawerState extends ConsumerState<ApplicantReviewDrawer> {
         SliderTheme(
           data: SliderThemeData(
             activeTrackColor: kOrgPrimary,
-            inactiveTrackColor: const Color(0xFFE8ECE8),
+            inactiveTrackColor: const Color(0xFFE8E8E8),
             thumbColor: kOrgPrimary,
             overlayColor: kOrgPrimary.withValues(alpha: 0.12),
             trackHeight: 4,
@@ -1901,7 +1901,7 @@ class _ApplicantReviewDrawerState extends ConsumerState<ApplicantReviewDrawer> {
                   width: double.infinity,
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: const Color(0xFFF2F4F2),
+                    color: const Color(0xFFF6F6F6),
                     borderRadius: BorderRadius.circular(12),
                     border: Border.all(
                       color: const Color(0xFFC0C9C0).withValues(alpha: 0.3),
@@ -1922,7 +1922,7 @@ class _ApplicantReviewDrawerState extends ConsumerState<ApplicantReviewDrawer> {
                   width: double.infinity,
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: const Color(0xFFF2F4F2),
+                    color: const Color(0xFFF6F6F6),
                     borderRadius: BorderRadius.circular(12),
                     border: Border.all(color: const Color(0xFFE5E7EB)),
                   ),
@@ -2018,7 +2018,7 @@ class _ApplicantReviewDrawerState extends ConsumerState<ApplicantReviewDrawer> {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: const Color(0xFFF2F4F2),
+        color: const Color(0xFFF6F6F6),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(color: const Color(0xFFE5E7EB)),
       ),
@@ -2039,7 +2039,7 @@ class _ApplicantReviewDrawerState extends ConsumerState<ApplicantReviewDrawer> {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                 decoration: BoxDecoration(
-                  color: const Color(0xFFE8ECE8),
+                  color: const Color(0xFFE8E8E8),
                   borderRadius: BorderRadius.circular(6),
                 ),
                 child: Text(

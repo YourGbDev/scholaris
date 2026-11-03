@@ -8,6 +8,8 @@ import 'package:scholaris/features/scholarships/providers/scholarships_provider.
 import 'package:scholaris/features/scholarships/repositories/scholarship_repository.dart';
 
 import 'helpers/fake_scholarship_data_source.dart';
+import 'package:scholaris/features/schools/providers/school_provider.dart';
+import 'package:scholaris/features/schools/models/school.dart';
 
 void main() {
   Widget buildApp({
@@ -39,6 +41,28 @@ void main() {
   }
 
   group('ScholarshipFormScreen', () {
+    testWidgets('selected school restrictions keep readable names', (tester) async {
+      configureViewport(tester);
+      await tester.pumpWidget(ProviderScope(
+        overrides: [schoolsProvider.overrideWith((ref) async => const [
+          School(id: 'school-1', name: 'Sample University', normalizedName: 'sample university'),
+        ])],
+        child: buildApp(dataSource: FakeScholarshipDataSource([])),
+      ));
+      await tester.pumpAndSettle();
+      await tester.ensureVisible(find.text('Restricted to selected schools'));
+      await tester.tap(find.text('Restricted to selected schools'));
+      await tester.pumpAndSettle();
+      final tile = find.widgetWithText(CheckboxListTile, 'Sample University');
+      await tester.ensureVisible(tile);
+      await tester.tap(tile);
+      await tester.pumpAndSettle();
+      final selected = tester.widget<CheckboxListTile>(tile);
+      expect(selected.value, isTrue);
+      expect((selected.title! as Text).style!.color!.computeLuminance(), lessThan(.3));
+      expect(tester.takeException(), isNull);
+    });
+
     testWidgets('renders create mode fields and validates empty title', (tester) async {
       configureViewport(tester);
 

@@ -51,7 +51,12 @@ class _IndividualProviderShellState
   ];
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context) => Theme(
+    data: workspaceTheme(Theme.of(context)),
+    child: Builder(builder: _buildWorkspace),
+  );
+
+  Widget _buildWorkspace(BuildContext context) {
     final identity = ref.watch(providerSubRoleProvider);
     final content = _currentIndex == 3
         ? ProviderOverview(
@@ -303,7 +308,7 @@ class _IndividualProviderShellState
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: BoxDecoration(
-                  color: const Color(0xFFDEE4DE),
+                  color: const Color(0xFFE2E4E3),
                   borderRadius: BorderRadius.circular(6),
                 ),
                 child: Text(

@@ -1,5 +1,7 @@
 import '../../../../shared/theme/app_theme.dart' show kSoftCardDecoration;
 import 'individual_support_summary.dart';
+import '../../../../shared/widgets/mascot_pose_view.dart'
+    show getMascotGreetingAssetPath;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -171,7 +173,7 @@ class ProviderOverviewPanel extends StatelessWidget {
                 children: [
                   const CircleAvatar(
                     radius: 17,
-                    backgroundColor: Color(0xFFE1F1E5),
+                    backgroundColor: kWorkspaceSubtle,
                     child: Icon(
                       Icons.school_rounded,
                       size: 19,
@@ -241,78 +243,65 @@ class ProviderOverviewPanel extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    individual
-                        ? 'YOUR INDIVIDUAL PROVIDER WORKSPACE'
-                        : 'YOUR ORGANIZATION WORKSPACE',
-                    style: orgLabel(
-                      fontSize: 10,
-                      color: kOrgTextSecondary,
-                      letterSpacing: 1.6,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    individual
-                        ? 'Hi, $firstName — a little support. A new beginning.'
-                        : 'Organization overview',
-                    style: orgHeadline(
-                      fontSize: compact ? 20 : 24,
-                      color: kOrgPrimary,
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-                  Container(
-                    clipBehavior: Clip.antiAlias,
-                    decoration: BoxDecoration(
-                      color: const Color(0xFFF1F7EF),
-                      borderRadius: BorderRadius.circular(26),
-                      border: Border.all(color: const Color(0xFFDDE5D4)),
-                      image: compact
-                          ? null
-                          : const DecorationImage(
-                              image: AssetImage(
-                                'assets/images/provider_hero_illustration.png',
-                              ),
-                              fit: BoxFit.cover,
-                              alignment: Alignment.topLeft,
-                            ),
-                    ),
-                    child: compact
-                        ? Column(
-                            children: [
-                              Image.asset(
-                                'assets/images/provider_hero_illustration.png',
-                                fit: BoxFit.cover,
-                                excludeFromSemantics: true,
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.fromLTRB(
-                                  16,
-                                  0,
-                                  16,
-                                  20,
-                                ),
-                                child: heroCard,
-                              ),
-                            ],
-                          )
-                        : ConstrainedBox(
-                            constraints: const BoxConstraints(minHeight: 300),
-                            child: Row(
-                              children: [
-                                const Expanded(flex: 4, child: SizedBox()),
-                                Expanded(
-                                  flex: 6,
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(24),
-                                    child: heroCard,
-                                  ),
-                                ),
-                              ],
+                  LayoutBuilder(
+                    builder: (context, header) {
+                      final portrait = Image.asset(
+                        getMascotGreetingAssetPath(gender: 'female'),
+                        width: compact ? 104 : 128,
+                        height: compact ? 96 : 118,
+                        fit: BoxFit.contain,
+                        filterQuality: FilterQuality.high,
+                        excludeFromSemantics: true,
+                      );
+                      final copy = Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'YOUR INDIVIDUAL PROVIDER WORKSPACE',
+                            style: orgLabel(
+                              fontSize: 10,
+                              color: kOrgTextSecondary,
+                              letterSpacing: 1,
                             ),
                           ),
+                          const SizedBox(height: 8),
+                          Text(
+                            'Hi, $firstName',
+                            style: orgHeadline(fontSize: compact ? 20 : 24),
+                          ),
+                          const SizedBox(height: 6),
+                          Text(
+                            'A little support. A new beginning.',
+                            style: orgBody(
+                              fontSize: 14,
+                              color: kOrgTextSecondary,
+                            ),
+                          ),
+                        ],
+                      );
+                      final stacked =
+                          header.maxWidth < 300 ||
+                          MediaQuery.textScalerOf(context).scale(1) > 1.3;
+                      return stacked
+                          ? Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                portrait,
+                                const SizedBox(height: 12),
+                                copy,
+                              ],
+                            )
+                          : Row(
+                              children: [
+                                portrait,
+                                const SizedBox(width: 20),
+                                Expanded(child: copy),
+                              ],
+                            );
+                    },
                   ),
+                  const SizedBox(height: 24),
+                  heroCard,
                   const SizedBox(height: 28),
                   Wrap(
                     spacing: 16,

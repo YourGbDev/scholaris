@@ -943,25 +943,8 @@ Widget _buildSkeletonLoader(BuildContext context) {
   }
 
   Widget _buildRoleBadge(String role) {
-    Color bg;
-    Color fg;
-    switch (role.toLowerCase()) {
-      case 'admin':
-        bg = kSeqPrimaryFixed.withValues(alpha: 0.5);
-        fg = kSeqPrimaryContainer;
-        break;
-      case 'student':
-        bg = kSeqSecondaryFixed.withValues(alpha: 0.5);
-        fg = kSeqSecondary;
-        break;
-      case 'provider':
-        bg = kSeqTertiaryFixed.withValues(alpha: 0.5);
-        fg = kSeqTertiaryContainer;
-        break;
-      default:
-        bg = kSeqSurfaceContainerHigh;
-        fg = kSeqOnSurfaceVariant;
-    }
+    const bg = kWorkspaceSubtle;
+    const fg = kWorkspaceInk;
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),

@@ -6,11 +6,12 @@
 
 import 'package:scholaris/shared/theme/app_theme.dart';
 import 'package:flutter/material.dart';
+export 'package:scholaris/shared/theme/workspace_theme.dart';
 
 // --- Color Palette -----------------------------------------------------------
 
 /// Neutral canvas behind the white administration panels.
-const Color kAdminSurface = Color(0xFFF6F8F6);
+const Color kAdminSurface = Colors.white;
 
 /// Primary operational green — nav active fill (#0F4D2E), primary CTAs, active highlights.
 const Color kAdminBridgeGreen = Color(0xFF0F4D2E);
@@ -31,7 +32,7 @@ const Color kAdminHairline = Color(0xFFE8E8E8);
 const Color kAdminTextPrimary = Color(0xFF1A1B1F);
 
 /// Muted secondary text for labels and captions (#5E6D66 / #707971).
-const Color kAdminTextSecondary = Color(0xFF5E6D66);
+const Color kAdminTextSecondary = Color(0xFF62666B);
 
 /// White sidebar surface, matching the provider workspace.
 const Color kAdminSidebarBackground = Color(0xFFFFFFFF);
@@ -43,7 +44,7 @@ const Color kAdminActiveNavBackground = Color(0xFF0F4D2E);
 const Color kAdminActiveNavText = Color(0xFFFFFFFF);
 
 /// Inactive navigation item text color (#404942).
-const Color kAdminInactiveNavText = Color(0xFF5E6D66);
+const Color kAdminInactiveNavText = Color(0xFF62666B);
 
 // --- Border Radius Tokens ----------------------------------------------------
 
@@ -152,9 +153,9 @@ const Color kSeqSurfaceContainer = Color(0xFFF0F0F0);
 const Color kSeqSurfaceContainerHigh = Color(0xFFEAEAEA);
 const Color kSeqSurfaceContainerHighest = Color(0xFFE3E3E3);
 const Color kSeqOnSurface = Color(0xFF1A1B1F);
-const Color kSeqOnSurfaceVariant = Color(0xFF5E6D66);
-const Color kSeqOutline = Color(0xFF5A625B);
-const Color kSeqOutlineVariant = Color(0xFFC0C9C0);
+const Color kSeqOnSurfaceVariant = Color(0xFF62666B);
+const Color kSeqOutline = Color(0xFF62666B);
+const Color kSeqOutlineVariant = Color(0xFFE2E4E3);
 const Color kSeqPrimary = Color(0xFF00351C);
 const Color kSeqPrimaryContainer = Color(0xFF0F4D2E);
 const Color kSeqOnPrimary = Color(0xFFFFFFFF);

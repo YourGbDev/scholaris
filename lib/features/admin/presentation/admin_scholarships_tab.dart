@@ -363,7 +363,7 @@ class _AdminScholarshipsTabState extends ConsumerState<AdminScholarshipsTab> {
         title: 'Monitored Grants',
         icon: Icons.school_rounded,
         iconColor: kSeqPrimaryContainer,
-        iconBg: kSeqPrimaryFixed,
+        iconBg: kWorkspaceSubtle,
         value: '$totalGrants',
         numericValue: totalGrants,
         badge: 'Live Catalog',
@@ -381,7 +381,7 @@ class _AdminScholarshipsTabState extends ConsumerState<AdminScholarshipsTab> {
         title: 'Total Listed Value',
         icon: Icons.account_balance_wallet_rounded,
         iconColor: kSeqSecondary,
-        iconBg: kSeqSecondaryFixed,
+        iconBg: kWorkspaceSubtle,
         value: formatCapital(totalCapital),
         numericValue: totalCapital.round(),
         prefix: '₱',
@@ -421,7 +421,7 @@ class _AdminScholarshipsTabState extends ConsumerState<AdminScholarshipsTab> {
         title: 'Moderation Attention',
         icon: Icons.assignment_late_rounded,
         iconColor: pausedGrants > 0 ? kSeqError : kSeqTertiaryContainer,
-        iconBg: pausedGrants > 0 ? kSeqErrorContainer : kSeqTertiaryFixed,
+        iconBg: pausedGrants > 0 ? kSeqErrorContainer : kWorkspaceSubtle,
         value: '$pausedGrants',
         numericValue: pausedGrants,
         badge: pausedGrants > 0 ? 'Requires Action' : 'All Clear',
@@ -884,24 +884,24 @@ class _AdminScholarshipsTabState extends ConsumerState<AdminScholarshipsTab> {
 
     // Icon choice based on courses/title
     IconData categoryIcon = Icons.school_rounded;
-    Color iconBg = kSeqPrimaryFixed;
-    Color iconColor = kSeqPrimaryContainer;
+    Color iconBg = kWorkspaceSubtle;
+    Color iconColor = kSeqOnSurfaceVariant;
     final titleLower = s.title.toLowerCase();
     if (titleLower.contains('technology') ||
         titleLower.contains('stem') ||
         titleLower.contains('engineering')) {
       categoryIcon = Icons.terminal_rounded;
-      iconBg = kSeqPrimaryFixed;
-      iconColor = kSeqPrimaryContainer;
+      iconBg = kWorkspaceSubtle;
+      iconColor = kSeqOnSurfaceVariant;
     } else if (titleLower.contains('science') || titleLower.contains('research')) {
       categoryIcon = Icons.science_rounded;
-      iconBg = kSeqSecondaryFixed;
-      iconColor = kSeqSecondary;
+      iconBg = kWorkspaceSubtle;
+      iconColor = kSeqOnSurfaceVariant;
     } else if (titleLower.contains('nursing') ||
         titleLower.contains('medical') ||
         titleLower.contains('health')) {
       categoryIcon = Icons.medical_services_rounded;
-      iconBg = kSeqTertiaryFixed;
+      iconBg = kWorkspaceSubtle;
       iconColor = kSeqTertiary;
     }
 

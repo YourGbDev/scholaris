@@ -399,7 +399,7 @@ class _AdminUsersTabState extends ConsumerState<AdminUsersTab> {
     final card1 = _buildMetricCard(
       title: 'Total Users',
       badge: '+$totalCount registered',
-      badgeBg: kSeqPrimaryFixed,
+      badgeBg: kWorkspaceSubtle,
       badgeFg: kSeqOnPrimaryFixed,
       value: '$totalCount',
       subtext: 'registered',
@@ -422,7 +422,7 @@ class _AdminUsersTabState extends ConsumerState<AdminUsersTab> {
     final card2 = _buildMetricCard(
       title: 'Student Scholars',
       badge: '$studentRate% rate',
-      badgeBg: kSeqPrimaryFixedDim.withValues(alpha: 0.45),
+      badgeBg: kWorkspaceSubtle,
       badgeFg: kSeqOnPrimaryFixedVariant,
       value: '$studentCount',
       subtext: 'of $totalCount',
@@ -462,7 +462,7 @@ class _AdminUsersTabState extends ConsumerState<AdminUsersTab> {
     final card4 = _buildMetricCard(
       title: 'Platform Admins',
       badge: 'Admin Role',
-      badgeBg: kSeqSecondaryFixed,
+      badgeBg: kWorkspaceSubtle,
       badgeFg: kSeqOnSecondaryFixedVariant,
       value: '$adminCount',
       subtext: 'clearances',
@@ -1340,16 +1340,8 @@ class _AdminUsersTabState extends ConsumerState<AdminUsersTab> {
   }
 
   Widget _buildUserAvatar(StudentProfile u, ProviderVerification? v, {double size = 40}) {
-    Color bg;
-    final fg = Colors.white; // Guaranteed high contrast >= 7:1 against all dark avatar backgrounds
-
-    if (u.role == 'admin') {
-      bg = const Color(0xFF263238); // Deep Slate, contrast ratio ~11.8:1
-    } else if (u.role == 'provider') {
-      bg = const Color(0xFF1E5280); // Rich Navy, contrast ratio ~7.8:1
-    } else {
-      bg = const Color(0xFF0F4D2E); // Deep Forest Green, contrast ratio ~8.9:1
-    }
+    const bg = kWorkspaceSelected;
+    const fg = Colors.white;
 
     final initials = _getInitials(u, v);
 
@@ -1420,8 +1412,8 @@ class _AdminUsersTabState extends ConsumerState<AdminUsersTab> {
       fg = kSeqOnSurface;
       label = 'Platform Admin';
     } else if (role == 'provider') {
-      bg = kSeqSecondaryFixed;
-      fg = kSeqOnSecondaryFixedVariant;
+      bg = kWorkspaceSubtle;
+      fg = kWorkspaceInk;
       label = 'Grant Provider';
     } else {
       bg = kSeqSurfaceContainer;
@@ -1729,7 +1721,7 @@ class _AdminUsersTabState extends ConsumerState<AdminUsersTab> {
           'Live tracking of student profiles with verified academic standing, enrolled course, institutional affiliation, and completion rate across all 17 administrative regions.',
       footerLabel: 'Profile Completion Rate',
       footerValue: '$completionRate% Completed',
-      footerBadgeColor: kSeqPrimaryFixed,
+      footerBadgeColor: kWorkspaceSubtle,
       footerTextColor: kSeqOnPrimaryFixedVariant,
     );
 
@@ -1742,7 +1734,7 @@ class _AdminUsersTabState extends ConsumerState<AdminUsersTab> {
           'Accreditation pipeline enforcing statutory KYC validation, SEC/DTI documentation, and administrative review per Migration 0014 before grant disbursement.',
       footerLabel: 'Accreditation Status',
       footerValue: '$approvedProvidersCount Approved • $pendingProvidersCount In Review',
-      footerBadgeColor: kSeqSecondaryFixed,
+      footerBadgeColor: kWorkspaceSubtle,
       footerTextColor: kSeqOnSecondaryFixedVariant,
     );
 
@@ -1755,7 +1747,7 @@ class _AdminUsersTabState extends ConsumerState<AdminUsersTab> {
           'Cryptographic JWT session claims and PostgreSQL Row-Level Security policies strictly isolating student records, provider disbursements, and administrative operations.',
       footerLabel: 'Database Security Policy',
       footerValue: 'PostgreSQL RLS Enforced',
-      footerBadgeColor: kSeqTertiaryFixed,
+      footerBadgeColor: kWorkspaceSubtle,
       footerTextColor: kSeqOnTertiaryFixedVariant,
     );
 

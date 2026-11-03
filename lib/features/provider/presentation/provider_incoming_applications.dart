@@ -297,7 +297,7 @@ class _IncomingApplicationRow extends ConsumerWidget {
                     padding:
                         const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                     decoration: BoxDecoration(
-                      color: kPrimarySoft,
+                      color: kStudentSurfaceSubtle,
                       borderRadius: BorderRadius.circular(10),
                     ),
                     child: Row(
@@ -616,7 +616,7 @@ class _ApplicantCredentialsCard extends StatelessWidget {
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: kPrimarySoft,
+        color: kStudentSurfaceSubtle,
         borderRadius: BorderRadius.circular(12),
       ),
       child: Column(
@@ -756,8 +756,8 @@ class _ProviderStatusFilterChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final foreground = selected ? Colors.white : kPrimary;
-    final background = selected ? kPrimary : kPrimarySoft;
+    final foreground = selected ? Colors.white : kOnSurface;
+    final background = selected ? const Color(0xFF25282A) : kStudentSurfaceSubtle;
 
     return Semantics(
       button: true,
@@ -797,7 +797,7 @@ class _MetaChip extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
       decoration: BoxDecoration(
-        color: kPrimarySoft,
+        color: kStudentSurfaceSubtle,
         borderRadius: BorderRadius.circular(20),
       ),
       child: Row(
@@ -871,7 +871,7 @@ class _ProviderSummaryPill extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 11, vertical: 6),
       decoration: BoxDecoration(
-        color: kPrimarySoft,
+        color: kStudentSurfaceSubtle,
         borderRadius: BorderRadius.circular(20),
       ),
       child: Row(

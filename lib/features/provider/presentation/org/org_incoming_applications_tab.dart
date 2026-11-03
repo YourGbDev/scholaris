@@ -86,16 +86,7 @@ class _OrgIncomingApplicationsTabState
     return 'Good Standing';
   }
 
-  Color _getInitialsColor(int index) {
-    const colors = [
-      kOrgPrimary,
-      Color(0xFF0058BC),
-      Color(0xFF306948),
-      Color(0xFF5A645C),
-      Color(0xFF442600),
-    ];
-    return colors[index % colors.length];
-  }
+  Color _getInitialsColor(int index) => kWorkspaceSelected;
 
   @override
   Widget build(BuildContext context) {
@@ -581,7 +572,7 @@ class _OrgIncomingApplicationsTabState
         badgeWidget: Container(
           padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
           decoration: BoxDecoration(
-            color: const Color(0xFFE8ECE8),
+            color: const Color(0xFFE8E8E8),
             borderRadius: BorderRadius.circular(10),
           ),
           child: Text(
@@ -688,7 +679,7 @@ class _OrgIncomingApplicationsTabState
         color: kOrgSurfaceWhite,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: isSelected ? kOrgPrimary : const Color(0xFFE8ECE8),
+          color: isSelected ? kOrgPrimary : const Color(0xFFE8E8E8),
           width: isSelected ? 1.5 : 1.0,
         ),
         boxShadow: [
@@ -726,7 +717,7 @@ class _OrgIncomingApplicationsTabState
                 decoration: BoxDecoration(
                   color: isSelected
                       ? kOrgPrimary.withValues(alpha: 0.10)
-                      : const Color(0xFFF2F4F2),
+                      : const Color(0xFFF6F6F6),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Center(
@@ -783,7 +774,7 @@ class _OrgIncomingApplicationsTabState
             child: LinearProgressIndicator(
               value: progressValue,
               minHeight: 5,
-              backgroundColor: const Color(0xFFE3E8E3),
+              backgroundColor: const Color(0xFFE2E4E3),
               valueColor: AlwaysStoppedAnimation<Color>(progressColor),
             ),
           ),
@@ -800,7 +791,7 @@ class _OrgIncomingApplicationsTabState
           child: InkWell(
             borderRadius: BorderRadius.circular(16),
             onTap: onTap,
-            hoverColor: const Color(0xFFF7F9F7),
+            hoverColor: const Color(0xFFF8F8F8),
             child: cardContent,
           ),
         ),
@@ -838,7 +829,7 @@ class _OrgIncomingApplicationsTabState
     final segmentCapsule = Container(
       padding: const EdgeInsets.all(4),
       decoration: BoxDecoration(
-        color: const Color(0xFFF2F4F2),
+        color: const Color(0xFFF6F6F6),
         borderRadius: BorderRadius.circular(16),
       ),
       child: SingleChildScrollView(
@@ -905,8 +896,8 @@ class _OrgIncomingApplicationsTabState
                           ),
                           decoration: BoxDecoration(
                             color: isSelected
-                                ? const Color(0xFFE8ECE8)
-                                : const Color(0xFFE3E8E3)
+                                ? const Color(0xFFE8E8E8)
+                                : const Color(0xFFE2E4E3)
                                       .withValues(alpha: 0.6),
                             borderRadius: BorderRadius.circular(10),
                           ),
@@ -944,7 +935,7 @@ class _OrgIncomingApplicationsTabState
       decoration: BoxDecoration(
         color: kOrgSurfaceWhite,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: const Color(0xFFE8ECE8)),
+        border: Border.all(color: const Color(0xFFE8E8E8)),
         boxShadow: const [
           BoxShadow(
             color: Color(0x06000000),
@@ -966,7 +957,7 @@ class _OrgIncomingApplicationsTabState
                         height: 38,
                         padding: const EdgeInsets.symmetric(horizontal: 10),
                         decoration: BoxDecoration(
-                          color: const Color(0xFFF2F4F2),
+                          color: const Color(0xFFF6F6F6),
                           borderRadius: BorderRadius.circular(10),
                         ),
                         child: TextField(
@@ -1067,7 +1058,7 @@ class _OrgIncomingApplicationsTabState
                       avatar: Icon(
                         Icons.assignment_ind_rounded,
                         size: 14,
-                        color: _assignedToMe ? Colors.white : kOrgPrimary,
+                        color: _assignedToMe ? Colors.white : kWorkspaceMuted,
                       ),
                       label: Text(
                         'Assigned to Me',
@@ -1080,14 +1071,14 @@ class _OrgIncomingApplicationsTabState
                         ),
                       ),
                       selected: _assignedToMe,
-                      selectedColor: kOrgPrimary,
-                      backgroundColor: const Color(0xFFF2F4F2),
+                      selectedColor: kWorkspaceSelected,
+                      backgroundColor: const Color(0xFFF6F6F6),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(8),
                         side: BorderSide(
                           color: _assignedToMe
-                              ? kOrgPrimary
-                              : const Color(0xFFE5E7EB),
+                              ? kWorkspaceSelected
+                              : kWorkspaceBorder,
                         ),
                       ),
                       onSelected: (val) => setState(() => _assignedToMe = val),
@@ -1119,7 +1110,7 @@ class _OrgIncomingApplicationsTabState
                       height: 38,
                       padding: const EdgeInsets.symmetric(horizontal: 10),
                       decoration: BoxDecoration(
-                        color: const Color(0xFFF2F4F2),
+                        color: const Color(0xFFF6F6F6),
                         borderRadius: BorderRadius.circular(10),
                       ),
                       child: TextField(
@@ -1221,7 +1212,7 @@ class _OrgIncomingApplicationsTabState
                             avatar: Icon(
                               Icons.assignment_ind_rounded,
                               size: 14,
-                              color: _assignedToMe ? Colors.white : kOrgPrimary,
+                              color: _assignedToMe ? Colors.white : kWorkspaceMuted,
                             ),
                             label: Text(
                               'Assigned to Me',
@@ -1236,14 +1227,14 @@ class _OrgIncomingApplicationsTabState
                               ),
                             ),
                             selected: _assignedToMe,
-                            selectedColor: kOrgPrimary,
-                            backgroundColor: const Color(0xFFF2F4F2),
+                            selectedColor: kWorkspaceSelected,
+                            backgroundColor: const Color(0xFFF6F6F6),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(8),
                               side: BorderSide(
                                 color: _assignedToMe
-                                    ? kOrgPrimary
-                                    : const Color(0xFFE5E7EB),
+                                    ? kWorkspaceSelected
+                                    : kWorkspaceBorder,
                               ),
                             ),
                             onSelected: (val) =>
@@ -1296,7 +1287,7 @@ class _OrgIncomingApplicationsTabState
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
         decoration: BoxDecoration(
-          color: const Color(0xFFF2F4F2),
+          color: const Color(0xFFF6F6F6),
           borderRadius: BorderRadius.circular(10),
         ),
         child: Row(
@@ -1440,7 +1431,7 @@ class _OrgIncomingApplicationsTabState
         ApplicationStatus.draft => 'Draft',
         _ => 'Under Review',
       };
-      statusBg = const Color(0xFFE8ECE8);
+      statusBg = const Color(0xFFE8E8E8);
       statusTextColor = kOrgTextPrimary;
       pulseDot = true;
     }
@@ -1518,7 +1509,7 @@ class _OrgIncomingApplicationsTabState
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
                 decoration: BoxDecoration(
-                  color: const Color(0xFFB3F1C6).withValues(alpha: 0.6),
+                  color: kWorkspaceSubtle,
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Row(
@@ -1528,7 +1519,7 @@ class _OrgIncomingApplicationsTabState
                       width: 5,
                       height: 5,
                       decoration: const BoxDecoration(
-                        color: kOrgPrimary,
+                        color: kOrgTextSecondary,
                         shape: BoxShape.circle,
                       ),
                     ),
@@ -1538,7 +1529,7 @@ class _OrgIncomingApplicationsTabState
                       style: orgLabel(
                         fontSize: 10.5,
                         fontWeight: FontWeight.w600,
-                        color: kOrgPrimary,
+                        color: kOrgTextSecondary,
                       ),
                     ),
                   ],
@@ -1744,7 +1735,7 @@ class _OrgIncomingApplicationsTabState
         ),
         Text(
           gwa != null ? honorStanding : 'Pending Verification',
-          style: orgLabel(fontSize: 11, color: gwa != null ? kOrgPrimary : kOrgTextSecondary),
+          style: orgLabel(fontSize: 11, color: kOrgTextSecondary),
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
         ),
@@ -1777,7 +1768,7 @@ class _OrgIncomingApplicationsTabState
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 1.5),
           decoration: BoxDecoration(
-            color: const Color(0xFFE8ECE8),
+            color: const Color(0xFFE8E8E8),
             borderRadius: BorderRadius.circular(8),
           ),
           child: Text(
@@ -1890,7 +1881,7 @@ class _OrgIncomingApplicationsTabState
       decoration: BoxDecoration(
         color: kOrgSurfaceWhite,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: const Color(0xFFE8ECE8)),
+        border: Border.all(color: const Color(0xFFE8E8E8)),
         boxShadow: const [
           BoxShadow(
             color: Color(0x06000000),
@@ -1929,7 +1920,7 @@ class _OrgIncomingApplicationsTabState
             ),
           ],
           const SizedBox(height: 16),
-          const Divider(height: 1, color: Color(0xFFE8ECE8)),
+          const Divider(height: 1, color: Color(0xFFE8E8E8)),
           const SizedBox(height: 14),
           if (isDesktop) metricsDesktop else metricsMobile,
           const SizedBox(height: 10),
@@ -1980,7 +1971,7 @@ class _OrgIncomingApplicationsTabState
                 decoration: BoxDecoration(
                   color: const Color(0xFFF8F7FC),
                   borderRadius: BorderRadius.circular(10),
-                  border: Border.all(color: const Color(0xFFE8ECE8)),
+                  border: Border.all(color: const Color(0xFFE8E8E8)),
                 ),
                 child: Row(
                   children: [
@@ -2048,7 +2039,7 @@ class _OrgIncomingApplicationsTabState
     final regulatoryBadge = Container(
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 9),
       decoration: BoxDecoration(
-        color: const Color(0xFFF2F4F2),
+        color: const Color(0xFFF6F6F6),
         borderRadius: BorderRadius.circular(12),
       ),
       child: Row(
@@ -2084,7 +2075,7 @@ class _OrgIncomingApplicationsTabState
           width: 32,
           height: 32,
           decoration: BoxDecoration(
-            color: const Color(0xFFF2F4F2),
+            color: const Color(0xFFF6F6F6),
             borderRadius: BorderRadius.circular(8),
           ),
           child: const Center(
@@ -2119,7 +2110,7 @@ class _OrgIncomingApplicationsTabState
           width: 32,
           height: 32,
           decoration: BoxDecoration(
-            color: const Color(0xFFF2F4F2),
+            color: const Color(0xFFF6F6F6),
             borderRadius: BorderRadius.circular(8),
           ),
           child: const Center(
@@ -2165,7 +2156,7 @@ class _OrgIncomingApplicationsTabState
             width: 56,
             height: 56,
             decoration: BoxDecoration(
-              color: const Color(0xFFF2F4F2),
+              color: const Color(0xFFF6F6F6),
               borderRadius: BorderRadius.circular(16),
             ),
             child: const Center(

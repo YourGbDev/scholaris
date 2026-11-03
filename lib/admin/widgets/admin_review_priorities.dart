@@ -213,8 +213,8 @@ class AdminReviewPriorities extends ConsumerWidget {
       buttonBg = const Color(0xFFB42318);
       buttonFg = Colors.white;
     } else {
-      badgeBg = const Color(0xFFE2EFE7);
-      badgeFg = kAdminBridgeGreen;
+      badgeBg = kWorkspaceSubtle;
+      badgeFg = kAdminTextPrimary;
       cardBg = Colors.white;
       borderColor = kAdminHairline;
       buttonBg = kAdminBridgeGreen;

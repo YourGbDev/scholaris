@@ -18,6 +18,7 @@ import '../../repositories/support_repository.dart';
 import 'package:scholaris/shared/theme/app_motion.dart';
 
 import '../org/org_provider_theme.dart';
+import '../../../../shared/theme/app_theme.dart' show kSoftCardDecoration;
 import '../widgets/org_summary_disclosure.dart';
 import '../widgets/org_metric_count.dart';
 import '../widgets/applicant_review_drawer.dart';
@@ -174,21 +175,7 @@ class _IndividualApplicationsTabState
                     summary: '${approvedApps.length} approved applications',
                     child: Container(
                       padding: const EdgeInsets.all(16),
-                      decoration: BoxDecoration(
-                        gradient: const LinearGradient(
-                          colors: [kOrgSidebarDark, kOrgPrimary],
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                        ),
-                        borderRadius: BorderRadius.circular(14),
-                        boxShadow: [
-                          BoxShadow(
-                            color: kOrgPrimary.withValues(alpha: 0.15),
-                            offset: const Offset(0, 3),
-                            blurRadius: 8,
-                          ),
-                        ],
-                      ),
+                      decoration: kSoftCardDecoration,
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -202,7 +189,7 @@ class _IndividualApplicationsTabState
                                   vertical: 3,
                                 ),
                                 decoration: BoxDecoration(
-                                  color: Colors.white.withValues(alpha: 0.15),
+                                  color: kWorkspaceSubtle,
                                   borderRadius: BorderRadius.circular(10),
                                 ),
                                 child: Row(
@@ -210,13 +197,13 @@ class _IndividualApplicationsTabState
                                     const Icon(
                                       Icons.favorite_rounded,
                                       size: 13,
-                                      color: kOrgAccentGold,
+                                      color: kOrgTextPrimary,
                                     ),
                                     const SizedBox(width: 4),
                                     Text(
                                       'Your support',
                                       style: orgLabel(
-                                        color: Colors.white,
+                                        color: kOrgTextPrimary,
                                         fontSize: 10,
                                       ),
                                     ),
@@ -226,7 +213,7 @@ class _IndividualApplicationsTabState
                               Text(
                                 'Recorded activity',
                                 style: orgLabel(
-                                  color: const Color(0xFFB3F1C6),
+                                  color: kOrgTextSecondary,
                                   fontSize: 10,
                                 ),
                               ),
@@ -242,7 +229,7 @@ class _IndividualApplicationsTabState
                                     Text(
                                       'Recorded commitments',
                                       style: orgLabel(
-                                        color: Colors.white70,
+                                        color: kOrgTextSecondary,
                                         fontSize: 10,
                                       ),
                                     ),
@@ -251,17 +238,17 @@ class _IndividualApplicationsTabState
                                       skipLoadingOnRefresh: false,
                                       loading: () => const Text(
                                         'Checking support totals…',
-                                        style: TextStyle(color: Colors.white),
+                                        style: TextStyle(color: kOrgTextPrimary),
                                       ),
                                       error: (_, _) => const Text(
                                         'Support totals unavailable',
-                                        style: TextStyle(color: Colors.white),
+                                        style: TextStyle(color: kOrgTextPrimary),
                                       ),
                                       data: (_) => Text(
                                         supportMoney(committedCents),
                                         style: orgHeadline(
                                           fontSize: 18,
-                                          color: Colors.white,
+                                          color: kOrgTextPrimary,
                                         ),
                                       ),
                                     ),
@@ -271,7 +258,7 @@ class _IndividualApplicationsTabState
                               Container(
                                 width: 1,
                                 height: 32,
-                                color: Colors.white24,
+                                color: kOrgBorder,
                               ),
                               const SizedBox(width: 16),
                               Expanded(
@@ -281,7 +268,7 @@ class _IndividualApplicationsTabState
                                     Text(
                                       'Approved applications',
                                       style: orgLabel(
-                                        color: Colors.white70,
+                                        color: kOrgTextSecondary,
                                         fontSize: 10,
                                       ),
                                     ),
@@ -295,14 +282,14 @@ class _IndividualApplicationsTabState
                                           targetValue: approvedApps.length,
                                           style: orgHeadline(
                                             fontSize: 18,
-                                            color: kOrgAccentGold,
+                                            color: kOrgTextPrimary,
                                           ),
                                         ),
                                         Text(
                                           ' Student${approvedApps.length == 1 ? '' : 's'}',
                                           style: orgHeadline(
                                             fontSize: 18,
-                                            color: kOrgAccentGold,
+                                            color: kOrgTextPrimary,
                                           ),
                                         ),
                                       ],
@@ -317,7 +304,7 @@ class _IndividualApplicationsTabState
                               onPressed: () =>
                                   ref.invalidate(supportLedgerProvider),
                               style: TextButton.styleFrom(
-                                foregroundColor: Colors.white,
+                                foregroundColor: kOrgPrimary,
                               ),
                               child: const Text('Retry support totals'),
                             ),
@@ -329,7 +316,7 @@ class _IndividualApplicationsTabState
                               missing > 0
                                   ? '$missing approved ${missing == 1 ? 'application has' : 'applications have'} no recorded commitment. Totals are incomplete; record agreed amounts in Budget & support.'
                                   : 'Agreed amounts are fixed records. Approval does not send money.',
-                              style: orgBody(fontSize: 12, color: Colors.white),
+                              style: orgBody(fontSize: 12, color: kOrgTextPrimary),
                             ),
                           ],
                         ],
@@ -487,7 +474,7 @@ class _IndividualApplicationsTabState
                                 children: [
                                   CircleAvatar(
                                     radius: 18,
-                                    backgroundColor: kOrgPrimary,
+                                    backgroundColor: kWorkspaceSelected,
                                     child: Text(
                                       studentName.isNotEmpty
                                           ? studentName[0].toUpperCase()
@@ -552,7 +539,7 @@ class _IndividualApplicationsTabState
                                     ),
                                     decoration: BoxDecoration(
                                       color: hasGwa
-                                          ? kOrgBadgeApprovedBg
+                                          ? kWorkspaceSubtle
                                           : kOrgBadgePendingBg,
                                       borderRadius: BorderRadius.circular(4),
                                     ),
@@ -561,7 +548,7 @@ class _IndividualApplicationsTabState
                                       style: orgLabel(
                                         fontSize: 10,
                                         color: hasGwa
-                                            ? kOrgBadgeApprovedText
+                                            ? kOrgTextSecondary
                                             : kOrgBadgePendingText,
                                       ),
                                     ),
@@ -713,15 +700,16 @@ class _IndividualApplicationsTabState
       child: ChoiceChip(
         selected: isSelected,
         onSelected: (_) => onTap(),
-        selectedColor: const Color(0xFFE5EDDD),
+        selectedColor: kWorkspaceSelected,
+        backgroundColor: Colors.white,
         label: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text(label, style: orgLabel(fontSize: 12, color: kOrgPrimary)),
+            Text(label, style: orgLabel(fontSize: 12, color: isSelected ? Colors.white : kWorkspaceInk)),
             const SizedBox(width: 6),
             Text(
               '($count)',
-              style: orgBody(fontSize: 12, color: kOrgTextSecondary),
+              style: orgBody(fontSize: 12, color: isSelected ? Colors.white : kWorkspaceMuted),
             ),
           ],
         ),

@@ -10,6 +10,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../../shared/theme/app_motion.dart';
 import '../../../shared/theme/app_theme.dart';
+import '../../../shared/theme/workspace_theme.dart';
 import '../../../shared/widgets/primary_button.dart';
 import '../../../shared/widgets/responsive_container.dart';
 import '../../scholarships/models/scholarship.dart';
@@ -252,7 +253,12 @@ class _ScholarshipFormScreenState extends ConsumerState<ScholarshipFormScreen> {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context) => Theme(
+    data: workspaceTheme(Theme.of(context)),
+    child: Builder(builder: _buildWorkspace),
+  );
+
+  Widget _buildWorkspace(BuildContext context) {
     final titleText = widget.isEditing ? 'Edit Scholarship' : 'New Scholarship';
 
     return Scaffold(
@@ -420,13 +426,13 @@ class _ScholarshipFormScreenState extends ConsumerState<ScholarshipFormScreen> {
                   return FilterChip(
                     label: Text(label),
                     selected: isSelected,
-                    selectedColor: kPrimary.withValues(alpha: 0.15),
-                    checkmarkColor: kPrimary,
+                    selectedColor: kWorkspaceSelected,
+                    checkmarkColor: Colors.white,
                     labelStyle: openSans(
                       fontSize: 12,
                       fontWeight:
                           isSelected ? FontWeight.w600 : FontWeight.w500,
-                      color: isSelected ? kPrimary : Colors.black87,
+                      color: isSelected ? Colors.white : kWorkspaceInk,
                     ),
                     onSelected: (selected) {
                       setState(() {
@@ -461,13 +467,13 @@ class _ScholarshipFormScreenState extends ConsumerState<ScholarshipFormScreen> {
                   ChoiceChip(
                     label: const Text('Open to all schools'),
                     selected: !_restrictSchools,
-                    selectedColor: kPrimary.withValues(alpha: 0.15),
-                    checkmarkColor: kPrimary,
+                    selectedColor: kWorkspaceSelected,
+                    checkmarkColor: Colors.white,
                     labelStyle: openSans(
                       fontSize: 12,
                       fontWeight:
                           !_restrictSchools ? FontWeight.w600 : FontWeight.w500,
-                      color: !_restrictSchools ? kPrimary : Colors.black87,
+                      color: !_restrictSchools ? Colors.white : kWorkspaceInk,
                     ),
                     onSelected: (val) {
                       setState(() => _restrictSchools = false);
@@ -476,13 +482,13 @@ class _ScholarshipFormScreenState extends ConsumerState<ScholarshipFormScreen> {
                   ChoiceChip(
                     label: const Text('Restricted to selected schools'),
                     selected: _restrictSchools,
-                    selectedColor: kPrimary.withValues(alpha: 0.15),
-                    checkmarkColor: kPrimary,
+                    selectedColor: kWorkspaceSelected,
+                    checkmarkColor: Colors.white,
                     labelStyle: openSans(
                       fontSize: 12,
                       fontWeight:
                           _restrictSchools ? FontWeight.w600 : FontWeight.w500,
-                      color: _restrictSchools ? kPrimary : Colors.black87,
+                      color: _restrictSchools ? Colors.white : kWorkspaceInk,
                     ),
                     onSelected: (val) {
                       setState(() => _restrictSchools = true);
@@ -773,8 +779,8 @@ class _ScholarshipFormScreenState extends ConsumerState<ScholarshipFormScreen> {
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                       ),
-                      backgroundColor: kPrimary.withValues(alpha: 0.1),
-                      side: BorderSide(color: kPrimary.withValues(alpha: 0.3)),
+                      backgroundColor: kWorkspaceSubtle,
+                      side: const BorderSide(color: kWorkspaceBorder),
                       deleteIcon: const Icon(Icons.close, size: 14, color: kPrimary),
                       onDeleted: () {
                         setState(() {
@@ -893,7 +899,9 @@ class _ScholarshipFormScreenState extends ConsumerState<ScholarshipFormScreen> {
                               final school = filtered[index];
                               final isSelected = _selectedSchoolIds.contains(school.id);
 
-                              return CheckboxListTile(
+                              return Material(
+                                color: Colors.white,
+                                child: CheckboxListTile(
                                 dense: true,
                                 controlAffinity: ListTileControlAffinity.trailing,
                                 activeColor: kPrimary,
@@ -908,7 +916,7 @@ class _ScholarshipFormScreenState extends ConsumerState<ScholarshipFormScreen> {
                                   style: openSans(
                                     fontSize: 12,
                                     fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
-                                    color: isSelected ? kPrimary : Colors.black87,
+                                    color: kWorkspaceInk,
                                   ),
                                 ),
                                 subtitle: !school.isCurated
@@ -926,6 +934,7 @@ class _ScholarshipFormScreenState extends ConsumerState<ScholarshipFormScreen> {
                                     }
                                   });
                                 },
+                                ),
                               );
                             },
                           ),

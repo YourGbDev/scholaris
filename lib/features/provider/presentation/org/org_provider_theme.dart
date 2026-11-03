@@ -6,6 +6,7 @@
 
 import 'package:scholaris/shared/theme/app_theme.dart';
 import 'package:flutter/material.dart';
+export 'package:scholaris/shared/theme/workspace_theme.dart';
 
 
 // Brand & Institutional Colors
@@ -15,7 +16,7 @@ const kOrgSidebarDark = Color(0xFF0A321E); // Legacy reference
 const kOrgSidebarLight = Color(0xFFFFFFFF);
 const kOrgActiveNavBg = Color(0xFF0F4D2E); // Active navigation fill
 const kOrgActiveNavText = Color(0xFFFFFFFF); // Pure white active text/icon
-const kOrgInactiveNavText = Color(0xFF404942); // Inactive dark gray nav text
+const kOrgInactiveNavText = Color(0xFF44484C); // Inactive dark gray nav text
 const kOrgAccentGold = Color(0xFFF1B41E); // Golden Opportunity
 const kOrgAccentGoldContainer = Color(0xFFFEBF2C);
 const kOrgCivicNavy = Color(0xFF1B3A5C); // Data series & tertiary
@@ -25,8 +26,8 @@ const kOrgBorder = kBorderLight;
 const kOrgHairline = kBorderLight;
 const kOrgBorderDark = Color(0xFFD1D5DB);
 const kOrgTextPrimary = Color(0xFF111827);
-const kOrgTextSecondary = Color(0xFF5E6D66);
-const kOrgTextMuted = Color(0xFF5E6D66);
+const kOrgTextSecondary = Color(0xFF62666B);
+const kOrgTextMuted = Color(0xFF62666B);
 const kOrgError = Color(0xFFBA1A1A);
 const kOrgSuccess = Color(0xFF27C93F);
 
@@ -127,7 +128,7 @@ TextStyle orgTabularFigures(TextStyle base) => base.copyWith(
 Widget orgIdPill(String idText) => Container(
       padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
       decoration: BoxDecoration(
-        color: const Color(0xFFF2F4F2),
+        color: const Color(0xFFF6F6F6),
         borderRadius: BorderRadius.circular(6),
         border: Border.all(color: kOrgHairline),
       ),

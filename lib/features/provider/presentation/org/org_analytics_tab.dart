@@ -65,7 +65,7 @@ class _OrgAnalyticsTabState extends ConsumerState<OrgAnalyticsTab> {
                   width: 32,
                   height: 32,
                   decoration: BoxDecoration(
-                    color: const Color(0xFFB3F1C6),
+                    color: kWorkspaceSubtle,
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: const Icon(Icons.task_alt_rounded, size: 18, color: kOrgPrimary),
@@ -121,7 +121,7 @@ class _OrgAnalyticsTabState extends ConsumerState<OrgAnalyticsTab> {
                         width: 44,
                         height: 44,
                         decoration: BoxDecoration(
-                          color: const Color(0xFF0F4D2E).withValues(alpha: 0.1),
+                          color: kWorkspaceSubtle,
                           shape: BoxShape.circle,
                         ),
                         child: Center(
@@ -730,8 +730,8 @@ class _OrgAnalyticsTabState extends ConsumerState<OrgAnalyticsTab> {
       child: _buildKpiCard(
         title: 'ACTIVE BENEFICIARIES',
         icon: Icons.school_outlined,
-        iconBg: const Color(0xFFB3F1C6),
-        iconColor: const Color(0xFF00351C),
+        iconBg: kWorkspaceSubtle,
+        iconColor: kOrgTextSecondary,
         value: totalScholars.toString(),
         numericValue: totalScholars,
         unit: totalScholars == 1 ? 'Scholar' : 'Scholars',
@@ -748,11 +748,11 @@ class _OrgAnalyticsTabState extends ConsumerState<OrgAnalyticsTab> {
       child: _buildKpiCard(
         title: 'AVERAGE COHORT GWA',
         icon: Icons.verified_outlined,
-        iconBg: const Color(0xFFD8E2FF),
-        iconColor: const Color(0xFF0058BC),
+        iconBg: kWorkspaceSubtle,
+        iconColor: kOrgTextSecondary,
         value: gwaCount > 0 ? avgGwa.toStringAsFixed(2) : '--',
         unit: gwaLabel,
-        unitColor: const Color(0xFF0058BC),
+        unitColor: kOrgTextSecondary,
         subtext: gwaCount == 0
             ? 'Awaiting applicant grade submissions'
             : (gwaCount == 1
@@ -766,8 +766,8 @@ class _OrgAnalyticsTabState extends ConsumerState<OrgAnalyticsTab> {
       child: _buildKpiCard(
         title: 'FIRST-GEN STUDENTS',
         icon: Icons.family_restroom_outlined,
-        iconBg: const Color(0xFFFFDDBB),
-        iconColor: const Color(0xFF623A00),
+        iconBg: kWorkspaceSubtle,
+        iconColor: kOrgTextSecondary,
         value: '--',
         unit: 'Not Tracked',
         subtext: 'Attribute not collected on intake profile',
@@ -779,7 +779,7 @@ class _OrgAnalyticsTabState extends ConsumerState<OrgAnalyticsTab> {
       child: _buildKpiCard(
         title: 'RETENTION RATE',
         icon: Icons.all_inclusive_rounded,
-        iconBg: const Color(0xFFDEE4DE),
+        iconBg: kWorkspaceSubtle,
         iconColor: kOrgTextPrimary,
         value: totalScholars > 0 ? '100%' : '--',
         unit: totalScholars > 0 ? 'Zero Attrition' : 'No Cohort Data',
@@ -1033,7 +1033,7 @@ class _OrgAnalyticsTabState extends ConsumerState<OrgAnalyticsTab> {
               Container(
                 padding: const EdgeInsets.all(3),
                 decoration: BoxDecoration(
-                  color: const Color(0xFFF2F4F2),
+                  color: const Color(0xFFF6F6F6),
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Row(
@@ -1107,7 +1107,7 @@ class _OrgAnalyticsTabState extends ConsumerState<OrgAnalyticsTab> {
             height: 180,
             width: double.infinity,
             decoration: BoxDecoration(
-              color: const Color(0xFFF7F9F7),
+              color: const Color(0xFFF8F8F8),
               borderRadius: BorderRadius.circular(12),
             ),
             child: Stack(
@@ -1340,7 +1340,7 @@ class _OrgAnalyticsTabState extends ConsumerState<OrgAnalyticsTab> {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 3),
                 decoration: BoxDecoration(
-                  color: const Color(0xFFF2F4F2),
+                  color: const Color(0xFFF6F6F6),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Text(
@@ -1422,7 +1422,7 @@ class _OrgAnalyticsTabState extends ConsumerState<OrgAnalyticsTab> {
                         child: Container(
                           height: 7,
                           width: double.infinity,
-                          color: const Color(0xFFE8ECE8),
+                          color: const Color(0xFFE8E8E8),
                           child: Align(
                             alignment: Alignment.centerLeft,
                             child: FractionallySizedBox(
@@ -1445,7 +1445,7 @@ class _OrgAnalyticsTabState extends ConsumerState<OrgAnalyticsTab> {
                 margin: const EdgeInsets.only(top: 4, bottom: 8),
                 padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
                 decoration: BoxDecoration(
-                  color: const Color(0xFFF2F4F2),
+                  color: const Color(0xFFF6F6F6),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Row(
@@ -1464,7 +1464,7 @@ class _OrgAnalyticsTabState extends ConsumerState<OrgAnalyticsTab> {
           ],
 
           // Footnote
-          const Divider(height: 12, color: Color(0xFFF1F0F5)),
+          const Divider(height: 12, color: Color(0xFFE8E8E8)),
           const SizedBox(height: 4),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -1542,7 +1542,7 @@ class _OrgAnalyticsTabState extends ConsumerState<OrgAnalyticsTab> {
       segments.add(Expanded(flex: mindanaoCount, child: Container(color: const Color(0xFF98D4AB))));
     }
     if (segments.isEmpty) {
-      segments.add(Expanded(child: Container(color: const Color(0xFFE8ECE8))));
+      segments.add(Expanded(child: Container(color: const Color(0xFFE8E8E8))));
     }
 
     return Container(
@@ -1591,7 +1591,7 @@ class _OrgAnalyticsTabState extends ConsumerState<OrgAnalyticsTab> {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 3),
                 decoration: BoxDecoration(
-                  color: const Color(0xFFF2F4F2),
+                  color: const Color(0xFFF6F6F6),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Row(
@@ -1745,7 +1745,7 @@ class _OrgAnalyticsTabState extends ConsumerState<OrgAnalyticsTab> {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: const Color(0xFFF7F9F7),
+        color: const Color(0xFFF8F8F8),
         borderRadius: BorderRadius.circular(12),
       ),
       child: Column(
@@ -1920,7 +1920,7 @@ class _OrgAnalyticsTabState extends ConsumerState<OrgAnalyticsTab> {
                     Container(
                       padding: const EdgeInsets.all(10),
                       decoration: BoxDecoration(
-                        color: const Color(0xFFF7F9F7),
+                        color: const Color(0xFFF8F8F8),
                         borderRadius: BorderRadius.circular(10),
                       ),
                       child: Column(
@@ -1975,7 +1975,7 @@ class _OrgAnalyticsTabState extends ConsumerState<OrgAnalyticsTab> {
                     Container(
                       padding: const EdgeInsets.all(10),
                       decoration: BoxDecoration(
-                        color: const Color(0xFFF7F9F7),
+                        color: const Color(0xFFF8F8F8),
                         borderRadius: BorderRadius.circular(10),
                       ),
                       child: Column(
@@ -2034,7 +2034,7 @@ class _OrgAnalyticsTabState extends ConsumerState<OrgAnalyticsTab> {
           const SizedBox(height: 16),
 
           // Footnote
-          const Divider(height: 12, color: Color(0xFFF1F0F5)),
+          const Divider(height: 12, color: Color(0xFFE8E8E8)),
           const SizedBox(height: 4),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -2133,7 +2133,7 @@ class _OrgAnalyticsTabState extends ConsumerState<OrgAnalyticsTab> {
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                     decoration: BoxDecoration(
-                      color: const Color(0xFFF2F4F2),
+                      color: const Color(0xFFF6F6F6),
                       borderRadius: BorderRadius.circular(10),
                     ),
                     child: Row(
@@ -2181,7 +2181,7 @@ class _OrgAnalyticsTabState extends ConsumerState<OrgAnalyticsTab> {
             child: ConstrainedBox(
               constraints: BoxConstraints(minWidth: isDesktop ? 960 : 800),
               child: DataTable(
-                headingRowColor: WidgetStateProperty.all(const Color(0xFFF7F9F7)),
+                headingRowColor: WidgetStateProperty.all(const Color(0xFFF8F8F8)),
                 dataRowMinHeight: 56,
                 dataRowMaxHeight: 64,
                 horizontalMargin: 12,
@@ -2238,7 +2238,7 @@ class _OrgAnalyticsTabState extends ConsumerState<OrgAnalyticsTab> {
                             : 'School Pending';
                         final gwa = (p != null && p.gpa > 0) ? p.gpa : 0.0;
                         final gwaTier = gwa > 0 ? (gwa <= 1.25 ? 'Summa Cum Laude' : (gwa <= 1.50 ? 'Magna Cum Laude' : 'Cum Laude')) : 'Pending Review';
-                        final Color gwaBadgeColor = gwa > 0 ? (gwa <= 1.25 ? const Color(0xFFB3F1C6) : const Color(0xFFD8E2FF)) : const Color(0xFFF2F4F2);
+                        final Color gwaBadgeColor = gwa > 0 ? (gwa <= 1.25 ? const Color(0xFFB3F1C6) : const Color(0xFFD8E2FF)) : const Color(0xFFF6F6F6);
                         final Color gwaTextColor = gwa > 0 ? (gwa <= 1.25 ? const Color(0xFF00351C) : const Color(0xFF004493)) : kOrgTextSecondary;
                         // gwaBadgeColor and gwaTextColor set above
 
@@ -2467,7 +2467,7 @@ class _GwaBellCurvePainter extends CustomPainter {
 
     // 1. Background grid lines
     final gridPaint = Paint()
-      ..color = const Color(0xFFDEE4DE).withValues(alpha: 0.5)
+      ..color = const Color(0xFFE2E4E3).withValues(alpha: 0.5)
       ..strokeWidth = 1.0;
     for (int i = 1; i <= 3; i++) {
       final y = h * (i / 4.0);
@@ -2575,7 +2575,7 @@ class _IncomeDonutPainter extends CustomPainter {
 
     // 1. Background ring
     final bgPaint = Paint()
-      ..color = const Color(0xFFE8ECE8)
+      ..color = const Color(0xFFE8E8E8)
       ..strokeWidth = strokeWidth
       ..style = PaintingStyle.stroke;
     canvas.drawCircle(center, radius, bgPaint);

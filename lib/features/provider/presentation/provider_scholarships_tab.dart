@@ -560,10 +560,10 @@ class _FilterChip extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
         decoration: BoxDecoration(
-          color: selected ? kPrimary : Colors.white,
+          color: selected ? const Color(0xFF25282A) : Colors.white,
           borderRadius: BorderRadius.circular(8),
           border: Border.all(
-            color: selected ? kPrimary : Colors.black12,
+            color: selected ? const Color(0xFF25282A) : kBorderLight,
           ),
         ),
         child: Text(

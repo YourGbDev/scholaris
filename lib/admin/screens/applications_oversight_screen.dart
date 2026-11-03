@@ -466,7 +466,7 @@ class _ApplicationsOversightScreenState
           subtitle: 'All live applications',
           icon: Icons.assignment_outlined,
           color: kSeqOnSurface,
-          containerBg: kSeqSurfaceContainerLow,
+          containerBg: kWorkspaceSubtle,
         ),
       ),
       StaggeredListItem(
@@ -478,7 +478,7 @@ class _ApplicationsOversightScreenState
           subtitle: 'Awaiting evaluation',
           icon: Icons.send_rounded,
           color: kSeqSecondary,
-          containerBg: kSeqSecondaryFixed.withValues(alpha: 0.4),
+          containerBg: kWorkspaceSubtle,
         ),
       ),
       StaggeredListItem(
@@ -490,7 +490,7 @@ class _ApplicationsOversightScreenState
           subtitle: 'In-flight assessment',
           icon: Icons.schedule_rounded,
           color: kSeqTertiaryContainer,
-          containerBg: kSeqTertiaryFixed.withValues(alpha: 0.4),
+          containerBg: kWorkspaceSubtle,
         ),
       ),
       StaggeredListItem(
@@ -502,7 +502,7 @@ class _ApplicationsOversightScreenState
           subtitle: 'Approved applications',
           icon: Icons.check_circle_rounded,
           color: kSeqPrimaryContainer,
-          containerBg: kSeqPrimaryFixed.withValues(alpha: 0.4),
+          containerBg: kWorkspaceSubtle,
         ),
       ),
     ];
@@ -738,12 +738,12 @@ class _ApplicationsOversightScreenState
           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
           margin: const EdgeInsets.symmetric(horizontal: 2),
           decoration: BoxDecoration(
-            color: isSelected ? kSeqPrimaryContainer : Colors.transparent,
+            color: isSelected ? kWorkspaceSelected : Colors.transparent,
             borderRadius: BorderRadius.circular(8),
             boxShadow: isSelected
                 ? [
                     BoxShadow(
-                      color: kSeqPrimaryContainer.withValues(alpha: 0.25),
+                      color: Colors.black.withValues(alpha: 0.08),
                       blurRadius: 4,
                       offset: const Offset(0, 1),
                     )
@@ -843,7 +843,7 @@ class _ApplicationsOversightScreenState
                     width: 38,
                     height: 38,
                     decoration: BoxDecoration(
-                      color: kSeqPrimaryFixed,
+                      color: kWorkspaceSubtle,
                       borderRadius: BorderRadius.circular(10),
                     ),
                     alignment: Alignment.center,

@@ -303,7 +303,7 @@ class _ReviewAnalyticsPanelState extends State<ReviewAnalyticsPanel> {
                                     color: e.key == ApplicationStatus.rejected
                                         ? const Color(0xFF87684A)
                                         : kOrgPrimary,
-                                    backgroundColor: const Color(0xFFEDF0E9),
+                                    backgroundColor: const Color(0xFFF6F6F6),
                                   ),
                                 ),
                               ],

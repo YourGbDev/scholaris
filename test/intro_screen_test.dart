@@ -51,17 +51,12 @@ void main() {
       expect(find.text('Scholaris'), findsOneWidget);
       expect(find.byIcon(Icons.school_rounded), findsOneWidget);
 
-      // 2. Blob illustration
-      final imageFinder = find.byType(Image);
-      expect(imageFinder, findsOneWidget);
-      final Image imageWidget = tester.widget(imageFinder);
+      // The joined pair keeps one shared straight crop.
       expect(
-        ((imageWidget.image is ResizeImage
-                    ? (imageWidget.image as ResizeImage).imageProvider
-                    : imageWidget.image)
-                as AssetImage)
-            .assetName,
-        'assets/mascots/onboarding/welcome.png',
+        find.image(
+          const AssetImage('assets/mascots/greetings/welcome_pair.png'),
+        ),
+        findsOneWidget,
       );
 
       // 3. Headline & subtext

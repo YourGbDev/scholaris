@@ -33,6 +33,7 @@ import 'package:scholaris/shared/theme/app_theme.dart';
 import 'package:scholaris/shared/widgets/responsive_container.dart';
 import 'package:scholaris/shared/widgets/scholarship_card.dart';
 import 'package:scholaris/shared/widgets/mascot_pose_view.dart';
+import 'package:scholaris/shared/widgets/greeting_mascot.dart';
 import 'package:scholaris/shared/widgets/typography_diagnostics.dart';
 
 class StudentDashboardScreen extends ConsumerStatefulWidget {
@@ -378,88 +379,72 @@ class _StudentDashboardScreenState
       children: [
         Text(dateStr, style: appOverline()),
         const SizedBox(height: 12),
-        Container(
+        LayoutBuilder(
           key: const ValueKey('student-home-welcome-card'),
-          decoration: kSoftCardDecoration.copyWith(
-            gradient: const LinearGradient(
-              begin: Alignment.centerLeft,
-              end: Alignment.centerRight,
-              colors: [Color(0xFFDDEBDD), Color(0xFFF2F7EF)],
-            ),
-          ),
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(kRadiusCard),
-            child: LayoutBuilder(
-              builder: (context, constraints) {
-                final portraitWidth = constraints.maxWidth < 330
-                    ? 108.0
-                    : 148.0;
-                final contentInset =
-                    portraitWidth + (constraints.maxWidth >= 330 ? 8 : 0);
-                final word = TextPainter(
-                  text: TextSpan(text: 'Magandang', style: appGreeting()),
-                  textDirection: Directionality.of(context),
-                  textScaler: MediaQuery.textScalerOf(context),
-                )..layout();
-                final stacked =
-                    constraints.maxWidth - contentInset - 18 < word.width + 4;
-                word.dispose();
-                final content = Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(greetingStr, style: appGreeting()),
-                    const SizedBox(height: 8),
-                    _buildMatchIntroduction(
-                      profileLoading: profileLoading,
-                      matchCount: matchCount,
-                      matchesFailed: matchesFailed,
+          builder: (context, constraints) {
+            final baseWidth = constraints.maxWidth < 330 ? 118.0 : 130.0;
+            final portraitWidth =
+                getMascotName(gender: profile?.gender) == 'Ari'
+                ? baseWidth
+                : baseWidth * 1.05;
+            final word = TextPainter(
+              text: TextSpan(text: 'Magandang', style: appGreeting()),
+              textDirection: Directionality.of(context),
+              textScaler: MediaQuery.textScalerOf(context),
+            )..layout();
+            final stacked =
+                constraints.maxWidth - portraitWidth - 16 < word.width + 12;
+            word.dispose();
+            final content = Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  greetingStr,
+                  style: appGreeting().copyWith(color: kOnSurface),
+                ),
+                const SizedBox(height: 8),
+                _buildMatchIntroduction(
+                  profileLoading: profileLoading,
+                  matchCount: matchCount,
+                  matchesFailed: matchesFailed,
+                ),
+              ],
+            );
+            final portrait = SizedBox(
+              key: const ValueKey('student-home-companion'),
+              width: portraitWidth,
+              height: getMascotName(gender: profile?.gender) == 'Ari'
+                  ? 148
+                  : 158,
+              child: profile == null
+                  ? null
+                  : GreetingMascotPortrait(
+                      gender: profile.gender,
+                      height: getMascotName(gender: profile.gender) == 'Ari'
+                          ? 148
+                          : 158,
                     ),
-                  ],
-                );
-                final companion = SizedBox(
-                  key: const ValueKey('student-home-companion'),
-                  width: portraitWidth,
-                  height: stacked ? 148 : null,
-                  child: profile == null
-                      ? null
-                      : Image.asset(
-                          getMascotCampusAssetPath(gender: profile.gender),
-                          fit: BoxFit.cover,
-                          alignment: Alignment.topCenter,
-                          excludeFromSemantics: true,
-                        ),
-                );
-                if (stacked) {
-                  return Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Align(alignment: Alignment.center, child: companion),
-                      Padding(
-                        padding: const EdgeInsets.fromLTRB(20, 16, 20, 20),
-                        child: content,
-                      ),
-                    ],
-                  );
-                }
-                return Stack(
-                  children: [
-                    Positioned(
-                      left: 0,
-                      top: 0,
-                      bottom: 0,
-                      width: portraitWidth,
-                      child: companion,
-                    ),
-                    Padding(
-                      padding: EdgeInsets.fromLTRB(contentInset, 22, 18, 22),
-                      child: content,
-                    ),
-                  ],
-                );
-              },
-            ),
-          ),
+            );
+            if (stacked) {
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Center(child: portrait),
+                  const SizedBox(height: 12),
+                  content,
+                ],
+              );
+            }
+            return Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                portrait,
+                const SizedBox(width: 16),
+                Expanded(child: content),
+              ],
+            );
+          },
         ),
       ],
     );
@@ -532,16 +517,16 @@ class _StudentDashboardScreenState
           style: geist(fontSize: 13, color: kTextSecondary, height: 1.45),
         ),
         const SizedBox(height: 12),
-        FilledButton.icon(
+        TextButton.icon(
           onPressed: () {
             HapticFeedback.lightImpact();
             ref.read(homeTabIndexProvider.notifier).selectTab(1);
           },
-          style: FilledButton.styleFrom(
+          style: TextButton.styleFrom(
             minimumSize: const Size(44, 44),
-            backgroundColor: kPrimary,
-            foregroundColor: Colors.white,
-            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+            foregroundColor: kPrimary,
+            alignment: Alignment.centerLeft,
+            padding: EdgeInsets.zero,
           ),
           label: Text(
             'Explore matches',

@@ -258,7 +258,7 @@ class _FeaturePage extends StatelessWidget {
                 height: constraints.maxHeight < 520 ? 180 : 230,
                 fit: BoxFit.contain,
                 excludeFromSemantics: true,
-                cacheWidth: 750,
+                cacheWidth: 1200,
               ),
               const SizedBox(height: 28),
               Text(

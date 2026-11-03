@@ -91,8 +91,8 @@ void main() {
           images.map((image) => image.assetName),
           contains(
             gender == 'Female'
-                ? 'assets/mascots/chat/ariel_welcome.png'
-                : 'assets/mascots/chat/ari_welcome.png',
+                ? 'assets/mascots/greetings/ariel.png'
+                : 'assets/mascots/greetings/ari.png',
           ),
         );
         await tester.tap(find.byTooltip('Back'));

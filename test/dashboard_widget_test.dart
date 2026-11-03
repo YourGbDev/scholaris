@@ -8,6 +8,7 @@ import 'dart:async';
 // is hit.
 
 import 'package:flutter/material.dart';
+import 'package:scholaris/shared/widgets/greeting_mascot.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -525,24 +526,25 @@ void main() {
     await tester.pump(const Duration(milliseconds: 100));
     Finder banner(String name) => find.byWidgetPredicate(
       (w) =>
-          w is Image &&
-          w.image is AssetImage &&
-          (w.image as AssetImage).assetName == 'assets/images/$name',
+          w is GreetingMascotPortrait &&
+          (w.gender?.toLowerCase() == 'female'
+              ? name == 'female'
+              : name == 'male'),
     );
-    expect(banner('student_hero_graduate_campus.png'), findsNothing);
+    expect(banner('male'), findsNothing);
     expect(
       find.byKey(const ValueKey('student-overview-loading')),
       findsOneWidget,
     );
     pending.complete(_student().copyWith(gender: 'female'));
     await tester.pumpAndSettle();
-    expect(banner('student_hero_graduate_campus.png'), findsNothing);
-    expect(banner('student_hero_graduate_campus_female.png'), findsOneWidget);
+    expect(banner('male'), findsNothing);
+    expect(banner('female'), findsOneWidget);
     expect(find.textContaining('Maria!'), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('Home selects the campus mascot using the stored gender', (
+  testWidgets('Home selects the greeting mascot using the stored gender', (
     tester,
   ) async {
     await tester.pumpWidget(
@@ -551,11 +553,7 @@ void main() {
     await tester.pumpAndSettle();
     expect(
       find.byWidgetPredicate(
-        (w) =>
-            w is Image &&
-            w.image is AssetImage &&
-            (w.image as AssetImage).assetName ==
-                'assets/images/student_hero_graduate_campus.png',
+        (w) => w is GreetingMascotPortrait && w.gender == 'male',
       ),
       findsOneWidget,
     );

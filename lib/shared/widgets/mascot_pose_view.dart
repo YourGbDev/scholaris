@@ -23,11 +23,11 @@ String getMascotAssetPath(MascotPose pose, {String? gender}) {
 String getMascotName({String? gender}) =>
     gender?.trim().toLowerCase() == 'female' ? 'Ari' : 'Ariel';
 
-/// The same welcoming artwork is used in Home and the guided introduction.
+/// Canonical portraits anchor Home, entry, and the guided introduction.
 String getMascotGreetingAssetPath({String? gender}) =>
     gender?.trim().toLowerCase() == 'female'
-    ? 'assets/images/mascot_female.png'
-    : 'assets/images/mascot_male_welcome_wave.png';
+    ? 'assets/mascots/greetings/ari.png'
+    : 'assets/mascots/greetings/ariel.png';
 
 /// Campus setting for the Home welcome card; identity follows the same gender rule.
 String getMascotCampusAssetPath({String? gender}) =>

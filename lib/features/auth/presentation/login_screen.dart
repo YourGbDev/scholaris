@@ -1,3 +1,5 @@
+import 'package:scholaris/shared/widgets/greeting_mascot.dart';
+
 import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -485,16 +487,13 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                                 crossAxisAlignment: CrossAxisAlignment.stretch,
                                 children: [
                                   Center(
-                                    child: Image.asset(
-                                      'assets/mascots/onboarding/welcome.png',
+                                    child: MascotWelcomePair(
+                                      key: const ValueKey('login-mascot-pair'),
                                       height:
                                           MediaQuery.sizeOf(context).height <
                                               650
-                                          ? 88
-                                          : 128,
-                                      width: 190,
-                                      fit: BoxFit.contain,
-                                      excludeFromSemantics: true,
+                                          ? 120
+                                          : 168,
                                     ),
                                   ),
                                   const SizedBox(height: 16),

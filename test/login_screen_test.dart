@@ -74,7 +74,7 @@ void main() {
       final image = tester.widget<Image>(find.byType(Image).first);
       expect(
         (image.image as AssetImage).assetName,
-        'assets/mascots/onboarding/welcome.png',
+        'assets/mascots/greetings/welcome_pair.png',
       );
     });
 

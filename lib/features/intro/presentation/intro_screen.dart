@@ -1,3 +1,4 @@
+import 'package:scholaris/shared/widgets/greeting_mascot.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -69,13 +70,7 @@ class StudentWelcomeContent extends StatelessWidget {
                 Column(
                   children: [
                     const SizedBox(height: 20),
-                    Image.asset(
-                      'assets/mascots/onboarding/welcome.png',
-                      height: artHeight,
-                      fit: BoxFit.contain,
-                      excludeFromSemantics: true,
-                      cacheWidth: 1000,
-                    ),
+                    MascotWelcomePair(height: artHeight),
                     const SizedBox(height: 32),
                     Text(
                       'Your next chapter starts here.',

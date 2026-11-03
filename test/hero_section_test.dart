@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:scholaris/shared/widgets/greeting_mascot.dart';
+import 'package:scholaris/shared/widgets/mascot_pose_view.dart';
 
 import 'dart:async';
 
@@ -123,13 +125,17 @@ void main() {
         await tester.pumpAndSettle();
         expect(find.text('Application Submitted'), findsOneWidget);
         expect(find.text('Explore matches'), findsOneWidget);
+        expect(
+          find.widgetWithText(TextButton, 'Explore matches'),
+          findsOneWidget,
+        );
         expect(find.text('Find your next opportunity.'), findsNothing);
-        expect(find.byType(Image), findsOneWidget);
+        expect(find.byType(GreetingMascotPortrait), findsOneWidget);
         expect(
           tester
               .getSize(find.byKey(const ValueKey('student-home-companion')))
               .width,
-          148,
+          136.5,
         );
         expect(tester.takeException(), isNull);
       },
@@ -199,10 +205,12 @@ void main() {
         );
         await tester.pumpAndSettle();
 
-        final mascot = tester.widget<Image>(find.byType(Image));
+        final mascot = tester.widget<GreetingMascotPortrait>(
+          find.byType(GreetingMascotPortrait),
+        );
         expect(
-          (mascot.image as AssetImage).assetName,
-          'assets/images/student_hero_graduate_campus.png',
+          getMascotGreetingAssetPath(gender: mascot.gender),
+          'assets/mascots/greetings/ariel.png',
         );
 
         // Verify Gilbert greeting is displayed
@@ -225,10 +233,12 @@ void main() {
         );
         await tester.pumpAndSettle();
 
-        final mascot = tester.widget<Image>(find.byType(Image));
+        final mascot = tester.widget<GreetingMascotPortrait>(
+          find.byType(GreetingMascotPortrait),
+        );
         expect(
-          (mascot.image as AssetImage).assetName,
-          'assets/images/student_hero_graduate_campus_female.png',
+          getMascotGreetingAssetPath(gender: mascot.gender),
+          'assets/mascots/greetings/ari.png',
         );
 
         expect(find.textContaining('Maria!'), findsOneWidget);

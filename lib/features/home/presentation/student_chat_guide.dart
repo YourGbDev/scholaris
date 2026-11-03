@@ -22,7 +22,11 @@ class ChatCompanionArtwork extends StatelessWidget {
   @override
   Widget build(BuildContext context) => ExcludeSemantics(
     child: Image.asset(
-      'assets/mascots/chat/${chatCompanionName(gender).toLowerCase()}_$pose.png',
+      pose == 'welcome'
+          ? getMascotGreetingAssetPath(
+              gender: chatCompanionName(gender) == 'Ari' ? 'female' : 'male',
+            )
+          : 'assets/mascots/chat/${chatCompanionName(gender).toLowerCase()}_$pose.png',
       width: size,
       height: size,
       fit: BoxFit.contain,

@@ -176,13 +176,11 @@ void main() {
     await mount(tester, 'maria', studentName: 'Maria Santos', gender: 'female');
     expect(find.text('Hi, Maria!'), findsOneWidget);
     expect(
-      find.image(const AssetImage('assets/images/mascot_female.png')),
+      find.image(const AssetImage('assets/mascots/greetings/ari.png')),
       findsOneWidget,
     );
     expect(
-      find.image(
-        const AssetImage('assets/images/mascot_male_welcome_wave.png'),
-      ),
+      find.image(const AssetImage('assets/mascots/greetings/ariel.png')),
       findsNothing,
     );
   });
@@ -207,7 +205,7 @@ void main() {
       );
       expect(find.text('Hi, Maria!'), findsOneWidget);
       expect(
-        find.image(const AssetImage('assets/images/mascot_female.png')),
+        find.image(const AssetImage('assets/mascots/greetings/ari.png')),
         findsOneWidget,
       );
       expect(find.text('View saved scholarships'), findsNothing);

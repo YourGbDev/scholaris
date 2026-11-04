@@ -22,21 +22,14 @@ enum AppTextRole {
 
 /// The single authority for app-owned font families and default role weights.
 abstract final class AppTypography {
+  /// The universal typography family across all platforms and environments.
+  static const String kUniversalFontFamily = 'Geist';
+
   static String resolveFontFamily({
     required bool isWeb,
     required TargetPlatform platform,
     double? fontSize,
-  }) {
-    // Web must use Inter even when the browser reports iOS as its platform.
-    if (isWeb) return 'Inter';
-    if (platform == TargetPlatform.iOS) {
-      // Flutter's supported native proxies, not bundled copies of SF Pro.
-      return (fontSize ?? 14) >= 20
-          ? 'CupertinoSystemDisplay'
-          : 'CupertinoSystemText';
-    }
-    return 'Inter';
-  }
+  }) => kUniversalFontFamily;
 
   static String familyFor(double? fontSize) => resolveFontFamily(
     isWeb: kIsWeb,
@@ -45,10 +38,7 @@ abstract final class AppTypography {
   );
 
   // Missing glyphs and emoji continue through Flutter's platform fallback.
-  static List<String> get fallback =>
-      !kIsWeb && defaultTargetPlatform == TargetPlatform.iOS
-      ? const ['Inter']
-      : const [];
+  static List<String> get fallback => const [];
 
   static FontWeight weightFor(AppTextRole role) => switch (role) {
     AppTextRole.display ||

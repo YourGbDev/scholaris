@@ -4,48 +4,20 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:scholaris/shared/theme/app_typography.dart';
 
 void main() {
-  test('web always chooses bundled Inter, including iOS Safari', () {
-    for (final platform in TargetPlatform.values) {
-      for (final size in [12.0, 20.0, 36.0]) {
-        expect(
-          AppTypography.resolveFontFamily(
-            isWeb: true,
-            platform: platform,
-            fontSize: size,
-          ),
-          'Inter',
-        );
+  test('all platforms and web universally resolve to bundled Geist', () {
+    for (final isWeb in [true, false]) {
+      for (final platform in TargetPlatform.values) {
+        for (final size in [12.0, 20.0, 36.0]) {
+          expect(
+            AppTypography.resolveFontFamily(
+              isWeb: isWeb,
+              platform: platform,
+              fontSize: size,
+            ),
+            'Geist',
+          );
+        }
       }
-    }
-  });
-  test('only native iOS selects the supported SF Pro optical proxies', () {
-    expect(
-      AppTypography.resolveFontFamily(
-        isWeb: false,
-        platform: TargetPlatform.iOS,
-        fontSize: 19,
-      ),
-      'CupertinoSystemText',
-    );
-    expect(
-      AppTypography.resolveFontFamily(
-        isWeb: false,
-        platform: TargetPlatform.iOS,
-        fontSize: 20,
-      ),
-      'CupertinoSystemDisplay',
-    );
-    for (final platform in TargetPlatform.values.where(
-      (p) => p != TargetPlatform.iOS,
-    )) {
-      expect(
-        AppTypography.resolveFontFamily(
-          isWeb: false,
-          platform: platform,
-          fontSize: 36,
-        ),
-        'Inter',
-      );
     }
   });
   test('all fifteen roles use exactly the approved semantic weights', () {
@@ -72,7 +44,7 @@ void main() {
     }
   });
   test(
-    'all native targets retain the same role weights and web stays Inter',
+    'all native targets retain the same role weights and resolve to Geist',
     () {
       addTearDown(() => debugDefaultTargetPlatformOverride = null);
       for (final platform in TargetPlatform.values) {
@@ -80,19 +52,14 @@ void main() {
         for (final role in AppTextRole.values) {
           final style = AppTypography.style(role, fontSize: 16);
           expect(style.fontWeight, AppTypography.weightFor(role));
-          expect(
-            style.fontFamily,
-            !kIsWeb && platform == TargetPlatform.iOS
-                ? 'CupertinoSystemText'
-                : 'Inter',
-          );
+          expect(style.fontFamily, 'Geist');
           expect(
             AppTypography.resolveFontFamily(
               isWeb: true,
               platform: platform,
               fontSize: 28,
             ),
-            'Inter',
+            'Geist',
           );
         }
       }
@@ -115,7 +82,7 @@ void main() {
       );
       final actual = AppTypography.style(AppTextRole.caption, base: base);
       expect(actual.fontWeight, FontWeight.w400);
-      expect(actual.fontFamily, 'Inter');
+      expect(actual.fontFamily, 'Geist');
       expect(actual.fontSize, base.fontSize);
       expect(actual.height, base.height);
       expect(actual.letterSpacing, base.letterSpacing);
@@ -126,17 +93,17 @@ void main() {
       expect(actual.fontFeatures, base.fontFeatures);
     },
   );
-  test('styles resolve native iOS family and bundled fallback centrally', () {
+  test('styles resolve universal Geist family across platforms', () {
     debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
     addTearDown(() => debugDefaultTargetPlatformOverride = null);
     expect(
       AppTypography.style(AppTextRole.body, fontSize: 14).fontFamily,
-      'CupertinoSystemText',
+      'Geist',
     );
     expect(
       AppTypography.style(AppTextRole.display, fontSize: 28).fontFamily,
-      'CupertinoSystemDisplay',
+      'Geist',
     );
-    expect(AppTypography.style(AppTextRole.body).fontFamilyFallback, ['Inter']);
-  }, skip: kIsWeb);
+    expect(AppTypography.style(AppTextRole.body).fontFamilyFallback, isEmpty);
+  });
 }

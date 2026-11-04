@@ -28,11 +28,11 @@ void main() {
           rootBundle.load('packages/cupertino_icons/assets/CupertinoIcons.ttf'),
         ))
         .load();
-    for (final family in ['Inter']) {
+    for (final family in ['Geist']) {
       final directory = Directory('assets/fonts/${family.toLowerCase()}');
       if (!directory.existsSync()) continue;
       final loader = FontLoader(family);
-      for (final weight in ['Regular', 'Medium', 'SemiBold', 'Bold']) {
+      for (final weight in ['Regular', 'Medium', 'SemiBold', 'Bold', 'ExtraBold']) {
         loader.addFont(
           rootBundle.load('${directory.path}/$family-$weight.ttf'),
         );

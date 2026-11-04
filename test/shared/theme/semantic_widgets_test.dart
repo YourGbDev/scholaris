@@ -8,9 +8,9 @@ import 'package:scholaris/shared/widgets/scholarship_card.dart';
 
 void main() {
   setUpAll(() async {
-    final fonts = FontLoader('Inter');
-    for (final weight in ['Regular', 'Medium', 'SemiBold', 'Bold']) {
-      fonts.addFont(rootBundle.load('assets/fonts/inter/Inter-$weight.ttf'));
+    final fonts = FontLoader('Geist');
+    for (final weight in ['Regular', 'Medium', 'SemiBold', 'Bold', 'ExtraBold']) {
+      fonts.addFont(rootBundle.load('assets/fonts/geist/Geist-$weight.ttf'));
     }
     await fonts.load();
   });

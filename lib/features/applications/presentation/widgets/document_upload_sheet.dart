@@ -3,12 +3,12 @@
 // Document upload bottom sheet modal allowing students to attach verified files
 // (transcripts, indigency certificates, etc.) to an existing scholarship application.
 
+import 'package:scholaris/shared/theme/app_typography.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:scholaris/shared/theme/app_motion.dart';
-import 'package:scholaris/shared/theme/app_theme.dart';
 import '../../../scholarships/models/scholarship.dart';
 import '../../../scholarships/providers/scholarships_provider.dart';
 import '../../providers/application_document_provider.dart';
@@ -222,18 +222,11 @@ class _DocumentUploadSheetState extends ConsumerState<DocumentUploadSheet> {
                     children: [
                       Text(
                         'Upload Application Document',
-                        style: outfit(
-                          fontSize: 17,
-                          fontWeight: FontWeight.w700,
-                          color: const Color(0xFF161C27),
-                        ),
+                        style: AppTypography.style(AppTextRole.sectionTitle, fontSize: 17, color: const Color(0xFF161C27), letterSpacing: opticalTracking(17), height: opticalLeading(17, isBody: false)),
                       ),
                       Text(
                         'Attach verified proof to an active grant submission',
-                        style: openSans(
-                          fontSize: 12,
-                          color: const Color(0xFF707971),
-                        ),
+                        style: AppTypography.style(AppTextRole.subtitle, fontSize: 12, color: const Color(0xFF707971), letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: true)),
                       ),
                     ],
                   ),
@@ -245,18 +238,13 @@ class _DocumentUploadSheetState extends ConsumerState<DocumentUploadSheet> {
             // Step 1: Select Application
             Text(
               '1. SELECT SCHOLARSHIP APPLICATION',
-              style: outfit(
-                fontSize: 11,
-                fontWeight: FontWeight.w700,
-                letterSpacing: 0.8,
-                color: const Color(0xFF707971),
-              ),
+              style: AppTypography.style(AppTextRole.sectionTitle, fontSize: 11, letterSpacing: 0.8, color: const Color(0xFF707971), height: opticalLeading(11, isBody: false)),
             ),
             const SizedBox(height: 8),
             appsAsync.when(
               loading: () => const LinearProgressIndicator(),
               error: (e, _) => Text('Could not load applications: $e',
-                  style: const TextStyle(color: Colors.red, fontSize: 12)),
+                  style: AppTypography.style(AppTextRole.caption, color: Colors.red, fontSize: 12)),
               data: (apps) {
                 if (apps.isEmpty) {
                   return Container(
@@ -267,10 +255,7 @@ class _DocumentUploadSheetState extends ConsumerState<DocumentUploadSheet> {
                     ),
                     child: Text(
                       'No active scholarship applications found. Start an application first to upload documents.',
-                      style: openSans(
-                        fontSize: 12.5,
-                        color: const Color(0xFF404942),
-                      ),
+                      style: AppTypography.style(AppTextRole.body, fontSize: 12.5, color: const Color(0xFF404942), letterSpacing: opticalTracking(12.5), height: opticalLeading(12.5, isBody: true)),
                     ),
                   );
                 }
@@ -306,11 +291,7 @@ class _DocumentUploadSheetState extends ConsumerState<DocumentUploadSheet> {
                             title,
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
-                            style: outfit(
-                              fontSize: 13.5,
-                              fontWeight: FontWeight.w600,
-                              color: const Color(0xFF161C27),
-                            ),
+                            style: AppTypography.style(AppTextRole.input, fontSize: 13.5, color: const Color(0xFF161C27), letterSpacing: opticalTracking(13.5), height: opticalLeading(13.5, isBody: false)),
                           ),
                         );
                       }).toList(),
@@ -330,12 +311,7 @@ class _DocumentUploadSheetState extends ConsumerState<DocumentUploadSheet> {
             // Step 2: Document Type
             Text(
               '2. SELECT DOCUMENT TYPE',
-              style: outfit(
-                fontSize: 11,
-                fontWeight: FontWeight.w700,
-                letterSpacing: 0.8,
-                color: const Color(0xFF707971),
-              ),
+              style: AppTypography.style(AppTextRole.sectionTitle, fontSize: 11, letterSpacing: 0.8, color: const Color(0xFF707971), height: opticalLeading(11, isBody: false)),
             ),
             const SizedBox(height: 8),
             Wrap(
@@ -362,13 +338,7 @@ class _DocumentUploadSheetState extends ConsumerState<DocumentUploadSheet> {
                     selected: isSelected,
                     selectedColor: const Color(0xFF0F4D2E),
                     backgroundColor: const Color(0xFFF4F3F8),
-                    labelStyle: outfit(
-                      fontSize: 12,
-                      fontWeight:
-                          isSelected ? FontWeight.w700 : FontWeight.w500,
-                      color:
-                          isSelected ? Colors.white : const Color(0xFF404942),
-                    ),
+                    labelStyle: AppTypography.style(AppTextRole.badge, fontSize: 12, color: isSelected ? Colors.white : const Color(0xFF404942), letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: false)),
                     side: BorderSide(
                       color: isSelected
                           ? const Color(0xFF0F4D2E)
@@ -390,12 +360,7 @@ class _DocumentUploadSheetState extends ConsumerState<DocumentUploadSheet> {
             // Step 3: Choose File
             Text(
               '3. CHOOSE FILE',
-              style: outfit(
-                fontSize: 11,
-                fontWeight: FontWeight.w700,
-                letterSpacing: 0.8,
-                color: const Color(0xFF707971),
-              ),
+              style: AppTypography.style(AppTextRole.sectionTitle, fontSize: 11, letterSpacing: 0.8, color: const Color(0xFF707971), height: opticalLeading(11, isBody: false)),
             ),
             const SizedBox(height: 8),
             PressableScale(
@@ -444,21 +409,14 @@ class _DocumentUploadSheetState extends ConsumerState<DocumentUploadSheet> {
                               _pickedFile?.name ?? 'Tap to select document file',
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
-                              style: outfit(
-                                fontSize: 13.5,
-                                fontWeight: FontWeight.w600,
-                                color: const Color(0xFF161C27),
-                              ),
+                              style: AppTypography.style(AppTextRole.bodyEmphasis, fontSize: 13.5, color: const Color(0xFF161C27), letterSpacing: opticalTracking(13.5), height: opticalLeading(13.5, isBody: false)),
                             ),
                             const SizedBox(height: 2),
                             Text(
                               _pickedFile != null
                                   ? '${(_pickedFile!.size / 1024).toStringAsFixed(1)} KB • ${_pickedFile!.extension?.toUpperCase() ?? "FILE"}'
                                   : 'Supported: PDF, JPG, PNG, DOCX (Max 15MB)',
-                              style: openSans(
-                                fontSize: 11.5,
-                                color: const Color(0xFF707971),
-                              ),
+                              style: AppTypography.style(AppTextRole.caption, fontSize: 11.5, color: const Color(0xFF707971), letterSpacing: opticalTracking(11.5), height: opticalLeading(11.5, isBody: true)),
                             ),
                           ],
                         ),
@@ -482,11 +440,7 @@ class _DocumentUploadSheetState extends ConsumerState<DocumentUploadSheet> {
               const SizedBox(height: 12),
               Text(
                 _uploadError!,
-                style: openSans(
-                  fontSize: 12,
-                  color: const Color(0xFFBA1A1A),
-                  fontWeight: FontWeight.w600,
-                ),
+                style: AppTypography.style(AppTextRole.caption, fontSize: 12, color: const Color(0xFFBA1A1A), letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: true)),
               ),
             ],
             const SizedBox(height: 24),
@@ -516,10 +470,7 @@ class _DocumentUploadSheetState extends ConsumerState<DocumentUploadSheet> {
                     : const Icon(Icons.cloud_upload_outlined, size: 20),
                 label: Text(
                   _isUploading ? 'Uploading Document...' : 'Upload Document',
-                  style: outfit(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w700,
-                  ),
+                  style: AppTypography.style(AppTextRole.button, fontSize: 14, letterSpacing: opticalTracking(14), height: opticalLeading(14, isBody: false)),
                 ),
               ),
             ),

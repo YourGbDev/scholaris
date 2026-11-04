@@ -53,10 +53,10 @@ Widget wrap(Widget child) => ProviderScope(
 void main() {
   setUpAll(() async {
     GoogleFonts.config.allowRuntimeFetching = false;
-    await (FontLoader('Geist')
-          ..addFont(rootBundle.load('assets/fonts/geist/Geist-Regular.ttf'))
-          ..addFont(rootBundle.load('assets/fonts/geist/Geist-SemiBold.ttf'))
-          ..addFont(rootBundle.load('assets/fonts/geist/Geist-Bold.ttf')))
+    await (FontLoader('Inter')
+          ..addFont(rootBundle.load('assets/fonts/inter/Inter-Regular.ttf'))
+          ..addFont(rootBundle.load('assets/fonts/inter/Inter-SemiBold.ttf'))
+          ..addFont(rootBundle.load('assets/fonts/inter/Inter-Bold.ttf')))
         .load();
   });
   testWidgets(

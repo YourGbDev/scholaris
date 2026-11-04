@@ -1,3 +1,5 @@
+import 'package:scholaris/shared/theme/app_theme.dart';
+import 'package:scholaris/shared/theme/app_typography.dart';
 import 'package:scholaris/features/home/presentation/widgets/student_tab_entrance.dart';
 // lib/dev/student_navbar_preview/main.dart
 //
@@ -27,11 +29,12 @@ class StudentNavbarPreviewApp extends StatelessWidget {
     return MaterialApp(
       title: 'Scholaris Student Navbar Preview',
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        fontFamily: 'Geist',
+      theme: applyScholarisTypography(ThemeData(
+        fontFamily: AppTypography.familyFor(14),
+        fontFamilyFallback: AppTypography.fallback,
         useMaterial3: true,
         scaffoldBackgroundColor: const Color(0xFF1E242B), // Dark outer preview canvas
-      ),
+      )),
       home: const StudentNavbarPreviewScreen(),
     );
   }
@@ -168,7 +171,7 @@ class _StudentNavbarPreviewScreenState extends State<StudentNavbarPreviewScreen>
           Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Text('Width: ', style: TextStyle(color: Colors.white70, fontSize: 13, fontWeight: FontWeight.bold)),
+               Text('Width: ', style: AppTypography.style(AppTextRole.label, color: Colors.white70, fontSize: 13)),
               const SizedBox(width: 4),
               SegmentedButton<double>(
                 segments: const [
@@ -195,7 +198,7 @@ class _StudentNavbarPreviewScreenState extends State<StudentNavbarPreviewScreen>
             child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Text('Glass Material: ', style: TextStyle(color: Colors.white70, fontSize: 13, fontWeight: FontWeight.bold)),
+               Text('Glass Material: ', style: AppTypography.style(AppTextRole.label, color: Colors.white70, fontSize: 13)),
               const SizedBox(width: 4),
               SegmentedButton<String>(
                 segments: const [
@@ -237,7 +240,7 @@ class _StudentNavbarPreviewScreenState extends State<StudentNavbarPreviewScreen>
           Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Text('Text Scale: ', style: TextStyle(color: Colors.white70, fontSize: 13, fontWeight: FontWeight.bold)),
+               Text('Text Scale: ', style: AppTypography.style(AppTextRole.label, color: Colors.white70, fontSize: 13)),
               const SizedBox(width: 4),
               SegmentedButton<double>(
                 segments: const [
@@ -262,7 +265,7 @@ class _StudentNavbarPreviewScreenState extends State<StudentNavbarPreviewScreen>
           Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Text('High Contrast: ', style: TextStyle(color: Colors.white70, fontSize: 13)),
+               Text('High Contrast: ', style: AppTypography.style(AppTextRole.label, color: Colors.white70, fontSize: 13)),
               Switch(
                 value: _isHighContrast,
                 onChanged: (val) => setState(() => _isHighContrast = val),
@@ -276,7 +279,7 @@ class _StudentNavbarPreviewScreenState extends State<StudentNavbarPreviewScreen>
           Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Text('Reduced Motion: ', style: TextStyle(color: Colors.white70, fontSize: 13)),
+               Text('Reduced Motion: ', style: AppTypography.style(AppTextRole.label, color: Colors.white70, fontSize: 13)),
               Switch(
                 value: _isReducedMotion,
                 onChanged: (val) => setState(() => _isReducedMotion = val),
@@ -290,7 +293,7 @@ class _StudentNavbarPreviewScreenState extends State<StudentNavbarPreviewScreen>
           Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Text('Pale BG: ', style: TextStyle(color: Colors.white70, fontSize: 13)),
+               Text('Pale BG: ', style: AppTypography.style(AppTextRole.label, color: Colors.white70, fontSize: 13)),
               Switch(
                 value: _isPaleBackground,
                 onChanged: (val) => setState(() => _isPaleBackground = val),
@@ -304,7 +307,7 @@ class _StudentNavbarPreviewScreenState extends State<StudentNavbarPreviewScreen>
           Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Text('Vibrant Bands: ', style: TextStyle(color: Colors.white70, fontSize: 13)),
+               Text('Vibrant Bands: ', style: AppTypography.style(AppTextRole.label, color: Colors.white70, fontSize: 13)),
               Switch(
                 key: const ValueKey('preview-vibrant-bands-switch'),
                 value: _isVibrantBands,
@@ -319,7 +322,7 @@ class _StudentNavbarPreviewScreenState extends State<StudentNavbarPreviewScreen>
           Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Text('Collapsed: ', style: TextStyle(color: Colors.white70, fontSize: 13)),
+               Text('Collapsed: ', style: AppTypography.style(AppTextRole.label, color: Colors.white70, fontSize: 13)),
               Switch(
                 key: const ValueKey('preview-collapsed-switch'),
                 value: _scrollDockController.isCollapsed,
@@ -602,13 +605,9 @@ class _StudentNavbarPreviewScreenState extends State<StudentNavbarPreviewScreen>
                   color: const Color(0xFFDCF3E5),
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: const Text(
+                child:  Text(
                   'Active Matches',
-                  style: TextStyle(
-                    color: Color(0xFF0F4D2E),
-                    fontSize: 12,
-                    fontWeight: FontWeight.bold,
-                  ),
+                  style: AppTypography.style(AppTextRole.sectionTitle, color: Color(0xFF0F4D2E), fontSize: 12),
                 ),
               ),
               const CircleAvatar(
@@ -619,19 +618,14 @@ class _StudentNavbarPreviewScreenState extends State<StudentNavbarPreviewScreen>
             ],
           ),
           const SizedBox(height: 12),
-          const Text(
+           Text(
             'Explore 24 Matching Opportunities',
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-              letterSpacing: -0.3,
-            ),
+            style: AppTypography.style(AppTextRole.subtitle, color: Colors.white, fontSize: 18, letterSpacing: -0.3),
           ),
           const SizedBox(height: 4),
-          const Text(
+           Text(
             'Curated for undergraduate STEM & academic scholars in Metro Manila.',
-            style: TextStyle(color: Colors.white70, fontSize: 13),
+            style: AppTypography.style(AppTextRole.subtitle, color: Colors.white70, fontSize: 13),
           ),
         ],
       ),
@@ -655,11 +649,7 @@ class _StudentNavbarPreviewScreenState extends State<StudentNavbarPreviewScreen>
               ),
               child: Text(
                 label,
-                style: TextStyle(
-                  color: label.startsWith('All') ? Colors.white : const Color(0xFF2D3748),
-                  fontSize: 12,
-                  fontWeight: FontWeight.w600,
-                ),
+                style: AppTypography.style(AppTextRole.badge, color: label.startsWith('All') ? Colors.white : const Color(0xFF2D3748), fontSize: 12),
               ),
             ),
         ],
@@ -707,11 +697,7 @@ class _StudentNavbarPreviewScreenState extends State<StudentNavbarPreviewScreen>
                 ),
                 child: Text(
                   tag,
-                  style: TextStyle(
-                    color: badgeColor,
-                    fontSize: 11,
-                    fontWeight: FontWeight.w700,
-                  ),
+                  style: AppTypography.style(AppTextRole.badge, color: badgeColor, fontSize: 11),
                 ),
               ),
               Container(
@@ -727,11 +713,7 @@ class _StudentNavbarPreviewScreenState extends State<StudentNavbarPreviewScreen>
                     const SizedBox(width: 2),
                     Text(
                       matchScore,
-                      style: const TextStyle(
-                        color: Color(0xFF0F4D2E),
-                        fontSize: 11,
-                        fontWeight: FontWeight.bold,
-                      ),
+                      style: AppTypography.style(AppTextRole.badge, color: Color(0xFF0F4D2E), fontSize: 11),
                     ),
                   ],
                 ),
@@ -741,16 +723,12 @@ class _StudentNavbarPreviewScreenState extends State<StudentNavbarPreviewScreen>
           const SizedBox(height: 10),
           Text(
             title,
-            style: const TextStyle(
-              fontSize: 15,
-              fontWeight: FontWeight.bold,
-              color: Color(0xFF1A202C),
-            ),
+            style: AppTypography.style(AppTextRole.cardTitle, fontSize: 15, color: Color(0xFF1A202C)),
           ),
           const SizedBox(height: 4),
           Text(
             provider,
-            style: const TextStyle(fontSize: 12.5, color: Color(0xFF718096)),
+            style: AppTypography.style(AppTextRole.subtitle, fontSize: 12.5, color: Color(0xFF718096)),
           ),
           const SizedBox(height: 12),
           const Divider(height: 1, color: Color(0xFFF1F5F9)),
@@ -771,11 +749,7 @@ class _StudentNavbarPreviewScreenState extends State<StudentNavbarPreviewScreen>
                     child: Text(
                       amount,
                       overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
-                        fontSize: 12.5,
-                        fontWeight: FontWeight.w700,
-                        color: Color(0xFF0F4D2E),
-                      ),
+                      style: AppTypography.style(AppTextRole.metric, fontSize: 12.5, color: Color(0xFF0F4D2E)),
                     ),
                   ),
                 ],
@@ -790,7 +764,7 @@ class _StudentNavbarPreviewScreenState extends State<StudentNavbarPreviewScreen>
                     child: Text(
                       'Due $deadline',
                       overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(fontSize: 11.5, color: Color(0xFF718096)),
+                      style: AppTypography.style(AppTextRole.caption, fontSize: 11.5, color: Color(0xFF718096)),
                     ),
                   ),
                 ],
@@ -819,23 +793,15 @@ class _StudentNavbarPreviewScreenState extends State<StudentNavbarPreviewScreen>
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        children: const [
+        children:  [
           Text(
             'Academic Documents & Requirements',
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-              color: Color(0xFF1A202C),
-            ),
+            style: AppTypography.style(AppTextRole.sectionTitle, fontSize: 16, color: Color(0xFF1A202C)),
           ),
           SizedBox(height: 6),
           Text(
             'Pale background test surface: verify translucent dock color transmission, fine illuminated edge, and high-contrast text legibility.',
-            style: TextStyle(
-              fontSize: 12.5,
-              color: Color(0xFF718096),
-              height: 1.4,
-            ),
+            style: AppTypography.style(AppTextRole.body, fontSize: 12.5, color: Color(0xFF718096), height: 1.4),
           ),
         ],
       ),
@@ -871,16 +837,12 @@ class _StudentNavbarPreviewScreenState extends State<StudentNavbarPreviewScreen>
                   children: [
                     Text(
                       'Official Document #${index + 1} — Verification Form',
-                      style: const TextStyle(
-                        fontSize: 13,
-                        fontWeight: FontWeight.w600,
-                        color: Color(0xFF2D3748),
-                      ),
+                      style: AppTypography.style(AppTextRole.cardTitle, fontSize: 13, color: Color(0xFF2D3748)),
                     ),
                     const SizedBox(height: 2),
-                    const Text(
+                     Text(
                       'Submitted on Oct 26, 2026 • Verified',
-                      style: TextStyle(fontSize: 11.5, color: Color(0xFFA0AEC0)),
+                      style: AppTypography.style(AppTextRole.caption, fontSize: 11.5, color: Color(0xFFA0AEC0)),
                     ),
                   ],
                 ),
@@ -912,23 +874,15 @@ class _StudentNavbarPreviewScreenState extends State<StudentNavbarPreviewScreen>
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        children: const [
+        children:  [
           Text(
             'Vibrant Multi-Spectrum Transmission Test',
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-              color: Colors.white,
-            ),
+            style: AppTypography.style(AppTextRole.sectionTitle, fontSize: 16, color: Colors.white),
           ),
           SizedBox(height: 6),
           Text(
             'Compare the floating navigation over bright and dark colors. Inspect background transmission, the fine rim, selection clarity, and labels while scrolling.',
-            style: TextStyle(
-              fontSize: 12.5,
-              color: Color(0xFFC7D2FE),
-              height: 1.4,
-            ),
+            style: AppTypography.style(AppTextRole.body, fontSize: 12.5, color: Color(0xFFC7D2FE), height: 1.4),
           ),
         ],
       ),
@@ -1016,19 +970,12 @@ class _StudentNavbarPreviewScreenState extends State<StudentNavbarPreviewScreen>
         children: [
           Text(
             title,
-            style: const TextStyle(
-              color: Colors.white,
-              fontWeight: FontWeight.bold,
-              fontSize: 13,
-            ),
+            style: AppTypography.style(AppTextRole.sectionTitle, color: Colors.white, fontSize: 13),
           ),
           const SizedBox(height: 3),
           Text(
             subtitle,
-            style: const TextStyle(
-              color: Color(0xEEFFFFFF),
-              fontSize: 11,
-            ),
+            style: AppTypography.style(AppTextRole.subtitle, color: Color(0xEEFFFFFF), fontSize: 11),
           ),
         ],
       ),

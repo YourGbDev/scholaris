@@ -6,6 +6,7 @@
 // anon key live there and are never hardcoded here). This file only reads the
 // shared client through Supabase.instance.client.
 
+import 'package:scholaris/shared/theme/app_typography.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -124,20 +125,13 @@ final routerProvider = Provider<GoRouter>((ref) {
               const SizedBox(height: 16),
               Text(
                 'Page Not Found',
-                style: geist(
-                  fontSize: 22,
-                  fontWeight: FontWeight.bold,
-                  color: const Color(0xFF161C27),
-                ),
+                style: AppTypography.style(AppTextRole.screenTitle, fontSize: 22, color: const Color(0xFF161C27)),
               ),
               const SizedBox(height: 8),
               Text(
                 'The requested route (${state.uri.path}) does not exist.',
                 textAlign: TextAlign.center,
-                style: geist(
-                  fontSize: 14,
-                  color: const Color(0xFF404942),
-                ),
+                style: AppTypography.style(AppTextRole.subtitle, fontSize: 14, color: const Color(0xFF404942)),
               ),
               const SizedBox(height: 24),
               ElevatedButton.icon(
@@ -152,7 +146,7 @@ final routerProvider = Provider<GoRouter>((ref) {
                 icon: const Icon(Icons.home_rounded, size: 18),
                 label: Text(
                   'Return to Home',
-                  style: geist(fontSize: 14, fontWeight: FontWeight.w600),
+                  style: AppTypography.style(AppTextRole.button, fontSize: 14),
                 ),
               ),
             ],

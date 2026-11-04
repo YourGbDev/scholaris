@@ -12,6 +12,7 @@
 // 5. Criteria chips (degree, need-based, year level, etc.)
 // 6. Quick Apply primary CTA button
 
+import 'package:scholaris/shared/theme/app_typography.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
@@ -252,13 +253,7 @@ class ScholarshipCard extends StatelessWidget {
                                       const SizedBox(width: 4.5),
                                       Flexible(child: Text(
                                         '$matchPct% Fit',
-                                        style: outfit(
-                                          fontSize: 12.5,
-                                          fontWeight: FontWeight.w700,
-                                          color: matchPct >= 90
-                                              ? kPrimary
-                                              : const Color(0xFF404942),
-                                        ),
+                                        style: AppTypography.style(AppTextRole.badge, fontSize: 12.5, color: matchPct >= 90 ? kPrimary : const Color(0xFF404942), letterSpacing: opticalTracking(12.5), height: opticalLeading(12.5, isBody: false)),
                                       )),
                                     ],
                                   ),
@@ -297,22 +292,19 @@ class ScholarshipCard extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(scholarship.title, maxLines: 2, overflow: TextOverflow.ellipsis,
-                              style: outfit(fontSize: 16, fontWeight: FontWeight.w700,
-                                color: const Color(0xFF161C27), letterSpacing: -0.25, height: 1.25)),
+                              style: AppTypography.style(AppTextRole.cardTitle, fontSize: 16, color: const Color(0xFF161C27), letterSpacing: -0.25, height: 1.25)),
                             const SizedBox(height: 4),
                             Row(children: [
                               Icon(Icons.account_balance_outlined, size: 15, color: providerTypeColor(scholarship.provider)),
                               const SizedBox(width: 5),
                               Expanded(child: Text(scholarship.provider ?? 'Scholarship Provider',
                                 maxLines: 2, overflow: TextOverflow.ellipsis,
-                                style: openSans(fontSize: 14, height: 1.4, color: const Color(0xFF4E5C53), fontWeight: FontWeight.w600))),
+                                style: AppTypography.style(AppTextRole.label, fontSize: 14, height: 1.4, color: const Color(0xFF4E5C53), letterSpacing: opticalTracking(14)))),
                             ]),
                           ],
                         );
-                        final amountText = Text(amount, style: outfit(fontSize: 18, fontWeight: FontWeight.w700,
-                          color: kPrimary, letterSpacing: -0.4));
-                        final frequencyText = Text(scholarship.formattedFrequency, style: openSans(fontSize: 12.5,
-                          color: const Color(0xFF4E5C53), fontWeight: FontWeight.w600));
+                        final amountText = Text(amount, style: AppTypography.style(AppTextRole.metric, fontSize: 18, color: kPrimary, letterSpacing: -0.4, height: opticalLeading(18, isBody: false)));
+                        final frequencyText = Text(scholarship.formattedFrequency, style: AppTypography.style(AppTextRole.caption, fontSize: 12.5, color: const Color(0xFF4E5C53), letterSpacing: opticalTracking(12.5), height: opticalLeading(12.5, isBody: true)));
                         final award = sideBySide
                             ? Column(crossAxisAlignment: CrossAxisAlignment.end, mainAxisSize: MainAxisSize.min,
                                 children: [amountText, frequencyText])
@@ -339,8 +331,7 @@ class ScholarshipCard extends StatelessWidget {
                             color: kScholarshipTagBackground,
                             borderRadius: BorderRadius.circular(999),
                           ),
-                          child: Text(benefit.text, style: outfit(fontSize: 11, fontWeight: FontWeight.w600,
-                            color: kScholarshipTagForeground)),
+                          child: Text(benefit.text, style: AppTypography.style(AppTextRole.badge, fontSize: 11, color: kScholarshipTagForeground, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: false))),
                         ),
                         ...criteriaChips.map((c) {
                           return Container(
@@ -354,11 +345,7 @@ class ScholarshipCard extends StatelessWidget {
                             ),
                             child: Text(
                               c,
-                              style: outfit(
-                                fontSize: 11,
-                                fontWeight: FontWeight.w600,
-                                color: kScholarshipTagForeground,
-                              ),
+                              style: AppTypography.style(AppTextRole.badge, fontSize: 11, color: kScholarshipTagForeground, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: false)),
                             ),
                           );
                         }),
@@ -369,7 +356,7 @@ class ScholarshipCard extends StatelessWidget {
                         Icon(requirements.icon, size: 15, color: const Color(0xFF404942)),
                         const SizedBox(width: 6),
                         Expanded(child: Text(requirements.text, maxLines: 2, overflow: TextOverflow.ellipsis,
-                          style: openSans(fontSize: 13, height: 1.45, fontWeight: FontWeight.w600, color: const Color(0xFF4E5C53)))),
+                          style: AppTypography.style(AppTextRole.caption, fontSize: 13, height: 1.45, color: const Color(0xFF4E5C53), letterSpacing: opticalTracking(13)))),
                       ]),
                       const SizedBox(height: 12),
                       Row(children: [
@@ -388,7 +375,7 @@ class ScholarshipCard extends StatelessWidget {
                             ),
                             child: Text(
                               'View Details',
-                              style: outfit(fontSize: 13, fontWeight: FontWeight.w600),
+                              style: AppTypography.style(AppTextRole.button, fontSize: 13, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: false)),
                             ),
                           )),
                         )),
@@ -402,7 +389,7 @@ class ScholarshipCard extends StatelessWidget {
                               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
                             ),
                             child: FittedBox(child: Row(mainAxisSize: MainAxisSize.min, children: [
-                              Text('Apply Now', style: outfit(fontSize: 13, fontWeight: FontWeight.w600, color: Colors.white)),
+                              Text('Apply Now', style: AppTypography.style(AppTextRole.button, fontSize: 13, color: Colors.white, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: false))),
                               const SizedBox(width: 4),
                               const Icon(Icons.arrow_forward_rounded, size: 15),
                             ])),
@@ -602,11 +589,7 @@ class _DeadlineChip extends StatelessWidget {
           const SizedBox(width: 3.5),
           Flexible(child: Text(
             label,
-            style: outfit(
-              fontSize: 10.5,
-              fontWeight: FontWeight.w600,
-              color: fg,
-            ),
+            style: AppTypography.style(AppTextRole.label, fontSize: 10.5, color: fg, letterSpacing: opticalTracking(10.5), height: opticalLeading(10.5, isBody: false)),
           )),
         ],
       ),
@@ -637,11 +620,7 @@ class _AppliedChip extends StatelessWidget {
           const SizedBox(width: 3),
           Flexible(child: Text(
             'Applied',
-            style: outfit(
-              fontSize: 11.5,
-              fontWeight: FontWeight.w600,
-              color: const Color(0xFF345B40),
-            ),
+            style: AppTypography.style(AppTextRole.badge, fontSize: 11.5, color: const Color(0xFF345B40), letterSpacing: opticalTracking(11.5), height: opticalLeading(11.5, isBody: false)),
           )),
         ],
       ),

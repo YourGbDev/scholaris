@@ -1,3 +1,5 @@
+import 'package:scholaris/shared/theme/app_theme.dart';
+import 'package:scholaris/shared/theme/app_typography.dart';
 import 'package:scholaris/features/applications/providers/application_document_provider.dart';
 import 'package:scholaris/features/applications/models/application_document.dart';
 import 'package:scholaris/features/provider/repositories/support_concern_repository.dart';
@@ -163,10 +165,11 @@ Widget buildApp({bool? individualPreview}) {
         ),
         child: child!,
       ),
-      theme: ThemeData(
-        fontFamily: 'Geist',
+      theme: applyScholarisTypography(ThemeData(
+        fontFamily: AppTypography.familyFor(14),
+        fontFamilyFallback: AppTypography.fallback,
         colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF0F4D2E)),
-      ),
+      )),
       home: showAdminSupport
           ? const Scaffold(body: SupportConcernsScreen())
           : individual

@@ -1,3 +1,5 @@
+import 'package:scholaris/shared/theme/app_motion.dart' show opticalTracking, opticalLeading;
+import 'package:scholaris/shared/theme/app_typography.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -133,20 +135,17 @@ class _ReviewAnalyticsPanelState extends State<ReviewAnalyticsPanel> {
                 children: [
                   Text(
                     'ORGANIZATION REPORTING',
-                    style: orgLabel(fontSize: 10, letterSpacing: 1.6),
+                    style: AppTypography.style(AppTextRole.label, fontSize: 10, letterSpacing: 1.6, color: kOrgTextSecondary, height: opticalLeading(10, isBody: false)),
                   ),
                   const SizedBox(height: 16),
                   Text(
                     'Application analytics',
-                    style: orgHeadline(
-                      fontSize: narrow ? 28 : 34,
-                      color: kOrgPrimary,
-                    ),
+                    style: AppTypography.style(AppTextRole.screenTitle, fontSize: narrow ? 28 : 34, color: kOrgPrimary, letterSpacing: opticalTracking(narrow ? 28 : 34), height: opticalLeading(narrow ? 28 : 34, isBody: false)),
                   ),
                   const SizedBox(height: 12),
                   Text(
                     'Monitor application status, compare programs, and track review progress.',
-                    style: orgBody(color: kOrgTextSecondary),
+                    style: AppTypography.style(AppTextRole.subtitle, color: kOrgTextSecondary, fontSize: 13.5, letterSpacing: opticalTracking(13.5), height: ((13.5) <= 16 ? 1.45 : opticalLeading(13.5, isBody: true))),
                   ),
                   const SizedBox(height: 28),
                   Wrap(
@@ -266,14 +265,14 @@ class _ReviewAnalyticsPanelState extends State<ReviewAnalyticsPanel> {
                       children: [
                         Text(
                           'Where applications stand',
-                          style: orgHeadline(fontSize: 21),
+                          style: AppTypography.style(AppTextRole.sectionTitle, fontSize: 21, color: kOrgTextPrimary, letterSpacing: opticalTracking(21), height: opticalLeading(21, isBody: false)),
                         ),
                         const SizedBox(height: 8),
                         Text(
                           cohort.isEmpty
                               ? 'No submitted applications in this selection.'
                               : 'Current status of ${cohort.length} ${cohort.length == 1 ? 'application' : 'applications'} in this submission cohort.',
-                          style: orgBody(color: kOrgTextSecondary),
+                          style: AppTypography.style(AppTextRole.caption, color: kOrgTextSecondary, fontSize: 13.5, letterSpacing: opticalTracking(13.5), height: ((13.5) <= 16 ? 1.45 : opticalLeading(13.5, isBody: true))),
                         ),
                         const SizedBox(height: 24),
                         ...labels.entries.map(
@@ -285,8 +284,8 @@ class _ReviewAnalyticsPanelState extends State<ReviewAnalyticsPanel> {
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceBetween,
                                   children: [
-                                    Text(e.value, style: orgBody()),
-                                    Text('${counts[e.key]}', style: orgLabel()),
+                                    Text(e.value, style: AppTypography.style(AppTextRole.label, fontSize: 13.5, color: kOrgTextPrimary, letterSpacing: opticalTracking(13.5), height: ((13.5) <= 16 ? 1.45 : opticalLeading(13.5, isBody: true)))),
+                                    Text('${counts[e.key]}', style: AppTypography.style(AppTextRole.metric, fontSize: 11.5, color: kOrgTextSecondary, letterSpacing: opticalTracking(11.5), height: opticalLeading(11.5, isBody: false))),
                                   ],
                                 ),
                                 const SizedBox(height: 8),
@@ -315,7 +314,7 @@ class _ReviewAnalyticsPanelState extends State<ReviewAnalyticsPanel> {
                   const SizedBox(height: 28),
                   Text(
                     'Program comparison',
-                    style: orgHeadline(fontSize: 21),
+                    style: AppTypography.style(AppTextRole.sectionTitle, fontSize: 21, color: kOrgTextPrimary, letterSpacing: opticalTracking(21), height: opticalLeading(21, isBody: false)),
                   ),
                   const SizedBox(height: 16),
                   if (programs.isEmpty)
@@ -339,7 +338,7 @@ class _ReviewAnalyticsPanelState extends State<ReviewAnalyticsPanel> {
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(s.title, style: orgHeadline(fontSize: 17)),
+                            Text(s.title, style: AppTypography.style(AppTextRole.cardTitle, fontSize: 17, color: kOrgTextPrimary, letterSpacing: opticalTracking(17), height: opticalLeading(17, isBody: false))),
                             const SizedBox(height: 14),
                             Wrap(
                               spacing: 28,
@@ -361,7 +360,7 @@ class _ReviewAnalyticsPanelState extends State<ReviewAnalyticsPanel> {
                   const SizedBox(height: 12),
                   Text(
                     'Drafts are excluded. Date filters use submission time; undated applications appear only in All time. Decision time uses recorded submission and decision timestamps. Scholarship values describe offered support, not money disbursed.',
-                    style: orgBody(fontSize: 12, color: kOrgTextSecondary),
+                    style: AppTypography.style(AppTextRole.caption, fontSize: 12, color: kOrgTextSecondary, letterSpacing: opticalTracking(12), height: ((12) <= 16 ? 1.45 : opticalLeading(12, isBody: true))),
                   ),
                 ],
               ),
@@ -377,11 +376,11 @@ class _ReviewAnalyticsPanelState extends State<ReviewAnalyticsPanel> {
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label, style: orgBody(fontSize: 13, color: kOrgTextSecondary)),
+        Text(label, style: AppTypography.style(AppTextRole.label, fontSize: 13, color: kOrgTextSecondary, letterSpacing: opticalTracking(13), height: ((13) <= 16 ? 1.45 : opticalLeading(13, isBody: true)))),
         const SizedBox(height: 8),
         if (int.tryParse(value) case final int count)
-          OrgMetricCount(motionId: 'review-analytics.$label', targetValue: count, style: orgHeadline(fontSize: 26, color: kOrgPrimary))
-        else Text(value, style: orgHeadline(fontSize: 26, color: kOrgPrimary)),
+          OrgMetricCount(motionId: 'review-analytics.$label', targetValue: count, style: AppTypography.style(AppTextRole.metric, fontSize: 26, color: kOrgPrimary, letterSpacing: opticalTracking(26), height: opticalLeading(26, isBody: false)))
+        else Text(value, style: AppTypography.style(AppTextRole.metric, fontSize: 26, color: kOrgPrimary, letterSpacing: opticalTracking(26), height: opticalLeading(26, isBody: false))),
       ],
     ),
   );

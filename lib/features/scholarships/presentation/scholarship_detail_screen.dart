@@ -12,6 +12,7 @@
 // the existing applications provider. Once applied, the screen renders an
 // official Digital Submission Token and confirmation receipt.
 
+import 'package:scholaris/shared/theme/app_typography.dart';
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -179,12 +180,7 @@ class _ScholarshipDetailScreenState
               const SizedBox(width: 8),
               Text(
                 'Scholaris',
-                style: poppins(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  letterSpacing: -0.5,
-                  color: const Color(0xFF0F172A),
-                ),
+                style: AppTypography.style(AppTextRole.label, fontSize: 18, letterSpacing: -0.5, color: const Color(0xFF0F172A), height: opticalLeading(18, isBody: false)),
               ),
             ],
           ),
@@ -518,11 +514,7 @@ class _HeroCard extends ConsumerWidget {
                         providerName,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: outfit(
-                          fontSize: 13,
-                          fontWeight: FontWeight.w600,
-                          color: kSecondary,
-                        ),
+                        style: AppTypography.style(AppTextRole.label, fontSize: 13, color: kSecondary, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: false)),
                       ),
                     ),
                   ],
@@ -540,12 +532,7 @@ class _HeroCard extends ConsumerWidget {
                     codeTag,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: outfit(
-                      fontSize: 10,
-                      fontWeight: FontWeight.w700,
-                      letterSpacing: 0.5,
-                      color: kOnSurfaceVariant,
-                    ),
+                    style: AppTypography.style(AppTextRole.badge, fontSize: 10, letterSpacing: 0.5, color: kOnSurfaceVariant, height: opticalLeading(10, isBody: false)),
                   ),
                 ),
               ),
@@ -556,13 +543,7 @@ class _HeroCard extends ConsumerWidget {
           // Scholarship Title
           Text(
             scholarship.title,
-            style: outfit(
-              fontSize: 22,
-              fontWeight: FontWeight.w700,
-              color: kOnSurface,
-              letterSpacing: -0.3,
-              height: 1.25,
-            ),
+            style: AppTypography.style(AppTextRole.screenTitle, fontSize: 22, color: kOnSurface, letterSpacing: -0.3, height: 1.25),
           ),
           const SizedBox(height: 6),
 
@@ -575,20 +556,12 @@ class _HeroCard extends ConsumerWidget {
                 fit: BoxFit.scaleDown,
                 child: Text(
                   _grantValue(scholarship),
-                  style: outfit(
-                    fontSize: 26,
-                    fontWeight: FontWeight.bold,
-                    color: kPrimaryContainer,
-                  ),
+                  style: AppTypography.style(AppTextRole.metric, fontSize: 26, color: kPrimaryContainer, letterSpacing: opticalTracking(26), height: opticalLeading(26, isBody: false)),
                 ),
               ),
               Text(
                 _grantSubtext(scholarship),
-                style: openSans(
-                  fontSize: 13,
-                  fontWeight: FontWeight.w500,
-                  color: kOnSurface,
-                ),
+                style: AppTypography.style(AppTextRole.subtitle, fontSize: 13, color: kOnSurface, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: true)),
               ),
             ],
           ),
@@ -637,11 +610,7 @@ class _HeroCard extends ConsumerWidget {
             const SizedBox(width: 8),
             Text(
               'Deadline Passed • Closed',
-              style: outfit(
-                fontSize: 12,
-                fontWeight: FontWeight.w600,
-                color: const Color(0xFF93000A),
-              ),
+              style: AppTypography.style(AppTextRole.badge, fontSize: 12, color: const Color(0xFF93000A), letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: false)),
             ),
           ],
         ),
@@ -667,11 +636,7 @@ class _HeroCard extends ConsumerWidget {
                 'Capacity Reached • All ${capacity.totalSlots} slots occupied',
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
-                style: outfit(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w600,
-                  color: const Color(0xFF93000A),
-                ),
+                style: AppTypography.style(AppTextRole.badge, fontSize: 12, color: const Color(0xFF93000A), letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: false)),
               ),
             ),
           ],
@@ -695,11 +660,7 @@ class _HeroCard extends ConsumerWidget {
                 'Due in $daysLeft Days • Closing soon — ${deadlineLabel(scholarship.deadline)}',
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
-                style: outfit(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w600,
-                  color: const Color(0xFF93000A),
-                ),
+                style: AppTypography.style(AppTextRole.badge, fontSize: 12, color: const Color(0xFF93000A), letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: false)),
               ),
             ),
           ],
@@ -735,11 +696,7 @@ class _HeroCard extends ConsumerWidget {
               '${deadlineLabel(scholarship.deadline)}$slotInfo',
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
-              style: outfit(
-                fontSize: 12,
-                fontWeight: FontWeight.w600,
-                color: kSecondary,
-              ),
+              style: AppTypography.style(AppTextRole.badge, fontSize: 12, color: kSecondary, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: false)),
             ),
           ),
         ],
@@ -778,11 +735,7 @@ class _HeroPill extends StatelessWidget {
       ),
       child: Text(
         label,
-        style: outfit(
-          fontSize: 11,
-          fontWeight: FontWeight.w600,
-          color: kScholarshipTagForeground,
-        ),
+        style: AppTypography.style(AppTextRole.badge, fontSize: 11, color: kScholarshipTagForeground, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: false)),
       ),
     );
   }
@@ -832,11 +785,7 @@ class _CapacityStatusCard extends ConsumerWidget {
                   Expanded(
                     child: Text(
                       'Slot Capacity & Seat Accounting',
-                      style: outfit(
-                        fontSize: 14,
-                        fontWeight: FontWeight.bold,
-                        color: isFull ? const Color(0xFFC62828) : kOnSurface,
-                      ),
+                      style: AppTypography.style(AppTextRole.sectionTitle, fontSize: 14, color: isFull ? const Color(0xFFC62828) : kOnSurface, letterSpacing: opticalTracking(14), height: opticalLeading(14, isBody: false)),
                     ),
                   ),
                   Container(
@@ -855,15 +804,7 @@ class _CapacityStatusCard extends ConsumerWidget {
                           : isUncapped
                               ? 'Uncapped'
                               : '$rem Seats Open',
-                      style: openSans(
-                        fontSize: 11,
-                        fontWeight: FontWeight.w700,
-                        color: isFull
-                            ? const Color(0xFFC62828)
-                            : isUncapped
-                                ? const Color(0xFF2E7D32)
-                                : (rem <= 3 ? const Color(0xFFE65100) : const Color(0xFF2E7D32)),
-                      ),
+                      style: AppTypography.style(AppTextRole.badge, fontSize: 11, color: isFull ? const Color(0xFFC62828) : isUncapped ? const Color(0xFF2E7D32) : (rem <= 3 ? const Color(0xFFE65100) : const Color(0xFF2E7D32)), letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: true)),
                     ),
                   ),
                 ],
@@ -872,12 +813,12 @@ class _CapacityStatusCard extends ConsumerWidget {
               if (isUncapped)
                 Text(
                   'Uncapped capacity • $occupied scholar${occupied == 1 ? '' : 's'} approved',
-                  style: openSans(fontSize: 12, color: Colors.black87),
+                  style: AppTypography.style(AppTextRole.caption, fontSize: 12, color: Colors.black87, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: true)),
                 )
               else ...[
                 Text(
                   '$tot total • $occupied occupied • $rem remaining',
-                  style: openSans(fontSize: 12, fontWeight: FontWeight.w600, color: Colors.black87),
+                  style: AppTypography.style(AppTextRole.caption, fontSize: 12, color: Colors.black87, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: true)),
                 ),
                 const SizedBox(height: 6),
                 ClipRRect(
@@ -943,11 +884,7 @@ class _SchoolEligibilityGuidanceCard extends ConsumerWidget {
               Expanded(
                 child: Text(
                   'Student-Declared Enrolled Institution',
-                  style: outfit(
-                    fontSize: 15,
-                    fontWeight: FontWeight.bold,
-                    color: kOnSurface,
-                  ),
+                  style: AppTypography.style(AppTextRole.sectionTitle, fontSize: 15, color: kOnSurface, letterSpacing: opticalTracking(15), height: opticalLeading(15, isBody: false)),
                 ),
               ),
             ],
@@ -984,11 +921,7 @@ class _SchoolEligibilityGuidanceCard extends ConsumerWidget {
                       Expanded(
                         child: Text(
                           'Open to all accredited Philippine universities & colleges',
-                          style: openSans(
-                            fontSize: 12,
-                            fontWeight: FontWeight.w600,
-                            color: const Color(0xFF1B5E20),
-                          ),
+                          style: AppTypography.style(AppTextRole.caption, fontSize: 12, color: const Color(0xFF1B5E20), letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: true)),
                         ),
                       ),
                     ],
@@ -1017,11 +950,7 @@ class _SchoolEligibilityGuidanceCard extends ConsumerWidget {
                       Expanded(
                         child: Text(
                           'Profile update required: Please select your institution in your profile to verify partner eligibility.',
-                          style: openSans(
-                            fontSize: 12,
-                            fontWeight: FontWeight.w600,
-                            color: const Color(0xFFBF360C),
-                          ),
+                          style: AppTypography.style(AppTextRole.body, fontSize: 12, color: const Color(0xFFBF360C), letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: true)),
                         ),
                       ),
                     ],
@@ -1056,11 +985,7 @@ class _SchoolEligibilityGuidanceCard extends ConsumerWidget {
                       Expanded(
                         child: Text(
                           'Eligible based on declared profile (Matches: $matchedSchoolName)',
-                          style: openSans(
-                            fontSize: 12,
-                            fontWeight: FontWeight.w600,
-                            color: const Color(0xFF1B5E20),
-                          ),
+                          style: AppTypography.style(AppTextRole.body, fontSize: 12, color: const Color(0xFF1B5E20), letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: true)),
                         ),
                       ),
                     ],
@@ -1094,11 +1019,7 @@ class _SchoolEligibilityGuidanceCard extends ConsumerWidget {
                         Expanded(
                           child: Text(
                             'Ineligible based on profile: Restricted to partner institutions.',
-                            style: openSans(
-                              fontSize: 12,
-                              fontWeight: FontWeight.w600,
-                              color: const Color(0xFFBF360C),
-                            ),
+                            style: AppTypography.style(AppTextRole.body, fontSize: 12, color: const Color(0xFFBF360C), letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: true)),
                           ),
                         ),
                       ],
@@ -1107,7 +1028,7 @@ class _SchoolEligibilityGuidanceCard extends ConsumerWidget {
                       const SizedBox(height: 4),
                       Text(
                         'Partner institutions: $partnerSummary',
-                        style: openSans(fontSize: 11, color: const Color(0xFF795548)),
+                        style: AppTypography.style(AppTextRole.caption, fontSize: 11, color: const Color(0xFF795548), letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: true)),
                       ),
                     ],
                   ],
@@ -1133,11 +1054,7 @@ class _SchoolEligibilityGuidanceCard extends ConsumerWidget {
                 Expanded(
                   child: Text(
                     'Academic enrollment is self-declared on your student profile and verified by scholarship administrators through your uploaded Certificate of Registration (COR) or Student ID.',
-                    style: openSans(
-                      fontSize: 11,
-                      height: 1.4,
-                      color: Colors.black87,
-                    ),
+                    style: AppTypography.style(AppTextRole.caption, fontSize: 11, height: 1.4, color: Colors.black87, letterSpacing: opticalTracking(11)),
                   ),
                 ),
               ],
@@ -1193,31 +1110,18 @@ class _AlgorithmicFitCard extends ConsumerWidget {
                       children: [
                         Text(
                           'ALGORITHMIC FIT',
-                          style: outfit(
-                            fontSize: 10,
-                            fontWeight: FontWeight.w700,
-                            color: const Color(0xFF145131),
-                            letterSpacing: 0.8,
-                          ),
+                          style: AppTypography.style(AppTextRole.label, fontSize: 10, color: const Color(0xFF145131), letterSpacing: 0.8, height: opticalLeading(10, isBody: false)),
                         ),
                         const SizedBox(height: 2),
                         CountUpAnimation(
                           targetValue: placeholderMatchPercentage(reasons.length),
                           suffix: '% Match',
-                          style: outfit(
-                            fontSize: 22,
-                            fontWeight: FontWeight.bold,
-                            color: const Color(0xFF00351C),
-                          ),
+                          style: AppTypography.style(AppTextRole.metric, fontSize: 22, color: const Color(0xFF00351C), letterSpacing: opticalTracking(22), height: opticalLeading(22, isBody: false)),
                         ),
                       const SizedBox(height: 2),
                       Text(
                         'Demo score • Based on $userName\'s profile',
-                        style: openSans(
-                          fontSize: 11,
-                          fontWeight: FontWeight.w500,
-                          color: kOnSurface,
-                        ),
+                        style: AppTypography.style(AppTextRole.caption, fontSize: 11, color: kOnSurface, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: true)),
                       ),
                     ],
                   ),
@@ -1254,11 +1158,7 @@ class _AlgorithmicFitCard extends ConsumerWidget {
                   'Criteria Checklist',
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: outfit(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: kOnSurface,
-                  ),
+                  style: AppTypography.style(AppTextRole.sectionTitle, fontSize: 16, color: kOnSurface, letterSpacing: opticalTracking(16), height: opticalLeading(16, isBody: false)),
                 ),
               ),
               const SizedBox(width: 8),
@@ -1266,11 +1166,7 @@ class _AlgorithmicFitCard extends ConsumerWidget {
                 fit: BoxFit.scaleDown,
                 child: Text(
                   '${reasons.length} of ${reasons.length} Met',
-                  style: outfit(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w600,
-                    color: kPrimaryContainer,
-                  ),
+                  style: AppTypography.style(AppTextRole.badge, fontSize: 12, color: kPrimaryContainer, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: false)),
                 ),
               ),
             ],
@@ -1278,11 +1174,7 @@ class _AlgorithmicFitCard extends ConsumerWidget {
           const SizedBox(height: 2),
           Text(
             'Why this matches you',
-            style: openSans(
-              fontSize: 12,
-              fontWeight: FontWeight.w500,
-              color: kOnSurfaceVariant,
-            ),
+            style: AppTypography.style(AppTextRole.subtitle, fontSize: 12, color: kOnSurfaceVariant, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: true)),
           ),
           const SizedBox(height: 12),
 
@@ -1313,20 +1205,12 @@ class _AlgorithmicFitCard extends ConsumerWidget {
                     children: [
                       Text(
                         'High Probability Tier',
-                        style: outfit(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w700,
-                          color: const Color(0xFF5D4200),
-                        ),
+                        style: AppTypography.style(AppTextRole.cardTitle, fontSize: 12, color: const Color(0xFF5D4200), letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: false)),
                       ),
                       const SizedBox(height: 2),
                       Text(
                         'Your academic profile ranks in the top 5% of historical applicants for this endowment. Early submissions have an 18% higher acceptance yield.',
-                        style: openSans(
-                          fontSize: 11,
-                          color: kOnSurface,
-                          height: 1.4,
-                        ),
+                        style: AppTypography.style(AppTextRole.caption, fontSize: 11, color: kOnSurface, height: 1.4, letterSpacing: opticalTracking(11)),
                       ),
                     ],
                   ),
@@ -1373,21 +1257,13 @@ class _AlgorithmicFitCard extends ConsumerWidget {
                 children: [
                   Text(
                     title,
-                    style: outfit(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w600,
-                      color: kOnSurface,
-                    ),
+                    style: AppTypography.style(AppTextRole.label, fontSize: 12, color: kOnSurface, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: false)),
                   ),
                   if (subtitle != null) ...[
                     const SizedBox(height: 1),
                     Text(
                       subtitle,
-                      style: openSans(
-                        fontSize: 11,
-                        fontWeight: FontWeight.w500,
-                        color: kPrimaryContainer,
-                      ),
+                      style: AppTypography.style(AppTextRole.subtitle, fontSize: 11, color: kPrimaryContainer, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: true)),
                     ),
                   ],
                 ],
@@ -1478,11 +1354,7 @@ class _AwardOverviewCard extends StatelessWidget {
         children: [
           Text(
             'Award Overview & Impact',
-            style: outfit(
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-              color: kOnSurface,
-            ),
+            style: AppTypography.style(AppTextRole.sectionTitle, fontSize: 16, color: kOnSurface, letterSpacing: opticalTracking(16), height: opticalLeading(16, isBody: false)),
           ),
           const SizedBox(height: 10),
 
@@ -1492,6 +1364,7 @@ class _AwardOverviewCard extends StatelessWidget {
               Expanded(
                 child: _MetricTile(
                   label: 'Total Pool',
+                  valueRole: AppTextRole.metric,
                   value: '₱${(((scholarship.slots != null && scholarship.slots! > 0) ? scholarship.slots! * scholarship.awardAmount : scholarship.awardAmount)).toString().replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (m) => '${m[1]},')}',
                   caption: scholarship.slots != null
                       ? '${scholarship.slots} grants'
@@ -1502,6 +1375,7 @@ class _AwardOverviewCard extends StatelessWidget {
               const Expanded(
                 child: _MetricTile(
                   label: 'Acceptance',
+                  valueRole: AppTextRole.metric,
                   value: '~14%',
                   caption: 'Selective',
                 ),
@@ -1521,21 +1395,13 @@ class _AwardOverviewCard extends StatelessWidget {
           // About Section
           Text(
             'About',
-            style: outfit(
-              fontSize: 14,
-              fontWeight: FontWeight.bold,
-              color: kOnSurface,
-            ),
+            style: AppTypography.style(AppTextRole.cardTitle, fontSize: 14, color: kOnSurface, letterSpacing: opticalTracking(14), height: opticalLeading(14, isBody: false)),
           ),
           const SizedBox(height: 8),
           Text(
             scholarship.description ??
                 'Established to empower next-generation technology pioneers from diverse socioeconomic backgrounds. Funds cover tuition, laboratory equipment supplies, and authorized academic conference research stipends throughout the degree program.',
-            style: openSans(
-              fontSize: 13,
-              height: 1.5,
-              color: kOnSurfaceVariant,
-            ),
+            style: AppTypography.style(AppTextRole.body, fontSize: 13, height: 1.5, color: kOnSurfaceVariant, letterSpacing: opticalTracking(13)),
           ),
           const SizedBox(height: 16),
 
@@ -1564,20 +1430,12 @@ class _AwardOverviewCard extends StatelessWidget {
                     children: [
                       Text(
                         '"This grant funded my senior neural compute capstone."',
-                        style: openSans(
-                          fontSize: 11,
-                          fontWeight: FontWeight.w600,
-                          fontStyle: FontStyle.italic,
-                          color: kOnSurface,
-                        ),
+                        style: AppTypography.style(AppTextRole.bodyEmphasis, fontSize: 11, fontStyle: FontStyle.italic, color: kOnSurface, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: true)),
                       ),
                       const SizedBox(height: 2),
                       Text(
                         'Elena R. • 2024 Scholar, UP Diliman CS',
-                        style: openSans(
-                          fontSize: 10,
-                          color: kOnSurfaceVariant,
-                        ),
+                        style: AppTypography.style(AppTextRole.caption, fontSize: 10, color: kOnSurfaceVariant, letterSpacing: opticalTracking(10), height: opticalLeading(10, isBody: true)),
                       ),
                     ],
                   ),
@@ -1596,11 +1454,13 @@ class _MetricTile extends StatelessWidget {
     required this.label,
     required this.value,
     required this.caption,
+    this.valueRole = AppTextRole.bodyEmphasis,
   });
 
   final String label;
   final String value;
   final String caption;
+  final AppTextRole valueRole;
 
   @override
   Widget build(BuildContext context) {
@@ -1616,22 +1476,14 @@ class _MetricTile extends StatelessWidget {
             label,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
-            style: outfit(
-              fontSize: 10,
-              fontWeight: FontWeight.w600,
-              color: kOnSurfaceVariant,
-            ),
+            style: AppTypography.style(AppTextRole.label, fontSize: 10, color: kOnSurfaceVariant, letterSpacing: opticalTracking(10), height: opticalLeading(10, isBody: false)),
           ),
           const SizedBox(height: 3),
           FittedBox(
             fit: BoxFit.scaleDown,
             child: Text(
               value,
-              style: outfit(
-                fontSize: 15,
-                fontWeight: FontWeight.bold,
-                color: kSecondary,
-              ),
+              style: AppTypography.style(valueRole, fontSize: 15, color: kSecondary, letterSpacing: opticalTracking(15), height: opticalLeading(15, isBody: false)),
             ),
           ),
           const SizedBox(height: 2),
@@ -1639,10 +1491,7 @@ class _MetricTile extends StatelessWidget {
             caption,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
-            style: openSans(
-              fontSize: 9,
-              color: kOnSurfaceVariant,
-            ),
+            style: AppTypography.style(AppTextRole.caption, fontSize: 9, color: kOnSurfaceVariant, letterSpacing: opticalTracking(9), height: opticalLeading(9, isBody: true)),
           ),
         ],
       ),
@@ -1669,11 +1518,7 @@ class _EligibilityCard extends ConsumerWidget {
         children: [
           Text(
             'Eligibility',
-            style: outfit(
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-              color: kOnSurface,
-            ),
+            style: AppTypography.style(AppTextRole.sectionTitle, fontSize: 16, color: kOnSurface, letterSpacing: opticalTracking(16), height: opticalLeading(16, isBody: false)),
           ),
           const SizedBox(height: 12),
           Wrap(
@@ -1798,11 +1643,7 @@ class _ApplicationMaterialsCardState
                   'Application Requirements',
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: outfit(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: kOnSurface,
-                  ),
+                  style: AppTypography.style(AppTextRole.sectionTitle, fontSize: 16, color: kOnSurface, letterSpacing: opticalTracking(16), height: opticalLeading(16, isBody: false)),
                 ),
               ),
               const SizedBox(width: 8),
@@ -1818,13 +1659,7 @@ class _ApplicationMaterialsCardState
                   ),
                   child: Text(
                     '$readyCount of 3 Ready',
-                    style: outfit(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w600,
-                      color: readyCount == 3
-                          ? const Color(0xFF145131)
-                          : kSecondary,
-                    ),
+                    style: AppTypography.style(AppTextRole.badge, fontSize: 12, color: readyCount == 3 ? const Color(0xFF145131) : kSecondary, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: false)),
                   ),
                 ),
               ),
@@ -1855,11 +1690,7 @@ class _ApplicationMaterialsCardState
                               '1. Personal Narrative Statement',
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
-                              style: outfit(
-                                fontSize: 13,
-                                fontWeight: FontWeight.w600,
-                                color: kOnSurface,
-                              ),
+                              style: AppTypography.style(AppTextRole.cardTitle, fontSize: 13, color: kOnSurface, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: false)),
                             ),
                           ),
                         ],
@@ -1875,13 +1706,7 @@ class _ApplicationMaterialsCardState
                       ),
                       child: Text(
                         hasEssay ? 'Draft Ready' : 'Incomplete',
-                        style: outfit(
-                          fontSize: 10,
-                          fontWeight: FontWeight.w600,
-                          color: hasEssay
-                              ? const Color(0xFF145131)
-                              : const Color(0xFF93000A),
-                        ),
+                        style: AppTypography.style(AppTextRole.badge, fontSize: 10, color: hasEssay ? const Color(0xFF145131) : const Color(0xFF93000A), letterSpacing: opticalTracking(10), height: opticalLeading(10, isBody: false)),
                       ),
                     ),
                   ],
@@ -1891,11 +1716,7 @@ class _ApplicationMaterialsCardState
                   padding: const EdgeInsets.only(left: 26),
                   child: Text(
                     'Prompt: Solving a community challenge in the Philippines with STEM innovation (750 words max).',
-                    style: openSans(
-                      fontSize: 11,
-                      color: kOnSurface,
-                      height: 1.35,
-                    ),
+                    style: AppTypography.style(AppTextRole.caption, fontSize: 11, color: kOnSurface, height: 1.35, letterSpacing: opticalTracking(11)),
                   ),
                 ),
                 ExpandableSection(
@@ -1907,10 +1728,10 @@ class _ApplicationMaterialsCardState
                       TextField(
                         controller: _essayController,
                         maxLines: 4,
-                        style: openSans(fontSize: 12, color: kOnSurface),
+                        style: AppTypography.style(AppTextRole.input, fontSize: 12, color: kOnSurface, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: true)),
                         decoration: InputDecoration(
                           hintText: 'Type your essay / personal statement here...',
-                          hintStyle: openSans(fontSize: 12, color: const Color(0xFF707971)),
+                          hintStyle: AppTypography.style(AppTextRole.placeholder, fontSize: 12, color: const Color(0xFF707971), letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: true)),
                           fillColor: Colors.white,
                           filled: true,
                           contentPadding: const EdgeInsets.all(10),
@@ -1927,11 +1748,7 @@ class _ApplicationMaterialsCardState
                         children: [
                           Text(
                             '$wordCount / 750 words',
-                            style: outfit(
-                              fontSize: 11,
-                              fontWeight: FontWeight.w600,
-                              color: wordCount > 750 ? kError : kPrimaryContainer,
-                            ),
+                            style: AppTypography.style(AppTextRole.label, fontSize: 11, color: wordCount > 750 ? kError : kPrimaryContainer, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: false)),
                           ),
                           PressableScale(
                             child: FilledButton.tonal(
@@ -1947,7 +1764,7 @@ class _ApplicationMaterialsCardState
                               },
                               child: Text(
                                 'Save Statement',
-                                style: outfit(fontSize: 11, fontWeight: FontWeight.w600),
+                                style: AppTypography.style(AppTextRole.button, fontSize: 11, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: false)),
                               ),
                             ),
                           ),
@@ -1968,11 +1785,7 @@ class _ApplicationMaterialsCardState
                             hasEssay ? '$wordCount words composed' : 'No statement composed yet',
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
-                            style: outfit(
-                              fontSize: 11,
-                              fontWeight: FontWeight.w600,
-                              color: hasEssay ? kPrimaryContainer : const Color(0xFF707971),
-                            ),
+                            style: AppTypography.style(AppTextRole.badge, fontSize: 11, color: hasEssay ? kPrimaryContainer : const Color(0xFF707971), letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: false)),
                           ),
                         ),
                         const SizedBox(width: 8),
@@ -1984,11 +1797,7 @@ class _ApplicationMaterialsCardState
                               children: [
                                 Text(
                                   hasEssay ? 'Edit Statement' : 'Write Statement',
-                                  style: outfit(
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.w600,
-                                    color: kSecondary,
-                                  ),
+                                  style: AppTypography.style(AppTextRole.button, fontSize: 12, color: kSecondary, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: false)),
                                 ),
                                 const SizedBox(width: 2),
                                 const Icon(Icons.edit_note_rounded, size: 16, color: kSecondary),
@@ -2022,22 +1831,14 @@ class _ApplicationMaterialsCardState
                     children: [
                       Text(
                         '2. Official Transcript of Records (TCG)',
-                        style: outfit(
-                          fontSize: 13,
-                          fontWeight: FontWeight.w600,
-                          color: kOnSurface,
-                        ),
+                        style: AppTypography.style(AppTextRole.cardTitle, fontSize: 13, color: kOnSurface, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: false)),
                       ),
                       const SizedBox(height: 2),
                       Text(
                         hasTranscript
                             ? 'GPA ${profile.gpa.toStringAsFixed(2)} • ${profile.school ?? ""}'
                             : 'No academic transcript on file in profile',
-                        style: openSans(
-                          fontSize: 11,
-                          fontWeight: FontWeight.w500,
-                          color: hasTranscript ? kPrimaryContainer : const Color(0xFF707971),
-                        ),
+                        style: AppTypography.style(AppTextRole.caption, fontSize: 11, color: hasTranscript ? kPrimaryContainer : const Color(0xFF707971), letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: true)),
                       ),
                     ],
                   ),
@@ -2050,11 +1851,7 @@ class _ApplicationMaterialsCardState
                   ),
                   child: Text(
                     hasTranscript ? 'Uploaded' : 'Incomplete',
-                    style: outfit(
-                      fontSize: 10,
-                      fontWeight: FontWeight.w600,
-                      color: hasTranscript ? const Color(0xFF145131) : const Color(0xFF93000A),
-                    ),
+                    style: AppTypography.style(AppTextRole.badge, fontSize: 10, color: hasTranscript ? const Color(0xFF145131) : const Color(0xFF93000A), letterSpacing: opticalTracking(10), height: opticalLeading(10, isBody: false)),
                   ),
                 ),
               ],
@@ -2085,11 +1882,7 @@ class _ApplicationMaterialsCardState
                               '3. Faculty Recommendation',
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
-                              style: outfit(
-                                fontSize: 13,
-                                fontWeight: FontWeight.w600,
-                                color: kOnSurface,
-                              ),
+                              style: AppTypography.style(AppTextRole.cardTitle, fontSize: 13, color: kOnSurface, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: false)),
                             ),
                           ),
                         ],
@@ -2105,13 +1898,7 @@ class _ApplicationMaterialsCardState
                       ),
                       child: Text(
                         hasRec ? '${recommenders.length} Linked' : '0 of 2 Linked',
-                        style: outfit(
-                          fontSize: 10,
-                          fontWeight: FontWeight.w600,
-                          color: hasRec
-                              ? const Color(0xFF145131)
-                              : const Color(0xFF5D4200),
-                        ),
+                        style: AppTypography.style(AppTextRole.badge, fontSize: 10, color: hasRec ? const Color(0xFF145131) : const Color(0xFF5D4200), letterSpacing: opticalTracking(10), height: opticalLeading(10, isBody: false)),
                       ),
                     ),
                   ],
@@ -2132,7 +1919,7 @@ class _ApplicationMaterialsCardState
                               Expanded(
                                 child: Text(
                                   rec,
-                                  style: openSans(fontSize: 11, color: kOnSurface),
+                                  style: AppTypography.style(AppTextRole.bodyEmphasis, fontSize: 11, color: kOnSurface, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: true)),
                                 ),
                               ),
                               IconButton(
@@ -2157,10 +1944,10 @@ class _ApplicationMaterialsCardState
                                   height: 32,
                                   child: TextField(
                                     controller: _recEmailController,
-                                    style: openSans(fontSize: 12),
+                                    style: AppTypography.style(AppTextRole.input, fontSize: 12, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: true)),
                                     decoration: InputDecoration(
                                       hintText: 'Faculty email (e.g. prof@univ.edu)',
-                                      hintStyle: openSans(fontSize: 11),
+                                      hintStyle: AppTypography.style(AppTextRole.placeholder, fontSize: 11, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: true)),
                                       contentPadding: const EdgeInsets.symmetric(horizontal: 8),
                                       filled: true,
                                       fillColor: Colors.white,
@@ -2187,7 +1974,7 @@ class _ApplicationMaterialsCardState
                                       });
                                     }
                                   },
-                                  child: const Text('Add', style: TextStyle(fontSize: 11)),
+                                  child:  Text('Add', style: AppTypography.style(AppTextRole.button, fontSize: 11)),
                                 ),
                               ),
                             ],
@@ -2212,11 +1999,7 @@ class _ApplicationMaterialsCardState
                                     const SizedBox(width: 4),
                                     Flexible(child: Text(
                                       'Add Recommender Email',
-                                      style: outfit(
-                                        fontSize: 11.5,
-                                        fontWeight: FontWeight.w600,
-                                        color: kSecondary,
-                                      ),
+                                      style: AppTypography.style(AppTextRole.button, fontSize: 11.5, color: kSecondary, letterSpacing: opticalTracking(11.5), height: opticalLeading(11.5, isBody: false)),
                                     )),
                                   ],
                                 ),
@@ -2252,9 +2035,9 @@ class _ProviderTrustCard extends StatelessWidget {
         const Icon(Icons.account_balance_outlined, color: kSecondary),
         const SizedBox(width: 12),
         Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Text('Scholarship provider', style: outfit(fontSize: 15, fontWeight: FontWeight.bold, color: kSecondary)),
+          Text('Scholarship provider', style: AppTypography.style(AppTextRole.cardTitle, fontSize: 15, color: kSecondary, letterSpacing: opticalTracking(15), height: opticalLeading(15, isBody: false))),
           const SizedBox(height: 4),
-          Text(scholarship.provider ?? 'Scholarship Provider', style: openSans(fontSize: 12, color: kOnSurfaceVariant)),
+          Text(scholarship.provider ?? 'Scholarship Provider', style: AppTypography.style(AppTextRole.body, fontSize: 12, color: kOnSurfaceVariant, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: true))),
         ])),
       ]),
     );
@@ -2310,11 +2093,7 @@ class _ApplySectionState extends ConsumerState<_ApplySection> {
                 Expanded(
                   child: Text(
                     'Application saved as draft.',
-                    style: outfit(
-                      fontSize: 13,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.white,
-                    ),
+                    style: AppTypography.style(AppTextRole.body, fontSize: 13, color: Colors.white, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: false)),
                   ),
                 ),
               ],
@@ -2336,7 +2115,7 @@ class _ApplySectionState extends ConsumerState<_ApplySection> {
                 Expanded(
                   child: Text(
                     'Could not save draft. Please try again.',
-                    style: outfit(fontSize: 13, color: Colors.white),
+                    style: AppTypography.style(AppTextRole.body, fontSize: 13, color: Colors.white, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: false)),
                   ),
                 ),
               ],
@@ -2432,11 +2211,7 @@ class _ApplySectionState extends ConsumerState<_ApplySection> {
               Expanded(
                 child: Text(
                   'Application submitted!',
-                  style: outfit(
-                    fontSize: 13,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.white,
-                  ),
+                  style: AppTypography.style(AppTextRole.body, fontSize: 13, color: Colors.white, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: false)),
                 ),
               ),
             ],
@@ -2458,7 +2233,7 @@ class _ApplySectionState extends ConsumerState<_ApplySection> {
               Expanded(
                 child: Text(
                   'You must be signed in to apply.',
-                  style: outfit(fontSize: 13, color: Colors.white),
+                  style: AppTypography.style(AppTextRole.body, fontSize: 13, color: Colors.white, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: false)),
                 ),
               ),
             ],
@@ -2479,7 +2254,7 @@ class _ApplySectionState extends ConsumerState<_ApplySection> {
               Expanded(
                 child: Text(
                   'You have already applied to this scholarship.',
-                  style: outfit(fontSize: 13, color: Colors.white),
+                  style: AppTypography.style(AppTextRole.body, fontSize: 13, color: Colors.white, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: false)),
                 ),
               ),
             ],
@@ -2500,7 +2275,7 @@ class _ApplySectionState extends ConsumerState<_ApplySection> {
               Expanded(
                 child: Text(
                   'Could not submit your application. Please try again.',
-                  style: outfit(fontSize: 13, color: Colors.white),
+                  style: AppTypography.style(AppTextRole.body, fontSize: 13, color: Colors.white, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: false)),
                 ),
               ),
             ],
@@ -2707,11 +2482,7 @@ class _ApplySectionState extends ConsumerState<_ApplySection> {
                     fit: BoxFit.scaleDown,
                     child: Text(
                       'Eligibility Breakdown',
-                      style: outfit(
-                        fontSize: 13,
-                        fontWeight: FontWeight.bold,
-                        color: kOnSurface,
-                      ),
+                      style: AppTypography.style(AppTextRole.button, fontSize: 13, color: kOnSurface, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: false)),
                     ),
                   ),
                 ),
@@ -2758,20 +2529,12 @@ class _ApplySectionState extends ConsumerState<_ApplySection> {
                             const SizedBox(width: 8),
                             Text(
                               'Applying...',
-                              style: outfit(
-                                fontSize: 13,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.white,
-                              ),
+                              style: AppTypography.style(AppTextRole.button, fontSize: 13, color: Colors.white, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: false)),
                             ),
                           ] else ...[
                             Text(
                               'Start Application',
-                              style: outfit(
-                                fontSize: 13,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.white,
-                              ),
+                              style: AppTypography.style(AppTextRole.button, fontSize: 13, color: Colors.white, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: false)),
                             ),
                             const SizedBox(width: 4),
                             const Icon(Icons.arrow_forward_rounded, size: 16, color: Colors.white),
@@ -2827,12 +2590,7 @@ class _DraftBanner extends StatelessWidget {
                     const SizedBox(width: 4),
                     Text(
                       'DRAFT IN PROGRESS',
-                      style: outfit(
-                        fontSize: 10,
-                        fontWeight: FontWeight.w700,
-                        color: kSecondary,
-                        letterSpacing: 0.5,
-                      ),
+                      style: AppTypography.style(AppTextRole.label, fontSize: 10, color: kSecondary, letterSpacing: 0.5, height: opticalLeading(10, isBody: false)),
                     ),
                   ],
                 ),
@@ -2840,31 +2598,19 @@ class _DraftBanner extends StatelessWidget {
               const Spacer(),
               Text(
                 'Not submitted',
-                style: openSans(
-                  fontSize: 11,
-                  fontWeight: FontWeight.w600,
-                  color: const Color(0xFF92400E),
-                ),
+                style: AppTypography.style(AppTextRole.badge, fontSize: 11, color: const Color(0xFF92400E), letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: true)),
               ),
             ],
           ),
           const SizedBox(height: 10),
           Text(
             'You have a saved draft',
-            style: outfit(
-              fontSize: 16,
-              fontWeight: FontWeight.w700,
-              color: const Color(0xFF161C27),
-            ),
+            style: AppTypography.style(AppTextRole.cardTitle, fontSize: 16, color: const Color(0xFF161C27), letterSpacing: opticalTracking(16), height: opticalLeading(16, isBody: false)),
           ),
           const SizedBox(height: 4),
           Text(
             'Complete your 4-part application packet and submit before the deadline.',
-            style: openSans(
-              fontSize: 12,
-              color: const Color(0xFF404942),
-              height: 1.4,
-            ),
+            style: AppTypography.style(AppTextRole.caption, fontSize: 12, color: const Color(0xFF404942), height: 1.4, letterSpacing: opticalTracking(12)),
           ),
           const SizedBox(height: 14),
           SizedBox(
@@ -2884,10 +2630,7 @@ class _DraftBanner extends StatelessWidget {
               icon: const Icon(Icons.arrow_forward_rounded, size: 18),
               label: Text(
                 'Continue Application',
-                style: outfit(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w600,
-                ),
+                style: AppTypography.style(AppTextRole.button, fontSize: 14, letterSpacing: opticalTracking(14), height: opticalLeading(14, isBody: false)),
               ),
             ),
           ),
@@ -2958,31 +2701,19 @@ class _AppliedBanner extends ConsumerWidget {
                   ),
                   child: Text(
                     'SUBMISSION SAVED',
-                    style: outfit(
-                      fontSize: 10,
-                      fontWeight: FontWeight.w700,
-                      color: const Color(0xFFB3F1C6),
-                      letterSpacing: 0.8,
-                    ),
+                    style: AppTypography.style(AppTextRole.label, fontSize: 10, color: const Color(0xFFB3F1C6), letterSpacing: 0.8, height: opticalLeading(10, isBody: false)),
                   ),
                 ),
                 const SizedBox(height: 8),
                 Text(
                   'Application $savedStatus',
-                  style: outfit(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                  ),
+                  style: AppTypography.style(AppTextRole.cardTitle, fontSize: 20, color: Colors.white, letterSpacing: opticalTracking(20), height: opticalLeading(20, isBody: false)),
                 ),
                 const SizedBox(height: 4),
                 Text(
                   'Your application has been saved. Check the tracker for its current status.',
                   textAlign: TextAlign.center,
-                  style: openSans(
-                    fontSize: 13,
-                    color: const Color(0xFFB3F1C6),
-                  ),
+                  style: AppTypography.style(AppTextRole.caption, fontSize: 13, color: const Color(0xFFB3F1C6), letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: true)),
                 ),
               ],
             ),
@@ -3020,22 +2751,13 @@ class _AppliedBanner extends ConsumerWidget {
                                   'INSTITUTIONAL DOSSIER',
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
-                                  style: outfit(
-                                    fontSize: 9,
-                                    fontWeight: FontWeight.w700,
-                                    color: const Color(0xFF404942),
-                                    letterSpacing: 0.5,
-                                  ),
+                                  style: AppTypography.style(AppTextRole.label, fontSize: 9, color: const Color(0xFF404942), letterSpacing: 0.5, height: opticalLeading(9, isBody: false)),
                                 ),
                                 Text(
                                   'Digital Submission Token',
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
-                                  style: outfit(
-                                    fontSize: 13,
-                                    fontWeight: FontWeight.w600,
-                                    color: const Color(0xFF161C27),
-                                  ),
+                                  style: AppTypography.style(AppTextRole.cardTitle, fontSize: 13, color: const Color(0xFF161C27), letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: false)),
                                 ),
                               ],
                             ),
@@ -3052,11 +2774,7 @@ class _AppliedBanner extends ConsumerWidget {
                       ),
                       child: Text(
                         'VALID',
-                        style: outfit(
-                          fontSize: 10,
-                          fontWeight: FontWeight.bold,
-                          color: kPrimaryContainer,
-                        ),
+                        style: AppTypography.style(AppTextRole.badge, fontSize: 10, color: kPrimaryContainer, letterSpacing: opticalTracking(10), height: opticalLeading(10, isBody: false)),
                       ),
                     ),
                   ],
@@ -3077,17 +2795,13 @@ class _AppliedBanner extends ConsumerWidget {
                           children: [
                             Text(
                               'Reference Identifier',
-                              style: openSans(fontSize: 10, color: const Color(0xFF404942)),
+                              style: AppTypography.style(AppTextRole.label, fontSize: 10, color: const Color(0xFF404942), letterSpacing: opticalTracking(10), height: opticalLeading(10, isBody: true)),
                             ),
                             Text(
                               application?.id ?? 'Application unavailable',
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
-                              style: outfit(
-                                fontSize: 12,
-                                fontWeight: FontWeight.w700,
-                                color: const Color(0xFF161C27),
-                              ),
+                              style: AppTypography.style(AppTextRole.body, fontSize: 12, color: const Color(0xFF161C27), letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: false)),
                             ),
                           ],
                         ),
@@ -3124,11 +2838,7 @@ class _AppliedBanner extends ConsumerWidget {
                         children: [
                           Text(
                             'UPLOADED ATTACHMENTS',
-                            style: outfit(
-                              fontSize: 10,
-                              fontWeight: FontWeight.w700,
-                              color: const Color(0xFF404942),
-                            ),
+                            style: AppTypography.style(AppTextRole.label, fontSize: 10, color: const Color(0xFF404942), letterSpacing: opticalTracking(10), height: opticalLeading(10, isBody: false)),
                           ),
                           const Icon(Icons.check_circle_rounded, size: 14, color: kPrimaryContainer),
                         ],
@@ -3163,7 +2873,7 @@ class _AppliedBanner extends ConsumerWidget {
                               'Submitted: ${application?.appliedAt?.toLocal() ?? 'Not available'}',
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
-                              style: outfit(fontSize: 10, color: const Color(0xFF404942)),
+                              style: AppTypography.style(AppTextRole.caption, fontSize: 10, color: const Color(0xFF404942), letterSpacing: opticalTracking(10), height: opticalLeading(10, isBody: false)),
                             ),
                           ),
                         ],
@@ -3174,7 +2884,7 @@ class _AppliedBanner extends ConsumerWidget {
                       application == null
                           ? 'Status unavailable'
                           : ApplicationStatusUi.of(application.status).label,
-                      style: outfit(fontSize: 10, fontWeight: FontWeight.w600, color: kPrimaryContainer),
+                      style: AppTypography.style(AppTextRole.badge, fontSize: 10, color: kPrimaryContainer, letterSpacing: opticalTracking(10), height: opticalLeading(10, isBody: false)),
                     ),
                   ],
                 ),
@@ -3193,7 +2903,7 @@ class _AppliedBanner extends ConsumerWidget {
                     icon: const Icon(Icons.track_changes_rounded, size: 18),
                     label: Text(
                       'Monitor in Application Tracker',
-                      style: outfit(fontWeight: FontWeight.w600, fontSize: 13),
+                      style: AppTypography.style(AppTextRole.button, fontSize: 13, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: false)),
                     ),
                   ),
                 ),
@@ -3204,11 +2914,7 @@ class _AppliedBanner extends ConsumerWidget {
                     icon: const Icon(Icons.receipt_long_rounded, size: 16, color: kPrimaryContainer),
                     label: Text(
                       'View Application Status',
-                      style: outfit(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w600,
-                        color: kPrimaryContainer,
-                      ),
+                      style: AppTypography.style(AppTextRole.button, fontSize: 12, color: kPrimaryContainer, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: false)),
                     ),
                   ),
                 ),
@@ -3229,11 +2935,7 @@ class _AppliedBanner extends ConsumerWidget {
       ),
       child: Text(
         label,
-        style: openSans(
-          fontSize: 10,
-          fontWeight: FontWeight.w600,
-          color: kSecondary,
-        ),
+        style: AppTypography.style(AppTextRole.badge, fontSize: 10, color: kSecondary, letterSpacing: opticalTracking(10), height: opticalLeading(10, isBody: true)),
       ),
     );
   }
@@ -3272,11 +2974,7 @@ class _ReadinessNotice extends StatelessWidget {
               Expanded(
                 child: Text(
                   title,
-                  style: outfit(
-                    fontSize: 15,
-                    fontWeight: FontWeight.w600,
-                    color: kPrimaryContainer,
-                  ),
+                  style: AppTypography.style(AppTextRole.cardTitle, fontSize: 15, color: kPrimaryContainer, letterSpacing: opticalTracking(15), height: opticalLeading(15, isBody: false)),
                 ),
               ),
             ],
@@ -3284,7 +2982,7 @@ class _ReadinessNotice extends StatelessWidget {
           const SizedBox(height: 6),
           Text(
             message,
-            style: openSans(fontSize: 13, color: const Color(0xFF404942)),
+            style: AppTypography.style(AppTextRole.body, fontSize: 13, color: const Color(0xFF404942), letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: true)),
           ),
           if (reasons.isNotEmpty) ...[
             const SizedBox(height: 10),
@@ -3335,11 +3033,7 @@ class _ReadinessReason extends StatelessWidget {
                 label,
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
-                style: openSans(
-                  fontSize: 11.5,
-                  fontWeight: FontWeight.w600,
-                  color: const Color(0xFF5F6368),
-                ),
+                style: AppTypography.style(AppTextRole.badge, fontSize: 11.5, color: const Color(0xFF5F6368), letterSpacing: opticalTracking(11.5), height: opticalLeading(11.5, isBody: true)),
               ),
             ),
           ],
@@ -3373,11 +3067,7 @@ class _EligibilityChip extends StatelessWidget {
               label,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
-              style: openSans(
-                fontSize: 13,
-                fontWeight: FontWeight.w600,
-                color: kScholarshipTagForeground,
-              ),
+              style: AppTypography.style(AppTextRole.badge, fontSize: 13, color: kScholarshipTagForeground, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: true)),
             ),
           ),
         ],

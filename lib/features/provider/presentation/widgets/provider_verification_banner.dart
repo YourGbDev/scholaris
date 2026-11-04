@@ -3,7 +3,7 @@
 // Persistent Verification Status Banner for Provider Consoles.
 // Appears at the top of the provider shells without blocking access.
 
-import 'package:scholaris/shared/theme/app_theme.dart';
+import 'package:scholaris/shared/theme/app_typography.dart';
 import 'dart:typed_data';
 
 import 'package:file_picker/file_picker.dart';
@@ -135,21 +135,12 @@ class ProviderVerificationBanner extends ConsumerWidget {
               children: [
                 Text(
                   title,
-                  style: geist(
-                    fontSize: 13,
-                    fontWeight: FontWeight.w700,
-                    color: titleColor,
-                  ),
+                  style: AppTypography.style(AppTextRole.cardTitle, fontSize: 13, color: titleColor),
                 ),
                 const SizedBox(height: 2),
                 Text(
                   message,
-                  style: geist(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w400,
-                    color: bodyColor,
-                    height: 1.35,
-                  ),
+                  style: AppTypography.style(AppTextRole.body, fontSize: 12, color: bodyColor, height: 1.35),
                 ),
                 if ((isRejected || status == 'changes_requested') &&
                     onUpdateDocuments != null) ...[
@@ -165,10 +156,7 @@ class ProviderVerificationBanner extends ConsumerWidget {
                         side: const BorderSide(color: Color(0xFFFECACA)),
                         padding: const EdgeInsets.symmetric(
                             horizontal: 12, vertical: 12),
-                        textStyle: geist(
-                          fontSize: 11.5,
-                          fontWeight: FontWeight.w600,
-                        ),
+                        textStyle: AppTypography.style(AppTextRole.button, fontSize: 11.5),
                       ),
                     ),
                   ),
@@ -185,12 +173,7 @@ class ProviderVerificationBanner extends ConsumerWidget {
               ),
               child: Text(
                 'PENDING',
-                style: geist(
-                  fontSize: 10,
-                  fontWeight: FontWeight.w700,
-                  color: const Color(0xFF92400E),
-                  letterSpacing: 0.5,
-                ),
+                style: AppTypography.style(AppTextRole.badge, fontSize: 10, color: const Color(0xFF92400E), letterSpacing: 0.5),
               ),
             ),
         ],
@@ -462,7 +445,7 @@ class _ProviderResubmitDialogState
               children: [
                 Text(
                   label,
-                  style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600),
+                  style: AppTypography.style(AppTextRole.label, fontSize: 12),
                 ),
                 if (selectedName != null) ...[
                   const SizedBox(height: 2),
@@ -474,7 +457,7 @@ class _ProviderResubmitDialogState
                         child: Text(
                           selectedName,
                           overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(fontSize: 12, color: Color(0xFF0F4D2E)),
+                          style: AppTypography.style(AppTextRole.caption, fontSize: 12, color: Color(0xFF0F4D2E)),
                         ),
                       ),
                     ],
@@ -494,7 +477,7 @@ class _ProviderResubmitDialogState
             OutlinedButton.icon(
               onPressed: _submitting ? null : onPick,
               icon: const Icon(Icons.upload_file, size: 14),
-              label: const Text('Upload new', style: TextStyle(fontSize: 12)),
+              label:  Text('Upload new', style: AppTypography.style(AppTextRole.button, fontSize: 12)),
             ),
         ],
       ),
@@ -528,30 +511,23 @@ class _ProviderResubmitDialogState
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text(
+                         Text(
                           'Reviewer feedback:',
-                          style: TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.w700,
-                            color: Color(0xFF912018),
-                          ),
+                          style: AppTypography.style(AppTextRole.label, fontSize: 12, color: Color(0xFF912018)),
                         ),
                         const SizedBox(height: 4),
                         Text(
                           note,
-                          style: const TextStyle(
-                            fontSize: 13,
-                            color: Color(0xFFB42318),
-                          ),
+                          style: AppTypography.style(AppTextRole.caption, fontSize: 13, color: Color(0xFFB42318)),
                         ),
                       ],
                     ),
                   ),
                   const SizedBox(height: 16),
                 ],
-                const Text(
+                 Text(
                   'Please correct your information below. Once submitted, your accreditation application will return to pending review.',
-                  style: TextStyle(fontSize: 13, color: Color(0xFF475467)),
+                  style: AppTypography.style(AppTextRole.body, fontSize: 13, color: Color(0xFF475467)),
                 ),
                 const SizedBox(height: 16),
                 TextFormField(
@@ -589,18 +565,14 @@ class _ProviderResubmitDialogState
                 const SizedBox(height: 16),
                 const Divider(),
                 const SizedBox(height: 8),
-                const Text(
+                 Text(
                   'Replacement documents (optional unless requested)',
-                  style: TextStyle(
-                    fontSize: 13,
-                    fontWeight: FontWeight.w700,
-                    color: Color(0xFF344054),
-                  ),
+                  style: AppTypography.style(AppTextRole.sectionTitle, fontSize: 13, color: Color(0xFF344054)),
                 ),
                 const SizedBox(height: 4),
-                const Text(
+                 Text(
                   'Select replacement files to update your accreditation dossier. Existing files will be preserved if not replaced.',
-                  style: TextStyle(fontSize: 12, color: Color(0xFF667085)),
+                  style: AppTypography.style(AppTextRole.caption, fontSize: 12, color: Color(0xFF667085)),
                 ),
                 const SizedBox(height: 12),
                 if (isOrg) ...[
@@ -670,10 +642,7 @@ class _ProviderResubmitDialogState
                   const SizedBox(height: 12),
                   Text(
                     _error!,
-                    style: const TextStyle(
-                      color: Color(0xFFB42318),
-                      fontSize: 12,
-                    ),
+                    style: AppTypography.style(AppTextRole.caption, color: Color(0xFFB42318), fontSize: 12),
                   ),
                 ],
               ],

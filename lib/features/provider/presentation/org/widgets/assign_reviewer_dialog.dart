@@ -3,6 +3,7 @@
 // Modal dialog allowing Organization Admins to assign or unassign active
 // academic evaluators/reviewers to a specific scholarship grant program.
 
+import 'package:scholaris/shared/theme/app_typography.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -70,7 +71,7 @@ class _AssignReviewerDialogState extends ConsumerState<AssignReviewerDialog> {
             isCurrentlyAssigned
                 ? 'Unassigned ${member.fullName} from "${widget.scholarship.title}".'
                 : 'Assigned ${member.fullName} to "${widget.scholarship.title}".',
-            style: orgBody(color: Colors.white, fontSize: 13),
+            style: AppTypography.style(AppTextRole.body, color: Colors.white, fontSize: 13, letterSpacing: opticalTracking(13), height: ((13) <= 16 ? 1.45 : opticalLeading(13, isBody: true))),
           ),
         ),
       );
@@ -83,7 +84,7 @@ class _AssignReviewerDialogState extends ConsumerState<AssignReviewerDialog> {
           backgroundColor: kOrgError,
           content: Text(
             'Failed to update assignment: $e',
-            style: orgBody(color: Colors.white, fontSize: 13),
+            style: AppTypography.style(AppTextRole.body, color: Colors.white, fontSize: 13, letterSpacing: opticalTracking(13), height: ((13) <= 16 ? 1.45 : opticalLeading(13, isBody: true))),
           ),
         ),
       );
@@ -153,19 +154,12 @@ class _AssignReviewerDialogState extends ConsumerState<AssignReviewerDialog> {
                         children: [
                           Text(
                             'Assign Reviewers',
-                            style: orgHeadline(
-                              fontSize: 16.5,
-                              fontWeight: FontWeight.w700,
-                              color: kOrgTextPrimary,
-                            ),
+                            style: AppTypography.style(AppTextRole.cardTitle, fontSize: 16.5, color: kOrgTextPrimary, letterSpacing: opticalTracking(16.5), height: opticalLeading(16.5, isBody: false)),
                           ),
                           const SizedBox(height: 2),
                           Text(
                             widget.scholarship.title,
-                            style: orgLabel(
-                              fontSize: 12,
-                              color: kOrgTextSecondary,
-                            ),
+                            style: AppTypography.style(AppTextRole.subtitle, fontSize: 12, color: kOrgTextSecondary, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: false)),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                           ),
@@ -194,7 +188,7 @@ class _AssignReviewerDialogState extends ConsumerState<AssignReviewerDialog> {
                     Expanded(
                       child: Text(
                         'Assigned evaluators can filter incoming dossiers using "Assigned to Me" and record rubric scores.',
-                        style: orgBody(fontSize: 11.5, color: kOrgTextSecondary),
+                        style: AppTypography.style(AppTextRole.body, fontSize: 11.5, color: kOrgTextSecondary, letterSpacing: opticalTracking(11.5), height: ((11.5) <= 16 ? 1.45 : opticalLeading(11.5, isBody: true))),
                       ),
                     ),
                   ],
@@ -214,7 +208,7 @@ class _AssignReviewerDialogState extends ConsumerState<AssignReviewerDialog> {
                     child: Center(
                       child: Text(
                         'Could not load organization roster: $err',
-                        style: orgBody(color: kOrgError, fontSize: 13),
+                        style: AppTypography.style(AppTextRole.body, color: kOrgError, fontSize: 13, letterSpacing: opticalTracking(13), height: ((13) <= 16 ? 1.45 : opticalLeading(13, isBody: true))),
                         textAlign: TextAlign.center,
                       ),
                     ),
@@ -236,18 +230,12 @@ class _AssignReviewerDialogState extends ConsumerState<AssignReviewerDialog> {
                               const SizedBox(height: 10),
                               Text(
                                 'No Active Reviewers Found',
-                                style: orgHeadline(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w600,
-                                ),
+                                style: AppTypography.style(AppTextRole.cardTitle, fontSize: 14, color: kOrgTextPrimary, letterSpacing: opticalTracking(14), height: opticalLeading(14, isBody: false)),
                               ),
                               const SizedBox(height: 4),
                               Text(
                                 'Add reviewers to your organization in the Team & Reviewers tab.',
-                                style: orgBody(
-                                  fontSize: 12,
-                                  color: kOrgTextSecondary,
-                                ),
+                                style: AppTypography.style(AppTextRole.body, fontSize: 12, color: kOrgTextSecondary, letterSpacing: opticalTracking(12), height: ((12) <= 16 ? 1.45 : opticalLeading(12, isBody: true))),
                                 textAlign: TextAlign.center,
                               ),
                             ],
@@ -286,27 +274,16 @@ class _AssignReviewerDialogState extends ConsumerState<AssignReviewerDialog> {
                               member.fullName.isNotEmpty
                                   ? member.fullName[0].toUpperCase()
                                   : 'R',
-                              style: orgLabel(
-                                fontSize: 13,
-                                fontWeight: FontWeight.w700,
-                                color: isAssigned ? Colors.white : kOrgTextPrimary,
-                              ),
+                              style: AppTypography.style(AppTextRole.label, fontSize: 13, color: isAssigned ? Colors.white : kOrgTextPrimary, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: false)),
                             ),
                           ),
                           title: Text(
                             member.fullName,
-                            style: orgHeadline(
-                              fontSize: 13.5,
-                              fontWeight: FontWeight.w600,
-                              color: kOrgTextPrimary,
-                            ),
+                            style: AppTypography.style(AppTextRole.cardTitle, fontSize: 13.5, color: kOrgTextPrimary, letterSpacing: opticalTracking(13.5), height: opticalLeading(13.5, isBody: false)),
                           ),
                           subtitle: Text(
                             'Academic Evaluator • ${member.assignedScholarshipCount} current assignments',
-                            style: orgBody(
-                              fontSize: 11.5,
-                              color: kOrgTextSecondary,
-                            ),
+                            style: AppTypography.style(AppTextRole.subtitle, fontSize: 11.5, color: kOrgTextSecondary, letterSpacing: opticalTracking(11.5), height: ((11.5) <= 16 ? 1.45 : opticalLeading(11.5, isBody: true))),
                           ),
                           trailing: isPending
                               ? const SizedBox(
@@ -352,11 +329,7 @@ class _AssignReviewerDialogState extends ConsumerState<AssignReviewerDialog> {
                       ),
                       child: Text(
                         'Done',
-                        style: orgLabel(
-                          fontSize: 13,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.white,
-                        ),
+                        style: AppTypography.style(AppTextRole.button, fontSize: 13, color: Colors.white, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: false)),
                       ),
                     ),
                   ],

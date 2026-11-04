@@ -5,7 +5,7 @@
 // Strictly real data: 100% wired to live Supabase counts across core tables.
 // Zero fabricated metrics, zero fake compliance stamps, zero fake trends/charts.
 
-import 'package:scholaris/shared/theme/app_theme.dart';
+import 'package:scholaris/shared/theme/app_typography.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:scholaris/features/admin/presentation/admin_theme.dart';
@@ -215,10 +215,7 @@ class PlatformOverviewScreen extends ConsumerWidget {
   Widget _buildSectionHeader(String title) {
     return Text(
       title,
-      style: seqLabelSm(
-        color: kSeqOutline,
-        fontWeight: FontWeight.w700,
-      ).copyWith(letterSpacing: 0.8),
+      style: AppTypography.style(AppTextRole.sectionTitle, color: kSeqOutline, fontSize: 10, height: 12 / 10, letterSpacing: 0.03 * 10).copyWith(letterSpacing: 0.8),
     );
   }
 
@@ -249,10 +246,7 @@ class PlatformOverviewScreen extends ConsumerWidget {
               const SizedBox(width: 6),
               Text(
                 'SUPER ADMIN',
-                style: seqLabelSm(
-                  color: kSeqOnSurfaceVariant,
-                  fontWeight: FontWeight.w600,
-                ),
+                style: AppTypography.style(AppTextRole.badge, color: kSeqOnSurfaceVariant, fontSize: 10, height: 12 / 10, letterSpacing: 0.03 * 10),
               ),
             ],
           ),
@@ -262,17 +256,14 @@ class PlatformOverviewScreen extends ConsumerWidget {
         // Title
         Text(
           'Platform overview',
-          style: seqHeadlineLg(
-            fontWeight: FontWeight.w700,
-            color: kSeqOnSurface,
-          ),
+          style: AppTypography.style(AppTextRole.screenTitle, color: kSeqOnSurface, fontSize: 32, height: 38 / 32, letterSpacing: -0.021 * 32),
         ),
         const SizedBox(height: 4),
 
         // Subtitle
         Text(
           'Provider approvals, student safety and platform oversight.',
-          style: seqBodyMd(color: kSeqOnSurfaceVariant),
+          style: AppTypography.style(AppTextRole.subtitle, color: kSeqOnSurfaceVariant, fontSize: 14, height: 20 / 14, letterSpacing: -0.006 * 14),
         ),
       ],
     );
@@ -359,10 +350,7 @@ class PlatformOverviewScreen extends ConsumerWidget {
               Expanded(
                 child: Text(
                   item.label,
-                  style: seqLabelSm(
-                    color: kSeqOutline,
-                    fontWeight: FontWeight.w700,
-                  ).copyWith(letterSpacing: 0.6),
+                  style: AppTypography.style(AppTextRole.label, color: kSeqOutline, fontSize: 10, height: 12 / 10, letterSpacing: 0.03 * 10).copyWith(letterSpacing: 0.6),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -387,11 +375,7 @@ class PlatformOverviewScreen extends ConsumerWidget {
                     Text(
                       '₱',
                       style: seqTabularFigures(
-                        geist(
-                          fontSize: 26,
-                          fontWeight: FontWeight.w700,
-                          color: kSeqOnSurface,
-                        ),
+                        AppTypography.style(AppTextRole.metric, fontSize: 26, color: kSeqOnSurface),
                       ),
                     ),
                     const SizedBox(width: 2),
@@ -400,13 +384,7 @@ class PlatformOverviewScreen extends ConsumerWidget {
                         targetValue: item.targetValue,
                         duration: const Duration(milliseconds: 800),
                         style: seqTabularFigures(
-                          geist(
-                            fontSize: 36,
-                            fontWeight: FontWeight.w800,
-                            height: 1.0,
-                            color: kSeqOnSurface,
-                            letterSpacing: -0.5,
-                          ),
+                          AppTypography.style(AppTextRole.metric, fontSize: 36, height: 1.0, color: kSeqOnSurface, letterSpacing: -0.5),
                         ),
                       ),
                     ),
@@ -416,19 +394,13 @@ class PlatformOverviewScreen extends ConsumerWidget {
                   targetValue: item.targetValue,
                   duration: const Duration(milliseconds: 800),
                   style: seqTabularFigures(
-                    geist(
-                      fontSize: 38,
-                      fontWeight: FontWeight.w800,
-                      height: 1.0,
-                      color: kSeqOnSurface,
-                      letterSpacing: -0.5,
-                    ),
+                    AppTypography.style(AppTextRole.metric, fontSize: 38, height: 1.0, color: kSeqOnSurface, letterSpacing: -0.5),
                   ),
                 ),
           const SizedBox(height: 10),
           Text(
             item.subtitle,
-            style: seqBodySm(color: kSeqOnSurfaceVariant),
+            style: AppTypography.style(AppTextRole.subtitle, color: kSeqOnSurfaceVariant, fontSize: 12, height: 16 / 12, letterSpacing: 0),
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
           ),
@@ -519,10 +491,7 @@ class PlatformOverviewScreen extends ConsumerWidget {
               children: [
                 Text(
                   item.label,
-                  style: seqLabelSm(
-                    color: kSeqOutline,
-                    fontWeight: FontWeight.w700,
-                  ).copyWith(letterSpacing: 0.6),
+                  style: AppTypography.style(AppTextRole.label, color: kSeqOutline, fontSize: 10, height: 12 / 10, letterSpacing: 0.03 * 10).copyWith(letterSpacing: 0.6),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -531,18 +500,13 @@ class PlatformOverviewScreen extends ConsumerWidget {
                   targetValue: item.count,
                   duration: const Duration(milliseconds: 800),
                   style: seqTabularFigures(
-                    geist(
-                      fontSize: 28,
-                      fontWeight: FontWeight.w700,
-                      height: 1.1,
-                      color: kSeqOnSurface,
-                    ),
+                    AppTypography.style(AppTextRole.metric, fontSize: 28, height: 1.1, color: kSeqOnSurface),
                   ),
                 ),
                 const SizedBox(height: 4),
                 Text(
                   item.subtitle,
-                  style: seqBodySm(color: kSeqOnSurfaceVariant),
+                  style: AppTypography.style(AppTextRole.subtitle, color: kSeqOnSurfaceVariant, fontSize: 12, height: 16 / 12, letterSpacing: 0),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -648,10 +612,7 @@ class PlatformOverviewScreen extends ConsumerWidget {
               Expanded(
                 child: Text(
                   item.label,
-                  style: seqLabelSm(
-                    color: kSeqOutline,
-                    fontWeight: FontWeight.w600,
-                  ).copyWith(letterSpacing: 0.5),
+                  style: AppTypography.style(AppTextRole.label, color: kSeqOutline, fontSize: 10, height: 12 / 10, letterSpacing: 0.03 * 10).copyWith(letterSpacing: 0.5),
                 ),
               ),
             ],
@@ -661,11 +622,7 @@ class PlatformOverviewScreen extends ConsumerWidget {
             targetValue: item.count,
             duration: const Duration(milliseconds: 800),
             style: seqTabularFigures(
-              geist(
-                fontSize: 20,
-                fontWeight: FontWeight.w700,
-                color: kSeqOnSurface,
-              ),
+              AppTypography.style(AppTextRole.metric, fontSize: 20, color: kSeqOnSurface),
             ),
           ),
         ],
@@ -690,7 +647,7 @@ class PlatformOverviewScreen extends ConsumerWidget {
           Expanded(
             child: Text(
               'Data reflects current platform state. Historical trends will appear as the platform grows.',
-              style: seqBodySm(color: kSeqOnSurfaceVariant),
+              style: AppTypography.style(AppTextRole.caption, color: kSeqOnSurfaceVariant, fontSize: 12, height: 16 / 12, letterSpacing: 0),
             ),
           ),
         ],

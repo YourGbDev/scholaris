@@ -1,3 +1,4 @@
+import 'package:scholaris/shared/theme/app_typography.dart';
 import 'package:scholaris/features/home/presentation/widgets/student_tab_entrance.dart';
 // lib/features/scholarships/screens/discover_screen.dart
 //
@@ -222,12 +223,7 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
                   const SizedBox(width: 8),
                   Text(
                     'Scholaris',
-                    style: outfit(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      color: const Color(0xFF161C27),
-                      letterSpacing: -0.5,
-                    ),
+                    style: AppTypography.style(AppTextRole.label, fontSize: 20, color: const Color(0xFF161C27), letterSpacing: -0.5, height: opticalLeading(20, isBody: false)),
                   ),
                 ],
               ),
@@ -405,11 +401,7 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
             onPressed: () => ref.read(discoveryFilterProvider.notifier).reset(),
             child: Text(
               'Clear all',
-              style: outfit(
-                fontSize: 12,
-                fontWeight: FontWeight.w600,
-                color: const Color(0xFF0F4D2E),
-              ),
+              style: AppTypography.style(AppTextRole.button, fontSize: 12, color: const Color(0xFF0F4D2E), letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: false)),
             ),
           ),
         ),
@@ -420,12 +412,7 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
   // --- 5. Opportunity Feed Header ---
   Widget _buildFeedHeader() => Text(
     'Matched for you',
-    style: outfit(
-      fontSize: 18,
-      fontWeight: FontWeight.bold,
-      color: const Color(0xFF161C27),
-      letterSpacing: -0.3,
-    ),
+    style: AppTypography.style(AppTextRole.sectionTitle, fontSize: 18, color: const Color(0xFF161C27), letterSpacing: -0.3, height: opticalLeading(18, isBody: false)),
   );
 
   // --- 6. Feed Cards Container ---
@@ -566,7 +553,7 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
               order: 0,
               child: Text(
                 'Showing ${browse.length} scholarships',
-                style: openSans(fontSize: 13, color: const Color(0xFF404942)),
+                style: AppTypography.style(AppTextRole.caption, fontSize: 13, color: const Color(0xFF404942), letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: true)),
               ),
             ),
             const SizedBox(height: 12),
@@ -640,21 +627,13 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
           Text(
             'Looking for more niche grants?',
             textAlign: TextAlign.center,
-            style: outfit(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-              color: const Color(0xFF161C27),
-            ),
+            style: AppTypography.style(AppTextRole.cardTitle, fontSize: 18, color: const Color(0xFF161C27), letterSpacing: opticalTracking(18), height: opticalLeading(18, isBody: false)),
           ),
           const SizedBox(height: 6),
           Text(
             'Connect your local community college, regional foundation, or alumni affinity groups to unlock hyper-local aid.',
             textAlign: TextAlign.center,
-            style: openSans(
-              fontSize: 13,
-              color: const Color(0xFF404942),
-              height: 1.4,
-            ),
+            style: AppTypography.style(AppTextRole.caption, fontSize: 13, color: const Color(0xFF404942), height: 1.4, letterSpacing: opticalTracking(13)),
           ),
           const SizedBox(height: 16),
           PressableScale(
@@ -683,7 +662,7 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
                     const SizedBox(width: 8),
                     Text(
                       'Update Eligibility Filters',
-                      style: outfit(fontSize: 13, fontWeight: FontWeight.bold),
+                      style: AppTypography.style(AppTextRole.button, fontSize: 13, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: false)),
                     ),
                   ],
                 ),
@@ -709,21 +688,13 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
             Text(
               'No scholarships found',
               textAlign: TextAlign.center,
-              style: outfit(
-                fontSize: 18,
-                fontWeight: FontWeight.w700,
-                color: const Color(0xFF161C27),
-              ),
+              style: AppTypography.style(AppTextRole.sectionTitle, fontSize: 18, color: const Color(0xFF161C27), letterSpacing: opticalTracking(18), height: opticalLeading(18, isBody: false)),
             ),
             const SizedBox(height: 8),
             Text(
               'No scholarships match your current search and filters. Try adjusting your filters to see more results.',
               textAlign: TextAlign.center,
-              style: openSans(
-                fontSize: 13.5,
-                color: const Color(0xFF404942),
-                height: 1.45,
-              ),
+              style: AppTypography.style(AppTextRole.body, fontSize: 13.5, color: const Color(0xFF404942), height: 1.45, letterSpacing: opticalTracking(13.5)),
             ),
             const SizedBox(height: 18),
             ElevatedButton(
@@ -743,11 +714,7 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
               ),
               child: Text(
                 'Clear search & filters',
-                style: outfit(
-                  fontSize: 13.5,
-                  fontWeight: FontWeight.w600,
-                  color: Colors.white,
-                ),
+                style: AppTypography.style(AppTextRole.button, fontSize: 13.5, color: Colors.white, letterSpacing: opticalTracking(13.5), height: opticalLeading(13.5, isBody: false)),
               ),
             ),
           ],
@@ -785,11 +752,7 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
                 Expanded(
                   child: Text(
                     'No scholarships in your matches match the current search and filters.',
-                    style: openSans(
-                      fontSize: 13,
-                      color: const Color(0xFF404942),
-                      height: 1.35,
-                    ),
+                    style: AppTypography.style(AppTextRole.caption, fontSize: 13, color: const Color(0xFF404942), height: 1.35, letterSpacing: opticalTracking(13)),
                   ),
                 ),
               ],
@@ -814,21 +777,13 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
               Text(
                 'No matches found for your profile yet',
                 textAlign: TextAlign.center,
-                style: outfit(
-                  fontSize: 17,
-                  fontWeight: FontWeight.w700,
-                  color: const Color(0xFF161C27),
-                ),
+                style: AppTypography.style(AppTextRole.sectionTitle, fontSize: 17, color: const Color(0xFF161C27), letterSpacing: opticalTracking(17), height: opticalLeading(17, isBody: false)),
               ),
               const SizedBox(height: 6),
               Text(
                 'Complete your profile with your course, university, and GWA to unlock targeted grants and scholarships.',
                 textAlign: TextAlign.center,
-                style: openSans(
-                  fontSize: 13,
-                  color: const Color(0xFF404942),
-                  height: 1.4,
-                ),
+                style: AppTypography.style(AppTextRole.caption, fontSize: 13, color: const Color(0xFF404942), height: 1.4, letterSpacing: opticalTracking(13)),
               ),
               const SizedBox(height: 16),
               ElevatedButton(
@@ -847,11 +802,7 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
                 ),
                 child: Text(
                   'Complete your profile',
-                  style: outfit(
-                    fontSize: 13.5,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.white,
-                  ),
+                  style: AppTypography.style(AppTextRole.button, fontSize: 13.5, color: Colors.white, letterSpacing: opticalTracking(13.5), height: opticalLeading(13.5, isBody: false)),
                 ),
               ),
             ],
@@ -917,10 +868,10 @@ class _SearchFieldState extends ConsumerState<_SearchField> {
         onChanged: (value) =>
             ref.read(discoveryFilterProvider.notifier).setQuery(value),
         textInputAction: TextInputAction.search,
-        style: openSans(fontSize: 14, color: const Color(0xFF161C27)),
+        style: AppTypography.style(AppTextRole.input, fontSize: 14, color: const Color(0xFF161C27), letterSpacing: opticalTracking(14), height: opticalLeading(14, isBody: true)),
         decoration: InputDecoration(
           hintText: 'Search scholarships',
-          hintStyle: openSans(fontSize: 13, color: const Color(0xFF707971)),
+          hintStyle: AppTypography.style(AppTextRole.placeholder, fontSize: 13, color: const Color(0xFF707971), letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: true)),
           prefixIcon: const Icon(
             Icons.search_rounded,
             color: Color(0xFF404942),
@@ -986,11 +937,7 @@ class _FilterButton extends ConsumerWidget {
                   const SizedBox(width: 5),
                   Text(
                     'Filter',
-                    style: outfit(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w600,
-                      color: const Color(0xFF436084),
-                    ),
+                    style: AppTypography.style(AppTextRole.button, fontSize: 12, color: const Color(0xFF436084), letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: false)),
                   ),
                   if (count > 0) ...[
                     const SizedBox(width: 5),
@@ -1005,11 +952,7 @@ class _FilterButton extends ConsumerWidget {
                       ),
                       child: Text(
                         '$count',
-                        style: outfit(
-                          fontSize: 10,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                        ),
+                        style: AppTypography.style(AppTextRole.badge, fontSize: 10, color: Colors.white, letterSpacing: opticalTracking(10), height: opticalLeading(10, isBody: false)),
                       ),
                     ),
                   ],
@@ -1092,11 +1035,7 @@ class _StitchCarouselChip extends StatelessWidget {
                 ],
                 Text(
                   label,
-                  style: outfit(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w600,
-                    color: fg,
-                  ),
+                  style: AppTypography.style(AppTextRole.badge, fontSize: 12, color: fg, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: false)),
                 ),
               ],
             ),
@@ -1134,11 +1073,7 @@ class _ActiveFilterChip extends StatelessWidget {
             padding: const EdgeInsets.only(left: 12),
             child: Text(
               label,
-              style: openSans(
-                fontSize: 12,
-                fontWeight: FontWeight.w600,
-                color: const Color(0xFF0F4D2E),
-              ),
+              style: AppTypography.style(AppTextRole.badge, fontSize: 12, color: const Color(0xFF0F4D2E), letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: true)),
             ),
           ),
           Tooltip(

@@ -9,6 +9,7 @@
 // Preserves domain validation (ProfileValidator), profileSetupProvider state,
 // and all test contracts.
 
+import 'package:scholaris/shared/theme/app_typography.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -195,11 +196,7 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
               const SizedBox(width: 8),
               Text(
                 'Profile Setup',
-                style: poppins(
-                  color: kPrimary,
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                ),
+                style: AppTypography.style(AppTextRole.screenTitle, color: kPrimary, fontSize: 16, letterSpacing: opticalTracking(16), height: opticalLeading(16, isBody: false)),
               ),
             ],
           ),
@@ -247,20 +244,12 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
                     // Step Header Titles
                     Text(
                       _stepTitle,
-                      style: outfit(
-                        color: kTextPrimary,
-                        fontSize: 22,
-                        fontWeight: FontWeight.w700,
-                      ),
+                      style: AppTypography.style(AppTextRole.sectionTitle, color: kTextPrimary, fontSize: 22, letterSpacing: opticalTracking(22), height: opticalLeading(22, isBody: false)),
                     ),
                     const SizedBox(height: 6),
                     Text(
                       _stepSubtitle,
-                      style: openSans(
-                        color: kTextSecondary,
-                        fontSize: 13,
-                        height: 1.45,
-                      ),
+                      style: AppTypography.style(AppTextRole.subtitle, color: kTextSecondary, fontSize: 13, height: 1.45, letterSpacing: opticalTracking(13)),
                     ),
                     const SizedBox(height: 16),
 
@@ -309,22 +298,12 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
                 children: [
                   Text(
                     'Step $_stepIndex of 3',
-                    style: outfit(
-                      color: kPrimary,
-                      fontSize: 12,
-                      fontWeight: FontWeight.w700,
-                      letterSpacing: 0.5,
-                    ),
+                    style: AppTypography.style(AppTextRole.label, color: kPrimary, fontSize: 12, letterSpacing: 0.5, height: opticalLeading(12, isBody: false)),
                   ),
                   Flexible(
                     child: Text(
                       ' • $_stepTrackerCategory',
-                      style: outfit(
-                        color: kPrimary,
-                        fontSize: 12,
-                        fontWeight: FontWeight.w600,
-                        letterSpacing: 0.3,
-                      ),
+                      style: AppTypography.style(AppTextRole.label, color: kPrimary, fontSize: 12, letterSpacing: 0.3, height: opticalLeading(12, isBody: false)),
                       overflow: TextOverflow.ellipsis,
                     ),
                   ),
@@ -420,11 +399,7 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
         ),
         child: Text(
           '33% Complete',
-          style: outfit(
-            fontSize: 11,
-            fontWeight: FontWeight.w700,
-            color: kPrimary,
-          ),
+          style: AppTypography.style(AppTextRole.badge, fontSize: 11, color: kPrimary, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: false)),
         ),
       );
     }
@@ -437,11 +412,7 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
         ),
         child: Text(
           '66%',
-          style: outfit(
-            fontSize: 11,
-            fontWeight: FontWeight.w700,
-            color: kTextPrimary,
-          ),
+          style: AppTypography.style(AppTextRole.badge, fontSize: 11, color: kTextPrimary, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: false)),
         ),
       );
     }
@@ -458,11 +429,7 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
           const SizedBox(width: 4),
           Text(
             'Final Step',
-            style: outfit(
-              fontSize: 11,
-              fontWeight: FontWeight.w700,
-              color: kOnTertiaryFixed,
-            ),
+            style: AppTypography.style(AppTextRole.badge, fontSize: 11, color: kOnTertiaryFixed, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: false)),
           ),
         ],
       ),
@@ -502,18 +469,11 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
                 children: [
                   Text(
                     '740+ Active Philippine Grants',
-                    style: outfit(
-                      fontSize: 13,
-                      fontWeight: FontWeight.w700,
-                      color: kTextPrimary,
-                    ),
+                    style: AppTypography.style(AppTextRole.cardTitle, fontSize: 13, color: kTextPrimary, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: false)),
                   ),
                   Text(
                     'DOST-SEI, UniFAST, LGU subsidies, and private foundations open.',
-                    style: openSans(
-                      fontSize: 11,
-                      color: kTextSecondary,
-                    ),
+                    style: AppTypography.style(AppTextRole.subtitle, fontSize: 11, color: kTextSecondary, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: true)),
                   ),
                 ],
               ),
@@ -553,18 +513,11 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
                 children: [
                   Text(
                     'Targeting Philippine Academic Grants',
-                    style: outfit(
-                      fontSize: 13,
-                      fontWeight: FontWeight.w700,
-                      color: kTextPrimary,
-                    ),
+                    style: AppTypography.style(AppTextRole.cardTitle, fontSize: 13, color: kTextPrimary, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: false)),
                   ),
                   Text(
                     'DOST Priority S&T, CHED UniFAST, and university partner endowments.',
-                    style: openSans(
-                      fontSize: 11,
-                      color: kTextSecondary,
-                    ),
+                    style: AppTypography.style(AppTextRole.subtitle, fontSize: 11, color: kTextSecondary, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: true)),
                   ),
                 ],
               ),
@@ -607,20 +560,12 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
                   children: [
                     Text(
                       '100% Confidential & Protected',
-                      style: outfit(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w700,
-                        color: kPrimary,
-                      ),
+                      style: AppTypography.style(AppTextRole.cardTitle, fontSize: 14, color: kPrimary, letterSpacing: opticalTracking(14), height: opticalLeading(14, isBody: false)),
                     ),
                     const SizedBox(height: 2),
                     Text(
                       'This info is stored under bank-grade encryption. It is used exclusively by our matching engine to calculate subsidy eligibility and will never be shared with schools or third parties without your permission.',
-                      style: openSans(
-                        fontSize: 11,
-                        color: kTextSecondary,
-                        height: 1.4,
-                      ),
+                      style: AppTypography.style(AppTextRole.body, fontSize: 11, color: kTextSecondary, height: 1.4, letterSpacing: opticalTracking(11)),
                     ),
                   ],
                 ),
@@ -717,7 +662,7 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
                 .map(
                   (region) => DropdownMenuItem(
                     value: region,
-                    child: Text(region, style: openSans()),
+                    child: Text(region, style: AppTypography.style(AppTextRole.input)),
                   ),
                 )
                 .toList(),
@@ -795,19 +740,12 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
                   children: [
                     Text(
                       'Choose Your Avatar',
-                      style: outfit(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w700,
-                        color: kNavyTrust,
-                      ),
+                      style: AppTypography.style(AppTextRole.sectionTitle, fontSize: 14, color: kNavyTrust, letterSpacing: opticalTracking(14), height: opticalLeading(14, isBody: false)),
                     ),
                     const SizedBox(height: 2),
                     Text(
                       'Pick a doodle for now • Formal photo required for deliberation',
-                      style: openSans(
-                        fontSize: 11,
-                        color: kTextSecondary,
-                      ),
+                      style: AppTypography.style(AppTextRole.subtitle, fontSize: 11, color: kTextSecondary, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: true)),
                     ),
                   ],
                 ),
@@ -833,11 +771,7 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
                 },
                 child: Text(
                   'Set up later',
-                  style: outfit(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w600,
-                    color: kPrimary,
-                  ),
+                  style: AppTypography.style(AppTextRole.button, fontSize: 12, color: kPrimary, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: false)),
                 ),
               ),
             ],
@@ -925,10 +859,7 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
         ),
         child: Text(
           birthDate == null ? 'Select date' : formatDate(birthDate),
-          style: openSans(
-            fontSize: 14,
-            color: birthDate == null ? Colors.black38 : kTextPrimary,
-          ),
+          style: AppTypography.style(AppTextRole.input, fontSize: 14, color: birthDate == null ? Colors.black38 : kTextPrimary, letterSpacing: opticalTracking(14), height: opticalLeading(14, isBody: true)),
         ),
       ),
     );
@@ -946,11 +877,7 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
             const SizedBox(width: 6),
             Text(
               'Gender',
-              style: outfit(
-                fontSize: 13,
-                fontWeight: FontWeight.w600,
-                color: kTextPrimary,
-              ),
+              style: AppTypography.style(AppTextRole.label, fontSize: 13, color: kTextPrimary, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: false)),
             ),
           ],
         ),
@@ -979,11 +906,7 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
                         const SizedBox(width: 8),
                         Text(
                           'Male',
-                          style: outfit(
-                            fontSize: 13,
-                            fontWeight: FontWeight.w600,
-                            color: selectedGender == 'male' ? kPrimary : kTextPrimary,
-                          ),
+                          style: AppTypography.style(AppTextRole.label, fontSize: 13, color: selectedGender == 'male' ? kPrimary : kTextPrimary, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: false)),
                         ),
                       ],
                     ),
@@ -1014,11 +937,7 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
                         const SizedBox(width: 8),
                         Text(
                           'Female',
-                          style: outfit(
-                            fontSize: 13,
-                            fontWeight: FontWeight.w600,
-                            color: selectedGender == 'female' ? kPrimary : kTextPrimary,
-                          ),
+                          style: AppTypography.style(AppTextRole.label, fontSize: 13, color: selectedGender == 'female' ? kPrimary : kTextPrimary, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: false)),
                         ),
                       ],
                     ),
@@ -1031,7 +950,7 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
         const SizedBox(height: 6),
         Text(
           'Personalizes your campus mascot across your dashboard and notifications.',
-          style: openSans(fontSize: 11, color: kTextSecondary),
+          style: AppTypography.style(AppTextRole.caption, fontSize: 11, color: kTextSecondary, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: true)),
         ),
       ],
     );
@@ -1053,7 +972,7 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
           Flexible(
             child: Text(
               'Protected by 256-bit encryption • Only matched with accredited partners',
-              style: outfit(fontSize: 11, fontWeight: FontWeight.w500, color: kTextSecondary),
+              style: AppTypography.style(AppTextRole.badge, fontSize: 11, color: kTextSecondary, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: false)),
               textAlign: TextAlign.center,
               overflow: TextOverflow.ellipsis,
             ),
@@ -1074,19 +993,11 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
           children: [
             Text(
               'Year Level *',
-              style: outfit(
-                fontSize: 13,
-                fontWeight: FontWeight.w600,
-                color: kTextPrimary,
-              ),
+              style: AppTypography.style(AppTextRole.label, fontSize: 13, color: kTextPrimary, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: false)),
             ),
             Text(
               'AY 2024-2025',
-              style: outfit(
-                fontSize: 11,
-                fontWeight: FontWeight.w500,
-                color: kTextSecondary,
-              ),
+              style: AppTypography.style(AppTextRole.label, fontSize: 11, color: kTextSecondary, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: false)),
             ),
           ],
         ),
@@ -1114,7 +1025,7 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
             Expanded(
               child: Text(
                 'Separates freshman entrance merit scholarships from thesis grants and final-year completion stipends.',
-                style: openSans(fontSize: 11, color: kTextSecondary),
+                style: AppTypography.style(AppTextRole.caption, fontSize: 11, color: kTextSecondary, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: true)),
               ),
             ),
           ],
@@ -1159,11 +1070,7 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
               Flexible(
                 child: Text(
                   title,
-                  style: outfit(
-                    fontSize: 12,
-                    fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
-                    color: isSelected ? Colors.white : kTextPrimary,
-                  ),
+                  style: AppTypography.style(AppTextRole.label, fontSize: 12, color: isSelected ? Colors.white : kTextPrimary, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: false)),
                   overflow: TextOverflow.ellipsis,
                 ),
               ),
@@ -1191,11 +1098,7 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
               Expanded(
                 child: Text(
                   'Grade Point Average (GWA)',
-                  style: outfit(
-                    fontSize: 13,
-                    fontWeight: FontWeight.w700,
-                    color: kTextPrimary,
-                  ),
+                  style: AppTypography.style(AppTextRole.sectionTitle, fontSize: 13, color: kTextPrimary, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: false)),
                   overflow: TextOverflow.ellipsis,
                 ),
               ),
@@ -1208,11 +1111,7 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
                 ),
                 child: Text(
                   'Merit Factor',
-                  style: outfit(
-                    fontSize: 10,
-                    fontWeight: FontWeight.w700,
-                    color: kPrimary,
-                  ),
+                  style: AppTypography.style(AppTextRole.badge, fontSize: 10, color: kPrimary, letterSpacing: opticalTracking(10), height: opticalLeading(10, isBody: false)),
                 ),
               ),
             ],
@@ -1255,7 +1154,7 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
           // Dynamic Scale Hint
           Text(
             'Active scale: $_selectedGpaScale. You can update this every semester.',
-            style: openSans(fontSize: 11, color: kTextSecondary),
+            style: AppTypography.style(AppTextRole.caption, fontSize: 11, color: kTextSecondary, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: true)),
           ),
           const SizedBox(height: 10),
 
@@ -1274,11 +1173,11 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
                 Expanded(
                   child: RichText(
                     text: TextSpan(
-                      style: openSans(fontSize: 11, color: kTextPrimary),
-                      children: const [
+                      style: AppTypography.style(AppTextRole.caption, fontSize: 11, color: kTextPrimary, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: true)),
+                      children:  [
                         TextSpan(
                           text: 'DOST-SEI & Megaworld Foundation ',
-                          style: TextStyle(fontWeight: FontWeight.w700, color: kPrimary),
+                          style: AppTypography.style(AppTextRole.bodyEmphasis, color: kPrimary),
                         ),
                         TextSpan(text: 'cutoff met for your academic standing.'),
                       ],
@@ -1322,11 +1221,7 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
             child: Text(
               scale,
               textAlign: TextAlign.center,
-              style: outfit(
-                fontSize: 11,
-                fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
-                color: isSelected ? kPrimary : kTextSecondary,
-              ),
+              style: AppTypography.style(AppTextRole.navigation, fontSize: 11, color: isSelected ? kPrimary : kTextSecondary, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: false)),
             ),
           ),
         ),
@@ -1370,20 +1265,11 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
                     children: [
                       Text(
                         'Subsidies Unlocked',
-                        style: outfit(
-                          fontSize: 10,
-                          fontWeight: FontWeight.w600,
-                          color: kTextSecondary,
-                          letterSpacing: 0.5,
-                        ),
+                        style: AppTypography.style(AppTextRole.cardTitle, fontSize: 10, color: kTextSecondary, letterSpacing: 0.5, height: opticalLeading(10, isBody: false)),
                       ),
                       Text(
                         isUndisclosed ? 'Merit Only Filter Active' : '₱60,000+ Potential / yr',
-                        style: outfit(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w700,
-                          color: kPrimary,
-                        ),
+                        style: AppTypography.style(isUndisclosed ? AppTextRole.bodyEmphasis : AppTextRole.metric, fontSize: 14, color: kPrimary, letterSpacing: opticalTracking(14), height: opticalLeading(14, isBody: false)),
                         overflow: TextOverflow.ellipsis,
                       ),
                     ],
@@ -1413,11 +1299,7 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
                 const SizedBox(width: 4),
                 Text(
                   'Active Filter',
-                  style: outfit(
-                    fontSize: 10,
-                    fontWeight: FontWeight.w700,
-                    color: kPrimary,
-                  ),
+                  style: AppTypography.style(AppTextRole.badge, fontSize: 10, color: kPrimary, letterSpacing: opticalTracking(10), height: opticalLeading(10, isBody: false)),
                 ),
               ],
             ),
@@ -1440,16 +1322,16 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
           inputFormatters: [
             FilteringTextInputFormatter.allow(RegExp(r'[0-9.]')),
           ],
-          style: outfit(fontSize: 16, fontWeight: FontWeight.w700, color: kTextPrimary),
+          style: AppTypography.style(AppTextRole.input, fontSize: 16, color: kTextPrimary, letterSpacing: opticalTracking(16), height: opticalLeading(16, isBody: false)),
           decoration: InputDecoration(
             labelText: 'Monthly Family Income *',
-            labelStyle: openSans(color: kTextSecondary, fontSize: 13),
+            labelStyle: AppTypography.style(AppTextRole.label, color: kTextSecondary, fontSize: 13, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: true)),
             hintText: '25,000',
-            hintStyle: openSans(color: Colors.black38, fontSize: 13),
+            hintStyle: AppTypography.style(AppTextRole.placeholder, color: Colors.black38, fontSize: 13, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: true)),
             helperText: 'Combined gross monthly income of parents, guardians, or breadwinners living in your home.',
-            helperStyle: openSans(color: kTextSecondary, fontSize: 11),
+            helperStyle: AppTypography.style(AppTextRole.caption, color: kTextSecondary, fontSize: 11, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: true)),
             prefixText: '₱ ',
-            prefixStyle: outfit(color: kPrimary, fontWeight: FontWeight.w700, fontSize: 16),
+            prefixStyle: AppTypography.style(AppTextRole.label, color: kPrimary, fontSize: 16, letterSpacing: opticalTracking(16), height: opticalLeading(16, isBody: false)),
             prefixIcon: const Icon(Icons.payments_outlined, size: 20, color: kTextSecondary),
             suffixIcon: _incomeController.text.isNotEmpty
                 ? IconButton(
@@ -1482,7 +1364,7 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
         // Quick Select Bracket Pills
         Text(
           'Quick Select Bracket',
-          style: outfit(fontSize: 11, fontWeight: FontWeight.w600, color: kTextSecondary),
+          style: AppTypography.style(AppTextRole.sectionTitle, fontSize: 11, color: kTextSecondary, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: false)),
         ),
         const SizedBox(height: 6),
         Wrap(
@@ -1520,11 +1402,7 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
           ),
           child: Text(
             label,
-            style: outfit(
-              fontSize: 11,
-              fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
-              color: isSelected ? Colors.white : kTextPrimary,
-            ),
+            style: AppTypography.style(AppTextRole.label, fontSize: 11, color: isSelected ? Colors.white : kTextPrimary, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: false)),
           ),
         ),
       ),
@@ -1544,11 +1422,11 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
         activeColor: kPrimary,
         title: Text(
           'Prefer not to say',
-          style: outfit(fontSize: 13, fontWeight: FontWeight.w700, color: kTextPrimary),
+          style: AppTypography.style(AppTextRole.label, fontSize: 13, color: kTextPrimary, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: false)),
         ),
         subtitle: Text(
           'You will still see 100% of academic, merit, STEM, creative, and leadership grants. Need-based filters will simply pause until you wish to update this.',
-          style: openSans(fontSize: 11, color: kTextSecondary, height: 1.35),
+          style: AppTypography.style(AppTextRole.caption, fontSize: 11, color: kTextSecondary, height: 1.35, letterSpacing: opticalTracking(11)),
         ),
         value: state.incomeUndisclosed,
         onChanged: (value) {
@@ -1575,7 +1453,7 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
           Flexible(
             child: Text(
               'Targeting Philippine Local Subsidies',
-              style: outfit(fontSize: 12, fontWeight: FontWeight.w700, color: kNavyTrust),
+              style: AppTypography.style(AppTextRole.cardTitle, fontSize: 12, color: kNavyTrust, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: false)),
               overflow: TextOverflow.ellipsis,
             ),
           ),
@@ -1615,17 +1493,17 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
               children: [
                 Text(
                   'LGU Funding Insight',
-                  style: outfit(fontSize: 12, fontWeight: FontWeight.w700, color: kSecondary),
+                  style: AppTypography.style(AppTextRole.cardTitle, fontSize: 12, color: kSecondary, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: false)),
                 ),
                 const SizedBox(height: 2),
                 RichText(
                   text: TextSpan(
-                    style: openSans(fontSize: 11, color: kTextPrimary, height: 1.35),
-                    children: const [
+                    style: AppTypography.style(AppTextRole.caption, fontSize: 11, color: kTextPrimary, height: 1.35, letterSpacing: opticalTracking(11)),
+                    children:  [
                       TextSpan(text: 'LGUs like Quezon City, Pasig, and Manila offer up to '),
                       TextSpan(
                         text: '₱10,000–₱25,000/sem',
-                        style: TextStyle(fontWeight: FontWeight.w700, color: kPrimary),
+                        style: AppTypography.style(AppTextRole.bodyEmphasis, color: kPrimary),
                       ),
                       TextSpan(text: ' specifically for registered local students. Keep your Barangay Indigency or Residency Certificate handy!'),
                     ],
@@ -1645,12 +1523,12 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
       children: [
         Text(
           'Government & Foundation Qualifiers',
-          style: outfit(fontSize: 14, fontWeight: FontWeight.w700, color: kTextPrimary),
+          style: AppTypography.style(AppTextRole.sectionTitle, fontSize: 14, color: kTextPrimary, letterSpacing: opticalTracking(14), height: opticalLeading(14, isBody: false)),
         ),
         const SizedBox(height: 2),
         Text(
           'Select any that apply to your household. These unlock preferential slots in CHED UniFAST TDP, DOST SEI, and private foundation quotas.',
-          style: openSans(fontSize: 11, color: kTextSecondary),
+          style: AppTypography.style(AppTextRole.caption, fontSize: 11, color: kTextSecondary, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: true)),
         ),
         const SizedBox(height: 10),
 
@@ -1726,15 +1604,11 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
         ),
         title: Text(
           title,
-          style: outfit(
-            fontSize: 13,
-            fontWeight: FontWeight.w600,
-            color: kTextPrimary,
-          ),
+          style: AppTypography.style(AppTextRole.cardTitle, fontSize: 13, color: kTextPrimary, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: false)),
         ),
         subtitle: Text(
           subtitle,
-          style: openSans(fontSize: 11, color: kTextSecondary),
+          style: AppTypography.style(AppTextRole.subtitle, fontSize: 11, color: kTextSecondary, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: true)),
         ),
         value: value,
         onChanged: (v) => onChanged(v ?? false),
@@ -1753,7 +1627,7 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
             Flexible(
               child: Text(
                 'Next: We will calculate your matched scholarship pool in real-time!',
-                style: outfit(fontSize: 11, fontWeight: FontWeight.w600, color: kPrimary),
+                style: AppTypography.style(AppTextRole.button, fontSize: 11, color: kPrimary, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: false)),
                 textAlign: TextAlign.center,
                 overflow: TextOverflow.ellipsis,
               ),
@@ -1769,7 +1643,7 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
             Flexible(
               child: Text(
                 'Encrypted • Republic Act No. 10173 (Data Privacy Act) Compliant',
-                style: openSans(fontSize: 11, color: kTextSecondary),
+                style: AppTypography.style(AppTextRole.caption, fontSize: 11, color: kTextSecondary, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: true)),
                 textAlign: TextAlign.center,
                 overflow: TextOverflow.ellipsis,
               ),
@@ -1811,7 +1685,7 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
       validator: validator,
       keyboardType: keyboardType,
       inputFormatters: inputFormatters,
-      style: openSans(fontSize: 14, color: kTextPrimary),
+      style: AppTypography.style(AppTextRole.input, fontSize: 14, color: kTextPrimary, letterSpacing: opticalTracking(14), height: opticalLeading(14, isBody: true)),
       decoration: _fieldDecoration(
         label: label,
         required: required,
@@ -1842,11 +1716,11 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
       initialValue: effectiveValue,
       hint: hint == null
           ? null
-          : Text(hint, style: openSans(color: Colors.black38, fontSize: 13)),
+          : Text(hint, style: AppTypography.style(AppTextRole.placeholder, color: Colors.black38, fontSize: 13, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: true))),
       onChanged: onChanged,
       items: items,
       validator: validator,
-      style: openSans(fontSize: 14, color: kTextPrimary),
+      style: AppTypography.style(AppTextRole.input, fontSize: 14, color: kTextPrimary, letterSpacing: opticalTracking(14), height: opticalLeading(14, isBody: true)),
       decoration: _fieldDecoration(
         label: label,
         required: required,
@@ -1872,13 +1746,13 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
             : label;
     return InputDecoration(
       labelText: labelText,
-      labelStyle: openSans(color: kTextSecondary, fontSize: 13),
+      labelStyle: AppTypography.style(AppTextRole.label, color: kTextSecondary, fontSize: 13, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: true)),
       hintText: hintText,
-      hintStyle: openSans(color: Colors.black38, fontSize: 13),
+      hintStyle: AppTypography.style(AppTextRole.placeholder, color: Colors.black38, fontSize: 13, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: true)),
       helperText: helperText,
-      helperStyle: openSans(color: kTextSecondary, fontSize: 11),
+      helperStyle: AppTypography.style(AppTextRole.caption, color: kTextSecondary, fontSize: 11, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: true)),
       prefixText: prefixText,
-      prefixStyle: outfit(color: kTextPrimary, fontWeight: FontWeight.w600, fontSize: 14),
+      prefixStyle: AppTypography.style(AppTextRole.label, color: kTextPrimary, fontSize: 14, letterSpacing: opticalTracking(14), height: opticalLeading(14, isBody: false)),
       prefixIcon: prefixIcon != null ? Icon(prefixIcon, size: 20, color: kTextSecondary) : null,
       filled: true,
       fillColor: Colors.white,
@@ -1921,7 +1795,7 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
           Expanded(
             child: Text(
               message,
-              style: openSans(color: kError, fontSize: 13),
+              style: AppTypography.style(AppTextRole.body, color: kError, fontSize: 13, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: true)),
             ),
           ),
         ],
@@ -1960,7 +1834,7 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
                     const SizedBox(width: 6),
                     Text(
                       'Back',
-                      style: outfit(fontSize: 14, fontWeight: FontWeight.w600),
+                      style: AppTypography.style(AppTextRole.button, fontSize: 14, letterSpacing: opticalTracking(14), height: opticalLeading(14, isBody: false)),
                     ),
                   ],
                 ),
@@ -2001,11 +1875,7 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
                         Flexible(
                           child: Text(
                             isLastStep ? 'Complete Profile' : 'Continue',
-                            style: outfit(
-                              fontSize: 15,
-                              fontWeight: FontWeight.w600,
-                              color: Colors.white,
-                            ),
+                            style: AppTypography.style(AppTextRole.button, fontSize: 15, color: Colors.white, letterSpacing: opticalTracking(15), height: opticalLeading(15, isBody: false)),
                             overflow: TextOverflow.ellipsis,
                           ),
                         ),
@@ -2047,17 +1917,13 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
                       'Enrolled College or University',
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: openSans(
-                        fontSize: 13,
-                        fontWeight: FontWeight.w600,
-                        color: kOnSurface,
-                      ),
+                      style: AppTypography.style(AppTextRole.label, fontSize: 13, color: kOnSurface, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: true)),
                     ),
                   ),
                   const SizedBox(width: 4),
                   Text(
                     '(Optional)',
-                    style: openSans(fontSize: 12, color: Colors.black45),
+                    style: AppTypography.style(AppTextRole.caption, fontSize: 12, color: Colors.black45, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: true)),
                   ),
                 ],
               ),
@@ -2067,7 +1933,7 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
               label: const Text('Add Unlisted'),
               style: TextButton.styleFrom(
                 foregroundColor: kPrimary,
-                textStyle: openSans(fontSize: 11, fontWeight: FontWeight.w600),
+                textStyle: AppTypography.style(AppTextRole.button, fontSize: 11, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: true)),
                 visualDensity: VisualDensity.compact,
               ),
               onPressed: () => _showAddSchoolDialog(context),
@@ -2077,7 +1943,7 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
         const SizedBox(height: 4),
         Text(
           'Matches campus-specific endowments, CHED UniFAST subsidies, and alumni grants.',
-          style: openSans(fontSize: 11, color: Colors.black54),
+          style: AppTypography.style(AppTextRole.caption, fontSize: 11, color: Colors.black54, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: true)),
         ),
         const SizedBox(height: 8),
 
@@ -2115,16 +1981,12 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
                     children: [
                       Text(
                         _schoolController.text,
-                        style: openSans(
-                          fontSize: 13,
-                          fontWeight: FontWeight.w600,
-                          color: kOnSurface,
-                        ),
+                        style: AppTypography.style(AppTextRole.bodyEmphasis, fontSize: 13, color: kOnSurface, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: true)),
                       ),
                       const SizedBox(height: 2),
                       Text(
                         'Student-declared • Verified via COR/Student ID',
-                        style: openSans(fontSize: 10, color: Colors.black54),
+                        style: AppTypography.style(AppTextRole.caption, fontSize: 10, color: Colors.black54, letterSpacing: opticalTracking(10), height: opticalLeading(10, isBody: true)),
                       ),
                     ],
                   ),
@@ -2133,7 +1995,7 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
                   onPressed: () => setState(() => _isSchoolSelectorExpanded = true),
                   child: Text(
                     'Change',
-                    style: openSans(fontSize: 12, fontWeight: FontWeight.w600, color: kPrimary),
+                    style: AppTypography.style(AppTextRole.button, fontSize: 12, color: kPrimary, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: true)),
                   ),
                 ),
               ],
@@ -2154,11 +2016,11 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
                 TextField(
                   controller: _schoolSearchController,
                   onChanged: (_) => setState(() {}),
-                  style: openSans(fontSize: 13),
+                  style: AppTypography.style(AppTextRole.input, fontSize: 13, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: true)),
                   decoration: InputDecoration(
                     isDense: true,
                     hintText: 'Search Philippine universities & colleges...',
-                    hintStyle: openSans(fontSize: 12, color: Colors.black38),
+                    hintStyle: AppTypography.style(AppTextRole.placeholder, fontSize: 12, color: Colors.black38, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: true)),
                     prefixIcon: const Icon(Icons.search, size: 18, color: Colors.black45),
                     suffixIcon: _schoolSearchController.text.isNotEmpty
                         ? IconButton(
@@ -2171,7 +2033,7 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
                         : (hasSelectedSchool
                             ? TextButton(
                                 onPressed: () => setState(() => _isSchoolSelectorExpanded = false),
-                                child: Text('Done', style: openSans(fontSize: 11, color: kPrimary)),
+                                child: Text('Done', style: AppTypography.style(AppTextRole.button, fontSize: 11, color: kPrimary, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: true))),
                               )
                             : null),
                     filled: true,
@@ -2207,7 +2069,7 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
                     padding: const EdgeInsets.all(8),
                     child: Text(
                       'Failed to load institutions: $err',
-                      style: openSans(fontSize: 12, color: Colors.red),
+                      style: AppTypography.style(AppTextRole.caption, fontSize: 12, color: Colors.red, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: true)),
                     ),
                   ),
                   data: (allSchools) {
@@ -2231,7 +2093,7 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
                                   child: Center(
                                     child: Text(
                                       'No matching institutions found.',
-                                      style: openSans(fontSize: 12, color: Colors.black45),
+                                      style: AppTypography.style(AppTextRole.caption, fontSize: 12, color: Colors.black45, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: true)),
                                     ),
                                   ),
                                 )
@@ -2255,16 +2117,12 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
                                       ),
                                       title: Text(
                                         school.name,
-                                        style: openSans(
-                                          fontSize: 12,
-                                          fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
-                                          color: isSelected ? kPrimary : Colors.black87,
-                                        ),
+                                        style: AppTypography.style(AppTextRole.input, fontSize: 12, color: isSelected ? kPrimary : Colors.black87, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: true)),
                                       ),
                                       subtitle: !school.isCurated
                                           ? Text(
                                               'Custom institution',
-                                              style: openSans(fontSize: 10, color: Colors.black45),
+                                              style: AppTypography.style(AppTextRole.caption, fontSize: 10, color: Colors.black45, letterSpacing: opticalTracking(10), height: opticalLeading(10, isBody: true)),
                                             )
                                           : null,
                                       trailing: isSelected
@@ -2282,15 +2140,11 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
                             leading: const Icon(Icons.add_circle_outline, color: kPrimary, size: 20),
                             title: Text(
                               'Add "${_schoolSearchController.text.trim()}"',
-                              style: poppins(
-                                color: kPrimary,
-                                fontWeight: FontWeight.w600,
-                                fontSize: 12,
-                              ),
+                              style: AppTypography.style(AppTextRole.button, color: kPrimary, fontSize: 12, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: false)),
                             ),
                             subtitle: Text(
                               'Register a new higher education institution',
-                              style: openSans(fontSize: 11, color: Colors.black54),
+                              style: AppTypography.style(AppTextRole.caption, fontSize: 11, color: Colors.black54, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: true)),
                             ),
                             onTap: () => _showAddSchoolDialog(
                               context,
@@ -2344,7 +2198,7 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
           title: Text(
             'Add Higher Education Institution',
-            style: poppins(fontSize: 16, fontWeight: FontWeight.w700, color: kPrimary),
+            style: AppTypography.style(AppTextRole.sectionTitle, fontSize: 16, color: kPrimary, letterSpacing: opticalTracking(16), height: opticalLeading(16, isBody: false)),
           ),
           content: Form(
             key: formKey,
@@ -2354,16 +2208,16 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
               children: [
                 Text(
                   'Enter the official name of the university or college in the Philippines.',
-                  style: openSans(fontSize: 12, color: Colors.black54),
+                  style: AppTypography.style(AppTextRole.subtitle, fontSize: 12, color: Colors.black54, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: true)),
                 ),
                 const SizedBox(height: 16),
                 TextFormField(
                   controller: nameController,
                   autofocus: true,
-                  style: openSans(fontSize: 13),
+                  style: AppTypography.style(AppTextRole.input, fontSize: 13, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: true)),
                   decoration: InputDecoration(
                     labelText: 'Institution Name *',
-                    labelStyle: openSans(fontSize: 12),
+                    labelStyle: AppTypography.style(AppTextRole.label, fontSize: 12, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: true)),
                     hintText: 'e.g. Pamantasan ng Lungsod ng Maynila',
                     border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
                   ),
@@ -2383,7 +2237,7 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
           actions: [
             TextButton(
               onPressed: isSubmitting ? null : () => Navigator.of(dialogCtx).pop(),
-              child: Text('Cancel', style: openSans(fontSize: 13, color: Colors.black54)),
+              child: Text('Cancel', style: AppTypography.style(AppTextRole.button, fontSize: 13, color: Colors.black54, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: true))),
             ),
             ElevatedButton(
               style: ElevatedButton.styleFrom(
@@ -2431,7 +2285,7 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
                       height: 16,
                       child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
                     )
-                  : Text('Add Institution', style: openSans(fontSize: 13, fontWeight: FontWeight.w600)),
+                  : Text('Add Institution', style: AppTypography.style(AppTextRole.button, fontSize: 13, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: true))),
             ),
           ],
         ),

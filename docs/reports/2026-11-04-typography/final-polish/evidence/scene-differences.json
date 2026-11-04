@@ -1,0 +1,25 @@
+{
+  "pairs": 18,
+  "changed": [
+    "home-390-1.0.png",
+    "home-390-2.0.png",
+    "scholarship-card-320.png",
+    "scholarship-card-390.png"
+  ],
+  "same": [
+    "admin-320.png",
+    "admin-390.png",
+    "authentication-320.png",
+    "authentication-390.png",
+    "authentication-errors-320.png",
+    "authentication-errors-390.png",
+    "logout-dialog-320.png",
+    "logout-dialog-390.png",
+    "onboarding-320.png",
+    "onboarding-390.png",
+    "provider-individual-320.png",
+    "provider-individual-390.png",
+    "provider-organization-320.png",
+    "provider-organization-390.png"
+  ]
+}

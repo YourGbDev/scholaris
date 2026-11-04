@@ -5,6 +5,7 @@
 // action. No approval workflow yet — this is the end of the provider signup
 // flow for now.
 
+import 'package:scholaris/shared/theme/app_typography.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -37,11 +38,7 @@ class ProviderReviewScreen extends StatelessWidget {
                   Text(
                     'Application Under Review',
                     textAlign: TextAlign.center,
-                    style: poppins(
-                      fontSize: 28,
-                      fontWeight: FontWeight.w700,
-                      color: kPrimary,
-                    ),
+                    style: AppTypography.style(AppTextRole.screenTitle, fontSize: 28, color: kPrimary, letterSpacing: opticalTracking(28), height: opticalLeading(28, isBody: false)),
                   ),
                   const SizedBox(height: 16),
                   Text(
@@ -49,11 +46,7 @@ class ProviderReviewScreen extends StatelessWidget {
                     'provider. Our team will review your application and '
                     'get back to you within 3–5 business days.',
                     textAlign: TextAlign.center,
-                    style: openSans(
-                      fontSize: 15,
-                      color: Colors.black54,
-                      height: 1.5,
-                    ),
+                    style: AppTypography.style(AppTextRole.body, fontSize: 15, color: Colors.black54, height: 1.5, letterSpacing: opticalTracking(15)),
                   ),
                   const SizedBox(height: 32),
                   PressableScale(
@@ -70,7 +63,7 @@ class ProviderReviewScreen extends StatelessWidget {
                       ),
                       child: Text(
                         'Back to Provider Sign In',
-                        style: poppins(fontWeight: FontWeight.w600),
+                        style: AppTypography.style(AppTextRole.button),
                       ),
                     ),
                   ),

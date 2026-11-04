@@ -6,6 +6,7 @@
 //
 // Preserves local validation, Supabase sign up flow, and test suite contracts.
 
+import 'package:scholaris/shared/theme/app_typography.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -177,11 +178,7 @@ class _SignupScreenState extends State<SignupScreen> {
           Expanded(
             child: Text(
               label,
-              style: openSans(
-                fontSize: 11,
-                color: met ? kPrimary : const Color(0xFF757575),
-                fontWeight: met ? FontWeight.w600 : FontWeight.w400,
-              ),
+              style: AppTypography.style(AppTextRole.label, fontSize: 11, color: met ? kPrimary : const Color(0xFF757575), letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: true)),
               overflow: TextOverflow.ellipsis,
             ),
           ),
@@ -193,7 +190,7 @@ class _SignupScreenState extends State<SignupScreen> {
   SnackBar _snackBar(String message) => SnackBar(
         content: Text(
           message,
-          style: openSans(color: Colors.white, fontSize: 13),
+          style: AppTypography.style(AppTextRole.body, color: Colors.white, fontSize: 13, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: true)),
         ),
         backgroundColor: const Color(0xFF161C27),
         behavior: SnackBarBehavior.floating,
@@ -252,11 +249,7 @@ class _SignupScreenState extends State<SignupScreen> {
                           const SizedBox(width: 4),
                           Text(
                             'Help',
-                            style: openSans(
-                              fontSize: 12,
-                              fontWeight: FontWeight.w600,
-                              color: kTextSecondary,
-                            ),
+                            style: AppTypography.style(AppTextRole.button, fontSize: 12, color: kTextSecondary, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: true)),
                           ),
                         ],
                       ),
@@ -302,12 +295,7 @@ class _SignupScreenState extends State<SignupScreen> {
                                   const SizedBox(width: 6),
                                   Text(
                                     'ISKOLAR NG BAYAN',
-                                    style: poppins(
-                                      fontSize: 11,
-                                      fontWeight: FontWeight.w700,
-                                      color: kPrimary,
-                                      letterSpacing: 0.8,
-                                    ),
+                                    style: AppTypography.style(AppTextRole.label, fontSize: 11, color: kPrimary, letterSpacing: 0.8, height: opticalLeading(11, isBody: false)),
                                   ),
                                 ],
                               ),
@@ -318,21 +306,12 @@ class _SignupScreenState extends State<SignupScreen> {
                           // Heading
                           Text(
                             'Create your account',
-                            style: poppins(
-                              fontSize: 24,
-                              fontWeight: FontWeight.w700,
-                              color: kTextPrimary,
-                              height: 1.2,
-                            ),
+                            style: AppTypography.style(AppTextRole.screenTitle, fontSize: 24, color: kTextPrimary, height: 1.2, letterSpacing: opticalTracking(24)),
                           ),
                           const SizedBox(height: 4),
                           Text(
                             'Access thousands of verified scholarships across the Philippines tailored to your background.',
-                            style: openSans(
-                              fontSize: 12,
-                              color: kTextSecondary,
-                              height: 1.4,
-                            ),
+                            style: AppTypography.style(AppTextRole.subtitle, fontSize: 12, color: kTextSecondary, height: 1.4, letterSpacing: opticalTracking(12)),
                           ),
                           const SizedBox(height: 14),
 
@@ -380,11 +359,7 @@ class _SignupScreenState extends State<SignupScreen> {
                                               child: Text(
                                                 'Free Forever For Students',
                                                 overflow: TextOverflow.ellipsis,
-                                                style: poppins(
-                                                  fontSize: 10,
-                                                  fontWeight: FontWeight.w600,
-                                                  color: Colors.white,
-                                                ),
+                                                style: AppTypography.style(AppTextRole.badge, fontSize: 10, color: Colors.white, letterSpacing: opticalTracking(10), height: opticalLeading(10, isBody: false)),
                                               ),
                                             ),
                                           ],
@@ -394,30 +369,19 @@ class _SignupScreenState extends State<SignupScreen> {
                                     const SizedBox(width: 6),
                                     Text(
                                       '100% Free',
-                                      style: poppins(
-                                        fontSize: 11,
-                                        fontWeight: FontWeight.w700,
-                                        color: const Color(0xFFB3F1C6),
-                                      ),
+                                      style: AppTypography.style(AppTextRole.badge, fontSize: 11, color: const Color(0xFFB3F1C6), letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: false)),
                                     ),
                                   ],
                                 ),
                                 const SizedBox(height: 8),
                                 Text(
                                   '₱480M+ Active Grants',
-                                  style: poppins(
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.w700,
-                                    color: Colors.white,
-                                  ),
+                                  style: AppTypography.style(AppTextRole.metric, fontSize: 20, color: Colors.white, letterSpacing: opticalTracking(20), height: opticalLeading(20, isBody: false)),
                                 ),
                                 const SizedBox(height: 2),
                                 Text(
                                   'Vetted opportunities spanning Luzon, Visayas & Mindanao',
-                                  style: openSans(
-                                    fontSize: 11,
-                                    color: Colors.white.withValues(alpha: 0.85),
-                                  ),
+                                  style: AppTypography.style(AppTextRole.caption, fontSize: 11, color: Colors.white.withValues(alpha: 0.85), letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: true)),
                                 ),
                               ],
                             ),
@@ -430,20 +394,13 @@ class _SignupScreenState extends State<SignupScreen> {
                             children: [
                               Text(
                                 'Full Name',
-                                style: poppins(
-                                  fontSize: 13,
-                                  fontWeight: FontWeight.w600,
-                                  color: kTextPrimary,
-                                ),
+                                style: AppTypography.style(AppTextRole.label, fontSize: 13, color: kTextPrimary, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: false)),
                               ),
                               Flexible(
                                 child: Text(
                                   'As on PSA birth certificate',
                                   overflow: TextOverflow.ellipsis,
-                                  style: openSans(
-                                    fontSize: 11,
-                                    color: kTextSecondary,
-                                  ),
+                                  style: AppTypography.style(AppTextRole.caption, fontSize: 11, color: kTextSecondary, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: true)),
                                 ),
                               ),
                             ],
@@ -461,11 +418,7 @@ class _SignupScreenState extends State<SignupScreen> {
                           // 2. University, College, or High School (TextField - preserves FormField indices)
                           Text(
                             'University, College, or High School',
-                            style: poppins(
-                              fontSize: 13,
-                              fontWeight: FontWeight.w600,
-                              color: kTextPrimary,
-                            ),
+                            style: AppTypography.style(AppTextRole.label, fontSize: 13, color: kTextPrimary, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: false)),
                           ),
                           const SizedBox(height: 6),
                           _auxTextField(
@@ -482,20 +435,13 @@ class _SignupScreenState extends State<SignupScreen> {
                             children: [
                               Text(
                                 'Email',
-                                style: poppins(
-                                  fontSize: 13,
-                                  fontWeight: FontWeight.w600,
-                                  color: kTextPrimary,
-                                ),
+                                style: AppTypography.style(AppTextRole.label, fontSize: 13, color: kTextPrimary, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: false)),
                               ),
                               Flexible(
                                 child: Text(
                                   'School or personal',
                                   overflow: TextOverflow.ellipsis,
-                                  style: openSans(
-                                    fontSize: 11,
-                                    color: kTextSecondary,
-                                  ),
+                                  style: AppTypography.style(AppTextRole.caption, fontSize: 11, color: kTextSecondary, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: true)),
                                 ),
                               ),
                             ],
@@ -514,11 +460,7 @@ class _SignupScreenState extends State<SignupScreen> {
                           // 4. Mobile number (optional) (TextField)
                           Text(
                             'Mobile number (optional)',
-                            style: poppins(
-                              fontSize: 13,
-                              fontWeight: FontWeight.w600,
-                              color: kTextPrimary,
-                            ),
+                            style: AppTypography.style(AppTextRole.label, fontSize: 13, color: kTextPrimary, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: false)),
                           ),
                           const SizedBox(height: 6),
                           Row(
@@ -537,11 +479,7 @@ class _SignupScreenState extends State<SignupScreen> {
                                     const SizedBox(width: 4),
                                     Text(
                                       '+63',
-                                      style: poppins(
-                                        fontSize: 12,
-                                        fontWeight: FontWeight.w600,
-                                        color: kTextPrimary,
-                                      ),
+                                      style: AppTypography.style(AppTextRole.label, fontSize: 12, color: kTextPrimary, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: false)),
                                     ),
                                   ],
                                 ),
@@ -562,11 +500,7 @@ class _SignupScreenState extends State<SignupScreen> {
                           // 5. Password (TextFormField index 2)
                           Text(
                             'Password',
-                            style: poppins(
-                              fontSize: 13,
-                              fontWeight: FontWeight.w600,
-                              color: kTextPrimary,
-                            ),
+                            style: AppTypography.style(AppTextRole.label, fontSize: 13, color: kTextPrimary, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: false)),
                           ),
                           const SizedBox(height: 6),
                           _formTextField(
@@ -632,17 +566,11 @@ class _SignupScreenState extends State<SignupScreen> {
                             children: [
                               Text(
                                 'Password Complexity',
-                                style: openSans(fontSize: 11, color: kTextSecondary),
+                                style: AppTypography.style(AppTextRole.sectionTitle, fontSize: 11, color: kTextSecondary, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: true)),
                               ),
                               Text(
                                 PasswordValidator.strengthLabel(passwordStrength),
-                                style: openSans(
-                                  fontSize: 11,
-                                  fontWeight: FontWeight.w600,
-                                  color: passwordStrength >= 3
-                                      ? kPrimary
-                                      : (passwordStrength == 2 ? Colors.orange : const Color(0xFFBA1A1A)),
-                                ),
+                                style: AppTypography.style(AppTextRole.label, fontSize: 11, color: passwordStrength >= 3 ? kPrimary : (passwordStrength == 2 ? Colors.orange : const Color(0xFFBA1A1A)), letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: true)),
                               ),
                             ],
                           ),
@@ -672,11 +600,7 @@ class _SignupScreenState extends State<SignupScreen> {
                             children: [
                               Text(
                                 'Confirm Password',
-                                style: poppins(
-                                  fontSize: 13,
-                                  fontWeight: FontWeight.w600,
-                                  color: kTextPrimary,
-                                ),
+                                style: AppTypography.style(AppTextRole.label, fontSize: 13, color: kTextPrimary, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: false)),
                               ),
                               if (passwordsMatch)
                                 Row(
@@ -685,11 +609,7 @@ class _SignupScreenState extends State<SignupScreen> {
                                     const SizedBox(width: 4),
                                     Text(
                                       'Passwords match',
-                                      style: openSans(
-                                        fontSize: 11,
-                                        fontWeight: FontWeight.w600,
-                                        color: kPrimary,
-                                      ),
+                                      style: AppTypography.style(AppTextRole.badge, fontSize: 11, color: kPrimary, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: true)),
                                     ),
                                   ],
                                 ),
@@ -740,11 +660,7 @@ class _SignupScreenState extends State<SignupScreen> {
                                 Expanded(
                                   child: Text(
                                     'I agree to the Terms of Service and Data Privacy Policy in accordance with the Philippine Data Privacy Act of 2012 (RA 10173).',
-                                    style: openSans(
-                                      fontSize: 11,
-                                      color: kTextSecondary,
-                                      height: 1.4,
-                                    ),
+                                    style: AppTypography.style(AppTextRole.body, fontSize: 11, color: kTextSecondary, height: 1.4, letterSpacing: opticalTracking(11)),
                                   ),
                                 ),
                               ],
@@ -805,20 +721,12 @@ class _SignupScreenState extends State<SignupScreen> {
                                   children: [
                                     Text(
                                       'Sign up',
-                                      style: poppins(
-                                        fontSize: 15,
-                                        fontWeight: FontWeight.w600,
-                                        color: Colors.white,
-                                      ),
+                                      style: AppTypography.style(AppTextRole.button, fontSize: 15, color: Colors.white, letterSpacing: opticalTracking(15), height: opticalLeading(15, isBody: false)),
                                     ),
                                     Text(
                                       ' — Create Free Account',
                                       overflow: TextOverflow.ellipsis,
-                                      style: poppins(
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.w500,
-                                        color: Colors.white.withValues(alpha: 0.9),
-                                      ),
+                                      style: AppTypography.style(AppTextRole.button, fontSize: 14, color: Colors.white.withValues(alpha: 0.9), letterSpacing: opticalTracking(14), height: opticalLeading(14, isBody: false)),
                                     ),
                                     const SizedBox(width: 6),
                                     const Icon(Icons.arrow_forward_rounded, size: 18),
@@ -835,10 +743,7 @@ class _SignupScreenState extends State<SignupScreen> {
                         children: [
                           Text(
                             'Already have an account? ',
-                            style: openSans(
-                              fontSize: 12,
-                              color: kTextSecondary,
-                            ),
+                            style: AppTypography.style(AppTextRole.body, fontSize: 12, color: kTextSecondary, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: true)),
                           ),
                           TextButton(
                             onPressed: () => context.go('/login'),
@@ -852,11 +757,7 @@ class _SignupScreenState extends State<SignupScreen> {
                               children: [
                                 Text(
                                   'Log in',
-                                  style: poppins(
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.w700,
-                                    color: kPrimary,
-                                  ),
+                                  style: AppTypography.style(AppTextRole.button, fontSize: 12, color: kPrimary, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: false)),
                                 ),
                                 const Icon(
                                   Icons.chevron_right_rounded,
@@ -898,11 +799,11 @@ class _SignupScreenState extends State<SignupScreen> {
       keyboardType: keyboardType,
       onChanged: onChanged,
       onFieldSubmitted: onFieldSubmitted,
-      style: openSans(fontSize: 14, color: kTextPrimary),
+      style: AppTypography.style(AppTextRole.input, fontSize: 14, color: kTextPrimary, letterSpacing: opticalTracking(14), height: opticalLeading(14, isBody: true)),
       validator: validator,
       decoration: InputDecoration(
         hintText: hintText,
-        hintStyle: openSans(fontSize: 13, color: Colors.black38),
+        hintStyle: AppTypography.style(AppTextRole.placeholder, fontSize: 13, color: Colors.black38, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: true)),
         prefixIcon: prefixIcon != null ? Icon(prefixIcon, size: 20, color: kTextSecondary) : null,
         suffixIcon: suffixIcon,
         filled: true,
@@ -943,10 +844,10 @@ class _SignupScreenState extends State<SignupScreen> {
       controller: controller,
       textInputAction: textInputAction,
       keyboardType: keyboardType,
-      style: openSans(fontSize: 14, color: kTextPrimary),
+      style: AppTypography.style(AppTextRole.input, fontSize: 14, color: kTextPrimary, letterSpacing: opticalTracking(14), height: opticalLeading(14, isBody: true)),
       decoration: InputDecoration(
         hintText: hintText,
-        hintStyle: openSans(fontSize: 13, color: Colors.black38),
+        hintStyle: AppTypography.style(AppTextRole.placeholder, fontSize: 13, color: Colors.black38, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: true)),
         prefixIcon: prefixIcon != null ? Icon(prefixIcon, size: 20, color: kTextSecondary) : null,
         filled: true,
         fillColor: Colors.white,

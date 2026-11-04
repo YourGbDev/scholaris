@@ -17,6 +17,8 @@
 //   * the controller is disposed with the state and a disposed widget never
 //     invokes [onCompleted].
 
+import 'package:scholaris/shared/theme/app_motion.dart' show opticalTracking, opticalLeading;
+import 'package:scholaris/shared/theme/app_typography.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 
@@ -154,11 +156,7 @@ class _GraduationCeremonyState extends State<GraduationCeremony>
                   ),
                   child: Text(
                     'Skip',
-                    style: outfit(
-                      fontSize: 13,
-                      fontWeight: FontWeight.w600,
-                      color: const Color(0xFF0F4D2E),
-                    ),
+                    style: AppTypography.style(AppTextRole.button, fontSize: 13, color: const Color(0xFF0F4D2E), letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: false)),
                   ),
                 ),
               ),

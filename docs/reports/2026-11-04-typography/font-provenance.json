@@ -1,0 +1,24 @@
+{
+  "release": "Inter 4.1",
+  "source": "https://github.com/rsms/inter/releases/tag/v4.1",
+  "download": "https://github.com/rsms/inter/releases/download/v4.1/Inter-4.1.zip",
+  "license": "assets/fonts/inter/OFL.txt",
+  "files": [
+    {
+      "file": "assets/fonts/inter/Inter-Regular.ttf",
+      "sha256": "40d692fce188e4471e2b3cba937be967878f631ad3ebbbdcd587687c7ebe0c82"
+    },
+    {
+      "file": "assets/fonts/inter/Inter-Medium.ttf",
+      "sha256": "97ad806f526e41546d46365bb3a393145f75b7b1568913db74549ad8b8dba872"
+    },
+    {
+      "file": "assets/fonts/inter/Inter-SemiBold.ttf",
+      "sha256": "78a843fade9d4612a5567302fb595b56976eb5fcebf4fea5a5912d638bafcde3"
+    },
+    {
+      "file": "assets/fonts/inter/Inter-Bold.ttf",
+      "sha256": "288316099b1e0a47a4716d159098005eef7c0066921f34e3200393dbdb01947f"
+    }
+  ]
+}

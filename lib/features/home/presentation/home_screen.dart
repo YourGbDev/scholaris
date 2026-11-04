@@ -13,6 +13,7 @@
 //
 // Retained offstage pages preserve state; StudentTabEntrance animates each visit.
 
+import 'package:scholaris/shared/theme/app_typography.dart';
 import 'dart:math' as math;
 
 import 'widgets/student_selection_indicator.dart';
@@ -1244,11 +1245,7 @@ class _StudentNavItemState extends State<_StudentNavItem>
     final labelMetrics = TextPainter(
       text: TextSpan(
         text: widget.label,
-        style: outfit(
-          fontSize: kStudentNavBaseFontSize,
-          fontWeight: FontWeight.w600,
-          letterSpacing: -.1,
-        ),
+        style: AppTypography.style(AppTextRole.navigation, fontSize: kStudentNavBaseFontSize, letterSpacing: -.1, height: opticalLeading(kStudentNavBaseFontSize, isBody: false)),
       ),
       textDirection: Directionality.of(context),
       textScaler: MediaQuery.textScalerOf(context),
@@ -1361,12 +1358,7 @@ class _StudentNavItemState extends State<_StudentNavItem>
                                 maxLines: 1,
                                 overflow: TextOverflow.visible,
                                 softWrap: false,
-                                style: outfit(
-                                  fontSize: kStudentNavBaseFontSize,
-                                  fontWeight: FontWeight.w600,
-                                  letterSpacing: -.1,
-                                  color: ink,
-                                ),
+                                style: AppTypography.style(AppTextRole.navigation, fontSize: kStudentNavBaseFontSize, letterSpacing: -.1, color: ink, height: opticalLeading(kStudentNavBaseFontSize, isBody: false)),
                               ),
                             ),
                           ),

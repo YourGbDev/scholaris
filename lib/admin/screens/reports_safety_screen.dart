@@ -1,3 +1,4 @@
+import 'package:scholaris/shared/theme/app_typography.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -49,9 +50,9 @@ class _ReportsSafetyScreenState extends ConsumerState<ReportsSafetyScreen> {
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
+                   Text(
                     'Select review outcome:',
-                    style: TextStyle(fontWeight: FontWeight.w600),
+                    style: AppTypography.style(AppTextRole.label),
                   ),
                   const SizedBox(height: 8),
                   DropdownButtonFormField<String>(
@@ -79,9 +80,9 @@ class _ReportsSafetyScreenState extends ConsumerState<ReportsSafetyScreen> {
                     },
                   ),
                   const SizedBox(height: 16),
-                  const Text(
+                   Text(
                     'Review explanation note (required, 10–1000 characters):',
-                    style: TextStyle(fontWeight: FontWeight.w600),
+                    style: AppTypography.style(AppTextRole.label),
                   ),
                   const SizedBox(height: 8),
                   TextField(
@@ -98,10 +99,7 @@ class _ReportsSafetyScreenState extends ConsumerState<ReportsSafetyScreen> {
                     const SizedBox(height: 8),
                     Text(
                       error!,
-                      style: const TextStyle(
-                        color: Color(0xFF93000A),
-                        fontSize: 13,
-                      ),
+                      style: AppTypography.style(AppTextRole.caption, color: Color(0xFF93000A), fontSize: 13),
                     ),
                   ],
                   if (saving) ...[
@@ -196,7 +194,7 @@ class _ReportsSafetyScreenState extends ConsumerState<ReportsSafetyScreen> {
                       _categoryLabels[row['category']] ??
                           supportConcernCategories[row['category']] ??
                           'Support concern',
-                      style: Theme.of(ctx).textTheme.titleMedium,
+                      style: AppTypography.style(AppTextRole.cardTitle, base: Theme.of(ctx).textTheme.titleMedium),
                     ),
                     Text(
                       'Status: ${row['status']?.toString().replaceAll('_', ' ') ?? 'Unavailable'}',
@@ -218,15 +216,15 @@ class _ReportsSafetyScreenState extends ConsumerState<ReportsSafetyScreen> {
                         padding: const EdgeInsets.only(top: 6),
                         child: Text(
                           'Latest update: ${row['resolution_note']}',
-                          style: const TextStyle(fontWeight: FontWeight.w600),
+                          style: AppTypography.style(AppTextRole.bodyEmphasis),
                         ),
                       ),
                     if (row['evidence'] is List &&
                         (row['evidence'] as List).isNotEmpty) ...[
                       const SizedBox(height: 10),
-                      const Text(
+                       Text(
                         'Attached evidence:',
-                        style: TextStyle(fontWeight: FontWeight.w600),
+                        style: AppTypography.style(AppTextRole.sectionTitle),
                       ),
                       const SizedBox(height: 4),
                       for (final ev in (row['evidence'] as List)) ...[
@@ -363,10 +361,9 @@ class _ReportsSafetyScreenState extends ConsumerState<ReportsSafetyScreen> {
       children: [
         Text(
           'Reports & safety',
-          style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                color: const Color(0xFF0F4D2E),
-                fontWeight: FontWeight.w700,
-              ),
+          style: AppTypography.style(AppTextRole.screenTitle,
+            base: Theme.of(context).textTheme.headlineMedium,
+            color: const Color(0xFF0F4D2E)),
         ),
         const SizedBox(height: 8),
         const Text(
@@ -497,21 +494,14 @@ class _ReportsSafetyScreenState extends ConsumerState<ReportsSafetyScreen> {
                 ),
               ),
               const SizedBox(height: 12),
-              const Text(
+               Text(
                 'No reports match these filters.',
-                style: TextStyle(
-                  fontSize: 15,
-                  fontWeight: FontWeight.w600,
-                  color: Color(0xFF1D2939),
-                ),
+                style: AppTypography.style(AppTextRole.sectionTitle, fontSize: 15, color: Color(0xFF1D2939)),
               ),
               const SizedBox(height: 4),
-              const Text(
+               Text(
                 'Try clearing your search query or selecting a different review status.',
-                style: TextStyle(
-                  fontSize: 13,
-                  color: Color(0xFF667085),
-                ),
+                style: AppTypography.style(AppTextRole.body, fontSize: 13, color: Color(0xFF667085)),
                 textAlign: TextAlign.center,
               ),
             ],
@@ -526,19 +516,16 @@ class _ReportsSafetyScreenState extends ConsumerState<ReportsSafetyScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 if (g.urgent)
-                  const Padding(
+                   Padding(
                     padding: EdgeInsets.only(bottom: 8),
                     child: Text(
                       'Needs urgent review',
-                      style: TextStyle(
-                        color: Color(0xFF9A3412),
-                        fontWeight: FontWeight.w700,
-                      ),
+                      style: AppTypography.style(AppTextRole.badge, color: Color(0xFF9A3412)),
                     ),
                   ),
                 Text(
                   g.scholarshipTitle,
-                  style: Theme.of(context).textTheme.titleLarge,
+                  style: AppTypography.style(AppTextRole.sectionTitle, base: Theme.of(context).textTheme.titleLarge),
                 ),
                 const SizedBox(height: 4),
                 Text(g.providerName),

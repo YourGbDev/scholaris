@@ -4,6 +4,7 @@
 // Displays an immutable audit trail of evaluations, endorsements, approvals,
 // and reviewer assignments within the grantor organization.
 
+import 'package:scholaris/shared/theme/app_typography.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -133,19 +134,12 @@ class _OrgActivityLogViewState extends ConsumerState<OrgActivityLogView> {
                         const SizedBox(height: 10),
                         Text(
                           'Could not load activity logs',
-                          style: orgHeadline(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w600,
-                            color: kOrgTextPrimary,
-                          ),
+                          style: AppTypography.style(AppTextRole.cardTitle, fontSize: 14, color: kOrgTextPrimary, letterSpacing: opticalTracking(14), height: opticalLeading(14, isBody: false)),
                         ),
                         const SizedBox(height: 4),
                         Text(
                           'Check your connection and try again.',
-                          style: orgBody(
-                            fontSize: 12,
-                            color: kOrgTextSecondary,
-                          ),
+                          style: AppTypography.style(AppTextRole.body, fontSize: 12, color: kOrgTextSecondary, letterSpacing: opticalTracking(12), height: ((12) <= 16 ? 1.45 : opticalLeading(12, isBody: true))),
                           textAlign: TextAlign.center,
                         ),
                         TextButton(
@@ -215,12 +209,7 @@ class _OrgActivityLogViewState extends ConsumerState<OrgActivityLogView> {
           children: [
             Text(
               'GOVERNANCE & AUDIT TRAIL',
-              style: orgLabel(
-                fontSize: 11,
-                fontWeight: FontWeight.w600,
-                color: kOrgPrimary,
-                letterSpacing: 0.6,
-              ),
+              style: AppTypography.style(AppTextRole.label, fontSize: 11, color: kOrgPrimary, letterSpacing: 0.6, height: opticalLeading(11, isBody: false)),
             ),
             Container(
               width: 5,
@@ -232,27 +221,19 @@ class _OrgActivityLogViewState extends ConsumerState<OrgActivityLogView> {
             ),
             Text(
               'LIVE LEDGER',
-              style: orgLabel(
-                fontSize: 10,
-                fontWeight: FontWeight.w700,
-                color: kOrgPrimary,
-              ),
+              style: AppTypography.style(AppTextRole.badge, fontSize: 10, color: kOrgPrimary, letterSpacing: opticalTracking(10), height: opticalLeading(10, isBody: false)),
             ),
           ],
         ),
         const SizedBox(height: 6),
         Text(
           'Organization Activity Log',
-          style: orgHeadline(
-            fontSize: isDesktop ? 32 : 26,
-            fontWeight: FontWeight.w700,
-            color: kOrgTextPrimary,
-          ),
+          style: AppTypography.style(AppTextRole.screenTitle, fontSize: isDesktop ? 32 : 26, color: kOrgTextPrimary, letterSpacing: opticalTracking(isDesktop ? 32 : 26), height: opticalLeading(isDesktop ? 32 : 26, isBody: false)),
         ),
         const SizedBox(height: 4),
         Text(
           'Review recorded decisions, endorsements, and reviewer assignments.',
-          style: orgBody(fontSize: 13, color: kOrgTextSecondary),
+          style: AppTypography.style(AppTextRole.subtitle, fontSize: 13, color: kOrgTextSecondary, letterSpacing: opticalTracking(13), height: ((13) <= 16 ? 1.45 : opticalLeading(13, isBody: true))),
         ),
       ],
     );
@@ -296,13 +277,10 @@ class _OrgActivityLogViewState extends ConsumerState<OrgActivityLogView> {
                   ),
                   child: TextField(
                     onChanged: (val) => setState(() => _searchQuery = val),
-                    style: orgBody(fontSize: 13, color: kOrgTextPrimary),
+                    style: AppTypography.style(AppTextRole.input, fontSize: 13, color: kOrgTextPrimary, letterSpacing: opticalTracking(13), height: ((13) <= 16 ? 1.45 : opticalLeading(13, isBody: true))),
                     decoration: InputDecoration(
                       hintText: 'Search by staff name, action, or target ID...',
-                      hintStyle: orgBody(
-                        fontSize: 12.5,
-                        color: kOrgTextSecondary,
-                      ),
+                      hintStyle: AppTypography.style(AppTextRole.placeholder, fontSize: 12.5, color: kOrgTextSecondary, letterSpacing: opticalTracking(12.5), height: ((12.5) <= 16 ? 1.45 : opticalLeading(12.5, isBody: true))),
                       prefixIcon: const Icon(
                         Icons.search_rounded,
                         size: 18,
@@ -333,13 +311,7 @@ class _OrgActivityLogViewState extends ConsumerState<OrgActivityLogView> {
                   child: ChoiceChip(
                     label: Text(
                       opt.label,
-                      style: orgLabel(
-                        fontSize: 11.5,
-                        fontWeight: isSelected
-                            ? FontWeight.w600
-                            : FontWeight.w500,
-                        color: isSelected ? Colors.white : kOrgTextPrimary,
-                      ),
+                      style: AppTypography.style(AppTextRole.badge, fontSize: 11.5, color: isSelected ? Colors.white : kOrgTextPrimary, letterSpacing: opticalTracking(11.5), height: opticalLeading(11.5, isBody: false)),
                     ),
                     selected: isSelected,
                     selectedColor: kOrgPrimary,
@@ -384,16 +356,12 @@ class _OrgActivityLogViewState extends ConsumerState<OrgActivityLogView> {
             const SizedBox(height: 12),
             Text(
               'No Activity Recorded',
-              style: orgHeadline(
-                fontSize: 15,
-                fontWeight: FontWeight.w600,
-                color: kOrgTextPrimary,
-              ),
+              style: AppTypography.style(AppTextRole.cardTitle, fontSize: 15, color: kOrgTextPrimary, letterSpacing: opticalTracking(15), height: opticalLeading(15, isBody: false)),
             ),
             const SizedBox(height: 4),
             Text(
               'Administrative and review decisions will automatically stream into this immutable audit log.',
-              style: orgBody(fontSize: 12, color: kOrgTextSecondary),
+              style: AppTypography.style(AppTextRole.body, fontSize: 12, color: kOrgTextSecondary, letterSpacing: opticalTracking(12), height: ((12) <= 16 ? 1.45 : opticalLeading(12, isBody: true))),
               textAlign: TextAlign.center,
             ),
           ],
@@ -462,11 +430,7 @@ class _OrgActivityLogViewState extends ConsumerState<OrgActivityLogView> {
                               children: [
                                 Text(
                                   log.actorName,
-                                  style: orgHeadline(
-                                    fontSize: 13.5,
-                                    fontWeight: FontWeight.w700,
-                                    color: kOrgTextPrimary,
-                                  ),
+                                  style: AppTypography.style(AppTextRole.cardTitle, fontSize: 13.5, color: kOrgTextPrimary, letterSpacing: opticalTracking(13.5), height: opticalLeading(13.5, isBody: false)),
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
                                 ),
@@ -481,11 +445,7 @@ class _OrgActivityLogViewState extends ConsumerState<OrgActivityLogView> {
                                   ),
                                   child: Text(
                                     log.action.toUpperCase(),
-                                    style: orgLabel(
-                                      fontSize: 9.5,
-                                      fontWeight: FontWeight.w700,
-                                      color: actionColor,
-                                    ),
+                                    style: AppTypography.style(AppTextRole.badge, fontSize: 9.5, color: actionColor, letterSpacing: opticalTracking(9.5), height: opticalLeading(9.5, isBody: false)),
                                   ),
                                 ),
                               ],
@@ -494,17 +454,14 @@ class _OrgActivityLogViewState extends ConsumerState<OrgActivityLogView> {
                           const SizedBox(width: 8),
                           Text(
                             timestampStr,
-                            style: orgLabel(
-                              fontSize: 11,
-                              color: kOrgTextSecondary,
-                            ),
+                            style: AppTypography.style(AppTextRole.caption, fontSize: 11, color: kOrgTextSecondary, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: false)),
                           ),
                         ],
                       ),
                       const SizedBox(height: 3),
                       Text(
                         'Target: ${log.targetType}${log.targetId != null ? " • #${log.targetId!.substring(0, log.targetId!.length > 8 ? 8 : log.targetId!.length)}" : ""}',
-                        style: orgBody(fontSize: 12, color: kOrgTextSecondary),
+                        style: AppTypography.style(AppTextRole.caption, fontSize: 12, color: kOrgTextSecondary, letterSpacing: opticalTracking(12), height: ((12) <= 16 ? 1.45 : opticalLeading(12, isBody: true))),
                       ),
                       if (log.details.isNotEmpty) ...[
                         const SizedBox(height: 6),
@@ -521,10 +478,7 @@ class _OrgActivityLogViewState extends ConsumerState<OrgActivityLogView> {
                             log.details.entries
                                 .map((e) => '${e.key}: ${e.value}')
                                 .join('  •  '),
-                            style: orgBody(
-                              fontSize: 11.5,
-                              color: const Color(0xFF404942),
-                            ),
+                            style: AppTypography.style(AppTextRole.body, fontSize: 11.5, color: const Color(0xFF404942), letterSpacing: opticalTracking(11.5), height: ((11.5) <= 16 ? 1.45 : opticalLeading(11.5, isBody: true))),
                             maxLines: 2,
                             overflow: TextOverflow.ellipsis,
                           ),

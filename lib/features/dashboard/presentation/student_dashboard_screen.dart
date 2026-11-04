@@ -1,3 +1,4 @@
+import 'package:scholaris/shared/theme/app_typography.dart';
 import 'package:scholaris/features/home/presentation/widgets/student_tab_entrance.dart';
 // lib/features/dashboard/presentation/student_dashboard_screen.dart
 //
@@ -251,12 +252,7 @@ class _StudentDashboardScreenState
             const SizedBox(width: 8),
             Text(
               'Scholaris',
-              style: outfit(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-                color: const Color(0xFF161C27),
-                letterSpacing: -0.5,
-              ),
+              style: AppTypography.style(AppTextRole.label, fontSize: 20, color: const Color(0xFF161C27), letterSpacing: -0.5, height: opticalLeading(20, isBody: false)),
             ),
           ],
           )),
@@ -333,20 +329,11 @@ class _StudentDashboardScreenState
                     children: [
                       Text(
                         title,
-                        style: outfit(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: const Color(0xFF161C27),
-                        ),
+                        style: AppTypography.style(AppTextRole.cardTitle, fontSize: 16, color: const Color(0xFF161C27), letterSpacing: opticalTracking(16), height: opticalLeading(16, isBody: false)),
                       ),
                       Text(
                         subtitle,
-                        style: openSans(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w600,
-                          height: 1.4,
-                          color: const Color(0xFF404942),
-                        ),
+                        style: AppTypography.style(AppTextRole.subtitle, fontSize: 14, height: 1.4, color: const Color(0xFF404942), letterSpacing: opticalTracking(14)),
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                       ),
@@ -378,22 +365,12 @@ class _StudentDashboardScreenState
       children: [
         Text(
           dateStr,
-          style: outfit(
-            fontSize: 12,
-            fontWeight: FontWeight.w500,
-            color: const Color(0xFF657168),
-            letterSpacing: 0.8,
-          ),
+          style: AppTypography.style(AppTextRole.caption, fontSize: 12, color: const Color(0xFF657168), letterSpacing: 0.8, height: opticalLeading(12, isBody: false)),
         ),
         const SizedBox(height: 3),
         Text(
           greetingStr,
-          style: outfit(
-            fontSize: 28,
-            fontWeight: FontWeight.w700,
-            color: const Color(0xFF0F4D2E),
-            letterSpacing: -0.5,
-          ),
+          style: AppTypography.style(AppTextRole.display, fontSize: 28, color: const Color(0xFF0F4D2E), letterSpacing: -0.5, height: opticalLeading(28, isBody: false)),
         ),
       ],
     );
@@ -454,17 +431,28 @@ class _StudentDashboardScreenState
     final asset = isFemale
         ? 'assets/images/student_hero_graduate_campus_female.png'
         : 'assets/images/student_hero_graduate_campus.png';
+    final matchDescription = matchCount == 1 ? 'scholarship matches' : 'scholarships match';
     final countLabel = matchesFailed ? 'Matches unavailable' : matchCount == null
-        ? 'Finding matches…' : '$matchCount ${matchCount == 1 ? 'scholarship matches' : 'scholarships match'} your profile.';
+        ? 'Finding matches…' : '$matchCount $matchDescription your profile.';
+    final summaryStyle = AppTypography.style(AppTextRole.body,
+      fontSize: 13, height: 1.4, color: const Color(0xFF485356));
     final summary = Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.min, children: [
-      Text('YOUR NEXT CHAPTER', style: geist(fontSize: 11, fontWeight: FontWeight.w600,
-        color: const Color(0xFF485356), letterSpacing: .15)),
+      Text('YOUR NEXT CHAPTER', style: AppTypography.style(AppTextRole.label, fontSize: 11, color: const Color(0xFF485356), letterSpacing: .15)),
       const SizedBox(height: 8),
       Text('Find your next opportunity.',
-        style: geist(fontSize: 22, fontWeight: FontWeight.w700, color: kPrimary, height: 1.15, letterSpacing: -.5)),
+        style: AppTypography.style(AppTextRole.display, fontSize: 22, color: kPrimary, height: 1.15, letterSpacing: -.5)),
       const SizedBox(height: 10),
-      Text(countLabel, key: const ValueKey('stat-count-matches'),
-        style: geist(fontSize: 13, fontWeight: FontWeight.w600, height: 1.4, color: const Color(0xFF485356))),
+      Text.rich(
+        matchesFailed || matchCount == null
+          ? TextSpan(text: countLabel)
+          : TextSpan(children: [
+              TextSpan(text: '$matchCount',
+                style: AppTypography.style(AppTextRole.metric, base: summaryStyle)),
+              TextSpan(text: ' $matchDescription your profile.'),
+            ]),
+        key: const ValueKey('stat-count-matches'),
+        style: summaryStyle,
+      ),
       const SizedBox(height: 12),
       Padding(
         padding: const EdgeInsets.only(left: 12),
@@ -606,12 +594,7 @@ class _StudentDashboardScreenState
               child: Text(
                 'Recommended for you',
                 key: widget.recommendationsGuideKey,
-                style: outfit(
-                  fontSize: 21,
-                  fontWeight: FontWeight.w700,
-                  color: const Color(0xFF161C27),
-                  letterSpacing: -0.34,
-                ),
+                style: AppTypography.style(AppTextRole.sectionTitle, fontSize: 21, color: const Color(0xFF161C27), letterSpacing: -0.34, height: opticalLeading(21, isBody: false)),
               ),
             ),
             const SizedBox(width: 8),
@@ -632,11 +615,7 @@ class _StudentDashboardScreenState
                       children: [
                         Text(
                           totalCount > 0 ? 'See all ($totalCount)' : 'See all',
-                          style: outfit(
-                            fontSize: 12.5,
-                            fontWeight: FontWeight.w600,
-                            color: const Color(0xFF0F4D2E),
-                          ),
+                          style: AppTypography.style(AppTextRole.button, fontSize: 12.5, color: const Color(0xFF0F4D2E), letterSpacing: opticalTracking(12.5), height: opticalLeading(12.5, isBody: false)),
                         ),
                         const Icon(
                           Icons.chevron_right_rounded,
@@ -671,10 +650,7 @@ class _StudentDashboardScreenState
                   child: Text(
                     'Complete your profile to discover matched scholarships.',
                     textAlign: TextAlign.center,
-                    style: openSans(
-                      fontSize: 13,
-                      color: const Color(0xFF404942),
-                    ),
+                    style: AppTypography.style(AppTextRole.body, fontSize: 13, color: const Color(0xFF404942), letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: true)),
                   ),
                 ),
               ));
@@ -778,12 +754,7 @@ class _StudentDashboardScreenState
             const SizedBox(width: 6),
             Expanded(child: Text(
               'Closing Soon (${info.closingSoonCount})',
-              style: outfit(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-                color: const Color(0xFFC62828),
-                letterSpacing: -0.32,
-              ),
+              style: AppTypography.style(AppTextRole.sectionTitle, fontSize: 16, color: const Color(0xFFC62828), letterSpacing: -0.32, height: opticalLeading(16, isBody: false)),
             )),
           ],
         )),
@@ -856,30 +827,19 @@ class _StudentDashboardScreenState
               children: [
                 Text(
                   'Pro-Tip for Applicants',
-                  style: outfit(
-                    fontSize: 13,
-                    fontWeight: FontWeight.bold,
-                    color: const Color(0xFF161C27),
-                  ),
+                  style: AppTypography.style(AppTextRole.cardTitle, fontSize: 13, color: const Color(0xFF161C27), letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: false)),
                 ),
                 const SizedBox(height: 3),
                 RichText(
                   text: TextSpan(
-                    style: openSans(
-                      fontSize: 12,
-                      color: const Color(0xFF404942),
-                      height: 1.45,
-                    ),
+                    style: AppTypography.style(AppTextRole.caption, fontSize: 12, color: const Color(0xFF404942), height: 1.45, letterSpacing: opticalTracking(12)),
                     children: [
                       const TextSpan(
                         text: 'Scholarships that require personal essays receive ',
                       ),
                       TextSpan(
                         text: '40% fewer applicants',
-                        style: outfit(
-                          fontWeight: FontWeight.bold,
-                          color: const Color(0xFF0F4D2E),
-                        ),
+                        style: AppTypography.style(AppTextRole.bodyEmphasis, color: const Color(0xFF0F4D2E)),
                       ),
                       const TextSpan(
                         text: ', doubling your acceptance likelihood.',
@@ -967,11 +927,7 @@ class _StatCard extends StatelessWidget {
                         fit: BoxFit.scaleDown,
                         child: CountUpAnimation(
                           targetValue: numericValue,
-                          style: outfit(
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold,
-                            color: const Color(0xFF161C27),
-                          ),
+                          style: AppTypography.style(AppTextRole.metric, fontSize: 24, color: const Color(0xFF161C27), letterSpacing: opticalTracking(24), height: opticalLeading(24, isBody: false)),
                         ),
                       ),
                     ),
@@ -998,11 +954,7 @@ class _StatCard extends StatelessWidget {
                   textAlign: TextAlign.center,
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
-                  style: openSans(
-                    fontSize: 13,
-                    fontWeight: FontWeight.w600,
-                    color: isUrgent ? const Color(0xFF8A5B00) : const Color(0xFF263D2C),
-                  ),
+                  style: AppTypography.style(AppTextRole.label, fontSize: 13, color: isUrgent ? const Color(0xFF8A5B00) : const Color(0xFF263D2C), letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: true)),
                 ),
               ],
             ),

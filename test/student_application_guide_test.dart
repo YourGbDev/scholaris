@@ -13,10 +13,10 @@ import 'package:scholaris/features/home/presentation/widgets/student_swipe_cue.d
 
 void main() {
   setUpAll(() async {
-    await (FontLoader('Geist')
-          ..addFont(rootBundle.load('assets/fonts/geist/Geist-Regular.ttf'))
-          ..addFont(rootBundle.load('assets/fonts/geist/Geist-SemiBold.ttf'))
-          ..addFont(rootBundle.load('assets/fonts/geist/Geist-Bold.ttf')))
+    await (FontLoader('Inter')
+          ..addFont(rootBundle.load('assets/fonts/inter/Inter-Regular.ttf'))
+          ..addFont(rootBundle.load('assets/fonts/inter/Inter-SemiBold.ttf'))
+          ..addFont(rootBundle.load('assets/fonts/inter/Inter-Bold.ttf')))
         .load();
   });
   setUp(() {
@@ -133,7 +133,7 @@ void main() {
             .widget<Text>(find.text('View saved scholarships'))
             .style
             ?.fontFamily,
-        'Geist',
+        'Inter',
       );
       await tester.tap(find.text('View saved scholarships'));
       await tester.pumpAndSettle();

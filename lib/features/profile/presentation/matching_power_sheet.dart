@@ -4,6 +4,7 @@
 // profile matching power, highlighting completed vs missing criteria and offering
 // direct navigation to complete missing details.
 
+import 'package:scholaris/shared/theme/app_typography.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -70,19 +71,12 @@ class MatchingPowerSheet extends StatelessWidget {
                   children: [
                     Text(
                       'Matching Power Diagnostics',
-                      style: poppins(
-                        fontSize: 18,
-                        fontWeight: FontWeight.w700,
-                        color: kPrimary,
-                      ),
+                      style: AppTypography.style(AppTextRole.sectionTitle, fontSize: 18, color: kPrimary, letterSpacing: opticalTracking(18), height: opticalLeading(18, isBody: false)),
                     ),
                     const SizedBox(height: 2),
                     Text(
                       '${report.completedCount} of ${report.totalCount} criteria optimized',
-                      style: openSans(
-                        fontSize: 12,
-                        color: Colors.black54,
-                      ),
+                      style: AppTypography.style(AppTextRole.subtitle, fontSize: 12, color: Colors.black54, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: true)),
                     ),
                   ],
                 ),
@@ -113,11 +107,7 @@ class MatchingPowerSheet extends StatelessWidget {
                   children: [
                     Text(
                       'Profile Matching Power',
-                      style: poppins(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600,
-                        color: kPrimary,
-                      ),
+                      style: AppTypography.style(AppTextRole.cardTitle, fontSize: 14, color: kPrimary, letterSpacing: opticalTracking(14), height: opticalLeading(14, isBody: false)),
                     ),
                     const Spacer(),
                     Container(
@@ -133,11 +123,7 @@ class MatchingPowerSheet extends StatelessWidget {
                       child: CountUpAnimation(
                         targetValue: report.percentage,
                         suffix: '%',
-                        style: poppins(
-                          fontSize: 13,
-                          fontWeight: FontWeight.w700,
-                          color: isComplete ? kPrimary : kMatchGoldText,
-                        ),
+                        style: AppTypography.style(AppTextRole.metric, fontSize: 13, color: isComplete ? kPrimary : kMatchGoldText, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: false)),
                       ),
                     ),
                   ],
@@ -156,11 +142,7 @@ class MatchingPowerSheet extends StatelessWidget {
                 const SizedBox(height: 10),
                 Text(
                   report.advice,
-                  style: openSans(
-                    fontSize: 12,
-                    color: kPrimary,
-                    height: 1.35,
-                  ),
+                  style: AppTypography.style(AppTextRole.body, fontSize: 12, color: kPrimary, height: 1.35, letterSpacing: opticalTracking(12)),
                 ),
                 if (isComplete) ...[
                   const SizedBox(height: 12),
@@ -185,20 +167,12 @@ class MatchingPowerSheet extends StatelessWidget {
                             children: [
                               Text(
                                 '100% Matching Power!',
-                                style: poppins(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w700,
-                                  color: kPrimary,
-                                ),
+                                style: AppTypography.style(AppTextRole.cardTitle, fontSize: 14, color: kPrimary, letterSpacing: opticalTracking(14), height: opticalLeading(14, isBody: false)),
                               ),
                               const SizedBox(height: 2),
                               Text(
                                 'Your profile is fully optimized for all Philippine scholarships and government grants.',
-                                style: openSans(
-                                  fontSize: 11.5,
-                                  color: const Color(0xFF404942),
-                                  height: 1.3,
-                                ),
+                                style: AppTypography.style(AppTextRole.subtitle, fontSize: 11.5, color: const Color(0xFF404942), height: 1.3, letterSpacing: opticalTracking(11.5)),
                               ),
                             ],
                           ),
@@ -214,11 +188,7 @@ class MatchingPowerSheet extends StatelessWidget {
 
           Text(
             'Criteria Breakdown',
-            style: poppins(
-              fontSize: 14,
-              fontWeight: FontWeight.w600,
-              color: kPrimary,
-            ),
+            style: AppTypography.style(AppTextRole.sectionTitle, fontSize: 14, color: kPrimary, letterSpacing: opticalTracking(14), height: opticalLeading(14, isBody: false)),
           ),
           const SizedBox(height: 8),
 
@@ -274,38 +244,24 @@ class MatchingPowerSheet extends StatelessWidget {
                                       Expanded(
                                         child: Text(
                                           item.title,
-                                          style: poppins(
-                                            fontSize: 13,
-                                            fontWeight: FontWeight.w600,
-                                            color: Colors.black87,
-                                          ),
+                                          style: AppTypography.style(AppTextRole.cardTitle, fontSize: 13, color: Colors.black87, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: false)),
                                         ),
                                       ),
                                       Text(
                                         done ? 'Verified' : 'Action needed',
-                                        style: openSans(
-                                          fontSize: 11,
-                                          fontWeight: FontWeight.w600,
-                                          color: done ? kPrimary : kMatchGoldText,
-                                        ),
+                                        style: AppTypography.style(AppTextRole.badge, fontSize: 11, color: done ? kPrimary : kMatchGoldText, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: true)),
                                       ),
                                     ],
                                   ),
                                   const SizedBox(height: 2),
                                   Text(
                                     item.subtitle,
-                                    style: openSans(
-                                      fontSize: 12,
-                                      color: Colors.black54,
-                                    ),
+                                    style: AppTypography.style(AppTextRole.subtitle, fontSize: 12, color: Colors.black54, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: true)),
                                   ),
                                   const SizedBox(height: 3),
                                   Text(
                                     item.impactHint,
-                                    style: openSans(
-                                      fontSize: 11,
-                                      color: done ? Colors.black45 : kPrimary,
-                                    ),
+                                    style: AppTypography.style(AppTextRole.caption, fontSize: 11, color: done ? Colors.black45 : kPrimary, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: true)),
                                   ),
                                 ],
                               ),
@@ -343,11 +299,7 @@ class MatchingPowerSheet extends StatelessWidget {
                 isComplete
                     ? 'Great Job! Return to Discover'
                     : 'Complete Missing Details',
-                style: poppins(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w600,
-                  color: Colors.white,
-                ),
+                style: AppTypography.style(AppTextRole.button, fontSize: 14, color: Colors.white, letterSpacing: opticalTracking(14), height: opticalLeading(14, isBody: false)),
               ),
             ),
           ),

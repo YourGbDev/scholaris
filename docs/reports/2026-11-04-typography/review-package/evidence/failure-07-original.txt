@@ -1,0 +1,13 @@
+00:00 +9 -3: C:/scholaris/scratch/typography/baseline-verification/test/scholarship_repository_test.dart: ScholarshipRepository fetchActive returns scholarships from snake_case rows [E]
+  Expected: 'sch-dost'
+    Actual: 'sch-ched'
+     Which: is different.
+            Expected: sch-dost
+              Actual: sch-ched
+                          ^
+             Differ at offset 4
+  
+  package:matcher                                     expect
+  package:flutter_test/src/widget_tester.dart 473:18  expect
+  test\scholarship_repository_test.dart 16:7          main.<fn>.<fn>
+  

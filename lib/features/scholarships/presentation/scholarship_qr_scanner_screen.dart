@@ -4,13 +4,13 @@
 // Decodes payloads matching `scholaris://scholarships/{scholarship_id}` and
 // routes directly to the deep-linked `/scholarship/:id` screen.
 
+import 'package:scholaris/shared/theme/app_typography.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 
 import '../../../shared/theme/app_motion.dart';
-import '../../../shared/theme/app_theme.dart';
 
 class ScholarshipQrScannerScreen extends StatefulWidget {
   const ScholarshipQrScannerScreen({super.key});
@@ -159,11 +159,7 @@ class _ScholarshipQrScannerScreenState
                     Expanded(
                       child: Text(
                         'Scan Scholarship QR',
-                        style: outfit(
-                          fontSize: 16.5,
-                          fontWeight: FontWeight.w700,
-                          color: Colors.white,
-                        ),
+                        style: AppTypography.style(AppTextRole.screenTitle, fontSize: 16.5, color: Colors.white, letterSpacing: opticalTracking(16.5), height: opticalLeading(16.5, isBody: false)),
                       ),
                     ),
                     PressableScale(
@@ -235,11 +231,7 @@ class _ScholarshipQrScannerScreenState
                                 Expanded(
                                   child: Text(
                                     'Invalid QR Payload',
-                                    style: outfit(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.white,
-                                    ),
+                                    style: AppTypography.style(AppTextRole.sectionTitle, fontSize: 14, color: Colors.white, letterSpacing: opticalTracking(14), height: opticalLeading(14, isBody: false)),
                                   ),
                                 ),
                               ],
@@ -247,10 +239,7 @@ class _ScholarshipQrScannerScreenState
                             const SizedBox(height: 6),
                             Text(
                               _errorMessage!,
-                              style: openSans(
-                                fontSize: 12,
-                                color: Colors.white,
-                              ),
+                              style: AppTypography.style(AppTextRole.body, fontSize: 12, color: Colors.white, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: true)),
                             ),
                             const SizedBox(height: 10),
                             PressableScale(
@@ -276,21 +265,13 @@ class _ScholarshipQrScannerScreenState
                       Text(
                         'Align the scholarship QR code within the frame',
                         textAlign: TextAlign.center,
-                        style: openSans(
-                          fontSize: 13,
-                          fontWeight: FontWeight.w500,
-                          color: Colors.white.withValues(alpha: 0.85),
-                        ),
+                        style: AppTypography.style(AppTextRole.caption, fontSize: 13, color: Colors.white.withValues(alpha: 0.85), letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: true)),
                       ),
                       const SizedBox(height: 6),
                       Text(
                         'Format: scholaris://scholarships/{id}',
                         textAlign: TextAlign.center,
-                        style: outfit(
-                          fontSize: 11,
-                          fontWeight: FontWeight.w600,
-                          color: const Color(0xFFB3F1C6),
-                        ),
+                        style: AppTypography.style(AppTextRole.caption, fontSize: 11, color: const Color(0xFFB3F1C6), letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: false)),
                       ),
                       const SizedBox(height: 14),
                     ],
@@ -314,10 +295,7 @@ class _ScholarshipQrScannerScreenState
                         icon: const Icon(Icons.keyboard_alt_outlined, size: 16),
                         label: Text(
                           'Enter Code or URL Manually',
-                          style: outfit(
-                            fontSize: 12,
-                            fontWeight: FontWeight.w600,
-                          ),
+                          style: AppTypography.style(AppTextRole.button, fontSize: 12, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: false)),
                         ),
                       ),
                     ),
@@ -428,20 +406,13 @@ class _ScholarshipQrScannerScreenState
             const SizedBox(height: 12),
             Text(
               'Camera Unavailable',
-              style: outfit(
-                fontSize: 17,
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-              ),
+              style: AppTypography.style(AppTextRole.sectionTitle, fontSize: 17, color: Colors.white, letterSpacing: opticalTracking(17), height: opticalLeading(17, isBody: false)),
             ),
             const SizedBox(height: 6),
             Text(
               'Camera hardware or permission is not active. You can still enter or paste a scholarship code directly.',
               textAlign: TextAlign.center,
-              style: openSans(
-                fontSize: 13,
-                color: Colors.white70,
-              ),
+              style: AppTypography.style(AppTextRole.body, fontSize: 13, color: Colors.white70, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: true)),
             ),
             const SizedBox(height: 16),
             PressableScale(
@@ -476,7 +447,7 @@ class _ScholarshipQrScannerScreenState
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         title: Text(
           'Enter Scholarship Code',
-          style: outfit(fontWeight: FontWeight.bold, fontSize: 18),
+          style: AppTypography.style(AppTextRole.sectionTitle, fontSize: 18, letterSpacing: opticalTracking(18), height: opticalLeading(18, isBody: false)),
         ),
         content: Column(
           mainAxisSize: MainAxisSize.min,
@@ -484,14 +455,14 @@ class _ScholarshipQrScannerScreenState
           children: [
             Text(
               'Paste a QR payload or enter the scholarship ID directly:',
-              style: openSans(fontSize: 13, color: const Color(0xFF404942)),
+              style: AppTypography.style(AppTextRole.body, fontSize: 13, color: const Color(0xFF404942), letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: true)),
             ),
             const SizedBox(height: 12),
             TextField(
               controller: _manualInputController,
               decoration: InputDecoration(
                 hintText: 'scholaris://scholarships/{id}',
-                hintStyle: openSans(fontSize: 12.5, color: Colors.black38),
+                hintStyle: AppTypography.style(AppTextRole.placeholder, fontSize: 12.5, color: Colors.black38, letterSpacing: opticalTracking(12.5), height: opticalLeading(12.5, isBody: true)),
                 filled: true,
                 fillColor: const Color(0xFFF4F3F8),
                 border: OutlineInputBorder(

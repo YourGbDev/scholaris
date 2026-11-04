@@ -1,3 +1,5 @@
+import 'package:scholaris/shared/theme/app_motion.dart' show opticalTracking, opticalLeading;
+import 'package:scholaris/shared/theme/app_typography.dart';
 import 'package:flutter/material.dart';
 
 import '../org/org_provider_theme.dart';
@@ -24,28 +26,21 @@ class OrgReviewSnapshot extends StatelessWidget {
         children: [
           Text(
             'APPLICATION REVIEW',
-            style: orgLabel(
-              fontSize: 10,
-              color: const Color(0xFFD2E3CE),
-              letterSpacing: 1.4,
-            ),
+            style: AppTypography.style(AppTextRole.label, fontSize: 10, color: const Color(0xFFD2E3CE), letterSpacing: 1.4, height: opticalLeading(10, isBody: false)),
           ),
           const SizedBox(height: 16),
           Text(
             pending == 0
                 ? 'No applications awaiting review'
                 : '$pending ${pending == 1 ? 'application' : 'applications'}\nawaiting review',
-            style: orgHeadline(
-              fontSize: compact ? 25 : 30,
-              color: Colors.white,
-            ),
+            style: AppTypography.style(AppTextRole.cardTitle, fontSize: compact ? 25 : 30, color: Colors.white, letterSpacing: opticalTracking(compact ? 25 : 30), height: opticalLeading(compact ? 25 : 30, isBody: false)),
           ),
           const SizedBox(height: 12),
           Text(
             total == 0
                 ? 'Submitted applications will appear here.'
                 : 'Review submitted requirements and record your team’s decision.',
-            style: orgBody(fontSize: 14, color: const Color(0xFFD2E3CE)),
+            style: AppTypography.style(AppTextRole.body, fontSize: 14, color: const Color(0xFFD2E3CE), letterSpacing: opticalTracking(14), height: ((14) <= 16 ? 1.45 : opticalLeading(14, isBody: true))),
           ),
           const SizedBox(height: 20),
           Wrap(
@@ -100,14 +95,11 @@ class OrgReviewSnapshot extends StatelessWidget {
                     children: [
                       Text(
                         '$decided / $total',
-                        style: orgHeadline(fontSize: 24, color: Colors.white),
+                        style: AppTypography.style(AppTextRole.metric, fontSize: 24, color: Colors.white, letterSpacing: opticalTracking(24), height: opticalLeading(24, isBody: false)),
                       ),
                       Text(
                         'decisions recorded',
-                        style: orgBody(
-                          fontSize: 11,
-                          color: const Color(0xFFD2E3CE),
-                        ),
+                        style: AppTypography.style(AppTextRole.label, fontSize: 11, color: const Color(0xFFD2E3CE), letterSpacing: opticalTracking(11), height: ((11) <= 16 ? 1.45 : opticalLeading(11, isBody: true))),
                       ),
                     ],
                   ),
@@ -118,7 +110,7 @@ class OrgReviewSnapshot extends StatelessWidget {
           const SizedBox(height: 12),
           Text(
             'Recorded application decisions',
-            style: orgBody(fontSize: 12, color: const Color(0xFFD2E3CE)),
+            style: AppTypography.style(AppTextRole.label, fontSize: 12, color: const Color(0xFFD2E3CE), letterSpacing: opticalTracking(12), height: ((12) <= 16 ? 1.45 : opticalLeading(12, isBody: true))),
           ),
         ],
       );

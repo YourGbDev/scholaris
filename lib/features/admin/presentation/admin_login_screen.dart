@@ -6,7 +6,7 @@
 // - Strictly internal: no social logins, no student signups, no provider marketing
 // - Direct authentication & role-gated access to Admin HomeScreen
 
-import 'package:scholaris/shared/theme/app_theme.dart';
+import 'package:scholaris/shared/theme/app_typography.dart';
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -179,7 +179,7 @@ class _AdminLoginScreenState extends ConsumerState<AdminLoginScreen> {
             Expanded(
               child: Text(
                 message,
-                style: geist(fontSize: 13, color: Colors.white, fontWeight: FontWeight.w500),
+                style: AppTypography.style(AppTextRole.body, fontSize: 13, color: Colors.white),
               ),
             ),
           ],
@@ -204,20 +204,20 @@ class _AdminLoginScreenState extends ConsumerState<AdminLoginScreen> {
             const SizedBox(width: 10),
             Text(
               'Access Restricted',
-              style: geist(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 18),
+              style: AppTypography.style(AppTextRole.sectionTitle, color: Colors.white, fontSize: 18),
             ),
           ],
         ),
         content: Text(
           'This account does not have Super Administrator privileges.\n\nOnly authorized institutional governance officers can sign in to the Scholaris Admin Console.',
-          style: geist(color: const Color(0xFF94A3B8), fontSize: 13, height: 1.5),
+          style: AppTypography.style(AppTextRole.body, color: const Color(0xFF94A3B8), fontSize: 13, height: 1.5),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(),
             child: Text(
               'Acknowledge',
-              style: geist(color: const Color(0xFF34D399), fontWeight: FontWeight.bold),
+              style: AppTypography.style(AppTextRole.button, color: const Color(0xFF34D399)),
             ),
           ),
         ],
@@ -321,12 +321,7 @@ class _AdminLoginScreenState extends ConsumerState<AdminLoginScreen> {
                                 const SizedBox(width: 8),
                                 Text(
                                   'RESTRICTED ACCESS • CENTRAL GOVERNANCE & AUDIT',
-                                  style: geist(
-                                    fontSize: 10.5,
-                                    fontWeight: FontWeight.w700,
-                                    letterSpacing: 0.8,
-                                    color: const Color(0xFF34D399),
-                                  ),
+                                  style: AppTypography.style(AppTextRole.badge, fontSize: 10.5, letterSpacing: 0.8, color: const Color(0xFF34D399)),
                                 ),
                               ],
                             ),
@@ -365,21 +360,12 @@ class _AdminLoginScreenState extends ConsumerState<AdminLoginScreen> {
                                 children: [
                                   Text(
                                     'Scholaris Admin Console',
-                                    style: geist(
-                                      fontSize: 22,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.white,
-                                      letterSpacing: -0.3,
-                                    ),
+                                    style: AppTypography.style(AppTextRole.screenTitle, fontSize: 22, color: Colors.white, letterSpacing: -0.3),
                                   ),
                                   const SizedBox(height: 2),
                                   Text(
                                     'Central Platform Oversight & Grant Disbursement',
-                                    style: geist(
-                                      fontSize: 12,
-                                      color: const Color(0xFF94A3B8),
-                                      fontWeight: FontWeight.w500,
-                                    ),
+                                    style: AppTypography.style(AppTextRole.subtitle, fontSize: 12, color: const Color(0xFF94A3B8)),
                                   ),
                                 ],
                               ),
@@ -392,11 +378,7 @@ class _AdminLoginScreenState extends ConsumerState<AdminLoginScreen> {
                         // Subtitle
                         Text(
                           'Sign in to verify scholarship providers, audit application lifecycle approvals, and authorize official grant disbursements.',
-                          style: geist(
-                            fontSize: 13,
-                            height: 1.5,
-                            color: const Color(0xFFCBD5E1),
-                          ),
+                          style: AppTypography.style(AppTextRole.body, fontSize: 13, height: 1.5, color: const Color(0xFFCBD5E1)),
                         ),
 
                         const SizedBox(height: 28),
@@ -417,11 +399,7 @@ class _AdminLoginScreenState extends ConsumerState<AdminLoginScreen> {
                                 Expanded(
                                   child: Text(
                                     _lockoutStatus?.lockoutMessage ?? 'Too many attempts.',
-                                    style: geist(
-                                      color: const Color(0xFFFCA5A5),
-                                      fontSize: 12.5,
-                                      fontWeight: FontWeight.w600,
-                                    ),
+                                    style: AppTypography.style(AppTextRole.body, color: const Color(0xFFFCA5A5), fontSize: 12.5),
                                   ),
                                 ),
                               ],
@@ -433,22 +411,17 @@ class _AdminLoginScreenState extends ConsumerState<AdminLoginScreen> {
                         // Email Field
                         Text(
                           'ADMINISTRATOR EMAIL',
-                          style: geist(
-                            fontSize: 11,
-                            fontWeight: FontWeight.bold,
-                            letterSpacing: 1.0,
-                            color: const Color(0xFF94A3B8),
-                          ),
+                          style: AppTypography.style(AppTextRole.label, fontSize: 11, letterSpacing: 1.0, color: const Color(0xFF94A3B8)),
                         ),
                         const SizedBox(height: 8),
                         TextFormField(
                           controller: _emailController,
                           enabled: !_isLoading && !isLocked,
-                          style: geist(color: Colors.white, fontSize: 14),
+                          style: AppTypography.style(AppTextRole.input, color: Colors.white, fontSize: 14),
                           keyboardType: TextInputType.emailAddress,
                           decoration: InputDecoration(
                             hintText: 'e.g. admin@scholaris.edu.ph',
-                            hintStyle: geist(color: const Color(0xFF64748B), fontSize: 13),
+                            hintStyle: AppTypography.style(AppTextRole.placeholder, color: const Color(0xFF64748B), fontSize: 13),
                             prefixIcon: const Icon(Icons.alternate_email_rounded, color: Color(0xFF94A3B8), size: 19),
                             filled: true,
                             fillColor: const Color(0xFF0F172A),
@@ -482,22 +455,17 @@ class _AdminLoginScreenState extends ConsumerState<AdminLoginScreen> {
                         // Password Field
                         Text(
                           'SECURITY CREDENTIAL',
-                          style: geist(
-                            fontSize: 11,
-                            fontWeight: FontWeight.bold,
-                            letterSpacing: 1.0,
-                            color: const Color(0xFF94A3B8),
-                          ),
+                          style: AppTypography.style(AppTextRole.label, fontSize: 11, letterSpacing: 1.0, color: const Color(0xFF94A3B8)),
                         ),
                         const SizedBox(height: 8),
                         TextFormField(
                           controller: _passwordController,
                           enabled: !_isLoading && !isLocked,
                           obscureText: _obscurePassword,
-                          style: geist(color: Colors.white, fontSize: 14),
+                          style: AppTypography.style(AppTextRole.input, color: Colors.white, fontSize: 14),
                           decoration: InputDecoration(
                             hintText: '••••••••••••',
-                            hintStyle: geist(color: const Color(0xFF64748B), fontSize: 13),
+                            hintStyle: AppTypography.style(AppTextRole.placeholder, color: const Color(0xFF64748B), fontSize: 13),
                             prefixIcon: const Icon(Icons.key_rounded, color: Color(0xFF94A3B8), size: 19),
                             suffixIcon: IconButton(
                               icon: Icon(
@@ -572,12 +540,7 @@ class _AdminLoginScreenState extends ConsumerState<AdminLoginScreen> {
                                       const SizedBox(width: 10),
                                       Text(
                                         'Authorize & Sign In',
-                                        style: geist(
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.white,
-                                          letterSpacing: 0.3,
-                                        ),
+                                        style: AppTypography.style(AppTextRole.button, fontSize: 14, color: Colors.white, letterSpacing: 0.3),
                                       ),
                                     ],
                                   ),
@@ -601,11 +564,7 @@ class _AdminLoginScreenState extends ConsumerState<AdminLoginScreen> {
                               Expanded(
                                 child: Text(
                                   'Protected by Row-Level Security & Immutable Audit Logging (RA 10173).',
-                                  style: geist(
-                                    fontSize: 10.5,
-                                    color: const Color(0xFF64748B),
-                                    height: 1.3,
-                                  ),
+                                  style: AppTypography.style(AppTextRole.caption, fontSize: 10.5, color: const Color(0xFF64748B), height: 1.3),
                                 ),
                               ),
                             ],

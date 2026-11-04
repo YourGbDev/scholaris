@@ -7,6 +7,7 @@
 //
 // Preserves local validation, Supabase update user, and test suite contracts.
 
+import 'package:scholaris/shared/theme/app_typography.dart';
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -120,7 +121,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
   SnackBar _snackBar(String message) => SnackBar(
         content: Text(
           message,
-          style: openSans(color: Colors.white, fontSize: 13),
+          style: AppTypography.style(AppTextRole.body, color: Colors.white, fontSize: 13, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: true)),
         ),
         backgroundColor: const Color(0xFF161C27),
         behavior: SnackBarBehavior.floating,
@@ -170,12 +171,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                       fit: BoxFit.scaleDown,
                       child: Text(
                         'Scholaris',
-                        style: poppins(
-                          fontSize: 18,
-                          fontWeight: FontWeight.w700,
-                          color: kPrimary,
-                          letterSpacing: -0.5,
-                        ),
+                        style: AppTypography.style(AppTextRole.label, fontSize: 18, color: kPrimary, letterSpacing: -0.5, height: opticalLeading(18, isBody: false)),
                       ),
                     ),
                   ),
@@ -242,12 +238,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                                       fit: BoxFit.scaleDown,
                                       child: Text(
                                         'CREDENTIAL UPDATE',
-                                        style: poppins(
-                                          fontSize: 11,
-                                          fontWeight: FontWeight.w700,
-                                          color: kPrimary,
-                                          letterSpacing: 0.8,
-                                        ),
+                                        style: AppTypography.style(AppTextRole.label, fontSize: 11, color: kPrimary, letterSpacing: 0.8, height: opticalLeading(11, isBody: false)),
                                       ),
                                     ),
                                   ),
@@ -260,21 +251,12 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                           // Heading: Create New Password
                           Text(
                             'Create New Password',
-                            style: poppins(
-                              fontSize: 26,
-                              fontWeight: FontWeight.w700,
-                              color: kPrimary,
-                              height: 1.2,
-                            ),
+                            style: AppTypography.style(AppTextRole.screenTitle, fontSize: 26, color: kPrimary, height: 1.2, letterSpacing: opticalTracking(26)),
                           ),
                           const SizedBox(height: 6),
                           Text(
                             'Your identity has been verified via the security link. Please choose a strong new password for your Scholaris account.',
-                            style: openSans(
-                              fontSize: 13,
-                              color: kTextSecondary,
-                              height: 1.4,
-                            ),
+                            style: AppTypography.style(AppTextRole.subtitle, fontSize: 13, color: kTextSecondary, height: 1.4, letterSpacing: opticalTracking(13)),
                           ),
                           const SizedBox(height: 16),
 
@@ -308,21 +290,12 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                                     children: [
                                       Text(
                                         'VERIFIED ACCOUNT',
-                                        style: poppins(
-                                          fontSize: 10,
-                                          fontWeight: FontWeight.w700,
-                                          color: kTextSecondary,
-                                          letterSpacing: 0.5,
-                                        ),
+                                        style: AppTypography.style(AppTextRole.label, fontSize: 10, color: kTextSecondary, letterSpacing: 0.5, height: opticalLeading(10, isBody: false)),
                                       ),
                                       Text(
                                         userEmail,
                                         overflow: TextOverflow.ellipsis,
-                                        style: poppins(
-                                          fontSize: 13,
-                                          fontWeight: FontWeight.w600,
-                                          color: kTextPrimary,
-                                        ),
+                                        style: AppTypography.style(AppTextRole.bodyEmphasis, fontSize: 13, color: kTextPrimary, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: false)),
                                       ),
                                     ],
                                   ),
@@ -335,11 +308,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                                   ),
                                   child: Text(
                                     'Active',
-                                    style: openSans(
-                                      fontSize: 11,
-                                      fontWeight: FontWeight.w600,
-                                      color: kNavyTrust,
-                                    ),
+                                    style: AppTypography.style(AppTextRole.badge, fontSize: 11, color: kNavyTrust, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: true)),
                                   ),
                                 ),
                               ],
@@ -356,19 +325,11 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                             children: [
                               Text(
                                 'New Password',
-                                style: poppins(
-                                  fontSize: 13,
-                                  fontWeight: FontWeight.w600,
-                                  color: kTextPrimary,
-                                ),
+                                style: AppTypography.style(AppTextRole.label, fontSize: 13, color: kTextPrimary, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: false)),
                               ),
                               Text(
                                 _strengthLabel(strength),
-                                style: openSans(
-                                  fontSize: 11,
-                                  fontWeight: FontWeight.w600,
-                                  color: strength >= 2 ? kPrimary : Colors.orange,
-                                ),
+                                style: AppTypography.style(AppTextRole.label, fontSize: 11, color: strength >= 2 ? kPrimary : Colors.orange, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: true)),
                               ),
                             ],
                           ),
@@ -443,12 +404,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                               children: [
                                 Text(
                                   'SECURITY GUIDELINES',
-                                  style: poppins(
-                                    fontSize: 10,
-                                    fontWeight: FontWeight.w700,
-                                    color: kTextSecondary,
-                                    letterSpacing: 0.5,
-                                  ),
+                                  style: AppTypography.style(AppTextRole.sectionTitle, fontSize: 10, color: kTextSecondary, letterSpacing: 0.5, height: opticalLeading(10, isBody: false)),
                                 ),
                                 const SizedBox(height: 8),
                                 _guidelineRow('At least 8 characters long', hasMinLength),
@@ -472,11 +428,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                             children: [
                               Text(
                                 'Confirm New Password',
-                                style: poppins(
-                                  fontSize: 13,
-                                  fontWeight: FontWeight.w600,
-                                  color: kTextPrimary,
-                                ),
+                                style: AppTypography.style(AppTextRole.label, fontSize: 13, color: kTextPrimary, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: false)),
                               ),
                               if (passwordsMatch)
                                 Row(
@@ -489,11 +441,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                                         fit: BoxFit.scaleDown,
                                         child: Text(
                                           'Passwords match',
-                                          style: openSans(
-                                            fontSize: 11,
-                                            fontWeight: FontWeight.w600,
-                                            color: kPrimary,
-                                          ),
+                                          style: AppTypography.style(AppTextRole.caption, fontSize: 11, color: kPrimary, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: true)),
                                         ),
                                       ),
                                     ),
@@ -552,11 +500,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                                           fit: BoxFit.scaleDown,
                                           child: Text(
                                             'Reset Password',
-                                            style: poppins(
-                                              fontSize: 15,
-                                              fontWeight: FontWeight.w600,
-                                              color: Colors.white,
-                                            ),
+                                            style: AppTypography.style(AppTextRole.button, fontSize: 15, color: Colors.white, letterSpacing: opticalTracking(15), height: opticalLeading(15, isBody: false)),
                                           ),
                                         ),
                                       ),
@@ -580,11 +524,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                               },
                               child: Text(
                                 'Cancel & Back to Login',
-                                style: poppins(
-                                  fontSize: 13,
-                                  fontWeight: FontWeight.w600,
-                                  color: kNavyTrust,
-                                ),
+                                style: AppTypography.style(AppTextRole.button, fontSize: 13, color: kNavyTrust, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: false)),
                               ),
                             ),
                           ),
@@ -609,11 +549,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                                 Expanded(
                                   child: Text(
                                     'This action attempts to sign out active sessions on other devices for your security. Existing sessions remain valid until their token expires.',
-                                    style: openSans(
-                                      fontSize: 11,
-                                      color: kTextSecondary,
-                                      height: 1.3,
-                                    ),
+                                    style: AppTypography.style(AppTextRole.caption, fontSize: 11, color: kTextSecondary, height: 1.3, letterSpacing: opticalTracking(11)),
                                   ),
                                 ),
                               ],
@@ -652,11 +588,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
         Expanded(
           child: Text(
             text,
-            style: openSans(
-              fontSize: 12,
-              color: met ? kPrimary : kTextSecondary,
-              fontWeight: met ? FontWeight.w600 : FontWeight.w400,
-            ),
+            style: AppTypography.style(AppTextRole.body, fontSize: 12, color: met ? kPrimary : kTextSecondary, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: true)),
           ),
         ),
       ],
@@ -682,11 +614,11 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
       keyboardType: keyboardType,
       onChanged: onChanged,
       onFieldSubmitted: onFieldSubmitted,
-      style: openSans(fontSize: 14, color: kTextPrimary),
+      style: AppTypography.style(AppTextRole.input, fontSize: 14, color: kTextPrimary, letterSpacing: opticalTracking(14), height: opticalLeading(14, isBody: true)),
       validator: validator,
       decoration: InputDecoration(
         hintText: hintText,
-        hintStyle: openSans(fontSize: 13, color: Colors.black38),
+        hintStyle: AppTypography.style(AppTextRole.placeholder, fontSize: 13, color: Colors.black38, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: true)),
         prefixIcon: prefixIcon != null ? Icon(prefixIcon, size: 20, color: kTextSecondary) : null,
         suffixIcon: suffixIcon,
         filled: true,

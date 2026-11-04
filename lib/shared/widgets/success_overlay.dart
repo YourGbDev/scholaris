@@ -4,13 +4,13 @@
 // Pure Flutter vector checkmark with concentric halo styling and auto-dismiss.
 // Completely removes Lottie animations per Stitch V2 guidelines.
 
+import 'package:scholaris/shared/theme/app_typography.dart';
 import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/physics.dart';
 
 import 'package:scholaris/shared/theme/app_motion.dart';
-import 'package:scholaris/shared/theme/app_theme.dart';
 import 'package:scholaris/shared/widgets/mascot_pose_view.dart';
 
 export 'package:scholaris/shared/widgets/mascot_pose_view.dart';
@@ -149,22 +149,14 @@ class _SuccessPageState extends State<_SuccessPage>
           Text(
             widget.title,
             textAlign: TextAlign.center,
-            style: outfit(
-              fontSize: 17,
-              fontWeight: FontWeight.w700,
-              color: const Color(0xFF161C27),
-            ),
+            style: AppTypography.style(AppTextRole.sectionTitle, fontSize: 17, color: const Color(0xFF161C27), letterSpacing: opticalTracking(17), height: opticalLeading(17, isBody: false)),
           ),
           if (widget.subtitle != null) ...[
             const SizedBox(height: 6),
             Text(
               widget.subtitle!,
               textAlign: TextAlign.center,
-              style: openSans(
-                fontSize: 12.5,
-                color: const Color(0xFF404942),
-                height: 1.35,
-              ),
+              style: AppTypography.style(AppTextRole.subtitle, fontSize: 12.5, color: const Color(0xFF404942), height: 1.35, letterSpacing: opticalTracking(12.5)),
             ),
           ],
         ],

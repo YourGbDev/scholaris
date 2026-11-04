@@ -5,7 +5,7 @@
 // Strictly real data: 100% wired to public.applications, public.profiles, and public.scholarships.
 // Zero fabricated metrics, zero fake compliance stamps, zero fake candidate identities.
 
-import 'package:scholaris/shared/theme/app_theme.dart';
+import 'package:scholaris/shared/theme/app_typography.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:scholaris/features/admin/presentation/admin_theme.dart';
@@ -419,10 +419,7 @@ class _ApplicationsOversightScreenState
               const SizedBox(width: 6),
               Text(
                 'STUDENT SCHOLARSHIP INTAKE',
-                style: seqLabelSm(
-                  color: kSeqOnSurfaceVariant,
-                  fontWeight: FontWeight.w600,
-                ),
+                style: AppTypography.style(AppTextRole.label, color: kSeqOnSurfaceVariant, fontSize: 10, height: 12 / 10, letterSpacing: 0.03 * 10),
               ),
             ],
           ),
@@ -432,14 +429,14 @@ class _ApplicationsOversightScreenState
         // Title
         Text(
           'Applications Oversight',
-          style: seqHeadlineLg(fontWeight: FontWeight.w700),
+          style: AppTypography.style(AppTextRole.screenTitle, fontSize: 32, height: 38 / 32, letterSpacing: -0.021 * 32, color: kSeqOnSurface),
         ),
         const SizedBox(height: 4),
 
         // Subtitle: strictly live database count
         Text(
           '$totalCount student applications across listed scholarships',
-          style: seqBodyMd(color: kSeqOnSurfaceVariant),
+          style: AppTypography.style(AppTextRole.subtitle, color: kSeqOnSurfaceVariant, fontSize: 14, height: 20 / 14, letterSpacing: -0.006 * 14),
         ),
       ],
     );
@@ -571,10 +568,7 @@ class _ApplicationsOversightScreenState
               Flexible(
                 child: Text(
                   title,
-                  style: seqLabelSm(
-                    color: kSeqOutline,
-                    fontWeight: FontWeight.w600,
-                  ),
+                  style: AppTypography.style(AppTextRole.label, color: kSeqOutline, fontSize: 10, height: 12 / 10, letterSpacing: 0.03 * 10),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -594,16 +588,16 @@ class _ApplicationsOversightScreenState
           numericValue != null
               ? CountUpAnimation(
                   targetValue: numericValue,
-                  style: seqTabularFigures(seqHeadlineLg(fontWeight: FontWeight.w700)),
+                  style: seqTabularFigures(AppTypography.style(AppTextRole.metric, fontSize: 32, height: 38 / 32, letterSpacing: -0.021 * 32, color: kSeqOnSurface)),
                 )
               : Text(
                   value,
-                  style: seqTabularFigures(seqHeadlineLg(fontWeight: FontWeight.w700)),
+                  style: seqTabularFigures(AppTypography.style(AppTextRole.metric, fontSize: 32, height: 38 / 32, letterSpacing: -0.021 * 32, color: kSeqOnSurface)),
                 ),
           const SizedBox(height: 2),
           Text(
             subtitle,
-            style: seqBodySm(color: kSeqOnSurfaceVariant),
+            style: AppTypography.style(AppTextRole.subtitle, color: kSeqOnSurfaceVariant, fontSize: 12, height: 16 / 12, letterSpacing: 0),
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
           ),
@@ -687,11 +681,11 @@ class _ApplicationsOversightScreenState
                 Expanded(
                   child: TextField(
                     controller: _searchController,
-                    style: seqBodyMd(),
+                    style: AppTypography.style(AppTextRole.input, fontSize: 14, height: 20 / 14, letterSpacing: -0.006 * 14, color: kSeqOnSurface),
                     decoration: InputDecoration(
                       hintText:
                           'Filter by applicant name, school, or scholarship title...',
-                      hintStyle: seqBodySm(color: kSeqOutline),
+                      hintStyle: AppTypography.style(AppTextRole.placeholder, color: kSeqOutline, fontSize: 12, height: 16 / 12, letterSpacing: 0),
                       border: InputBorder.none,
                       isDense: true,
                       contentPadding: const EdgeInsets.symmetric(vertical: 8),
@@ -752,10 +746,7 @@ class _ApplicationsOversightScreenState
           ),
           child: Text(
             label,
-            style: seqLabelSm(
-              color: isSelected ? kSeqOnPrimary : kSeqOnSurfaceVariant,
-              fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
-            ),
+            style: AppTypography.style(AppTextRole.navigation, color: isSelected ? kSeqOnPrimary : kSeqOnSurfaceVariant, fontSize: 10, height: 12 / 10, letterSpacing: 0.03 * 10),
           ),
         ),
       ),
@@ -849,10 +840,7 @@ class _ApplicationsOversightScreenState
                     alignment: Alignment.center,
                     child: Text(
                       initials,
-                      style: seqLabelSm(
-                        color: kSeqOnPrimaryFixedVariant,
-                        fontWeight: FontWeight.w700,
-                      ),
+                      style: AppTypography.style(AppTextRole.label, color: kSeqOnPrimaryFixedVariant, fontSize: 10, height: 12 / 10, letterSpacing: 0.03 * 10),
                     ),
                   ),
                   const SizedBox(width: 12),
@@ -864,24 +852,14 @@ class _ApplicationsOversightScreenState
                       children: [
                         Text(
                           applicantDisplayName,
-                          style: geist(
-                            fontSize: 16,
-                            color: hasApplicantName
-                                ? kSeqOnSurface
-                                : kSeqOutline,
-                            fontWeight: FontWeight.w700,
-                          ),
+                          style: AppTypography.style(AppTextRole.cardTitle, fontSize: 16, color: hasApplicantName ? kSeqOnSurface : kSeqOutline),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                         ),
                         const SizedBox(height: 2),
                         Text(
                           schoolDisplayName,
-                          style: seqBodySm(
-                            color: hasSchool
-                                ? kSeqOnSurfaceVariant
-                                : kSeqOutline,
-                          ),
+                          style: AppTypography.style(AppTextRole.subtitle, color: hasSchool ? kSeqOnSurfaceVariant : kSeqOutline, fontSize: 12, height: 16 / 12, letterSpacing: 0),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                         ),
@@ -889,10 +867,7 @@ class _ApplicationsOversightScreenState
                           const SizedBox(height: 2),
                           Text(
                             courseYearText,
-                            style: seqLabelSm(
-                              color: kSeqOutline,
-                              fontWeight: FontWeight.w500,
-                            ),
+                            style: AppTypography.style(AppTextRole.caption, color: kSeqOutline, fontSize: 10, height: 12 / 10, letterSpacing: 0.03 * 10),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                           ),
@@ -926,18 +901,12 @@ class _ApplicationsOversightScreenState
                       children: [
                         Text(
                           'PROGRAM & GRANT POOL',
-                          style: seqLabelSm(
-                            color: kSeqOutline,
-                            fontWeight: FontWeight.w600,
-                          ),
+                          style: AppTypography.style(AppTextRole.label, color: kSeqOutline, fontSize: 10, height: 12 / 10, letterSpacing: 0.03 * 10),
                         ),
                         const SizedBox(height: 2),
                         Text(
                           scholarshipTitleText,
-                          style: seqBodyMd(
-                            color: kSeqOnSurfaceVariant,
-                            fontWeight: FontWeight.w500,
-                          ),
+                          style: AppTypography.style(AppTextRole.bodyEmphasis, color: kSeqOnSurfaceVariant, fontSize: 14, height: 20 / 14, letterSpacing: -0.006 * 14),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                         ),
@@ -950,18 +919,12 @@ class _ApplicationsOversightScreenState
                     children: [
                       Text(
                         'ALLOCATION',
-                        style: seqLabelSm(
-                          color: kSeqOutline,
-                          fontWeight: FontWeight.w600,
-                        ),
+                        style: AppTypography.style(AppTextRole.label, color: kSeqOutline, fontSize: 10, height: 12 / 10, letterSpacing: 0.03 * 10),
                       ),
                       const SizedBox(height: 2),
                       Text(
                         scholarshipAmountText,
-                        style: seqTabularFigures(seqHeadlineSm(
-                          color: kSeqPrimaryContainer,
-                          fontWeight: FontWeight.w700,
-                        )),
+                        style: seqTabularFigures(AppTypography.style(AppTextRole.metric, color: kSeqPrimaryContainer, fontSize: 19, height: 24 / 19, letterSpacing: -0.015 * 19)),
                       ),
                     ],
                   ),
@@ -987,19 +950,19 @@ class _ApplicationsOversightScreenState
                           Flexible(
                             child: Text(
                               'Applied: $appliedAtText',
-                              style: seqTabularFigures(seqLabelSm(color: kSeqOnSurfaceVariant)),
+                              style: seqTabularFigures(AppTypography.style(AppTextRole.caption, color: kSeqOnSurfaceVariant, fontSize: 10, height: 12 / 10, letterSpacing: 0.03 * 10)),
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                             ),
                           ),
                           const SizedBox(width: 8),
                           Text('•',
-                              style: seqLabelSm(color: kSeqOutline)),
+                              style: AppTypography.style(AppTextRole.caption, color: kSeqOutline, fontSize: 10, height: 12 / 10, letterSpacing: 0.03 * 10)),
                           const SizedBox(width: 8),
                           Flexible(
                             child: Text(
                               'Updated: $updatedAtText',
-                              style: seqTabularFigures(seqLabelSm(color: kSeqOutline)),
+                              style: seqTabularFigures(AppTypography.style(AppTextRole.caption, color: kSeqOutline, fontSize: 10, height: 12 / 10, letterSpacing: 0.03 * 10)),
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                             ),
@@ -1013,10 +976,7 @@ class _ApplicationsOversightScreenState
                       children: [
                         Text(
                           'Inspect Dossier',
-                          style: seqLabelSm(
-                            color: kSeqSecondary,
-                            fontWeight: FontWeight.w600,
-                          ),
+                          style: AppTypography.style(AppTextRole.button, color: kSeqSecondary, fontSize: 10, height: 12 / 10, letterSpacing: 0.03 * 10),
                         ),
                         const SizedBox(width: 4),
                         const Icon(
@@ -1065,7 +1025,7 @@ class _ApplicationsOversightScreenState
             Expanded(
               child: Text(
                 'Application Dossier',
-                style: seqHeadlineSm(fontWeight: FontWeight.w700),
+                style: AppTypography.style(AppTextRole.sectionTitle, fontSize: 19, height: 24 / 19, letterSpacing: -0.015 * 19, color: kSeqOnSurface),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
               ),
@@ -1084,10 +1044,7 @@ class _ApplicationsOversightScreenState
                 // Applicant Identity Section
                 Text(
                   'APPLICANT PROFILE',
-                  style: seqLabelSm(
-                    color: kSeqOutline,
-                    fontWeight: FontWeight.w700,
-                  ),
+                  style: AppTypography.style(AppTextRole.sectionTitle, color: kSeqOutline, fontSize: 10, height: 12 / 10, letterSpacing: 0.03 * 10),
                 ),
                 const SizedBox(height: 8),
                 _dossierRow('Candidate Name', applicantDisplayName),
@@ -1111,10 +1068,7 @@ class _ApplicationsOversightScreenState
                 // Scholarship Program Section
                 Text(
                   'SCHOLARSHIP PROGRAM',
-                  style: seqLabelSm(
-                    color: kSeqOutline,
-                    fontWeight: FontWeight.w700,
-                  ),
+                  style: AppTypography.style(AppTextRole.sectionTitle, color: kSeqOutline, fontSize: 10, height: 12 / 10, letterSpacing: 0.03 * 10),
                 ),
                 const SizedBox(height: 8),
                 _dossierRow('Grant Program', scholarshipTitleText),
@@ -1127,10 +1081,7 @@ class _ApplicationsOversightScreenState
                 // Intake & Clearance State Section
                 Text(
                   'INTAKE & CLEARANCE STATE',
-                  style: seqLabelSm(
-                    color: kSeqOutline,
-                    fontWeight: FontWeight.w700,
-                  ),
+                  style: AppTypography.style(AppTextRole.sectionTitle, color: kSeqOutline, fontSize: 10, height: 12 / 10, letterSpacing: 0.03 * 10),
                 ),
                 const SizedBox(height: 8),
 
@@ -1144,10 +1095,7 @@ class _ApplicationsOversightScreenState
                         width: 170,
                         child: Text(
                           'Clearance Status',
-                          style: seqLabelSm(
-                            color: kSeqOutline,
-                            fontWeight: FontWeight.w500,
-                          ),
+                          style: AppTypography.style(AppTextRole.label, color: kSeqOutline, fontSize: 10, height: 12 / 10, letterSpacing: 0.03 * 10),
                         ),
                       ),
                       Expanded(
@@ -1158,10 +1106,7 @@ class _ApplicationsOversightScreenState
                             const SizedBox(height: 3),
                             Text(
                               item.status,
-                              style: geist(
-                                fontSize: 11,
-                                color: kSeqOutline,
-                              ),
+                              style: AppTypography.style(AppTextRole.badge, fontSize: 11, color: kSeqOutline),
                             ),
                           ],
                         ),
@@ -1192,10 +1137,7 @@ class _ApplicationsOversightScreenState
                 // Notes Field
                 Text(
                   'APPLICATION NOTES',
-                  style: seqLabelSm(
-                    color: kSeqOutline,
-                    fontWeight: FontWeight.w700,
-                  ),
+                  style: AppTypography.style(AppTextRole.sectionTitle, color: kSeqOutline, fontSize: 10, height: 12 / 10, letterSpacing: 0.03 * 10),
                 ),
                 const SizedBox(height: 6),
                 Container(
@@ -1213,8 +1155,8 @@ class _ApplicationsOversightScreenState
                         ? item.notes!
                         : 'No notes',
                     style: item.notes != null && item.notes!.trim().isNotEmpty
-                        ? seqBodySm(color: kSeqOnSurface)
-                        : seqBodySm(color: kSeqOutline),
+                        ? AppTypography.style(AppTextRole.body, color: kSeqOnSurface, fontSize: 12, height: 16 / 12, letterSpacing: 0)
+                        : AppTypography.style(AppTextRole.body, color: kSeqOutline, fontSize: 12, height: 16 / 12, letterSpacing: 0),
                   ),
                 ),
 
@@ -1259,7 +1201,7 @@ class _ApplicationsOversightScreenState
                             Expanded(
                               child: Text(
                                 'Unable to verify disbursement record. Please try again.',
-                                style: seqLabelSm(color: kSeqOnErrorContainer, fontWeight: FontWeight.w500),
+                                style: AppTypography.style(AppTextRole.body, color: kSeqOnErrorContainer, fontSize: 10, height: 12 / 10, letterSpacing: 0.03 * 10),
                               ),
                             ),
                             const SizedBox(width: 8),
@@ -1272,7 +1214,7 @@ class _ApplicationsOversightScreenState
                               ),
                               onPressed: () => cRef.invalidate(applicationDisbursementProvider(item.id)),
                               icon: const Icon(Icons.refresh_rounded, size: 14),
-                              label: const Text('Retry', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 12)),
+                              label:  Text('Retry', style: AppTypography.style(AppTextRole.button, fontSize: 12)),
                             ),
                           ],
                         ),
@@ -1303,10 +1245,7 @@ class _ApplicationsOversightScreenState
                                 const SizedBox(width: 8),
                                 Text(
                                   '● Disbursement on record',
-                                  style: seqLabelSm(
-                                    color: kSeqOnPrimaryFixedVariant,
-                                    fontWeight: FontWeight.w600,
-                                  ),
+                                  style: AppTypography.style(AppTextRole.badge, color: kSeqOnPrimaryFixedVariant, fontSize: 10, height: 12 / 10, letterSpacing: 0.03 * 10),
                                 ),
                               ],
                             ),
@@ -1332,10 +1271,7 @@ class _ApplicationsOversightScreenState
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(12),
                                 ),
-                                textStyle: seqLabelMd(
-                                  fontWeight: FontWeight.w600,
-                                  color: kSeqOnPrimary,
-                                ),
+                                textStyle: AppTypography.style(AppTextRole.button, color: kSeqOnPrimary, fontSize: 12, height: 16 / 12, letterSpacing: -0.002 * 12),
                               ),
                             ),
                           ),
@@ -1352,10 +1288,7 @@ class _ApplicationsOversightScreenState
                   onPressed: () => Navigator.of(dialogContext).pop(),
                   child: Text(
                     'Close',
-                    style: seqLabelMd(
-                      color: kSeqOnSurfaceVariant,
-                      fontWeight: FontWeight.w600,
-                    ),
+                    style: AppTypography.style(AppTextRole.button, color: kSeqOnSurfaceVariant, fontSize: 12, height: 16 / 12, letterSpacing: -0.002 * 12),
                   ),
                 ),
               ),
@@ -1407,25 +1340,15 @@ class _ApplicationsOversightScreenState
             width: 170,
             child: Text(
               label,
-              style: seqLabelSm(
-                color: kSeqOutline,
-                fontWeight: FontWeight.w500,
-              ),
+              style: AppTypography.style(AppTextRole.label, color: kSeqOutline, fontSize: 10, height: 12 / 10, letterSpacing: 0.03 * 10),
             ),
           ),
           Expanded(
             child: Text(
               value,
               style: isMono
-                  ? adminDataMono(
-                      fontSize: 11.5,
-                      fontWeight: FontWeight.w500,
-                      color: kSeqOnSurface,
-                    )
-                  : seqBodySm(
-                      color: kSeqOnSurface,
-                      fontWeight: FontWeight.w600,
-                    ),
+                  ? AppTypography.style(AppTextRole.caption, fontSize: 11.5, color: kSeqOnSurface)
+                  : AppTypography.style(AppTextRole.bodyEmphasis, color: kSeqOnSurface, fontSize: 12, height: 16 / 12, letterSpacing: 0),
             ),
           ),
         ],
@@ -1463,14 +1386,14 @@ class _ApplicationsOversightScreenState
           const SizedBox(height: 16),
           Text(
             'No applications found',
-            style: seqHeadlineSm(fontWeight: FontWeight.w600),
+            style: AppTypography.style(AppTextRole.sectionTitle, fontSize: 19, height: 24 / 19, letterSpacing: -0.015 * 19, color: kSeqOnSurface),
           ),
           const SizedBox(height: 6),
           Text(
             searchQuery.isNotEmpty
                 ? 'No applications match your search query "$searchQuery".'
                 : 'There are currently 0 applications in the "$activeTab" category.',
-            style: seqBodySm(color: kSeqOnSurfaceVariant),
+            style: AppTypography.style(AppTextRole.body, color: kSeqOnSurfaceVariant, fontSize: 12, height: 16 / 12, letterSpacing: 0),
             textAlign: TextAlign.center,
           ),
         ],
@@ -1625,10 +1548,7 @@ class StatusBadge extends StatelessWidget {
             const SizedBox(width: 5),
             Text(
               label,
-              style: seqLabelSm(
-                color: fg,
-                fontWeight: FontWeight.w600,
-              ),
+              style: AppTypography.style(AppTextRole.badge, color: fg, fontSize: 10, height: 12 / 10, letterSpacing: 0.03 * 10),
             ),
           ],
         ),
@@ -1801,7 +1721,7 @@ class _CreateDisbursementSheetState extends State<_CreateDisbursementSheet> {
                 Expanded(
                   child: Text(
                     'Confirm Award & Schedule Disbursement',
-                    style: seqHeadlineSm(fontWeight: FontWeight.w700),
+                    style: AppTypography.style(AppTextRole.sectionTitle, fontSize: 19, height: 24 / 19, letterSpacing: -0.015 * 19, color: kSeqOnSurface),
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                   ),
@@ -1839,7 +1759,7 @@ class _CreateDisbursementSheetState extends State<_CreateDisbursementSheet> {
             Text(
               'PAYMENT METHOD',
               style:
-                  seqLabelSm(color: kSeqOutline, fontWeight: FontWeight.w700),
+                  AppTypography.style(AppTextRole.label, color: kSeqOutline, fontSize: 10, height: 12 / 10, letterSpacing: 0.03 * 10),
             ),
             const SizedBox(height: 6),
             Container(
@@ -1861,7 +1781,7 @@ class _CreateDisbursementSheetState extends State<_CreateDisbursementSheet> {
                       value: pm['value'],
                       child: Text(
                         pm['label']!,
-                        style: seqBodyMd(color: kSeqOnSurface),
+                        style: AppTypography.style(AppTextRole.label, color: kSeqOnSurface, fontSize: 14, height: 20 / 14, letterSpacing: -0.006 * 14),
                       ),
                     );
                   }).toList(),
@@ -1878,14 +1798,14 @@ class _CreateDisbursementSheetState extends State<_CreateDisbursementSheet> {
             Text(
               'REFERENCE NUMBER (OPTIONAL)',
               style:
-                  seqLabelSm(color: kSeqOutline, fontWeight: FontWeight.w700),
+                  AppTypography.style(AppTextRole.label, color: kSeqOutline, fontSize: 10, height: 12 / 10, letterSpacing: 0.03 * 10),
             ),
             const SizedBox(height: 6),
             TextField(
               controller: _referenceController,
               decoration: InputDecoration(
                 hintText: 'e.g. GC-2026-XXXX',
-                hintStyle: seqBodySm(color: kSeqOutline),
+                hintStyle: AppTypography.style(AppTextRole.placeholder, color: kSeqOutline, fontSize: 12, height: 16 / 12, letterSpacing: 0),
                 filled: true,
                 fillColor: kSeqSurfaceContainerLow,
                 contentPadding: const EdgeInsets.symmetric(
@@ -1915,7 +1835,7 @@ class _CreateDisbursementSheetState extends State<_CreateDisbursementSheet> {
             Text(
               'NOTES (OPTIONAL)',
               style:
-                  seqLabelSm(color: kSeqOutline, fontWeight: FontWeight.w700),
+                  AppTypography.style(AppTextRole.label, color: kSeqOutline, fontSize: 10, height: 12 / 10, letterSpacing: 0.03 * 10),
             ),
             const SizedBox(height: 6),
             TextField(
@@ -1923,7 +1843,7 @@ class _CreateDisbursementSheetState extends State<_CreateDisbursementSheet> {
               maxLines: 3,
               decoration: InputDecoration(
                 hintText: 'Add internal disbursement notes or instructions...',
-                hintStyle: seqBodySm(color: kSeqOutline),
+                hintStyle: AppTypography.style(AppTextRole.placeholder, color: kSeqOutline, fontSize: 12, height: 16 / 12, letterSpacing: 0),
                 filled: true,
                 fillColor: kSeqSurfaceContainerLow,
                 contentPadding: const EdgeInsets.all(14),
@@ -1958,10 +1878,7 @@ class _CreateDisbursementSheetState extends State<_CreateDisbursementSheet> {
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
-                  textStyle: seqLabelMd(
-                    fontWeight: FontWeight.w700,
-                    color: kSeqOnPrimary,
-                  ),
+                  textStyle: AppTypography.style(AppTextRole.button, color: kSeqOnPrimary, fontSize: 12, height: 16 / 12, letterSpacing: -0.002 * 12),
                 ),
                 child: _isSubmitting
                     ? const SizedBox(
@@ -1989,13 +1906,13 @@ class _CreateDisbursementSheetState extends State<_CreateDisbursementSheet> {
           width: 110,
           child: Text(
             label,
-            style: seqLabelSm(color: kSeqOutline, fontWeight: FontWeight.w500),
+            style: AppTypography.style(AppTextRole.label, color: kSeqOutline, fontSize: 10, height: 12 / 10, letterSpacing: 0.03 * 10),
           ),
         ),
         Expanded(
           child: Text(
             value,
-            style: seqBodySm(color: kSeqOnSurface, fontWeight: FontWeight.w600),
+            style: AppTypography.style(AppTextRole.bodyEmphasis, color: kSeqOnSurface, fontSize: 12, height: 16 / 12, letterSpacing: 0),
           ),
         ),
       ],

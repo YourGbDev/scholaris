@@ -1,3 +1,4 @@
+import 'package:scholaris/shared/theme/app_typography.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -26,11 +27,7 @@ class StudentChatScreen extends ConsumerWidget {
         ),
         title: Text(
           'Chat',
-          style: geist(
-            fontSize: 20,
-            fontWeight: FontWeight.w600,
-            color: kOnSurface,
-          ),
+          style: AppTypography.style(AppTextRole.screenTitle, fontSize: 20, color: kOnSurface),
         ),
         actions: [
           IconButton(
@@ -72,12 +69,7 @@ class StudentChatScreen extends ConsumerWidget {
                                 firstName == null
                                     ? 'Hi there!'
                                     : 'Hi, $firstName!',
-                                style: geist(
-                                  fontSize: 28,
-                                  fontWeight: FontWeight.w600,
-                                  color: kPrimary,
-                                  height: 1.2,
-                                ),
+                                style: AppTypography.style(AppTextRole.display, fontSize: 28, color: kPrimary, height: 1.2),
                               ),
                             ),
                           ],
@@ -85,31 +77,17 @@ class StudentChatScreen extends ConsumerWidget {
                         const SizedBox(height: 24),
                         Text(
                           'A little guidance for your next step.',
-                          style: geist(
-                            fontSize: 22,
-                            fontWeight: FontWeight.w500,
-                            color: kOnSurface,
-                            height: 1.35,
-                          ),
+                          style: AppTypography.style(AppTextRole.subtitle, fontSize: 22, color: kOnSurface, height: 1.35),
                         ),
                         const SizedBox(height: 12),
                         Text(
                           'Scholarship chat is coming soon. It will be a place to ask about scholarships and your applications.',
-                          style: geist(
-                            fontSize: 16,
-                            color: kOnSurfaceVariant,
-                            height: 1.5,
-                          ),
+                          style: AppTypography.style(AppTextRole.body, fontSize: 16, color: kOnSurfaceVariant, height: 1.5),
                         ),
                         const SizedBox(height: 24),
                         Text(
                           'AI replies are not connected yet.',
-                          style: geist(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w600,
-                            color: kPrimary,
-                            height: 1.4,
-                          ),
+                          style: AppTypography.style(AppTextRole.caption, fontSize: 14, color: kPrimary, height: 1.4),
                         ),
                       ],
                     ),
@@ -139,21 +117,13 @@ class StudentChatScreen extends ConsumerWidget {
                                           0
                                       ? 2
                                       : 4,
-                                  style: geist(
-                                    fontSize: 16,
-                                    color: kOnSurface,
-                                    height: 1.4,
-                                  ),
+                                  style: AppTypography.style(AppTextRole.input, fontSize: 16, color: kOnSurface, height: 1.4),
                                   cursorColor: kPrimary,
                                   textCapitalization:
                                       TextCapitalization.sentences,
                                   decoration: InputDecoration(
                                     hintText: 'Write a scholarship question…',
-                                    hintStyle: geist(
-                                      fontSize: 16,
-                                      color: kOnSurfaceVariant,
-                                      height: 1.4,
-                                    ),
+                                    hintStyle: AppTypography.style(AppTextRole.placeholder, fontSize: 16, color: kOnSurfaceVariant, height: 1.4),
                                     border: InputBorder.none,
                                     enabledBorder: InputBorder.none,
                                     focusedBorder: InputBorder.none,
@@ -178,11 +148,7 @@ class StudentChatScreen extends ConsumerWidget {
                       Text(
                         'Coming soon · Your draft stays on this screen.',
                         textAlign: TextAlign.center,
-                        style: geist(
-                          fontSize: 12,
-                          color: kOnSurfaceVariant,
-                          height: 1.4,
-                        ),
+                        style: AppTypography.style(AppTextRole.caption, fontSize: 12, color: kOnSurfaceVariant, height: 1.4),
                       ),
                     ],
                   ),
@@ -202,16 +168,12 @@ class StudentChatScreen extends ConsumerWidget {
         backgroundColor: kSurface,
         title: Text(
           'About scholarship chat',
-          style: geist(
-            fontSize: 22,
-            fontWeight: FontWeight.w600,
-            color: kOnSurface,
-          ),
+          style: AppTypography.style(AppTextRole.sectionTitle, fontSize: 22, color: kOnSurface),
         ),
         content: SingleChildScrollView(
           child: Text(
             'Chat is being prepared to help you understand scholarship eligibility, document requirements, and application steps.\n\nAI replies are not connected yet. You can type a draft here, but it cannot be sent. Drafts are cleared when you leave Chat.\n\nAlways check deadlines and requirements with the scholarship provider.',
-            style: geist(fontSize: 16, color: kOnSurfaceVariant, height: 1.5),
+            style: AppTypography.style(AppTextRole.caption, fontSize: 16, color: kOnSurfaceVariant, height: 1.5),
           ),
         ),
         actions: [
@@ -219,11 +181,7 @@ class StudentChatScreen extends ConsumerWidget {
             onPressed: () => Navigator.of(context).pop(),
             child: Text(
               'Got it',
-              style: geist(
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-                color: kPrimary,
-              ),
+              style: AppTypography.style(AppTextRole.button, fontSize: 16, color: kPrimary),
             ),
           ),
         ],

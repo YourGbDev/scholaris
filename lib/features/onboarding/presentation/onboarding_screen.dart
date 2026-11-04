@@ -11,6 +11,7 @@
 // Shows exactly once — completing, skipping or choosing "Log In" persists the
 // `onboarding_seen` flag via [onboardingSeenProvider].
 
+import 'package:scholaris/shared/theme/app_typography.dart';
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
@@ -140,11 +141,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                           ),
                           child: Text(
                             'Skip',
-                            style: geist(
-                              fontSize: 13.5,
-                              fontWeight: FontWeight.w600,
-                              color: const Color(0xFF436084),
-                            ),
+                            style: AppTypography.style(AppTextRole.button, fontSize: 13.5, color: const Color(0xFF436084)),
                           ),
                         )
                       else
@@ -163,20 +160,11 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                             children: [
                               Text(
                                 'STEP ',
-                                style: geist(
-                                  fontSize: 9.5,
-                                  fontWeight: FontWeight.w600,
-                                  color: const Color(0xFF436084),
-                                  letterSpacing: 0.5,
-                                ),
+                                style: AppTypography.style(AppTextRole.label, fontSize: 9.5, color: const Color(0xFF436084), letterSpacing: 0.5),
                               ),
                               Text(
                                 '3 of 3',
-                                style: geist(
-                                  fontSize: 10.5,
-                                  fontWeight: FontWeight.bold,
-                                  color: const Color(0xFF0F4D2E),
-                                ),
+                                style: AppTypography.style(AppTextRole.label, fontSize: 10.5, color: const Color(0xFF0F4D2E)),
                               ),
                             ],
                           ),
@@ -281,12 +269,7 @@ class _Slide1Ecosystem extends StatelessWidget {
                             const SizedBox(width: 4),
                             Text(
                               'SIMULAN ANG PANGARAP',
-                              style: geist(
-                                fontSize: 10,
-                                fontWeight: FontWeight.w700,
-                                color: const Color(0xFF145131),
-                                letterSpacing: 0.5,
-                              ),
+                              style: AppTypography.style(AppTextRole.label, fontSize: 10, color: const Color(0xFF145131), letterSpacing: 0.5),
                             ),
                           ],
                         ),
@@ -295,23 +278,13 @@ class _Slide1Ecosystem extends StatelessWidget {
                       // Headline
                       Text(
                         'Find Your Scholarship',
-                        style: geist(
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
-                          color: const Color(0xFF00351C),
-                          letterSpacing: -0.5,
-                          height: 1.15,
-                        ),
+                        style: AppTypography.style(AppTextRole.display, fontSize: 24, color: const Color(0xFF00351C), letterSpacing: -0.5, height: 1.15),
                       ),
                       const SizedBox(height: 5),
                       // Narrative
                       Text(
                         'Discover scholarships suited to your academic background, region, and financial needs.',
-                        style: geist(
-                          fontSize: 13,
-                          color: const Color(0xFF404942),
-                          height: 1.35,
-                        ),
+                        style: AppTypography.style(AppTextRole.subtitle, fontSize: 13, color: const Color(0xFF404942), height: 1.35),
                       ),
                       const SizedBox(height: 10),
                       // Metric Bento
@@ -348,18 +321,11 @@ class _Slide1Ecosystem extends StatelessWidget {
                                 children: [
                                   Text(
                                     'Explore scholarship opportunities',
-                                    style: geist(
-                                      fontSize: 13.5,
-                                      fontWeight: FontWeight.bold,
-                                      color: const Color(0xFF161C27),
-                                    ),
+                                    style: AppTypography.style(AppTextRole.cardTitle, fontSize: 13.5, color: const Color(0xFF161C27)),
                                   ),
                                   Text(
                                     'Across Luzon, Visayas & Mindanao',
-                                    style: geist(
-                                      fontSize: 11,
-                                      color: const Color(0xFF436084),
-                                    ),
+                                    style: AppTypography.style(AppTextRole.subtitle, fontSize: 11, color: const Color(0xFF436084)),
                                   ),
                                 ],
                               ),
@@ -393,10 +359,7 @@ class _Slide1Ecosystem extends StatelessWidget {
                     children: [
                       Text(
                         'Next',
-                        style: geist(
-                          fontSize: 15,
-                          fontWeight: FontWeight.w700,
-                        ),
+                        style: AppTypography.style(AppTextRole.button, fontSize: 15),
                       ),
                       const SizedBox(width: 6),
                       const Icon(Icons.arrow_forward_rounded, size: 18),
@@ -409,19 +372,12 @@ class _Slide1Ecosystem extends StatelessWidget {
                 onPressed: onLogin,
                 child: Text.rich(
                   TextSpan(
-                    style: geist(
-                      fontSize: 12.5,
-                      color: const Color(0xFF436084),
-                    ),
+                    style: AppTypography.style(AppTextRole.body, fontSize: 12.5, color: const Color(0xFF436084)),
                     children: [
                       const TextSpan(text: 'Already have an account? '),
                       TextSpan(
                         text: 'Sign In',
-                        style: geist(
-                          fontWeight: FontWeight.bold,
-                          color: const Color(0xFF0F4D2E),
-                          decoration: TextDecoration.underline,
-                        ),
+                        style: AppTypography.style(AppTextRole.button, color: const Color(0xFF0F4D2E), decoration: TextDecoration.underline),
                       ),
                     ],
                   ),
@@ -493,12 +449,7 @@ class _Slide2Matching extends StatelessWidget {
                             const SizedBox(width: 4),
                             Text(
                               'SMART CRITERIA MATCHING',
-                              style: geist(
-                                fontSize: 10,
-                                fontWeight: FontWeight.w700,
-                                color: const Color(0xFF2B486B),
-                                letterSpacing: 0.5,
-                              ),
+                              style: AppTypography.style(AppTextRole.label, fontSize: 10, color: const Color(0xFF2B486B), letterSpacing: 0.5),
                             ),
                           ],
                         ),
@@ -507,13 +458,7 @@ class _Slide2Matching extends StatelessWidget {
                       // Headline
                       Text.rich(
                         TextSpan(
-                          style: geist(
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold,
-                            color: const Color(0xFF161C27),
-                            letterSpacing: -0.5,
-                            height: 1.15,
-                          ),
+                          style: AppTypography.style(AppTextRole.display, fontSize: 24, color: const Color(0xFF161C27), letterSpacing: -0.5, height: 1.15),
                           children: const [
                             TextSpan(text: 'Get Matched,\n'),
                             TextSpan(
@@ -527,11 +472,7 @@ class _Slide2Matching extends StatelessWidget {
                       // Narrative
                       Text(
                         'Spend less time searching. Scholaris compares your profile with scholarship criteria to highlight opportunities that may suit you.',
-                        style: geist(
-                          fontSize: 13,
-                          color: const Color(0xFF404942),
-                          height: 1.35,
-                        ),
+                        style: AppTypography.style(AppTextRole.subtitle, fontSize: 13, color: const Color(0xFF404942), height: 1.35),
                       ),
                       const SizedBox(height: 10),
                       // Trust Features
@@ -582,10 +523,7 @@ class _Slide2Matching extends StatelessWidget {
                       icon: const Icon(Icons.arrow_back_rounded, size: 17),
                       label: Text(
                         'Back',
-                        style: geist(
-                          fontSize: 14.5,
-                          fontWeight: FontWeight.w600,
-                        ),
+                        style: AppTypography.style(AppTextRole.button, fontSize: 14.5),
                       ),
                       style: OutlinedButton.styleFrom(
                         foregroundColor: const Color(0xFF436084),
@@ -616,10 +554,7 @@ class _Slide2Matching extends StatelessWidget {
                           children: [
                             Text(
                               'Continue',
-                              style: geist(
-                                fontSize: 15,
-                                fontWeight: FontWeight.w700,
-                              ),
+                              style: AppTypography.style(AppTextRole.button, fontSize: 15),
                             ),
                             const SizedBox(width: 6),
                             const Icon(Icons.arrow_forward_rounded, size: 18),
@@ -695,12 +630,7 @@ class _Slide3AuditTrail extends StatelessWidget {
                             const SizedBox(width: 4),
                             Text(
                               'RADICAL TRANSPARENCY',
-                              style: geist(
-                                fontSize: 10,
-                                fontWeight: FontWeight.w700,
-                                color: const Color(0xFF145131),
-                                letterSpacing: 0.5,
-                              ),
+                              style: AppTypography.style(AppTextRole.label, fontSize: 10, color: const Color(0xFF145131), letterSpacing: 0.5),
                             ),
                           ],
                         ),
@@ -709,23 +639,13 @@ class _Slide3AuditTrail extends StatelessWidget {
                       // Headline
                       Text(
                         'Track Every Step',
-                        style: geist(
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
-                          color: const Color(0xFF161C27),
-                          letterSpacing: -0.5,
-                          height: 1.15,
-                        ),
+                        style: AppTypography.style(AppTextRole.display, fontSize: 24, color: const Color(0xFF161C27), letterSpacing: -0.5, height: 1.15),
                       ),
                       const SizedBox(height: 5),
                       // Narrative
                       Text(
                         'Follow your application from draft and submission through to a decision.',
-                        style: geist(
-                          fontSize: 13,
-                          color: const Color(0xFF404942),
-                          height: 1.35,
-                        ),
+                        style: AppTypography.style(AppTextRole.subtitle, fontSize: 13, color: const Color(0xFF404942), height: 1.35),
                       ),
                       const SizedBox(height: 10),
                       // Reassurance Banner
@@ -750,10 +670,7 @@ class _Slide3AuditTrail extends StatelessWidget {
                             Expanded(
                               child: Text.rich(
                                 TextSpan(
-                                  style: geist(
-                                    fontSize: 11,
-                                    color: const Color(0xFF404942),
-                                  ),
+                                  style: AppTypography.style(AppTextRole.caption, fontSize: 11, color: const Color(0xFF404942)),
                                   children: [
                                     const TextSpan(
                                       text:
@@ -761,10 +678,7 @@ class _Slide3AuditTrail extends StatelessWidget {
                                     ),
                                     TextSpan(
                                       text: '• 100% Free for Students',
-                                      style: geist(
-                                        fontWeight: FontWeight.bold,
-                                        color: const Color(0xFF0F4D2E),
-                                      ),
+                                      style: AppTypography.style(AppTextRole.bodyEmphasis, color: const Color(0xFF0F4D2E)),
                                     ),
                                   ],
                                 ),
@@ -799,10 +713,7 @@ class _Slide3AuditTrail extends StatelessWidget {
                     children: [
                       Text(
                         'Get Started',
-                        style: geist(
-                          fontSize: 15.5,
-                          fontWeight: FontWeight.bold,
-                        ),
+                        style: AppTypography.style(AppTextRole.button, fontSize: 15.5),
                       ),
                       const SizedBox(width: 6),
                       const Icon(Icons.arrow_forward_rounded, size: 18),
@@ -815,19 +726,12 @@ class _Slide3AuditTrail extends StatelessWidget {
                 onPressed: onLogin,
                 child: Text.rich(
                   TextSpan(
-                    style: geist(
-                      fontSize: 12.5,
-                      color: const Color(0xFF436084),
-                    ),
+                    style: AppTypography.style(AppTextRole.body, fontSize: 12.5, color: const Color(0xFF436084)),
                     children: [
                       const TextSpan(text: 'Already have an account? '),
                       TextSpan(
                         text: 'Log In',
-                        style: geist(
-                          fontWeight: FontWeight.bold,
-                          color: const Color(0xFF161C27),
-                          decoration: TextDecoration.underline,
-                        ),
+                        style: AppTypography.style(AppTextRole.button, color: const Color(0xFF161C27), decoration: TextDecoration.underline),
                       ),
                     ],
                   ),
@@ -1074,12 +978,7 @@ class _VerifiedGrantsBadge extends StatelessWidget {
                 const SizedBox(width: 4),
                 Text(
                   'SCHOLARSHIP DISCOVERY',
-                  style: geist(
-                    fontSize: 9.5,
-                    fontWeight: FontWeight.w700,
-                    color: const Color(0xFF00351C),
-                    letterSpacing: 0.4,
-                  ),
+                  style: AppTypography.style(AppTextRole.label, fontSize: 9.5, color: const Color(0xFF00351C), letterSpacing: 0.4),
                 ),
               ],
             ),
@@ -1131,11 +1030,7 @@ class _PrivateEndowmentsBadge extends StatelessWidget {
           const SizedBox(width: 5.5),
           Text(
             'Private Endowments',
-            style: geist(
-              fontSize: 11.0,
-              fontWeight: FontWeight.bold,
-              color: const Color(0xFF404942),
-            ),
+            style: AppTypography.style(AppTextRole.cardTitle, fontSize: 11.0, color: const Color(0xFF404942)),
           ),
         ],
       ),
@@ -1196,21 +1091,11 @@ class _EcosystemBadge extends StatelessWidget {
             children: [
               Text(
                 title,
-                style: geist(
-                  fontSize: 11.5,
-                  fontWeight: FontWeight.bold,
-                  color: const Color(0xFF161C27),
-                  height: 1.15,
-                ),
+                style: AppTypography.style(AppTextRole.sectionTitle, fontSize: 11.5, color: const Color(0xFF161C27), height: 1.15),
               ),
               Text(
                 subtitle,
-                style: geist(
-                  fontSize: 9.0,
-                  fontWeight: FontWeight.w600,
-                  color: const Color(0xFF436084),
-                  height: 1.15,
-                ),
+                style: AppTypography.style(AppTextRole.subtitle, fontSize: 9.0, color: const Color(0xFF436084), height: 1.15),
               ),
             ],
           ),
@@ -1323,32 +1208,19 @@ class _PrecisionMatchingCanvas extends StatelessWidget {
                         children: [
                           RichText(
                             text: TextSpan(
-                              style: geist(
-                                fontSize: 10.5,
-                                fontWeight: FontWeight.bold,
-                                color: const Color(0xFF0F4D2E),
-                              ),
+                              style: AppTypography.style(AppTextRole.metric, fontSize: 10.5, color: const Color(0xFF0F4D2E)),
                               children: [
                                 const TextSpan(text: '98'),
                                 TextSpan(
                                   text: '%',
-                                  style: geist(
-                                    fontSize: 7.5,
-                                    fontWeight: FontWeight.w600,
-                                    color: const Color(0xFFF1B41E),
-                                  ),
+                                  style: AppTypography.style(AppTextRole.metric, fontSize: 7.5, color: const Color(0xFFF1B41E)),
                                 ),
                               ],
                             ),
                           ),
                           Text(
                             'MATCH',
-                            style: geist(
-                              fontSize: 5.5,
-                              fontWeight: FontWeight.w700,
-                              color: const Color(0xFF436084),
-                              letterSpacing: 0.3,
-                            ),
+                            style: AppTypography.style(AppTextRole.label, fontSize: 5.5, color: const Color(0xFF436084), letterSpacing: 0.3),
                           ),
                         ],
                       ),
@@ -1376,11 +1248,7 @@ class _PrecisionMatchingCanvas extends StatelessWidget {
                       const SizedBox(width: 3.5),
                       Text(
                         'DOST-SEI Merit',
-                        style: geist(
-                          fontSize: 10.0,
-                          fontWeight: FontWeight.bold,
-                          color: const Color(0xFF0F4D2E),
-                        ),
+                        style: AppTypography.style(AppTextRole.cardTitle, fontSize: 10.0, color: const Color(0xFF0F4D2E)),
                       ),
                     ],
                   ),
@@ -1445,11 +1313,7 @@ class _MatrixBadge extends StatelessWidget {
           ],
           Text(
             text,
-            style: geist(
-              fontSize: 11.5,
-              fontWeight: FontWeight.bold,
-              color: const Color(0xFF161C27),
-            ),
+            style: AppTypography.style(AppTextRole.badge, fontSize: 11.5, color: const Color(0xFF161C27)),
           ),
         ],
       ),
@@ -1618,11 +1482,7 @@ class _AuditTrailCanvas extends StatelessWidget {
                     Flexible(
                       child: Text(
                         'Application progress',
-                        style: geist(
-                          fontSize: 12,
-                          fontWeight: FontWeight.bold,
-                          color: const Color(0xFF161C27),
-                        ),
+                        style: AppTypography.style(AppTextRole.sectionTitle, fontSize: 12, color: const Color(0xFF161C27)),
                         overflow: TextOverflow.ellipsis,
                       ),
                     ),
@@ -1650,11 +1510,7 @@ class _AuditTrailCanvas extends StatelessWidget {
                     const SizedBox(width: 4),
                     Text(
                       'Status updates',
-                      style: geist(
-                        fontSize: 9.5,
-                        fontWeight: FontWeight.w600,
-                        color: const Color(0xFF404942),
-                      ),
+                      style: AppTypography.style(AppTextRole.cardTitle, fontSize: 9.5, color: const Color(0xFF404942)),
                     ),
                   ],
                 ),
@@ -2009,11 +1865,7 @@ class _AuditStepRow extends StatelessWidget {
                   Expanded(
                     child: Text(
                       step,
-                      style: geist(
-                        fontSize: 11,
-                        fontWeight: FontWeight.bold,
-                        color: const Color(0xFF161C27),
-                      ),
+                      style: AppTypography.style(AppTextRole.label, fontSize: 11, color: const Color(0xFF161C27)),
                       overflow: TextOverflow.ellipsis,
                     ),
                   ),
@@ -2030,11 +1882,7 @@ class _AuditStepRow extends StatelessWidget {
                       ),
                       child: Text(
                         chip!,
-                        style: geist(
-                          fontSize: 8.5,
-                          fontWeight: FontWeight.bold,
-                          color: const Color(0xFF145131),
-                        ),
+                        style: AppTypography.style(AppTextRole.badge, fontSize: 8.5, color: const Color(0xFF145131)),
                       ),
                     ),
                   ],
@@ -2042,10 +1890,7 @@ class _AuditStepRow extends StatelessWidget {
               ),
               Text(
                 subtitle,
-                style: geist(
-                  fontSize: 9.5,
-                  color: const Color(0xFF404942),
-                ),
+                style: AppTypography.style(AppTextRole.subtitle, fontSize: 9.5, color: const Color(0xFF404942)),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
               ),
@@ -2061,11 +1906,7 @@ class _AuditStepRow extends StatelessWidget {
             ),
             child: Text(
               badge!,
-              style: geist(
-                fontSize: 9,
-                fontWeight: FontWeight.bold,
-                color: badgeColor ?? const Color(0xFF161C27),
-              ),
+              style: AppTypography.style(AppTextRole.badge, fontSize: 9, color: badgeColor ?? const Color(0xFF161C27)),
             ),
           ),
       ],
@@ -2094,11 +1935,7 @@ class _FeatureCheckRow extends StatelessWidget {
         Expanded(
           child: Text(
             text,
-            style: geist(
-              fontSize: 11.5,
-              fontWeight: FontWeight.w600,
-              color: const Color(0xFF161C27),
-            ),
+            style: AppTypography.style(AppTextRole.label, fontSize: 11.5, color: const Color(0xFF161C27)),
           ),
         ),
       ],

@@ -10,6 +10,7 @@
 // 4. Momentum anchor encouraging multiple applications
 // 5. Direct navigation to Application Tracker & Student Dashboard
 
+import 'package:scholaris/shared/theme/app_typography.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -117,20 +118,11 @@ class _SubmissionConfirmationReceiptScreenState
                 children: [
                   Text(
                     'Scholaris',
-                    style: outfit(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: kPrimaryDark,
-                    ),
+                    style: AppTypography.style(AppTextRole.label, fontSize: 16, color: kPrimaryDark, letterSpacing: opticalTracking(16), height: opticalLeading(16, isBody: false)),
                   ),
                   Text(
                     'SCHOLARSHIP DETAIL & ELIGIBILITY',
-                    style: outfit(
-                      fontSize: 9,
-                      fontWeight: FontWeight.w600,
-                      color: kOnSurfaceVariant,
-                      letterSpacing: 0.5,
-                    ),
+                    style: AppTypography.style(AppTextRole.label, fontSize: 9, color: kOnSurfaceVariant, letterSpacing: 0.5, height: opticalLeading(9, isBody: false)),
                   ),
                 ],
               ),
@@ -253,12 +245,7 @@ class _SubmissionConfirmationReceiptScreenState
                 const SizedBox(width: 6),
                 Text(
                   'PACKET SECURED & SEALED',
-                  style: outfit(
-                    fontSize: 11,
-                    fontWeight: FontWeight.bold,
-                    color: const Color(0xFFB3F1C6),
-                    letterSpacing: 0.5,
-                  ),
+                  style: AppTypography.style(AppTextRole.badge, fontSize: 11, color: const Color(0xFFB3F1C6), letterSpacing: 0.5, height: opticalLeading(11, isBody: false)),
                 ),
               ],
             ),
@@ -274,12 +261,7 @@ class _SubmissionConfirmationReceiptScreenState
           Text(
             'Application Successfully Submitted!',
             textAlign: TextAlign.center,
-            style: outfit(
-              fontSize: 22,
-              fontWeight: FontWeight.bold,
-              color: Colors.white,
-              letterSpacing: -0.2,
-            ),
+            style: AppTypography.style(AppTextRole.screenTitle, fontSize: 22, color: Colors.white, letterSpacing: -0.2, height: opticalLeading(22, isBody: false)),
           ),
           const SizedBox(height: 6),
 
@@ -287,11 +269,7 @@ class _SubmissionConfirmationReceiptScreenState
           Text(
             'Your packet is officially logged and queued for the ${widget.scholarship.provider ?? "DOST-SEI (Department of Science and Technology)"} review panel.',
             textAlign: TextAlign.center,
-            style: openSans(
-              fontSize: 13,
-              color: const Color(0xFF82BD95),
-              height: 1.4,
-            ),
+            style: AppTypography.style(AppTextRole.subtitle, fontSize: 13, color: const Color(0xFF82BD95), height: 1.4, letterSpacing: opticalTracking(13)),
           ),
           const SizedBox(height: 12),
 
@@ -313,19 +291,11 @@ class _SubmissionConfirmationReceiptScreenState
                 const SizedBox(width: 6),
                 Text(
                   'Oct 10, 2025 • 4:19 PM PHT ',
-                  style: outfit(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.white,
-                  ),
+                  style: AppTypography.style(AppTextRole.caption, fontSize: 12, color: Colors.white, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: false)),
                 ),
                 Text(
                   '(5 days ahead)',
-                  style: outfit(
-                    fontSize: 12,
-                    fontWeight: FontWeight.bold,
-                    color: const Color(0xFFFFDEA3),
-                  ),
+                  style: AppTypography.style(AppTextRole.badge, fontSize: 12, color: const Color(0xFFFFDEA3), letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: false)),
                 ),
               ],
             ),
@@ -341,11 +311,7 @@ class _SubmissionConfirmationReceiptScreenState
             ),
             child: Text(
               'Application submitted',
-              style: openSans(
-                fontSize: 11,
-                fontWeight: FontWeight.w600,
-                color: const Color(0xFFB3F1C6),
-              ),
+              style: AppTypography.style(AppTextRole.caption, fontSize: 11, color: const Color(0xFFB3F1C6), letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: true)),
             ),
           ),
         ],
@@ -389,20 +355,11 @@ class _SubmissionConfirmationReceiptScreenState
                     children: [
                       Text(
                         'INSTITUTIONAL DOSSIER',
-                        style: outfit(
-                          fontSize: 9,
-                          fontWeight: FontWeight.w700,
-                          color: kOnSurfaceVariant,
-                          letterSpacing: 0.5,
-                        ),
+                        style: AppTypography.style(AppTextRole.label, fontSize: 9, color: kOnSurfaceVariant, letterSpacing: 0.5, height: opticalLeading(9, isBody: false)),
                       ),
                       Text(
                         'Digital Submission Token',
-                        style: outfit(
-                          fontSize: 15,
-                          fontWeight: FontWeight.bold,
-                          color: kOnSurface,
-                        ),
+                        style: AppTypography.style(AppTextRole.cardTitle, fontSize: 15, color: kOnSurface, letterSpacing: opticalTracking(15), height: opticalLeading(15, isBody: false)),
                       ),
                     ],
                   ),
@@ -416,11 +373,7 @@ class _SubmissionConfirmationReceiptScreenState
                 ),
                 child: Text(
                   'VALID',
-                  style: outfit(
-                    fontSize: 10,
-                    fontWeight: FontWeight.bold,
-                    color: kOnPrimaryFixedVariant,
-                  ),
+                  style: AppTypography.style(AppTextRole.badge, fontSize: 10, color: kOnPrimaryFixedVariant, letterSpacing: opticalTracking(10), height: opticalLeading(10, isBody: false)),
                 ),
               ),
             ],
@@ -442,23 +395,14 @@ class _SubmissionConfirmationReceiptScreenState
                     children: [
                       Text(
                         'Reference Identifier',
-                        style: openSans(
-                          fontSize: 10,
-                          color: kOnSurfaceVariant,
-                        ),
+                        style: AppTypography.style(AppTextRole.label, fontSize: 10, color: kOnSurfaceVariant, letterSpacing: opticalTracking(10), height: opticalLeading(10, isBody: true)),
                       ),
                       const SizedBox(height: 2),
                       Text(
                         (widget.receiptId != null && widget.receiptId!.trim().isNotEmpty)
                             ? widget.receiptId!
                             : 'Receipt ID unavailable',
-                        style: geist(
-                          fontSize: 13,
-                          fontWeight: FontWeight.bold,
-                          color: (widget.receiptId != null && widget.receiptId!.trim().isNotEmpty)
-                              ? kOnSurface
-                              : kOnSurfaceVariant,
-                        ),
+                        style: AppTypography.style(AppTextRole.bodyEmphasis, fontSize: 13, color: (widget.receiptId != null && widget.receiptId!.trim().isNotEmpty) ? kOnSurface : kOnSurfaceVariant),
                       ),
                     ],
                   ),
@@ -484,7 +428,7 @@ class _SubmissionConfirmationReceiptScreenState
           _receiptRow(
             label: 'Grant Opportunity',
             value: widget.scholarship.title,
-            bold: true,
+            valueRole: AppTextRole.cardTitle,
           ),
           const Divider(height: 14),
           _receiptRow(
@@ -492,7 +436,7 @@ class _SubmissionConfirmationReceiptScreenState
             value: '${_grantValue(widget.scholarship)} / year + Monthly Stipend',
             subvalue: '(4-Yr Renewable)',
             valueColor: kPrimaryContainer,
-            bold: true,
+            valueRole: AppTextRole.metric,
           ),
           const Divider(height: 14),
           _receiptRow(
@@ -523,12 +467,7 @@ class _SubmissionConfirmationReceiptScreenState
                   children: [
                     Text(
                       'VERIFIED ATTACHMENTS (4 OF 4)',
-                      style: outfit(
-                        fontSize: 10,
-                        fontWeight: FontWeight.w700,
-                        color: kOnSurfaceVariant,
-                        letterSpacing: 0.5,
-                      ),
+                      style: AppTypography.style(AppTextRole.label, fontSize: 10, color: kOnSurfaceVariant, letterSpacing: 0.5, height: opticalLeading(10, isBody: false)),
                     ),
                     const Icon(
                       Icons.check_circle_rounded,
@@ -571,10 +510,7 @@ class _SubmissionConfirmationReceiptScreenState
                         'SHA-256: e3b0c44298fc1c...8b456',
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: geist(
-                          fontSize: 10,
-                          color: kOnSurfaceVariant,
-                        ),
+                        style: AppTypography.style(AppTextRole.caption, fontSize: 10, color: kOnSurfaceVariant),
                       ),
                     ),
                   ],
@@ -585,11 +521,7 @@ class _SubmissionConfirmationReceiptScreenState
                 fit: BoxFit.scaleDown,
                 child: Text(
                   'Scholaris Vault Sealed',
-                  style: outfit(
-                    fontSize: 11,
-                    fontWeight: FontWeight.bold,
-                    color: kPrimaryContainer,
-                  ),
+                  style: AppTypography.style(AppTextRole.badge, fontSize: 11, color: kPrimaryContainer, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: false)),
                 ),
               ),
             ],
@@ -617,11 +549,7 @@ class _SubmissionConfirmationReceiptScreenState
                     icon: const Icon(Icons.download_rounded, size: 16, color: kPrimaryContainer),
                     label: Text(
                       'Export PDF',
-                      style: outfit(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w600,
-                        color: kOnSurface,
-                      ),
+                      style: AppTypography.style(AppTextRole.button, fontSize: 12, color: kOnSurface, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: false)),
                     ),
                   ),
                 ),
@@ -645,11 +573,7 @@ class _SubmissionConfirmationReceiptScreenState
                     icon: const Icon(Icons.calendar_month_outlined, size: 16, color: kSecondary),
                     label: Text(
                       'Sync Calendar',
-                      style: outfit(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w600,
-                        color: kOnSurface,
-                      ),
+                      style: AppTypography.style(AppTextRole.button, fontSize: 12, color: kOnSurface, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: false)),
                     ),
                   ),
                 ),
@@ -666,7 +590,7 @@ class _SubmissionConfirmationReceiptScreenState
     required String value,
     String? subvalue,
     Color? valueColor,
-    bool bold = false,
+    AppTextRole valueRole = AppTextRole.bodyEmphasis,
   }) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -674,10 +598,7 @@ class _SubmissionConfirmationReceiptScreenState
       children: [
         Text(
           label,
-          style: openSans(
-            fontSize: 12,
-            color: kOnSurfaceVariant,
-          ),
+          style: AppTypography.style(AppTextRole.label, fontSize: 12, color: kOnSurfaceVariant, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: true)),
         ),
         const SizedBox(width: 12),
         Flexible(
@@ -687,20 +608,13 @@ class _SubmissionConfirmationReceiptScreenState
               Text(
                 value,
                 textAlign: TextAlign.end,
-                style: outfit(
-                  fontSize: 13,
-                  fontWeight: bold ? FontWeight.bold : FontWeight.w600,
-                  color: valueColor ?? kOnSurface,
-                ),
+                style: AppTypography.style(valueRole, fontSize: 13, color: valueColor ?? kOnSurface, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: false)),
               ),
               if (subvalue != null)
                 Text(
                   subvalue,
                   textAlign: TextAlign.end,
-                  style: openSans(
-                    fontSize: 10,
-                    color: kOnSurfaceVariant,
-                  ),
+                  style: AppTypography.style(AppTextRole.caption, fontSize: 10, color: kOnSurfaceVariant, letterSpacing: opticalTracking(10), height: opticalLeading(10, isBody: true)),
                 ),
             ],
           ),
@@ -727,10 +641,7 @@ class _SubmissionConfirmationReceiptScreenState
             label,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
-            style: openSans(
-              fontSize: 11,
-              color: kOnSurface,
-            ),
+            style: AppTypography.style(AppTextRole.label, fontSize: 11, color: kOnSurface, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: true)),
           ),
         ),
       ],
@@ -758,11 +669,7 @@ class _SubmissionConfirmationReceiptScreenState
                   const SizedBox(width: 8),
                   Text(
                     'Evaluation Roadmap',
-                    style: outfit(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: kOnSurface,
-                    ),
+                    style: AppTypography.style(AppTextRole.cardTitle, fontSize: 16, color: kOnSurface, letterSpacing: opticalTracking(16), height: opticalLeading(16, isBody: false)),
                   ),
                 ],
               ),
@@ -774,11 +681,7 @@ class _SubmissionConfirmationReceiptScreenState
                 ),
                 child: Text(
                   'Stage 1 of 4',
-                  style: outfit(
-                    fontSize: 10,
-                    fontWeight: FontWeight.w600,
-                    color: kOnSurfaceVariant,
-                  ),
+                  style: AppTypography.style(AppTextRole.badge, fontSize: 10, color: kOnSurfaceVariant, letterSpacing: opticalTracking(10), height: opticalLeading(10, isBody: false)),
                 ),
               ),
             ],
@@ -859,18 +762,11 @@ class _SubmissionConfirmationReceiptScreenState
                     children: [
                       Text(
                         'Dispatch Guarantees',
-                        style: outfit(
-                          fontSize: 10,
-                          fontWeight: FontWeight.bold,
-                          color: kOnSurfaceVariant,
-                        ),
+                        style: AppTypography.style(AppTextRole.cardTitle, fontSize: 10, color: kOnSurfaceVariant, letterSpacing: opticalTracking(10), height: opticalLeading(10, isBody: false)),
                       ),
                       Text(
                         'Copy emailed to applicant & SMS notice to +63 917 **** 421',
-                        style: openSans(
-                          fontSize: 11,
-                          color: kOnSurface,
-                        ),
+                        style: AppTypography.style(AppTextRole.caption, fontSize: 11, color: kOnSurface, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: true)),
                       ),
                     ],
                   ),
@@ -936,11 +832,7 @@ class _SubmissionConfirmationReceiptScreenState
                         Expanded(
                           child: Text(
                             title,
-                            style: outfit(
-                              fontSize: 13,
-                              fontWeight: FontWeight.bold,
-                              color: kOnSurface,
-                            ),
+                            style: AppTypography.style(AppTextRole.cardTitle, fontSize: 13, color: kOnSurface, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: false)),
                           ),
                         ),
                         if (tag != null)
@@ -952,11 +844,7 @@ class _SubmissionConfirmationReceiptScreenState
                             ),
                             child: Text(
                               tag,
-                              style: outfit(
-                                fontSize: 9,
-                                fontWeight: FontWeight.bold,
-                                color: tagColor ?? kOnSurfaceVariant,
-                              ),
+                              style: AppTypography.style(AppTextRole.badge, fontSize: 9, color: tagColor ?? kOnSurfaceVariant, letterSpacing: opticalTracking(9), height: opticalLeading(9, isBody: false)),
                             ),
                           ),
                       ],
@@ -964,11 +852,7 @@ class _SubmissionConfirmationReceiptScreenState
                     const SizedBox(height: 2),
                     Text(
                       caption,
-                      style: openSans(
-                        fontSize: 11,
-                        color: kOnSurfaceVariant,
-                        height: 1.35,
-                      ),
+                      style: AppTypography.style(AppTextRole.caption, fontSize: 11, color: kOnSurfaceVariant, height: 1.35, letterSpacing: opticalTracking(11)),
                     ),
                   ],
                 ),
@@ -1001,10 +885,7 @@ class _SubmissionConfirmationReceiptScreenState
               icon: const Icon(Icons.track_changes_rounded, size: 18),
               label: Text(
                 'Monitor in Application Tracker',
-                style: outfit(
-                  fontSize: 14,
-                  fontWeight: FontWeight.bold,
-                ),
+                style: AppTypography.style(AppTextRole.button, fontSize: 14, letterSpacing: opticalTracking(14), height: opticalLeading(14, isBody: false)),
               ),
             ),
           ),
@@ -1025,10 +906,7 @@ class _SubmissionConfirmationReceiptScreenState
               onPressed: _navigateToDashboard,
               child: Text(
                 'Return to Student Dashboard',
-                style: outfit(
-                  fontSize: 14,
-                  fontWeight: FontWeight.bold,
-                ),
+                style: AppTypography.style(AppTextRole.button, fontSize: 14, letterSpacing: opticalTracking(14), height: opticalLeading(14, isBody: false)),
               ),
             ),
           ),

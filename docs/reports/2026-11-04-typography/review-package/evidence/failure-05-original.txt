@@ -1,0 +1,9 @@
+00:00 +5 -1: C:/scholaris/scratch/typography/baseline-verification/test/auth_boundary_test.dart: auth boundary — matches isolation matches recompute for the new user and never reuse prior results [E]
+  Expected: ['sch-dost', 'sch-ched']
+    Actual: MappedListIterable<Scholarship, String>:['sch-ched', 'sch-dost']
+     Which: at location [0] is 'sch-ched' instead of 'sch-dost'
+  
+  package:matcher                                     expect
+  package:flutter_test/src/widget_tester.dart 473:18  expect
+  test\auth_boundary_test.dart 292:7                  main.<fn>.<fn>
+  

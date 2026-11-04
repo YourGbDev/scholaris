@@ -1,3 +1,4 @@
+import 'package:scholaris/shared/theme/app_typography.dart';
 import 'package:flutter/material.dart';
 
 import '../../../../shared/theme/app_theme.dart';
@@ -103,21 +104,13 @@ class StudentGuideGreeting extends StatelessWidget {
                                   liveRegion: true,
                                   child: Text(
                                     title,
-                                    style: geist(
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.w700,
-                                      height: 1.15,
-                                    ),
+                                    style: AppTypography.style(AppTextRole.sectionTitle, fontSize: 20, height: 1.15),
                                   ),
                                 ),
                                 const SizedBox(height: 12),
                                 Text(
                                   message,
-                                  style: geist(
-                                    fontSize: 15,
-                                    height: 1.45,
-                                    color: kTextSecondary,
-                                  ),
+                                  style: AppTypography.style(AppTextRole.body, fontSize: 15, height: 1.45, color: kTextSecondary),
                                 ),
                                 if (explicitContinue) ...[
                                   const SizedBox(height: 18),
@@ -129,18 +122,14 @@ class StudentGuideGreeting extends StatelessWidget {
                                         onPressed: onSkip,
                                         child: Text(
                                           'Skip',
-                                          style: geist(
-                                            fontWeight: FontWeight.w600,
-                                          ),
+                                          style: AppTypography.style(AppTextRole.button),
                                         ),
                                       ),
                                       FilledButton(
                                         onPressed: onContinue,
                                         child: Text(
                                           'Continue',
-                                          style: geist(
-                                            fontWeight: FontWeight.w600,
-                                          ),
+                                          style: AppTypography.style(AppTextRole.button),
                                         ),
                                       ),
                                     ],
@@ -166,12 +155,7 @@ class StudentGuideGreeting extends StatelessWidget {
                             child: Text(
                               'Tap anywhere to continue',
                               textAlign: TextAlign.center,
-                              style: geist(
-                                fontSize: 14,
-                                height: 1.3,
-                                fontWeight: FontWeight.w600,
-                                color: Colors.white,
-                              ),
+                              style: AppTypography.style(AppTextRole.caption, fontSize: 14, height: 1.3, color: Colors.white),
                             ),
                           ),
                         ),
@@ -195,7 +179,7 @@ class StudentGuideGreeting extends StatelessWidget {
                           ),
                           child: Text(
                             'Skip guide',
-                            style: geist(fontWeight: FontWeight.w600),
+                            style: AppTypography.style(AppTextRole.button),
                           ),
                         ),
                       ),

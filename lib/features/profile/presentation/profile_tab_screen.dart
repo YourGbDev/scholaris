@@ -1,3 +1,4 @@
+import 'package:scholaris/shared/theme/app_typography.dart';
 import 'package:scholaris/features/home/presentation/widgets/student_tab_entrance.dart';
 // lib/features/profile/presentation/profile_tab_screen.dart
 //
@@ -180,10 +181,7 @@ class ProfileTabScreen extends ConsumerWidget {
                 order: 0, immediate: true,
                 child: Text(
                 '/',
-                style: openSans(
-                  fontSize: 14,
-                  color: kTextSecondary.withValues(alpha: 0.5),
-                ),
+                style: AppTypography.style(AppTextRole.body, fontSize: 14, color: kTextSecondary.withValues(alpha: 0.5), letterSpacing: opticalTracking(14), height: opticalLeading(14, isBody: true)),
               ),
               ),
               const SizedBox(width: 6),
@@ -191,11 +189,7 @@ class ProfileTabScreen extends ConsumerWidget {
                 order: 0, immediate: true,
                 child: Text(
                 'Profile',
-                style: outfit(
-                  fontSize: 15,
-                  fontWeight: FontWeight.w600,
-                  color: kOnSurface,
-                  ),
+                style: AppTypography.style(AppTextRole.navigation, fontSize: 15, color: kOnSurface, letterSpacing: opticalTracking(15), height: opticalLeading(15, isBody: false)),
                 ),
               ),
             ],
@@ -247,19 +241,12 @@ class ProfileTabScreen extends ConsumerWidget {
             children: [
               Text(
                 'My Profile',
-                style: outfit(
-                  fontSize: 24,
-                  fontWeight: FontWeight.w700,
-                  color: kOnSurface,
-                ),
+                style: AppTypography.style(AppTextRole.screenTitle, fontSize: 24, color: kOnSurface, letterSpacing: opticalTracking(24), height: opticalLeading(24, isBody: false)),
               ),
               const SizedBox(height: 2),
               Text(
                 'Academic standing & grant eligibility',
-                style: openSans(
-                  fontSize: 12,
-                  color: kOnSurfaceVariant,
-                ),
+                style: AppTypography.style(AppTextRole.subtitle, fontSize: 12, color: kOnSurfaceVariant, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: true)),
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
               ),
@@ -344,11 +331,7 @@ class ProfileTabScreen extends ConsumerWidget {
                           Flexible(
                             child: Text(
                               'Student profile',
-                              style: outfit(
-                                fontSize: 11,
-                                fontWeight: FontWeight.w700,
-                                color: kOnPrimaryFixedVariant,
-                              ),
+                              style: AppTypography.style(AppTextRole.label, fontSize: 11, color: kOnPrimaryFixedVariant, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: false)),
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                             ),
@@ -359,30 +342,19 @@ class ProfileTabScreen extends ConsumerWidget {
                     const SizedBox(height: 6),
                     Text(
                       profile.fullName,
-                      style: outfit(
-                        fontSize: 18,
-                        fontWeight: FontWeight.w700,
-                        color: kOnSurface,
-                      ),
+                      style: AppTypography.style(AppTextRole.cardTitle, fontSize: 18, color: kOnSurface, letterSpacing: opticalTracking(18), height: opticalLeading(18, isBody: false)),
                     ),
                     const SizedBox(height: 2),
                     Text(
                       (profile.school != null && profile.school!.trim().isNotEmpty)
                           ? profile.school!
                           : 'Institution not set',
-                      style: openSans(
-                        fontSize: 13,
-                        color: kOnSurfaceVariant,
-                      ),
+                      style: AppTypography.style(AppTextRole.subtitle, fontSize: 13, color: kOnSurfaceVariant, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: true)),
                     ),
                     const SizedBox(height: 2),
                     Text(
                       '${profile.course} (${profile.yearLevel}${_ordinal(profile.yearLevel)} Year)',
-                      style: openSans(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w600,
-                        color: kSecondary,
-                      ),
+                      style: AppTypography.style(AppTextRole.subtitle, fontSize: 12, color: kSecondary, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: true)),
                     ),
                   ],
                 ),
@@ -411,11 +383,7 @@ class ProfileTabScreen extends ConsumerWidget {
                       Expanded(
                         child: Text(
                           'Student ID / SUC:',
-                          style: outfit(
-                            fontSize: 12,
-                            fontWeight: FontWeight.w600,
-                            color: kOnSurfaceVariant,
-                          ),
+                          style: AppTypography.style(AppTextRole.label, fontSize: 12, color: kOnSurfaceVariant, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: false)),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                         ),
@@ -426,12 +394,7 @@ class ProfileTabScreen extends ConsumerWidget {
                 const SizedBox(width: 8),
                 Text(
                   studentId,
-                  style: outfit(
-                    fontSize: 13,
-                    fontWeight: FontWeight.w700,
-                    color: kOnSurface,
-                    letterSpacing: 0.5,
-                  ),
+                  style: AppTypography.style(AppTextRole.bodyEmphasis, fontSize: 13, color: kOnSurface, letterSpacing: 0.5, height: opticalLeading(13, isBody: false)),
                 ),
               ],
             ),
@@ -462,11 +425,7 @@ class ProfileTabScreen extends ConsumerWidget {
                   Expanded(
                     child: Text(
                       'Profile details',
-                      style: outfit(
-                        fontSize: 17,
-                        fontWeight: FontWeight.w700,
-                        color: kOnSurface,
-                      ),
+                      style: AppTypography.style(AppTextRole.sectionTitle, fontSize: 17, color: kOnSurface, letterSpacing: opticalTracking(17), height: opticalLeading(17, isBody: false)),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
@@ -476,11 +435,7 @@ class ProfileTabScreen extends ConsumerWidget {
                     child: Text(
                       syncedCount > 0 ? '$syncedCount Categories Provided' : 'Pending Profile Setup',
                       textAlign: TextAlign.end,
-                      style: outfit(
-                        fontSize: 11,
-                        fontWeight: FontWeight.w600,
-                        color: syncedCount > 0 ? kPrimary : kOnSurfaceVariant,
-                      ),
+                      style: AppTypography.style(AppTextRole.badge, fontSize: 11, color: syncedCount > 0 ? kPrimary : kOnSurfaceVariant, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: false)),
                     ),
                   ),
                 ],
@@ -561,11 +516,7 @@ class ProfileTabScreen extends ConsumerWidget {
                     Expanded(
                       child: Text(
                         'Academic Information',
-                        style: outfit(
-                          fontSize: 15,
-                          fontWeight: FontWeight.w600,
-                          color: kOnSurface,
-                        ),
+                        style: AppTypography.style(AppTextRole.cardTitle, fontSize: 15, color: kOnSurface, letterSpacing: opticalTracking(15), height: opticalLeading(15, isBody: false)),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                       ),
@@ -586,6 +537,7 @@ class ProfileTabScreen extends ConsumerWidget {
               Expanded(
                 child: _buildGridItem(
                   label: 'Cumulative GWA',
+                  valueRole: AppTextRole.metric,
                   value: profile.gpa.toStringAsFixed(2),
                   subtitle: '1.0 – 5.0 ($gwaScale)',
                 ),
@@ -648,13 +600,7 @@ class ProfileTabScreen extends ConsumerWidget {
                     (profile.school != null && profile.school!.trim().isNotEmpty)
                         ? 'Institution provided on your profile'
                         : 'Institution not declared on profile',
-                    style: openSans(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w600,
-                      color: profile.setupComplete
-                          ? kOnPrimaryFixedVariant
-                          : kOnSurfaceVariant,
-                    ),
+                    style: AppTypography.style(AppTextRole.caption, fontSize: 12, color: profile.setupComplete ? kOnPrimaryFixedVariant : kOnSurfaceVariant, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: true)),
                   ),
                 ),
               ],
@@ -695,11 +641,7 @@ class ProfileTabScreen extends ConsumerWidget {
                     Expanded(
                       child: Text(
                         'Location & Residency',
-                        style: outfit(
-                          fontSize: 15,
-                          fontWeight: FontWeight.w600,
-                          color: kOnSurface,
-                        ),
+                        style: AppTypography.style(AppTextRole.cardTitle, fontSize: 15, color: kOnSurface, letterSpacing: opticalTracking(15), height: opticalLeading(15, isBody: false)),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                       ),
@@ -730,22 +672,18 @@ class ProfileTabScreen extends ConsumerWidget {
                     children: [
                       Text(
                         'Permanent Address',
-                        style: outfit(fontSize: 11, color: kOnSurfaceVariant),
+                        style: AppTypography.style(AppTextRole.label, fontSize: 11, color: kOnSurfaceVariant, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: false)),
                       ),
                       const SizedBox(height: 1),
                       Text(
                         profile.cityMunicipality ?? 'Diliman, Quezon City',
-                        style: openSans(
-                          fontSize: 13,
-                          fontWeight: FontWeight.w600,
-                          color: kOnSurface,
-                        ),
+                        style: AppTypography.style(AppTextRole.body, fontSize: 13, color: kOnSurface, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: true)),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                       ),
                       Text(
                         'Region ${profile.region}',
-                        style: openSans(fontSize: 11, color: kOnSurfaceVariant),
+                        style: AppTypography.style(AppTextRole.body, fontSize: 11, color: kOnSurfaceVariant, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: true)),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                       ),
@@ -761,11 +699,7 @@ class ProfileTabScreen extends ConsumerWidget {
                   ),
                   child: Text(
                     '${profile.region} Dist.',
-                    style: outfit(
-                      fontSize: 11,
-                      fontWeight: FontWeight.w600,
-                      color: kOnSurfaceVariant,
-                    ),
+                    style: AppTypography.style(AppTextRole.badge, fontSize: 11, color: kOnSurfaceVariant, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: false)),
                   ),
                 ),
               ],
@@ -788,7 +722,7 @@ class ProfileTabScreen extends ConsumerWidget {
                     children: [
                       Text(
                         'Declared Residency',
-                        style: outfit(fontSize: 11, color: kOnSurfaceVariant),
+                        style: AppTypography.style(AppTextRole.label, fontSize: 11, color: kOnSurfaceVariant, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: false)),
                       ),
                       const SizedBox(height: 1),
                       Text(
@@ -797,11 +731,7 @@ class ProfileTabScreen extends ConsumerWidget {
                             : (profile.region.isNotEmpty
                                 ? profile.region
                                 : 'Region Not Set'),
-                        style: openSans(
-                          fontSize: 13,
-                          fontWeight: FontWeight.w600,
-                          color: kOnSurface,
-                        ),
+                        style: AppTypography.style(AppTextRole.body, fontSize: 13, color: kOnSurface, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: true)),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                       ),
@@ -811,13 +741,7 @@ class ProfileTabScreen extends ConsumerWidget {
                 const SizedBox(width: 8),
                 Text(
                   profile.region.isNotEmpty ? 'Region Declared' : 'Incomplete',
-                  style: outfit(
-                    fontSize: 11,
-                    fontWeight: FontWeight.w700,
-                    color: profile.region.isNotEmpty
-                        ? kPrimary
-                        : kOnSurfaceVariant,
-                  ),
+                  style: AppTypography.style(AppTextRole.badge, fontSize: 11, color: profile.region.isNotEmpty ? kPrimary : kOnSurfaceVariant, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: false)),
                 ),
               ],
             ),
@@ -849,13 +773,7 @@ class ProfileTabScreen extends ConsumerWidget {
                     (profile.region.isNotEmpty && profile.setupComplete)
                         ? 'Residency information added to your profile'
                         : 'LGU Grant Matching: Set residency to unlock local grants',
-                    style: openSans(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w600,
-                      color: (profile.region.isNotEmpty && profile.setupComplete)
-                          ? kOnPrimaryFixedVariant
-                          : kOnSurfaceVariant,
-                    ),
+                    style: AppTypography.style(AppTextRole.caption, fontSize: 12, color: (profile.region.isNotEmpty && profile.setupComplete) ? kOnPrimaryFixedVariant : kOnSurfaceVariant, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: true)),
                   ),
                 ),
               ],
@@ -896,11 +814,7 @@ class ProfileTabScreen extends ConsumerWidget {
                     Expanded(
                       child: Text(
                         'Financial Background',
-                        style: outfit(
-                          fontSize: 15,
-                          fontWeight: FontWeight.w600,
-                          color: kOnSurface,
-                        ),
+                        style: AppTypography.style(AppTextRole.cardTitle, fontSize: 15, color: kOnSurface, letterSpacing: opticalTracking(15), height: opticalLeading(15, isBody: false)),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                       ),
@@ -933,7 +847,7 @@ class ProfileTabScreen extends ConsumerWidget {
                 Expanded(
                   child: Text(
                     'Specific salary shielded per RA 10173 (Data Privacy)',
-                    style: openSans(fontSize: 11, color: kOnSurfaceVariant),
+                    style: AppTypography.style(AppTextRole.caption, fontSize: 11, color: kOnSurfaceVariant, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: true)),
                   ),
                 ),
               ],
@@ -956,7 +870,7 @@ class ProfileTabScreen extends ConsumerWidget {
                     Expanded(
                       child: Text(
                         'Household Income Tier',
-                        style: outfit(fontSize: 11, color: kOnSurfaceVariant),
+                        style: AppTypography.style(AppTextRole.label, fontSize: 11, color: kOnSurfaceVariant, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: false)),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                       ),
@@ -966,31 +880,21 @@ class ProfileTabScreen extends ConsumerWidget {
                       profile.monthlyFamilyIncome != null
                           ? 'Declared Income'
                           : 'Income Undisclosed',
-                      style: outfit(
-                        fontSize: 11,
-                        fontWeight: FontWeight.w600,
-                        color: profile.monthlyFamilyIncome != null
-                            ? kPrimary
-                            : kOnSurfaceVariant,
-                      ),
+                      style: AppTypography.style(AppTextRole.badge, fontSize: 11, color: profile.monthlyFamilyIncome != null ? kPrimary : kOnSurfaceVariant, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: false)),
                     ),
                   ],
                 ),
                 const SizedBox(height: 4),
                 Text(
                   _incomeLabel(profile),
-                  style: outfit(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                    color: kOnSurface,
-                  ),
+                  style: AppTypography.style(AppTextRole.label, fontSize: 14, color: kOnSurface, letterSpacing: opticalTracking(14), height: opticalLeading(14, isBody: false)),
                 ),
                 const SizedBox(height: 2),
                 Text(
                   profile.monthlyFamilyIncome != null
                       ? 'Qualifies for needs-based tuition and stipend subsidies'
                       : 'Declare monthly income to unlock needs-based subsidies',
-                  style: openSans(fontSize: 11, color: kOnSurfaceVariant),
+                  style: AppTypography.style(AppTextRole.caption, fontSize: 11, color: kOnSurfaceVariant, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: true)),
                 ),
               ],
             ),
@@ -1008,7 +912,7 @@ class ProfileTabScreen extends ConsumerWidget {
               children: [
                 Text(
                   'Special Beneficiary Status',
-                  style: outfit(fontSize: 11, color: kOnSurfaceVariant),
+                  style: AppTypography.style(AppTextRole.label, fontSize: 11, color: kOnSurfaceVariant, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: false)),
                 ),
                 const SizedBox(height: 4),
                 Text(
@@ -1019,11 +923,7 @@ class ProfileTabScreen extends ConsumerWidget {
                           : (profile.monthlyFamilyIncome != null && profile.monthlyFamilyIncome! < 25000
                               ? 'Low-Income Bracket (Subsidized)'
                               : 'Standard Grant Applicant')),
-                  style: outfit(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                    color: kOnSurface,
-                  ),
+                  style: AppTypography.style(AppTextRole.bodyEmphasis, fontSize: 14, color: kOnSurface, letterSpacing: opticalTracking(14), height: opticalLeading(14, isBody: false)),
                 ),
                 const SizedBox(height: 2),
                 Text(
@@ -1032,7 +932,7 @@ class ProfileTabScreen extends ConsumerWidget {
                       : (profile.monthlyFamilyIncome != null
                           ? 'Based on declared family income bracket'
                           : 'No special demographic status declared'),
-                  style: openSans(fontSize: 11, color: kSecondary),
+                  style: AppTypography.style(AppTextRole.caption, fontSize: 11, color: kSecondary, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: true)),
                 ),
               ],
             ),
@@ -1050,11 +950,7 @@ class ProfileTabScreen extends ConsumerWidget {
           padding: const EdgeInsets.symmetric(horizontal: 2),
           child: Text(
             'Documents & Quick Actions',
-            style: outfit(
-              fontSize: 17,
-              fontWeight: FontWeight.w700,
-              color: kOnSurface,
-            ),
+            style: AppTypography.style(AppTextRole.sectionTitle, fontSize: 17, color: kOnSurface, letterSpacing: opticalTracking(17), height: opticalLeading(17, isBody: false)),
           ),
         )),
         const SizedBox(height: 10),
@@ -1073,7 +969,7 @@ class ProfileTabScreen extends ConsumerWidget {
                   SnackBar(
                     content: Text(
                       'Scholaris Passport is not available yet.',
-                      style: openSans(fontSize: 13, color: Colors.white),
+                      style: AppTypography.style(AppTextRole.caption, fontSize: 13, color: Colors.white, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: true)),
                     ),
                     behavior: SnackBarBehavior.floating,
                     backgroundColor: kPrimary,
@@ -1105,19 +1001,12 @@ class ProfileTabScreen extends ConsumerWidget {
                         children: [
                           Text(
                             'Download Scholaris Passport',
-                            style: outfit(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w600,
-                              color: Colors.white,
-                            ),
+                            style: AppTypography.style(AppTextRole.button, fontSize: 14, color: Colors.white, letterSpacing: opticalTracking(14), height: opticalLeading(14, isBody: false)),
                           ),
                           const SizedBox(height: 2),
                           Text(
                             'Coming soon',
-                            style: openSans(
-                              fontSize: 12,
-                              color: kPrimaryFixedDim,
-                            ),
+                            style: AppTypography.style(AppTextRole.badge, fontSize: 12, color: kPrimaryFixedDim, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: true)),
                           ),
                         ],
                       ),
@@ -1147,7 +1036,7 @@ class ProfileTabScreen extends ConsumerWidget {
                   SnackBar(
                     content: Text(
                       'University transcript sync is not available yet.',
-                      style: openSans(fontSize: 13, color: Colors.white),
+                      style: AppTypography.style(AppTextRole.caption, fontSize: 13, color: Colors.white, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: true)),
                     ),
                     behavior: SnackBarBehavior.floating,
                     backgroundColor: kPrimary,
@@ -1168,11 +1057,7 @@ class ProfileTabScreen extends ConsumerWidget {
                     Expanded(
                       child: Text(
                         'University transcript sync • Coming soon',
-                        style: outfit(
-                          fontSize: 13,
-                          fontWeight: FontWeight.w600,
-                          color: kOnSurface,
-                        ),
+                        style: AppTypography.style(AppTextRole.button, fontSize: 13, color: kOnSurface, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: false)),
                       ),
                     ),
                     const Icon(
@@ -1198,11 +1083,7 @@ class ProfileTabScreen extends ConsumerWidget {
           padding: const EdgeInsets.symmetric(horizontal: 2),
           child: Text(
             'Account & Settings',
-            style: outfit(
-              fontSize: 17,
-              fontWeight: FontWeight.w700,
-              color: kOnSurface,
-            ),
+            style: AppTypography.style(AppTextRole.sectionTitle, fontSize: 17, color: kOnSurface, letterSpacing: opticalTracking(17), height: opticalLeading(17, isBody: false)),
           ),
         )),
         const SizedBox(height: 10),
@@ -1242,7 +1123,7 @@ class ProfileTabScreen extends ConsumerWidget {
             icon: const Icon(Icons.edit_outlined, size: 18),
             label: Text(
               'Update profile',
-              style: outfit(fontSize: 14, fontWeight: FontWeight.w600),
+              style: AppTypography.style(AppTextRole.button, fontSize: 14, letterSpacing: opticalTracking(14), height: opticalLeading(14, isBody: false)),
             ),
             style: OutlinedButton.styleFrom(
               foregroundColor: kPrimary,
@@ -1269,7 +1150,7 @@ class ProfileTabScreen extends ConsumerWidget {
             icon: const Icon(Icons.logout_rounded, size: 18),
             label: Text(
               'Sign out',
-              style: outfit(fontSize: 14, fontWeight: FontWeight.w600),
+              style: AppTypography.style(AppTextRole.button, fontSize: 14, letterSpacing: opticalTracking(14), height: opticalLeading(14, isBody: false)),
             ),
             style: OutlinedButton.styleFrom(
               minimumSize: const Size.fromHeight(48),
@@ -1289,6 +1170,7 @@ class ProfileTabScreen extends ConsumerWidget {
     required String label,
     required String value,
     required String subtitle,
+    AppTextRole valueRole = AppTextRole.bodyEmphasis,
   }) {
     return Container(
       padding: const EdgeInsets.all(10),
@@ -1301,23 +1183,19 @@ class ProfileTabScreen extends ConsumerWidget {
         children: [
           Text(
             label,
-            style: outfit(fontSize: 11, color: kOnSurfaceVariant),
+            style: AppTypography.style(AppTextRole.label, fontSize: 11, color: kOnSurfaceVariant, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: false)),
           ),
           const SizedBox(height: 2),
           Text(
             value,
-            style: outfit(
-              fontSize: 14,
-              fontWeight: FontWeight.w700,
-              color: kOnSurface,
-            ),
+            style: AppTypography.style(valueRole, fontSize: 14, color: kOnSurface, letterSpacing: opticalTracking(14), height: opticalLeading(14, isBody: false)),
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
           ),
           const SizedBox(height: 2),
           Text(
             subtitle,
-            style: openSans(fontSize: 11, color: kOnSurfaceVariant),
+            style: AppTypography.style(AppTextRole.subtitle, fontSize: 11, color: kOnSurfaceVariant, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: true)),
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
           ),
@@ -1338,11 +1216,7 @@ class ProfileTabScreen extends ConsumerWidget {
         ),
         child: Text(
           'Edit',
-          style: outfit(
-            fontSize: 11,
-            fontWeight: FontWeight.w700,
-            color: kPrimary,
-          ),
+          style: AppTypography.style(AppTextRole.button, fontSize: 11, color: kPrimary, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: false)),
         ),
       ),
     );
@@ -1385,19 +1259,12 @@ class ProfileTabScreen extends ConsumerWidget {
                     children: [
                       Text(
                         title,
-                        style: outfit(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w600,
-                          color: kTextPrimary,
-                        ),
+                        style: AppTypography.style(AppTextRole.navigation, fontSize: 14, color: kTextPrimary, letterSpacing: opticalTracking(14), height: opticalLeading(14, isBody: false)),
                       ),
                       const SizedBox(height: 2),
                       Text(
                         subtitle,
-                        style: openSans(
-                          fontSize: 12,
-                          color: kTextSecondary,
-                        ),
+                        style: AppTypography.style(AppTextRole.subtitle, fontSize: 12, color: kTextSecondary, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: true)),
                       ),
                     ],
                   ),
@@ -1497,12 +1364,7 @@ class _ProfileMilestoneCard extends StatelessWidget {
                               Expanded(
                                 child: Text(
                                   'GRANT ENGINE',
-                                  style: outfit(
-                                    fontSize: 10,
-                                    fontWeight: FontWeight.w700,
-                                    color: kOnSurfaceVariant,
-                                    letterSpacing: 1.0,
-                                  ),
+                                  style: AppTypography.style(AppTextRole.label, fontSize: 10, color: kOnSurfaceVariant, letterSpacing: 1.0, height: opticalLeading(10, isBody: false)),
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
                                 ),
@@ -1521,11 +1383,7 @@ class _ProfileMilestoneCard extends StatelessWidget {
                                 ),
                                 child: Text(
                                   isComplete ? 'Peak Fit' : 'High Fit',
-                                  style: outfit(
-                                    fontSize: 10,
-                                    fontWeight: FontWeight.w700,
-                                    color: kPrimary,
-                                  ),
+                                  style: AppTypography.style(AppTextRole.badge, fontSize: 10, color: kPrimary, letterSpacing: opticalTracking(10), height: opticalLeading(10, isBody: false)),
                                 ),
                               ),
                             ],
@@ -1536,11 +1394,7 @@ class _ProfileMilestoneCard extends StatelessWidget {
                               Flexible(
                                 child: Text(
                                   'Matching Power',
-                                  style: outfit(
-                                    fontSize: 15,
-                                    fontWeight: FontWeight.w700,
-                                    color: kOnSurface,
-                                  ),
+                                  style: AppTypography.style(AppTextRole.cardTitle, fontSize: 15, color: kOnSurface, letterSpacing: opticalTracking(15), height: opticalLeading(15, isBody: false)),
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
                                 ),
@@ -1549,11 +1403,7 @@ class _ProfileMilestoneCard extends StatelessWidget {
                               CountUpAnimation(
                                 targetValue: percentage,
                                 suffix: '%',
-                                style: outfit(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w700,
-                                  color: isComplete ? kPrimary : kMatchGoldText,
-                                ),
+                                style: AppTypography.style(AppTextRole.metric, fontSize: 16, color: isComplete ? kPrimary : kMatchGoldText, letterSpacing: opticalTracking(16), height: opticalLeading(16, isBody: false)),
                               ),
                             ],
                           ),
@@ -1581,16 +1431,12 @@ class _ProfileMilestoneCard extends StatelessWidget {
                 // Unlocks copy
                 RichText(
                   text: TextSpan(
-                    style: openSans(fontSize: 12, color: kOnSurfaceVariant),
+                    style: AppTypography.style(AppTextRole.bodyEmphasis, fontSize: 12, color: kOnSurfaceVariant, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: true)),
                     children: [
                       const TextSpan(text: 'Your profile unlocks '),
                       TextSpan(
                         text: '${((percentage * 42) / 100).round()} of 42',
-                        style: outfit(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w700,
-                          color: kPrimary,
-                        ),
+                        style: AppTypography.style(AppTextRole.metric, fontSize: 12, color: kPrimary, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: false)),
                       ),
                       const TextSpan(text: ' active Philippine grants.'),
                     ],
@@ -1638,11 +1484,7 @@ class _ProfileMilestoneCard extends StatelessWidget {
                   ),
                   child: Text(
                     report.advice,
-                    style: openSans(
-                      fontSize: 12,
-                      color: isComplete ? kPrimary : kMatchGoldText,
-                      height: 1.35,
-                    ),
+                    style: AppTypography.style(AppTextRole.caption, fontSize: 12, color: isComplete ? kPrimary : kMatchGoldText, height: 1.35, letterSpacing: opticalTracking(12)),
                   ),
                 ),
                 const SizedBox(height: 12),
@@ -1662,11 +1504,7 @@ class _ProfileMilestoneCard extends StatelessWidget {
                       Flexible(
                         child: Text(
                           'View Matching Power Breakdown',
-                          style: outfit(
-                            fontSize: 12,
-                            fontWeight: FontWeight.w600,
-                            color: kPrimary,
-                          ),
+                          style: AppTypography.style(AppTextRole.button, fontSize: 12, color: kPrimary, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: false)),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                         ),
@@ -1703,16 +1541,12 @@ class _ProfileMilestoneCard extends StatelessWidget {
         children: [
           Text(
             label,
-            style: outfit(fontSize: 10, color: kOnSurfaceVariant),
+            style: AppTypography.style(AppTextRole.label, fontSize: 10, color: kOnSurfaceVariant, letterSpacing: opticalTracking(10), height: opticalLeading(10, isBody: false)),
           ),
           const SizedBox(height: 2),
           Text(
             status,
-            style: outfit(
-              fontSize: 11,
-              fontWeight: FontWeight.w700,
-              color: valueColor,
-            ),
+            style: AppTypography.style(AppTextRole.badge, fontSize: 11, color: valueColor, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: false)),
           ),
         ],
       ),

@@ -1,3 +1,4 @@
+import 'package:scholaris/shared/theme/app_typography.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/services.dart';
@@ -127,7 +128,7 @@ class _ChangeEmailDialogState extends ConsumerState<ChangeEmailDialog> {
                     TextField(controller: _code, keyboardType: TextInputType.number, inputFormatters: [FilteringTextInputFormatter.digitsOnly, LengthLimitingTextInputFormatter(8)], decoration: const InputDecoration(labelText: '8-digit confirmation code')),
                   ],
                   if (_notice != null) Padding(padding: const EdgeInsets.only(top: 12), child: Text(_notice!)),
-                  if (_error != null) Padding(padding: const EdgeInsets.only(top: 12), child: Text(_error!, style: TextStyle(color: Theme.of(context).colorScheme.error))),
+                  if (_error != null) Padding(padding: const EdgeInsets.only(top: 12), child: Text(_error!, style: AppTypography.style(AppTextRole.caption, color: Theme.of(context).colorScheme.error))),
                 ]),
         ),
       ),

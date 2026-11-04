@@ -1,0 +1,9 @@
+{
+  "fontSource": "https://github.com/google/fonts/tree/main/ofl/nunito",
+  "nunitoSha256": "bb55a5ca5c2042335b3991af27c4d0705d0ef41cac6164ac737fd8f2a1e85207",
+  "weightAxis": "explicit wght axis equals each approved role weight",
+  "sourceFilesUnchanged": 403,
+  "changes": [],
+  "testResult": "1 passed",
+  "platform": "Windows Flutter tester; not native iOS/Android"
+}

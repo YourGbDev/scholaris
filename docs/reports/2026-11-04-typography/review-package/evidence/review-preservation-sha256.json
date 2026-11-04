@@ -1,0 +1,4534 @@
+{
+  "checkedFiles": 647,
+  "bytesHashed": 2564203222,
+  "mismatches": [],
+  "files": [
+    {
+      "status": " M",
+      "file": "AGENTS.md",
+      "size": 5649,
+      "mtimeMs": 1793745135965.3174,
+      "sha256": "46b91263b1e7a75770c85a5a7da5860db7b9eac76fc5fb40cc8036eeb6867d09"
+    },
+    {
+      "status": " M",
+      "file": "docs/reviews/2026-10-28-final-checking-readiness.md",
+      "size": 23774,
+      "mtimeMs": 1793350897501.993,
+      "sha256": "e6366ad76c83f9703ddba4fede41981cba198aafeb6d35ca079122284181872a"
+    },
+    {
+      "status": " M",
+      "file": "landing/index.html",
+      "size": 45136,
+      "mtimeMs": 1793303820824.8396,
+      "sha256": "4cee86e44bbcfbdf07155284202e22b0e48e48d37f1deb037d9437ed13dd85bb"
+    },
+    {
+      "status": " M",
+      "file": "lib/admin/screens/admin_settings_screen.dart",
+      "size": 11595,
+      "mtimeMs": 1793745135967.3127,
+      "sha256": "2939caa30b5398cba15ebcc7ca840df9f247db1572a5adf45c7d939b77753e75"
+    },
+    {
+      "status": " M",
+      "file": "lib/admin/screens/applications_oversight_screen.dart",
+      "size": 71788,
+      "mtimeMs": 1793745135968.5518,
+      "sha256": "c5e025e79861919bdd98a9b07ea37cfdaaacb7ad327c977cac78fc1d8bfb6de9"
+    },
+    {
+      "status": " M",
+      "file": "lib/admin/screens/audit_trail_screen.dart",
+      "size": 44353,
+      "mtimeMs": 1793745135969.58,
+      "sha256": "e7a66403dd8476d4ce2a6e0a9e323ab81c09b7b80df51a868a4e2e5fc6e6077c"
+    },
+    {
+      "status": " M",
+      "file": "lib/admin/screens/disbursements_oversight_screen.dart",
+      "size": 28961,
+      "mtimeMs": 1793745135969.58,
+      "sha256": "1b9dcbc435d808102b5870af0cfe2c0fe52102672a523b337245ef13fbca225e"
+    },
+    {
+      "status": " M",
+      "file": "lib/admin/screens/platform_overview_screen.dart",
+      "size": 23346,
+      "mtimeMs": 1793745135970.5886,
+      "sha256": "6323ff89026d991ca19fcc34451fe46aca71ea8483fecece9084aa0791b3ef7b"
+    },
+    {
+      "status": " M",
+      "file": "lib/admin/screens/reports_analytics_screen.dart",
+      "size": 27353,
+      "mtimeMs": 1793745135971.5928,
+      "sha256": "82dac2d9b858814b698adc54d31e9b7097ed4d14e7d3eca4bd8deec5426d5e9e"
+    },
+    {
+      "status": " M",
+      "file": "lib/admin/screens/reports_safety_screen.dart",
+      "size": 23774,
+      "mtimeMs": 1793745383450.8794,
+      "sha256": "4038a179e6aa9c27ce06fe63a0adac46e6e04b127493cee2afca7c12b021b201"
+    },
+    {
+      "status": " M",
+      "file": "lib/admin/screens/support_concerns_screen.dart",
+      "size": 9924,
+      "mtimeMs": 1793745383449.873,
+      "sha256": "64c06e4d3d0b95944c5846d36a7016563eab3a3f8ab19ecadff5e1a2976a22fd"
+    },
+    {
+      "status": " M",
+      "file": "lib/admin/widgets/admin_review_priorities.dart",
+      "size": 12061,
+      "mtimeMs": 1793745135973.1045,
+      "sha256": "94ed531652c4582510f8f6ff7f6dda0cf3b3c6059e46f78e3f3071472153769e"
+    },
+    {
+      "status": " M",
+      "file": "lib/app/router.dart",
+      "size": 36949,
+      "mtimeMs": 1793745135973.7441,
+      "sha256": "a85d100f7b0e095d257f54bef9f9db9c1c9c581a267b18b6db795e1f004d27ce"
+    },
+    {
+      "status": " M",
+      "file": "lib/dev/provider_preview/main.dart",
+      "size": 7885,
+      "mtimeMs": 1793745135973.7441,
+      "sha256": "594c793eb4b0a52b7b5d0272797b01e3d2a7fb0d3f084a5c257e6ee60858d038"
+    },
+    {
+      "status": " M",
+      "file": "lib/dev/student_navbar_preview/main.dart",
+      "size": 39146,
+      "mtimeMs": 1793745383437.7466,
+      "sha256": "3b36caba56ef5a2896f9c7f617a57d380046c4148de6075ccba425ed70668703"
+    },
+    {
+      "status": " M",
+      "file": "lib/features/account/presentation/account_settings_screen.dart",
+      "size": 48934,
+      "mtimeMs": 1793745135975.7522,
+      "sha256": "278e6e359e67831beedc2e35aa82c57d7df1ed21b31a4650c3839d4fa84f1a52"
+    },
+    {
+      "status": " M",
+      "file": "lib/features/account/presentation/change_email_dialog.dart",
+      "size": 5925,
+      "mtimeMs": 1793745383438.856,
+      "sha256": "b3c179ee9d50097756b44e4eb254358f41ebf7899c32421f7f5c3daf11515dd0"
+    },
+    {
+      "status": " M",
+      "file": "lib/features/admin/presentation/admin_home_screen.dart",
+      "size": 14608,
+      "mtimeMs": 1793745383439.361,
+      "sha256": "2e6f7cb972c3985e480d3992bd70d7d73d78278188d17dbd842837b2e4959e19"
+    },
+    {
+      "status": " M",
+      "file": "lib/features/admin/presentation/admin_login_screen.dart",
+      "size": 24745,
+      "mtimeMs": 1793745135976.7568,
+      "sha256": "fc15096768e1e9f9097d6e000d374350bd8b6df83cf9b5b13faf81290b0e8c14"
+    },
+    {
+      "status": " M",
+      "file": "lib/features/admin/presentation/admin_providers_tab.dart",
+      "size": 22683,
+      "mtimeMs": 1793745383451.9172,
+      "sha256": "8eb1cd7ecdb307b026f7a951bc98b82081a1bfbba046882b80e8ed089c75783c"
+    },
+    {
+      "status": " M",
+      "file": "lib/features/admin/presentation/admin_scholarships_tab.dart",
+      "size": 74841,
+      "mtimeMs": 1793745135978.7534,
+      "sha256": "8e04b943be9e1884be3ae28b09de4fcec054642d993ea8d0b7d7ca03fb48eabf"
+    },
+    {
+      "status": " M",
+      "file": "lib/features/admin/presentation/admin_theme.dart",
+      "size": 6185,
+      "mtimeMs": 1793745135978.7534,
+      "sha256": "50228332e50deb461bb42caf2bafc7c4c0b7dd5b1e01447c4340f6466631941f"
+    },
+    {
+      "status": " M",
+      "file": "lib/features/admin/presentation/admin_users_tab.dart",
+      "size": 93221,
+      "mtimeMs": 1793745135979.9016,
+      "sha256": "3785e18dd0ac4ea8ebcb7544fffa0d7d4503c75e750a88e04fcb29983b0a64aa"
+    },
+    {
+      "status": " M",
+      "file": "lib/features/applications/presentation/application_decision_letter.dart",
+      "size": 7935,
+      "mtimeMs": 1793745135980.9114,
+      "sha256": "ffa155426883de9be3cf04d13adb80400ee7b8b8e5b566519b6d4ba6323f4688"
+    },
+    {
+      "status": " M",
+      "file": "lib/features/applications/presentation/application_detail_screen.dart",
+      "size": 41019,
+      "mtimeMs": 1793745135981.9077,
+      "sha256": "04e9ca5a8672e7c19e8a9c3d9b8b264e7893ae4ffede0123f3fb253d225587d5"
+    },
+    {
+      "status": " M",
+      "file": "lib/features/applications/presentation/application_status_chip.dart",
+      "size": 4079,
+      "mtimeMs": 1793745135981.9077,
+      "sha256": "4ed420dd28e69dc833be4c88f3fd30bfde0f2d60597ef6fc69f5a1fd070d64bc"
+    },
+    {
+      "status": " M",
+      "file": "lib/features/applications/presentation/applications_screen.dart",
+      "size": 74846,
+      "mtimeMs": 1793745135981.9077,
+      "sha256": "9605c9a735aa90c0b67cc093f64d729a07fe3392dadc248122fd242713792d19"
+    },
+    {
+      "status": " M",
+      "file": "lib/features/applications/presentation/student_support_concerns.dart",
+      "size": 6807,
+      "mtimeMs": 1793745383452.881,
+      "sha256": "fab088fca3d71f1d13b374070e0ac839691d0034e75e29ffe44b97d7ec171009"
+    },
+    {
+      "status": " M",
+      "file": "lib/features/applications/presentation/student_support_receipts.dart",
+      "size": 4642,
+      "mtimeMs": 1793746174416.0188,
+      "sha256": "f8c7042039a65067e7622584dcfbf321a6dad87aa01fd16c73ce74b19be5095f"
+    },
+    {
+      "status": " M",
+      "file": "lib/features/applications/presentation/submission_confirmation_receipt_screen.dart",
+      "size": 35234,
+      "mtimeMs": 1793745135983.5107,
+      "sha256": "c07f91df635d8db40d7467c2e9b72ccff7a738d33875498ee2e3b7f7fbaaa904"
+    },
+    {
+      "status": " M",
+      "file": "lib/features/applications/presentation/submit_application_review_dialog.dart",
+      "size": 38310,
+      "mtimeMs": 1793745383440.371,
+      "sha256": "82f43c5eb2722bf956fa66df26c88d00b208beed089b3492c294b9f05733041b"
+    },
+    {
+      "status": " M",
+      "file": "lib/features/applications/presentation/widgets/document_upload_sheet.dart",
+      "size": 18790,
+      "mtimeMs": 1793745383441.367,
+      "sha256": "f24761524d8f8c9602c7bbe8a02ebacd154505582f038ee10c2ce89a8ef1c091"
+    },
+    {
+      "status": " M",
+      "file": "lib/features/auth/presentation/ceremony_screen.dart",
+      "size": 6740,
+      "mtimeMs": 1793745135985.1028,
+      "sha256": "4b0c1973431dca5cfc0821d3bf88e1524e3dc1788f97888553cfd0760a6a17fc"
+    },
+    {
+      "status": " M",
+      "file": "lib/features/auth/presentation/forgot_password_screen.dart",
+      "size": 24880,
+      "mtimeMs": 1793745135986.1023,
+      "sha256": "36c7e79fdf0cac3c5dd918aa713755afd46373d549294ea39ffab1a9a69b1aae"
+    },
+    {
+      "status": " M",
+      "file": "lib/features/auth/presentation/graduation_ceremony.dart",
+      "size": 6517,
+      "mtimeMs": 1793745135986.1023,
+      "sha256": "b024ccc3a77b01d398289db4364453e1e2361f2efe9309cb5e86742c1d45dce6"
+    },
+    {
+      "status": " M",
+      "file": "lib/features/auth/presentation/login_screen.dart",
+      "size": 49823,
+      "mtimeMs": 1793745135987.118,
+      "sha256": "2eeb8152feabfa5f879df1ac6f3881953cad392384de2b0278a0578ef696bbd0"
+    },
+    {
+      "status": " M",
+      "file": "lib/features/auth/presentation/reset_password_screen.dart",
+      "size": 30169,
+      "mtimeMs": 1793745135987.118,
+      "sha256": "6d7d94c9b89181c5322b7abe990bf25bbdbd2e658f979d4270f02a0e6650dc53"
+    },
+    {
+      "status": " M",
+      "file": "lib/features/auth/presentation/signup_screen.dart",
+      "size": 42178,
+      "mtimeMs": 1793745135988.1035,
+      "sha256": "fafc77f8c4bd3192ab10ef4372264a3bb6ac0c32ce1c6093359e6158a998ec10"
+    },
+    {
+      "status": " M",
+      "file": "lib/features/auth/presentation/verify_email_screen.dart",
+      "size": 31368,
+      "mtimeMs": 1793745135989.1028,
+      "sha256": "3db5f81b0b51d22c7d0b9c603fee864d23ed9c193506956c576f4045b9c296f5"
+    },
+    {
+      "status": " M",
+      "file": "lib/features/dashboard/presentation/student_dashboard_screen.dart",
+      "size": 35312,
+      "mtimeMs": 1793745971436.1584,
+      "sha256": "844dd6d72c7939ce1081a09c4d78c420484f50e6b26e5cd9a1a4c6bc1fbe1dd6"
+    },
+    {
+      "status": " M",
+      "file": "lib/features/dashboard/presentation/widgets/student_notifications_sheet.dart",
+      "size": 20669,
+      "mtimeMs": 1793745135990.1472,
+      "sha256": "c38ff535f7ee3e0912a6836271f9508bdd1400d9765b1441b4e42f4145c9bf02"
+    },
+    {
+      "status": " M",
+      "file": "lib/features/home/presentation/home_screen.dart",
+      "size": 53333,
+      "mtimeMs": 1793745135991.1047,
+      "sha256": "5c2d728721e9f6f2805ac1d142e11c54700b2e7e022b80cf67956f7a58a0d54d"
+    },
+    {
+      "status": " M",
+      "file": "lib/features/home/presentation/student_chat_screen.dart",
+      "size": 8444,
+      "mtimeMs": 1793745971437.1833,
+      "sha256": "da09c0a85d1af56c4daaa066eba0da8f2aa372c41198cdbfcd4d87612e2fcdc9"
+    },
+    {
+      "status": " M",
+      "file": "lib/features/home/presentation/widgets/student_action_sheet.dart",
+      "size": 5886,
+      "mtimeMs": 1793745135991.1047,
+      "sha256": "16f52b438883741f211dde0d0908bbf634bef2441421e68663ccc9f6567a03bc"
+    },
+    {
+      "status": " M",
+      "file": "lib/features/home/presentation/widgets/student_application_guide.dart",
+      "size": 28630,
+      "mtimeMs": 1793745135992.104,
+      "sha256": "7f31592b5dd15048d71bb3c68165d25392ccb7b188789b2c09a2da488703de2f"
+    },
+    {
+      "status": " M",
+      "file": "lib/features/home/presentation/widgets/student_guide_greeting.dart",
+      "size": 8481,
+      "mtimeMs": 1793745135992.104,
+      "sha256": "09ff6dc717faac1c00f1e68368c376a296bb8ad2296e1ab94e559fad03a01978"
+    },
+    {
+      "status": " M",
+      "file": "lib/features/intro/presentation/intro_screen.dart",
+      "size": 10047,
+      "mtimeMs": 1793745135993.1035,
+      "sha256": "28d108fde580f6983c4394a65d2b3c6d08fdbcb9af260fe98c38db845ce394a7"
+    },
+    {
+      "status": " M",
+      "file": "lib/features/onboarding/presentation/onboarding_screen.dart",
+      "size": 71348,
+      "mtimeMs": 1793745135994.6096,
+      "sha256": "9d2dcaec16f8a0a836b06463572c94f45e2f4142db75f5c43f1059174328710c"
+    },
+    {
+      "status": " M",
+      "file": "lib/features/profile/presentation/matching_power_sheet.dart",
+      "size": 13725,
+      "mtimeMs": 1793745135994.6096,
+      "sha256": "7819283d7d1395142a4850538892abdfe11ac12f9260cafe63594f5626ddae69"
+    },
+    {
+      "status": " M",
+      "file": "lib/features/profile/presentation/profile_setup_screen.dart",
+      "size": 95682,
+      "mtimeMs": 1793745135995.6172,
+      "sha256": "19f3bc5e371c1485cee333d4e8d14e594516d6a119c7329d34391bf6350aab4e"
+    },
+    {
+      "status": " M",
+      "file": "lib/features/profile/presentation/profile_tab_screen.dart",
+      "size": 63602,
+      "mtimeMs": 1793745135996.6155,
+      "sha256": "60057ccac2e06ce5208a8d4991f216112ebc2d1d35aca2be8450109a44a29b78"
+    },
+    {
+      "status": " M",
+      "file": "lib/features/profile/presentation/widgets/avatar_selector_sheet.dart",
+      "size": 12922,
+      "mtimeMs": 1793745135996.6155,
+      "sha256": "e4975b4e654ebc176cc9f09dd2311e6e595ebb2fc90879a9830c7b277a48fb3a"
+    },
+    {
+      "status": " M",
+      "file": "lib/features/provider/presentation/individual/individual_applications_tab.dart",
+      "size": 34901,
+      "mtimeMs": 1793745383441.367,
+      "sha256": "54361f12819b2157a97424c4f57eff23aebbd7d9a539f459e925930b3c4ff9db"
+    },
+    {
+      "status": " M",
+      "file": "lib/features/provider/presentation/individual/individual_grant_tab.dart",
+      "size": 22035,
+      "mtimeMs": 1793745135998.6162,
+      "sha256": "48ab5b0b702027b8b8b5b9cb0f3820f1c009ed429c5e25e4a9d69b9038caa0bc"
+    },
+    {
+      "status": " M",
+      "file": "lib/features/provider/presentation/individual/individual_provider_shell.dart",
+      "size": 16706,
+      "mtimeMs": 1793745135998.6162,
+      "sha256": "9f99c068d122f1b6b7b14ddc052a559443f3f5f7a518a3de8cc4152fca71e705"
+    },
+    {
+      "status": " M",
+      "file": "lib/features/provider/presentation/individual/individual_settings_tab.dart",
+      "size": 17627,
+      "mtimeMs": 1793745135998.6162,
+      "sha256": "3d148b19041200aec7549989501d801f6d66188ddaf0717540ac83e507ecb49c"
+    },
+    {
+      "status": " M",
+      "file": "lib/features/provider/presentation/individual/individual_support_tab.dart",
+      "size": 25871,
+      "mtimeMs": 1793745383442.3713,
+      "sha256": "7db19a35f1b15d1244add06cbbd7e6e6bc6843f07867669612990b5aa3c7a2f5"
+    },
+    {
+      "status": " M",
+      "file": "lib/features/provider/presentation/org/org_activity_log_view.dart",
+      "size": 20007,
+      "mtimeMs": 1793745135999.619,
+      "sha256": "45457e01b91cd42cb1930e48ac2f1658a29217f8bb10e47087d7094d4925b8b7"
+    },
+    {
+      "status": " M",
+      "file": "lib/features/provider/presentation/org/org_analytics_tab.dart",
+      "size": 101592,
+      "mtimeMs": 1793745136000.6167,
+      "sha256": "5f02fa929449ea5d29f38fb555ab714f5e6d45e1230d1fd9630c8f0033a3ec7f"
+    },
+    {
+      "status": " M",
+      "file": "lib/features/provider/presentation/org/org_disbursements_tab.dart",
+      "size": 114043,
+      "mtimeMs": 1793745136002.6716,
+      "sha256": "48af81d2cf1f78848cfd4da1e826b35e57e00192ba9635f41da082b9e48c2239"
+    },
+    {
+      "status": " M",
+      "file": "lib/features/provider/presentation/org/org_incoming_applications_tab.dart",
+      "size": 90108,
+      "mtimeMs": 1793745383443.3684,
+      "sha256": "eba8b64bce7cd1be7fe49c3630ce14a79973094c62575b3ae8c4e8eb455e79fe"
+    },
+    {
+      "status": " M",
+      "file": "lib/features/provider/presentation/org/org_provider_shell.dart",
+      "size": 60325,
+      "mtimeMs": 1793745136004.6145,
+      "sha256": "5439864ae510c1b28f4e01e8ba60be689df79e7787d5ee1bbc5a4bd0c1612494"
+    },
+    {
+      "status": " M",
+      "file": "lib/features/provider/presentation/org/org_provider_theme.dart",
+      "size": 3415,
+      "mtimeMs": 1793745136005.1182,
+      "sha256": "a0f67a9f1d459cd43e402dce3a77824423b0d5496568fa6490583d7d6cd1dc88"
+    },
+    {
+      "status": " M",
+      "file": "lib/features/provider/presentation/org/org_review_analytics_tab.dart",
+      "size": 18332,
+      "mtimeMs": 1793745136005.1182,
+      "sha256": "456ba2f32b49e98d926142a8655a8c5fc5b48e09ac4ba35cd75fdc56f7f1af5c"
+    },
+    {
+      "status": " M",
+      "file": "lib/features/provider/presentation/org/org_scholarships_tab.dart",
+      "size": 62358,
+      "mtimeMs": 1793745383443.3684,
+      "sha256": "fad263f583cd615c9a39aa7f4035ac07ac683afb431a091f569b6eed1a1e732e"
+    },
+    {
+      "status": " M",
+      "file": "lib/features/provider/presentation/org/org_settings_tab.dart",
+      "size": 84744,
+      "mtimeMs": 1793745136008.1248,
+      "sha256": "806b3979949538c2558a948686b2bda12905b670cbccf853ccff595cf3f4c1e5"
+    },
+    {
+      "status": " M",
+      "file": "lib/features/provider/presentation/org/org_team_view.dart",
+      "size": 26524,
+      "mtimeMs": 1793745136009.1245,
+      "sha256": "8951097d228880f9908de0bcd056cad82e0ded3675dbf9481410578ee6a9d70b"
+    },
+    {
+      "status": " M",
+      "file": "lib/features/provider/presentation/org/widgets/assign_reviewer_dialog.dart",
+      "size": 15072,
+      "mtimeMs": 1793745136009.1245,
+      "sha256": "19870a1d31941bb7f28f7b91a17dd6f86d737d2dfc08485ff70cc49f9c699fa6"
+    },
+    {
+      "status": " M",
+      "file": "lib/features/provider/presentation/provider_application_detail_screen.dart",
+      "size": 41498,
+      "mtimeMs": 1793745136010.1245,
+      "sha256": "a04381dd55ae98da890dfa9d2eb223ea4ed8d8a49ae8f484380464317cf9d6aa"
+    },
+    {
+      "status": " M",
+      "file": "lib/features/provider/presentation/provider_incoming_applications.dart",
+      "size": 31999,
+      "mtimeMs": 1793745383444.37,
+      "sha256": "aa52e68dbaf465c567e20e74a751e5343597905bfb1027424aa750cf819076f6"
+    },
+    {
+      "status": " M",
+      "file": "lib/features/provider/presentation/provider_login_screen.dart",
+      "size": 44420,
+      "mtimeMs": 1793745383445.3682,
+      "sha256": "42525b7d9df82fc5fda09b5a74b82de135cf3db233596b02a0f39aeb33022f1b"
+    },
+    {
+      "status": " M",
+      "file": "lib/features/provider/presentation/provider_review_screen.dart",
+      "size": 3183,
+      "mtimeMs": 1793745136012.1245,
+      "sha256": "9afcd16f932862c4550277b4478cf60fc29ae44af8a7f38254be8430b11f7d01"
+    },
+    {
+      "status": " M",
+      "file": "lib/features/provider/presentation/provider_scholarships_tab.dart",
+      "size": 30954,
+      "mtimeMs": 1793745136012.1245,
+      "sha256": "e29febc89c50672a82be0b595c9450a69220a1e1e1b5e48e80c8030d4869d80d"
+    },
+    {
+      "status": " M",
+      "file": "lib/features/provider/presentation/provider_signup_screen.dart",
+      "size": 83673,
+      "mtimeMs": 1793745136013.1228,
+      "sha256": "0356bbeed310fd6241639404c2a9a6221d9f8915210108d55302ec997d86ec6d"
+    },
+    {
+      "status": " M",
+      "file": "lib/features/provider/presentation/scholarship_form_screen.dart",
+      "size": 43576,
+      "mtimeMs": 1793745136014.1243,
+      "sha256": "dfa58b96e1e4876cab55151afcceedeae400d6575561a84e5688e0d24fa404cf"
+    },
+    {
+      "status": " M",
+      "file": "lib/features/provider/presentation/widgets/applicant_review_drawer.dart",
+      "size": 90379,
+      "mtimeMs": 1793745383446.3691,
+      "sha256": "9653474168349b84217eb78b062e821f74581a39e3ec413739a1f5591faf976e"
+    },
+    {
+      "status": " M",
+      "file": "lib/features/provider/presentation/widgets/individual_support_summary.dart",
+      "size": 2134,
+      "mtimeMs": 1793745136015.124,
+      "sha256": "76b75dd3fe508b81cea1463976496915da274574f013f5d80daab17bcaf9f14f"
+    },
+    {
+      "status": " M",
+      "file": "lib/features/provider/presentation/widgets/org_overview_workspace.dart",
+      "size": 16692,
+      "mtimeMs": 1793745136015.6287,
+      "sha256": "2cfaed569e84679a23bcf4b90392171c5e0bd7ff9e251474417b27bc66259562"
+    },
+    {
+      "status": " M",
+      "file": "lib/features/provider/presentation/widgets/org_review_snapshot.dart",
+      "size": 5659,
+      "mtimeMs": 1793745136015.6287,
+      "sha256": "02064811b3d3558c4bc22b897d6f6d29dd0136ad48fb640d091b710a06a3003b"
+    },
+    {
+      "status": " M",
+      "file": "lib/features/provider/presentation/widgets/org_summary_disclosure.dart",
+      "size": 1599,
+      "mtimeMs": 1793745136015.6287,
+      "sha256": "3c812f90da7e899fc54c277cfd51704109358b9b876dea52da6c6d99b2c85635"
+    },
+    {
+      "status": " M",
+      "file": "lib/features/provider/presentation/widgets/provider_overview_panel.dart",
+      "size": 21301,
+      "mtimeMs": 1793745136016.634,
+      "sha256": "cc5095790ca43360b1084aeed85a48b913959764d4ce916652cb22ce0d8123cb"
+    },
+    {
+      "status": " M",
+      "file": "lib/features/provider/presentation/widgets/provider_verification_banner.dart",
+      "size": 23785,
+      "mtimeMs": 1793745383446.3691,
+      "sha256": "f766ff504423f20ba7ff1539558967b0207de8048d40d8c9c1024b73c72023b6"
+    },
+    {
+      "status": " M",
+      "file": "lib/features/provider/presentation/widgets/scholarship_qr_dialog.dart",
+      "size": 7844,
+      "mtimeMs": 1793745136017.634,
+      "sha256": "711c5f73bedd7703d1dc5050d4eb38b7839ee09e8b7052cf124d693213b950e2"
+    },
+    {
+      "status": " M",
+      "file": "lib/features/safety/presentation/student_safety_report.dart",
+      "size": 26416,
+      "mtimeMs": 1793745383447.3674,
+      "sha256": "2bd7311081b5f74ca257595644a037c212d416c352028e3e79ba8cd94bee2e85"
+    },
+    {
+      "status": " M",
+      "file": "lib/features/scholarships/presentation/discovery_filter_sheet.dart",
+      "size": 12172,
+      "mtimeMs": 1793745136018.6355,
+      "sha256": "094a28e7b4bd35d44919be68af42389c52872a1c66233bb0fbbe0a0a46abbf94"
+    },
+    {
+      "status": " M",
+      "file": "lib/features/scholarships/presentation/scholarship_detail_screen.dart",
+      "size": 126464,
+      "mtimeMs": 1793745383449.3674,
+      "sha256": "2e4015342b193f6b092339422220ebb8a1c04bc276fc9bb0e7147abeda60907f"
+    },
+    {
+      "status": " M",
+      "file": "lib/features/scholarships/presentation/scholarship_qr_scanner_screen.dart",
+      "size": 19476,
+      "mtimeMs": 1793745136019.638,
+      "sha256": "de23595cc9e89a5e43382cec2d388ac5702bee28f5a372cb9967d1f6083fceb5"
+    },
+    {
+      "status": " M",
+      "file": "lib/features/scholarships/presentation/widgets/identity_photo_dialog.dart",
+      "size": 7540,
+      "mtimeMs": 1793745136020.6338,
+      "sha256": "ed80a697e6f8d639595c7abe922e27c09bd6d2b136cf90481cc649b8e041d147"
+    },
+    {
+      "status": " M",
+      "file": "lib/features/scholarships/screens/discover_screen.dart",
+      "size": 38346,
+      "mtimeMs": 1793745136020.6338,
+      "sha256": "c9615af4618c374ca2396b0774f29f4669426f16f8b7011a9a2051906268dd7c"
+    },
+    {
+      "status": " M",
+      "file": "lib/features/scholarships/screens/saved_screen.dart",
+      "size": 30326,
+      "mtimeMs": 1793745136021.636,
+      "sha256": "44314aae2b1558f8ed20c9e4dbe5c24066fff6e4a2d4781da6ac6060d01a5dae"
+    },
+    {
+      "status": " M",
+      "file": "lib/features/splash/presentation/splash_screen.dart",
+      "size": 10630,
+      "mtimeMs": 1793745136022.635,
+      "sha256": "40caf302f8d8f2f2063431267507cbf6ffebd10baf2c8073607e02246170d78d"
+    },
+    {
+      "status": " M",
+      "file": "lib/shared/theme/app_motion.dart",
+      "size": 49345,
+      "mtimeMs": 1793745136023.6343,
+      "sha256": "c5f596cc42b3ee91c820a64bdaf1734a023296072b6050d98d2e0bca85980332"
+    },
+    {
+      "status": " M",
+      "file": "lib/shared/theme/app_theme.dart",
+      "size": 15821,
+      "mtimeMs": 1793745137164.2585,
+      "sha256": "13be45e0ac03e8fe977089f9b0399de335691f62bf85ef4491126eb52bfbb688"
+    },
+    {
+      "status": " M",
+      "file": "lib/shared/widgets/logout_confirmation_dialog.dart",
+      "size": 2242,
+      "mtimeMs": 1793745136023.6343,
+      "sha256": "83556935b454cfda735df750db5c4d96656a4b9bf960ae927b289314a30f14e7"
+    },
+    {
+      "status": " M",
+      "file": "lib/shared/widgets/primary_button.dart",
+      "size": 1283,
+      "mtimeMs": 1793745136024.634,
+      "sha256": "b6f69f307a6a088076f59f21ef43d91af9dea67152ff871994aaf2b3ca5ff794"
+    },
+    {
+      "status": " M",
+      "file": "lib/shared/widgets/radial_matching_gauge.dart",
+      "size": 4524,
+      "mtimeMs": 1793745136024.634,
+      "sha256": "f043f45be014c9bc19ddf45b2af5be5a23721e830802f882c1c9a999bf4e4d79"
+    },
+    {
+      "status": " M",
+      "file": "lib/shared/widgets/save_draft_dialog.dart",
+      "size": 2781,
+      "mtimeMs": 1793745136025.637,
+      "sha256": "b2d9268d818ac87ce3e9c1d5236e2aedbe52c082e74da42c8856e35aa704df63"
+    },
+    {
+      "status": " M",
+      "file": "lib/shared/widgets/scholaris_logo.dart",
+      "size": 2783,
+      "mtimeMs": 1793745136026.2043,
+      "sha256": "9096bda231f8b00106b165aa510e53f9d4b9f37bb5aaf1f90e6bac3f758723c8"
+    },
+    {
+      "status": " M",
+      "file": "lib/shared/widgets/scholarship_card.dart",
+      "size": 25359,
+      "mtimeMs": 1793745136026.2043,
+      "sha256": "aa8e7389671fd2f24774130481f69f840cd822543d0be327d55110f72f021825"
+    },
+    {
+      "status": " M",
+      "file": "lib/shared/widgets/section_header.dart",
+      "size": 2084,
+      "mtimeMs": 1793745136027.2102,
+      "sha256": "137119f47c6a1b4d8c49964cca771f9289f475a8eaf8bb24d3d1a475d57e5780"
+    },
+    {
+      "status": " M",
+      "file": "lib/shared/widgets/state_views.dart",
+      "size": 13409,
+      "mtimeMs": 1793745136027.2102,
+      "sha256": "e03ade822e6c2258873b0e451d4f469f802cccc3388997f9b37b55080b492645"
+    },
+    {
+      "status": " M",
+      "file": "lib/shared/widgets/success_overlay.dart",
+      "size": 5131,
+      "mtimeMs": 1793745136028.211,
+      "sha256": "d4d8276d5ab14aebf47118fe0399bc9928ce0c9f3afbde158031a789c6eff7a6"
+    },
+    {
+      "status": " M",
+      "file": "pubspec.yaml",
+      "size": 2508,
+      "mtimeMs": 1793745136028.211,
+      "sha256": "be0bb68194879ffb14ca6d7aca05d41ea57ab02d0e6fc8c2fdf977b20217d1cd"
+    },
+    {
+      "status": " M",
+      "file": "test/hero_section_test.dart",
+      "size": 8017,
+      "mtimeMs": 1793745947750.3154,
+      "sha256": "49ce741a60c74bb00c69ac3d77edcf2b8d2ce94db1af0e86c3aba8ec8d828e1f"
+    },
+    {
+      "status": " M",
+      "file": "test/scholarship_card_test.dart",
+      "size": 16762,
+      "mtimeMs": 1793745136029.211,
+      "sha256": "ab463d210d5a52491c493a256f1b1a6d755297dff6cb702e8511e3d54cc874f5"
+    },
+    {
+      "status": " M",
+      "file": "test/screenshots/generate_stitch_screenshots_test.dart",
+      "size": 11250,
+      "mtimeMs": 1793746082538.0876,
+      "sha256": "e8a9f70b3e4c1cff81c688439f14cee5be105353484cb26b155ad83f7352d1e2"
+    },
+    {
+      "status": " D",
+      "file": "test/shared/theme/geist_typography_test.dart",
+      "missing": true
+    },
+    {
+      "status": " M",
+      "file": "test/student_application_guide_test.dart",
+      "size": 7234,
+      "mtimeMs": 1793745136029.211,
+      "sha256": "1e41208677cde24823765b8121db31ff41ba61cd8b9454922f1447ce0ab73f15"
+    },
+    {
+      "status": " M",
+      "file": "test/student_chat_screen_test.dart",
+      "size": 4155,
+      "mtimeMs": 1793745947751.3147,
+      "sha256": "bbfe2b7326eb9a828e725762b3670fe80a15114219ff29f998b1685811261632"
+    },
+    {
+      "status": " M",
+      "file": "test/student_detail_tour_test.dart",
+      "size": 6448,
+      "mtimeMs": 1793745136029.211,
+      "sha256": "e174466e710536bb6d150e2f5343ef00d81b1f5529148c55485b4c55d17c4912"
+    },
+    {
+      "status": " M",
+      "file": "test/student_frosted_nav_test.dart",
+      "size": 7469,
+      "mtimeMs": 1793745136030.2104,
+      "sha256": "04a6a8bf6a33b626cd8a7292c4091ab52ced4be49d16735965867cab5a76137f"
+    },
+    {
+      "status": " M",
+      "file": "test/student_quick_actions_polish_test.dart",
+      "size": 4198,
+      "mtimeMs": 1793745136030.2104,
+      "sha256": "ff1b58ca51993142edad280b1449e339c78972584bf2f1dc6099d41294bc6927"
+    },
+    {
+      "status": "??",
+      "file": "Scholaris.ipa",
+      "size": 34400339,
+      "mtimeMs": 1793438132781.609,
+      "sha256": "db0d44c2c462f32f3369443634b22aef5834de2a955311433b098f7cad052193"
+    },
+    {
+      "status": "??",
+      "file": "Scholaris_build.zip",
+      "size": 25648665,
+      "mtimeMs": 1792346548207.4053,
+      "sha256": "7acc00ef891791e524fd3cbaee77ef47124d807cb314e7fc4e1fb8ecf097a0a2"
+    },
+    {
+      "status": "??",
+      "file": "Scholaris_latest.zip",
+      "size": 22910928,
+      "mtimeMs": 1792346173387.6555,
+      "sha256": "666930c51696b753bb949ae287261190a8f1ed7f54c982940e47d6e4c85f621f"
+    },
+    {
+      "status": "??",
+      "file": "assets/fonts/inter/Inter-Bold.ttf",
+      "size": 420428,
+      "mtimeMs": 1731658560000,
+      "sha256": "288316099b1e0a47a4716d159098005eef7c0066921f34e3200393dbdb01947f"
+    },
+    {
+      "status": "??",
+      "file": "assets/fonts/inter/Inter-Medium.ttf",
+      "size": 417300,
+      "mtimeMs": 1731658560000,
+      "sha256": "97ad806f526e41546d46365bb3a393145f75b7b1568913db74549ad8b8dba872"
+    },
+    {
+      "status": "??",
+      "file": "assets/fonts/inter/Inter-Regular.ttf",
+      "size": 411640,
+      "mtimeMs": 1731658560000,
+      "sha256": "40d692fce188e4471e2b3cba937be967878f631ad3ebbbdcd587687c7ebe0c82"
+    },
+    {
+      "status": "??",
+      "file": "assets/fonts/inter/Inter-SemiBold.ttf",
+      "size": 419744,
+      "mtimeMs": 1731658560000,
+      "sha256": "78a843fade9d4612a5567302fb595b56976eb5fcebf4fea5a5912d638bafcde3"
+    },
+    {
+      "status": "??",
+      "file": "assets/fonts/inter/OFL.txt",
+      "size": 4380,
+      "mtimeMs": 1731658560000,
+      "sha256": "262481e844521b326f5ecd053e59b98c8b2da78c8ee1bdbb6e8174305e54935a"
+    },
+    {
+      "status": "??",
+      "file": "assets/images/hero_chapter_backdrop.png",
+      "size": 1407289,
+      "mtimeMs": 1792346946715.5342,
+      "sha256": "fbbe8d2d1f71d428dc0e47b8943f3736d416dc7cf1f5d067452784323910b3e4"
+    },
+    {
+      "status": "??",
+      "file": "build_ios_build10_oct27/Scholaris.ipa",
+      "size": 28085788,
+      "mtimeMs": 1793119765238.9233,
+      "sha256": "f064bd9da66758ea4994aa39ff6b902cbcb05bfad879ddeb8d0d23d2543587e4"
+    },
+    {
+      "status": "??",
+      "file": "build_ios_build3_oct27/Scholaris_build3.zip",
+      "size": 27996705,
+      "mtimeMs": 1793058532618.7295,
+      "sha256": "4960cb91dbe47569b771b02df37068614ed69dddc453e5adff2a00a6d08a56ea"
+    },
+    {
+      "status": "??",
+      "file": "build_ios_build3_oct27/extracted/Scholaris.ipa",
+      "size": 28071523,
+      "mtimeMs": 1793029104000,
+      "sha256": "246deb20aeae8a2148cc23d50bd775debce8c3bc96053ec991ec3abded41e780"
+    },
+    {
+      "status": "??",
+      "file": "build_ios_build3_oct27/ipa_extracted/Payload/Runner.app/Info.plist",
+      "size": 1881,
+      "mtimeMs": 1793057901000,
+      "sha256": "7038ab18a215195f2a15dcd873bf74163a5cfe674d58e2f439f406a6ba95435c"
+    },
+    {
+      "status": "??",
+      "file": "build_ios_build4_oct27/Scholaris_build4.zip",
+      "size": 27996408,
+      "mtimeMs": 1793062599835.6296,
+      "sha256": "69910fdc45fc4ee7c65e109e155767f7e3e28b0bd17b41bfc27c2dc5665ff84b"
+    },
+    {
+      "status": "??",
+      "file": "build_ios_build4_oct27/extracted/Scholaris.ipa",
+      "size": 28072315,
+      "mtimeMs": 1793033312000,
+      "sha256": "50beb4082238b87c9597df16a8c346c1516d53d91186f2a120ca669cc43ec85a"
+    },
+    {
+      "status": "??",
+      "file": "build_ios_build4_oct27/ipa_extracted/Payload/Runner.app/Info.plist",
+      "size": 1881,
+      "mtimeMs": 1793062110000,
+      "sha256": "4e37b20f19847b1d7ed26dd82df072f418c7d74f489a9e423d35030cb955c1c5"
+    },
+    {
+      "status": "??",
+      "file": "build_ios_build5_oct27/Scholaris_build5.zip",
+      "size": 28005756,
+      "mtimeMs": 1793069341878.2058,
+      "sha256": "a8fc2befa423833398096e238111b5b471796e787bca7143ab1c5e92ffb23b0b"
+    },
+    {
+      "status": "??",
+      "file": "build_ios_build5_oct27/extracted/Scholaris.ipa",
+      "size": 28080450,
+      "mtimeMs": 1793040456000,
+      "sha256": "032ab8b7c65b9eef883c120ec7d156a25bcf4e9f753beb026026cecde6c390d1"
+    },
+    {
+      "status": "??",
+      "file": "build_ios_build5_oct27/ipa_extracted/Payload/Runner.app/Info.plist",
+      "size": 1881,
+      "mtimeMs": 1793069255000,
+      "sha256": "6d00eaa5300b32cde1b96a6ffceab8e392e6e9e45f5853661316fafdac4f9fca"
+    },
+    {
+      "status": "??",
+      "file": "build_ios_build6_oct27/Scholaris_build6.zip",
+      "size": 28008060,
+      "mtimeMs": 1793071277227.2566,
+      "sha256": "1200a216c455a3befaceb5dc8ab8088beec50870d7087bb87f2d3211fb808f9b"
+    },
+    {
+      "status": "??",
+      "file": "build_ios_build6_oct27/extracted/Scholaris.ipa",
+      "size": 28082180,
+      "mtimeMs": 1793042386000,
+      "sha256": "e7ccc5a695a87fcf28882d2e002ea965a416133eb8de2e7b435552a900b156b3"
+    },
+    {
+      "status": "??",
+      "file": "build_ios_build6_oct27/ipa_extracted/Payload/Runner.app/Info.plist",
+      "size": 1881,
+      "mtimeMs": 1793071184000,
+      "sha256": "ba9bc6a48d98f3f5fb5f24b2dcbe07e5006f6aab3bc39b6d7f164cc00f8cbaab"
+    },
+    {
+      "status": "??",
+      "file": "build_ios_build7_oct27/Scholaris-iOS-App/Scholaris.ipa",
+      "size": 28079983,
+      "mtimeMs": 1793080122338.8313,
+      "sha256": "6281d582f3f89907c39bfe7f15277cde61f1021be3682deb88b05eb2cf149ed1"
+    },
+    {
+      "status": "??",
+      "file": "build_ios_build8_oct27/Scholaris.ipa",
+      "size": 28081685,
+      "mtimeMs": 1793082738464.4805,
+      "sha256": "71a5c9ede06925ac98acb34f99f71df4ee4793926d0c46a7b20eb7bf1a9723a7"
+    },
+    {
+      "status": "??",
+      "file": "build_ios_build9_oct27/Scholaris.ipa",
+      "size": 28085561,
+      "mtimeMs": 1793115557692.8496,
+      "sha256": "11b45519036ecd1296e27247d8111f7c61163bd6f1a85442a21581c6fc336415"
+    },
+    {
+      "status": "??",
+      "file": "build_ios_decision_letter_oct19/Scholaris.ipa",
+      "size": 26953860,
+      "mtimeMs": 1792335404000,
+      "sha256": "34a313fe05149fee1fca4436301738df0c19538d4d63d4f75eb40965afcef0e2"
+    },
+    {
+      "status": "??",
+      "file": "build_ios_decision_letter_oct19/Scholaris_artifact.zip",
+      "size": 26879006,
+      "mtimeMs": 1792364623846.572,
+      "sha256": "7d51ab72204cf514293b74d615314beb39eccfd357f45f84359a99923e75200a"
+    },
+    {
+      "status": "??",
+      "file": "build_ios_decision_letter_oct19/extracted/Scholaris.ipa",
+      "size": 26953860,
+      "mtimeMs": 1792335404000,
+      "sha256": "34a313fe05149fee1fca4436301738df0c19538d4d63d4f75eb40965afcef0e2"
+    },
+    {
+      "status": "??",
+      "file": "build_ios_output_oct19/Scholaris.ipa",
+      "size": 26949725,
+      "mtimeMs": 1792330608000,
+      "sha256": "69dbd44361efd86d38d8700595e218c865f975dba08753fc45bd7eaab7aeac7d"
+    },
+    {
+      "status": "??",
+      "file": "build_ios_output_oct19/Scholaris_artifact.zip",
+      "size": 26875421,
+      "mtimeMs": 1792360487133.9805,
+      "sha256": "d303650c7624c0b7564cb853e3dae11b075e7129fd9e3b406d65ce3de0a41beb"
+    },
+    {
+      "status": "??",
+      "file": "build_ios_output_oct19/Scholaris_artifact_latest.zip",
+      "size": 29160636,
+      "mtimeMs": 1792359768570.6172,
+      "sha256": "63d05531156d6aac981a9d4163ef78669d6a041b4955f6ed20a1cc47d6811ce1"
+    },
+    {
+      "status": "??",
+      "file": "build_ios_output_oct19/extracted/Scholaris.ipa",
+      "size": 26949725,
+      "mtimeMs": 1792330608000,
+      "sha256": "69dbd44361efd86d38d8700595e218c865f975dba08753fc45bd7eaab7aeac7d"
+    },
+    {
+      "status": "??",
+      "file": "chrome_provider_decisioning.png",
+      "size": 113686,
+      "mtimeMs": 1792354168593.3127,
+      "sha256": "fbbee4626f1ea6a84a92359be835419ab9060e32821f3376040509290bb400b0"
+    },
+    {
+      "status": "??",
+      "file": "chrome_provider_login.png",
+      "size": 96234,
+      "mtimeMs": 1792353988583.005,
+      "sha256": "aa13ac2628f6943644402fe6ce74b70b85937f082357e8ba4e91280035ce0e68"
+    },
+    {
+      "status": "??",
+      "file": "chrome_test.png",
+      "size": 2740,
+      "mtimeMs": 1792353903497.1006,
+      "sha256": "fb32313e11bc8ffbd5310a1660e630b64cedb4622f8462a5eae2d5464ac8279e"
+    },
+    {
+      "status": "??",
+      "file": "chrome_test2.png",
+      "size": 3850,
+      "mtimeMs": 1792353938290.6978,
+      "sha256": "211fc41cbbacb56f6408de381f26b66fa445bf14dba637e99d09a3ee3febd61a"
+    },
+    {
+      "status": "??",
+      "file": "chrome_test3.png",
+      "size": 104197,
+      "mtimeMs": 1792353965165.3074,
+      "sha256": "20786eb8b0e40b345d632480c29cdd214365dfd1554173bb3fcc61f23aac3824"
+    },
+    {
+      "status": "??",
+      "file": "design-plans/2026-10-31-tour-re-audit/audit.md",
+      "size": 6525,
+      "mtimeMs": 1793393476891.5718,
+      "sha256": "ef73b8df7feaf78ee2e127e39f2d0a005a747e5c8fa4efe8693f2120b9b02ca3"
+    },
+    {
+      "status": "??",
+      "file": "design-plans/2026-10-31-tour-re-audit/interaction_probe_test.dart",
+      "size": 3392,
+      "mtimeMs": 1793394343570.6726,
+      "sha256": "b61bd5254ab4900ed36d513f0255ddd7fc039412856df495522f449a38ba5475"
+    },
+    {
+      "status": "??",
+      "file": "design-plans/2026-11-02-scholaris-own-identity.md",
+      "size": 11755,
+      "mtimeMs": 1793600322587.0684,
+      "sha256": "58209e8ff28aafdd2292575eea6820ac014920ec4646a7177251ffc897804e25"
+    },
+    {
+      "status": "??",
+      "file": "docs/coordination/SESSION_LOG.md",
+      "size": 156583,
+      "mtimeMs": 1793164205584.841,
+      "sha256": "d3217e96c2c4172f9f6257b636178edcb1ebf46fdacd5d55e11bb01bce3a638c"
+    },
+    {
+      "status": "??",
+      "file": "docs/coordination/SESSION_STATE.md",
+      "size": 71481,
+      "mtimeMs": 1793164204259.8018,
+      "sha256": "220957340aa6110544559b0f056985652b3b7c57f408df7bcbd7eba48d0f678c"
+    },
+    {
+      "status": "??",
+      "file": "docs/coordination/SPECIALIST_CONTRACT.md",
+      "size": 10602,
+      "mtimeMs": 1792949432577.7793,
+      "sha256": "f8cfe7f849a77714d9c69a141cb0988fde9d769e30ac2971cad78957e74539a0"
+    },
+    {
+      "status": "??",
+      "file": "docs/coordination/STATUS_BOARD.md",
+      "size": 13549,
+      "mtimeMs": 1792950299883.1528,
+      "sha256": "63b8e7ccc811c1d199708f0bb6d4e0408f1e3616a33f1a9e3ccd4940972dedf7"
+    },
+    {
+      "status": "??",
+      "file": "docs/plans/2026-10-21-scholaris-product-roadmap.md",
+      "size": 43852,
+      "mtimeMs": 1793046571158.782,
+      "sha256": "3db075e45700cd12fa3ac5c3b2903c7f274f4f82f4852e5f136aeaca5059e228"
+    },
+    {
+      "status": "??",
+      "file": "docs/plans/2026-10-21-student-onboarding-recovery.md",
+      "size": 2470,
+      "mtimeMs": 1792572352468.7266,
+      "sha256": "c556a3ab205ecbd72ed625f05665639f7882a9ad5cdd9469e5b258d879cbc9d8"
+    },
+    {
+      "status": "??",
+      "file": "docs/plans/2026-10-21_individual_provider_lifecycle_plan.md",
+      "size": 9911,
+      "mtimeMs": 1792515049001.7485,
+      "sha256": "882066e9ac23842be8746b8fa48b91dee31b3c56786a93bfa37982040fb2665d"
+    },
+    {
+      "status": "??",
+      "file": "docs/plans/2026-10-22-organization-workspace-concept.md",
+      "size": 2418,
+      "mtimeMs": 1792659154607.7688,
+      "sha256": "2d0b96ba5e445110f1d4305dcf905d18ed4e2ef4d75b4da3fa73635fd89450ac"
+    },
+    {
+      "status": "??",
+      "file": "docs/plans/2026-10-23-provider-ui-polish.md",
+      "size": 7799,
+      "mtimeMs": 1792746906382.1484,
+      "sha256": "bd8d6356cb12231206dac34d60e9ca53ac4c3c354a56307a298b8d7172cb3e49"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/2026-10-21-female-dashboard-hero.md",
+      "size": 2521,
+      "mtimeMs": 1792573739669.0547,
+      "sha256": "5eafb628957074858f98811f5070b5a1c41601391163573ac5b38944142a2c98"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/2026-10-21-student-onboarding-recovery.md",
+      "size": 3764,
+      "mtimeMs": 1792572330873.1772,
+      "sha256": "878449a718a9aef65679143d7c6208a81fa6fa363a6689089cd86b410ef769fe"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/2026-10-21_individual_provider_lifecycle_report.md",
+      "size": 27323,
+      "mtimeMs": 1792521533694.509,
+      "sha256": "ae4fcaf3ecc076e5f5efbfcae10645a28025f2916bead3be0381bca27df14163"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/2026-10-27-student-650ms-choreography.md",
+      "size": 3374,
+      "mtimeMs": 1793068654584.613,
+      "sha256": "32f19b2cdebb012c9fed7c081fa2cef54709b40abf33989ae4c40b9048755c7c"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/2026-10-27-student-clear-rim-refinement.md",
+      "size": 4287,
+      "mtimeMs": 1793067951188.0527,
+      "sha256": "3738f3ede70678d0b1df0ba69d78a0849c664de3c76dc23adb742cdf64701d6e"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/2026-10-27-student-clearer-glass-ipa-handoff.md",
+      "size": 4197,
+      "mtimeMs": 1793053116596.6616,
+      "sha256": "bddf23f3eac000ce6a91fa6523b93e09b02e8d55bebc37e38482e755df51da82"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/2026-10-27-student-dock-boundary-tab-sequence-build4-report.md",
+      "size": 3980,
+      "mtimeMs": 1793062198396.268,
+      "sha256": "7f299155837a7665590b57154ba3bf420de1fc9e81d92a0e88ea32f17f0f83ea"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/2026-10-27-student-dock-boundary-tab-sequence.md",
+      "size": 3692,
+      "mtimeMs": 1793061408573.9404,
+      "sha256": "39cd93b32fe2958b0403b40f88efb5234e1f6cc906bc670065cd1857dd463ff5"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/2026-10-27-student-frosted-lens-refinement.md",
+      "size": 5988,
+      "mtimeMs": 1793066866075.8235,
+      "sha256": "c2910d4c4f480c5f4a997f489eda4dff9dffc3df2e1c8b88ab58489bf28d012d"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/2026-10-27-student-navbar-animation-ipa-handoff.md",
+      "size": 5564,
+      "mtimeMs": 1793049637449.8938,
+      "sha256": "297109bd35f0e1c2fd2329684a976069ba2813cf4c5ac3beb6474f5a23de8203"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/2026-10-27-student-saved-spacing-cards-build3-handoff.md",
+      "size": 8620,
+      "mtimeMs": 1793056881111.6475,
+      "sha256": "ead70b2866a27cdac7b21ed3b9394537609971093fb4cf0b9a6c915bc598cc9a"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/2026-10-27-student-saved-spacing-cards-build3-report.md",
+      "size": 4041,
+      "mtimeMs": 1793058335777.2397,
+      "sha256": "f453aa89a80519a380c5c4886c0e8bb718f203bd6b0836e87ab215d3eb00bb5f"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/2026-10-27-student-soft-nav-fluid-entrance.md",
+      "size": 3574,
+      "mtimeMs": 1793070476502.4048,
+      "sha256": "72ff46a2af0efed91e4b036652cb582aebbea84ef5e795b7c7422e6d6e49aaed"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/2026-10-30-geist-crisp-pass/discover-typography-only-440.jpg",
+      "size": 49659,
+      "mtimeMs": 1793303289114.052,
+      "sha256": "c00ddc4e0ac58952ee83c5060a19879c86d17e0c655fec34bd66c835ea3b350d"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/2026-10-30-geist-crisp-pass/landing-geist-desktop.jpg",
+      "size": 88919,
+      "mtimeMs": 1793303679414.796,
+      "sha256": "d13370afe320f8fe2e0d8e6b07f99a089df15ad97e5cf6ddfccd680c9dc02e9f"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/2026-10-30-geist-crisp-pass/typography-only-440.jpg",
+      "size": 55193,
+      "mtimeMs": 1793303343790.6963,
+      "sha256": "90ebbac99f3e4753b0fbd698ba798e9f38d3a545bffebb83fbd11813e06a0338"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/2026-10-30-geist-crisp-pass/typography-only.md",
+      "size": 1312,
+      "mtimeMs": 1793303315764.9146,
+      "sha256": "e7625890769b57107f1f1191d0f4760fd75fb1e2757ae0481aa379c474864531"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/2026-10-31-ari-tour-scroll-cutout-desync-report.md",
+      "size": 7926,
+      "mtimeMs": 1793456394386.0398,
+      "sha256": "2a356abfb40ba85cf8f432007c8bf55b41304fc1a6b19e63883ee6a3530a992f"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/2026-10-31-auth-tour-pre-defense-audit.md",
+      "size": 10722,
+      "mtimeMs": 1793432138668.5654,
+      "sha256": "4376ce5f07048cfb563f11c04f7a81aa2c3a3a5bc4af7367cbeb3458df145df9"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/2026-11-04-typography/after/admin-320.png",
+      "size": 53158,
+      "mtimeMs": 1793746137365.675,
+      "sha256": "7ccccaa23a608f22655cd8d20e4cc7a4904363281fe59238367209832d68c95f"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/2026-11-04-typography/after/admin-390.png",
+      "size": 56037,
+      "mtimeMs": 1793746137491.991,
+      "sha256": "c7b9ae912f90b9d040510d3df11fd9650e06c52a85d654a7b89d79db36c35c98"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/2026-11-04-typography/after/authentication-320.png",
+      "size": 50455,
+      "mtimeMs": 1793746134386.5222,
+      "sha256": "388af7722a3ee029953ad98839aea34ff8ec05076c831066b9e130bc52d97fef"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/2026-11-04-typography/after/authentication-390.png",
+      "size": 110468,
+      "mtimeMs": 1793746134636.6086,
+      "sha256": "d6a458ba25be30f4277bbffbe86b6cb0144e88f1fd3c389986047e1ef7390936"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/2026-11-04-typography/after/authentication-errors-320.png",
+      "size": 94465,
+      "mtimeMs": 1793746135032.9165,
+      "sha256": "473243b8dec0fc46d4a8be045b0dc547ae80d978cb6a4e2254ef3e4b34f41e94"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/2026-11-04-typography/after/authentication-errors-390.png",
+      "size": 113017,
+      "mtimeMs": 1793746135248.5334,
+      "sha256": "613ad677e943db2a9f4d2ec07a96b111761af69bac40350f174fb0e4361fd027"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/2026-11-04-typography/after/logout-dialog-320.png",
+      "size": 9486,
+      "mtimeMs": 1793746137726.1506,
+      "sha256": "d3dc0da8ff5c3d64da03f1f940683a681a6b0d7adc51460d4a0911c8dea1ce91"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/2026-11-04-typography/after/logout-dialog-390.png",
+      "size": 9336,
+      "mtimeMs": 1793746137812.6338,
+      "sha256": "87582bc652ffeaea619fc3e681a9ac105220c3e791f9dde7dd26c00d1a7a1023"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/2026-11-04-typography/after/onboarding-320.png",
+      "size": 57302,
+      "mtimeMs": 1793746133588.791,
+      "sha256": "20f4fc5829ef5cc33c22684e800bfb140223cf835efc77b5ad6f3cb2795f5e3f"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/2026-11-04-typography/after/onboarding-390.png",
+      "size": 120977,
+      "mtimeMs": 1793746133848.099,
+      "sha256": "d0292ded24099550cf9d4ec748347ce2a9ef5984406a35bfd54f5bbb65565700"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/2026-11-04-typography/after/provider-individual-320.png",
+      "size": 43182,
+      "mtimeMs": 1793746136707.6487,
+      "sha256": "c7fd0015565552065ee093b3e68bc3cfde105aa09689da8e6521412d7032fc88"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/2026-11-04-typography/after/provider-individual-390.png",
+      "size": 112047,
+      "mtimeMs": 1793746137104.2612,
+      "sha256": "74a8cf87f45883bed1819ba951a398f4151d5bd1826de7e706706ba3eab1c09e"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/2026-11-04-typography/after/provider-organization-320.png",
+      "size": 37163,
+      "mtimeMs": 1793746135770.8826,
+      "sha256": "56ea968a015ff37dd3b95cde729ed9ea0a3df77286b34a7d5577f97b1b000530"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/2026-11-04-typography/after/provider-organization-390.png",
+      "size": 38307,
+      "mtimeMs": 1793746136090.7278,
+      "sha256": "800b2dfab9f662169d2e10774a17dcce785de1a5da20bef1aad97c52d8e6d755"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/2026-11-04-typography/after/scholarship-card-320.png",
+      "size": 29200,
+      "mtimeMs": 1793746137562.925,
+      "sha256": "77c9ef46822476b430e39dcbfed4186eedd335c893eee4803ba924c0b3bbed92"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/2026-11-04-typography/after/scholarship-card-390.png",
+      "size": 30188,
+      "mtimeMs": 1793746137627.2476,
+      "sha256": "3b424966192bb7341a578db473846906bbe122c8bfbc9f4b4ba1817a8bbd377b"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/2026-11-04-typography/after/web-capture.json",
+      "size": 1926,
+      "mtimeMs": 1793746250110.3115,
+      "sha256": "31ba161cb081dd44bb2a4f5e010f22ada78bba77bdb1721f63b0bfb6af39964a"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/2026-11-04-typography/after/web-detail-390.png",
+      "size": 91078,
+      "mtimeMs": 1793746238926.809,
+      "sha256": "8f933161e83c10c83d1ce359ec8699482d5ea4c11efa4e2385de4ee0ba9b7dbd"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/2026-11-04-typography/after/web-discover-390.png",
+      "size": 91528,
+      "mtimeMs": 1793746222183.141,
+      "sha256": "32980c49926d2a277a414efaba7df1ed852ede33d3a8605e8aaa25001df5ae4f"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/2026-11-04-typography/after/web-home-390.png",
+      "size": 131278,
+      "mtimeMs": 1793746216603.7249,
+      "sha256": "fe55be283051357095adc289985b6c82a46a492c486927615831849ac3e2f675"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/2026-11-04-typography/after/web-home-large-text-320.png",
+      "size": 87653,
+      "mtimeMs": 1793746250108.3887,
+      "sha256": "7c60a26fee980d548bf0e6c2475132ddd4535b03a54b1b2359059e9c022dff46"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/2026-11-04-typography/after/web-home-narrow-320.png",
+      "size": 100982,
+      "mtimeMs": 1793746244516.1719,
+      "sha256": "a9615a44b470b68ff48e238c15edafa8e3d260aad488a5769a4503752e1a37dd"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/2026-11-04-typography/after/web-profile-390.png",
+      "size": 85943,
+      "mtimeMs": 1793746233337.306,
+      "sha256": "5fdfb757a4432a5e7cc0b11399fb008493728fb9c665618c6df4517d6b53aabd"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/2026-11-04-typography/after/web-tracker-390.png",
+      "size": 96053,
+      "mtimeMs": 1793746227757.6885,
+      "sha256": "c0e40398479f85472d61856a6118b132478ef8a7b62c75b1de9014bf00c43b04"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/2026-11-04-typography/before/admin-320.png",
+      "size": 50373,
+      "mtimeMs": 1793745251464.8916,
+      "sha256": "0812728ec28f84c0236e5ecc583034b3bce6d4299e3bcc5ad8776e5eccbeccf4"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/2026-11-04-typography/before/admin-390.png",
+      "size": 55304,
+      "mtimeMs": 1793745251553.2776,
+      "sha256": "9e7d03bc93e45e632b601f1b845067d0e9032955c2ac2b524c3f4a7b0d7e2f75"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/2026-11-04-typography/before/authentication-320.png",
+      "size": 49987,
+      "mtimeMs": 1793745249829.6235,
+      "sha256": "8007abe523d8f483e902708071fb226148215748b901456df2eae117011a92e3"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/2026-11-04-typography/before/authentication-390.png",
+      "size": 109917,
+      "mtimeMs": 1793745249993.9824,
+      "sha256": "83b790ba7ef39899c91a5c9bb75fd59a8a2d5e10062c344d096db56a207b81d4"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/2026-11-04-typography/before/authentication-errors-320.png",
+      "size": 94160,
+      "mtimeMs": 1793745250199.6084,
+      "sha256": "b25266ee3e264922cc42845daf2c924b508ace9557f09712ed2be3e1616d8817"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/2026-11-04-typography/before/authentication-errors-390.png",
+      "size": 112531,
+      "mtimeMs": 1793745250325.6196,
+      "sha256": "9915922ab807ad371ac180fd0abca1b60d8fb5eba5c09c2231fa516b7be27b39"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/2026-11-04-typography/before/logout-dialog-320.png",
+      "size": 9834,
+      "mtimeMs": 1793745251770.719,
+      "sha256": "ae59b2c5f7de8d6bb76e45ce0b293fbafd1b3f0858cedbd4968f6bb4bb3ec232"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/2026-11-04-typography/before/logout-dialog-390.png",
+      "size": 9687,
+      "mtimeMs": 1793745251844.4314,
+      "sha256": "40d897808d6c046351ebcd54a3ed5762a5d9fddde3dd1d6d7c693143924eb66d"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/2026-11-04-typography/before/onboarding-320.png",
+      "size": 58502,
+      "mtimeMs": 1793745249386.042,
+      "sha256": "8f95533492e18edb54b3f4b249787c80db7aeb706d9b817b167b27622680fd4e"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/2026-11-04-typography/before/onboarding-390.png",
+      "size": 122385,
+      "mtimeMs": 1793745249519.9775,
+      "sha256": "d6a6873c309a027730a30ee68f48e15cc7a17b3dfadbb66746fd7fd4c0054259"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/2026-11-04-typography/before/provider-individual-320.png",
+      "size": 42021,
+      "mtimeMs": 1793745251055.7136,
+      "sha256": "25400dab42970a6d342ab924351010540233f41fa6b940d0364874247f02b71e"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/2026-11-04-typography/before/provider-individual-390.png",
+      "size": 111376,
+      "mtimeMs": 1793745251283.545,
+      "sha256": "7bef9da9da1e908e8a592acbcf59e36046564b76feb483957832f791a2139c8c"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/2026-11-04-typography/before/provider-organization-320.png",
+      "size": 36236,
+      "mtimeMs": 1793745250619.8672,
+      "sha256": "594e59b11b44cd6dd21b3a126a3f16b049edb4b1636e7ba6292dafc68749c625"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/2026-11-04-typography/before/provider-organization-390.png",
+      "size": 37602,
+      "mtimeMs": 1793745250767.9143,
+      "sha256": "daba14a8cd51b7aa9e53a559749625bee75fe6d722afe06b9c7f3615a0bec916"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/2026-11-04-typography/before/scholarship-card-320.png",
+      "size": 29512,
+      "mtimeMs": 1793745251619.093,
+      "sha256": "ea0ecc55a90b592883c735fd1d80cc10a6b2e0b054d95b282434eacec3613d59"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/2026-11-04-typography/before/scholarship-card-390.png",
+      "size": 30709,
+      "mtimeMs": 1793745251693.2717,
+      "sha256": "c1742d72d2ff7c6bd29ac0ba3589f498eae8c5ccd9092293e2fda3ad745bf46c"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/2026-11-04-typography/before/web-capture.json",
+      "size": 1445,
+      "mtimeMs": 1793744054620.1238,
+      "sha256": "1d66ff4acba53e71879b785f0ff0b34bf0a8fcd02b7cb96f731648f3c675a9b9"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/2026-11-04-typography/before/web-detail-390.png",
+      "size": 92468,
+      "mtimeMs": 1793744043458.4478,
+      "sha256": "ac66c7010185477da329298b763e1deb758752605f507ce68501889c5e5e61f5"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/2026-11-04-typography/before/web-discover-390.png",
+      "size": 94270,
+      "mtimeMs": 1793744026709.744,
+      "sha256": "c0a9fc85bcb2397a2d774a334d6ae75acefc7f0a9551e97d4dd64bacd3876b20"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/2026-11-04-typography/before/web-home-390.png",
+      "size": 134184,
+      "mtimeMs": 1793744021146.6892,
+      "sha256": "f02d5bd11d34791c06007c04cc8e91a9dfe639df57398c61bfd55296c92cc081"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/2026-11-04-typography/before/web-home-large-text-320.png",
+      "size": 92190,
+      "mtimeMs": 1793744054620.1238,
+      "sha256": "af93e6182430512b3e18f91cea2ede444f3332e5496f0bbed81ec3b99d6e14fd"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/2026-11-04-typography/before/web-home-narrow-320.png",
+      "size": 102168,
+      "mtimeMs": 1793744049037.9194,
+      "sha256": "2a2297585d5026e9bd8126b971590f778d1eec8183753e066c8c70c6c0e1bd8b"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/2026-11-04-typography/before/web-profile-390.png",
+      "size": 88649,
+      "mtimeMs": 1793744037878.0781,
+      "sha256": "1ea7ac43149b934ec064e91470484578aada5295ef5a9cb62799fc75b3101b33"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/2026-11-04-typography/before/web-tracker-390.png",
+      "size": 98208,
+      "mtimeMs": 1793744032301.2888,
+      "sha256": "a4ba0aef9b5f6532e2e4ae9b972f65706767d6ca59bb12cc567d9dcc8a2f74c2"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/2026-11-04-typography/changed-files.md",
+      "size": 15339,
+      "mtimeMs": 1793746174420.0156,
+      "sha256": "6485b411df2184cecfffdd8fea230dadf65a6307d10e782b72f16d0576b239ec"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/2026-11-04-typography/comparison.html",
+      "size": 3660,
+      "mtimeMs": 1793745468836.0237,
+      "sha256": "9970c5e00103f011698bb8a26e8d873b40640f6ebd6ff24b7a8d6ca4a9badc3c"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/2026-11-04-typography/font-provenance.json",
+      "size": 832,
+      "mtimeMs": 1793745469072.8513,
+      "sha256": "ac456c9195e7161e413ddf5100476402c87749f513b2b88b40eb284630305b91"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/2026-11-04-typography/handoff.md",
+      "size": 9609,
+      "mtimeMs": 1793746358020.236,
+      "sha256": "16daabcb700a94218c8403645da237e092c6faf2c483ea6164ad2d444af3b513"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/2026-11-04-typography/progress.md",
+      "size": 3707,
+      "mtimeMs": 1793746259229.4182,
+      "sha256": "be06236da9e0c42bc8f0238656ae8dd18cc97983aa562271b5bbea3f865aa38f"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/2026-11-04-typography/semantic-review.json",
+      "size": 12041,
+      "mtimeMs": 1793746280607.3262,
+      "sha256": "84badc7e6ebb7b8b53beaf46408a6cb81227344caac4da96f020aeed4ca806fd"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/codex-local-pass/READY.json",
+      "size": 898,
+      "mtimeMs": 1793008522809.7622,
+      "sha256": "7cb449f187ac494a6bbeffc2de47d38ad36788c73b383569c246e25c93df4a41"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/codex-local-pass/architect.md",
+      "size": 15935,
+      "mtimeMs": 1793008502358.0312,
+      "sha256": "e61e61a606e8dc3eff916eb77a86003a8fc56318ce6a2acb0da2d268e809ed52"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/codex-local-pass/builder.md",
+      "size": 20589,
+      "mtimeMs": 1793007501918.4,
+      "sha256": "96ad00dc331b0031173477cf722db5d4a2f771641d993298614cb04d3f012cc7"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/codex-local-pass/independent-acceptance.md",
+      "size": 1969,
+      "mtimeMs": 1793008908789.297,
+      "sha256": "6fe603196099d30ff5dde70d29ddd997152d53fd85c07bbac884939f7da35e0b"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/codex-local-pass/qa.md",
+      "size": 18834,
+      "mtimeMs": 1793007136972.903,
+      "sha256": "47be19b522d52b624032f09d6ab7806432576e7c58e544d3b166aa7bfe702af0"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/codex-local-pass/security.md",
+      "size": 24793,
+      "mtimeMs": 1793006603280.833,
+      "sha256": "a291cc81913df0b703ce783838ed19cea912a9c862af49304b6e0785653e8c17"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/codex-local-pass/ui.md",
+      "size": 25558,
+      "mtimeMs": 1793006230322.936,
+      "sha256": "8053e42e5c5bb1717526fb510d6f5bf2221b4df1e5f2ada9a2f4b566f28a67c8"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-device-feedback-2026-10-31/ari-design-detect.json",
+      "size": 3,
+      "mtimeMs": 1793392097566.4917,
+      "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-device-feedback-2026-10-31/ari-journey/male-welcome.jpg",
+      "size": 38103,
+      "mtimeMs": 1793391405102.4377,
+      "sha256": "7597d9079899f98a081c08f42778f6ff94c2745e22d4f9d2904e6c1b2599794b"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-device-feedback-2026-10-31/ari-journey/saved-tap-anywhere.jpg",
+      "size": 29727,
+      "mtimeMs": 1793391549145.9768,
+      "sha256": "e0cd210200a9a9abe3c588f0efe989fbef3b80b24983c665864a15d5e519274d"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-device-feedback-2026-10-31/collapsed-nav-green.jpg",
+      "size": 1340,
+      "mtimeMs": 1793386268982.3313,
+      "sha256": "e0523220ef8ef5c1608fe63c41cad5654df6d78a88d8be8fd69b2c4d58f321ff"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-device-feedback-2026-10-31/contextual-guide/discover-compact.jpg",
+      "size": 41363,
+      "mtimeMs": 1793389127206.304,
+      "sha256": "52ef534c352de3f910b283f7b80e8da906016f5ef70daaa1dc61007dab78a332"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-device-feedback-2026-10-31/contextual-guide/female-home.jpg",
+      "size": 45566,
+      "mtimeMs": 1793388924700.3472,
+      "sha256": "52ccc6a5eb097d1c23fc7fbcbe244c26463ed6a179e3ef170dc301ea4ae6e420"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-device-feedback-2026-10-31/contextual-guide/guide-01-saved.jpg",
+      "size": 32356,
+      "mtimeMs": 1793388660171.8904,
+      "sha256": "109b51159e16eefb9e638bd28569682214242d3e9fcdcdb02b38970c7950ac32"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-device-feedback-2026-10-31/contextual-guide/guide-02-progress.jpg",
+      "size": 32444,
+      "mtimeMs": 1793388667045.6167,
+      "sha256": "476dea036f34c302d6f7c2781b5771998ee52c67fc19178e6458e221ff1c9e23"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-device-feedback-2026-10-31/contextual-guide/guide-03-discover.jpg",
+      "size": 30586,
+      "mtimeMs": 1793389009318.1025,
+      "sha256": "7015db2ed9be43a9e617fa11b6f0efb8d6f1791a4818fd7efd8bdb270a140761"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-device-feedback-2026-10-31/contextual-guide/guide-04-details.jpg",
+      "size": 23098,
+      "mtimeMs": 1793389084038.2996,
+      "sha256": "aa654f494a2859e90fda40deea39ebfc13dc49760a926993615ad4c63325955d"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-device-feedback-2026-10-31/contextual-guide/guide-05-eligibility.jpg",
+      "size": 31027,
+      "mtimeMs": 1793388719188.98,
+      "sha256": "caae6243d25eb8efc9f43ab75433de1310dc603ecdc7947c70748fefddd35a07"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-device-feedback-2026-10-31/contextual-guide/guide-06-start.jpg",
+      "size": 25807,
+      "mtimeMs": 1793388770637.1829,
+      "sha256": "c65d7f1bbea21df2539d29c2b720ea9292b147c071897e5eb2212f72c7e84c02"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-device-feedback-2026-10-31/contextual-guide/guide-07-review.jpg",
+      "size": 36513,
+      "mtimeMs": 1793388795646.0056,
+      "sha256": "0770a4322e62671e70c7272f1b0f7d9382d0001c543bb349f5c8e26f64b27c9a"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-device-feedback-2026-10-31/contextual-guide/guide-08-submit.jpg",
+      "size": 30653,
+      "mtimeMs": 1793388821838.0776,
+      "sha256": "f72064888da148c2e76e45d0ea48a111e23076dabb3a389acdab7f2774d25844"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-device-feedback-2026-10-31/contextual-guide/guide-09-receipt.jpg",
+      "size": 24380,
+      "mtimeMs": 1793388828517.3638,
+      "sha256": "c17b231e3d7666794917116ad48b83f5eb4473ef1dd9b693a1699dea3575447d"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-device-feedback-2026-10-31/contextual-guide/guide-10-tracker.jpg",
+      "size": 27478,
+      "mtimeMs": 1793388834504.2366,
+      "sha256": "214555d32b9e3a44f4082937651846504bad8725529321df87cb980fe87c20ad"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-device-feedback-2026-10-31/contextual-guide/male-guide-saved.jpg",
+      "size": 32738,
+      "mtimeMs": 1793389004031.0083,
+      "sha256": "3fb9a934108d8d86ba5108d75f96d4605cff740d66667308f33757f46c06175e"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-device-feedback-2026-10-31/contextual-guide/male-home.jpg",
+      "size": 47319,
+      "mtimeMs": 1793388969566.7112,
+      "sha256": "41a63aed04d147b1200f062823375910257993e9f22b17a641df1fad1f52c776"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-device-feedback-2026-10-31/fresh-browser-2026-10-31/female-hero-header.jpg",
+      "size": 24461,
+      "mtimeMs": 1793387427534.3628,
+      "sha256": "dab8262d0455a4e64e04ce357e76976e0082d24241d232a0fbb61abecfbcda15"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-device-feedback-2026-10-31/fresh-browser-2026-10-31/female-home.jpg",
+      "size": 45575,
+      "mtimeMs": 1793387426560.6057,
+      "sha256": "206308d2d1b5c7c868f7544dde7d62f5f6e3768389776786a6972e4e5acfc4db"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-device-feedback-2026-10-31/fresh-browser-2026-10-31/female-plus-menu.jpg",
+      "size": 8336,
+      "mtimeMs": 1793387433540.6394,
+      "sha256": "cf0bbeb7ebc6e8cf6305c3fb1d3085eaf6ee9a7fa04898dfc6c90b1bf36b4ea4"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-device-feedback-2026-10-31/fresh-browser-2026-10-31/guide-finished-home.jpg",
+      "size": 45575,
+      "mtimeMs": 1793387483871.1453,
+      "sha256": "206308d2d1b5c7c868f7544dde7d62f5f6e3768389776786a6972e4e5acfc4db"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-device-feedback-2026-10-31/fresh-browser-2026-10-31/guide-step-1.jpg",
+      "size": 23947,
+      "mtimeMs": 1793387456171.652,
+      "sha256": "be7197ef768edf4ef94ddd2df6e86eb84295c432b24749fedc796d42715ee547"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-device-feedback-2026-10-31/fresh-browser-2026-10-31/guide-step-2.jpg",
+      "size": 26903,
+      "mtimeMs": 1793387460038.8904,
+      "sha256": "579fc8c046b24f622713717ec1287e462a6d1807d1872242bd861dc6de87a33f"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-device-feedback-2026-10-31/fresh-browser-2026-10-31/guide-step-3.jpg",
+      "size": 28595,
+      "mtimeMs": 1793387463660.5132,
+      "sha256": "eabcfd06d974c91c8b53f382911efe0e7cebb2fa6583b42d2f7f859d4eaf34da"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-device-feedback-2026-10-31/fresh-browser-2026-10-31/guide-step-4.jpg",
+      "size": 31911,
+      "mtimeMs": 1793387467594.0098,
+      "sha256": "590518845d58080c657c06b49cd06200f59766b19d2a813172c8e5003704e35b"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-device-feedback-2026-10-31/fresh-browser-2026-10-31/guide-step-5.jpg",
+      "size": 31053,
+      "mtimeMs": 1793387471158.484,
+      "sha256": "6244850f8fc6d3d05bb678fdc6f36fbb12df95e43c8ffe18b003999a32ad0d0c"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-device-feedback-2026-10-31/fresh-browser-2026-10-31/guide-step-6.jpg",
+      "size": 29255,
+      "mtimeMs": 1793387476839.7378,
+      "sha256": "b1f3386def100cc85be67edfb3f00c7ece180369adaeb889e91225e14e05f9f5"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-device-feedback-2026-10-31/fresh-browser-2026-10-31/header-actions.jpg",
+      "size": 1117,
+      "mtimeMs": 1793387408661.4917,
+      "sha256": "fc9f09593f399eb4d40dc26079ec9e2cfe45307be5dfdd6a8fb222de40d4fc57"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-device-feedback-2026-10-31/fresh-browser-2026-10-31/male-hero-header.jpg",
+      "size": 25188,
+      "mtimeMs": 1793387400374.3713,
+      "sha256": "85dd495305e9fa3065c2dfaa3d11f7a908e7145eddaf78db842aca2eda8af07e"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-device-feedback-2026-10-31/fresh-browser-2026-10-31/male-home.jpg",
+      "size": 46200,
+      "mtimeMs": 1793387399637.569,
+      "sha256": "ff37b0944ddf1d52057eaca45d1187d8b2f2249d94e3f48e2ed4282626e78b2a"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-device-feedback-2026-10-31/fresh-browser-2026-10-31/male-plus-menu.jpg",
+      "size": 8336,
+      "mtimeMs": 1793387408512.7778,
+      "sha256": "cf0bbeb7ebc6e8cf6305c3fb1d3085eaf6ee9a7fa04898dfc6c90b1bf36b4ea4"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-device-feedback-2026-10-31/home-390x844.jpg",
+      "size": 46117,
+      "mtimeMs": 1793386244910.938,
+      "sha256": "2e08926f7d4e4ed1b3a15fe473e0c687645b46589077bc5ba62199c0d3a2bb78"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-device-feedback-2026-10-31/impeccable-detect.json",
+      "size": 3,
+      "mtimeMs": 1793388637568.831,
+      "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-glass-material-2026-10-27/READY.json",
+      "size": 1815,
+      "mtimeMs": 1793035252479.1206,
+      "sha256": "260c2849c1724c103ff8d62d122ddf5ffbeaecad641d42d5e6e576182cc622c2"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-glass-material-2026-10-27/architect.md",
+      "size": 13257,
+      "mtimeMs": 1793035293403.5173,
+      "sha256": "403ab80b90ed30d3be16e8b117e4bc3a0e694477822f17ad4cf438805a8ada75"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-glass-material-2026-10-27/builder.md",
+      "size": 7796,
+      "mtimeMs": 1793034228816.086,
+      "sha256": "9450f73f1cd2ea28e0ab94fba18858068c802325ceae8b800aa9f681be4e382a"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-glass-material-2026-10-27/qa.md",
+      "size": 7513,
+      "mtimeMs": 1793034783038.1133,
+      "sha256": "2000e741b01412aa1082cd562f8c25289e30762db06633e52cb331f63e496a66"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-glass-material-2026-10-27/security.md",
+      "size": 9125,
+      "mtimeMs": 1793034268860.5342,
+      "sha256": "c4c3a2f86a0796117ca114f28559a445cd48529fc0aecbad2e34cc7183b564c6"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-glass-material-2026-10-27/ui.md",
+      "size": 17576,
+      "mtimeMs": 1793034662112.6948,
+      "sha256": "806246c6d87988db0e82c5d4c6869a2a7a5c566e3db074f9fbbb73d7c0521407"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-navbar-2026-10-26/READY.json",
+      "size": 1716,
+      "mtimeMs": 1793023851594.5576,
+      "sha256": "8fb3df70bb708a2d242bd52a6e30fbf735328a3886a657b394cceef0483af91d"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-navbar-2026-10-26/architect.md",
+      "size": 9850,
+      "mtimeMs": 1793023746321.7693,
+      "sha256": "25079afa550f4e591c8403556a6aba579432a24b65f20329a3bfd673cafdb301"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-navbar-2026-10-26/builder.md",
+      "size": 2962,
+      "mtimeMs": 1793023793926.5227,
+      "sha256": "9806813b3ad02960c89c9baf0c816c7575be518973e383ddc816c6936c8f0b1c"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-navbar-2026-10-26/qa.md",
+      "size": 4356,
+      "mtimeMs": 1793023780727.5847,
+      "sha256": "bc12a4867270c5b7861efce23f0cee598b1affe62d54c66d8aad09d3b4a54dd7"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-navbar-2026-10-26/security.md",
+      "size": 2856,
+      "mtimeMs": 1793023820755.045,
+      "sha256": "a81716bb7c0d37f992757334225496fc50658cb8ded3c56e4ee3e6156deda04a"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-navbar-2026-10-26/ui.md",
+      "size": 4810,
+      "mtimeMs": 1793023764069.2715,
+      "sha256": "28eec28da183b7296964418da043e8d4cd7927a888aab6ec89393eaef04b527a"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-navbar-proportions-2026-10-27/READY.json",
+      "size": 1008,
+      "mtimeMs": 1793037844092.2424,
+      "sha256": "c3c0591b690121ef6fda41f94ace85b711a875c3c98bc28a18df14259ba3c1e3"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-navbar-proportions-2026-10-27/architect.md",
+      "size": 8774,
+      "mtimeMs": 1793037827183.6199,
+      "sha256": "293437eb6c2e390242f090456a74c4db2196721857ba8e48a34da2c331021817"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-navbar-proportions-2026-10-27/builder.md",
+      "size": 9516,
+      "mtimeMs": 1793037213438.7239,
+      "sha256": "c7e5065ddd372894ead0132fdb21fabb55efba208f3ba0b55e07db013c611f28"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-navbar-proportions-2026-10-27/qa.md",
+      "size": 8458,
+      "mtimeMs": 1793037740486.168,
+      "sha256": "0c77c505586a671450572c9d74f123892b64848051145866efdc8975c9880002"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-navbar-proportions-2026-10-27/security.md",
+      "size": 9431,
+      "mtimeMs": 1793036997450.0889,
+      "sha256": "6e9b5a67ad9c09aa28f6ca8d48facf3efbdc177976b0415fc573ec46647ed634"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-navbar-proportions-2026-10-27/ui.md",
+      "size": 17578,
+      "mtimeMs": 1793037405080.9663,
+      "sha256": "bc4a1562250627851c38f2e65597338f09fd38574b3156fd7d29d5de93b046f9"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-scroll-dock-2026-10-26/READY.json",
+      "size": 646,
+      "mtimeMs": 1793033112396.6477,
+      "sha256": "a819b4e31d512b2533777f4c5b50c2783e2e971cac34335a6706ca7d72297b57"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-scroll-dock-2026-10-26/architect.md",
+      "size": 18243,
+      "mtimeMs": 1793033096638.5027,
+      "sha256": "5a41cc37bf6767440c7ea2226352fd40069f8a5d40b4762468c86ae6e1e0f3d6"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-scroll-dock-2026-10-26/builder.md",
+      "size": 17502,
+      "mtimeMs": 1793031788691.551,
+      "sha256": "025605594ab4fd9f1ee64962a3a88e4c3af006d262daade118e16703c09b6510"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-scroll-dock-2026-10-26/qa.md",
+      "size": 14887,
+      "mtimeMs": 1793032750078.0242,
+      "sha256": "3f3782917f11312985e54da6a30676bf9daa3e7ff8ad8451b14053fc46eb310c"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-scroll-dock-2026-10-26/security.md",
+      "size": 15059,
+      "mtimeMs": 1793027863726.7405,
+      "sha256": "177bb626b6259fdd245314e0f63c9c8e2e13096b1cdc74cccf5de4f24e029823"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-scroll-dock-2026-10-26/ui.md",
+      "size": 25806,
+      "mtimeMs": 1793028603181.395,
+      "sha256": "b1b49475e39276a7d983809b62155eea3b02fbd6e7b1fbbe3a9790c1ab6c1b9a"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-tour-polish-2026-10-30/all-gray-capsules.md",
+      "size": 420,
+      "mtimeMs": 1793367346283.8813,
+      "sha256": "56a2a9bdfe84750c290010086fb5267849dfcd5e578f0a48fa97f90af15c4bd3"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-tour-polish-2026-10-30/calm-experiment.md",
+      "size": 1628,
+      "mtimeMs": 1793359201676.6475,
+      "sha256": "06b15abbabb321316c02b8d11956669eb2dbab1c5ef9990b8ce716dd41ae143f"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-tour-polish-2026-10-30/calm-tests.txt",
+      "size": 13709,
+      "mtimeMs": 1793359175351.7903,
+      "sha256": "fde9f31cc4394fc33fb257504532fa57dac5ce1e85f72a7435ebc009a29d0bd2"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-tour-polish-2026-10-30/capsules-all-gray.jpg",
+      "size": 39759,
+      "mtimeMs": 1793367355739.947,
+      "sha256": "6a4b7e0250266dae4d22648357d2a6858c8acd709eb44f498571d498eeda1589"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-tour-polish-2026-10-30/capsules-gray.jpg",
+      "size": 39786,
+      "mtimeMs": 1793367304524.037,
+      "sha256": "4983554a2962c5f0cb3cd8e286f6d44887b49a7046e2f35ad3c52c770783be20"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-tour-polish-2026-10-30/capsules.jpg",
+      "size": 39765,
+      "mtimeMs": 1793367078561.7507,
+      "sha256": "786777f2e7757dc9d7efcc14ed7b789cb5c589af8752861497d2d5abd60f3d98"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-tour-polish-2026-10-30/capsules.md",
+      "size": 747,
+      "mtimeMs": 1793367068390.2673,
+      "sha256": "d6d6d0ce1f6bce3aedc7315bb9081e0e6e0f9533239d8f477afed053283bb5c1"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-tour-polish-2026-10-30/card-emphasis-tests.txt",
+      "size": 5408,
+      "mtimeMs": 1793366280940.61,
+      "sha256": "6d9b8b0a2ebf1544bf8ec3d72180f97882078ad33ba91118ae264ae18ca6b09f"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-tour-polish-2026-10-30/card-emphasis.md",
+      "size": 1097,
+      "mtimeMs": 1793366303047.3003,
+      "sha256": "5eac2efc25a5e99a3159c7911f3646dc4ea9ba599f15839498c7a91ce529a349"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-tour-polish-2026-10-30/cards-emphasis.jpg",
+      "size": 39361,
+      "mtimeMs": 1793366292120.3018,
+      "sha256": "be38c938545c7aee32a8beb9a0c36417eca173c4b8d263e06ddfcae59b2ba752"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-tour-polish-2026-10-30/detail-tags-gray.jpg",
+      "size": 41460,
+      "mtimeMs": 1793367586852.4648,
+      "sha256": "371001b52bab35ba37dd53c13306540984c94c017025297e339bd524e6baaa9f"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-tour-polish-2026-10-30/discover-calm.jpg",
+      "size": 37362,
+      "mtimeMs": 1793359136778.7815,
+      "sha256": "62e464887b0c6d048d1d347ced70bf951aaaeeb3aa567dcbd67ffae315d1fde0"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-tour-polish-2026-10-30/female-dashboard-parity/discover-390x844.jpg",
+      "size": 40037,
+      "mtimeMs": 1793371966318.7393,
+      "sha256": "6763c30ee4bf1155ee922e3469a05efd4fc4b1bbc4794f169f0ac043ad646c20"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-tour-polish-2026-10-30/female-dashboard-parity/hero-shorter.jpg",
+      "size": 20241,
+      "mtimeMs": 1793372133371.0706,
+      "sha256": "859fccc1e2287cec859afba7b5626331af8195a9f46392d330e781daf77953af"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-tour-polish-2026-10-30/female-dashboard-parity/home-390x844.jpg",
+      "size": 46765,
+      "mtimeMs": 1793371888938.7405,
+      "sha256": "4aed9d13d24aabd090bcf851266a9332d9b2c448e9700908698e192af96df086"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-tour-polish-2026-10-30/female-dashboard-parity/home-navbar.jpg",
+      "size": 7610,
+      "mtimeMs": 1793371889706.9053,
+      "sha256": "5d2a2a19f7c37a9edea1ba1856f9bb824fa050298b3c00d4caa395a5c7b9b9a7"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-tour-polish-2026-10-30/female-dashboard-parity/home-shorter-390x844.jpg",
+      "size": 45940,
+      "mtimeMs": 1793372132715.565,
+      "sha256": "4082ad16fae8926694ebc8e3cf0e06a3593bd289c178ac122fc8f3cc07076d07"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-tour-polish-2026-10-30/female-dashboard-parity/illustration-source.txt",
+      "size": 1207,
+      "mtimeMs": 1793372006180.3423,
+      "sha256": "4fea12a052dc53aea6a02ff91f646dc7da14e02da79ca546c40d0dc6e857dbb3"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-tour-polish-2026-10-30/female-dashboard-parity/tracker-390x844.jpg",
+      "size": 42847,
+      "mtimeMs": 1793372006179.3242,
+      "sha256": "8ec0fe6cf764dc1c101b89c643b045df0e9a58dd79757650bcb54646b48b6a0f"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-tour-polish-2026-10-30/fresh-browser-capture-2026-10-30/discover-390x844.jpg",
+      "size": 37000,
+      "mtimeMs": 1793370980055.3665,
+      "sha256": "4da3a17e1150b4a668de89e6018658fe7959ba38675d4ac86dd6fc07f1fe759f"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-tour-polish-2026-10-30/fresh-browser-capture-2026-10-30/discover-navbar.jpg",
+      "size": 5042,
+      "mtimeMs": 1793370980383.9893,
+      "sha256": "34535215b07f5b308a3a4a8c62d10eb6bd0eaa2f97477080656b4b94e8a1ac53"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-tour-polish-2026-10-30/fresh-browser-capture-2026-10-30/home-390x844.jpg",
+      "size": 43432,
+      "mtimeMs": 1793370883260.8657,
+      "sha256": "102d224d775fd84c40379b907329587dae8619c3e28d780c645b825623fad07c"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-tour-polish-2026-10-30/fresh-browser-capture-2026-10-30/home-navbar.jpg",
+      "size": 6270,
+      "mtimeMs": 1793370883366.5,
+      "sha256": "7a57d90670beafe43bdfb340a531ae2ebdf768bc708cd7682ddc18fa12d7772c"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-tour-polish-2026-10-30/glass-restoration-tests.txt",
+      "size": 5006,
+      "mtimeMs": 1793370330447.1714,
+      "sha256": "605426dc8ac7c3fcf359fc70ae281c0ecce944338620216a5ce4fdc2651412f0"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-tour-polish-2026-10-30/hero-and-tracker-2026-10-30/discover-390x844.jpg",
+      "size": 40037,
+      "mtimeMs": 1793371345948.48,
+      "sha256": "6763c30ee4bf1155ee922e3469a05efd4fc4b1bbc4794f169f0ac043ad646c20"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-tour-polish-2026-10-30/hero-and-tracker-2026-10-30/discover-navbar.jpg",
+      "size": 5950,
+      "mtimeMs": 1793371348041.5032,
+      "sha256": "2a73824fe78df969ab751b621f28ac6eb836067d77d9cd20c0df1ee110401d80"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-tour-polish-2026-10-30/hero-and-tracker-2026-10-30/hero-button-clearance.jpg",
+      "size": 21423,
+      "mtimeMs": 1793372285300.8496,
+      "sha256": "1becbe8255dbc5fb1b562dcff8b2a1ef3928c5be34073ba5d669fdcdb7851122"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-tour-polish-2026-10-30/hero-and-tracker-2026-10-30/home-390x844.jpg",
+      "size": 45593,
+      "mtimeMs": 1793371320935.1582,
+      "sha256": "819670ef4926ce38b8c1caf61cb8fb3a9ef70f7a11c53ff49621650a29d5eb46"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-tour-polish-2026-10-30/hero-and-tracker-2026-10-30/home-navbar.jpg",
+      "size": 6677,
+      "mtimeMs": 1793371322138.787,
+      "sha256": "3a23aa0cc9c80e9f1bed75a66d94b9a38a03c5238185635d65cbc08e05e17589"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-tour-polish-2026-10-30/hero-and-tracker-2026-10-30/illustration-source.txt",
+      "size": 1104,
+      "mtimeMs": 1793371446707.0261,
+      "sha256": "22c211340cbd45bbf56a8ccbf16084cb1c0916ffcde03c63f15ac0054251c5e0"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-tour-polish-2026-10-30/hero-and-tracker-2026-10-30/tracker-390x844.jpg",
+      "size": 42847,
+      "mtimeMs": 1793371446078.5686,
+      "sha256": "8ec0fe6cf764dc1c101b89c643b045df0e9a58dd79757650bcb54646b48b6a0f"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-tour-polish-2026-10-30/hero-and-tracker-2026-10-30/tracker-capsules.jpg",
+      "size": 31934,
+      "mtimeMs": 1793371446702.3857,
+      "sha256": "e3add3aa78410e573e87e8e63bb4525fa4351ad5114709feeb8f27b0e8c330f3"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-tour-polish-2026-10-30/hero-character.md",
+      "size": 808,
+      "mtimeMs": 1793365410675.7183,
+      "sha256": "8c85c62ae6656b5ae3b4fb8b92d642a0158c5bd3eafc5099479465debe7e5414"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-tour-polish-2026-10-30/hero-emphasis.md",
+      "size": 992,
+      "mtimeMs": 1793365900590.5857,
+      "sha256": "80a3c1c95a8dfdad552d26a131d24a44415a1508b5a30a0dc4954c1d05be4bee"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-tour-polish-2026-10-30/home-calm.jpg",
+      "size": 43216,
+      "mtimeMs": 1793359210396.3184,
+      "sha256": "8b6f829ddf24df3de707651061d7fe2ea94642c4518aeed187728728bbbcedcd"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-tour-polish-2026-10-30/home-character.jpg",
+      "size": 41025,
+      "mtimeMs": 1793365400839.1409,
+      "sha256": "33ed557c9a670aaa95627e5b86555529934ebc6192404d77e40ca5e95bd59751"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-tour-polish-2026-10-30/home-emphasis.jpg",
+      "size": 42571,
+      "mtimeMs": 1793365910500.4485,
+      "sha256": "5a5859bc627807dd2589ab780ae1c1446fa6f28a742a3f90a452f23ca642add3"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-tour-polish-2026-10-30/home-simple.jpg",
+      "size": 41002,
+      "mtimeMs": 1793359657977.9695,
+      "sha256": "15e12ebd3252e8c06e92cd910a39573999b2fa32b7c142bb0ba5b1652a6a563f"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-tour-polish-2026-10-30/home.jpg",
+      "size": 45509,
+      "mtimeMs": 1793357476536.7312,
+      "sha256": "3f915517b0b6ad5c82a44073cecc4694b5d8292a42d71ac1a13cc8daaa405f7f"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-tour-polish-2026-10-30/implementation.md",
+      "size": 2196,
+      "mtimeMs": 1793357810260.4111,
+      "sha256": "b09291a2115597c7d0d3df51350ef61ff615bde33d5f71886f1b705ae3ffbd45"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-tour-polish-2026-10-30/indicator-colors-tests.txt",
+      "size": 8680,
+      "mtimeMs": 1793370060673.392,
+      "sha256": "4f83a0673d74d4477ecf5d7eb0b57358e79f33711c22f28ac0e96b64971fe7cb"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-tour-polish-2026-10-30/nav-weight-tests.txt",
+      "size": 4218,
+      "mtimeMs": 1793370591101.9514,
+      "sha256": "a44fe11a530ab55dafd0e6510749a842023f354d529617ea15d643b353473c16"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-tour-polish-2026-10-30/quick-actions.jpg",
+      "size": 43590,
+      "mtimeMs": 1793357482836.3171,
+      "sha256": "5fc58637c64bb5e4feb517e4724d6673816bc3cf77245ec9fe834301820c7e36"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-tour-polish-2026-10-30/simple-hero.md",
+      "size": 1307,
+      "mtimeMs": 1793359667716.036,
+      "sha256": "516078db924c66e952dedcfd453b089184b2ed9b35311b180e75a3844ace6354"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-tour-polish-2026-10-30/subtitles.jpg",
+      "size": 39378,
+      "mtimeMs": 1793366919155.912,
+      "sha256": "9c5b84f35c009159f3170b4fcfdb94c1ffc13cf61662626272da4ddd65bcf9d7"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-tour-polish-2026-10-30/subtitles.md",
+      "size": 873,
+      "mtimeMs": 1793366926866.7146,
+      "sha256": "01283b3356aa5cc1ed56d344db6530bf476a255c59bc4029809c8f0b2f6827cd"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-tour-polish-2026-10-30/tag-consistency-tests.txt",
+      "size": 7720,
+      "mtimeMs": 1793367515786.2253,
+      "sha256": "da4bef6467a9c158f83c6f4d8e20d3ad600c4ca6cb58e68cc8d5fbc8dda0fdc5"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-tour-polish-2026-10-30/tag-consistency.md",
+      "size": 1267,
+      "mtimeMs": 1793367595240.055,
+      "sha256": "e20e861ecf673688f8bc5ef5785422b9fbdeeb4504e985ea9b8695031ae74d4c"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-tour-polish-2026-10-30/tests.txt",
+      "size": 12096,
+      "mtimeMs": 1793357373921.3489,
+      "sha256": "ece84a05d7b9cc464eab307b2dae91b19fa4deac7027e8998da79ac458536119"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-tour-polish-2026-10-30/tour-plus.jpg",
+      "size": 36389,
+      "mtimeMs": 1793357779331.8281,
+      "sha256": "427bfb9315c0a9a7340bb53237153d7e21caf8025ce2a4f159f113d1370abb25"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-tour-polish-2026-10-30/tour.jpg",
+      "size": 36197,
+      "mtimeMs": 1793357769156.2732,
+      "sha256": "7fbedae29cbf43a70251e25eae55cbe9833ab9297152cdaf84857d4779a82fac"
+    },
+    {
+      "status": "??",
+      "file": "docs/reviews/2026-10-30-ias-audit-followup.md",
+      "size": 4065,
+      "mtimeMs": 1793295615854.8645,
+      "sha256": "13e97191053a6062138825a1a50d32b5cee4d6f560172539de886dafc97c4c01"
+    },
+    {
+      "status": "??",
+      "file": "docs/reviews/2026-11-01-independent-readiness-audit.md",
+      "size": 9605,
+      "mtimeMs": 1793510702638.9912,
+      "sha256": "720a48009100a7d5f4afd340c33e74581bb309e7fcbe851ae167b4fc7c6931df"
+    },
+    {
+      "status": "??",
+      "file": "docs/superpowers/plans/2026-10-23-individual-budget-support.md",
+      "size": 2382,
+      "mtimeMs": 1792764681915.5056,
+      "sha256": "5430fea01d7c8cdb09803aace4d6d699fc072d9432793928073e467300cd6879"
+    },
+    {
+      "status": "??",
+      "file": "docs/superpowers/plans/2026-10-23-individual-review-recovery.md",
+      "size": 1658,
+      "mtimeMs": 1792766080800.012,
+      "sha256": "5676999360c364b39fbe097fa35dbef56452774809018429dcaec04a48f72c8b"
+    },
+    {
+      "status": "??",
+      "file": "docs/superpowers/plans/2026-10-23-provider-audit-fixes.md",
+      "size": 3166,
+      "mtimeMs": 1792785353244.0698,
+      "sha256": "9bd35e3a81e21d0639e6cecb56796f9b103ee83838065b2c0e7904b07ab0f289"
+    },
+    {
+      "status": "??",
+      "file": "docs/superpowers/plans/2026-10-24-super-admin-and-provider-ui-polish.md",
+      "size": 7169,
+      "mtimeMs": 1792789821196.8567,
+      "sha256": "2540dd26bad6a2e941dbcbab977d8275040c97df99247327739b26a2d2810765"
+    },
+    {
+      "status": "??",
+      "file": "docs/superpowers/plans/2026-10-24-super-admin-backend-wiring.md",
+      "size": 11793,
+      "mtimeMs": 1792792275929.276,
+      "sha256": "05deacf249ef5b7ff9deb715748160cdfad4e2bcba503d1be88b97b747f8cf05"
+    },
+    {
+      "status": "??",
+      "file": "docs/superpowers/plans/2026-10-24-super-admin-ui.md",
+      "size": 7021,
+      "mtimeMs": 1792787626391.1619,
+      "sha256": "ac097442a1590f09962afabea1e5e1737a5df18e994d10bbf6d4e96337008be1"
+    },
+    {
+      "status": "??",
+      "file": "docs/superpowers/plans/2026-10-26-student-navbar-refinements.md",
+      "size": 10778,
+      "mtimeMs": 1793017383741.8547,
+      "sha256": "c6abef532b48ec15eb2ae4bd51b236d28ac3d76a34be591826c98cb227492b4c"
+    },
+    {
+      "status": "??",
+      "file": "docs/superpowers/plans/2026-10-26-student-scroll-dock.md",
+      "size": 7006,
+      "mtimeMs": 1793024374274.977,
+      "sha256": "2409c53493e374e24f31a288a827fb8ce1c7f012645d2e220d944dee1f864d85"
+    },
+    {
+      "status": "??",
+      "file": "docs/superpowers/plans/2026-10-27-direct-student-motion.md",
+      "size": 14452,
+      "mtimeMs": 1793046571156.6555,
+      "sha256": "49274afe990d4dd9f683980fd08f2da2bff6e93d5f3a1f67d9ab45a95aa11ea2"
+    },
+    {
+      "status": "??",
+      "file": "docs/superpowers/plans/2026-10-27-student-section-entrance.md",
+      "size": 4700,
+      "mtimeMs": 1793048050643.8162,
+      "sha256": "80a5dfac7ddefb7f0bbdb1a3f6311aa132e69d049e3a7d2ec3559548357b402d"
+    },
+    {
+      "status": "??",
+      "file": "docs/superpowers/plans/2026-10-29-trusted-audit-completion.md",
+      "size": 3003,
+      "mtimeMs": 1793286861588.828,
+      "sha256": "6bef2e681c6694c2beba5d34b8f2340eb422e1c64a0a0620dcf4fabf2c22985d"
+    },
+    {
+      "status": "??",
+      "file": "docs/superpowers/plans/2026-10-30-student-tour-and-polish.md",
+      "size": 2198,
+      "mtimeMs": 1793356767026.9126,
+      "sha256": "9a5b2e3e5efc8b3dfdb1e7be7e03bd66594044a79071789e3887f4cc89b72b47"
+    },
+    {
+      "status": "??",
+      "file": "docs/superpowers/plans/2026-10-31-ari-scroll-cutout-polish.md",
+      "size": 8232,
+      "mtimeMs": 1793432138669.5642,
+      "sha256": "0962d65600cc41a88f29cc05b7b61a1a9c913329deb96676a022fe61c2ded3ae"
+    },
+    {
+      "status": "??",
+      "file": "docs/superpowers/plans/2026-10-31-auth-lifecycle-polish.md",
+      "size": 10190,
+      "mtimeMs": 1793432138668.5654,
+      "sha256": "b431cdff4678bb0ec1aa6feeafd6e6fce565e14f5e6158f2d4d83596be9686ea"
+    },
+    {
+      "status": "??",
+      "file": "docs/superpowers/specs/2026-10-24-super-admin-workspace-design.md",
+      "size": 13036,
+      "mtimeMs": 1792786138951.4966,
+      "sha256": "0e553cfdd1bdf938025616b3f8909d7883c52eff610ce6a2ef09efd0caedb2fc"
+    },
+    {
+      "status": "??",
+      "file": "docs/superpowers/specs/2026-10-31-student-contextual-guide-design.md",
+      "size": 9283,
+      "mtimeMs": 1793388986531.302,
+      "sha256": "9ddd083b34213db423c374e0fe531c9d6125c0512156e902bf5f7b9e2cd6b846"
+    },
+    {
+      "status": "??",
+      "file": "landing/assets/images/app-application.jpg",
+      "size": 128480,
+      "mtimeMs": 1792486342279.4114,
+      "sha256": "0ebbb1498f552207a9a495734fda80a7e724ab2cee94d79c128ea3e5529f6e56"
+    },
+    {
+      "status": "??",
+      "file": "landing/assets/images/app-dashboard.jpg",
+      "size": 61009,
+      "mtimeMs": 1792421257314.483,
+      "sha256": "10cd369bb8a86855c645c94d8ea335e06844ea80c25b8e6cfe16740347bccb1e"
+    },
+    {
+      "status": "??",
+      "file": "landing/assets/images/app-detail.jpg",
+      "size": 56134,
+      "mtimeMs": 1792421355923.5374,
+      "sha256": "60053ea2fc405d6bd82fe8475a0ac9ee29cb7bab2c2c50ebe5ce59f0c12d7683"
+    },
+    {
+      "status": "??",
+      "file": "landing/assets/images/app-discover.jpg",
+      "size": 51613,
+      "mtimeMs": 1792421327427.4631,
+      "sha256": "d326f4bc1a0a07586cd49bd9f6bde13803d75d738c0c5da1db990fde934fbc90"
+    },
+    {
+      "status": "??",
+      "file": "landing/assets/images/app-profile.jpg",
+      "size": 47816,
+      "mtimeMs": 1792423079294.9465,
+      "sha256": "f284fcca5f04781e537c0b2f37844f38f8a56f8650f0be4591c1d2fc75918373"
+    },
+    {
+      "status": "??",
+      "file": "landing/assets/images/app-receipt.jpg",
+      "size": 102788,
+      "mtimeMs": 1792486344528.6038,
+      "sha256": "3025e26d1b8ba7567026205b6914672a04382c57b87f0030b2f2b7b24b4e1951"
+    },
+    {
+      "status": "??",
+      "file": "landing/assets/images/app-tracker-submitted.jpg",
+      "size": 104611,
+      "mtimeMs": 1792655989646.4692,
+      "sha256": "50e603244ca2a0ea21f476e07ff882bc7e9d77737b07b19a0425f7637b6bb160"
+    },
+    {
+      "status": "??",
+      "file": "landing/assets/images/app-tracker.jpg",
+      "size": 60474,
+      "mtimeMs": 1792420972680.9253,
+      "sha256": "bbb4693b6c4bc88f623c795e65e775b18418262190cdbb987e0030739b5a293f"
+    },
+    {
+      "status": "??",
+      "file": "landing/assets/org-provider-concept.mp4",
+      "size": 4151109,
+      "mtimeMs": 1792659193459.171,
+      "sha256": "0684e576dd62fc988bc1a6ed82db4694ced12f65175e050a3aaa7c7e4aa74938"
+    },
+    {
+      "status": "??",
+      "file": "landing/assets/org-provider-concept.vtt",
+      "size": 338,
+      "mtimeMs": 1792659154606.7632,
+      "sha256": "ccd95d50a6795833951140eb2c78c7881c1027251befc1068ed83c5f89333b8a"
+    },
+    {
+      "status": "??",
+      "file": "landing/assets/org-provider-poster.png",
+      "size": 71312,
+      "mtimeMs": 1792659055930.7195,
+      "sha256": "fd7a65eb6851673bb9f07cc405ba3a398660315388356cca2309ce68899885e1"
+    },
+    {
+      "status": "??",
+      "file": "landing/assets/provider-concept-v2.mp4",
+      "size": 5037307,
+      "mtimeMs": 1792657169727.4407,
+      "sha256": "d8a764b0961df995da737cc9813e6f20224624974534c24e827e37a8806875af"
+    },
+    {
+      "status": "??",
+      "file": "landing/assets/provider-concept-v2.vtt",
+      "size": 373,
+      "mtimeMs": 1792656915319.1565,
+      "sha256": "1bb97eec120e1e2e6017774db90d5cb749a32e0e743e6fd5cd502e9fefbea131"
+    },
+    {
+      "status": "??",
+      "file": "landing/assets/provider-concept.mp4",
+      "size": 1025537,
+      "mtimeMs": 1792655268487.076,
+      "sha256": "7caaa4124d2a7d5876293992d47ae409a3750ac8bc811215312af06797661ba3"
+    },
+    {
+      "status": "??",
+      "file": "landing/assets/provider-concept.vtt",
+      "size": 314,
+      "mtimeMs": 1792655454611.6516,
+      "sha256": "4c5dba8e3ab63a7f93e051df70932f47e98820dfef919ad77f8290f72725c34a"
+    },
+    {
+      "status": "??",
+      "file": "landing/assets/provider-poster.png",
+      "size": 74067,
+      "mtimeMs": 1792656919975.8967,
+      "sha256": "f69a42f394760c6d0b8f60d68a5be5a39e785df1d454be5becda096b3c2a4328"
+    },
+    {
+      "status": "??",
+      "file": "landing/landing.css",
+      "size": 39423,
+      "mtimeMs": 1793303820823.8914,
+      "sha256": "b92122f08e5a177391f12fe893d077a79e39640fd798380ed97b613ddda135e0"
+    },
+    {
+      "status": "??",
+      "file": "landing/landing.js",
+      "size": 14561,
+      "mtimeMs": 1793306556666.5183,
+      "sha256": "4c2402ad29c2fd61fdb81374686a4ad15235c5cbb8c96f2451780424af76c673"
+    },
+    {
+      "status": "??",
+      "file": "landing/vendor/LENIS-LICENSE.txt",
+      "size": 1088,
+      "mtimeMs": 1792763051331.7283,
+      "sha256": "7d1896b31f2eed9f286b05faca067c4e35b2f109ae7c4ed5105220e2d2820228"
+    },
+    {
+      "status": "??",
+      "file": "landing/vendor/lenis-1.3.27.css",
+      "size": 513,
+      "mtimeMs": 1792763051045.7563,
+      "sha256": "2f668ae84a668327f246faf8a770383a2bf69196d214290fbc4d5548910606c5"
+    },
+    {
+      "status": "??",
+      "file": "landing/vendor/lenis-1.3.27.min.js",
+      "size": 18815,
+      "mtimeMs": 1792763050934.6057,
+      "sha256": "80f53e77f1c13e379fc246d2b5e299188e20bcb2b2fe7ebb13e8e8c7563a6da7"
+    },
+    {
+      "status": "??",
+      "file": "latest_ipa/Scholaris.ipa",
+      "size": 25724307,
+      "mtimeMs": 1792316960000,
+      "sha256": "1270c0a6237dbb4ad39e0637f08a245df1ecfe427c4a28ae1759058d965ccea9"
+    },
+    {
+      "status": "??",
+      "file": "latest_ipa_email_code_oct22/Scholaris.ipa",
+      "size": 28040732,
+      "mtimeMs": 1792647470000,
+      "sha256": "9e58faa473c9343988ac58004ee3b68b98abf1cd27ecce520c8975b2f783c84d"
+    },
+    {
+      "status": "??",
+      "file": "latest_ipa_oct20/Scholaris-iOS-App/Scholaris.ipa",
+      "size": 26954363,
+      "mtimeMs": 1792430122401.2659,
+      "sha256": "13a05637435da5e1e12b95cf6878717d85c0bfab76f3e4b1db54c2381062da68"
+    },
+    {
+      "status": "??",
+      "file": "latest_ipa_student_build11_oct29/Scholaris-iOS-App/Scholaris.ipa",
+      "size": 28253214,
+      "mtimeMs": 1793213261481.8784,
+      "sha256": "cea5ed85ad4a0f571178808e33d019c2d351c4b254b0a4c49ed99d8761605c1e"
+    },
+    {
+      "status": "??",
+      "file": "latest_ipa_student_build11_oct29/Scholaris.ipa",
+      "size": 28253214,
+      "mtimeMs": 1793213261481.8784,
+      "sha256": "cea5ed85ad4a0f571178808e33d019c2d351c4b254b0a4c49ed99d8761605c1e"
+    },
+    {
+      "status": "??",
+      "file": "latest_ipa_student_build12_oct30/Scholaris-iOS-App/Scholaris.ipa",
+      "size": 30066772,
+      "mtimeMs": 1793292903384.9473,
+      "sha256": "83494b301a405c4f25d0dc275e220fb0aac9fbc7359a83af050c73e8975a1242"
+    },
+    {
+      "status": "??",
+      "file": "latest_ipa_student_build12_oct30/Scholaris.ipa",
+      "size": 30066772,
+      "mtimeMs": 1793292903384.9473,
+      "sha256": "83494b301a405c4f25d0dc275e220fb0aac9fbc7359a83af050c73e8975a1242"
+    },
+    {
+      "status": "??",
+      "file": "latest_ipa_student_build13_oct30/Scholaris-iOS-App/Scholaris.ipa",
+      "size": 30312131,
+      "mtimeMs": 1793308560344.9888,
+      "sha256": "599b6c198be255464394f426c147a364b2416881a298007e7f9193a02a510301"
+    },
+    {
+      "status": "??",
+      "file": "latest_ipa_student_build13_oct30/Scholaris.ipa",
+      "size": 30312131,
+      "mtimeMs": 1793308560344.9888,
+      "sha256": "599b6c198be255464394f426c147a364b2416881a298007e7f9193a02a510301"
+    },
+    {
+      "status": "??",
+      "file": "latest_ipa_student_build14_oct30/Scholaris.ipa",
+      "size": 30302982,
+      "mtimeMs": 1793348328359.5415,
+      "sha256": "0e52f26dcfe64ace638e65666d2c5337a5ca4ba0317837bf71b40a9768bfb35b"
+    },
+    {
+      "status": "??",
+      "file": "latest_ipa_student_build15_oct30/Scholaris.ipa",
+      "size": 33255787,
+      "mtimeMs": 1793373983307.8398,
+      "sha256": "8e105cc464c3cd76e7b947c52c36755d9c3d2e01257bfc55b2be3caae39c811a"
+    },
+    {
+      "status": "??",
+      "file": "latest_ipa_student_build16_oct31/Scholaris.ipa",
+      "size": 34388687,
+      "mtimeMs": 1793397270852.49,
+      "sha256": "8dc9fc9ad759f65ec0002ae6040271851f96efd917801964ffa97111ea32462d"
+    },
+    {
+      "status": "??",
+      "file": "latest_ipa_student_build17_oct31/Scholaris.ipa",
+      "size": 34384772,
+      "mtimeMs": 1793398633205.5757,
+      "sha256": "c017b612c78aa95a2089f9cb0bad33c7a7fe2108768fbe53b573dc793ec46035"
+    },
+    {
+      "status": "??",
+      "file": "latest_ipa_student_build18_oct31/Scholaris.ipa",
+      "size": 34400339,
+      "mtimeMs": 1793438132781.609,
+      "sha256": "db0d44c2c462f32f3369443634b22aef5834de2a955311433b098f7cad052193"
+    },
+    {
+      "status": "??",
+      "file": "latest_ipa_student_build20_nov02/Scholaris.ipa",
+      "size": 34476662,
+      "mtimeMs": 1793523386000,
+      "sha256": "7c44c64add3bd92e4a5e01cf51ac1937419d0daae291c725c6dc1eaac67390c8"
+    },
+    {
+      "status": "??",
+      "file": "latest_ipa_student_build21_nov02/Scholaris.ipa",
+      "size": 34476789,
+      "mtimeMs": 1793527908000,
+      "sha256": "c15cadf89b0b44493630346c7daeaba40c18d0d2516feb39659dbbf288745631"
+    },
+    {
+      "status": "??",
+      "file": "latest_ipa_student_build22_nov02/Scholaris.ipa",
+      "size": 34473738,
+      "mtimeMs": 1793531946000,
+      "sha256": "c92e328a236dce7fd0da7291af3e7f66eb6e6de90ff3f541c7f1b28696704619"
+    },
+    {
+      "status": "??",
+      "file": "latest_ipa_student_build23_nov02/Scholaris.ipa",
+      "size": 34473709,
+      "mtimeMs": 1793533832000,
+      "sha256": "c44193bbb198bccb590d64399e664219202dabfcb97bd0be2df64fa5697f1b81"
+    },
+    {
+      "status": "??",
+      "file": "latest_ipa_student_build24_nov02/Scholaris.ipa",
+      "size": 34475564,
+      "mtimeMs": 1793537010000,
+      "sha256": "fd525e4eb6d0dc67edfaff2ad3d7a400ba22a02c5441071444582f4c015597b0"
+    },
+    {
+      "status": "??",
+      "file": "latest_ipa_student_build24_nov02/artifact.zip",
+      "size": 34395938,
+      "mtimeMs": 1793566451061.3027,
+      "sha256": "81db2fda63ae996e208afbe2dfd8c4f9922533208b219ef4d0f19792f80520c1"
+    },
+    {
+      "status": "??",
+      "file": "latest_ipa_student_build25_nov02/Scholaris.ipa",
+      "size": 34475501,
+      "mtimeMs": 1793541982000,
+      "sha256": "52d2eb1529d8a634159c0754d39586ba72446f6982d82eb345b48d6efb590fb0"
+    },
+    {
+      "status": "??",
+      "file": "latest_ipa_student_build25_nov02/artifact.zip",
+      "size": 34395651,
+      "mtimeMs": 1793571336069.386,
+      "sha256": "ff7ebfa1a855b7a4509023d5eed19813aaa136aa4e6d2fd7250aeb3b1fdd09c5"
+    },
+    {
+      "status": "??",
+      "file": "latest_ipa_student_build26_nov02/Scholaris-iOS-App/Scholaris.ipa",
+      "size": 41111269,
+      "mtimeMs": 1793636720215.164,
+      "sha256": "0b3c9b2a3c9229c64fd3c2c16b92ab906a4ce34f090ce133913d26b6e7cc0f4f"
+    },
+    {
+      "status": "??",
+      "file": "latest_ipa_student_build26_nov02/Scholaris.ipa",
+      "size": 41111269,
+      "mtimeMs": 1793636720215.164,
+      "sha256": "0b3c9b2a3c9229c64fd3c2c16b92ab906a4ce34f090ce133913d26b6e7cc0f4f"
+    },
+    {
+      "status": "??",
+      "file": "latest_ipa_student_build27_nov03/Scholaris.ipa",
+      "size": 46649899,
+      "mtimeMs": 1793618766000,
+      "sha256": "6519e23ff6a73168c2f9ae06a04365c6b617f8d1b014057f12fefff6b1d6f4be"
+    },
+    {
+      "status": "??",
+      "file": "latest_ipa_student_build27_nov03/artifact.zip",
+      "size": 46572061,
+      "mtimeMs": 1793648537065.4563,
+      "sha256": "a55ba76a24c738d4e365059c6efbe8baf6a6692d3e05ae9c515a93a917052239"
+    },
+    {
+      "status": "??",
+      "file": "latest_ipa_student_build27_nov03/extracted/Scholaris.ipa",
+      "size": 46649899,
+      "mtimeMs": 1793618766000,
+      "sha256": "6519e23ff6a73168c2f9ae06a04365c6b617f8d1b014057f12fefff6b1d6f4be"
+    },
+    {
+      "status": "??",
+      "file": "latest_ipa_student_build27_nov03_run41524236026/Scholaris.ipa",
+      "size": 46649489,
+      "mtimeMs": 1793625054000,
+      "sha256": "72a8093004c4776c434ce4667872735367aab7d2f95504dfe4a51b9df3c53127"
+    },
+    {
+      "status": "??",
+      "file": "latest_ipa_student_build27_nov03_run41524236026/artifact.zip",
+      "size": 46571785,
+      "mtimeMs": 1793654648615.0276,
+      "sha256": "6f8048ccaa62b2bba39be4627bf887997f10d10574516f668c71be11589c8bb5"
+    },
+    {
+      "status": "??",
+      "file": "latest_ipa_student_build28_nov03/Scholaris.ipa",
+      "size": 46649543,
+      "mtimeMs": 1793626786000,
+      "sha256": "9b6db9e1991f48babf6461e21e9b6114bb77a2c243fc6ce7ed2ef78b007c48ca"
+    },
+    {
+      "status": "??",
+      "file": "latest_ipa_student_build28_nov03/artifact.zip",
+      "size": 46571729,
+      "mtimeMs": 1793656355578.9602,
+      "sha256": "5d42ab06a97219b8ee0fc5ba65a00621c9a03c0253cf2dd124e04b3c48c66630"
+    },
+    {
+      "status": "??",
+      "file": "latest_ipa_student_build29_nov03/Scholaris.ipa",
+      "size": 50276420,
+      "mtimeMs": 1793670898000,
+      "sha256": "49de1ec2feb0f2c0c0a11e86d10e31f267055b5b01e3d12744e5cfaadf2d687d"
+    },
+    {
+      "status": "??",
+      "file": "latest_ipa_student_build29_nov03/artifact.zip",
+      "size": 50198394,
+      "mtimeMs": 1793701385506.7046,
+      "sha256": "9369fc662bbe6e6ae70e3125ce9004d64df0a1088d9c0a6d0e2c57c3ac101c23"
+    },
+    {
+      "status": "??",
+      "file": "latest_ipa_student_choreography_build5_oct27/Scholaris.ipa",
+      "size": 28080450,
+      "mtimeMs": 1793040456000,
+      "sha256": "032ab8b7c65b9eef883c120ec7d156a25bcf4e9f753beb026026cecde6c390d1"
+    },
+    {
+      "status": "??",
+      "file": "latest_ipa_student_crisp_polish_build10_oct27/Scholaris.ipa",
+      "size": 28085788,
+      "mtimeMs": 1793119765238.9233,
+      "sha256": "f064bd9da66758ea4994aa39ff6b902cbcb05bfad879ddeb8d0d23d2543587e4"
+    },
+    {
+      "status": "??",
+      "file": "latest_ipa_student_crisp_polish_build9_oct27/Scholaris.ipa",
+      "size": 28085561,
+      "mtimeMs": 1793115557692.8496,
+      "sha256": "11b45519036ecd1296e27247d8111f7c61163bd6f1a85442a21581c6fc336415"
+    },
+    {
+      "status": "??",
+      "file": "latest_ipa_student_dock_reveal_build4_oct27/Scholaris.ipa",
+      "size": 28072315,
+      "mtimeMs": 1793033312000,
+      "sha256": "50beb4082238b87c9597df16a8c346c1516d53d91186f2a120ca669cc43ec85a"
+    },
+    {
+      "status": "??",
+      "file": "latest_ipa_student_geist_captcha_oct30/Scholaris-iOS-App/Scholaris.ipa",
+      "size": 30303249,
+      "mtimeMs": 1793306383468.6367,
+      "sha256": "773a86bb9c9b1de4252e5ac4e6917e28df8ab7f4f7cd2331c481ff829e1a6660"
+    },
+    {
+      "status": "??",
+      "file": "latest_ipa_student_geist_captcha_oct30/Scholaris.ipa",
+      "size": 30303249,
+      "mtimeMs": 1793306383468.6367,
+      "sha256": "773a86bb9c9b1de4252e5ac4e6917e28df8ab7f4f7cd2331c481ff829e1a6660"
+    },
+    {
+      "status": "??",
+      "file": "latest_ipa_student_geist_oct30/Scholaris-iOS-App/Scholaris.ipa",
+      "size": 30234998,
+      "mtimeMs": 1793304674405.159,
+      "sha256": "59c7dbe9fb35090bb6f78f62ccec176ff6f9abab1a1c3fe3bf2c8237375a4a38"
+    },
+    {
+      "status": "??",
+      "file": "latest_ipa_student_geist_oct30/Scholaris.ipa",
+      "size": 30234998,
+      "mtimeMs": 1793304674405.159,
+      "sha256": "59c7dbe9fb35090bb6f78f62ccec176ff6f9abab1a1c3fe3bf2c8237375a4a38"
+    },
+    {
+      "status": "??",
+      "file": "latest_ipa_student_motion_oct27/Scholaris.ipa",
+      "size": 28070030,
+      "mtimeMs": 1793021884000,
+      "sha256": "3d55f1d97880abc56bbb7c89b91ffb8d84dfffd628acbb9b1d3d9b45170afe33"
+    },
+    {
+      "status": "??",
+      "file": "latest_ipa_student_pure_white_build7_oct27/Scholaris.ipa",
+      "size": 28079983,
+      "mtimeMs": 1793080122338.8313,
+      "sha256": "6281d582f3f89907c39bfe7f15277cde61f1021be3682deb88b05eb2cf149ed1"
+    },
+    {
+      "status": "??",
+      "file": "latest_ipa_student_saved_cards_build3_oct27/Scholaris.ipa",
+      "size": 28071523,
+      "mtimeMs": 1793029104000,
+      "sha256": "246deb20aeae8a2148cc23d50bd775debce8c3bc96053ec991ec3abded41e780"
+    },
+    {
+      "status": "??",
+      "file": "latest_ipa_student_signup_flash_fix_oct22/Scholaris-iOS-App/Scholaris.ipa",
+      "size": 28049419,
+      "mtimeMs": 1792684138464.5676,
+      "sha256": "30fa0630a4176ea3172ce78928d367c8aaf5abc0a32a350b8a5f4bc22e3e33b6"
+    },
+    {
+      "status": "??",
+      "file": "latest_ipa_student_signup_flash_fix_oct22/Scholaris.ipa",
+      "size": 28049419,
+      "mtimeMs": 1792684138464.5676,
+      "sha256": "30fa0630a4176ea3172ce78928d367c8aaf5abc0a32a350b8a5f4bc22e3e33b6"
+    },
+    {
+      "status": "??",
+      "file": "latest_ipa_student_signup_oct22/Scholaris.ipa",
+      "size": 28041867,
+      "mtimeMs": 1792680611362.4185,
+      "sha256": "864bc94b42a1680934fdb004f89209795e7138ac3f4bb3231922b756d50d9589"
+    },
+    {
+      "status": "??",
+      "file": "latest_ipa_student_soft_nav_build6_oct27/Scholaris.ipa",
+      "size": 28082180,
+      "mtimeMs": 1793042386000,
+      "sha256": "e7ccc5a695a87fcf28882d2e002ea965a416133eb8de2e7b435552a900b156b3"
+    },
+    {
+      "status": "??",
+      "file": "latest_ipa_student_stat_capsules_build8_oct27/Scholaris.ipa",
+      "size": 28081685,
+      "mtimeMs": 1793082738464.4805,
+      "sha256": "71a5c9ede06925ac98acb34f99f71df4ee4793926d0c46a7b20eb7bf1a9723a7"
+    },
+    {
+      "status": "??",
+      "file": "latest_ipa_student_ui_oct20/Scholaris.ipa",
+      "size": 27022727,
+      "mtimeMs": 1792459528000,
+      "sha256": "eb2d668157a97dca5be43bdc2bfc30b8c351f3b4dd6e18ca6034ae3a5497134e"
+    },
+    {
+      "status": "??",
+      "file": "latest_ipa_student_ui_oct22/Scholaris-iOS-App/Scholaris.ipa",
+      "size": 28039087,
+      "mtimeMs": 1792602192473.1484,
+      "sha256": "fc5efd5e55d882692b93807e75e8467cd9bf2b0ef1ac920437052d48c31bf7f6"
+    },
+    {
+      "status": "??",
+      "file": "latest_ipa_student_ui_oct22/Scholaris.ipa",
+      "size": 28039087,
+      "mtimeMs": 1792602192473.1484,
+      "sha256": "fc5efd5e55d882692b93807e75e8467cd9bf2b0ef1ac920437052d48c31bf7f6"
+    },
+    {
+      "status": "??",
+      "file": "latest_ipa_student_ui_oct22_nav_fix/Scholaris-iOS-App/Scholaris.ipa",
+      "size": 28038935,
+      "mtimeMs": 1792605112344.1404,
+      "sha256": "fdf60cbe6daf3c691155b1a298ea9b19205e2a47a0a1c4f5f7ab2e9ee0021f1f"
+    },
+    {
+      "status": "??",
+      "file": "latest_ipa_student_ui_oct22_nav_fix/Scholaris.ipa",
+      "size": 28038935,
+      "mtimeMs": 1792605112344.1404,
+      "sha256": "fdf60cbe6daf3c691155b1a298ea9b19205e2a47a0a1c4f5f7ab2e9ee0021f1f"
+    },
+    {
+      "status": "??",
+      "file": "latest_ipa_tour_sync_build19/Scholaris.ipa",
+      "size": 34401152,
+      "mtimeMs": 1793426570000,
+      "sha256": "877811f914f4a902bf0da9054caacb4112dd478e17b4690aeb26a147c04fea54"
+    },
+    {
+      "status": "??",
+      "file": "lib/shared/theme/app_typography.dart",
+      "size": 4458,
+      "mtimeMs": 1793745137138.1794,
+      "sha256": "5e566d54e7acd1ab567e3e98401037a44218ce8a531a28d29eb501ce9eae9224"
+    },
+    {
+      "status": "??",
+      "file": "supabase/cleanup_demo_transaction_records.sql",
+      "size": 3045,
+      "mtimeMs": 1792362816439.8628,
+      "sha256": "e1cc870ec06f92d685d255e2db855ff3963425abe549947974d6d5166f57fa23"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/AppFrameworkInfo.plist",
+      "size": 347,
+      "mtimeMs": 1793523384000,
+      "sha256": "275c1f7273e185d2d65f8b447af25841e2be7fbdb3df89feb6324634f33ce317"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/AppIcon60x60@2x.png",
+      "size": 4274,
+      "mtimeMs": 1793523384000,
+      "sha256": "2e50090e19d8d55ae05f57987f6e0b5d72f916fcc2b1ca815c2a49b25963caeb"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/AppIcon76x76@2x~ipad.png",
+      "size": 5444,
+      "mtimeMs": 1793523384000,
+      "sha256": "15f8071239be03d6528f3b262074634c6fa8f95632c46efd1c85da3ebf69757e"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/Assets.car",
+      "size": 164648,
+      "mtimeMs": 1793523384000,
+      "sha256": "83234b517e03cdf018678109aa565cdedd9e84df48c7e0b8d3907258bf48f52d"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/Base.lproj/LaunchScreen.storyboardc/01J-lp-oVM-view-Ze5-6b-2t3.nib",
+      "size": 2281,
+      "mtimeMs": 1793523384000,
+      "sha256": "6f2e96b21c175a06c4622032d9bbe1d14b634956b7130c9290d15cd456b319d6"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/Base.lproj/LaunchScreen.storyboardc/Info.plist",
+      "size": 258,
+      "mtimeMs": 1793523384000,
+      "sha256": "1f255d5cc53b531e3f29a9406a8df49a958e2bf9443d3e20bd8374f707f7d5c8"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/Base.lproj/LaunchScreen.storyboardc/UIViewController-01J-lp-oVM.nib",
+      "size": 924,
+      "mtimeMs": 1793523384000,
+      "sha256": "54f3637f671feba5f19e82ec4f4a7fb448bb3cfc0fb180f089aa571fc8f053e2"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/Base.lproj/Main.storyboardc/BYZ-38-t0r-view-8bC-Xf-vdC.nib",
+      "size": 1835,
+      "mtimeMs": 1793523384000,
+      "sha256": "058fe138c3b415c0a5f2608c42a8d56c579bf10f7b7351bd947b1c7eca4714d9"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/Base.lproj/Main.storyboardc/Info.plist",
+      "size": 258,
+      "mtimeMs": 1793523384000,
+      "sha256": "3e9bdaa408d1eb6ae5e989b813a8644e0a4a981202c536905de52a7291e69aa4"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/Base.lproj/Main.storyboardc/UIViewController-BYZ-38-t0r.nib",
+      "size": 951,
+      "mtimeMs": 1793523384000,
+      "sha256": "cbdd28d89423b2c9beef2b27ce2c9608d30d6c6a9d2e7679f79a53814444e53f"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/DKImagePickerController_DKImagePickerController.bundle/Assets.car",
+      "size": 89736,
+      "mtimeMs": 1793523384000,
+      "sha256": "338d477030af7a329020a2decb9c0c97eb737d966916886f2ac1d6ca179a30bf"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/DKImagePickerController_DKImagePickerController.bundle/Base.lproj/DKImagePickerController.strings",
+      "size": 837,
+      "mtimeMs": 1793523384000,
+      "sha256": "10b8cc44b0a42e496c2923baac5631aed5350173c608cfe325c7fab36ee641f1"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/DKImagePickerController_DKImagePickerController.bundle/Info.plist",
+      "size": 739,
+      "mtimeMs": 1793523384000,
+      "sha256": "f18197cb5eafea9139e96aadb452a6341de6ce48385c2fa5efc228a7f9b75fcd"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/DKImagePickerController_DKImagePickerController.bundle/ar.lproj/DKImagePickerController.strings",
+      "size": 1018,
+      "mtimeMs": 1793523384000,
+      "sha256": "f040447e16e0f56a78f2e6644815e1f37fc28ee6996d8d0f97930fd21ee4d7df"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/DKImagePickerController_DKImagePickerController.bundle/da.lproj/DKImagePickerController.strings",
+      "size": 883,
+      "mtimeMs": 1793523384000,
+      "sha256": "49ee6aee1eeb245699002caec501ef5676cca59b8510f63682150ae67e28d3c2"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/DKImagePickerController_DKImagePickerController.bundle/de.lproj/DKImagePickerController.strings",
+      "size": 920,
+      "mtimeMs": 1793523384000,
+      "sha256": "1fba0f73d14332cc814efd607b8cf343d9b0b17d05a01b8b67d6fb21eb05b8e3"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/DKImagePickerController_DKImagePickerController.bundle/en.lproj/DKImagePickerController.strings",
+      "size": 865,
+      "mtimeMs": 1793523384000,
+      "sha256": "c1192d2009d5027ab2d77c889c1141018d03ac11e912d23da0ab732de5c3dd12"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/DKImagePickerController_DKImagePickerController.bundle/es.lproj/DKImagePickerController.strings",
+      "size": 886,
+      "mtimeMs": 1793523384000,
+      "sha256": "4d86aefcf48ed45dcaf34624392186b2e51d2abf866dc6ced31926b28560b841"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/DKImagePickerController_DKImagePickerController.bundle/fr.lproj/DKImagePickerController.strings",
+      "size": 942,
+      "mtimeMs": 1793523384000,
+      "sha256": "5dea8c4ed88a48ad49eae8ddc7bca15e9ec15aebca25823e4509d88989f2e03f"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/DKImagePickerController_DKImagePickerController.bundle/hu.lproj/DKImagePickerController.strings",
+      "size": 886,
+      "mtimeMs": 1793523384000,
+      "sha256": "9285c3d6848c43a040806266702807eb699661a8c8dae04c0bd597f944860965"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/DKImagePickerController_DKImagePickerController.bundle/it.lproj/DKImagePickerController.strings",
+      "size": 891,
+      "mtimeMs": 1793523384000,
+      "sha256": "9e148ad9bc3ff8f2c64ed5b6eed3e390e93bd53f8c9dc7ec929a8fc0ada58592"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/DKImagePickerController_DKImagePickerController.bundle/ja.lproj/DKImagePickerController.strings",
+      "size": 967,
+      "mtimeMs": 1793523384000,
+      "sha256": "29e2f4a2b239d8f3836b186b57846f81b802e10ea4ac390efeca6bc6a9513df5"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/DKImagePickerController_DKImagePickerController.bundle/ko.lproj/DKImagePickerController.strings",
+      "size": 931,
+      "mtimeMs": 1793523384000,
+      "sha256": "142ac0e06734323f746d15c42e292a1f7f084a6f95667fdf4c57405aa14d5a0c"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/DKImagePickerController_DKImagePickerController.bundle/nb-NO.lproj/DKImagePickerController.strings",
+      "size": 844,
+      "mtimeMs": 1793523384000,
+      "sha256": "763546fcda56b515a3480dc6d62220e778207ac98b3d6c63dcbee873613a87c3"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/DKImagePickerController_DKImagePickerController.bundle/nl.lproj/DKImagePickerController.strings",
+      "size": 893,
+      "mtimeMs": 1793523384000,
+      "sha256": "c0e6e6b7d0417742056229b0fae1b22868ca1002eb26c8d96bee18b5ba684798"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/DKImagePickerController_DKImagePickerController.bundle/pt_BR.lproj/DKImagePickerController.strings",
+      "size": 865,
+      "mtimeMs": 1793523384000,
+      "sha256": "9fa8aef7948bb814454506dde9cacc5ac5b823a3791c90e8345d18373a18a41c"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/DKImagePickerController_DKImagePickerController.bundle/ru.lproj/DKImagePickerController.strings",
+      "size": 1037,
+      "mtimeMs": 1793523384000,
+      "sha256": "335da04dc776d4b012f37be683bd08c4184cae4afd494cbe94c360a90aa0267d"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/DKImagePickerController_DKImagePickerController.bundle/tr.lproj/DKImagePickerController.strings",
+      "size": 885,
+      "mtimeMs": 1793523384000,
+      "sha256": "0ae20302096ea83fc92ad13da534ef9eef6b192a2dfff212dd75791d894d2855"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/DKImagePickerController_DKImagePickerController.bundle/ur.lproj/DKImagePickerController.strings",
+      "size": 1114,
+      "mtimeMs": 1793523384000,
+      "sha256": "397d54a11ff427081f4e485502e54b0bcae6f2992ca3a32cb01f936fe29e9b18"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/DKImagePickerController_DKImagePickerController.bundle/vi.lproj/DKImagePickerController.strings",
+      "size": 909,
+      "mtimeMs": 1793523384000,
+      "sha256": "3797e2d8bb18e3791aecf245301a9373e1a3539cf8d7bc465d299e82bc715097"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/DKImagePickerController_DKImagePickerController.bundle/zh-Hans.lproj/DKImagePickerController.strings",
+      "size": 782,
+      "mtimeMs": 1793523384000,
+      "sha256": "816e7cca0e00612485ca9cf3c5ad6c43cb5e0134586f7e1f8b826b7f06ac6eea"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/DKImagePickerController_DKImagePickerController.bundle/zh-Hant.lproj/DKImagePickerController.strings",
+      "size": 778,
+      "mtimeMs": 1793523384000,
+      "sha256": "56834c35c8f7ba03a9435d098f152f3d7e4ca1204b7ed289762abdb09d628ec0"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/DKPhotoGallery_DKPhotoGallery.bundle/Assets.car",
+      "size": 93624,
+      "mtimeMs": 1793523384000,
+      "sha256": "38025c5b91543ea23af2d355d028e7d0cae23f587bedcf1ad1b5c09cf385642f"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/DKPhotoGallery_DKPhotoGallery.bundle/Base.lproj/DKPhotoGallery.strings",
+      "size": 824,
+      "mtimeMs": 1793523384000,
+      "sha256": "48323c9991f72b12d5df9852aa33f50daa13fd4afb447ddb995f8c9e3327c79e"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/DKPhotoGallery_DKPhotoGallery.bundle/Info.plist",
+      "size": 703,
+      "mtimeMs": 1793523384000,
+      "sha256": "dded6e8b0830a0950e628411c2b54fc6b7f9f2d6476f04d266156327497e9290"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/DKPhotoGallery_DKPhotoGallery.bundle/en.lproj/DKPhotoGallery.strings",
+      "size": 825,
+      "mtimeMs": 1793523384000,
+      "sha256": "efd39647cbb35228a962f5d397757839f13c1c6360417a7822ce428d1a44ae61"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/DKPhotoGallery_DKPhotoGallery.bundle/zh-Hans.lproj/DKPhotoGallery.strings",
+      "size": 839,
+      "mtimeMs": 1793523384000,
+      "sha256": "288d39f3e5c57b1a268e746a96759c839077b2e7a0f42d5f025ba0060986373b"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/Frameworks/App.framework/App",
+      "size": 12138064,
+      "mtimeMs": 1793523384000,
+      "sha256": "03c7a54a019cf4d8c05a77e502d81cb6c75d57098730d1476f3a7fa5b9e1db8a"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/Frameworks/App.framework/Info.plist",
+      "size": 754,
+      "mtimeMs": 1793523384000,
+      "sha256": "448bf45fc4afbdf5a384e44425f995ab5318901915a4f766809b44bed1b1930d"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/Frameworks/App.framework/_CodeSignature/CodeResources",
+      "size": 16802,
+      "mtimeMs": 1793523384000,
+      "sha256": "074e18e183de81e6311fe281934b9ed883d7fff07675b17ecfcfac8300880ec9"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/Frameworks/App.framework/flutter_assets/AssetManifest.bin",
+      "size": 4137,
+      "mtimeMs": 1793523384000,
+      "sha256": "30b2c05300c32d03bb801cf12e510ebe4ba40dac1390f3fbc4d6af61f8c0c3e7"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/Frameworks/App.framework/flutter_assets/FontManifest.json",
+      "size": 546,
+      "mtimeMs": 1793523384000,
+      "sha256": "ce4bef8cca6872436e0872138d87d19e947936645663a593b8a0200931289a71"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/Frameworks/App.framework/flutter_assets/NOTICES.Z",
+      "size": 109582,
+      "mtimeMs": 1793523384000,
+      "sha256": "e4813037aa597dfef710ed8b6ab539ac91529eb90ebb7631e0ecd1a0bbccd748"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/Frameworks/App.framework/flutter_assets/NativeAssetsManifest.json",
+      "size": 147,
+      "mtimeMs": 1793523384000,
+      "sha256": "625b2ddedce42e3d218ceb8869bc9119e8dea8650a6cb24ab779d5008055b141"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/Frameworks/App.framework/flutter_assets/assets/animations/Successfully%20Done.json",
+      "size": 26447,
+      "mtimeMs": 1793523384000,
+      "sha256": "5963c30c0a39402934a5a7a00bb1dee86cade70632d80dcedaef42ab12ec8652"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/Frameworks/App.framework/flutter_assets/assets/animations/forgot_password_hero.json",
+      "size": 56813,
+      "mtimeMs": 1793523384000,
+      "sha256": "9dc82335d268ee06980d2edb1c968425f6b25a9be022417ed707dc7e9d349b9d"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/Frameworks/App.framework/flutter_assets/assets/animations/login_hero.json",
+      "size": 329145,
+      "mtimeMs": 1793523384000,
+      "sha256": "1e649a8284e94eac3857aecbb01b1d7655fd158199a87eebf2adafe845f6a16d"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/Frameworks/App.framework/flutter_assets/assets/animations/onboarding_slide1.json",
+      "size": 181157,
+      "mtimeMs": 1793523384000,
+      "sha256": "f72f405a1a203a1e98fe7ea450b7a3270361ac209674d0942b300e39d7ef0138"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/Frameworks/App.framework/flutter_assets/assets/animations/onboarding_slide2_hero.json",
+      "size": 192159,
+      "mtimeMs": 1793523384000,
+      "sha256": "a269ae741786b30b42dbc737689027d8a2cfc16342b951bf151c826a13398c24"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/Frameworks/App.framework/flutter_assets/assets/animations/onboarding_slide3.json",
+      "size": 60674,
+      "mtimeMs": 1793523384000,
+      "sha256": "8e3973a9818db9f06e6bf1120f49a8d0ffb27bacb017629ce3757a501ac1b1c5"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/Frameworks/App.framework/flutter_assets/assets/animations/provider_signup_hero.json",
+      "size": 162464,
+      "mtimeMs": 1793523384000,
+      "sha256": "2e7591f7a401c62d1533fe6079b87b3185f5dbc9cd35e511e4e331ac05bbba2d"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/Frameworks/App.framework/flutter_assets/assets/animations/reset_password_hero.json",
+      "size": 192159,
+      "mtimeMs": 1793523384000,
+      "sha256": "a269ae741786b30b42dbc737689027d8a2cfc16342b951bf151c826a13398c24"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/Frameworks/App.framework/flutter_assets/assets/animations/scholaris_ceremony.json",
+      "size": 39625,
+      "mtimeMs": 1793523384000,
+      "sha256": "bc6ecdb0b72ddd6b22392eff5d8f5ad5fa89ea686920012dcdc575996c2770f3"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/Frameworks/App.framework/flutter_assets/assets/animations/signup_hero.json",
+      "size": 250297,
+      "mtimeMs": 1793523384000,
+      "sha256": "5067a6d323380f83292c088d1ceef2f79a2820e1c50407a9bb4ca06d6ddc6fdd"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/Frameworks/App.framework/flutter_assets/assets/animations/verify_email_hero.json",
+      "size": 56813,
+      "mtimeMs": 1793523384000,
+      "sha256": "9dc82335d268ee06980d2edb1c968425f6b25a9be022417ed707dc7e9d349b9d"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/Frameworks/App.framework/flutter_assets/assets/fonts/geist/Geist-Bold.ttf",
+      "size": 128824,
+      "mtimeMs": 1793523384000,
+      "sha256": "3f21f02b827228c3f0c5fb230d027b5a1a263013618e8052bc1b3c5692812c88"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/Frameworks/App.framework/flutter_assets/assets/fonts/geist/Geist-ExtraBold.ttf",
+      "size": 129664,
+      "mtimeMs": 1793523384000,
+      "sha256": "68b974a40bb1a6dc76f00fe5e36a5fb58808bbafbc19e3c920e8dc51c13e75b3"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/Frameworks/App.framework/flutter_assets/assets/fonts/geist/Geist-Medium.ttf",
+      "size": 127660,
+      "mtimeMs": 1793523384000,
+      "sha256": "3a3b36f0d0b981f4857f7f00eeef4a5ee123605575d362ab31ee7c19e3d11f2f"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/Frameworks/App.framework/flutter_assets/assets/fonts/geist/Geist-Regular.ttf",
+      "size": 126048,
+      "mtimeMs": 1793523384000,
+      "sha256": "85a1c6b18a6b0a06dfe9fd4f6d6a5d4979f74ec861eaef4bc7868b5492b8a117"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/Frameworks/App.framework/flutter_assets/assets/fonts/geist/Geist-SemiBold.ttf",
+      "size": 127872,
+      "mtimeMs": 1793523384000,
+      "sha256": "b9f52322d6d20a7ff1e7fe1310ff12ec851aebb83d24f8b4f1d4149298f489b2"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/Frameworks/App.framework/flutter_assets/assets/fonts/geist/OFL.txt",
+      "size": 4382,
+      "mtimeMs": 1793523384000,
+      "sha256": "e5e56b793839774266243b8dd89c618f2962f098a2076757a5f2839c27eaaabd"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/Frameworks/App.framework/flutter_assets/assets/images/hero_banner_exact.png",
+      "size": 673139,
+      "mtimeMs": 1793523384000,
+      "sha256": "9b558deb068fdfd60595e2a8040f83c17f3fe9b3c1bfe82a313f6f929a1f85d1"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/Frameworks/App.framework/flutter_assets/assets/images/hero_banner_female.png",
+      "size": 1725587,
+      "mtimeMs": 1793523384000,
+      "sha256": "b1acf600c21a84ae9a1ee605d13b232e6d0603d6d9fb614ed34ccc45612c88ef"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/Frameworks/App.framework/flutter_assets/assets/images/intro_scene.png",
+      "size": 509782,
+      "mtimeMs": 1793523384000,
+      "sha256": "93192dcbf63ea42c5b6833ec5701352e1ad4e7171af51087265a3a643919aabf"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/Frameworks/App.framework/flutter_assets/assets/images/login_hero.svg",
+      "size": 69121,
+      "mtimeMs": 1793523384000,
+      "sha256": "f11b3ab001037edf226f59a7a6f09f004794e11186ef4163b74be4f798dd446f"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/Frameworks/App.framework/flutter_assets/assets/images/mascot_couple_magnifier.png",
+      "size": 1068068,
+      "mtimeMs": 1793523384000,
+      "sha256": "b5cac686f5d9258a87d0314e8c7701adcb435e724055c0bb4bceb5d9a07dbfe2"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/Frameworks/App.framework/flutter_assets/assets/images/mascot_couple_wave.png",
+      "size": 151117,
+      "mtimeMs": 1793523384000,
+      "sha256": "a38f90adda19f04dfa39c8b8d4aab060cf596911e185213f664af34906eeb6ac"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/Frameworks/App.framework/flutter_assets/assets/images/mascot_female.png",
+      "size": 365306,
+      "mtimeMs": 1793523384000,
+      "sha256": "acd2c4e7b519693fdeb4333f6f8e61b45a45cf8ac3159d8b8c0e28667a7954f7"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/Frameworks/App.framework/flutter_assets/assets/images/mascot_female_pointing.png",
+      "size": 863521,
+      "mtimeMs": 1793523384000,
+      "sha256": "8592cc0d07887f048fb0ae7a3a102d240792e4b8983321634497fb68810a5966"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/Frameworks/App.framework/flutter_assets/assets/images/mascot_male.png",
+      "size": 446003,
+      "mtimeMs": 1793523384000,
+      "sha256": "de841ba354409cd508c59fd77f4b2222c0bfd3da0c0c5dd7658bf0ac2d34a797"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/Frameworks/App.framework/flutter_assets/assets/images/mascot_male_thinking.png",
+      "size": 729853,
+      "mtimeMs": 1793523384000,
+      "sha256": "9ce0b831059f80c1f417b709565812a076e69f1c6aefeaebd251c17576a7f829"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/Frameworks/App.framework/flutter_assets/assets/images/mascot_male_welcome_wave.png",
+      "size": 1281900,
+      "mtimeMs": 1793523384000,
+      "sha256": "08ac2495d54abf167216c958c0e64cf47b6b4fc3bff3699219ef79041daa93db"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/Frameworks/App.framework/flutter_assets/assets/images/onboarding_slide1.svg",
+      "size": 13189,
+      "mtimeMs": 1793523384000,
+      "sha256": "d5ff20c85d0edaf4e0f07d6ab56e3c81f68e9282f4ef188a33063fe8cc576a29"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/Frameworks/App.framework/flutter_assets/assets/images/onboarding_slide2.svg",
+      "size": 7849,
+      "mtimeMs": 1793523384000,
+      "sha256": "2daeee90561a0b1c0a3154e2e0dc6fc4948a8100e494e20ee057984142ac236d"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/Frameworks/App.framework/flutter_assets/assets/images/onboarding_slide3.svg",
+      "size": 14022,
+      "mtimeMs": 1793523384000,
+      "sha256": "2305096fbf53ec49559eb5333a334e8dd123b73782bbed1ac36f16c2e66d5371"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/Frameworks/App.framework/flutter_assets/assets/images/provider_hero_illustration.png",
+      "size": 1762606,
+      "mtimeMs": 1793523384000,
+      "sha256": "160cc7e540a4c26beeba16359bab712a27ccfb1a8864e864fd527875d795ba3e"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/Frameworks/App.framework/flutter_assets/assets/images/scholaris_hero_student.png",
+      "size": 87210,
+      "mtimeMs": 1793523384000,
+      "sha256": "0c60d18cabe09dbdcd4afefeb6ab35e8a25d79df177fce1f77d6091e52e86363"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/Frameworks/App.framework/flutter_assets/assets/images/student_hero_graduate_campus.png",
+      "size": 1581098,
+      "mtimeMs": 1793523384000,
+      "sha256": "718bcac4509f780921a1adccc5c45808359f0d481b8239f238367a3d9224ad10"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/Frameworks/App.framework/flutter_assets/assets/images/student_hero_graduate_campus_female.png",
+      "size": 1604624,
+      "mtimeMs": 1793523384000,
+      "sha256": "82973065d157e8b21d947935834621b34faa2ae76395b8f52d3397eed2141ae6"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/Frameworks/App.framework/flutter_assets/assets/mascots/mascot_female_celebrating.png",
+      "size": 1493691,
+      "mtimeMs": 1793523384000,
+      "sha256": "4c41d3869f1029dba553965ff07ff581e7d60e2a516cb3c849dea7bf329096ea"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/Frameworks/App.framework/flutter_assets/assets/mascots/mascot_female_confused.png",
+      "size": 1211607,
+      "mtimeMs": 1793523384000,
+      "sha256": "edf7e07d21b84b20a3506558ec4caeb4658fc5d237f0c5c7f63f6cab30818496"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/Frameworks/App.framework/flutter_assets/assets/mascots/mascot_female_consoling.png",
+      "size": 1199719,
+      "mtimeMs": 1793523384000,
+      "sha256": "01dc806a1f3396df41a62a733c905c90ca3b48ea74e5750394c2551ae875bf00"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/Frameworks/App.framework/flutter_assets/assets/mascots/mascot_female_searching.png",
+      "size": 1349485,
+      "mtimeMs": 1793523384000,
+      "sha256": "ebce2fe9a8ad1b6904874085b765a1a48bd0fc5f4d77ccac8b95f7238a7d3d31"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/Frameworks/App.framework/flutter_assets/assets/mascots/mascot_male_celebrating.png",
+      "size": 1567802,
+      "mtimeMs": 1793523384000,
+      "sha256": "395fc49c00c12d4407c10f028db7f1cacc9f5c753609aca25fbdbe6f1481500f"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/Frameworks/App.framework/flutter_assets/assets/mascots/mascot_male_confused.png",
+      "size": 1281376,
+      "mtimeMs": 1793523384000,
+      "sha256": "b328c7bbdb033a6d92424982bfddca9d50aca9f6b4037fe27c17d8073dd2836f"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/Frameworks/App.framework/flutter_assets/assets/mascots/mascot_male_consoling.png",
+      "size": 1276842,
+      "mtimeMs": 1793523384000,
+      "sha256": "a60908bf54acd19a2bfc2260289f9fda9ecb87022f2603f78f105b058ad172c8"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/Frameworks/App.framework/flutter_assets/assets/mascots/mascot_male_searching.png",
+      "size": 1359176,
+      "mtimeMs": 1793523384000,
+      "sha256": "a012976ed213195f1c091740ae40f4280193d253f5f4c05bd327a1da16ca0679"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/Frameworks/App.framework/flutter_assets/fonts/MaterialIcons-Regular.otf",
+      "size": 46424,
+      "mtimeMs": 1793523384000,
+      "sha256": "7f1ba7d6587df98546f4aa07874092f5096c039d0330e8d8f190143dbe08b7bd"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/Frameworks/App.framework/flutter_assets/packages/cupertino_icons/assets/CupertinoIcons.ttf",
+      "size": 1400,
+      "mtimeMs": 1793523384000,
+      "sha256": "1f560a34f1c0aa76134325aeedaacdafa8b796f200cd8ccc88521d8974dc48c8"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/Frameworks/App.framework/flutter_assets/shaders/ink_sparkle.frag",
+      "size": 4960,
+      "mtimeMs": 1793523384000,
+      "sha256": "62ce4ba6e34254371ffdfb8e0670afcc5314f4452edf5ee70afcf079f2ed7ea2"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/Frameworks/App.framework/flutter_assets/shaders/stretch_effect.frag",
+      "size": 4408,
+      "mtimeMs": 1793523384000,
+      "sha256": "21cdf2ecc9b113671fb228620d952ebae0f102a78a39a9df89b6ebdf6aec315a"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/Frameworks/App.framework/flutter_assets/shaders/student_glass_lens.frag",
+      "size": 1776,
+      "mtimeMs": 1793523384000,
+      "sha256": "5d4908d1098d1c5debf8354ff7e970b0d98ae494ae1d8bf22884047faa7437d2"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/Frameworks/Flutter.framework/Flutter",
+      "size": 9432656,
+      "mtimeMs": 1793523384000,
+      "sha256": "09c5e234ef53710440cb05b3f17d389f037a9d98905431cf9722717a8ea425a9"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/Frameworks/Flutter.framework/Headers/Flutter.h",
+      "size": 921,
+      "mtimeMs": 1793523384000,
+      "sha256": "c1f5b26a03d82c2451dbec13b8645bb56df3df3d80592f98171ba204e15d4a36"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/Frameworks/Flutter.framework/Headers/FlutterAppDelegate.h",
+      "size": 2283,
+      "mtimeMs": 1793523384000,
+      "sha256": "ebf60356f3456e2054548d873f08674ea2cdb5d7518d7530a328b5e81d867ba3"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/Frameworks/Flutter.framework/Headers/FlutterBinaryMessenger.h",
+      "size": 3761,
+      "mtimeMs": 1793523384000,
+      "sha256": "1170e4e2dfbba82a724246abfaaf561ea63d6dc2bc7b2a210b0195b41261332f"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/Frameworks/Flutter.framework/Headers/FlutterCallbackCache.h",
+      "size": 1724,
+      "mtimeMs": 1793523384000,
+      "sha256": "d21f7ebcae4afabf26a13b221817ecebe4ccf50a20d3cf5a7c7032de06dcc035"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/Frameworks/Flutter.framework/Headers/FlutterChannels.h",
+      "size": 18414,
+      "mtimeMs": 1793523384000,
+      "sha256": "920d7de42def64b88e9fc29e150532ec3a15b80f55643a6aa012d59fae2e19a2"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/Frameworks/Flutter.framework/Headers/FlutterCodecs.h",
+      "size": 15290,
+      "mtimeMs": 1793523384000,
+      "sha256": "672aa51d8b996e915ebd57a7cbd59d974ad51604bbb33232b2c4a20b269a7853"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/Frameworks/Flutter.framework/Headers/FlutterDartProject.h",
+      "size": 3914,
+      "mtimeMs": 1793523384000,
+      "sha256": "53cabfd086edf6ae0ed8732c09d530213b49753c7c2e3865c7ed1a63cddf1fab"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/Frameworks/Flutter.framework/Headers/FlutterEngine.h",
+      "size": 21724,
+      "mtimeMs": 1793523384000,
+      "sha256": "29528cda49a2619ac88f2a31be72b314af4e543918315dfaf11e5622c200742a"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/Frameworks/Flutter.framework/Headers/FlutterEngineGroup.h",
+      "size": 4755,
+      "mtimeMs": 1793523384000,
+      "sha256": "4aacef231a815c427753d2c9df6842117b2b1f63f5ea0ba643e810c7a3dd95fe"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/Frameworks/Flutter.framework/Headers/FlutterHeadlessDartRunner.h",
+      "size": 3927,
+      "mtimeMs": 1793523384000,
+      "sha256": "9e6663669bc5097af281fe14f5a3e4362f15708edc2f902d03e098e6e51620bd"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/Frameworks/Flutter.framework/Headers/FlutterHourFormat.h",
+      "size": 536,
+      "mtimeMs": 1793523384000,
+      "sha256": "43848b1528212ffe441493f22e0ecf362f49ff1a645557f3ae8d15422407b6b6"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/Frameworks/Flutter.framework/Headers/FlutterMacros.h",
+      "size": 1823,
+      "mtimeMs": 1793523384000,
+      "sha256": "79b0551d265c52701b378851718ab7b6db7afbecf561b73c2954988554e80f99"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/Frameworks/Flutter.framework/Headers/FlutterPlatformViews.h",
+      "size": 1966,
+      "mtimeMs": 1793523384000,
+      "sha256": "d1a53db8ce90729ce6669b8560e6e3f5d1a51849132a8c0f304449410745d8fe"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/Frameworks/Flutter.framework/Headers/FlutterPlugin.h",
+      "size": 19326,
+      "mtimeMs": 1793523384000,
+      "sha256": "349bc734c4eec7babf27b476f7c7a3bcfa01f4b0114bfbc7eae8ed9b09947838"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/Frameworks/Flutter.framework/Headers/FlutterPluginAppLifeCycleDelegate.h",
+      "size": 5318,
+      "mtimeMs": 1793523384000,
+      "sha256": "f8f327fb94838f655de9153c09022dfc9625dd3fbc0e1a7b1c89aa033a1ca0d9"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/Frameworks/Flutter.framework/Headers/FlutterSceneDelegate.h",
+      "size": 893,
+      "mtimeMs": 1793523384000,
+      "sha256": "1bdbab65e137d7695d6b391e3ffeecbadd2dda103795f72ec47452b8b9a3fa06"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/Frameworks/Flutter.framework/Headers/FlutterSceneLifeCycle.h",
+      "size": 8387,
+      "mtimeMs": 1793523384000,
+      "sha256": "b4d90b84efbe3ce2f8db38397e312fe7f0c97d0ad7bbca8763a24b6ebf2d2217"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/Frameworks/Flutter.framework/Headers/FlutterTexture.h",
+      "size": 2263,
+      "mtimeMs": 1793523384000,
+      "sha256": "25ca4de1af6cbfac729e50f7462eb5d4de72f87a2ea545a9da1cab21707f23c6"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/Frameworks/Flutter.framework/Headers/FlutterViewController.h",
+      "size": 10734,
+      "mtimeMs": 1793523384000,
+      "sha256": "e2336e4d76c2899c2aa71d253a64dd292183b3ebaba237681a95ce2bac09a9a5"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/Frameworks/Flutter.framework/Info.plist",
+      "size": 1078,
+      "mtimeMs": 1793523384000,
+      "sha256": "33f9c292bdd168ae6f1d96756476390e0e8fdbc5f5bed2dc704f1ff1c1b5cfa6"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/Frameworks/Flutter.framework/Modules/module.modulemap",
+      "size": 95,
+      "mtimeMs": 1793523384000,
+      "sha256": "d158eb891a59ec065968fff498c00f3093e18ba2e8301e0c857ccbe63db8b46b"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/Frameworks/Flutter.framework/PrivacyInfo.xcprivacy",
+      "size": 845,
+      "mtimeMs": 1793523384000,
+      "sha256": "9f95d7e7862a4b56b66ed926bd6d622d2a6545a827d19847278b438d571d4212"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/Frameworks/Flutter.framework/_CodeSignature/CodeResources",
+      "size": 7070,
+      "mtimeMs": 1793523384000,
+      "sha256": "4d114f589f8dd08c357eca7ec40c43688858999ba98c495ed4469e89779c03dd"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/Frameworks/Flutter.framework/icudtl.dat",
+      "size": 864880,
+      "mtimeMs": 1793523384000,
+      "sha256": "325a86063d26334c2eabe1743cea073b612540fbf3d8fc2ef0b5708e3763a8c7"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/Frameworks/objective_c.framework/Info.plist",
+      "size": 791,
+      "mtimeMs": 1793523384000,
+      "sha256": "7896b09dbca92969d6c9b95d57fd87c2c18b2a65d0d9b5216166bfd669f372c8"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/Frameworks/objective_c.framework/_CodeSignature/CodeResources",
+      "size": 1798,
+      "mtimeMs": 1793523384000,
+      "sha256": "436838fb0c5317621b3e3f98c49720685f57e2a033c95d72e32549f859c2684a"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/Frameworks/objective_c.framework/objective_c",
+      "size": 203216,
+      "mtimeMs": 1793523384000,
+      "sha256": "b390364d9f96ae52fe52a7036d132fd18e1c9426a2ee5a4a2bbe5a91a92f34eb"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/Info.plist",
+      "size": 1882,
+      "mtimeMs": 1793523384000,
+      "sha256": "0688415a64cfbcb1577bc7743b93f479755c2cb08861636d2ba7b7b2fa2b7b46"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/PkgInfo",
+      "size": 8,
+      "mtimeMs": 1793523384000,
+      "sha256": "82502191c9484b04d685374f9879a0066069c49b8acae7a04b01d38d07e8eca0"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/Runner",
+      "size": 4694816,
+      "mtimeMs": 1793523384000,
+      "sha256": "0f65ba05d51f8d3524aa23947ddcb6274c963e6151843be1e7bb6fc64a763227"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/SDWebImage_SDWebImage.bundle/Info.plist",
+      "size": 687,
+      "mtimeMs": 1793523384000,
+      "sha256": "a4be1b8ac57754dbac6780d890484a699cf84e9ace0d59f533d1b31c702c7e3e"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/SDWebImage_SDWebImage.bundle/PrivacyInfo.xcprivacy",
+      "size": 599,
+      "mtimeMs": 1793523384000,
+      "sha256": "03b2c70833a331a2b1efd11ff168ed02a8eadfd5e7d1fbf30eecc7509a4aea47"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/SwiftyGif_SwiftyGif.bundle/Info.plist",
+      "size": 683,
+      "mtimeMs": 1793523384000,
+      "sha256": "63872fe1b6e9d3aa567bc1ca8ebc7d54e971590d7e155357299529d7a69eba20"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/SwiftyGif_SwiftyGif.bundle/PrivacyInfo.xcprivacy",
+      "size": 373,
+      "mtimeMs": 1793523384000,
+      "sha256": "8d65d0b43a1262cfe29e83396c00b3db94fb120d44d1188d927341f14a6c223c"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/TOCropViewController_TOCropViewController.bundle/Base.lproj/TOCropViewControllerLocalizable.strings",
+      "size": 168,
+      "mtimeMs": 1793523384000,
+      "sha256": "196d99fb833491e1dcc4f617fa81df10762a5012b5102f119b79892d6ad358c1"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/TOCropViewController_TOCropViewController.bundle/Info.plist",
+      "size": 727,
+      "mtimeMs": 1793523384000,
+      "sha256": "cf357b949f73146825b87b5d6e61b708a6a1fa3ecb101b58f8bad73ae36c3252"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/TOCropViewController_TOCropViewController.bundle/PrivacyInfo.xcprivacy",
+      "size": 373,
+      "mtimeMs": 1793523384000,
+      "sha256": "521eb6ef8430773e5c010e1838fe9dd8fa5d62b7b76d1cea8d7d8daadcb144e2"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/TOCropViewController_TOCropViewController.bundle/ar.lproj/TOCropViewControllerLocalizable.strings",
+      "size": 207,
+      "mtimeMs": 1793523384000,
+      "sha256": "463845d6fed5919e691cd5b0ab8ab609eb35d7f9e3f4716c8ed6d536f9ab2151"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/TOCropViewController_TOCropViewController.bundle/ca.lproj/TOCropViewControllerLocalizable.strings",
+      "size": 177,
+      "mtimeMs": 1793523384000,
+      "sha256": "483a0ec24343e4c9f1a615bf08614aaf024df42ca7d2e8a4cafadf25896ead4a"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/TOCropViewController_TOCropViewController.bundle/cs.lproj/TOCropViewControllerLocalizable.strings",
+      "size": 173,
+      "mtimeMs": 1793523384000,
+      "sha256": "65ea0b63d111d1b5b3d712d09d9efcead3a78db95985ea68f49f5643c20d263b"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/TOCropViewController_TOCropViewController.bundle/da-DK.lproj/TOCropViewControllerLocalizable.strings",
+      "size": 174,
+      "mtimeMs": 1793523384000,
+      "sha256": "78afaf79b20fc03807c7a5e55d670e75a6c49f206e0593550435fc5c30684e46"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/TOCropViewController_TOCropViewController.bundle/de.lproj/TOCropViewControllerLocalizable.strings",
+      "size": 189,
+      "mtimeMs": 1793523384000,
+      "sha256": "6c8d836a96d43c6618bdbd7cd2dc13a3ed4ddca443d2168e40488209e393980b"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/TOCropViewController_TOCropViewController.bundle/en.lproj/TOCropViewControllerLocalizable.strings",
+      "size": 168,
+      "mtimeMs": 1793523384000,
+      "sha256": "196d99fb833491e1dcc4f617fa81df10762a5012b5102f119b79892d6ad358c1"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/TOCropViewController_TOCropViewController.bundle/es.lproj/TOCropViewControllerLocalizable.strings",
+      "size": 179,
+      "mtimeMs": 1793523384000,
+      "sha256": "59348afae4a669133b51046871a5333afa85e55e7ff18a72cd8477e83d29ca6f"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/TOCropViewController_TOCropViewController.bundle/fa-IR.lproj/TOCropViewControllerLocalizable.strings",
+      "size": 210,
+      "mtimeMs": 1793523384000,
+      "sha256": "aa55c494d495f7afc185f9b6561847bca872f55ca19b9ba2e6cb2aa0b8bb7b9f"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/TOCropViewController_TOCropViewController.bundle/fa.lproj/TOCropViewControllerLocalizable.strings",
+      "size": 210,
+      "mtimeMs": 1793523384000,
+      "sha256": "aa55c494d495f7afc185f9b6561847bca872f55ca19b9ba2e6cb2aa0b8bb7b9f"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/TOCropViewController_TOCropViewController.bundle/fi.lproj/TOCropViewControllerLocalizable.strings",
+      "size": 179,
+      "mtimeMs": 1793523384000,
+      "sha256": "830cd8107cada3bef8c2b124e407a8cef43efcb4aa87eed597398f7d61185cf3"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/TOCropViewController_TOCropViewController.bundle/fr.lproj/TOCropViewControllerLocalizable.strings",
+      "size": 193,
+      "mtimeMs": 1793523384000,
+      "sha256": "e2349f96a350057f870adc6641399ceb0c38fb9d7a6795f93694b97b469c17fc"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/TOCropViewController_TOCropViewController.bundle/hu.lproj/TOCropViewControllerLocalizable.strings",
+      "size": 194,
+      "mtimeMs": 1793523384000,
+      "sha256": "3c8358f131898d2bae71fdf8d563355587839b1796ee65a154b6312a026a3d0d"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/TOCropViewController_TOCropViewController.bundle/id.lproj/TOCropViewControllerLocalizable.strings",
+      "size": 178,
+      "mtimeMs": 1793523384000,
+      "sha256": "fdaeeed707df9287a38abf8f87cb72ed2df3499dcf6a1ef617dc7f3ba0dc0cbb"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/TOCropViewController_TOCropViewController.bundle/it.lproj/TOCropViewControllerLocalizable.strings",
+      "size": 181,
+      "mtimeMs": 1793523384000,
+      "sha256": "851b312677a8bea5d385f642205e5d804c05f25850d5496fc0494fb0b806eec2"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/TOCropViewController_TOCropViewController.bundle/ja.lproj/TOCropViewControllerLocalizable.strings",
+      "size": 210,
+      "mtimeMs": 1793523384000,
+      "sha256": "655bcd0a9d160f28e80773ec2afc439d85ffde867058090a5d686437c7ce8cad"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/TOCropViewController_TOCropViewController.bundle/ko.lproj/TOCropViewControllerLocalizable.strings",
+      "size": 187,
+      "mtimeMs": 1793523384000,
+      "sha256": "60f97accb9d7b4a9e8dd3358fc1223d16e88f6696a67b62148e6bfeafe101d58"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/TOCropViewController_TOCropViewController.bundle/ms.lproj/TOCropViewControllerLocalizable.strings",
+      "size": 173,
+      "mtimeMs": 1793523384000,
+      "sha256": "c17cf0ad646842b37c2393e62c6b315e2c52071a5e75a6028905ea63cdae890c"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/TOCropViewController_TOCropViewController.bundle/nl.lproj/TOCropViewControllerLocalizable.strings",
+      "size": 178,
+      "mtimeMs": 1793523384000,
+      "sha256": "278b8709918dca99c27cd89da697bd907a60a48479bb731594358c13f35dee14"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/TOCropViewController_TOCropViewController.bundle/pl.lproj/TOCropViewControllerLocalizable.strings",
+      "size": 171,
+      "mtimeMs": 1793523384000,
+      "sha256": "60af26124f227706113e384ed23fc814eba123b33a0c852c7a66bfddefa42149"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/TOCropViewController_TOCropViewController.bundle/pt-BR.lproj/TOCropViewControllerLocalizable.strings",
+      "size": 181,
+      "mtimeMs": 1793523384000,
+      "sha256": "256f376c16ce05ec531652c6645ecacff2f8fb6105a4a0661a417c70da4e6320"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/TOCropViewController_TOCropViewController.bundle/pt.lproj/TOCropViewControllerLocalizable.strings",
+      "size": 181,
+      "mtimeMs": 1793523384000,
+      "sha256": "256f376c16ce05ec531652c6645ecacff2f8fb6105a4a0661a417c70da4e6320"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/TOCropViewController_TOCropViewController.bundle/ro.lproj/TOCropViewControllerLocalizable.strings",
+      "size": 181,
+      "mtimeMs": 1793523384000,
+      "sha256": "0fa7f37bb8a433c65d4513d172c90f6515eeba48430193db3b82d8ca501d9eaf"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/TOCropViewController_TOCropViewController.bundle/ru.lproj/TOCropViewControllerLocalizable.strings",
+      "size": 237,
+      "mtimeMs": 1793523384000,
+      "sha256": "917d8f4ecd3f824c45ba12ac65274343c71049d8260bb20ed913c4b91f2a54bb"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/TOCropViewController_TOCropViewController.bundle/sk.lproj/TOCropViewControllerLocalizable.strings",
+      "size": 176,
+      "mtimeMs": 1793523384000,
+      "sha256": "d4056c0ec6621e1fb50390096034b463b7a3c9d205af6164e9f756ec92bbc393"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/TOCropViewController_TOCropViewController.bundle/tr.lproj/TOCropViewControllerLocalizable.strings",
+      "size": 183,
+      "mtimeMs": 1793523384000,
+      "sha256": "8206afca669d9b48eb85d305960cc11e517aa248c050b89fc78adc8f4cd3faaa"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/TOCropViewController_TOCropViewController.bundle/uk.lproj/TOCropViewControllerLocalizable.strings",
+      "size": 231,
+      "mtimeMs": 1793523384000,
+      "sha256": "3c3e707d99725aaf009665b3013bb47823b974e7b3e49c38db9c8597b37fbc92"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/TOCropViewController_TOCropViewController.bundle/vi.lproj/TOCropViewControllerLocalizable.strings",
+      "size": 178,
+      "mtimeMs": 1793523384000,
+      "sha256": "1c10e1a3f087c6ad7aeead17f8d0d34739dc3c58ed037d0fd09466f6eac15c00"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/TOCropViewController_TOCropViewController.bundle/zh-Hans.lproj/TOCropViewControllerLocalizable.strings",
+      "size": 172,
+      "mtimeMs": 1793523384000,
+      "sha256": "b0e59e719003736e7d61ea775c66c97136e09a7d895ef54f921ed2eae697b754"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/TOCropViewController_TOCropViewController.bundle/zh-Hant.lproj/TOCropViewControllerLocalizable.strings",
+      "size": 175,
+      "mtimeMs": 1793523384000,
+      "sha256": "b5e11d126bd469dfbe2a66c019b989fa576e395cb7057023798d709263f42e81"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/app_links_app_links.bundle/Info.plist",
+      "size": 689,
+      "mtimeMs": 1793523384000,
+      "sha256": "1df7b1166563a451098d34f86cef70619e55643abbb3e7db7f0d5a8fbb1bd7c7"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/app_links_app_links.bundle/PrivacyInfo.xcprivacy",
+      "size": 415,
+      "mtimeMs": 1793523384000,
+      "sha256": "df01bf8f311b7b350d01d55afe5059ead9ba2b0069c5421e69d9b405f7cabea2"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/file_picker_file_picker.bundle/Info.plist",
+      "size": 697,
+      "mtimeMs": 1793523384000,
+      "sha256": "42688fa60f8c5390b9cb879dffc25d4203efbdeee2d3c226552c444cc1fe1a63"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/file_picker_file_picker.bundle/PrivacyInfo.xcprivacy",
+      "size": 372,
+      "mtimeMs": 1793523384000,
+      "sha256": "47226a29608df206ad0a110e6afeb5a77ff575ac1df9c76bfdb2d6dfb3fafed1"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/mobile_scanner_mobile_scanner.bundle/Info.plist",
+      "size": 709,
+      "mtimeMs": 1793523384000,
+      "sha256": "5073cd41c9a5597f1d6dfa0eaeeffff5ec3f5de9cc41728f56bce084c44c0926"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/mobile_scanner_mobile_scanner.bundle/PrivacyInfo.xcprivacy",
+      "size": 373,
+      "mtimeMs": 1793523384000,
+      "sha256": "1bac827f49b2b8a5358491b9698203bf191791a6f1ba3a3ace3b1285d52d2d17"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/shared_preferences_foundation_shared_preferences_foundation.bundle/Info.plist",
+      "size": 769,
+      "mtimeMs": 1793523384000,
+      "sha256": "a2146c52ae3aa37f2ac1fe99a4c1b58d978be04c70c059d7bf0130275703cf38"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/shared_preferences_foundation_shared_preferences_foundation.bundle/PrivacyInfo.xcprivacy",
+      "size": 598,
+      "mtimeMs": 1793523384000,
+      "sha256": "056428b938bd57018a60019d15c3c1ee2fa727f23687598bbbd934848b180b1a"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/url_launcher_ios_url_launcher_ios.bundle/Info.plist",
+      "size": 717,
+      "mtimeMs": 1793523384000,
+      "sha256": "6eaedf7562c505ebd0cd69d880d5bcc9e0f1a04f80c182748373ac13e7de8ebd"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/url_launcher_ios_url_launcher_ios.bundle/PrivacyInfo.xcprivacy",
+      "size": 373,
+      "mtimeMs": 1793523384000,
+      "sha256": "6d2da0d8d930227d428c1d9363b0ad6e3a12e2c9b68c5ce297158a7412fc8c31"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/webview_flutter_wkwebview_webview_flutter_wkwebview.bundle/Info.plist",
+      "size": 754,
+      "mtimeMs": 1793523384000,
+      "sha256": "3d65e8aa3c75ebd060b869531bf8e508295e7f42295439edaeceb7d0a450fca7"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/webview_flutter_wkwebview_webview_flutter_wkwebview.bundle/PrivacyInfo.xcprivacy",
+      "size": 373,
+      "mtimeMs": 1793523384000,
+      "sha256": "6d2da0d8d930227d428c1d9363b0ad6e3a12e2c9b68c5ce297158a7412fc8c31"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/app.zip",
+      "size": 34476662,
+      "mtimeMs": 1793523386000,
+      "sha256": "7c44c64add3bd92e4a5e01cf51ac1937419d0daae291c725c6dc1eaac67390c8"
+    },
+    {
+      "status": "??",
+      "file": "test/shared/theme/app_typography_test.dart",
+      "size": 3880,
+      "mtimeMs": 1793745736776.2788,
+      "sha256": "ed37a63cbf138147a46aa400275a6e7e8e319a3e815c3401813c85d4297279f7"
+    },
+    {
+      "status": "??",
+      "file": "test/shared/theme/reference_typography_test.dart",
+      "size": 1027,
+      "mtimeMs": 1793744400535.9546,
+      "sha256": "e65defcb7690fe860da5d011a35b2d96deab8abaa967b0367416c35461455e78"
+    },
+    {
+      "status": "??",
+      "file": "test/shared/theme/semantic_theme_test.dart",
+      "size": 3357,
+      "mtimeMs": 1793745137174.7754,
+      "sha256": "4abf93e75194ff5b2bf9602bf7d3c9ad5959ed45adb5d59b9ced25e4d366a90d"
+    },
+    {
+      "status": "??",
+      "file": "test/shared/theme/semantic_widgets_test.dart",
+      "size": 3093,
+      "mtimeMs": 1793745137181.5144,
+      "sha256": "bd5539ce425ebcbdb7bc018a5e8035916e8d5639a9881d4b70a99995f4d82003"
+    },
+    {
+      "status": "??",
+      "file": "test/typography_visual_capture_test.dart",
+      "size": 5488,
+      "mtimeMs": 1793745261031.921,
+      "sha256": "656e16da3eb3a6054297b97a95a38a1fe021d5ed0d09eb17a00b6501a83218d8"
+    },
+    {
+      "status": "??",
+      "file": "tools/capture_preview_screenshot.mjs",
+      "size": 2283,
+      "mtimeMs": 1793033841378.4934,
+      "sha256": "009af8faf82942fe315d681c544d64deabca32e210e4639f30fd3f753bfaa8f9"
+    },
+    {
+      "status": "??",
+      "file": "tools/capture_typography_web.mjs",
+      "size": 4663,
+      "mtimeMs": 1793746209519.3147,
+      "sha256": "c2cbd3c8322769284a65fce1b31b7e19c941c31de4168b1c6549a5cdb9736eba"
+    },
+    {
+      "status": "??",
+      "file": "tools/check_typography.mjs",
+      "size": 1978,
+      "mtimeMs": 1793744347986.1194,
+      "sha256": "eefb2bbd246d738944610014bfbd26453a825fda99725de513ca33778d0a3b1e"
+    },
+    {
+      "status": "??",
+      "file": "tools/check_typography.test.mjs",
+      "size": 2325,
+      "mtimeMs": 1793744688278.6963,
+      "sha256": "949c3dcd349038980c2f0e47cc2b8a6a667026a0126949f0e9d0d9fe8b6a1e91"
+    },
+    {
+      "status": "??",
+      "file": "tools/deploy_orchestrator.mjs",
+      "size": 36973,
+      "mtimeMs": 1792944153563.8188,
+      "sha256": "55082bed3f9330a04a78b0ffa3ad4d3515e1c7400e16d382b394eadb1ac4ac3d"
+    },
+    {
+      "status": "??",
+      "file": "tools/test_confirmed_email_sync.mjs",
+      "size": 1320,
+      "mtimeMs": 1793164590434.5818,
+      "sha256": "ae80f5897fb134241e3b41e207dd70ba89cdf3216500b2699e861514cb6963e0"
+    },
+    {
+      "status": "??",
+      "file": "tools/test_genuine_storage_api_plan.mjs",
+      "size": 23799,
+      "mtimeMs": 1792937242081.8066,
+      "sha256": "b707e9f624498cabb701e85d72c825a423ab7732a0593be6a17055e537493f6e"
+    },
+    {
+      "status": "??",
+      "file": "tools/test_individual_provider_security.mjs",
+      "size": 30439,
+      "mtimeMs": 1792519042268.681,
+      "sha256": "8cfba317891948438fd333b6e9d944875ca96efa924298995d1ffbf711637520"
+    },
+    {
+      "status": "??",
+      "file": "tools/test_individual_provider_two_connection_concurrency.mjs",
+      "size": 12895,
+      "mtimeMs": 1792520609845.9673,
+      "sha256": "9400e9bdf40f90e19e6e3fbac8a494c01348c72439bffbc6f9ca0d3bb14add59"
+    },
+    {
+      "status": "??",
+      "file": "tools/test_individual_support_recovery.mjs",
+      "size": 19166,
+      "mtimeMs": 1792765222727.5808,
+      "sha256": "7c25aacc0a558fe19ac99118ba76610972390d95a73bd2e724db6c5b0f034596"
+    },
+    {
+      "status": "??",
+      "file": "tools/test_individual_support_security.mjs",
+      "size": 15899,
+      "mtimeMs": 1792764660840.6692,
+      "sha256": "b1b34919aa06e43ab562096d065bf5d02b49caa2e6ebbbb332c8be8955b6b7f5"
+    },
+    {
+      "status": "??",
+      "file": "tools/test_live_acceptance_api.mjs",
+      "size": 27429,
+      "mtimeMs": 1792479556440.5515,
+      "sha256": "f44d7504005f3af55ffb2786c03d28f9fb0076f22a63f934bc82c07180e1db56"
+    },
+    {
+      "status": "??",
+      "file": "tools/test_postchecks_validation.mjs",
+      "size": 11712,
+      "mtimeMs": 1792937177547.393,
+      "sha256": "a6656de3d6cc4a55897947ad3df129787a74a21dbfd7a052e27ec16f18893f33"
+    },
+    {
+      "status": "??",
+      "file": "tools/test_profile_status_guard.mjs",
+      "size": 4339,
+      "mtimeMs": 1793164469927.8901,
+      "sha256": "05bebf8fc3e91ab0c124fd8e37f0d5da38c6208a35f296eb341349051e733014"
+    },
+    {
+      "status": "??",
+      "file": "tools/test_provider_audit_security.mjs",
+      "size": 22282,
+      "mtimeMs": 1792768361556.9453,
+      "sha256": "4f2d7020f5842e889b53453b0297f2fcf9d2b7981af748679a909d7152dd7dc2"
+    },
+    {
+      "status": "??",
+      "file": "tools/test_provider_review_concurrency.mjs",
+      "size": 9816,
+      "mtimeMs": 1792792865549.3977,
+      "sha256": "8974b58f47016fcfc24faaed609aa5336d7c74f335fe2ef0b0921e824f380a45"
+    },
+    {
+      "status": "??",
+      "file": "tools/test_provider_review_security.mjs",
+      "size": 13596,
+      "mtimeMs": 1792796553555.1042,
+      "sha256": "b82fa74dafcbac6981e127f0f5302c8b8dfcfdd370f93a7d7297db3dec65c169"
+    },
+    {
+      "status": "??",
+      "file": "tools/test_remote_security_remaining.mjs",
+      "size": 7432,
+      "mtimeMs": 1792480311068.3528,
+      "sha256": "a2a91487f112d8633a4b9221afff83d278318c642f5776d8abfdde4198245e4b"
+    },
+    {
+      "status": "??",
+      "file": "tools/test_safety_concurrency.mjs",
+      "size": 12257,
+      "mtimeMs": 1792851370633.718,
+      "sha256": "ff6371bc0378453e53dacc9d84eba5a605904bef72d62eebe55b9d1b94e103de"
+    },
+    {
+      "status": "??",
+      "file": "tools/test_safety_storage_concurrency.mjs",
+      "size": 13090,
+      "mtimeMs": 1792852754305.6992,
+      "sha256": "8f83cda7a7a90d478014d0574d0b9f9da7e3c51bdddbd5a159ec1cb4fea8e055"
+    },
+    {
+      "status": "??",
+      "file": "tools/test_signup_role_security.mjs",
+      "size": 2848,
+      "mtimeMs": 1793163526233.916,
+      "sha256": "ecfd97518756856ac88b4f02915818f7555bb395c1b22874a0def0a9b34c0aa7"
+    },
+    {
+      "status": "??",
+      "file": "tools/test_storage_api_binary_integrity.mjs",
+      "size": 15954,
+      "mtimeMs": 1792854028105.4812,
+      "sha256": "1b1e407bad9ac3c219064c48cd1422184e95db0a5e679fcc28018d089f7e5727"
+    },
+    {
+      "status": "??",
+      "file": "tools/test_student_safety_security.mjs",
+      "size": 22318,
+      "mtimeMs": 1792850503950.377,
+      "sha256": "bd5545e505647d4c9bb3fabe4968db913cfe1ada7df0913cd00cdd8216bd2e5c"
+    },
+    {
+      "status": "??",
+      "file": "tools/verify_student_navbar_browser.mjs",
+      "size": 5134,
+      "mtimeMs": 1793023512960.438,
+      "sha256": "d68851b4a74182a8871e07aaadca0f5e5daa7110b1d33a7a60ca26d8a8e31dd9"
+    }
+  ]
+}

@@ -2,14 +2,17 @@
 
 These rules apply to every contributor and agent, including Codex and Archi. Read them before changing UI or producing an IPA.
 
-## Typography: bundled Geist Sans everywhere
+## Typography: platform-adaptive semantic roles
 
-- Every app-owned screen and text surface must use the bundled **Geist Sans** family, registered as `Geist` in `pubspec.yaml`.
-- Use the shared `geist(...)` helper and the existing Geist-based application themes. Legacy helpers in `lib/shared/theme/app_theme.dart` delegate to Geist; their names do not authorize another font.
-- This includes student, provider and admin screens, onboarding/tours, chat, dialogs, sheets, forms, validation messages, buttons, labels, receipts and preview apps. Do not introduce a different font through `GoogleFonts`, local `ThemeData`, `TextStyle`, or a component override.
-- Keep appropriate Geist weights, line height, accessible text scaling and wrapping. Do not replace text with an image or shrink it to hide an overflow.
-- Platform-owned keyboards/system UI and essential missing-glyph fallback are outside this app-owned typography requirement. Otherwise, a font exception requires the user's explicit instruction.
-- Before handoff, inspect changed themes/styles, run the relevant UI/typography tests, and verify the actual rendered result when device/browser access is available. Do not claim a video alone proves the font family.
+- `lib/shared/theme/app_typography.dart` is the single authority for font families and role weights. Use `AppTypography.style(AppTextRole.<role>, ...)`; do not define font families or weights independently in components or restore legacy font helpers.
+- Check `kIsWeb` first. Every web browser/OS uses locally bundled **Inter**, including Safari on iOS. Android and other native platforms also use bundled Inter. Native iOS uses **SF Pro** through Flutter's supported `CupertinoSystemText`/`CupertinoSystemDisplay` system-font proxies, not downloaded or bundled copies of SF Pro.
+- Exact default weights: **700** `display`, `screenTitle`, `metric`; **600** `sectionTitle`, `cardTitle`, `button`; **500** `bodyEmphasis`, `label`, `navigation`, `badge`; **400** `subtitle`, `body`, `caption`, `input`, `placeholder`. Primary/secondary actions share `button`; chips share `badge`. No default 800/900 weights.
+- Apply these roles to every student, provider and admin surface, onboarding/tours, chat, dialogs, sheets, forms, validation messages, navigation, receipts, and previews. Use `applyScholarisTypography` when a standalone preview needs its own base theme.
+- Choose roles by actual purpose, not by old weights, text size, or whether a string happens to contain digits. Shared helpers with mixed purposes accept an explicit semantic role. Supporting text stays quieter than headings; important amounts and metrics use `metric`.
+- Preserve existing font sizes, heights, tracking, colors, spacing, component dimensions and geometry. Correct only verified rendering issues, documenting the problem and correction. Do not shrink text, replace text with images, clamp system text scaling, or redesign screens to conceal overflow.
+- Preserve Flutter text scaling and system Bold Text. System-requested bolding and essential missing-glyph/emoji fallback are accessibility exceptions; other semantic exceptions require documented justification. Platform-owned keyboards/system UI are outside the app-owned typography requirement.
+- Bundle genuine Inter 400/500/600/700 assets with their license; do not download fonts at runtime. Keep the font source and hashes documented.
+- Before handoff, run `node tools/check_typography.mjs`, `node --test tools/check_typography.test.mjs`, the semantic typography tests, and relevant UI tests. Compare matched before/after captures, including narrow layouts and enlarged text. Native iOS and Android rendering need genuine platform captures; a simulated target-platform override or video alone does not prove the actual font family. Label unavailable platform checks pending.
 
 ## Consistent content-card surfaces
 

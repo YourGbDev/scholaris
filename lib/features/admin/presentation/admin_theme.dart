@@ -4,6 +4,7 @@
 // Apple Design DNA pass: clean squircles, #F5F5F7 sidebar, #0F4D2E active fill,
 // pure white active typography, subtle hairline borders, and responsive elevation.
 
+import 'package:scholaris/shared/theme/app_typography.dart';
 import 'package:scholaris/shared/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 
@@ -72,51 +73,6 @@ const BoxDecoration kAdminCardDecoration = kSoftCardDecoration;
 
 // --- Typography Helpers ------------------------------------------------------
 
-TextStyle adminHeaderStyle({
-  double fontSize = 18,
-  FontWeight fontWeight = FontWeight.w600,
-  Color color = kAdminNavyTrust,
-}) =>
-    geist(
-      fontSize: fontSize,
-      fontWeight: fontWeight,
-      color: color,
-    );
-
-TextStyle adminLabelStyle({
-  double fontSize = 13.5,
-  FontWeight fontWeight = FontWeight.w500,
-  Color color = kAdminTextSecondary,
-}) =>
-    geist(
-      fontSize: fontSize,
-      fontWeight: fontWeight,
-      color: color,
-    );
-
-TextStyle adminBodyStyle({
-  double fontSize = 14,
-  FontWeight fontWeight = FontWeight.w400,
-  Color color = kAdminTextPrimary,
-}) =>
-    geist(
-      fontSize: fontSize,
-      fontWeight: fontWeight,
-      color: color,
-    );
-
-/// Compatibility helper; counts, metrics, timestamps, and IDs use Geist Sans.
-TextStyle adminDataMono({
-  double fontSize = 13,
-  FontWeight fontWeight = FontWeight.w500,
-  Color color = kAdminTextPrimary,
-}) =>
-    geist(
-      fontSize: fontSize,
-      fontWeight: fontWeight,
-      color: color,
-    );
-
 /// Tabular figures helper for numeric typography (prevents digit horizontal jittering).
 TextStyle seqTabularFigures(TextStyle base) => base.copyWith(
       fontFeatures: [
@@ -125,7 +81,7 @@ TextStyle seqTabularFigures(TextStyle base) => base.copyWith(
       ],
     );
 
-/// Geist Sans pill container helper for IDs, hashes, and IP addresses.
+/// Reference-code pill container helper for IDs, hashes, and IP addresses.
 Widget adminIdPill(String idText) => Container(
       padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
       decoration: BoxDecoration(
@@ -135,7 +91,7 @@ Widget adminIdPill(String idText) => Container(
       ),
       child: Text(
         idText,
-        style: adminDataMono(fontSize: 11, color: kSeqOnSurfaceVariant),
+        style: AppTypography.style(AppTextRole.caption, fontSize: 11, color: kSeqOnSurfaceVariant),
       ),
     );
 
@@ -183,123 +139,4 @@ const Color kSeqErrorContainer = Color(0xFFFFDAD6);
 const Color kSeqOnErrorContainer = Color(0xFF93000A);
 
 // Sequoia Typography (Inter)
-TextStyle seqDisplay({
-  FontWeight fontWeight = FontWeight.w700,
-  Color color = kSeqOnSurface,
-}) =>
-    geist(
-      fontSize: 40,
-      height: 48 / 40,
-      letterSpacing: -0.022 * 40,
-      fontWeight: fontWeight,
-      color: color,
-    );
-
-TextStyle seqHeadlineLg({
-  FontWeight fontWeight = FontWeight.w600,
-  Color color = kSeqOnSurface,
-}) =>
-    geist(
-      fontSize: 32,
-      height: 38 / 32,
-      letterSpacing: -0.021 * 32,
-      fontWeight: fontWeight,
-      color: color,
-    );
-
-TextStyle seqHeadlineMd({
-  FontWeight fontWeight = FontWeight.w600,
-  Color color = kSeqOnSurface,
-}) =>
-    geist(
-      fontSize: 24,
-      height: 30 / 24,
-      letterSpacing: -0.019 * 24,
-      fontWeight: fontWeight,
-      color: color,
-    );
-
-TextStyle seqHeadlineSm({
-  FontWeight fontWeight = FontWeight.w600,
-  Color color = kSeqOnSurface,
-}) =>
-    geist(
-      fontSize: 19,
-      height: 24 / 19,
-      letterSpacing: -0.015 * 19,
-      fontWeight: fontWeight,
-      color: color,
-    );
-
-TextStyle seqBodyLg({
-  FontWeight fontWeight = FontWeight.w400,
-  Color color = kSeqOnSurface,
-}) =>
-    geist(
-      fontSize: 16,
-      height: 24 / 16,
-      letterSpacing: -0.011 * 16,
-      fontWeight: fontWeight,
-      color: color,
-    );
-
-TextStyle seqBodyMd({
-  FontWeight fontWeight = FontWeight.w400,
-  Color color = kSeqOnSurface,
-}) =>
-    geist(
-      fontSize: 14,
-      height: 20 / 14,
-      letterSpacing: -0.006 * 14,
-      fontWeight: fontWeight,
-      color: color,
-    );
-
-TextStyle seqBodySm({
-  FontWeight fontWeight = FontWeight.w400,
-  Color color = kSeqOnSurface,
-}) =>
-    geist(
-      fontSize: 12,
-      height: 16 / 12,
-      letterSpacing: 0,
-      fontWeight: fontWeight,
-      color: color,
-    );
-
-TextStyle seqLabelLg({
-  FontWeight fontWeight = FontWeight.w500,
-  Color color = kSeqOnSurface,
-}) =>
-    geist(
-      fontSize: 14,
-      height: 18 / 14,
-      letterSpacing: -0.008 * 14,
-      fontWeight: fontWeight,
-      color: color,
-    );
-
-TextStyle seqLabelMd({
-  FontWeight fontWeight = FontWeight.w500,
-  Color color = kSeqOnSurface,
-}) =>
-    geist(
-      fontSize: 12,
-      height: 16 / 12,
-      letterSpacing: -0.002 * 12,
-      fontWeight: fontWeight,
-      color: color,
-    );
-
-TextStyle seqLabelSm({
-  FontWeight fontWeight = FontWeight.w600,
-  Color color = kSeqOnSurface,
-}) =>
-    geist(
-      fontSize: 10,
-      height: 12 / 10,
-      letterSpacing: 0.03 * 10,
-      fontWeight: fontWeight,
-      color: color,
-    );
 

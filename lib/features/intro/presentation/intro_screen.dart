@@ -1,10 +1,10 @@
+import 'package:scholaris/shared/theme/app_typography.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:scholaris/features/onboarding/controllers/onboarding_controller.dart';
 import 'package:scholaris/shared/theme/app_motion.dart';
-import 'package:scholaris/shared/theme/app_theme.dart';
 import 'package:scholaris/shared/widgets/responsive_container.dart';
 
 /// The welcome / intro screen displayed once on first app launch before onboarding.
@@ -74,13 +74,7 @@ class IntroScreen extends ConsumerWidget {
                           Text(
                             'Your Dream,\nOur Mission.',
                             textAlign: TextAlign.center,
-                            style: outfit(
-                              fontSize: constraints.maxHeight < 700 ? 28 : 34,
-                              fontWeight: FontWeight.w800,
-                              color: const Color(0xFF0F4D2E),
-                              height: 1.15,
-                              letterSpacing: -0.4,
-                            ),
+                            style: AppTypography.style(AppTextRole.display, fontSize: constraints.maxHeight < 700 ? 28 : 34, color: const Color(0xFF0F4D2E), height: 1.15, letterSpacing: -0.4),
                           ),
                           const SizedBox(height: 12),
                           Padding(
@@ -88,12 +82,7 @@ class IntroScreen extends ConsumerWidget {
                             child: Text(
                               'Scholaris helps Filipino students find the scholarship they truly deserve.',
                               textAlign: TextAlign.center,
-                              style: openSans(
-                                fontSize: 14.5,
-                                fontWeight: FontWeight.w400,
-                                color: const Color(0xFF717971),
-                                height: 1.45,
-                              ),
+                              style: AppTypography.style(AppTextRole.subtitle, fontSize: 14.5, color: const Color(0xFF717971), height: 1.45, letterSpacing: opticalTracking(14.5)),
                             ),
                           ),
                         ],
@@ -134,11 +123,7 @@ class IntroScreen extends ConsumerWidget {
                                     children: [
                                       Text(
                                         'Get Started',
-                                        style: outfit(
-                                          fontSize: 16.5,
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.white,
-                                        ),
+                                        style: AppTypography.style(AppTextRole.button, fontSize: 16.5, color: Colors.white, letterSpacing: opticalTracking(16.5), height: opticalLeading(16.5, isBody: false)),
                                       ),
                                       const SizedBox(width: 8),
                                       const Icon(
@@ -170,12 +155,7 @@ class IntroScreen extends ConsumerWidget {
                                 padding: const EdgeInsets.symmetric(vertical: 6.0),
                                 child: Text(
                                   'Already have an account? Sign In.',
-                                  style: openSans(
-                                    fontSize: 13.5,
-                                    fontWeight: FontWeight.w600,
-                                    color: const Color(0xFF0F4D2E),
-                                    decoration: TextDecoration.underline,
-                                  ),
+                                  style: AppTypography.style(AppTextRole.button, fontSize: 13.5, color: const Color(0xFF0F4D2E), decoration: TextDecoration.underline, letterSpacing: opticalTracking(13.5), height: opticalLeading(13.5, isBody: true)),
                                 ),
                               ),
                             ),
@@ -223,12 +203,7 @@ class IntroScreen extends ConsumerWidget {
             const SizedBox(width: 8),
             Text(
               'Scholaris',
-              style: outfit(
-                fontSize: 21,
-                fontWeight: FontWeight.bold,
-                color: const Color(0xFF0F4D2E),
-                letterSpacing: -0.3,
-              ),
+              style: AppTypography.style(AppTextRole.label, fontSize: 21, color: const Color(0xFF0F4D2E), letterSpacing: -0.3, height: opticalLeading(21, isBody: false)),
             ),
             Container(
               width: 6,

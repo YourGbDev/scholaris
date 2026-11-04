@@ -3,6 +3,7 @@
 // Dual-mode form for creating a new scholarship or editing an existing one.
 // Providers configure criteria, deadlines, quotas, and special eligibility tags.
 
+import 'package:scholaris/shared/theme/app_typography.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -260,11 +261,7 @@ class _ScholarshipFormScreenState extends ConsumerState<ScholarshipFormScreen> {
       appBar: AppBar(
         title: Text(
           titleText,
-          style: poppins(
-            fontSize: 18,
-            fontWeight: FontWeight.w600,
-            color: kPrimary,
-          ),
+          style: AppTypography.style(AppTextRole.screenTitle, fontSize: 18, color: kPrimary, letterSpacing: opticalTracking(18), height: opticalLeading(18, isBody: false)),
         ),
         backgroundColor: kBackground,
         elevation: 0,
@@ -398,11 +395,7 @@ class _ScholarshipFormScreenState extends ConsumerState<ScholarshipFormScreen> {
               const SizedBox(height: 16),
               Text(
                 'Eligible Year Levels',
-                style: poppins(
-                  fontSize: 13,
-                  fontWeight: FontWeight.w600,
-                  color: kPrimary,
-                ),
+                style: AppTypography.style(AppTextRole.label, fontSize: 13, color: kPrimary, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: false)),
               ),
               const SizedBox(height: 6),
               Wrap(
@@ -422,12 +415,7 @@ class _ScholarshipFormScreenState extends ConsumerState<ScholarshipFormScreen> {
                     selected: isSelected,
                     selectedColor: kPrimary.withValues(alpha: 0.15),
                     checkmarkColor: kPrimary,
-                    labelStyle: openSans(
-                      fontSize: 12,
-                      fontWeight:
-                          isSelected ? FontWeight.w600 : FontWeight.w500,
-                      color: isSelected ? kPrimary : Colors.black87,
-                    ),
+                    labelStyle: AppTypography.style(AppTextRole.badge, fontSize: 12, color: isSelected ? kPrimary : Colors.black87, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: true)),
                     onSelected: (selected) {
                       setState(() {
                         if (selected) {
@@ -447,11 +435,7 @@ class _ScholarshipFormScreenState extends ConsumerState<ScholarshipFormScreen> {
               // School / Institution Eligibility Section
               Text(
                 'School / Institution Eligibility',
-                style: poppins(
-                  fontSize: 13,
-                  fontWeight: FontWeight.w600,
-                  color: kPrimary,
-                ),
+                style: AppTypography.style(AppTextRole.label, fontSize: 13, color: kPrimary, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: false)),
               ),
               const SizedBox(height: 6),
               Wrap(
@@ -463,12 +447,7 @@ class _ScholarshipFormScreenState extends ConsumerState<ScholarshipFormScreen> {
                     selected: !_restrictSchools,
                     selectedColor: kPrimary.withValues(alpha: 0.15),
                     checkmarkColor: kPrimary,
-                    labelStyle: openSans(
-                      fontSize: 12,
-                      fontWeight:
-                          !_restrictSchools ? FontWeight.w600 : FontWeight.w500,
-                      color: !_restrictSchools ? kPrimary : Colors.black87,
-                    ),
+                    labelStyle: AppTypography.style(AppTextRole.badge, fontSize: 12, color: !_restrictSchools ? kPrimary : Colors.black87, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: true)),
                     onSelected: (val) {
                       setState(() => _restrictSchools = false);
                     },
@@ -478,12 +457,7 @@ class _ScholarshipFormScreenState extends ConsumerState<ScholarshipFormScreen> {
                     selected: _restrictSchools,
                     selectedColor: kPrimary.withValues(alpha: 0.15),
                     checkmarkColor: kPrimary,
-                    labelStyle: openSans(
-                      fontSize: 12,
-                      fontWeight:
-                          _restrictSchools ? FontWeight.w600 : FontWeight.w500,
-                      color: _restrictSchools ? kPrimary : Colors.black87,
-                    ),
+                    labelStyle: AppTypography.style(AppTextRole.badge, fontSize: 12, color: _restrictSchools ? kPrimary : Colors.black87, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: true)),
                     onSelected: (val) {
                       setState(() => _restrictSchools = true);
                     },
@@ -509,14 +483,11 @@ class _ScholarshipFormScreenState extends ConsumerState<ScholarshipFormScreen> {
                     SwitchListTile(
                       title: Text(
                         'Priority for Indigenous Students',
-                        style: openSans(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w500,
-                        ),
+                        style: AppTypography.style(AppTextRole.label, fontSize: 14, letterSpacing: opticalTracking(14), height: opticalLeading(14, isBody: true)),
                       ),
                       subtitle: Text(
                         'Boosts matching score for indigenous applicants',
-                        style: openSans(fontSize: 12, color: Colors.black54),
+                        style: AppTypography.style(AppTextRole.caption, fontSize: 12, color: Colors.black54, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: true)),
                       ),
                       value: _forIndigenous,
                       activeThumbColor: kPrimary,
@@ -526,14 +497,11 @@ class _ScholarshipFormScreenState extends ConsumerState<ScholarshipFormScreen> {
                     SwitchListTile(
                       title: Text(
                         'Priority for PWD Students',
-                        style: openSans(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w500,
-                        ),
+                        style: AppTypography.style(AppTextRole.label, fontSize: 14, letterSpacing: opticalTracking(14), height: opticalLeading(14, isBody: true)),
                       ),
                       subtitle: Text(
                         'Boosts matching score for students with disabilities',
-                        style: openSans(fontSize: 12, color: Colors.black54),
+                        style: AppTypography.style(AppTextRole.caption, fontSize: 12, color: Colors.black54, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: true)),
                       ),
                       value: _forPwd,
                       activeThumbColor: kPrimary,
@@ -543,16 +511,13 @@ class _ScholarshipFormScreenState extends ConsumerState<ScholarshipFormScreen> {
                     SwitchListTile(
                       title: Text(
                         'Active Listing',
-                        style: openSans(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w600,
-                        ),
+                        style: AppTypography.style(AppTextRole.label, fontSize: 14, letterSpacing: opticalTracking(14), height: opticalLeading(14, isBody: true)),
                       ),
                       subtitle: Text(
                         _isActive
                             ? 'Visible and open to student applications'
                             : 'Closed — hidden from active discovery',
-                        style: openSans(fontSize: 12, color: Colors.black54),
+                        style: AppTypography.style(AppTextRole.caption, fontSize: 12, color: Colors.black54, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: true)),
                       ),
                       value: _isActive,
                       activeThumbColor: kPrimary,
@@ -575,11 +540,7 @@ class _ScholarshipFormScreenState extends ConsumerState<ScholarshipFormScreen> {
                   onPressed: _isSaving ? null : () => Navigator.of(context).pop(),
                   child: Text(
                     'Cancel',
-                    style: openSans(
-                      fontSize: 14,
-                      color: Colors.black54,
-                      fontWeight: FontWeight.w500,
-                    ),
+                    style: AppTypography.style(AppTextRole.button, fontSize: 14, color: Colors.black54, letterSpacing: opticalTracking(14), height: opticalLeading(14, isBody: true)),
                   ),
                 ),
               ),
@@ -599,16 +560,12 @@ class _ScholarshipFormScreenState extends ConsumerState<ScholarshipFormScreen> {
       children: [
         Text(
           title,
-          style: poppins(
-            fontSize: 16,
-            fontWeight: FontWeight.w700,
-            color: kPrimary,
-          ),
+          style: AppTypography.style(AppTextRole.sectionTitle, fontSize: 16, color: kPrimary, letterSpacing: opticalTracking(16), height: opticalLeading(16, isBody: false)),
         ),
         const SizedBox(height: 2),
         Text(
           subtitle,
-          style: openSans(fontSize: 12, color: Colors.black54),
+          style: AppTypography.style(AppTextRole.subtitle, fontSize: 12, color: Colors.black54, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: true)),
         ),
       ],
     );
@@ -631,14 +588,14 @@ class _ScholarshipFormScreenState extends ConsumerState<ScholarshipFormScreen> {
       keyboardType: keyboardType,
       inputFormatters: inputFormatters,
       validator: validator,
-      style: openSans(fontSize: 14, color: Colors.black87),
+      style: AppTypography.style(AppTextRole.input, fontSize: 14, color: Colors.black87, letterSpacing: opticalTracking(14), height: opticalLeading(14, isBody: true)),
       decoration: InputDecoration(
         labelText: required ? '$label *' : label,
-        labelStyle: openSans(fontSize: 13, color: Colors.black54),
+        labelStyle: AppTypography.style(AppTextRole.label, fontSize: 13, color: Colors.black54, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: true)),
         hintText: hint,
-        hintStyle: openSans(fontSize: 13, color: Colors.black38),
+        hintStyle: AppTypography.style(AppTextRole.placeholder, fontSize: 13, color: Colors.black38, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: true)),
         helperText: helperText,
-        helperStyle: openSans(fontSize: 11, color: Colors.black45),
+        helperStyle: AppTypography.style(AppTextRole.caption, fontSize: 11, color: Colors.black45, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: true)),
         filled: true,
         fillColor: Colors.white,
         contentPadding:
@@ -680,18 +637,14 @@ class _ScholarshipFormScreenState extends ConsumerState<ScholarshipFormScreen> {
                 children: [
                   Text(
                     'Application Deadline *',
-                    style: openSans(fontSize: 11, color: Colors.black54),
+                    style: AppTypography.style(AppTextRole.label, fontSize: 11, color: Colors.black54, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: true)),
                   ),
                   const SizedBox(height: 2),
                   Text(
                     _deadline != null
                         ? _formatDate(_deadline!)
                         : 'Select deadline date',
-                    style: openSans(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w600,
-                      color: _deadline != null ? Colors.black87 : Colors.black38,
-                    ),
+                    style: AppTypography.style(AppTextRole.input, fontSize: 14, color: _deadline != null ? Colors.black87 : Colors.black38, letterSpacing: opticalTracking(14), height: opticalLeading(14, isBody: true)),
                   ),
                 ],
               ),
@@ -725,11 +678,7 @@ class _ScholarshipFormScreenState extends ConsumerState<ScholarshipFormScreen> {
               Expanded(
                 child: Text(
                   'Eligible Universities & Colleges',
-                  style: poppins(
-                    fontSize: 13,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.black87,
-                  ),
+                  style: AppTypography.style(AppTextRole.label, fontSize: 13, color: Colors.black87, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: false)),
                 ),
               ),
               TextButton.icon(
@@ -737,7 +686,7 @@ class _ScholarshipFormScreenState extends ConsumerState<ScholarshipFormScreen> {
                 label: const Text('Add Unlisted'),
                 style: TextButton.styleFrom(
                   foregroundColor: kPrimary,
-                  textStyle: openSans(fontSize: 12, fontWeight: FontWeight.w600),
+                  textStyle: AppTypography.style(AppTextRole.button, fontSize: 12, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: true)),
                   visualDensity: VisualDensity.compact,
                 ),
                 onPressed: () => _showAddSchoolDialog(context),
@@ -747,7 +696,7 @@ class _ScholarshipFormScreenState extends ConsumerState<ScholarshipFormScreen> {
           const SizedBox(height: 8),
           Text(
             'Students enrolled in other institutions will be alerted before applying.',
-            style: openSans(fontSize: 12, color: Colors.black54),
+            style: AppTypography.style(AppTextRole.caption, fontSize: 12, color: Colors.black54, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: true)),
           ),
           const SizedBox(height: 12),
 
@@ -765,11 +714,7 @@ class _ScholarshipFormScreenState extends ConsumerState<ScholarshipFormScreen> {
                       avatar: const Icon(Icons.school, size: 14, color: kPrimary),
                       label: Text(
                         name,
-                        style: openSans(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w500,
-                          color: kPrimary,
-                        ),
+                        style: AppTypography.style(AppTextRole.badge, fontSize: 12, color: kPrimary, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: true)),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                       ),
@@ -792,7 +737,7 @@ class _ScholarshipFormScreenState extends ConsumerState<ScholarshipFormScreen> {
                   return Chip(
                     label: Text(
                       'Institution ($id)',
-                      style: openSans(fontSize: 11),
+                      style: AppTypography.style(AppTextRole.badge, fontSize: 11, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: true)),
                     ),
                     onDeleted: () => setState(() => _selectedSchoolIds.remove(id)),
                   );
@@ -806,11 +751,11 @@ class _ScholarshipFormScreenState extends ConsumerState<ScholarshipFormScreen> {
           TextField(
             controller: _schoolFilterController,
             onChanged: (_) => setState(() {}),
-            style: openSans(fontSize: 13),
+            style: AppTypography.style(AppTextRole.input, fontSize: 13, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: true)),
             decoration: InputDecoration(
               isDense: true,
               hintText: 'Search Philippine universities & colleges...',
-              hintStyle: openSans(fontSize: 12, color: Colors.black38),
+              hintStyle: AppTypography.style(AppTextRole.placeholder, fontSize: 12, color: Colors.black38, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: true)),
               prefixIcon: const Icon(Icons.search, size: 18, color: Colors.black45),
               suffixIcon: _schoolFilterController.text.isNotEmpty
                   ? IconButton(
@@ -856,7 +801,7 @@ class _ScholarshipFormScreenState extends ConsumerState<ScholarshipFormScreen> {
               padding: const EdgeInsets.all(8),
               child: Text(
                 'Failed to load school catalog: $err',
-                style: openSans(fontSize: 12, color: Colors.red),
+                style: AppTypography.style(AppTextRole.body, fontSize: 12, color: Colors.red, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: true)),
               ),
             ),
             data: (allSchools) {
@@ -881,7 +826,7 @@ class _ScholarshipFormScreenState extends ConsumerState<ScholarshipFormScreen> {
                             child: Center(
                               child: Text(
                                 'No matching institutions found.',
-                                style: openSans(fontSize: 12, color: Colors.black45),
+                                style: AppTypography.style(AppTextRole.body, fontSize: 12, color: Colors.black45, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: true)),
                               ),
                             ),
                           )
@@ -905,16 +850,12 @@ class _ScholarshipFormScreenState extends ConsumerState<ScholarshipFormScreen> {
                                 ),
                                 title: Text(
                                   school.name,
-                                  style: openSans(
-                                    fontSize: 12,
-                                    fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
-                                    color: isSelected ? kPrimary : Colors.black87,
-                                  ),
+                                  style: AppTypography.style(AppTextRole.label, fontSize: 12, color: isSelected ? kPrimary : Colors.black87, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: true)),
                                 ),
                                 subtitle: !school.isCurated
                                     ? Text(
                                         'Custom institution',
-                                        style: openSans(fontSize: 10, color: Colors.black45),
+                                        style: AppTypography.style(AppTextRole.caption, fontSize: 10, color: Colors.black45, letterSpacing: opticalTracking(10), height: opticalLeading(10, isBody: true)),
                                       )
                                     : null,
                                 onChanged: (val) {
@@ -937,15 +878,11 @@ class _ScholarshipFormScreenState extends ConsumerState<ScholarshipFormScreen> {
                       leading: const Icon(Icons.add_circle_outline, color: kPrimary, size: 20),
                       title: Text(
                         'Add "${_schoolFilterController.text.trim()}"',
-                        style: poppins(
-                          color: kPrimary,
-                          fontWeight: FontWeight.w600,
-                          fontSize: 12,
-                        ),
+                        style: AppTypography.style(AppTextRole.button, color: kPrimary, fontSize: 12, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: false)),
                       ),
                       subtitle: Text(
                         'Register a new higher education institution',
-                        style: openSans(fontSize: 11, color: Colors.black54),
+                        style: AppTypography.style(AppTextRole.caption, fontSize: 11, color: Colors.black54, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: true)),
                       ),
                       onTap: () => _showAddSchoolDialog(
                         context,
@@ -974,7 +911,7 @@ class _ScholarshipFormScreenState extends ConsumerState<ScholarshipFormScreen> {
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
           title: Text(
             'Add Higher Education Institution',
-            style: poppins(fontSize: 16, fontWeight: FontWeight.w700, color: kPrimary),
+            style: AppTypography.style(AppTextRole.cardTitle, fontSize: 16, color: kPrimary, letterSpacing: opticalTracking(16), height: opticalLeading(16, isBody: false)),
           ),
           content: Form(
             key: formKey,
@@ -984,16 +921,16 @@ class _ScholarshipFormScreenState extends ConsumerState<ScholarshipFormScreen> {
               children: [
                 Text(
                   'Enter the official name of the university or college in the Philippines.',
-                  style: openSans(fontSize: 12, color: Colors.black54),
+                  style: AppTypography.style(AppTextRole.body, fontSize: 12, color: Colors.black54, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: true)),
                 ),
                 const SizedBox(height: 16),
                 TextFormField(
                   controller: nameController,
                   autofocus: true,
-                  style: openSans(fontSize: 13),
+                  style: AppTypography.style(AppTextRole.input, fontSize: 13, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: true)),
                   decoration: InputDecoration(
                     labelText: 'Institution Name *',
-                    labelStyle: openSans(fontSize: 12),
+                    labelStyle: AppTypography.style(AppTextRole.label, fontSize: 12, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: true)),
                     hintText: 'e.g. Pamantasan ng Lungsod ng Maynila',
                     border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
                   ),
@@ -1013,7 +950,7 @@ class _ScholarshipFormScreenState extends ConsumerState<ScholarshipFormScreen> {
           actions: [
             TextButton(
               onPressed: isSubmitting ? null : () => Navigator.of(dialogCtx).pop(),
-              child: Text('Cancel', style: openSans(fontSize: 13, color: Colors.black54)),
+              child: Text('Cancel', style: AppTypography.style(AppTextRole.button, fontSize: 13, color: Colors.black54, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: true))),
             ),
             ElevatedButton(
               style: ElevatedButton.styleFrom(
@@ -1065,7 +1002,7 @@ class _ScholarshipFormScreenState extends ConsumerState<ScholarshipFormScreen> {
                       height: 16,
                       child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
                     )
-                  : Text('Add Institution', style: openSans(fontSize: 13, fontWeight: FontWeight.w600)),
+                  : Text('Add Institution', style: AppTypography.style(AppTextRole.button, fontSize: 13, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: true))),
             ),
           ],
         ),

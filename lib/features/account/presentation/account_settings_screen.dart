@@ -14,6 +14,8 @@
 //   4. Support & About — student help desk, live chat, and app build details.
 //   5. Account Actions & Trust Footer — calm logout, deactivation, and security facts.
 
+import 'package:scholaris/shared/theme/app_motion.dart' show opticalTracking, opticalLeading;
+import 'package:scholaris/shared/theme/app_typography.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -261,11 +263,7 @@ class _AccountSettingsScreenState extends ConsumerState<AccountSettingsScreen> {
         leading: const BackButton(color: kTextPrimary),
         title: Text(
           'Account Settings',
-          style: outfit(
-            fontSize: 18,
-            fontWeight: FontWeight.w700,
-            color: kTextPrimary,
-          ),
+          style: AppTypography.style(AppTextRole.screenTitle, fontSize: 18, color: kTextPrimary, letterSpacing: opticalTracking(18), height: opticalLeading(18, isBody: false)),
         ),
         actions: [
           IconButton(
@@ -323,21 +321,11 @@ class _AccountSettingsScreenState extends ConsumerState<AccountSettingsScreen> {
               children: [
                 Text(
                   'Account',
-                  style: outfit(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w700,
-                    letterSpacing: 0.5,
-                    color: kTextSecondary,
-                  ),
+                  style: AppTypography.style(AppTextRole.sectionTitle, fontSize: 12, letterSpacing: 0.5, color: kTextSecondary, height: opticalLeading(12, isBody: false)),
                 ),
                 Text(
                   ' & Security',
-                  style: outfit(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w600,
-                    letterSpacing: 0.5,
-                    color: kTextSecondary,
-                  ),
+                  style: AppTypography.style(AppTextRole.sectionTitle, fontSize: 12, letterSpacing: 0.5, color: kTextSecondary, height: opticalLeading(12, isBody: false)),
                 ),
               ],
             ),
@@ -348,11 +336,7 @@ class _AccountSettingsScreenState extends ConsumerState<AccountSettingsScreen> {
                 const SizedBox(width: 4),
                 Text(
                   'Secured',
-                  style: outfit(
-                    fontSize: 11,
-                    fontWeight: FontWeight.w700,
-                    color: kPrimary,
-                  ),
+                  style: AppTypography.style(AppTextRole.badge, fontSize: 11, color: kPrimary, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: false)),
                 ),
               ],
             ),
@@ -398,7 +382,7 @@ class _AccountSettingsScreenState extends ConsumerState<AccountSettingsScreen> {
               Flexible(
                 child: Text(
                   'Email Address',
-                  style: openSans(fontSize: 12, color: kTextSecondary),
+                  style: AppTypography.style(AppTextRole.label, fontSize: 12, color: kTextSecondary, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: true)),
                   overflow: TextOverflow.ellipsis,
                 ),
               ),
@@ -411,13 +395,7 @@ class _AccountSettingsScreenState extends ConsumerState<AccountSettingsScreen> {
                 ),
                 child: Text(
                   emailConfirmed ? 'Verified' : 'Not verified',
-                  style: outfit(
-                    fontSize: 11,
-                    fontWeight: FontWeight.w700,
-                    color: emailConfirmed
-                        ? kOnPrimaryFixedVariant
-                        : kOnTertiaryFixedVariant,
-                  ),
+                  style: AppTypography.style(AppTextRole.badge, fontSize: 11, color: emailConfirmed ? kOnPrimaryFixedVariant : kOnTertiaryFixedVariant, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: false)),
                 ),
               ),
             ],
@@ -425,11 +403,7 @@ class _AccountSettingsScreenState extends ConsumerState<AccountSettingsScreen> {
           const SizedBox(height: 4),
           Text(
             email ?? 'Unknown',
-            style: outfit(
-              fontSize: 15,
-              fontWeight: FontWeight.w600,
-              color: kTextPrimary,
-            ),
+            style: AppTypography.style(AppTextRole.bodyEmphasis, fontSize: 15, color: kTextPrimary, letterSpacing: opticalTracking(15), height: opticalLeading(15, isBody: false)),
             overflow: TextOverflow.ellipsis,
           ),
           if (email != null && email.isNotEmpty)
@@ -461,11 +435,7 @@ class _AccountSettingsScreenState extends ConsumerState<AccountSettingsScreen> {
                       fit: BoxFit.scaleDown,
                       child: Text(
                         _isResending ? 'Sending…' : 'Resend verification email',
-                        style: outfit(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w600,
-                          color: kPrimary,
-                        ),
+                        style: AppTypography.style(AppTextRole.button, fontSize: 12, color: kPrimary, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: false)),
                       ),
                     ),
                   ),
@@ -476,14 +446,14 @@ class _AccountSettingsScreenState extends ConsumerState<AccountSettingsScreen> {
               const SizedBox(height: 6),
               Text(
                 _resendSuccess!,
-                style: openSans(fontSize: 12, color: kPrimary, fontWeight: FontWeight.w600),
+                style: AppTypography.style(AppTextRole.caption, fontSize: 12, color: kPrimary, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: true)),
               ),
             ],
             if (_resendError != null) ...[
               const SizedBox(height: 6),
               Text(
                 _resendError!,
-                style: openSans(fontSize: 12, color: kError),
+                style: AppTypography.style(AppTextRole.caption, fontSize: 12, color: kError, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: true)),
               ),
             ],
           ],
@@ -504,11 +474,7 @@ class _AccountSettingsScreenState extends ConsumerState<AccountSettingsScreen> {
               Flexible(
                 child: Text(
                   'Change password',
-                  style: outfit(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w700,
-                    color: kTextPrimary,
-                  ),
+                  style: AppTypography.style(AppTextRole.button, fontSize: 14, color: kTextPrimary, letterSpacing: opticalTracking(14), height: opticalLeading(14, isBody: false)),
                   overflow: TextOverflow.ellipsis,
                 ),
               ),
@@ -520,7 +486,7 @@ class _AccountSettingsScreenState extends ConsumerState<AccountSettingsScreen> {
                   const SizedBox(width: 4),
                   Text(
                     'Password protection',
-                    style: outfit(fontSize: 11, fontWeight: FontWeight.w600, color: kPrimary),
+                    style: AppTypography.style(AppTextRole.cardTitle, fontSize: 11, color: kPrimary, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: false)),
                   ),
                 ],
               ),
@@ -529,12 +495,12 @@ class _AccountSettingsScreenState extends ConsumerState<AccountSettingsScreen> {
           const SizedBox(height: 2),
           Text(
             'Confirm your current password to set a new one.',
-            style: openSans(fontSize: 12, color: kTextSecondary),
+            style: AppTypography.style(AppTextRole.subtitle, fontSize: 12, color: kTextSecondary, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: true)),
           ),
           const SizedBox(height: 4),
           Text(
             'Use at least 8 characters, including uppercase, lowercase, a number, and a special character.',
-            style: openSans(fontSize: 12, color: kTextSecondary),
+            style: AppTypography.style(AppTextRole.caption, fontSize: 12, color: kTextSecondary, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: true)),
           ),
           const SizedBox(height: 14),
 
@@ -585,7 +551,7 @@ class _AccountSettingsScreenState extends ConsumerState<AccountSettingsScreen> {
                         Expanded(
                           child: Text(
                             _passwordError!,
-                            style: openSans(fontSize: 12, color: kError),
+                            style: AppTypography.style(AppTextRole.caption, fontSize: 12, color: kError, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: true)),
                           ),
                         ),
                       ],
@@ -608,7 +574,7 @@ class _AccountSettingsScreenState extends ConsumerState<AccountSettingsScreen> {
                         const SizedBox(width: 8),
                         Text(
                           'Password updated successfully.',
-                          style: openSans(fontSize: 12, color: kPrimary, fontWeight: FontWeight.w600),
+                          style: AppTypography.style(AppTextRole.caption, fontSize: 12, color: kPrimary, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: true)),
                         ),
                       ],
                     ),
@@ -637,11 +603,7 @@ class _AccountSettingsScreenState extends ConsumerState<AccountSettingsScreen> {
                         )
                       : Text(
                           'Update Password',
-                          style: outfit(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w600,
-                            color: Colors.white,
-                          ),
+                          style: AppTypography.style(AppTextRole.button, fontSize: 14, color: Colors.white, letterSpacing: opticalTracking(14), height: opticalLeading(14, isBody: false)),
                         ),
                 ),
               ],
@@ -663,10 +625,10 @@ class _AccountSettingsScreenState extends ConsumerState<AccountSettingsScreen> {
       controller: controller,
       obscureText: obscure,
       validator: validator,
-      style: openSans(fontSize: 14, color: kTextPrimary),
+      style: AppTypography.style(AppTextRole.input, fontSize: 14, color: kTextPrimary, letterSpacing: opticalTracking(14), height: opticalLeading(14, isBody: true)),
       decoration: InputDecoration(
         labelText: label,
-        labelStyle: openSans(color: kTextSecondary, fontSize: 13),
+        labelStyle: AppTypography.style(AppTextRole.label, color: kTextSecondary, fontSize: 13, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: true)),
         prefixIcon: const Icon(Icons.lock_outline_rounded, size: 18, color: kTextSecondary),
         suffixIcon: IconButton(
           icon: Icon(
@@ -707,22 +669,22 @@ class _AccountSettingsScreenState extends ConsumerState<AccountSettingsScreen> {
               children: [
                 Text(
                   'Phone Number',
-                  style: openSans(fontSize: 12, color: kTextSecondary),
+                  style: AppTypography.style(AppTextRole.label, fontSize: 12, color: kTextSecondary, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: true)),
                 ),
                 const SizedBox(height: 2),
                 Row(
                   children: [
                     Text(
                       '+63 917 ••• •421',
-                      style: outfit(fontSize: 14, fontWeight: FontWeight.w600, color: kTextPrimary),
+                      style: AppTypography.style(AppTextRole.bodyEmphasis, fontSize: 14, color: kTextPrimary, letterSpacing: opticalTracking(14), height: opticalLeading(14, isBody: false)),
                     ),
                     const SizedBox(width: 6),
-                    Text('•', style: openSans(color: kTextSecondary)),
+                    Text('•', style: AppTypography.style(AppTextRole.caption, color: kTextSecondary)),
                     const SizedBox(width: 6),
                     Flexible(
                       child: Text(
                         'SMS alerts active',
-                        style: openSans(fontSize: 12, color: kTextSecondary),
+                        style: AppTypography.style(AppTextRole.caption, fontSize: 12, color: kTextSecondary, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: true)),
                         overflow: TextOverflow.ellipsis,
                       ),
                     ),
@@ -749,7 +711,7 @@ class _AccountSettingsScreenState extends ConsumerState<AccountSettingsScreen> {
               children: [
                 Text(
                   'Academic Institution SSO',
-                  style: openSans(fontSize: 12, color: kTextSecondary),
+                  style: AppTypography.style(AppTextRole.label, fontSize: 12, color: kTextSecondary, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: true)),
                 ),
                 const SizedBox(height: 2),
                 Row(
@@ -766,7 +728,7 @@ class _AccountSettingsScreenState extends ConsumerState<AccountSettingsScreen> {
                     Flexible(
                       child: Text(
                         'Not connected • Coming soon',
-                        style: outfit(fontSize: 14, fontWeight: FontWeight.w600, color: kTextPrimary),
+                        style: AppTypography.style(AppTextRole.bodyEmphasis, fontSize: 14, color: kTextPrimary, letterSpacing: opticalTracking(14), height: opticalLeading(14, isBody: false)),
                         overflow: TextOverflow.ellipsis,
                       ),
                     ),
@@ -775,7 +737,7 @@ class _AccountSettingsScreenState extends ConsumerState<AccountSettingsScreen> {
                 const SizedBox(height: 2),
                 Text(
                   'University record sync is not available yet.',
-                  style: openSans(fontSize: 11, color: kTextSecondary),
+                  style: AppTypography.style(AppTextRole.caption, fontSize: 11, color: kTextSecondary, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: true)),
                 ),
               ],
             ),
@@ -805,12 +767,7 @@ class _AccountSettingsScreenState extends ConsumerState<AccountSettingsScreen> {
       children: [
         Text(
           'NOTIFICATION PREFERENCES',
-          style: outfit(
-            fontSize: 12,
-            fontWeight: FontWeight.w700,
-            letterSpacing: 0.5,
-            color: kTextSecondary,
-          ),
+          style: AppTypography.style(AppTextRole.sectionTitle, fontSize: 12, letterSpacing: 0.5, color: kTextSecondary, height: opticalLeading(12, isBody: false)),
         ),
         const SizedBox(height: 8),
 
@@ -907,7 +864,7 @@ class _AccountSettingsScreenState extends ConsumerState<AccountSettingsScreen> {
                     Flexible(
                       child: Text(
                         title,
-                        style: outfit(fontSize: 14, fontWeight: FontWeight.w600, color: kTextPrimary),
+                        style: AppTypography.style(AppTextRole.label, fontSize: 14, color: kTextPrimary, letterSpacing: opticalTracking(14), height: opticalLeading(14, isBody: false)),
                         overflow: TextOverflow.ellipsis,
                       ),
                     ),
@@ -921,11 +878,7 @@ class _AccountSettingsScreenState extends ConsumerState<AccountSettingsScreen> {
                         ),
                         child: Text(
                           badge,
-                          style: outfit(
-                            fontSize: 10,
-                            fontWeight: FontWeight.w700,
-                            color: badgeTextColor ?? kPrimary,
-                          ),
+                          style: AppTypography.style(AppTextRole.badge, fontSize: 10, color: badgeTextColor ?? kPrimary, letterSpacing: opticalTracking(10), height: opticalLeading(10, isBody: false)),
                         ),
                       ),
                     ],
@@ -934,7 +887,7 @@ class _AccountSettingsScreenState extends ConsumerState<AccountSettingsScreen> {
                 const SizedBox(height: 2),
                 Text(
                   subtitle,
-                  style: openSans(fontSize: 11, color: kTextSecondary, height: 1.35),
+                  style: AppTypography.style(AppTextRole.subtitle, fontSize: 11, color: kTextSecondary, height: 1.35, letterSpacing: opticalTracking(11)),
                 ),
               ],
             ),
@@ -962,12 +915,7 @@ class _AccountSettingsScreenState extends ConsumerState<AccountSettingsScreen> {
             Flexible(
               child: Text(
                 'PRIVACY & DATA SHIELD',
-                style: outfit(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w700,
-                  letterSpacing: 0.5,
-                  color: kTextSecondary,
-                ),
+                style: AppTypography.style(AppTextRole.sectionTitle, fontSize: 12, letterSpacing: 0.5, color: kTextSecondary, height: opticalLeading(12, isBody: false)),
                 overflow: TextOverflow.ellipsis,
               ),
             ),
@@ -979,7 +927,7 @@ class _AccountSettingsScreenState extends ConsumerState<AccountSettingsScreen> {
                 const SizedBox(width: 4),
                 Text(
                   'RA 10173',
-                  style: outfit(fontSize: 11, fontWeight: FontWeight.w600, color: kSecondary),
+                  style: AppTypography.style(AppTextRole.badge, fontSize: 11, color: kSecondary, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: false)),
                 ),
               ],
             ),
@@ -1017,12 +965,12 @@ class _AccountSettingsScreenState extends ConsumerState<AccountSettingsScreen> {
                         children: [
                           Text(
                             'Data Usage & Income Shielding',
-                            style: outfit(fontSize: 13, fontWeight: FontWeight.w700, color: kTextPrimary),
+                            style: AppTypography.style(AppTextRole.cardTitle, fontSize: 13, color: kTextPrimary, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: false)),
                           ),
                           const SizedBox(height: 2),
                           Text(
                             'Your exact income is never sold or disclosed to third parties. Only verified eligibility tiers are shared with accredited providers under Philippine Data Privacy Act protections.',
-                            style: openSans(fontSize: 11, color: kTextSecondary, height: 1.35),
+                            style: AppTypography.style(AppTextRole.body, fontSize: 11, color: kTextSecondary, height: 1.35, letterSpacing: opticalTracking(11)),
                           ),
                         ],
                       ),
@@ -1106,11 +1054,11 @@ class _AccountSettingsScreenState extends ConsumerState<AccountSettingsScreen> {
                 children: [
                   Text(
                     title,
-                    style: outfit(fontSize: 13, fontWeight: FontWeight.w600, color: kTextPrimary),
+                    style: AppTypography.style(AppTextRole.navigation, fontSize: 13, color: kTextPrimary, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: false)),
                   ),
                   Text(
                     subtitle,
-                    style: openSans(fontSize: 11, color: kTextSecondary),
+                    style: AppTypography.style(AppTextRole.subtitle, fontSize: 11, color: kTextSecondary, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: true)),
                   ),
                 ],
               ),
@@ -1131,12 +1079,7 @@ class _AccountSettingsScreenState extends ConsumerState<AccountSettingsScreen> {
       children: [
         Text(
           'SUPPORT & ABOUT',
-          style: outfit(
-            fontSize: 12,
-            fontWeight: FontWeight.w700,
-            letterSpacing: 0.5,
-            color: kTextSecondary,
-          ),
+          style: AppTypography.style(AppTextRole.sectionTitle, fontSize: 12, letterSpacing: 0.5, color: kTextSecondary, height: opticalLeading(12, isBody: false)),
         ),
         const SizedBox(height: 8),
 
@@ -1183,11 +1126,11 @@ class _AccountSettingsScreenState extends ConsumerState<AccountSettingsScreen> {
                         children: [
                           Text(
                             'Scholaris App Version',
-                            style: outfit(fontSize: 13, fontWeight: FontWeight.w600, color: kTextPrimary),
+                            style: AppTypography.style(AppTextRole.label, fontSize: 13, color: kTextPrimary, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: false)),
                           ),
                           Text(
                             'AY 2024–2025 Edition • Build 489',
-                            style: openSans(fontSize: 11, color: kTextSecondary),
+                            style: AppTypography.style(AppTextRole.caption, fontSize: 11, color: kTextSecondary, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: true)),
                           ),
                         ],
                       ),
@@ -1200,11 +1143,7 @@ class _AccountSettingsScreenState extends ConsumerState<AccountSettingsScreen> {
                       ),
                       child: Text(
                         'v2.4.0',
-                        style: outfit(
-                          fontSize: 11,
-                          fontWeight: FontWeight.w700,
-                          color: kSecondary,
-                        ),
+                        style: AppTypography.style(AppTextRole.badge, fontSize: 11, color: kSecondary, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: false)),
                       ),
                     ),
                   ],
@@ -1237,11 +1176,7 @@ class _AccountSettingsScreenState extends ConsumerState<AccountSettingsScreen> {
           icon: const Icon(Icons.logout_rounded, size: 18, color: kSecondary),
           label: Text(
             'Log Out',
-            style: outfit(
-              fontSize: 14,
-              fontWeight: FontWeight.w600,
-              color: kSecondary,
-            ),
+            style: AppTypography.style(AppTextRole.button, fontSize: 14, color: kSecondary, letterSpacing: opticalTracking(14), height: opticalLeading(14, isBody: false)),
           ),
           style: OutlinedButton.styleFrom(
             side: const BorderSide(color: Color(0xFFDDE2F3), width: 1.5),
@@ -1267,11 +1202,7 @@ class _AccountSettingsScreenState extends ConsumerState<AccountSettingsScreen> {
             },
             child: Text(
               'Delete or Deactivate Account',
-              style: openSans(
-                fontSize: 12,
-                color: const Color(0xFF707971),
-                decoration: TextDecoration.underline,
-              ),
+              style: AppTypography.style(AppTextRole.button, fontSize: 12, color: const Color(0xFF707971), decoration: TextDecoration.underline, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: true)),
             ),
           ),
         ),
@@ -1285,12 +1216,7 @@ class _AccountSettingsScreenState extends ConsumerState<AccountSettingsScreen> {
             const SizedBox(width: 4),
             Text(
               'ENCRYPTED IN TRANSIT (TLS)',
-              style: outfit(
-                fontSize: 10,
-                fontWeight: FontWeight.w700,
-                letterSpacing: 0.5,
-                color: const Color(0xFF707971),
-              ),
+              style: AppTypography.style(AppTextRole.badge, fontSize: 10, letterSpacing: 0.5, color: const Color(0xFF707971), height: opticalLeading(10, isBody: false)),
             ),
           ],
         ),
@@ -1298,10 +1224,7 @@ class _AccountSettingsScreenState extends ConsumerState<AccountSettingsScreen> {
         Center(
           child: Text(
             'Access-Controlled Storage',
-            style: openSans(
-              fontSize: 11,
-              color: const Color(0xFF707971),
-            ),
+            style: AppTypography.style(AppTextRole.badge, fontSize: 11, color: const Color(0xFF707971), letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: true)),
           ),
         ),
       ],

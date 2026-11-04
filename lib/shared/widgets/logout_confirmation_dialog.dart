@@ -3,6 +3,8 @@
 // Shared confirmation dialog guarding sign-out actions across the application
 // (Profile tab, Account settings, Provider console, and Admin portal).
 
+import 'package:scholaris/shared/theme/app_motion.dart' show opticalTracking, opticalLeading;
+import 'package:scholaris/shared/theme/app_typography.dart';
 import 'package:flutter/material.dart';
 import 'package:scholaris/shared/theme/app_theme.dart';
 
@@ -19,19 +21,11 @@ Future<bool> showLogoutConfirmationDialog(
       backgroundColor: Colors.white,
       title: Text(
         'Log out',
-        style: poppins(
-          fontSize: 18,
-          fontWeight: FontWeight.bold,
-          color: kNavyTrust,
-        ),
+        style: AppTypography.style(AppTextRole.sectionTitle, fontSize: 18, color: kNavyTrust, letterSpacing: opticalTracking(18), height: opticalLeading(18, isBody: false)),
       ),
       content: Text(
         message,
-        style: openSans(
-          fontSize: 14,
-          color: const Color(0xFF404944),
-          height: 1.4,
-        ),
+        style: AppTypography.style(AppTextRole.body, fontSize: 14, color: const Color(0xFF404944), height: 1.4, letterSpacing: opticalTracking(14)),
       ),
       actions: [
         TextButton(
@@ -39,11 +33,7 @@ Future<bool> showLogoutConfirmationDialog(
           onPressed: () => Navigator.of(dialogContext).pop(false),
           child: Text(
             'Cancel',
-            style: poppins(
-              fontSize: 14,
-              fontWeight: FontWeight.w600,
-              color: const Color(0xFF707971),
-            ),
+            style: AppTypography.style(AppTextRole.button, fontSize: 14, color: const Color(0xFF707971), letterSpacing: opticalTracking(14), height: opticalLeading(14, isBody: false)),
           ),
         ),
         TextButton(
@@ -51,11 +41,7 @@ Future<bool> showLogoutConfirmationDialog(
           onPressed: () => Navigator.of(dialogContext).pop(true),
           child: Text(
             'Log Out',
-            style: poppins(
-              fontSize: 14,
-              fontWeight: FontWeight.w600,
-              color: kError,
-            ),
+            style: AppTypography.style(AppTextRole.button, fontSize: 14, color: kError, letterSpacing: opticalTracking(14), height: opticalLeading(14, isBody: false)),
           ),
         ),
       ],

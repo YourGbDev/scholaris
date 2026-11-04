@@ -3,6 +3,8 @@
 // "My Scholarships" management tab for the Provider Console.
 // Built to match Stitch design reference: scholaris_provider_dashboard.
 
+import 'package:scholaris/shared/theme/app_motion.dart' show opticalTracking, opticalLeading;
+import 'package:scholaris/shared/theme/app_typography.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -60,7 +62,7 @@ class _ProviderScholarshipsTabState
       builder: (ctx) => AlertDialog(
         title: Text(
           'Delete Scholarship?',
-          style: poppins(fontSize: 18, fontWeight: FontWeight.w600),
+          style: AppTypography.style(AppTextRole.cardTitle, fontSize: 18, letterSpacing: opticalTracking(18), height: opticalLeading(18, isBody: false)),
         ),
         content: Column(
           mainAxisSize: MainAxisSize.min,
@@ -68,7 +70,7 @@ class _ProviderScholarshipsTabState
           children: [
             Text(
               'Are you sure you want to delete "${scholarship.title}"?',
-              style: openSans(fontSize: 14),
+              style: AppTypography.style(AppTextRole.body, fontSize: 14, letterSpacing: opticalTracking(14), height: opticalLeading(14, isBody: true)),
             ),
             if (applicantCount > 0) ...[
               const SizedBox(height: 12),
@@ -87,11 +89,7 @@ class _ProviderScholarshipsTabState
                       child: Text(
                         'This scholarship has $applicantCount student application(s). '
                         'Deactivating instead of deleting is strongly recommended.',
-                        style: openSans(
-                          fontSize: 12,
-                          color: kError,
-                          fontWeight: FontWeight.w500,
-                        ),
+                        style: AppTypography.style(AppTextRole.body, fontSize: 12, color: kError, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: true)),
                       ),
                     ),
                   ],
@@ -103,12 +101,12 @@ class _ProviderScholarshipsTabState
         actions: [
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(false),
-            child: Text('Cancel', style: openSans(color: Colors.black54)),
+            child: Text('Cancel', style: AppTypography.style(AppTextRole.button, color: Colors.black54)),
           ),
           FilledButton(
             style: FilledButton.styleFrom(backgroundColor: kError),
             onPressed: () => Navigator.of(ctx).pop(true),
-            child: Text('Delete', style: openSans(color: Colors.white)),
+            child: Text('Delete', style: AppTypography.style(AppTextRole.button, color: Colors.white)),
           ),
         ],
       ),
@@ -171,11 +169,7 @@ class _ProviderScholarshipsTabState
                               const SizedBox(width: 4),
                               Text(
                                 'Accredited Govt Agency',
-                                style: poppins(
-                                  fontSize: 10,
-                                  fontWeight: FontWeight.w700,
-                                  color: kPrimary,
-                                ),
+                                style: AppTypography.style(AppTextRole.badge, fontSize: 10, color: kPrimary, letterSpacing: opticalTracking(10), height: opticalLeading(10, isBody: false)),
                               ),
                             ],
                           ),
@@ -190,11 +184,7 @@ class _ProviderScholarshipsTabState
                           ),
                           child: Text(
                             'DOST-SEI Portal',
-                            style: openSans(
-                              fontSize: 10,
-                              fontWeight: FontWeight.w600,
-                              color: Colors.black54,
-                            ),
+                            style: AppTypography.style(AppTextRole.badge, fontSize: 10, color: Colors.black54, letterSpacing: opticalTracking(10), height: opticalLeading(10, isBody: true)),
                           ),
                         ),
                       ],
@@ -211,17 +201,13 @@ class _ProviderScholarshipsTabState
                         children: [
                           Text(
                             'My Scholarships',
-                            style: poppins(
-                              fontSize: 22,
-                              fontWeight: FontWeight.w700,
-                              color: kPrimary,
-                            ),
+                            style: AppTypography.style(AppTextRole.screenTitle, fontSize: 22, color: kPrimary, letterSpacing: opticalTracking(22), height: opticalLeading(22, isBody: false)),
                           ),
                           const SizedBox(height: 1),
                           Text(
                             'Scholarship programs',
                             style:
-                                openSans(fontSize: 11, color: Colors.black54),
+                                AppTypography.style(AppTextRole.subtitle, fontSize: 11, color: Colors.black54, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: true)),
                           ),
                         ],
                       ),
@@ -233,7 +219,7 @@ class _ProviderScholarshipsTabState
                       label: Text(
                         'New Program',
                         style:
-                            openSans(fontSize: 13, fontWeight: FontWeight.w600),
+                            AppTypography.style(AppTextRole.button, fontSize: 13, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: true)),
                       ),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: kPrimary,
@@ -305,11 +291,11 @@ class _ProviderScholarshipsTabState
                     height: 38,
                     child: TextField(
                       controller: _searchController,
-                      style: openSans(fontSize: 13),
+                      style: AppTypography.style(AppTextRole.input, fontSize: 13, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: true)),
                       decoration: InputDecoration(
                         hintText: 'Search programs...',
                         hintStyle:
-                            openSans(fontSize: 12, color: Colors.black38),
+                            AppTypography.style(AppTextRole.placeholder, fontSize: 12, color: Colors.black38, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: true)),
                         prefixIcon: const Icon(
                           Icons.search_rounded,
                           size: 18,
@@ -427,18 +413,13 @@ class _ProviderScholarshipsTabState
                           const SizedBox(height: 14),
                           Text(
                             'No scholarship programs yet',
-                            style: poppins(
-                              fontSize: 18,
-                              fontWeight: FontWeight.w600,
-                              color: kPrimary,
-                            ),
+                            style: AppTypography.style(AppTextRole.cardTitle, fontSize: 18, color: kPrimary, letterSpacing: opticalTracking(18), height: opticalLeading(18, isBody: false)),
                           ),
                           const SizedBox(height: 6),
                           Text(
                             'Publish your organization\'s scholarships so eligible Filipino students can discover and apply for them.',
                             textAlign: TextAlign.center,
-                            style: openSans(
-                                fontSize: 13, color: Colors.black54),
+                            style: AppTypography.style(AppTextRole.body, fontSize: 13, color: Colors.black54, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: true)),
                           ),
                           const SizedBox(height: 16),
                           ElevatedButton.icon(
@@ -520,20 +501,12 @@ class _MetricPill extends StatelessWidget {
         children: [
           Text(
             '$count',
-            style: openSans(
-              fontSize: 13,
-              fontWeight: FontWeight.w700,
-              color: color,
-            ),
+            style: AppTypography.style(AppTextRole.metric, fontSize: 13, color: color, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: true)),
           ),
           const SizedBox(width: 4),
           Text(
             label,
-            style: openSans(
-              fontSize: 11,
-              fontWeight: FontWeight.w500,
-              color: color,
-            ),
+            style: AppTypography.style(AppTextRole.label, fontSize: 11, color: color, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: true)),
           ),
         ],
       ),
@@ -568,11 +541,7 @@ class _FilterChip extends StatelessWidget {
         ),
         child: Text(
           label,
-          style: openSans(
-            fontSize: 12,
-            fontWeight: selected ? FontWeight.w600 : FontWeight.w500,
-            color: selected ? Colors.white : Colors.black87,
-          ),
+          style: AppTypography.style(AppTextRole.navigation, fontSize: 12, color: selected ? Colors.white : Colors.black87, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: true)),
         ),
       ),
     );
@@ -631,18 +600,14 @@ class _ScholarshipCard extends StatelessWidget {
                     children: [
                       Text(
                         s.title,
-                        style: poppins(
-                          fontSize: 15,
-                          fontWeight: FontWeight.w600,
-                          color: isActive ? kPrimary : Colors.black54,
-                        ),
+                        style: AppTypography.style(AppTextRole.cardTitle, fontSize: 15, color: isActive ? kPrimary : Colors.black54, letterSpacing: opticalTracking(15), height: opticalLeading(15, isBody: false)),
                       ),
                       if (s.provider != null) ...[
                         const SizedBox(height: 2),
                         Text(
                           s.provider!,
                           style:
-                              openSans(fontSize: 12, color: Colors.black54),
+                              AppTypography.style(AppTextRole.caption, fontSize: 12, color: Colors.black54, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: true)),
                         ),
                       ],
                     ],
@@ -660,13 +625,7 @@ class _ScholarshipCard extends StatelessWidget {
                   ),
                   child: Text(
                     isActive ? 'Active' : 'Closed',
-                    style: openSans(
-                      fontSize: 11,
-                      fontWeight: FontWeight.w600,
-                      color: isActive
-                          ? const Color(0xFF1B7A43)
-                          : Colors.black54,
-                    ),
+                    style: AppTypography.style(AppTextRole.badge, fontSize: 11, color: isActive ? const Color(0xFF1B7A43) : Colors.black54, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: true)),
                   ),
                 ),
               ],
@@ -695,16 +654,11 @@ class _ScholarshipCard extends StatelessWidget {
                             children: [
                               Text(
                                 'Candidates',
-                                style: openSans(
-                                    fontSize: 10, color: Colors.black45),
+                                style: AppTypography.style(AppTextRole.label, fontSize: 10, color: Colors.black45, letterSpacing: opticalTracking(10), height: opticalLeading(10, isBody: true)),
                               ),
                               Text(
                                 '$applicantCount Total',
-                                style: poppins(
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w700,
-                                  color: Colors.black87,
-                                ),
+                                style: AppTypography.style(AppTextRole.metric, fontSize: 12, color: Colors.black87, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: false)),
                                 overflow: TextOverflow.ellipsis,
                               ),
                             ],
@@ -726,16 +680,11 @@ class _ScholarshipCard extends StatelessWidget {
                             children: [
                               Text(
                                 'Deadline',
-                                style: openSans(
-                                    fontSize: 10, color: Colors.black45),
+                                style: AppTypography.style(AppTextRole.label, fontSize: 10, color: Colors.black45, letterSpacing: opticalTracking(10), height: opticalLeading(10, isBody: true)),
                               ),
                               Text(
                                 deadlineStr,
-                                style: poppins(
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w700,
-                                  color: Colors.black87,
-                                ),
+                                style: AppTypography.style(AppTextRole.caption, fontSize: 12, color: Colors.black87, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: false)),
                                 overflow: TextOverflow.ellipsis,
                               ),
                             ],
@@ -789,11 +738,7 @@ class _ScholarshipCard extends StatelessWidget {
                   children: [
                     Text(
                       isActive ? 'Active' : 'Closed',
-                      style: openSans(
-                        fontSize: 11,
-                        color: isActive ? kPrimary : Colors.black45,
-                        fontWeight: FontWeight.w600,
-                      ),
+                      style: AppTypography.style(AppTextRole.badge, fontSize: 11, color: isActive ? kPrimary : Colors.black45, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: true)),
                     ),
                     const SizedBox(width: 4),
                     Switch.adaptive(

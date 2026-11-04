@@ -4,6 +4,7 @@
 // Confidential scholarship-level safety reports independent of applications.
 // Fully compliant with RA 10173 student privacy protections.
 
+import 'package:scholaris/shared/theme/app_typography.dart';
 import 'dart:typed_data';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
@@ -279,9 +280,9 @@ class _StudentSafetyReportDialogState
               'Thank you for reporting this concern regarding "${widget.scholarshipTitle}".',
             ),
             const SizedBox(height: 12),
-            const Text(
+             Text(
               'Your report is kept strictly confidential. Platform administrators will review your concern. Scholarship providers never receive your identity, report text, or notes.',
-              style: TextStyle(color: Color(0xFF555D58), fontSize: 13),
+              style: AppTypography.style(AppTextRole.body, color: Color(0xFF555D58), fontSize: 13),
             ),
           ],
         ),
@@ -306,10 +307,10 @@ class _StudentSafetyReportDialogState
             children: [
               const Icon(Icons.shield_outlined, color: Color(0xFF93000A)),
               const SizedBox(width: 8),
-              const Expanded(
+               Expanded(
                 child: Text(
                   'Report safety or integrity concern',
-                  style: TextStyle(fontSize: 18),
+                  style: AppTypography.style(AppTextRole.sectionTitle, fontSize: 18),
                 ),
               ),
             ],
@@ -319,11 +320,7 @@ class _StudentSafetyReportDialogState
             widget.scholarshipTitle,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
-            style: const TextStyle(
-              fontSize: 13,
-              fontWeight: FontWeight.normal,
-              color: Color(0xFF555D58),
-            ),
+            style: AppTypography.style(AppTextRole.cardTitle, fontSize: 13, color: Color(0xFF555D58)),
           ),
         ],
       ),
@@ -343,26 +340,23 @@ class _StudentSafetyReportDialogState
                     borderRadius: BorderRadius.circular(8),
                     border: Border.all(color: const Color(0xFFBBF7D0)),
                   ),
-                  child: const Row(
+                  child:  Row(
                     children: [
                       Icon(Icons.lock_outline, size: 18, color: Color(0xFF0F4D2E)),
                       SizedBox(width: 8),
                       Expanded(
                         child: Text(
                           'Strictly confidential. Reviewed by platform safety administrators only. Providers cannot view reports.',
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: Color(0xFF0F4D2E),
-                          ),
+                          style: AppTypography.style(AppTextRole.caption, fontSize: 12, color: Color(0xFF0F4D2E)),
                         ),
                       ),
                     ],
                   ),
                 ),
                 const SizedBox(height: 16),
-                const Text(
+                 Text(
                   'Concern category',
-                  style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13),
+                  style: AppTypography.style(AppTextRole.label, fontSize: 13),
                 ),
                 const SizedBox(height: 6),
                 DropdownButtonFormField<String>(
@@ -380,7 +374,7 @@ class _StudentSafetyReportDialogState
                   items: _categories
                       .map((c) => DropdownMenuItem(
                             value: c.key,
-                            child: Text(c.value, style: const TextStyle(fontSize: 14)),
+                            child: Text(c.value, style: AppTypography.style(AppTextRole.input, fontSize: 14)),
                           ))
                       .toList(),
                   onChanged: _submitting || _persistedReportId != null
@@ -390,9 +384,9 @@ class _StudentSafetyReportDialogState
                         },
                 ),
                 const SizedBox(height: 16),
-                const Text(
+                 Text(
                   'How are you connected to this concern?',
-                  style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13),
+                  style: AppTypography.style(AppTextRole.label, fontSize: 13),
                 ),
                 const SizedBox(height: 6),
                 DropdownButtonFormField<String>(
@@ -410,7 +404,7 @@ class _StudentSafetyReportDialogState
                   items: _relationships
                       .map((r) => DropdownMenuItem(
                             value: r.key,
-                            child: Text(r.value, style: const TextStyle(fontSize: 14)),
+                            child: Text(r.value, style: AppTypography.style(AppTextRole.input, fontSize: 14)),
                           ))
                       .toList(),
                   onChanged: _submitting || _persistedReportId != null
@@ -423,9 +417,9 @@ class _StudentSafetyReportDialogState
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    const Text(
+                     Text(
                       'Incident date (optional)',
-                      style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13),
+                      style: AppTypography.style(AppTextRole.label, fontSize: 13),
                     ),
                     TextButton.icon(
                       onPressed: _submitting || _persistedReportId != null
@@ -436,15 +430,15 @@ class _StudentSafetyReportDialogState
                         _incidentDate != null
                             ? _incidentDate!.toIso8601String().substring(0, 10)
                             : 'Select date',
-                        style: const TextStyle(fontSize: 13),
+                        style: AppTypography.style(AppTextRole.input, fontSize: 13),
                       ),
                     ),
                   ],
                 ),
                 const SizedBox(height: 8),
-                const Text(
+                 Text(
                   'Description of concern',
-                  style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13),
+                  style: AppTypography.style(AppTextRole.label, fontSize: 13),
                 ),
                 const SizedBox(height: 6),
                 TextFormField(
@@ -474,21 +468,18 @@ class _StudentSafetyReportDialogState
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    const Text(
+                     Text(
                       'Evidence files (optional, up to 3)',
-                      style: TextStyle(
-                        fontWeight: FontWeight.w600,
-                        fontSize: 13,
-                      ),
+                      style: AppTypography.style(AppTextRole.label, fontSize: 13),
                     ),
                     OutlinedButton.icon(
                       onPressed: _submitting || _attachedFiles.length >= 3
                           ? null
                           : _pickEvidence,
                       icon: const Icon(Icons.attach_file, size: 16),
-                      label: const Text(
+                      label:  Text(
                         'Add file',
-                        style: TextStyle(fontSize: 12),
+                        style: AppTypography.style(AppTextRole.button, fontSize: 12),
                       ),
                     ),
                   ],
@@ -506,7 +497,7 @@ class _StudentSafetyReportDialogState
                               : null,
                           label: Text(
                             _attachedFiles[i].name,
-                            style: const TextStyle(fontSize: 12),
+                            style: AppTypography.style(AppTextRole.caption, fontSize: 12),
                           ),
                           deleteIcon: _attachedIds.contains(_attachedFiles[i].id)
                               ? null
@@ -546,10 +537,7 @@ class _StudentSafetyReportDialogState
                     ),
                     child: Text(
                       _errorMessage!,
-                      style: const TextStyle(
-                        color: Color(0xFF93000A),
-                        fontSize: 13,
-                      ),
+                      style: AppTypography.style(AppTextRole.caption, color: Color(0xFF93000A), fontSize: 13),
                     ),
                   ),
                 ],
@@ -631,12 +619,12 @@ class StudentSafetyReportHistoryDialog extends ConsumerWidget {
           ),
           data: (reports) {
             if (reports.isEmpty) {
-              return const Padding(
+              return  Padding(
                 padding: EdgeInsets.symmetric(vertical: 24),
                 child: Center(
                   child: Text(
                     'You have not submitted any safety reports.',
-                    style: TextStyle(color: Color(0xFF555D58)),
+                    style: AppTypography.style(AppTextRole.body, color: Color(0xFF555D58)),
                   ),
                 ),
               );
@@ -656,10 +644,7 @@ class StudentSafetyReportHistoryDialog extends ConsumerWidget {
                         Expanded(
                           child: Text(
                             r.scholarshipTitle ?? 'Scholarship concern',
-                            style: const TextStyle(
-                              fontWeight: FontWeight.w600,
-                              fontSize: 14,
-                            ),
+                            style: AppTypography.style(AppTextRole.cardTitle, fontSize: 14),
                           ),
                         ),
                         Container(
@@ -677,15 +662,7 @@ class StudentSafetyReportHistoryDialog extends ConsumerWidget {
                           ),
                           child: Text(
                             r.status.replaceAll('_', ' ').toUpperCase(),
-                            style: TextStyle(
-                              fontSize: 11,
-                              fontWeight: FontWeight.w700,
-                              color: r.isResolved
-                                  ? const Color(0xFF2E7D32)
-                                  : r.isDismissed
-                                      ? const Color(0xFF616161)
-                                      : const Color(0xFFE65100),
-                            ),
+                            style: AppTypography.style(AppTextRole.badge, fontSize: 11, color: r.isResolved ? const Color(0xFF2E7D32) : r.isDismissed ? const Color(0xFF616161) : const Color(0xFFE65100)),
                           ),
                         ),
                       ],
@@ -693,17 +670,14 @@ class StudentSafetyReportHistoryDialog extends ConsumerWidget {
                     const SizedBox(height: 4),
                     Text(
                       'Category: ${r.categoryLabel} · ${r.relationshipLabel}',
-                      style: const TextStyle(
-                        fontSize: 12,
-                        color: Color(0xFF555D58),
-                      ),
+                      style: AppTypography.style(AppTextRole.caption, fontSize: 12, color: Color(0xFF555D58)),
                     ),
                     const SizedBox(height: 4),
                     Text(
                       r.description,
                       maxLines: 3,
                       overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(fontSize: 13),
+                      style: AppTypography.style(AppTextRole.body, fontSize: 13),
                     ),
                     if (r.resolutionNote != null &&
                         r.resolutionNote!.isNotEmpty) ...[
@@ -717,10 +691,7 @@ class StudentSafetyReportHistoryDialog extends ConsumerWidget {
                         ),
                         child: Text(
                           'Update from safety team: ${r.resolutionNote}',
-                          style: const TextStyle(
-                            fontSize: 12,
-                            fontStyle: FontStyle.italic,
-                          ),
+                          style: AppTypography.style(AppTextRole.caption, fontSize: 12, fontStyle: FontStyle.italic),
                         ),
                       ),
                     ],

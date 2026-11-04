@@ -4,6 +4,7 @@
 // Derives live notifications from real student applications and profile status,
 // completely eliminating mock/fake notifications while remaining actionable.
 
+import 'package:scholaris/shared/theme/app_typography.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -161,11 +162,7 @@ class StudentNotificationsSheet extends ConsumerWidget {
                     children: [
                       Text(
                         'Notifications',
-                        style: outfit(
-                          fontSize: 18,
-                          fontWeight: FontWeight.w700,
-                          color: const Color(0xFF161C27),
-                        ),
+                        style: AppTypography.style(AppTextRole.sectionTitle, fontSize: 18, color: const Color(0xFF161C27), letterSpacing: opticalTracking(18), height: opticalLeading(18, isBody: false)),
                       ),
                       if (items.isNotEmpty) ...[
                         const SizedBox(width: 8),
@@ -180,11 +177,7 @@ class StudentNotificationsSheet extends ConsumerWidget {
                           ),
                           child: Text(
                             '${items.length} Active',
-                            style: outfit(
-                              fontSize: 11,
-                              fontWeight: FontWeight.w700,
-                              color: kPrimary,
-                            ),
+                            style: AppTypography.style(AppTextRole.badge, fontSize: 11, color: kPrimary, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: false)),
                           ),
                         ),
                       ],
@@ -411,11 +404,7 @@ class StudentNotificationsSheet extends ConsumerWidget {
                         children: [
                           Text(
                               item.title,
-                              style: outfit(
-                                fontSize: 13.5,
-                                fontWeight: FontWeight.w700,
-                                color: const Color(0xFF161C27),
-                              ),
+                              style: AppTypography.style(AppTextRole.cardTitle, fontSize: 13.5, color: const Color(0xFF161C27), letterSpacing: opticalTracking(13.5), height: opticalLeading(13.5, isBody: false)),
                           ),
                           if (item.badgeText != null) ...[
                             Container(
@@ -429,11 +418,7 @@ class StudentNotificationsSheet extends ConsumerWidget {
                               ),
                               child: Text(
                                 item.badgeText!,
-                                style: outfit(
-                                  fontSize: 10,
-                                  fontWeight: FontWeight.w700,
-                                  color: item.iconColor,
-                                ),
+                                style: AppTypography.style(AppTextRole.badge, fontSize: 10, color: item.iconColor, letterSpacing: opticalTracking(10), height: opticalLeading(10, isBody: false)),
                               ),
                             ),
                           ],
@@ -442,11 +427,7 @@ class StudentNotificationsSheet extends ConsumerWidget {
                       const SizedBox(height: 4),
                       Text(
                         item.subtitle,
-                        style: openSans(
-                          fontSize: 12,
-                          color: const Color(0xFF707971),
-                          height: 1.35,
-                        ),
+                        style: AppTypography.style(AppTextRole.subtitle, fontSize: 12, color: const Color(0xFF707971), height: 1.35, letterSpacing: opticalTracking(12)),
                       ),
                     ],
                   ),
@@ -492,21 +473,13 @@ class StudentNotificationsSheet extends ConsumerWidget {
           const SizedBox(height: 16),
           Text(
             "You're All Caught Up",
-            style: outfit(
-              fontSize: 16.5,
-              fontWeight: FontWeight.w700,
-              color: const Color(0xFF161C27),
-            ),
+            style: AppTypography.style(AppTextRole.sectionTitle, fontSize: 16.5, color: const Color(0xFF161C27), letterSpacing: opticalTracking(16.5), height: opticalLeading(16.5, isBody: false)),
           ),
           const SizedBox(height: 6),
           Text(
             "You have no unread alerts. You'll receive real-time notifications here when providers update your applications or request documentation.",
             textAlign: TextAlign.center,
-            style: openSans(
-              fontSize: 12.5,
-              color: const Color(0xFF707971),
-              height: 1.45,
-            ),
+            style: AppTypography.style(AppTextRole.body, fontSize: 12.5, color: const Color(0xFF707971), height: 1.45, letterSpacing: opticalTracking(12.5)),
           ),
           const SizedBox(height: 20),
           PressableScale(
@@ -536,10 +509,7 @@ class StudentNotificationsSheet extends ConsumerWidget {
                 icon: const Icon(Icons.settings_outlined, size: 16),
                 label: Text(
                   'Notification Preferences',
-                  style: outfit(
-                    fontSize: 12.5,
-                    fontWeight: FontWeight.w600,
-                  ),
+                  style: AppTypography.style(AppTextRole.button, fontSize: 12.5, letterSpacing: opticalTracking(12.5), height: opticalLeading(12.5, isBody: false)),
                 ),
               ),
             ),

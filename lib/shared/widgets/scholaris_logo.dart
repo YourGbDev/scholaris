@@ -5,6 +5,8 @@
 // cap icon, paired with the Scholaris wordmark in Poppins Bold.
 // Used consistently across every screen.
 
+import 'package:scholaris/shared/theme/app_motion.dart' show opticalTracking;
+import 'package:scholaris/shared/theme/app_typography.dart';
 import 'package:flutter/material.dart';
 
 import '../theme/app_theme.dart';
@@ -81,12 +83,7 @@ class ScholarisLogo extends StatelessWidget {
               'Scholaris',
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
-              style: poppins(
-                fontSize: effectiveFontSize,
-                fontWeight: FontWeight.bold,
-                color: textColor ?? kPrimary,
-                height: 1.1,
-              ),
+              style: AppTypography.style(AppTextRole.label, fontSize: effectiveFontSize, color: textColor ?? kPrimary, height: 1.1, letterSpacing: opticalTracking(effectiveFontSize)),
             ),
           ),
         ],

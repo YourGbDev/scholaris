@@ -4,10 +4,12 @@
 // Academic Momentum design specifications (`academic_momentum/DESIGN.md`).
 //
 // Typography:
-// - UI headings, labels, body copy, and metrics: bundled Geist Sans
-// - Legacy font helpers delegate to Geist to preserve existing call sites.
+// - Native iOS: SF Pro through Flutter's native system-font proxies.
+// - Android/web/other platforms: bundled Inter; semantics in app_typography.dart.
 
+import 'package:scholaris/shared/theme/app_typography.dart';
 import 'package:flutter/material.dart';
+
 import 'app_motion.dart';
 
 // --- Stitch Color Tokens ----------------------------------------------------
@@ -115,11 +117,7 @@ const Border kCardBorderCrisp = Border.fromBorderSide(kHairlineBorderSide);
 
 /// Shared soft elevation, matching the scholarship program cards.
 const List<BoxShadow> kCardElevationCrisp = [
-  BoxShadow(
-    color: Color(0x050F172A),
-    blurRadius: 16,
-    offset: Offset(0, 4),
-  ),
+  BoxShadow(color: Color(0x050F172A), blurRadius: 16, offset: Offset(0, 4)),
 ];
 
 /// Default for full-size content cards; status borders can override the border.
@@ -138,225 +136,6 @@ const LinearGradient kHeroSurface = LinearGradient(
 
 // --- Typography Helpers -----------------------------------------------------
 
-/// Scholaris UI typography. Bundled locally for consistent offline rendering.
-TextStyle geist({
-  TextStyle? textStyle,
-  Color? color,
-  Color? backgroundColor,
-  double? fontSize,
-  FontWeight? fontWeight,
-  FontStyle? fontStyle,
-  double? letterSpacing,
-  double? wordSpacing,
-  TextBaseline? textBaseline,
-  double? height,
-  Locale? locale,
-  Paint? foreground,
-  Paint? background,
-  List<Shadow>? shadows,
-  List<FontFeature>? fontFeatures,
-  TextDecoration? decoration,
-  Color? decorationColor,
-  TextDecorationStyle? decorationStyle,
-  double? decorationThickness,
-}) => (textStyle ?? const TextStyle()).copyWith(
-  fontFamily: 'Geist',
-  color: color,
-  backgroundColor: backgroundColor,
-  fontSize: fontSize,
-  fontWeight: fontWeight,
-  fontStyle: fontStyle,
-  letterSpacing: letterSpacing,
-  wordSpacing: wordSpacing,
-  textBaseline: textBaseline,
-  height: height,
-  locale: locale,
-  foreground: foreground,
-  background: background,
-  shadows: shadows,
-  fontFeatures: fontFeatures,
-  decoration: decoration,
-  decorationColor: decorationColor,
-  decorationStyle: decorationStyle,
-  decorationThickness: decorationThickness,
-);
-
-
-
-/// Compatibility helper; headlines and labels use Geist Sans.
-/// Defaults to Apple HIG optical tracking and leading if unspecified.
-TextStyle outfit({
-  TextStyle? textStyle,
-  Color? color,
-  Color? backgroundColor,
-  double? fontSize,
-  FontWeight? fontWeight,
-  FontStyle? fontStyle,
-  double? letterSpacing,
-  double? wordSpacing,
-  TextBaseline? textBaseline,
-  double? height,
-  Locale? locale,
-  Paint? foreground,
-  Paint? background,
-  List<Shadow>? shadows,
-  List<FontFeature>? fontFeatures,
-  TextDecoration? decoration,
-  Color? decorationColor,
-  TextDecorationStyle? decorationStyle,
-  double? decorationThickness,
-}) => geist(
-  textStyle: textStyle ?? const TextStyle(fontFamilyFallback: ['Roboto']),
-  color: color,
-  backgroundColor: backgroundColor,
-  fontSize: fontSize,
-  fontWeight: fontWeight,
-  fontStyle: fontStyle,
-  letterSpacing: letterSpacing ?? (fontSize != null ? opticalTracking(fontSize) : null),
-  wordSpacing: wordSpacing,
-  textBaseline: textBaseline,
-  height: height ?? (fontSize != null ? opticalLeading(fontSize, isBody: false) : null),
-  locale: locale,
-  foreground: foreground,
-  background: background,
-  shadows: shadows,
-  fontFeatures: fontFeatures,
-  decoration: decoration,
-  decorationColor: decorationColor,
-  decorationStyle: decorationStyle,
-  decorationThickness: decorationThickness,
-);
-
-/// Compatibility helper; body copy uses Geist Sans.
-/// Defaults to Apple HIG optical tracking and relaxed body leading (1.45–1.50).
-TextStyle openSans({
-  TextStyle? textStyle,
-  Color? color,
-  Color? backgroundColor,
-  double? fontSize,
-  FontWeight? fontWeight,
-  FontStyle? fontStyle,
-  double? letterSpacing,
-  double? wordSpacing,
-  TextBaseline? textBaseline,
-  double? height,
-  Locale? locale,
-  Paint? foreground,
-  Paint? background,
-  List<Shadow>? shadows,
-  List<FontFeature>? fontFeatures,
-  TextDecoration? decoration,
-  Color? decorationColor,
-  TextDecorationStyle? decorationStyle,
-  double? decorationThickness,
-}) => geist(
-  textStyle: textStyle ?? const TextStyle(fontFamilyFallback: ['Roboto']),
-  color: color,
-  backgroundColor: backgroundColor,
-  fontSize: fontSize,
-  fontWeight: fontWeight,
-  fontStyle: fontStyle,
-  letterSpacing: letterSpacing ?? (fontSize != null ? opticalTracking(fontSize) : null),
-  wordSpacing: wordSpacing,
-  textBaseline: textBaseline,
-  height: height ?? (fontSize != null ? opticalLeading(fontSize, isBody: true) : null),
-  locale: locale,
-  foreground: foreground,
-  background: background,
-  shadows: shadows,
-  fontFeatures: fontFeatures,
-  decoration: decoration,
-  decorationColor: decorationColor,
-  decorationStyle: decorationStyle,
-  decorationThickness: decorationThickness,
-);
-
-/// Compatibility helper; wordmarks and headers use Geist Sans.
-TextStyle poppins({
-  TextStyle? textStyle,
-  Color? color,
-  Color? backgroundColor,
-  double? fontSize,
-  FontWeight? fontWeight,
-  FontStyle? fontStyle,
-  double? letterSpacing,
-  double? wordSpacing,
-  TextBaseline? textBaseline,
-  double? height,
-  Locale? locale,
-  Paint? foreground,
-  Paint? background,
-  List<Shadow>? shadows,
-  List<FontFeature>? fontFeatures,
-  TextDecoration? decoration,
-  Color? decorationColor,
-  TextDecorationStyle? decorationStyle,
-  double? decorationThickness,
-}) => geist(
-  textStyle: textStyle ?? const TextStyle(fontFamilyFallback: ['Roboto']),
-  color: color,
-  backgroundColor: backgroundColor,
-  fontSize: fontSize,
-  fontWeight: fontWeight,
-  fontStyle: fontStyle,
-  letterSpacing: letterSpacing ?? (fontSize != null ? opticalTracking(fontSize) : null),
-  wordSpacing: wordSpacing,
-  textBaseline: textBaseline,
-  height: height ?? (fontSize != null ? opticalLeading(fontSize, isBody: false) : null),
-  locale: locale,
-  foreground: foreground,
-  background: background,
-  shadows: shadows,
-  fontFeatures: fontFeatures,
-  decoration: decoration,
-  decorationColor: decorationColor,
-  decorationStyle: decorationStyle,
-  decorationThickness: decorationThickness,
-);
-
-/// Institutional font for Admin & Provider consoles.
-TextStyle inter({
-  TextStyle? textStyle,
-  Color? color,
-  Color? backgroundColor,
-  double? fontSize,
-  FontWeight? fontWeight,
-  FontStyle? fontStyle,
-  double? letterSpacing,
-  double? wordSpacing,
-  TextBaseline? textBaseline,
-  double? height,
-  Locale? locale,
-  Paint? foreground,
-  Paint? background,
-  List<Shadow>? shadows,
-  List<FontFeature>? fontFeatures,
-  TextDecoration? decoration,
-  Color? decorationColor,
-  TextDecorationStyle? decorationStyle,
-  double? decorationThickness,
-}) => geist(
-  textStyle: textStyle ?? const TextStyle(fontFamilyFallback: ['Roboto']),
-  color: color,
-  backgroundColor: backgroundColor,
-  fontSize: fontSize,
-  fontWeight: fontWeight,
-  fontStyle: fontStyle,
-  letterSpacing: letterSpacing ?? (fontSize != null ? opticalTracking(fontSize) : null),
-  wordSpacing: wordSpacing,
-  textBaseline: textBaseline,
-  height: height ?? (fontSize != null ? opticalLeading(fontSize, isBody: (fontSize <= 16)) : null),
-  locale: locale,
-  foreground: foreground,
-  background: background,
-  shadows: shadows,
-  fontFeatures: fontFeatures,
-  decoration: decoration,
-  decorationColor: decorationColor,
-  decorationStyle: decorationStyle,
-  decorationThickness: decorationThickness,
-);
-
 // --- ThemeData --------------------------------------------------------------
 
 ThemeData scholarisTheme() {
@@ -374,30 +153,92 @@ ThemeData scholarisTheme() {
   );
 
   final baseTextTheme = TextTheme(
-    displayLarge: outfit(fontSize: 36, fontWeight: FontWeight.w700),
-    headlineLarge: outfit(fontSize: 28, fontWeight: FontWeight.w700),
-    headlineMedium: outfit(fontSize: 22, fontWeight: FontWeight.w600),
-    headlineSmall: outfit(fontSize: 18, fontWeight: FontWeight.w600),
-    titleMedium: outfit(fontSize: 16, fontWeight: FontWeight.w600),
-    bodyLarge: openSans(fontSize: 16, fontWeight: FontWeight.w400),
-    bodyMedium: openSans(fontSize: 14, fontWeight: FontWeight.w400),
-    bodySmall: openSans(fontSize: 12, fontWeight: FontWeight.w400),
-    labelLarge: outfit(fontSize: 14, fontWeight: FontWeight.w600),
-    labelMedium: outfit(fontSize: 12, fontWeight: FontWeight.w600),
-    labelSmall: outfit(fontSize: 11, fontWeight: FontWeight.w700),
+    displayLarge: AppTypography.style(
+      AppTextRole.display,
+      fontSize: 36,
+      letterSpacing: opticalTracking(36),
+      height: opticalLeading(36, isBody: false),
+    ),
+    headlineLarge: AppTypography.style(
+      AppTextRole.screenTitle,
+      fontSize: 28,
+      letterSpacing: opticalTracking(28),
+      height: opticalLeading(28, isBody: false),
+    ),
+    headlineMedium: AppTypography.style(
+      AppTextRole.sectionTitle,
+      fontSize: 22,
+      letterSpacing: opticalTracking(22),
+      height: opticalLeading(22, isBody: false),
+    ),
+    headlineSmall: AppTypography.style(
+      AppTextRole.sectionTitle,
+      fontSize: 18,
+      letterSpacing: opticalTracking(18),
+      height: opticalLeading(18, isBody: false),
+    ),
+    titleMedium: AppTypography.style(
+      AppTextRole.cardTitle,
+      fontSize: 16,
+      letterSpacing: opticalTracking(16),
+      height: opticalLeading(16, isBody: false),
+    ),
+    bodyLarge: AppTypography.style(
+      AppTextRole.body,
+      fontSize: 16,
+      letterSpacing: opticalTracking(16),
+      height: opticalLeading(16, isBody: true),
+    ),
+    bodyMedium: AppTypography.style(
+      AppTextRole.body,
+      fontSize: 14,
+      letterSpacing: opticalTracking(14),
+      height: opticalLeading(14, isBody: true),
+    ),
+    bodySmall: AppTypography.style(
+      AppTextRole.caption,
+      fontSize: 12,
+      letterSpacing: opticalTracking(12),
+      height: opticalLeading(12, isBody: true),
+    ),
+    labelLarge: AppTypography.style(
+      AppTextRole.label,
+      fontSize: 14,
+      letterSpacing: opticalTracking(14),
+      height: opticalLeading(14, isBody: false),
+    ),
+    labelMedium: AppTypography.style(
+      AppTextRole.label,
+      fontSize: 12,
+      letterSpacing: opticalTracking(12),
+      height: opticalLeading(12, isBody: false),
+    ),
+    labelSmall: AppTypography.style(
+      AppTextRole.label,
+      fontSize: 11,
+      letterSpacing: opticalTracking(11),
+      height: opticalLeading(11, isBody: false),
+    ),
   );
 
-  return ThemeData(
+  final theme = ThemeData(
     useMaterial3: true,
     colorScheme: colorScheme,
     scaffoldBackgroundColor: kBackground,
-    fontFamily: 'Geist',
+    fontFamily: AppTypography.familyFor(14),
+    fontFamilyFallback: AppTypography.fallback,
     textTheme: applyOpticalTypography(baseTextTheme),
     appBarTheme: AppBarTheme(
       backgroundColor: kSurfaceContainerLowest,
       elevation: 0,
       centerTitle: false,
-      titleTextStyle: outfit(fontSize: 18, fontWeight: FontWeight.w700, color: kOnSurface, letterSpacing: -0.2),
+      titleTextStyle: AppTypography.style(
+        AppTextRole.screenTitle,
+        fontSize: 18,
+        color: kOnSurface,
+        letterSpacing: -0.2,
+        height: opticalLeading(18, isBody: false),
+      ),
       iconTheme: const IconThemeData(color: kOnSurface),
     ),
     elevatedButtonTheme: ElevatedButtonThemeData(
@@ -408,7 +249,12 @@ ThemeData scholarisTheme() {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(kRadiusInput),
         ),
-        textStyle: outfit(fontSize: 16, fontWeight: FontWeight.w600),
+        textStyle: AppTypography.style(
+          AppTextRole.button,
+          fontSize: 16,
+          letterSpacing: opticalTracking(16),
+          height: opticalLeading(16, isBody: false),
+        ),
       ),
     ),
     inputDecorationTheme: InputDecorationTheme(
@@ -447,7 +293,13 @@ ThemeData scholarisTheme() {
     ),
     snackBarTheme: SnackBarThemeData(
       backgroundColor: kOnSurface,
-      contentTextStyle: openSans(color: Colors.white, fontSize: 13, letterSpacing: 0.1),
+      contentTextStyle: AppTypography.style(
+        AppTextRole.body,
+        color: Colors.white,
+        fontSize: 13,
+        letterSpacing: 0.1,
+        height: opticalLeading(13, isBody: true),
+      ),
       behavior: SnackBarBehavior.floating,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(kRadiusInput),
@@ -469,6 +321,109 @@ ThemeData scholarisTheme() {
     bottomSheetTheme: const BottomSheetThemeData(
       backgroundColor: kSurfaceContainerLowest,
       surfaceTintColor: Colors.transparent,
+    ),
+  );
+  return applyScholarisTypography(theme);
+}
+
+/// Apply the same hierarchy to production and standalone preview themes.
+/// Component overrides keep their platform defaults for colors and geometry.
+ThemeData applyScholarisTypography(ThemeData theme) {
+  final text = AppTypography.textTheme(theme.textTheme);
+  final action = AppTypography.style(AppTextRole.button, base: text.labelLarge);
+  final navigation = AppTypography.style(
+    AppTextRole.navigation,
+    base: text.labelMedium,
+  );
+  ButtonStyle actions(ButtonStyle? existing) =>
+      (existing ?? const ButtonStyle()).copyWith(
+        textStyle: WidgetStateProperty.resolveWith(
+          (states) => AppTypography.style(
+            AppTextRole.button,
+            base: existing?.textStyle?.resolve(states) ?? action,
+          ),
+        ),
+      );
+  return theme.copyWith(
+    textTheme: text,
+    primaryTextTheme: AppTypography.textTheme(theme.primaryTextTheme),
+    elevatedButtonTheme: ElevatedButtonThemeData(
+      style: actions(theme.elevatedButtonTheme.style),
+    ),
+    textButtonTheme: TextButtonThemeData(
+      style: actions(theme.textButtonTheme.style),
+    ),
+    outlinedButtonTheme: OutlinedButtonThemeData(
+      style: actions(theme.outlinedButtonTheme.style),
+    ),
+    filledButtonTheme: FilledButtonThemeData(
+      style: actions(theme.filledButtonTheme.style),
+    ),
+    inputDecorationTheme: theme.inputDecorationTheme.copyWith(
+      labelStyle: AppTypography.style(AppTextRole.label),
+      floatingLabelStyle: AppTypography.style(AppTextRole.label),
+      hintStyle: AppTypography.style(AppTextRole.placeholder),
+      helperStyle: AppTypography.style(AppTextRole.caption),
+      errorStyle: AppTypography.style(AppTextRole.caption),
+    ),
+    navigationBarTheme: theme.navigationBarTheme.copyWith(
+      labelTextStyle: WidgetStateProperty.resolveWith(
+        (states) => AppTypography.style(
+          AppTextRole.navigation,
+          base:
+              theme.navigationBarTheme.labelTextStyle?.resolve(states) ??
+              navigation.copyWith(
+                color: states.contains(WidgetState.disabled)
+                    ? theme.colorScheme.onSurfaceVariant.withValues(alpha: .38)
+                    : states.contains(WidgetState.selected)
+                    ? theme.colorScheme.onSurface
+                    : theme.colorScheme.onSurfaceVariant,
+              ),
+        ),
+      ),
+    ),
+    navigationRailTheme: theme.navigationRailTheme.copyWith(
+      selectedLabelTextStyle: AppTypography.style(
+        AppTextRole.navigation,
+        base: theme.navigationRailTheme.selectedLabelTextStyle ?? navigation,
+      ),
+      unselectedLabelTextStyle: AppTypography.style(
+        AppTextRole.navigation,
+        base: theme.navigationRailTheme.unselectedLabelTextStyle ?? navigation,
+      ),
+    ),
+    bottomNavigationBarTheme: theme.bottomNavigationBarTheme.copyWith(
+      selectedLabelStyle: AppTypography.style(
+        AppTextRole.navigation,
+        base: theme.bottomNavigationBarTheme.selectedLabelStyle,
+      ),
+      unselectedLabelStyle: AppTypography.style(
+        AppTextRole.navigation,
+        base: theme.bottomNavigationBarTheme.unselectedLabelStyle,
+      ),
+    ),
+    tabBarTheme: theme.tabBarTheme.copyWith(
+      labelStyle: AppTypography.style(
+        AppTextRole.navigation,
+        base: theme.tabBarTheme.labelStyle ?? text.titleSmall,
+      ),
+      unselectedLabelStyle: AppTypography.style(
+        AppTextRole.navigation,
+        base: theme.tabBarTheme.unselectedLabelStyle ?? text.titleSmall,
+      ),
+    ),
+    chipTheme: theme.chipTheme.copyWith(
+      labelStyle: AppTypography.style(AppTextRole.badge, base: text.labelLarge),
+    ),
+    dialogTheme: theme.dialogTheme.copyWith(
+      titleTextStyle: AppTypography.style(
+        AppTextRole.sectionTitle,
+        base: theme.dialogTheme.titleTextStyle ?? text.headlineSmall,
+      ),
+      contentTextStyle: AppTypography.style(
+        AppTextRole.body,
+        base: theme.dialogTheme.contentTextStyle ?? text.bodyMedium,
+      ),
     ),
   );
 }

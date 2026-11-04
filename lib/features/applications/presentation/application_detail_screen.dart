@@ -1,3 +1,4 @@
+import 'package:scholaris/shared/theme/app_typography.dart';
 import 'student_support_concerns.dart';
 import 'student_support_receipts.dart';
 // lib/features/applications/presentation/application_detail_screen.dart
@@ -291,11 +292,7 @@ class _DetailBodyState extends ConsumerState<_DetailBody> {
                                   scholarship.title,
                                   maxLines: 2,
                                   overflow: TextOverflow.ellipsis,
-                                  style: poppins(
-                                    fontSize: 17,
-                                    fontWeight: FontWeight.w700,
-                                    color: kPrimary,
-                                  ),
+                                  style: AppTypography.style(AppTextRole.screenTitle, fontSize: 17, color: kPrimary, letterSpacing: opticalTracking(17), height: opticalLeading(17, isBody: false)),
                                 ),
                                 const SizedBox(height: 3),
                                 Text(
@@ -303,10 +300,7 @@ class _DetailBodyState extends ConsumerState<_DetailBody> {
                                       'Scholarship provider',
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
-                                  style: openSans(
-                                    fontSize: 13,
-                                    color: const Color(0xFF404942),
-                                  ),
+                                  style: AppTypography.style(AppTextRole.subtitle, fontSize: 13, color: const Color(0xFF404942), letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: true)),
                                 ),
                               ],
                             ),
@@ -332,7 +326,7 @@ class _DetailBodyState extends ConsumerState<_DetailBody> {
               decoration: kSoftCardDecoration,
               child: Text(
                 'This scholarship is no longer active.',
-                style: openSans(fontSize: 14, color: const Color(0xFF404942)),
+                style: AppTypography.style(AppTextRole.body, fontSize: 14, color: const Color(0xFF404942), letterSpacing: opticalTracking(14), height: opticalLeading(14, isBody: true)),
               ),
             ),
           ),
@@ -452,16 +446,12 @@ class _StatusSection extends StatelessWidget {
               children: [
                 Text(
                   'Status',
-                  style: openSans(fontSize: 12, color: const Color(0xFF707971)),
+                  style: AppTypography.style(AppTextRole.label, fontSize: 12, color: const Color(0xFF707971), letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: true)),
                 ),
                 const SizedBox(height: 2),
                 Text(
                   ui.label,
-                  style: poppins(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                    color: ui.foreground,
-                  ),
+                  style: AppTypography.style(AppTextRole.badge, fontSize: 16, color: ui.foreground, letterSpacing: opticalTracking(16), height: opticalLeading(16, isBody: false)),
                 ),
               ],
             ),
@@ -517,12 +507,7 @@ class _DecisionLetterCard extends StatelessWidget {
                         awarded
                             ? 'SCHOLARSHIP AWARDED'
                             : 'APPLICATION APPROVED',
-                        style: outfit(
-                          fontSize: 10,
-                          fontWeight: FontWeight.w700,
-                          color: const Color(0xFF0F4D2E),
-                          letterSpacing: 0.5,
-                        ),
+                        style: AppTypography.style(AppTextRole.badge, fontSize: 10, color: const Color(0xFF0F4D2E), letterSpacing: 0.5, height: opticalLeading(10, isBody: false)),
                       ),
                     ),
                     const SizedBox(height: 4),
@@ -532,11 +517,7 @@ class _DecisionLetterCard extends StatelessWidget {
                           : 'Your application is approved',
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
-                      style: outfit(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w700,
-                        color: const Color(0xFF0F4D2E),
-                      ),
+                      style: AppTypography.style(AppTextRole.cardTitle, fontSize: 16, color: const Color(0xFF0F4D2E), letterSpacing: opticalTracking(16), height: opticalLeading(16, isBody: false)),
                     ),
                   ],
                 ),
@@ -546,11 +527,7 @@ class _DecisionLetterCard extends StatelessWidget {
           const SizedBox(height: 12),
           Text(
             'View your saved decision for $scholarshipTitle and contact your provider for the next steps.',
-            style: openSans(
-              fontSize: 13,
-              color: const Color(0xFF404942),
-              height: 1.4,
-            ),
+            style: AppTypography.style(AppTextRole.subtitle, fontSize: 13, color: const Color(0xFF404942), height: 1.4, letterSpacing: opticalTracking(13)),
           ),
           const SizedBox(height: 14),
           SizedBox(
@@ -573,11 +550,7 @@ class _DecisionLetterCard extends StatelessWidget {
                   fit: BoxFit.scaleDown,
                   child: Text(
                     awarded ? 'View Award Certificate' : 'View Approval Letter',
-                    style: outfit(
-                      fontSize: 14,
-                      fontWeight: FontWeight.bold,
-                      letterSpacing: 0.2,
-                    ),
+                    style: AppTypography.style(AppTextRole.button, fontSize: 14, letterSpacing: 0.2, height: opticalLeading(14, isBody: false)),
                   ),
                 ),
               ),
@@ -607,21 +580,13 @@ class _RejectedConsolingBanner extends StatelessWidget {
           Text(
             '"Hindi ito ang katapusan."',
             textAlign: TextAlign.center,
-            style: poppins(
-              fontSize: 19,
-              fontWeight: FontWeight.w700,
-              color: const Color(0xFF161C27),
-            ),
+            style: AppTypography.style(AppTextRole.cardTitle, fontSize: 19, color: const Color(0xFF161C27), letterSpacing: opticalTracking(19), height: opticalLeading(19, isBody: false)),
           ),
           const SizedBox(height: 4),
           Text(
             "This isn't the end of the road.",
             textAlign: TextAlign.center,
-            style: openSans(
-              fontSize: 13.5,
-              fontWeight: FontWeight.w500,
-              color: const Color(0xFF404942),
-            ),
+            style: AppTypography.style(AppTextRole.caption, fontSize: 13.5, color: const Color(0xFF404942), letterSpacing: opticalTracking(13.5), height: opticalLeading(13.5, isBody: true)),
           ),
           const SizedBox(height: 12),
           Container(
@@ -634,11 +599,7 @@ class _RejectedConsolingBanner extends StatelessWidget {
             child: Text(
               '$programName — Not Selected',
               textAlign: TextAlign.center,
-              style: poppins(
-                fontSize: 13,
-                fontWeight: FontWeight.w600,
-                color: const Color(0xFFBA1A1A),
-              ),
+              style: AppTypography.style(AppTextRole.cardTitle, fontSize: 13, color: const Color(0xFFBA1A1A), letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: false)),
             ),
           ),
           if (reason != null && reason!.trim().isNotEmpty) ...[
@@ -646,11 +607,7 @@ class _RejectedConsolingBanner extends StatelessWidget {
             Text(
               reason!.trim(),
               textAlign: TextAlign.center,
-              style: openSans(
-                fontSize: 12.5,
-                color: const Color(0xFF707971),
-                fontStyle: FontStyle.italic,
-              ),
+              style: AppTypography.style(AppTextRole.body, fontSize: 12.5, color: const Color(0xFF707971), fontStyle: FontStyle.italic, letterSpacing: opticalTracking(12.5), height: opticalLeading(12.5, isBody: true)),
             ),
           ],
           const SizedBox(height: 16),
@@ -671,7 +628,7 @@ class _RejectedConsolingBanner extends StatelessWidget {
                 child: Text(
                   'See other scholarships you may qualify for',
                   textAlign: TextAlign.center,
-                  style: outfit(fontSize: 13.5, fontWeight: FontWeight.w600),
+                  style: AppTypography.style(AppTextRole.button, fontSize: 13.5, letterSpacing: opticalTracking(13.5), height: opticalLeading(13.5, isBody: false)),
                 ),
               ),
             ),
@@ -712,11 +669,7 @@ class _FactsCard extends StatelessWidget {
         children: [
           Text(
             'Application details',
-            style: poppins(
-              fontSize: 15,
-              fontWeight: FontWeight.w600,
-              color: const Color(0xFF161C27),
-            ),
+            style: AppTypography.style(AppTextRole.sectionTitle, fontSize: 15, color: const Color(0xFF161C27), letterSpacing: opticalTracking(15), height: opticalLeading(15, isBody: false)),
           ),
           const SizedBox(height: 12),
           for (final fact in facts) ...[
@@ -727,10 +680,7 @@ class _FactsCard extends StatelessWidget {
                 Expanded(
                   child: Text(
                     fact.$2,
-                    style: openSans(
-                      fontSize: 13,
-                      color: const Color(0xFF404942),
-                    ),
+                    style: AppTypography.style(AppTextRole.body, fontSize: 13, color: const Color(0xFF404942), letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: true)),
                   ),
                 ),
               ],
@@ -785,11 +735,7 @@ class _SubmittedDocumentsCard extends ConsumerWidget {
                   'Attached Documents',
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: poppins(
-                    fontSize: 14.5,
-                    fontWeight: FontWeight.w600,
-                    color: const Color(0xFF161C27),
-                  ),
+                  style: AppTypography.style(AppTextRole.sectionTitle, fontSize: 14.5, color: const Color(0xFF161C27), letterSpacing: opticalTracking(14.5), height: opticalLeading(14.5, isBody: false)),
                 ),
               ),
               const SizedBox(width: 8),
@@ -802,7 +748,7 @@ class _SubmittedDocumentsCard extends ConsumerWidget {
                   icon: const Icon(Icons.add_rounded, size: 15),
                   label: Text(
                     'Upload',
-                    style: outfit(fontSize: 12, fontWeight: FontWeight.w600),
+                    style: AppTypography.style(AppTextRole.button, fontSize: 12, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: false)),
                   ),
                   style: TextButton.styleFrom(
                     foregroundColor: kPrimary,
@@ -832,7 +778,7 @@ class _SubmittedDocumentsCard extends ConsumerWidget {
               padding: const EdgeInsets.symmetric(vertical: 4),
               child: Text(
                 'Could not load attached documents.',
-                style: openSans(fontSize: 12.5, color: kError),
+                style: AppTypography.style(AppTextRole.body, fontSize: 12.5, color: kError, letterSpacing: opticalTracking(12.5), height: opticalLeading(12.5, isBody: true)),
               ),
             ),
             data: (docs) {
@@ -841,11 +787,7 @@ class _SubmittedDocumentsCard extends ConsumerWidget {
                   padding: const EdgeInsets.symmetric(vertical: 6),
                   child: Text(
                     'No documents uploaded yet. Tap "Upload" to attach transcripts or certificates.',
-                    style: openSans(
-                      fontSize: 12.5,
-                      color: const Color(0xFF707971),
-                      fontStyle: FontStyle.italic,
-                    ),
+                    style: AppTypography.style(AppTextRole.body, fontSize: 12.5, color: const Color(0xFF707971), fontStyle: FontStyle.italic, letterSpacing: opticalTracking(12.5), height: opticalLeading(12.5, isBody: true)),
                   ),
                 );
               }
@@ -876,21 +818,14 @@ class _SubmittedDocumentsCard extends ConsumerWidget {
                               children: [
                                 Text(
                                   docs[i].humanType,
-                                  style: poppins(
-                                    fontSize: 13,
-                                    fontWeight: FontWeight.w600,
-                                    color: const Color(0xFF161C27),
-                                  ),
+                                  style: AppTypography.style(AppTextRole.label, fontSize: 13, color: const Color(0xFF161C27), letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: false)),
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
                                 ),
                                 const SizedBox(height: 2),
                                 Text(
                                   '${docs[i].fileName}${docs[i].formattedSize.isNotEmpty ? ' • ${docs[i].formattedSize}' : ''}',
-                                  style: openSans(
-                                    fontSize: 11.5,
-                                    color: const Color(0xFF707971),
-                                  ),
+                                  style: AppTypography.style(AppTextRole.caption, fontSize: 11.5, color: const Color(0xFF707971), letterSpacing: opticalTracking(11.5), height: opticalLeading(11.5, isBody: true)),
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
                                 ),
@@ -938,16 +873,12 @@ class _NotesCard extends StatelessWidget {
         children: [
           Text(
             'Notes',
-            style: poppins(
-              fontSize: 15,
-              fontWeight: FontWeight.w600,
-              color: const Color(0xFF161C27),
-            ),
+            style: AppTypography.style(AppTextRole.sectionTitle, fontSize: 15, color: const Color(0xFF161C27), letterSpacing: opticalTracking(15), height: opticalLeading(15, isBody: false)),
           ),
           const SizedBox(height: 3),
           Text(
             'Notes shared with authorized organization reviewers.',
-            style: openSans(fontSize: 12, color: const Color(0xFF707971)),
+            style: AppTypography.style(AppTextRole.caption, fontSize: 12, color: const Color(0xFF707971), letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: true)),
           ),
           const SizedBox(height: 12),
           TextField(
@@ -956,13 +887,10 @@ class _NotesCard extends StatelessWidget {
             minLines: 3,
             maxLines: 6,
             textInputAction: TextInputAction.newline,
-            style: openSans(fontSize: 13.5, color: const Color(0xFF161C27)),
+            style: AppTypography.style(AppTextRole.input, fontSize: 13.5, color: const Color(0xFF161C27), letterSpacing: opticalTracking(13.5), height: opticalLeading(13.5, isBody: true)),
             decoration: InputDecoration(
               hintText: 'Add notes about this application…',
-              hintStyle: openSans(
-                fontSize: 13.5,
-                color: const Color(0xFF707971),
-              ),
+              hintStyle: AppTypography.style(AppTextRole.placeholder, fontSize: 13.5, color: const Color(0xFF707971), letterSpacing: opticalTracking(13.5), height: opticalLeading(13.5, isBody: true)),
               filled: true,
               fillColor: const Color(0xFFF1F3FF),
               contentPadding: const EdgeInsets.all(12),
@@ -1013,17 +941,13 @@ class _WithdrawCard extends StatelessWidget {
         children: [
           Text(
             'Withdraw application',
-            style: poppins(
-              fontSize: 15,
-              fontWeight: FontWeight.w600,
-              color: kError,
-            ),
+            style: AppTypography.style(AppTextRole.button, fontSize: 15, color: kError, letterSpacing: opticalTracking(15), height: opticalLeading(15, isBody: false)),
           ),
           const SizedBox(height: 4),
           Text(
             'If you no longer want to pursue this scholarship, you can '
             'withdraw. It will stay in your history as Withdrawn.',
-            style: openSans(fontSize: 13, color: const Color(0xFF404942)),
+            style: AppTypography.style(AppTextRole.body, fontSize: 13, color: const Color(0xFF404942), letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: true)),
           ),
           const SizedBox(height: 12),
           SizedBox(
@@ -1089,7 +1013,7 @@ class _TerminalNote extends StatelessWidget {
           Expanded(
             child: Text(
               message,
-              style: openSans(fontSize: 13, color: kPrimary),
+              style: AppTypography.style(AppTextRole.body, fontSize: 13, color: kPrimary, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: true)),
             ),
           ),
         ],
@@ -1121,22 +1045,14 @@ class _ContinueApplicationCard extends StatelessWidget {
               const SizedBox(width: 8),
               Text(
                 'Draft In Progress',
-                style: outfit(
-                  fontSize: 15,
-                  fontWeight: FontWeight.w700,
-                  color: kOnSurface,
-                ),
+                style: AppTypography.style(AppTextRole.cardTitle, fontSize: 15, color: kOnSurface, letterSpacing: opticalTracking(15), height: opticalLeading(15, isBody: false)),
               ),
             ],
           ),
           const SizedBox(height: 6),
           Text(
             'This application has not been submitted yet. Complete and submit your application packet before the deadline.',
-            style: openSans(
-              fontSize: 13,
-              color: const Color(0xFF404942),
-              height: 1.35,
-            ),
+            style: AppTypography.style(AppTextRole.caption, fontSize: 13, color: const Color(0xFF404942), height: 1.35, letterSpacing: opticalTracking(13)),
           ),
           const SizedBox(height: 12),
           SizedBox(
@@ -1156,7 +1072,7 @@ class _ContinueApplicationCard extends StatelessWidget {
                 icon: const Icon(Icons.arrow_forward_rounded, size: 18),
                 label: Text(
                   'Continue Application',
-                  style: poppins(fontSize: 14, fontWeight: FontWeight.w600),
+                  style: AppTypography.style(AppTextRole.button, fontSize: 14, letterSpacing: opticalTracking(14), height: opticalLeading(14, isBody: false)),
                 ),
               ),
             ),

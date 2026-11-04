@@ -1,3 +1,4 @@
+import 'package:scholaris/shared/theme/app_typography.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -146,7 +147,7 @@ class AdminReviewPriorities extends ConsumerWidget {
       children: [
         Text(
           'Needs your attention',
-          style: adminHeaderStyle(fontSize: 20, fontWeight: FontWeight.w700),
+          style: AppTypography.style(AppTextRole.sectionTitle, fontSize: 20, color: kAdminNavyTrust),
         ),
         const SizedBox(height: 8),
         const Text(
@@ -252,12 +253,7 @@ class AdminReviewPriorities extends ConsumerWidget {
                     Flexible(
                       child: Text(
                         badgeLabel,
-                        style: TextStyle(
-                          fontSize: 11,
-                          fontWeight: FontWeight.w700,
-                          letterSpacing: 0.5,
-                          color: badgeFg,
-                        ),
+                        style: AppTypography.style(AppTextRole.badge, fontSize: 11, letterSpacing: 0.5, color: badgeFg),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                       ),
@@ -274,11 +270,7 @@ class AdminReviewPriorities extends ConsumerWidget {
                   ),
                   child: Text(
                     '$badgeCount',
-                    style: const TextStyle(
-                      fontSize: 11,
-                      fontWeight: FontWeight.w700,
-                      color: Colors.white,
-                    ),
+                    style: AppTypography.style(AppTextRole.badge, fontSize: 11, color: Colors.white),
                   ),
                 ),
             ],
@@ -286,12 +278,12 @@ class AdminReviewPriorities extends ConsumerWidget {
           const SizedBox(height: 12),
           Text(
             title,
-            style: adminHeaderStyle(fontSize: 17, fontWeight: FontWeight.w700),
+            style: AppTypography.style(AppTextRole.cardTitle, fontSize: 17, color: kAdminNavyTrust),
           ),
           const SizedBox(height: 6),
           Text(
             detail,
-            style: adminLabelStyle(fontSize: 13, color: kAdminTextSecondary),
+            style: AppTypography.style(AppTextRole.subtitle, fontSize: 13, color: kAdminTextSecondary),
           ),
           const SizedBox(height: 14),
           PressableScale(
@@ -312,7 +304,7 @@ class AdminReviewPriorities extends ConsumerWidget {
                     icon: const Icon(Icons.refresh_rounded, size: 16),
                     label: Text(
                       action,
-                      style: const TextStyle(fontWeight: FontWeight.w600),
+                      style: AppTypography.style(AppTextRole.button),
                     ),
                   )
                 : FilledButton.icon(
@@ -335,7 +327,7 @@ class AdminReviewPriorities extends ConsumerWidget {
                     ),
                     label: Text(
                       action,
-                      style: const TextStyle(fontWeight: FontWeight.w600),
+                      style: AppTypography.style(AppTextRole.button),
                     ),
                   ),
           ),

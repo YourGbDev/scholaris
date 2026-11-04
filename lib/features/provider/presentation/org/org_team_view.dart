@@ -4,6 +4,7 @@
 // Displays active staff roster (Org Admins, Evaluators, Finance Officers)
 // and reviewer scholarship assignments.
 
+import 'package:scholaris/shared/theme/app_typography.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -52,7 +53,7 @@ class _OrgTeamViewState extends ConsumerState<OrgTeamView> {
           ),
           title: Text(
             'Select Grant Program for ${reviewer.fullName}',
-            style: orgHeadline(fontSize: 16, fontWeight: FontWeight.w700),
+            style: AppTypography.style(AppTextRole.cardTitle, fontSize: 16, color: kOrgTextPrimary, letterSpacing: opticalTracking(16), height: opticalLeading(16, isBody: false)),
           ),
           content: SizedBox(
             width: 400,
@@ -71,14 +72,11 @@ class _OrgTeamViewState extends ConsumerState<OrgTeamView> {
                   ),
                   title: Text(
                     s.title,
-                    style: orgHeadline(
-                      fontSize: 13,
-                      fontWeight: FontWeight.w600,
-                    ),
+                    style: AppTypography.style(AppTextRole.cardTitle, fontSize: 13, color: kOrgTextPrimary, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: false)),
                   ),
                   subtitle: Text(
                     '₱${s.awardAmount} / yr',
-                    style: orgBody(fontSize: 11.5, color: kOrgTextSecondary),
+                    style: AppTypography.style(AppTextRole.subtitle, fontSize: 11.5, color: kOrgTextSecondary, letterSpacing: opticalTracking(11.5), height: ((11.5) <= 16 ? 1.45 : opticalLeading(11.5, isBody: true))),
                   ),
                   trailing: const Icon(
                     Icons.arrow_forward_ios_rounded,
@@ -156,19 +154,12 @@ class _OrgTeamViewState extends ConsumerState<OrgTeamView> {
                         const SizedBox(height: 10),
                         Text(
                           'Could not load team roster',
-                          style: orgHeadline(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w600,
-                            color: kOrgTextPrimary,
-                          ),
+                          style: AppTypography.style(AppTextRole.cardTitle, fontSize: 14, color: kOrgTextPrimary, letterSpacing: opticalTracking(14), height: opticalLeading(14, isBody: false)),
                         ),
                         const SizedBox(height: 4),
                         Text(
                           'Check your connection and try again.',
-                          style: orgBody(
-                            fontSize: 12,
-                            color: kOrgTextSecondary,
-                          ),
+                          style: AppTypography.style(AppTextRole.body, fontSize: 12, color: kOrgTextSecondary, letterSpacing: opticalTracking(12), height: ((12) <= 16 ? 1.45 : opticalLeading(12, isBody: true))),
                           textAlign: TextAlign.center,
                         ),
                         TextButton(
@@ -257,12 +248,7 @@ class _OrgTeamViewState extends ConsumerState<OrgTeamView> {
           children: [
             Text(
               'ORGANIZATION ROSTER & ASSIGNMENTS'.toUpperCase(),
-              style: orgLabel(
-                fontSize: 11,
-                fontWeight: FontWeight.w600,
-                color: kOrgPrimary,
-                letterSpacing: 0.6,
-              ),
+              style: AppTypography.style(AppTextRole.label, fontSize: 11, color: kOrgPrimary, letterSpacing: 0.6, height: opticalLeading(11, isBody: false)),
             ),
             Container(
               width: 6,
@@ -274,27 +260,19 @@ class _OrgTeamViewState extends ConsumerState<OrgTeamView> {
             ),
             Text(
               'ACTIVE TEAM',
-              style: orgLabel(
-                fontSize: 10,
-                fontWeight: FontWeight.w700,
-                color: kOrgPrimary,
-              ),
+              style: AppTypography.style(AppTextRole.badge, fontSize: 10, color: kOrgPrimary, letterSpacing: opticalTracking(10), height: opticalLeading(10, isBody: false)),
             ),
           ],
         ),
         const SizedBox(height: 6),
         Text(
           'Team & Reviewers',
-          style: orgHeadline(
-            fontSize: isDesktop ? 32 : 26,
-            fontWeight: FontWeight.w700,
-            color: kOrgTextPrimary,
-          ),
+          style: AppTypography.style(AppTextRole.screenTitle, fontSize: isDesktop ? 32 : 26, color: kOrgTextPrimary, letterSpacing: opticalTracking(isDesktop ? 32 : 26), height: opticalLeading(isDesktop ? 32 : 26, isBody: false)),
         ),
         const SizedBox(height: 4),
         Text(
           'Manage your team and scholarship review assignments.',
-          style: orgBody(fontSize: 13, color: kOrgTextSecondary),
+          style: AppTypography.style(AppTextRole.subtitle, fontSize: 13, color: kOrgTextSecondary, letterSpacing: opticalTracking(13), height: ((13) <= 16 ? 1.45 : opticalLeading(13, isBody: true))),
         ),
       ],
     );
@@ -404,11 +382,7 @@ class _OrgTeamViewState extends ConsumerState<OrgTeamView> {
               Expanded(
                 child: Text(
                   title,
-                  style: orgLabel(
-                    fontSize: 10.5,
-                    fontWeight: FontWeight.w600,
-                    color: kOrgTextSecondary,
-                  ),
+                  style: AppTypography.style(AppTextRole.cardTitle, fontSize: 10.5, color: kOrgTextSecondary, letterSpacing: opticalTracking(10.5), height: opticalLeading(10.5, isBody: false)),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -421,16 +395,12 @@ class _OrgTeamViewState extends ConsumerState<OrgTeamView> {
           OrgMetricCount(
             motionId: 'team.$title',
             targetValue: int.parse(value),
-            style: orgHeadline(
-              fontSize: 22,
-              fontWeight: FontWeight.w700,
-              color: kOrgTextPrimary,
-            ),
+            style: AppTypography.style(AppTextRole.metric, fontSize: 22, color: kOrgTextPrimary, letterSpacing: opticalTracking(22), height: opticalLeading(22, isBody: false)),
           ),
           const SizedBox(height: 2),
           Text(
             subtitle,
-            style: orgBody(fontSize: 11, color: kOrgTextSecondary),
+            style: AppTypography.style(AppTextRole.subtitle, fontSize: 11, color: kOrgTextSecondary, letterSpacing: opticalTracking(11), height: ((11) <= 16 ? 1.45 : opticalLeading(11, isBody: true))),
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
           ),
@@ -472,10 +442,10 @@ class _OrgTeamViewState extends ConsumerState<OrgTeamView> {
             ),
             child: TextField(
               onChanged: (val) => setState(() => _searchQuery = val),
-              style: orgBody(fontSize: 13, color: kOrgTextPrimary),
+              style: AppTypography.style(AppTextRole.input, fontSize: 13, color: kOrgTextPrimary, letterSpacing: opticalTracking(13), height: ((13) <= 16 ? 1.45 : opticalLeading(13, isBody: true))),
               decoration: InputDecoration(
                 hintText: 'Search staff by name or role...',
-                hintStyle: orgBody(fontSize: 12.5, color: kOrgTextSecondary),
+                hintStyle: AppTypography.style(AppTextRole.placeholder, fontSize: 12.5, color: kOrgTextSecondary, letterSpacing: opticalTracking(12.5), height: ((12.5) <= 16 ? 1.45 : opticalLeading(12.5, isBody: true))),
                 prefixIcon: const Icon(
                   Icons.search_rounded,
                   size: 18,
@@ -501,13 +471,7 @@ class _OrgTeamViewState extends ConsumerState<OrgTeamView> {
                   child: ChoiceChip(
                     label: Text(
                       opt.label,
-                      style: orgLabel(
-                        fontSize: 11.5,
-                        fontWeight: isSelected
-                            ? FontWeight.w600
-                            : FontWeight.w500,
-                        color: isSelected ? Colors.white : kOrgTextPrimary,
-                      ),
+                      style: AppTypography.style(AppTextRole.badge, fontSize: 11.5, color: isSelected ? Colors.white : kOrgTextPrimary, letterSpacing: opticalTracking(11.5), height: opticalLeading(11.5, isBody: false)),
                     ),
                     selected: isSelected,
                     selectedColor: kOrgPrimary,
@@ -552,16 +516,12 @@ class _OrgTeamViewState extends ConsumerState<OrgTeamView> {
             const SizedBox(height: 12),
             Text(
               'No Members Found',
-              style: orgHeadline(
-                fontSize: 15,
-                fontWeight: FontWeight.w600,
-                color: kOrgTextPrimary,
-              ),
+              style: AppTypography.style(AppTextRole.cardTitle, fontSize: 15, color: kOrgTextPrimary, letterSpacing: opticalTracking(15), height: opticalLeading(15, isBody: false)),
             ),
             const SizedBox(height: 4),
             Text(
               'No team members match the search query or selected role filter.',
-              style: orgBody(fontSize: 12, color: kOrgTextSecondary),
+              style: AppTypography.style(AppTextRole.body, fontSize: 12, color: kOrgTextSecondary, letterSpacing: opticalTracking(12), height: ((12) <= 16 ? 1.45 : opticalLeading(12, isBody: true))),
               textAlign: TextAlign.center,
             ),
           ],
@@ -615,11 +575,7 @@ class _OrgTeamViewState extends ConsumerState<OrgTeamView> {
                   icon: const Icon(Icons.assignment_ind_rounded, size: 15),
                   label: Text(
                     'Assign Grants',
-                    style: orgLabel(
-                      fontSize: 11.5,
-                      fontWeight: FontWeight.w600,
-                      color: kOrgPrimary,
-                    ),
+                    style: AppTypography.style(AppTextRole.button, fontSize: 11.5, color: kOrgPrimary, letterSpacing: opticalTracking(11.5), height: opticalLeading(11.5, isBody: false)),
                   ),
                   style: OutlinedButton.styleFrom(
                     foregroundColor: kOrgPrimary,
@@ -651,11 +607,7 @@ class _OrgTeamViewState extends ConsumerState<OrgTeamView> {
                     member.fullName.isNotEmpty
                         ? member.fullName[0].toUpperCase()
                         : 'M',
-                    style: orgLabel(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w700,
-                      color: Colors.white,
-                    ),
+                    style: AppTypography.style(AppTextRole.label, fontSize: 14, color: Colors.white, letterSpacing: opticalTracking(14), height: opticalLeading(14, isBody: false)),
                   ),
                 ),
                 const SizedBox(width: 14),
@@ -670,11 +622,7 @@ class _OrgTeamViewState extends ConsumerState<OrgTeamView> {
                         children: [
                           Text(
                             member.fullName,
-                            style: orgHeadline(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w700,
-                              color: kOrgTextPrimary,
-                            ),
+                            style: AppTypography.style(AppTextRole.cardTitle, fontSize: 14, color: kOrgTextPrimary, letterSpacing: opticalTracking(14), height: opticalLeading(14, isBody: false)),
                           ),
                           Container(
                             padding: const EdgeInsets.symmetric(
@@ -687,11 +635,7 @@ class _OrgTeamViewState extends ConsumerState<OrgTeamView> {
                             ),
                             child: Text(
                               member.roleDisplay.toUpperCase(),
-                              style: orgLabel(
-                                fontSize: 9.5,
-                                fontWeight: FontWeight.w700,
-                                color: roleBadgeText,
-                              ),
+                              style: AppTypography.style(AppTextRole.badge, fontSize: 9.5, color: roleBadgeText, letterSpacing: opticalTracking(9.5), height: opticalLeading(9.5, isBody: false)),
                             ),
                           ),
                           Container(
@@ -707,13 +651,7 @@ class _OrgTeamViewState extends ConsumerState<OrgTeamView> {
                             ),
                             child: Text(
                               member.active ? 'ACTIVE' : 'INACTIVE',
-                              style: orgLabel(
-                                fontSize: 9,
-                                fontWeight: FontWeight.w700,
-                                color: member.active
-                                    ? const Color(0xFF0F4D2E)
-                                    : kOrgError,
-                              ),
+                              style: AppTypography.style(AppTextRole.badge, fontSize: 9, color: member.active ? const Color(0xFF0F4D2E) : kOrgError, letterSpacing: opticalTracking(9), height: opticalLeading(9, isBody: false)),
                             ),
                           ),
                         ],
@@ -723,7 +661,7 @@ class _OrgTeamViewState extends ConsumerState<OrgTeamView> {
                         member.isReviewer
                             ? '${member.assignedScholarshipCount} scholarship grant${member.assignedScholarshipCount == 1 ? "" : "s"} assigned for review'
                             : 'Organization Member • User ID: #${member.userId.substring(0, member.userId.length > 8 ? 8 : member.userId.length)}',
-                        style: orgBody(fontSize: 12, color: kOrgTextSecondary),
+                        style: AppTypography.style(AppTextRole.caption, fontSize: 12, color: kOrgTextSecondary, letterSpacing: opticalTracking(12), height: ((12) <= 16 ? 1.45 : opticalLeading(12, isBody: true))),
                       ),
                       if (assignButton != null && !isDesktop) ...[
                         const SizedBox(height: 8),

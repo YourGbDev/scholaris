@@ -1,0 +1,73 @@
+{
+  "phase": "after",
+  "manifest": [
+    {
+      "filename": "web-home-390.png",
+      "url": "http://127.0.0.1:5074/?width=390&height=844&scale=1&motion=off",
+      "width": 390,
+      "height": 844,
+      "scale": 1
+    },
+    {
+      "filename": "web-discover-390.png",
+      "url": "http://127.0.0.1:5074/?tab=1&width=390&height=844&scale=1&motion=off",
+      "width": 390,
+      "height": 844,
+      "scale": 1
+    },
+    {
+      "filename": "web-tracker-390.png",
+      "url": "http://127.0.0.1:5074/?tab=2&width=390&height=844&scale=1&motion=off",
+      "width": 390,
+      "height": 844,
+      "scale": 1
+    },
+    {
+      "filename": "web-profile-390.png",
+      "url": "http://127.0.0.1:5074/?tab=3&width=390&height=844&scale=1&motion=off",
+      "width": 390,
+      "height": 844,
+      "scale": 1
+    },
+    {
+      "filename": "web-detail-390.png",
+      "url": "http://127.0.0.1:5074/?width=390&height=844&scale=1&motion=off#/scholarship/sch-dost",
+      "width": 390,
+      "height": 844,
+      "scale": 1
+    },
+    {
+      "filename": "web-home-narrow-320.png",
+      "url": "http://127.0.0.1:5074/?width=320&height=844&scale=1&motion=off",
+      "width": 320,
+      "height": 844,
+      "scale": 1
+    },
+    {
+      "filename": "web-home-large-text-320.png",
+      "url": "http://127.0.0.1:5074/?width=320&height=844&scale=2&motion=off",
+      "width": 320,
+      "height": 844,
+      "scale": 2
+    }
+  ],
+  "fontResponses": [
+    {
+      "url": "http://127.0.0.1:5074/assets/assets/fonts/inter/Inter-Regular.ttf",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:5074/assets/assets/fonts/inter/Inter-Medium.ttf",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:5074/assets/assets/fonts/inter/Inter-SemiBold.ttf",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:5074/assets/assets/fonts/inter/Inter-Bold.ttf",
+      "status": 200
+    }
+  ],
+  "errors": []
+}

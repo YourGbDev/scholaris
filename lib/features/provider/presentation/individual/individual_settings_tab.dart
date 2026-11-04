@@ -4,6 +4,7 @@
 // Allows individual sponsors to manage their personal details, toggle
 // view mode between individual and organization for evaluation, and sign out.
 
+import 'package:scholaris/shared/theme/app_typography.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -148,11 +149,11 @@ class _IndividualSettingsTabState extends ConsumerState<IndividualSettingsTab> {
         padding: const EdgeInsets.fromLTRB(16, 16, 16, 32),
         children: [
           // Header
-          Text('Profile & settings', style: orgHeadline(fontSize: 28)),
+          Text('Profile & settings', style: AppTypography.style(AppTextRole.screenTitle, fontSize: 28, color: kOrgTextPrimary, letterSpacing: opticalTracking(28), height: opticalLeading(28, isBody: false))),
           const SizedBox(height: 2),
           Text(
             'Your provider details and account preferences.',
-            style: orgBody(fontSize: 14, color: kOrgTextSecondary),
+            style: AppTypography.style(AppTextRole.subtitle, fontSize: 14, color: kOrgTextSecondary, letterSpacing: opticalTracking(14), height: ((14) <= 16 ? 1.45 : opticalLeading(14, isBody: true))),
           ),
 
           const SizedBox(height: 18),
@@ -182,14 +183,14 @@ class _IndividualSettingsTabState extends ConsumerState<IndividualSettingsTab> {
                         const SizedBox(width: 8),
                         Text(
                           'Console View Mode',
-                          style: orgHeadline(fontSize: 14),
+                          style: AppTypography.style(AppTextRole.cardTitle, fontSize: 14, color: kOrgTextPrimary, letterSpacing: opticalTracking(14), height: opticalLeading(14, isBody: false)),
                         ),
                       ],
                     ),
                     const SizedBox(height: 4),
                     Text(
                       'Switch between Individual Benefactor view and Organization Console.',
-                      style: orgBody(fontSize: 11, color: kOrgTextSecondary),
+                      style: AppTypography.style(AppTextRole.body, fontSize: 11, color: kOrgTextSecondary, letterSpacing: opticalTracking(11), height: ((11) <= 16 ? 1.45 : opticalLeading(11, isBody: true))),
                     ),
                     const SizedBox(height: 10),
                     Row(
@@ -204,12 +205,7 @@ class _IndividualSettingsTabState extends ConsumerState<IndividualSettingsTab> {
                               ),
                               selected: activeType == 'individual',
                               selectedColor: kOrgSidebarDark,
-                              labelStyle: orgLabel(
-                                color: activeType == 'individual'
-                                    ? Colors.white
-                                    : kOrgTextPrimary,
-                                fontSize: 11,
-                              ),
+                              labelStyle: AppTypography.style(AppTextRole.badge, color: activeType == 'individual' ? Colors.white : kOrgTextPrimary, fontSize: 11, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: false)),
                               onSelected: (_) =>
                                   setProviderType(ref, 'individual'),
                             ),
@@ -226,12 +222,7 @@ class _IndividualSettingsTabState extends ConsumerState<IndividualSettingsTab> {
                               ),
                               selected: activeType == 'organization',
                               selectedColor: kOrgSidebarDark,
-                              labelStyle: orgLabel(
-                                color: activeType == 'organization'
-                                    ? Colors.white
-                                    : kOrgTextPrimary,
-                                fontSize: 11,
-                              ),
+                              labelStyle: AppTypography.style(AppTextRole.badge, color: activeType == 'organization' ? Colors.white : kOrgTextPrimary, fontSize: 11, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: false)),
                               onSelected: (_) =>
                                   setProviderType(ref, 'organization'),
                             ),
@@ -261,13 +252,13 @@ class _IndividualSettingsTabState extends ConsumerState<IndividualSettingsTab> {
                 children: [
                   Text(
                     'Personal Benefactor Details',
-                    style: orgHeadline(fontSize: 14),
+                    style: AppTypography.style(AppTextRole.sectionTitle, fontSize: 14, color: kOrgTextPrimary, letterSpacing: opticalTracking(14), height: opticalLeading(14, isBody: false)),
                   ),
                   const SizedBox(height: 14),
 
                   Text(
                     'Full Name / Display Title',
-                    style: orgLabel(fontSize: 11, color: kOrgTextSecondary),
+                    style: AppTypography.style(AppTextRole.label, fontSize: 11, color: kOrgTextSecondary, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: false)),
                   ),
                   const SizedBox(height: 6),
                   Form(
@@ -282,7 +273,7 @@ class _IndividualSettingsTabState extends ConsumerState<IndividualSettingsTab> {
                           : value.trim().length > 100
                           ? 'Use 100 characters or fewer'
                           : null,
-                      style: orgBody(fontSize: 13),
+                      style: AppTypography.style(AppTextRole.input, fontSize: 13, color: kOrgTextPrimary, letterSpacing: opticalTracking(13), height: ((13) <= 16 ? 1.45 : opticalLeading(13, isBody: true))),
                       decoration: InputDecoration(
                         isDense: true,
                         filled: true,
@@ -308,14 +299,14 @@ class _IndividualSettingsTabState extends ConsumerState<IndividualSettingsTab> {
 
                   Text(
                     'Personal statement (not available yet)',
-                    style: orgLabel(fontSize: 11, color: kOrgTextSecondary),
+                    style: AppTypography.style(AppTextRole.label, fontSize: 11, color: kOrgTextSecondary, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: false)),
                   ),
                   const SizedBox(height: 6),
                   TextFormField(
                     controller: _bioController,
                     readOnly: true,
                     maxLines: 3,
-                    style: orgBody(fontSize: 13),
+                    style: AppTypography.style(AppTextRole.input, fontSize: 13, color: kOrgTextPrimary, letterSpacing: opticalTracking(13), height: ((13) <= 16 ? 1.45 : opticalLeading(13, isBody: true))),
                     decoration: InputDecoration(
                       isDense: true,
                       filled: true,
@@ -340,7 +331,7 @@ class _IndividualSettingsTabState extends ConsumerState<IndividualSettingsTab> {
                         liveRegion: true,
                         child: Text(
                           _saveError!,
-                          style: orgBody(color: kOrgError),
+                          style: AppTypography.style(AppTextRole.body, color: kOrgError, fontSize: 13.5, letterSpacing: opticalTracking(13.5), height: ((13.5) <= 16 ? 1.45 : opticalLeading(13.5, isBody: true))),
                         ),
                       ),
                     ),
@@ -400,11 +391,11 @@ class _IndividualSettingsTabState extends ConsumerState<IndividualSettingsTab> {
                     children: [
                       Text(
                         'Provider Session',
-                        style: orgHeadline(fontSize: 14),
+                        style: AppTypography.style(AppTextRole.cardTitle, fontSize: 14, color: kOrgTextPrimary, letterSpacing: opticalTracking(14), height: opticalLeading(14, isBody: false)),
                       ),
                       Text(
                         'Sign out of your benefactor portal.',
-                        style: orgBody(fontSize: 11, color: kOrgTextSecondary),
+                        style: AppTypography.style(AppTextRole.body, fontSize: 11, color: kOrgTextSecondary, letterSpacing: opticalTracking(11), height: ((11) <= 16 ? 1.45 : opticalLeading(11, isBody: true))),
                       ),
                     ],
                   ),

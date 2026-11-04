@@ -4,12 +4,12 @@
 // shared discoveryFilterProvider directly — no local persistent state — so the
 // Discover screen stays reactive while the sheet is open.
 
+import 'package:scholaris/shared/theme/app_typography.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../shared/theme/app_motion.dart';
-import '../../../shared/theme/app_theme.dart';
 import '../../profile/models/student_profile.dart';
 import '../providers/discovery_provider.dart';
 import '../services/discovery_filters.dart';
@@ -68,11 +68,7 @@ class _DiscoveryFilterSheetState extends ConsumerState<DiscoveryFilterSheet> {
               children: [
                 Text(
                   'Filters',
-                  style: outfit(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: const Color(0xFF161C27),
-                  ),
+                  style: AppTypography.style(AppTextRole.sectionTitle, fontSize: 18, color: const Color(0xFF161C27), letterSpacing: opticalTracking(18), height: opticalLeading(18, isBody: false)),
                 ),
                 const Spacer(),
                 PressableScale(
@@ -87,11 +83,7 @@ class _DiscoveryFilterSheetState extends ConsumerState<DiscoveryFilterSheet> {
                     ),
                     child: Text(
                       'Reset',
-                      style: outfit(
-                        fontSize: 13,
-                        fontWeight: FontWeight.w600,
-                        color: const Color(0xFF0F4D2E),
-                      ),
+                      style: AppTypography.style(AppTextRole.button, fontSize: 13, color: const Color(0xFF0F4D2E), letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: false)),
                     ),
                   ),
                 ),
@@ -135,14 +127,14 @@ class _DiscoveryFilterSheetState extends ConsumerState<DiscoveryFilterSheet> {
                       value: DiscoverySort.defaultSort,
                       label: Text(
                         'Default',
-                        style: outfit(fontSize: 13, fontWeight: FontWeight.w600),
+                        style: AppTypography.style(AppTextRole.label, fontSize: 13, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: false)),
                       ),
                     ),
                     ButtonSegment(
                       value: DiscoverySort.highestAmount,
                       label: Text(
                         'Highest amount',
-                        style: outfit(fontSize: 13, fontWeight: FontWeight.w600),
+                        style: AppTypography.style(AppTextRole.label, fontSize: 13, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: false)),
                       ),
                     ),
                   ],
@@ -165,11 +157,7 @@ class _DiscoveryFilterSheetState extends ConsumerState<DiscoveryFilterSheet> {
                       child: ChoiceChip(
                         label: Text(
                           incomeLabel(bracket == 'any' ? null : bracket),
-                          style: outfit(
-                            fontSize: 12.5,
-                            fontWeight: selected ? FontWeight.bold : FontWeight.w500,
-                            color: selected ? Colors.white : const Color(0xFF161C27),
-                          ),
+                          style: AppTypography.style(AppTextRole.label, fontSize: 12.5, color: selected ? Colors.white : const Color(0xFF161C27), letterSpacing: opticalTracking(12.5), height: opticalLeading(12.5, isBody: false)),
                         ),
                         selected: selected,
                         selectedColor: const Color(0xFF0F4D2E),
@@ -196,11 +184,11 @@ class _DiscoveryFilterSheetState extends ConsumerState<DiscoveryFilterSheet> {
                   contentPadding: EdgeInsets.zero,
                   title: Text(
                     'Closing soon',
-                    style: outfit(fontSize: 14, fontWeight: FontWeight.bold, color: const Color(0xFF161C27)),
+                    style: AppTypography.style(AppTextRole.label, fontSize: 14, color: const Color(0xFF161C27), letterSpacing: opticalTracking(14), height: opticalLeading(14, isBody: false)),
                   ),
                   subtitle: Text(
                     'Within 14 days of the deadline',
-                    style: openSans(fontSize: 12, color: const Color(0xFF404942)),
+                    style: AppTypography.style(AppTextRole.caption, fontSize: 12, color: const Color(0xFF404942), letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: true)),
                   ),
                   value: state.closingSoonOnly,
                   activeThumbColor: const Color(0xFF0F4D2E),
@@ -222,11 +210,7 @@ class _DiscoveryFilterSheetState extends ConsumerState<DiscoveryFilterSheet> {
                       child: FilterChip(
                         label: Text(
                           region,
-                          style: outfit(
-                            fontSize: 12,
-                            fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
-                            color: isSelected ? Colors.white : const Color(0xFF161C27),
-                          ),
+                          style: AppTypography.style(AppTextRole.label, fontSize: 12, color: isSelected ? Colors.white : const Color(0xFF161C27), letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: false)),
                         ),
                         selected: isSelected,
                         selectedColor: const Color(0xFF0F4D2E),
@@ -275,11 +259,7 @@ class _DiscoveryFilterSheetState extends ConsumerState<DiscoveryFilterSheet> {
                   ),
                   child: Text(
                     'Done',
-                    style: outfit(
-                      fontSize: 14.5,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                    ),
+                    style: AppTypography.style(AppTextRole.button, fontSize: 14.5, color: Colors.white, letterSpacing: opticalTracking(14.5), height: opticalLeading(14.5, isBody: false)),
                   ),
                 ),
               ),
@@ -304,11 +284,7 @@ class _DiscoveryFilterSheetState extends ConsumerState<DiscoveryFilterSheet> {
           ),
           Text(
             title,
-            style: outfit(
-              fontSize: 14,
-              fontWeight: FontWeight.bold,
-              color: const Color(0xFF161C27),
-            ),
+            style: AppTypography.style(AppTextRole.sectionTitle, fontSize: 14, color: const Color(0xFF161C27), letterSpacing: opticalTracking(14), height: opticalLeading(14, isBody: false)),
           ),
         ],
       );

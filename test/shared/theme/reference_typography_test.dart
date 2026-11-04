@@ -8,7 +8,7 @@ import 'package:scholaris/shared/theme/app_theme.dart';
 void main() {
   setUpAll(() => GoogleFonts.config.allowRuntimeFetching = false);
 
-  testWidgets('admin and provider reference pills use bundled Geist offline', (
+  testWidgets('admin and provider reference pills use bundled Inter offline', (
     tester,
   ) async {
     await tester.pumpWidget(
@@ -24,7 +24,7 @@ void main() {
 
     for (final reference in ['ADMIN-123', 'ORG-456']) {
       final label = tester.widget<Text>(find.text(reference));
-      expect(label.style!.fontFamily, 'Geist', reason: reference);
+      expect(label.style!.fontFamily, 'Inter', reason: reference);
     }
     expect(tester.takeException(), isNull);
   });

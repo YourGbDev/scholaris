@@ -49,6 +49,7 @@ void main() {
       (tester) async {
         await openChat(tester, gender: gender);
         expect(find.text('Hi, Alex!'), findsOneWidget);
+        expect(tester.widget<Text>(find.text('Hi, Alex!')).style!.fontWeight, FontWeight.w700);
         final images = tester
             .widgetList<Image>(find.byType(Image))
             .map((image) => image.image)

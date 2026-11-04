@@ -1,3 +1,5 @@
+import 'package:scholaris/shared/theme/app_motion.dart' show opticalTracking, opticalLeading;
+import 'package:scholaris/shared/theme/app_typography.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -15,7 +17,7 @@ class IndividualSupportSummary extends ConsumerWidget {
     return ProviderOverviewCard(
       heading: Text(
         'Your support at a glance',
-        style: orgHeadline(fontSize: 18),
+        style: AppTypography.style(AppTextRole.cardTitle, fontSize: 18, color: kOrgTextPrimary, letterSpacing: opticalTracking(18), height: opticalLeading(18, isBody: false)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

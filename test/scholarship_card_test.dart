@@ -44,10 +44,10 @@ Widget _wrap({required ScholarshipCard card}) =>
 
 void main() {
   testWidgets('deadline and Applied remain adjacent on a phone with a bookmark', (tester) async {
-    final fonts = FontLoader('Geist')
-      ..addFont(rootBundle.load('assets/fonts/geist/Geist-Regular.ttf'))
-      ..addFont(rootBundle.load('assets/fonts/geist/Geist-SemiBold.ttf'))
-      ..addFont(rootBundle.load('assets/fonts/geist/Geist-Bold.ttf'));
+    final fonts = FontLoader('Inter')
+      ..addFont(rootBundle.load('assets/fonts/inter/Inter-Regular.ttf'))
+      ..addFont(rootBundle.load('assets/fonts/inter/Inter-SemiBold.ttf'))
+      ..addFont(rootBundle.load('assets/fonts/inter/Inter-Bold.ttf'));
     await fonts.load();
     tester.view.physicalSize = const Size(390, 1100);
     tester.view.devicePixelRatio = 1;

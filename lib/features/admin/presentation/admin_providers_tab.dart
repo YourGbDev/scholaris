@@ -1,5 +1,6 @@
 // Platform provider-review presentation. Decisions use the existing repository;
 // returned-row checks and new review states require the backend handoff.
+import 'package:scholaris/shared/theme/app_typography.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -33,11 +34,9 @@ class _AdminProvidersTabState extends ConsumerState<AdminProvidersTab> {
                     Expanded(
                       child: Text(
                         'Provider approvals',
-                        style: Theme.of(context).textTheme.headlineSmall
-                            ?.copyWith(
-                              fontWeight: FontWeight.w700,
-                              color: _green,
-                            ),
+                        style: AppTypography.style(AppTextRole.screenTitle,
+                          base: Theme.of(context).textTheme.headlineSmall,
+                          color: _green),
                       ),
                     ),
                     IconButton(
@@ -185,8 +184,8 @@ class _AdminProvidersTabState extends ConsumerState<AdminProvidersTab> {
                         children: [
                           Text(
                             v.displayName,
-                            style: Theme.of(context).textTheme.titleMedium
-                                ?.copyWith(fontWeight: FontWeight.w700),
+                            style: AppTypography.style(AppTextRole.cardTitle,
+                              base: Theme.of(context).textTheme.titleMedium),
                           ),
                           const SizedBox(height: 6),
                           Text(
@@ -421,7 +420,7 @@ class _ProviderReviewDialogState extends ConsumerState<_ProviderReviewDialog> {
                           org
                               ? 'Organization review'
                               : 'Individual provider review',
-                          style: Theme.of(context).textTheme.titleLarge,
+                          style: AppTypography.style(AppTextRole.sectionTitle, base: Theme.of(context).textTheme.titleLarge),
                         ),
                       ),
                       IconButton(
@@ -434,18 +433,15 @@ class _ProviderReviewDialogState extends ConsumerState<_ProviderReviewDialog> {
                   const SizedBox(height: 12),
                   Text(
                     v.displayName,
-                    style: Theme.of(context).textTheme.titleMedium,
+                    style: AppTypography.style(AppTextRole.cardTitle, base: Theme.of(context).textTheme.titleMedium),
                   ),
                   Text(
                     '${_statusLabel(v.status)} • Submitted ${_date(v.submittedAt)}',
                   ),
                   const SizedBox(height: 16),
-                  const Text(
+                   Text(
                     'Submitted information',
-                    style: TextStyle(
-                      fontWeight: FontWeight.w700,
-                      color: _green,
-                    ),
+                    style: AppTypography.style(AppTextRole.sectionTitle, color: _green),
                   ),
                   const Text(
                     'These are provider declarations and uploads. Their presence does not establish authenticity or available funding.',
@@ -467,12 +463,9 @@ class _ProviderReviewDialogState extends ConsumerState<_ProviderReviewDialog> {
                     _info('TIN (masked)', v.maskedTin),
                   ],
                   const Divider(height: 32),
-                  const Text(
+                   Text(
                     'Submitted documents',
-                    style: TextStyle(
-                      fontWeight: FontWeight.w700,
-                      color: _green,
-                    ),
+                    style: AppTypography.style(AppTextRole.sectionTitle, color: _green),
                   ),
                   const Text(
                     'Available files open through a temporary private link. Review their contents before deciding.',
@@ -506,7 +499,7 @@ class _ProviderReviewDialogState extends ConsumerState<_ProviderReviewDialog> {
                         liveRegion: true,
                         child: Text(
                           _error!,
-                          style: const TextStyle(color: Color(0xFF93000A)),
+                          style: AppTypography.style(AppTextRole.caption, color: Color(0xFF93000A)),
                         ),
                       ),
                     ),
@@ -568,7 +561,7 @@ class _ProviderReviewDialogState extends ConsumerState<_ProviderReviewDialog> {
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label, style: const TextStyle(color: Color(0xFF555D58))),
+        Text(label, style: AppTypography.style(AppTextRole.label, color: Color(0xFF555D58))),
         SelectableText(
           value?.trim().isNotEmpty == true ? value! : 'Not provided',
         ),

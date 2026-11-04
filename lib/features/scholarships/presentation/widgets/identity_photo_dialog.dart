@@ -4,6 +4,7 @@
 // while still having a default/placeholder avatar. Explains provider identity
 // verification requirements and allows uploading from camera or gallery.
 
+import 'package:scholaris/shared/theme/app_typography.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -74,23 +75,14 @@ class IdentityPhotoRequiredDialog extends ConsumerWidget {
             Text(
               'Identity Photo Required',
               textAlign: TextAlign.center,
-              style: geist(
-                fontSize: 18,
-                fontWeight: FontWeight.w700,
-                color: const Color(0xFF161C27),
-              ),
+              style: AppTypography.style(AppTextRole.sectionTitle, fontSize: 18, color: const Color(0xFF161C27)),
             ),
             const SizedBox(height: 6),
 
             // Subtitle
             Text(
               'Official Student Verification',
-              style: geist(
-                fontSize: 12,
-                fontWeight: FontWeight.w600,
-                color: kPrimary,
-                letterSpacing: 0.5,
-              ),
+              style: AppTypography.style(AppTextRole.subtitle, fontSize: 12, color: kPrimary, letterSpacing: 0.5),
             ),
             const SizedBox(height: 14),
 
@@ -117,11 +109,7 @@ class IdentityPhotoRequiredDialog extends ConsumerWidget {
                       Expanded(
                         child: Text(
                           'Scholarship providers require an authentic, real photograph of you for identity verification before evaluating your application.',
-                          style: geist(
-                            fontSize: 12,
-                            height: 1.45,
-                            color: const Color(0xFF404942),
-                          ),
+                          style: AppTypography.style(AppTextRole.body, fontSize: 12, height: 1.45, color: const Color(0xFF404942)),
                         ),
                       ),
                     ],
@@ -129,11 +117,7 @@ class IdentityPhotoRequiredDialog extends ConsumerWidget {
                   const SizedBox(height: 8),
                   Text(
                     'Applications submitted with cartoon or placeholder avatars cannot be deliberated by scholarship committees.',
-                    style: geist(
-                      fontSize: 11,
-                      fontWeight: FontWeight.w600,
-                      color: const Color(0xFFBA1A1A),
-                    ),
+                    style: AppTypography.style(AppTextRole.caption, fontSize: 11, color: const Color(0xFFBA1A1A)),
                   ),
                 ],
               ),
@@ -156,10 +140,7 @@ class IdentityPhotoRequiredDialog extends ConsumerWidget {
                 icon: const Icon(Icons.camera_alt_rounded, size: 18),
                 label: Text(
                   'Take Photo with Camera',
-                  style: geist(
-                    fontSize: 13,
-                    fontWeight: FontWeight.w600,
-                  ),
+                  style: AppTypography.style(AppTextRole.button, fontSize: 13),
                 ),
                 onPressed: () {
                   notifier.uploadRealPhoto(path: 'camera_verified_$userId.jpg');
@@ -183,11 +164,7 @@ class IdentityPhotoRequiredDialog extends ConsumerWidget {
                 icon: const Icon(Icons.photo_library_rounded, size: 18, color: kPrimary),
                 label: Text(
                   'Upload from Gallery',
-                  style: geist(
-                    fontSize: 13,
-                    fontWeight: FontWeight.w600,
-                    color: kPrimary,
-                  ),
+                  style: AppTypography.style(AppTextRole.button, fontSize: 13, color: kPrimary),
                 ),
                 onPressed: () {
                   notifier.uploadRealPhoto(path: 'gallery_verified_$userId.jpg');
@@ -208,11 +185,7 @@ class IdentityPhotoRequiredDialog extends ConsumerWidget {
               onPressed: () => Navigator.of(context).pop(false),
               child: Text(
                 'Cancel',
-                style: geist(
-                  fontSize: 13,
-                  fontWeight: FontWeight.w600,
-                  color: const Color(0xFF707971),
-                ),
+                style: AppTypography.style(AppTextRole.button, fontSize: 13, color: const Color(0xFF707971)),
               ),
             ),
             TextButton(
@@ -220,11 +193,7 @@ class IdentityPhotoRequiredDialog extends ConsumerWidget {
               onPressed: () => Navigator.of(context).pop(true),
               child: Text(
                 'Proceed with Warning',
-                style: geist(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w600,
-                  color: kPrimary,
-                ),
+                style: AppTypography.style(AppTextRole.button, fontSize: 12, color: kPrimary),
               ),
             ),
           ],

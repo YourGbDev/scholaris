@@ -5,9 +5,9 @@
 // Strictly real data: 100% wired to public.audit_logs.
 // Zero fabricated metrics, zero fake compliance stamps, zero fake log entries.
 
+import 'package:scholaris/shared/theme/app_typography.dart';
 import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:scholaris/shared/theme/app_theme.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:scholaris/features/admin/presentation/admin_theme.dart';
@@ -183,12 +183,12 @@ class _AuditTrailScreenState extends ConsumerState<AuditTrailScreen> {
                   const SizedBox(height: 12),
                   Text(
                     'Failed to load audit logs',
-                    style: seqHeadlineSm(color: kSeqOnSurface),
+                    style: AppTypography.style(AppTextRole.sectionTitle, color: kSeqOnSurface, fontSize: 19, height: 24 / 19, letterSpacing: -0.015 * 19),
                   ),
                   const SizedBox(height: 4),
                   Text(
                     err.toString(),
-                    style: seqBodyMd(color: kSeqOnSurfaceVariant),
+                    style: AppTypography.style(AppTextRole.body, color: kSeqOnSurfaceVariant, fontSize: 14, height: 20 / 14, letterSpacing: -0.006 * 14),
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 16),
@@ -368,10 +368,7 @@ Widget _buildSkeletonLoader(BuildContext context) {
               const SizedBox(width: 6),
               Text(
                 'Live data',
-                style: seqLabelSm(
-                  color: kSeqOnSurfaceVariant,
-                  fontWeight: FontWeight.w600,
-                ),
+                style: AppTypography.style(AppTextRole.badge, color: kSeqOnSurfaceVariant, fontSize: 10, height: 12 / 10, letterSpacing: 0.03 * 10),
               ),
             ],
           ),
@@ -381,17 +378,14 @@ Widget _buildSkeletonLoader(BuildContext context) {
         // Title
         Text(
           'System Audit Trail',
-          style: seqHeadlineLg(
-            fontWeight: FontWeight.w700,
-            color: kSeqOnSurface,
-          ),
+          style: AppTypography.style(AppTextRole.screenTitle, color: kSeqOnSurface, fontSize: 32, height: 38 / 32, letterSpacing: -0.021 * 32),
         ),
         const SizedBox(height: 4),
 
         // Subtitle: strictly live database count
         Text(
           '$totalCount audit events recorded',
-          style: seqTabularFigures(seqBodyMd(color: kSeqOnSurfaceVariant)),
+          style: seqTabularFigures(AppTypography.style(AppTextRole.subtitle, color: kSeqOnSurfaceVariant, fontSize: 14, height: 20 / 14, letterSpacing: -0.006 * 14)),
         ),
       ],
     );
@@ -408,7 +402,7 @@ Widget _buildSkeletonLoader(BuildContext context) {
         icon: const Icon(Icons.picture_as_pdf_rounded, size: 18),
         label: Text(
           'Export PDF Report (${filteredLogs.length})',
-          style: seqLabelMd(fontWeight: FontWeight.w600, color: Colors.white),
+          style: AppTypography.style(AppTextRole.button, color: Colors.white, fontSize: 12, height: 16 / 12, letterSpacing: -0.002 * 12),
         ),
       ),
     );
@@ -474,7 +468,7 @@ Widget _buildSkeletonLoader(BuildContext context) {
             Expanded(
               child: Text(
                 'Exported ${logs.length} audit entries to PDF audit briefing clipboard.',
-                style: seqBodyMd(color: kSeqOnPrimary),
+                style: AppTypography.style(AppTextRole.body, color: kSeqOnPrimary, fontSize: 14, height: 20 / 14, letterSpacing: -0.006 * 14),
               ),
             ),
           ],
@@ -514,11 +508,11 @@ Widget _buildSkeletonLoader(BuildContext context) {
               onChanged: (val) {
                 ref.read(auditSearchQueryProvider.notifier).state = val.trim();
               },
-              style: seqBodyMd(),
+              style: AppTypography.style(AppTextRole.input, fontSize: 14, height: 20 / 14, letterSpacing: -0.006 * 14, color: kSeqOnSurface),
               decoration: InputDecoration(
                 hintText:
                     'Search by action, target, actor email, or IP address...',
-                hintStyle: seqBodyMd(color: kSeqOutline),
+                hintStyle: AppTypography.style(AppTextRole.placeholder, color: kSeqOutline, fontSize: 14, height: 20 / 14, letterSpacing: -0.006 * 14),
                 prefixIcon: const Icon(
                   Icons.search_rounded,
                   size: 20,
@@ -623,10 +617,7 @@ Widget _buildSkeletonLoader(BuildContext context) {
                   dateFrom != null && dateTo != null
                       ? '${_formatDateShort(dateFrom)} – ${_formatDateShort(dateTo)}'
                       : 'Date range',
-                  style: seqLabelSm(
-                    color: dateFrom != null ? kSeqPrimaryContainer : kSeqOnSurface,
-                    fontWeight: dateFrom != null ? FontWeight.w600 : FontWeight.w500,
-                  ),
+                  style: AppTypography.style(AppTextRole.label, color: dateFrom != null ? kSeqPrimaryContainer : kSeqOnSurface, fontSize: 10, height: 12 / 10, letterSpacing: 0.03 * 10),
                 ),
                 style: OutlinedButton.styleFrom(
                   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
@@ -682,7 +673,7 @@ Widget _buildSkeletonLoader(BuildContext context) {
           value: items.contains(value) ? value : 'all',
           isDense: true,
           isExpanded: true,
-          style: seqLabelSm(color: kSeqOnSurface, fontWeight: FontWeight.w600),
+          style: AppTypography.style(AppTextRole.input, color: kSeqOnSurface, fontSize: 10, height: 12 / 10, letterSpacing: 0.03 * 10),
           icon: const Icon(Icons.arrow_drop_down, color: kSeqOutline),
           items: items.map((it) {
             final displayText = it == 'all'
@@ -726,15 +717,12 @@ Widget _buildSkeletonLoader(BuildContext context) {
             const SizedBox(height: 12),
             Text(
               'No audit events found',
-              style: seqHeadlineSm(
-                color: kSeqOnSurface,
-                fontWeight: FontWeight.w600,
-              ),
+              style: AppTypography.style(AppTextRole.sectionTitle, color: kSeqOnSurface, fontSize: 19, height: 24 / 19, letterSpacing: -0.015 * 19),
             ),
             const SizedBox(height: 6),
             Text(
               'Try adjusting or clearing your filters to see more events.',
-              style: seqBodyMd(color: kSeqOnSurfaceVariant),
+              style: AppTypography.style(AppTextRole.body, color: kSeqOnSurfaceVariant, fontSize: 14, height: 20 / 14, letterSpacing: -0.006 * 14),
             ),
           ],
         ),
@@ -808,20 +796,14 @@ Widget _buildSkeletonLoader(BuildContext context) {
                                 children: [
                                   Text(
                                     entry.action,
-                                    style: seqHeadlineSm(
-                                      fontWeight: FontWeight.w700,
-                                      color: kSeqOnSurface,
-                                    ).copyWith(fontSize: 14),
+                                    style: AppTypography.style(AppTextRole.cardTitle, color: kSeqOnSurface, fontSize: 19, height: 24 / 19, letterSpacing: -0.015 * 19).copyWith(fontSize: 14),
                                     maxLines: 1,
                                     overflow: TextOverflow.ellipsis,
                                   ),
                                   const SizedBox(height: 4),
                                   Text(
                                     '${entry.targetType} · ${_truncateId(entry.targetId)}',
-                                    style: adminDataMono(
-                                      fontSize: 12,
-                                      color: kSeqOnSurfaceVariant,
-                                    ),
+                                    style: AppTypography.style(AppTextRole.caption, fontSize: 12, color: kSeqOnSurfaceVariant),
                                   ),
                                 ],
                               ),
@@ -838,10 +820,7 @@ Widget _buildSkeletonLoader(BuildContext context) {
                                   Expanded(
                                     child: Text(
                                       entry.actorEmail ?? 'System',
-                                      style: seqBodySm(
-                                        color: kSeqOnSurface,
-                                        fontWeight: FontWeight.w500,
-                                      ),
+                                      style: AppTypography.style(AppTextRole.bodyEmphasis, color: kSeqOnSurface, fontSize: 12, height: 16 / 12, letterSpacing: 0),
                                       maxLines: 1,
                                       overflow: TextOverflow.ellipsis,
                                     ),
@@ -856,10 +835,7 @@ Widget _buildSkeletonLoader(BuildContext context) {
                               width: 120,
                               child: Text(
                                 entry.ipAddress ?? '—',
-                                style: adminDataMono(
-                                  fontSize: 12,
-                                  color: kSeqOutline,
-                                ),
+                                style: AppTypography.style(AppTextRole.caption, fontSize: 12, color: kSeqOutline),
                               ),
                             ),
                             const SizedBox(width: 16),
@@ -869,7 +845,7 @@ Widget _buildSkeletonLoader(BuildContext context) {
                               width: 170,
                               child: Text(
                                 _formatDateTime(entry.createdAt),
-                                style: seqTabularFigures(seqBodySm(color: kSeqOnSurfaceVariant)),
+                                style: seqTabularFigures(AppTypography.style(AppTextRole.caption, color: kSeqOnSurfaceVariant, fontSize: 12, height: 16 / 12, letterSpacing: 0)),
                                 textAlign: TextAlign.end,
                               ),
                             ),
@@ -890,10 +866,7 @@ Widget _buildSkeletonLoader(BuildContext context) {
                                 Expanded(
                                   child: Text(
                                     entry.action,
-                                    style: seqHeadlineSm(
-                                      fontWeight: FontWeight.w700,
-                                      color: kSeqOnSurface,
-                                    ).copyWith(fontSize: 14),
+                                    style: AppTypography.style(AppTextRole.cardTitle, color: kSeqOnSurface, fontSize: 19, height: 24 / 19, letterSpacing: -0.015 * 19).copyWith(fontSize: 14),
                                     maxLines: 1,
                                     overflow: TextOverflow.ellipsis,
                                   ),
@@ -904,10 +877,7 @@ Widget _buildSkeletonLoader(BuildContext context) {
                             const SizedBox(height: 6),
                             Text(
                               '${entry.targetType} · ${_truncateId(entry.targetId)}',
-                              style: adminDataMono(
-                                fontSize: 12,
-                                color: kSeqOnSurfaceVariant,
-                              ),
+                              style: AppTypography.style(AppTextRole.caption, fontSize: 12, color: kSeqOnSurfaceVariant),
                             ),
                             const SizedBox(height: 6),
                             Row(
@@ -916,10 +886,7 @@ Widget _buildSkeletonLoader(BuildContext context) {
                                 Flexible(
                                   child: Text(
                                     entry.actorEmail ?? 'System',
-                                    style: seqBodySm(
-                                      color: kSeqOnSurface,
-                                      fontWeight: FontWeight.w500,
-                                    ),
+                                    style: AppTypography.style(AppTextRole.bodyEmphasis, color: kSeqOnSurface, fontSize: 12, height: 16 / 12, letterSpacing: 0),
                                     maxLines: 1,
                                     overflow: TextOverflow.ellipsis,
                                   ),
@@ -927,7 +894,7 @@ Widget _buildSkeletonLoader(BuildContext context) {
                                 const SizedBox(width: 8),
                                 Text(
                                   _formatDateTime(entry.createdAt),
-                                  style: seqTabularFigures(seqLabelSm(color: kSeqOutline)),
+                                  style: seqTabularFigures(AppTypography.style(AppTextRole.caption, color: kSeqOutline, fontSize: 10, height: 12 / 10, letterSpacing: 0.03 * 10)),
                                 ),
                               ],
                             ),
@@ -971,10 +938,7 @@ Widget _buildSkeletonLoader(BuildContext context) {
       ),
       child: Text(
         role.toUpperCase(),
-        style: seqLabelSm(
-          color: fg,
-          fontWeight: FontWeight.w700,
-        ).copyWith(letterSpacing: 0.5),
+        style: AppTypography.style(AppTextRole.badge, color: fg, fontSize: 10, height: 12 / 10, letterSpacing: 0.03 * 10).copyWith(letterSpacing: 0.5),
       ),
     );
   }
@@ -1024,15 +988,12 @@ Widget _buildSkeletonLoader(BuildContext context) {
                             children: [
                               Text(
                                 'Audit Event Detail',
-                                style: seqHeadlineSm(
-                                  fontWeight: FontWeight.w700,
-                                  color: kSeqOnSurface,
-                                ),
+                                style: AppTypography.style(AppTextRole.sectionTitle, color: kSeqOnSurface, fontSize: 19, height: 24 / 19, letterSpacing: -0.015 * 19),
                               ),
                               const SizedBox(height: 2),
                               Text(
                                 'Immutable ledger record',
-                                style: seqLabelSm(color: kSeqOutline),
+                                style: AppTypography.style(AppTextRole.subtitle, color: kSeqOutline, fontSize: 10, height: 12 / 10, letterSpacing: 0.03 * 10),
                               ),
                             ],
                           ),
@@ -1067,10 +1028,7 @@ Widget _buildSkeletonLoader(BuildContext context) {
                         const SizedBox(height: 16),
                         Text(
                           'EVENT DETAILS (JSONB)',
-                          style: seqLabelSm(
-                            color: kSeqOutline,
-                            fontWeight: FontWeight.w700,
-                          ).copyWith(letterSpacing: 0.5),
+                          style: AppTypography.style(AppTextRole.sectionTitle, color: kSeqOutline, fontSize: 10, height: 12 / 10, letterSpacing: 0.03 * 10).copyWith(letterSpacing: 0.5),
                         ),
                         const SizedBox(height: 8),
 
@@ -1098,20 +1056,13 @@ Widget _buildSkeletonLoader(BuildContext context) {
                                           width: 140,
                                           child: Text(
                                             kv.key,
-                                            style: geist(
-                                              fontSize: 12,
-                                              color: kSeqOnSurfaceVariant,
-                                              fontWeight: FontWeight.w600,
-                                            ),
+                                            style: AppTypography.style(AppTextRole.label, fontSize: 12, color: kSeqOnSurfaceVariant),
                                           ),
                                         ),
                                         Expanded(
                                           child: Text(
                                             kv.value?.toString() ?? 'null',
-                                            style: geist(
-                                              fontSize: 12,
-                                              color: kSeqOnSurface,
-                                            ),
+                                            style: AppTypography.style(AppTextRole.body, fontSize: 12, color: kSeqOnSurface),
                                           ),
                                         ),
                                       ],
@@ -1129,9 +1080,7 @@ Widget _buildSkeletonLoader(BuildContext context) {
                             ),
                             child: Text(
                               'No details',
-                              style: seqBodyMd(
-                                color: kSeqOutline,
-                              ).copyWith(fontStyle: FontStyle.italic),
+                              style: AppTypography.style(AppTextRole.body, color: kSeqOutline, fontSize: 14, height: 20 / 14, letterSpacing: -0.006 * 14).copyWith(fontStyle: FontStyle.italic),
                             ),
                           ),
                       ],
@@ -1157,24 +1106,15 @@ Widget _buildSkeletonLoader(BuildContext context) {
             width: 120,
             child: Text(
               label,
-              style: seqLabelSm(
-                color: kSeqOutline,
-                fontWeight: FontWeight.w600,
-              ),
+              style: AppTypography.style(AppTextRole.label, color: kSeqOutline, fontSize: 10, height: 12 / 10, letterSpacing: 0.03 * 10),
             ),
           ),
           Expanded(
             child: Text(
               value,
               style: isMonospace
-                  ? seqTabularFigures(adminDataMono(
-                      fontSize: 13,
-                      color: kSeqOnSurface,
-                    ))
-                  : seqBodySm(
-                      color: kSeqOnSurface,
-                      fontWeight: isBold ? FontWeight.w700 : FontWeight.w500,
-                    ),
+                  ? seqTabularFigures(AppTypography.style(AppTextRole.caption, fontSize: 13, color: kSeqOnSurface))
+                  : AppTypography.style(AppTextRole.bodyEmphasis, color: kSeqOnSurface, fontSize: 12, height: 16 / 12, letterSpacing: 0),
             ),
           ),
         ],

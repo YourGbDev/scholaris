@@ -1,4 +1,4 @@
-import 'package:scholaris/shared/theme/app_theme.dart';
+import 'package:scholaris/shared/theme/app_typography.dart';
 // lib/features/provider/presentation/org/org_disbursements_tab.dart
 //
 // Institutional Grant Disbursements & Payout Ledger faithfully matching Stitch mockup
@@ -103,18 +103,11 @@ class _OrgDisbursementsTabState extends ConsumerState<OrgDisbursementsTab> {
                   children: [
                     Text(
                       'Export unavailable',
-                      style: inter(
-                        fontSize: 13,
-                        fontWeight: FontWeight.w600,
-                        color: kOrgTextPrimary,
-                      ),
+                      style: AppTypography.style(AppTextRole.cardTitle, fontSize: 13, color: kOrgTextPrimary, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: (13) <= 16)),
                     ),
                     Text(
                       'This ledger cannot be exported yet.',
-                      style: inter(
-                        fontSize: 11,
-                        color: kOrgTextSecondary,
-                      ),
+                      style: AppTypography.style(AppTextRole.body, fontSize: 11, color: kOrgTextSecondary, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: (11) <= 16)),
                     ),
                   ],
                 ),
@@ -169,18 +162,11 @@ class _OrgDisbursementsTabState extends ConsumerState<OrgDisbursementsTab> {
                   children: [
                     Text(
                       'Tranche Release Queue Prepared',
-                      style: inter(
-                        fontSize: 13,
-                        fontWeight: FontWeight.w600,
-                        color: kOrgTextPrimary,
-                      ),
+                      style: AppTypography.style(AppTextRole.cardTitle, fontSize: 13, color: kOrgTextPrimary, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: (13) <= 16)),
                     ),
                     Text(
                       'Tranche 2 (${_formatCurrency(totalAmount)} for $scholarsCount ${scholarsCount == 1 ? 'scholar' : 'scholars'}) prepared for authorization.',
-                      style: inter(
-                        fontSize: 11,
-                        color: kOrgTextSecondary,
-                      ),
+                      style: AppTypography.style(AppTextRole.body, fontSize: 11, color: kOrgTextSecondary, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: (11) <= 16)),
                     ),
                   ],
                 ),
@@ -235,18 +221,11 @@ class _OrgDisbursementsTabState extends ConsumerState<OrgDisbursementsTab> {
                   children: [
                     Text(
                       'Audit Binder Generated',
-                      style: inter(
-                        fontSize: 13,
-                        fontWeight: FontWeight.w600,
-                        color: kOrgTextPrimary,
-                      ),
+                      style: AppTypography.style(AppTextRole.cardTitle, fontSize: 13, color: kOrgTextPrimary, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: (13) <= 16)),
                     ),
                     Text(
                       'Compiled compliant with CHED Memorandum Order No. 08 & BIR RMC 24-2022.',
-                      style: inter(
-                        fontSize: 11,
-                        color: kOrgTextSecondary,
-                      ),
+                      style: AppTypography.style(AppTextRole.body, fontSize: 11, color: kOrgTextSecondary, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: (11) <= 16)),
                     ),
                   ],
                 ),
@@ -291,11 +270,11 @@ class _OrgDisbursementsTabState extends ConsumerState<OrgDisbursementsTab> {
                           children: [
                             Text(
                               'CHED & BIR Liquidation Protocol',
-                              style: inter(fontSize: 16, fontWeight: FontWeight.w700, color: kOrgTextPrimary),
+                              style: AppTypography.style(AppTextRole.cardTitle, fontSize: 16, color: kOrgTextPrimary, letterSpacing: opticalTracking(16), height: opticalLeading(16, isBody: (16) <= 16)),
                             ),
                             Text(
                               'Statutory Philippine Higher Education Grant Compliance',
-                              style: inter(fontSize: 11.5, color: kOrgTextSecondary),
+                              style: AppTypography.style(AppTextRole.subtitle, fontSize: 11.5, color: kOrgTextSecondary, letterSpacing: opticalTracking(11.5), height: opticalLeading(11.5, isBody: (11.5) <= 16)),
                             ),
                           ],
                         ),
@@ -311,22 +290,22 @@ class _OrgDisbursementsTabState extends ConsumerState<OrgDisbursementsTab> {
                   const SizedBox(height: 16),
                   Text(
                     '1. Direct Matriculation Settlement',
-                    style: inter(fontSize: 13, fontWeight: FontWeight.w600, color: kOrgTextPrimary),
+                    style: AppTypography.style(AppTextRole.cardTitle, fontSize: 13, color: kOrgTextPrimary, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: (13) <= 16)),
                   ),
                   const SizedBox(height: 4),
                   Text(
                     'Tuition disbursements (Tranche 1) are remitted directly to accredited Philippine higher education institutions via institutional bank transfer against official registrar billing assessment forms.',
-                    style: inter(fontSize: 12, color: kOrgTextSecondary, height: 1.35),
+                    style: AppTypography.style(AppTextRole.body, fontSize: 12, color: kOrgTextSecondary, height: 1.35, letterSpacing: opticalTracking(12)),
                   ),
                   const SizedBox(height: 12),
                   Text(
                     '2. Living Allowance & Device Stipends',
-                    style: inter(fontSize: 13, fontWeight: FontWeight.w600, color: kOrgTextPrimary),
+                    style: AppTypography.style(AppTextRole.cardTitle, fontSize: 13, color: kOrgTextPrimary, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: (13) <= 16)),
                   ),
                   const SizedBox(height: 4),
                   Text(
                     'Subsequent student tranches are disbursed directly to confirmed scholar bank accounts upon certified midterm enrollment verification and minimum passing grade maintenance (GWA ≥ 2.0).',
-                    style: inter(fontSize: 12, color: kOrgTextSecondary, height: 1.35),
+                    style: AppTypography.style(AppTextRole.body, fontSize: 12, color: kOrgTextSecondary, height: 1.35, letterSpacing: opticalTracking(12)),
                   ),
                   const SizedBox(height: 20),
                   Align(
@@ -383,7 +362,7 @@ class _OrgDisbursementsTabState extends ConsumerState<OrgDisbursementsTab> {
                         child: Center(
                           child: Text(
                             profile.fullName.isNotEmpty ? profile.fullName[0].toUpperCase() : 'S',
-                            style: inter(fontSize: 18, fontWeight: FontWeight.w700, color: kOrgPrimary),
+                            style: AppTypography.style(AppTextRole.label, fontSize: 18, color: kOrgPrimary, letterSpacing: opticalTracking(18), height: opticalLeading(18, isBody: (18) <= 16)),
                           ),
                         ),
                       ),
@@ -394,11 +373,11 @@ class _OrgDisbursementsTabState extends ConsumerState<OrgDisbursementsTab> {
                           children: [
                             Text(
                               profile.fullName.isNotEmpty ? profile.fullName : 'Applicant #${app.userId.length >= 8 ? app.userId.substring(0, 8) : app.userId}',
-                              style: inter(fontSize: 17, fontWeight: FontWeight.w700, color: kOrgTextPrimary),
+                              style: AppTypography.style(AppTextRole.cardTitle, fontSize: 17, color: kOrgTextPrimary, letterSpacing: opticalTracking(17), height: opticalLeading(17, isBody: (17) <= 16)),
                             ),
                             Text(
                               'APP-${app.id.length >= 8 ? app.id.substring(0, 8) : app.id} • ${profile.school?.isNotEmpty == true ? profile.school! : 'School Pending'} (${profile.course.isNotEmpty ? profile.course : 'Course Pending'})',
-                              style: inter(fontSize: 12, color: kOrgTextSecondary),
+                              style: AppTypography.style(AppTextRole.caption, fontSize: 12, color: kOrgTextSecondary, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: (12) <= 16)),
                             ),
                           ],
                         ),
@@ -508,19 +487,11 @@ class _OrgDisbursementsTabState extends ConsumerState<OrgDisbursementsTab> {
                               children: [
                                 Text(
                                   'Authorize Grant Award & Release Tranche',
-                                  style: inter(
-                                    fontSize: 16.5,
-                                    fontWeight: FontWeight.w700,
-                                    color: kOrgTextPrimary,
-                                  ),
+                                  style: AppTypography.style(AppTextRole.cardTitle, fontSize: 16.5, color: kOrgTextPrimary, letterSpacing: opticalTracking(16.5), height: opticalLeading(16.5, isBody: (16.5) <= 16)),
                                 ),
                                 Text(
                                   'DOST-SEI Treasury & Disbursing Desk Authorization',
-                                  style: inter(
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.w500,
-                                    color: kOrgTextSecondary,
-                                  ),
+                                  style: AppTypography.style(AppTextRole.subtitle, fontSize: 12, color: kOrgTextSecondary, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: (12) <= 16)),
                                 ),
                               ],
                             ),
@@ -558,7 +529,7 @@ class _OrgDisbursementsTabState extends ConsumerState<OrgDisbursementsTab> {
                             Expanded(
                               child: Text(
                                 'Confirming this transaction will mark the grant as officially Awarded, release Tranche 1 to the scholar, and notify the student immediately.',
-                                style: inter(fontSize: 11.5, color: const Color(0xFF0F4D2E), fontWeight: FontWeight.w500),
+                                style: AppTypography.style(AppTextRole.body, fontSize: 11.5, color: const Color(0xFF0F4D2E), letterSpacing: opticalTracking(11.5), height: opticalLeading(11.5, isBody: (11.5) <= 16)),
                               ),
                             ),
                           ],
@@ -573,7 +544,7 @@ class _OrgDisbursementsTabState extends ConsumerState<OrgDisbursementsTab> {
                               onPressed: () => Navigator.of(ctx).pop(),
                               child: Text(
                                 'Cancel',
-                                style: inter(color: kOrgTextSecondary, fontWeight: FontWeight.w600),
+                                style: AppTypography.style(AppTextRole.button, color: kOrgTextSecondary),
                               ),
                             ),
                           const SizedBox(width: 12),
@@ -593,7 +564,7 @@ class _OrgDisbursementsTabState extends ConsumerState<OrgDisbursementsTab> {
                                 : const Icon(Icons.check_circle_rounded, size: 18, color: Colors.white),
                             label: Text(
                               isProcessing ? 'Authorizing & Releasing...' : 'Confirm Authorization & Release Tranche',
-                              style: inter(fontSize: 13, fontWeight: FontWeight.w700, color: Colors.white),
+                              style: AppTypography.style(AppTextRole.button, fontSize: 13, color: Colors.white, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: (13) <= 16)),
                             ),
                             onPressed: isProcessing
                                 ? null
@@ -663,7 +634,7 @@ class _OrgDisbursementsTabState extends ConsumerState<OrgDisbursementsTab> {
                                               Expanded(
                                                 child: Text(
                                                   'Grant officially awarded! Tranche 1 payout of $trancheFormatted released to $scholarName (Ref #$refNum).',
-                                                  style: inter(fontSize: 13, fontWeight: FontWeight.w600, color: Colors.white),
+                                                  style: AppTypography.style(AppTextRole.body, fontSize: 13, color: Colors.white, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: (13) <= 16)),
                                                 ),
                                               ),
                                             ],
@@ -701,12 +672,12 @@ class _OrgDisbursementsTabState extends ConsumerState<OrgDisbursementsTab> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(label, style: inter(fontSize: 12, color: kOrgTextSecondary)),
+          Text(label, style: AppTypography.style(AppTextRole.label, fontSize: 12, color: kOrgTextSecondary, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: (12) <= 16))),
           Flexible(
             child: Text(
               value,
               textAlign: TextAlign.right,
-              style: inter(fontSize: 12, fontWeight: FontWeight.w600, color: kOrgTextPrimary),
+              style: AppTypography.style(AppTextRole.bodyEmphasis, fontSize: 12, color: kOrgTextPrimary, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: (12) <= 16)),
             ),
           ),
         ],
@@ -729,7 +700,7 @@ class _OrgDisbursementsTabState extends ConsumerState<OrgDisbursementsTab> {
       return Container(
         color: kOrgCanvas,
         child: Center(
-          child: Text('Error loading disbursements ledger: ${incomingAppsAsync.error}', style: orgBody(color: kOrgError)),
+          child: Text('Error loading disbursements ledger: ${incomingAppsAsync.error}', style: AppTypography.style(AppTextRole.body, color: kOrgError, fontSize: 13.5, letterSpacing: opticalTracking(13.5), height: ((13.5) <= 16 ? 1.45 : opticalLeading(13.5, isBody: true)))),
         ),
       );
     }
@@ -911,26 +882,16 @@ class _OrgDisbursementsTabState extends ConsumerState<OrgDisbursementsTab> {
                 const SizedBox(width: 8),
                 Text(
                   orgName,
-                  style: inter(
-                    fontSize: 11,
-                    fontWeight: FontWeight.w600,
-                    color: kOrgTextSecondary,
-                    letterSpacing: 0.5,
-                  ),
+                  style: AppTypography.style(AppTextRole.navigation, fontSize: 11, color: kOrgTextSecondary, letterSpacing: 0.5, height: opticalLeading(11, isBody: (11) <= 16)),
                 ),
               ],
             ),
-            Text('•', style: inter(fontSize: 11, color: kOrgBorderDark)),
+            Text('•', style: AppTypography.style(AppTextRole.caption, fontSize: 11, color: kOrgBorderDark, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: (11) <= 16))),
             Text(
               'Financial Oversight',
-              style: inter(
-                fontSize: 11,
-                fontWeight: FontWeight.w600,
-                color: kOrgTextPrimary,
-                letterSpacing: 0.5,
-              ),
+              style: AppTypography.style(AppTextRole.navigation, fontSize: 11, color: kOrgTextPrimary, letterSpacing: 0.5, height: opticalLeading(11, isBody: (11) <= 16)),
             ),
-            Text('•', style: inter(fontSize: 11, color: kOrgBorderDark)),
+            Text('•', style: AppTypography.style(AppTextRole.caption, fontSize: 11, color: kOrgBorderDark, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: (11) <= 16))),
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
               decoration: BoxDecoration(
@@ -939,11 +900,7 @@ class _OrgDisbursementsTabState extends ConsumerState<OrgDisbursementsTab> {
               ),
               child: Text(
                 'Recorded activity',
-                style: inter(
-                  fontSize: 10,
-                  fontWeight: FontWeight.w700,
-                  color: const Color(0xFF00351C),
-                ),
+                style: AppTypography.style(AppTextRole.badge, fontSize: 10, color: const Color(0xFF00351C), letterSpacing: opticalTracking(10), height: opticalLeading(10, isBody: (10) <= 16)),
               ),
             ),
           ],
@@ -951,23 +908,14 @@ class _OrgDisbursementsTabState extends ConsumerState<OrgDisbursementsTab> {
         const SizedBox(height: 8),
         Text(
           'Grant Disbursements & Payout Ledger',
-          style: inter(
-            fontSize: isDesktop ? 26 : 21,
-            fontWeight: FontWeight.w700,
-            color: kOrgTextPrimary,
-
-          ),
+          style: AppTypography.style(AppTextRole.screenTitle, fontSize: isDesktop ? 26 : 21, color: kOrgTextPrimary, letterSpacing: opticalTracking(isDesktop ? 26 : 21), height: opticalLeading(isDesktop ? 26 : 21, isBody: (isDesktop ? 26 : 21) <= 16)),
         ),
         const SizedBox(height: 4),
         ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 620),
           child: Text(
             'Track committed semester stipends, tuition releases, and institutional liquidation schedules for confirmed scholars.',
-            style: inter(
-              fontSize: 13,
-              color: kOrgTextSecondary,
-              height: 1.35,
-            ),
+            style: AppTypography.style(AppTextRole.subtitle, fontSize: 13, color: kOrgTextSecondary, height: 1.35, letterSpacing: opticalTracking(13)),
           ),
         ),
       ],
@@ -995,11 +943,7 @@ class _OrgDisbursementsTabState extends ConsumerState<OrgDisbursementsTab> {
                   const SizedBox(width: 6),
                   Text(
                     'Download Ledger Summary (CSV)',
-                    style: inter(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w600,
-                      color: kOrgTextPrimary,
-                    ),
+                    style: AppTypography.style(AppTextRole.button, fontSize: 12, color: kOrgTextPrimary, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: (12) <= 16)),
                   ),
                 ],
               ),
@@ -1028,11 +972,7 @@ class _OrgDisbursementsTabState extends ConsumerState<OrgDisbursementsTab> {
                   const SizedBox(width: 6),
                   Text(
                     '+ Prepare Tranche Release',
-                    style: inter(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.white,
-                    ),
+                    style: AppTypography.style(AppTextRole.button, fontSize: 12, color: Colors.white, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: (12) <= 16)),
                   ),
                 ],
               ),
@@ -1107,16 +1047,12 @@ class _OrgDisbursementsTabState extends ConsumerState<OrgDisbursementsTab> {
               ),
               child: Text(
                 '2 Planned Tranches',
-                style: inter(
-                  fontSize: 10.5,
-                  fontWeight: FontWeight.w600,
-                  color: kOrgTextSecondary,
-                ),
+                style: AppTypography.style(AppTextRole.badge, fontSize: 10.5, color: kOrgTextSecondary, letterSpacing: opticalTracking(10.5), height: opticalLeading(10.5, isBody: (10.5) <= 16)),
               ),
             ),
             Text(
               'Endowment Allocation',
-              style: inter(fontSize: 11, color: kOrgTextSecondary),
+              style: AppTypography.style(AppTextRole.label, fontSize: 11, color: kOrgTextSecondary, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: (11) <= 16)),
             ),
           ],
         ),
@@ -1145,15 +1081,11 @@ class _OrgDisbursementsTabState extends ConsumerState<OrgDisbursementsTab> {
               children: [
                 Text(
                   '${(pctExecuted * 100).toStringAsFixed(1)}% Executed',
-                  style: inter(
-                    fontSize: 10.5,
-                    fontWeight: FontWeight.w600,
-                    color: kOrgPrimary,
-                  ),
+                  style: AppTypography.style(AppTextRole.badge, fontSize: 10.5, color: kOrgPrimary, letterSpacing: opticalTracking(10.5), height: opticalLeading(10.5, isBody: (10.5) <= 16)),
                 ),
                 Text(
                   '${_formatCompactCurrency(disbursedYtd)} / ${_formatCompactCurrency(totalCommitted)}',
-                  style: inter(fontSize: 10.5, color: kOrgTextSecondary),
+                  style: AppTypography.style(AppTextRole.metric, fontSize: 10.5, color: kOrgTextSecondary, letterSpacing: opticalTracking(10.5), height: opticalLeading(10.5, isBody: (10.5) <= 16)),
                 ),
               ],
             ),
@@ -1201,14 +1133,10 @@ class _OrgDisbursementsTabState extends ConsumerState<OrgDisbursementsTab> {
               ),
               child: Text(
                 'Scheduled: Nov 15',
-                style: inter(
-                  fontSize: 10,
-                  fontWeight: FontWeight.w700,
-                  color: const Color(0xFF623A00),
-                ),
+                style: AppTypography.style(AppTextRole.badge, fontSize: 10, color: const Color(0xFF623A00), letterSpacing: opticalTracking(10), height: opticalLeading(10, isBody: (10) <= 16)),
               ),
             ),
-            Text('Tranche 2', style: inter(fontSize: 11, color: kOrgTextSecondary)),
+            Text('Tranche 2', style: AppTypography.style(AppTextRole.label, fontSize: 11, color: kOrgTextSecondary, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: (11) <= 16))),
           ],
         ),
       ),
@@ -1242,22 +1170,18 @@ class _OrgDisbursementsTabState extends ConsumerState<OrgDisbursementsTab> {
                   child: Center(
                     child: Text(
                       'SC',
-                      style: inter(fontSize: 10, fontWeight: FontWeight.w700, color: Colors.white),
+                      style: AppTypography.style(AppTextRole.label, fontSize: 10, color: Colors.white, letterSpacing: opticalTracking(10), height: opticalLeading(10, isBody: (10) <= 16)),
                     ),
                   ),
                 ),
                 const SizedBox(width: 6),
                 if (totalScholars > 1)
-                  Text('+${totalScholars - 1}', style: inter(fontSize: 11, color: kOrgTextSecondary)),
+                  Text('+${totalScholars - 1}', style: AppTypography.style(AppTextRole.badge, fontSize: 11, color: kOrgTextSecondary, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: (11) <= 16))),
               ],
             ),
             Text(
               '100% Enrollment Verified',
-              style: inter(
-                fontSize: 10.5,
-                fontWeight: FontWeight.w600,
-                color: kOrgPrimary,
-              ),
+              style: AppTypography.style(AppTextRole.badge, fontSize: 10.5, color: kOrgPrimary, letterSpacing: opticalTracking(10.5), height: opticalLeading(10.5, isBody: (10.5) <= 16)),
             ),
           ],
         ),
@@ -1330,12 +1254,7 @@ class _OrgDisbursementsTabState extends ConsumerState<OrgDisbursementsTab> {
                   title,
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
-                  style: inter(
-                    fontSize: 10.5,
-                    fontWeight: FontWeight.w600,
-                    color: kOrgTextMuted,
-                    letterSpacing: 0.5,
-                  ),
+                  style: AppTypography.style(AppTextRole.cardTitle, fontSize: 10.5, color: kOrgTextMuted, letterSpacing: 0.5, height: opticalLeading(10.5, isBody: (10.5) <= 16)),
                 ),
               ),
               const SizedBox(width: 6),
@@ -1358,21 +1277,11 @@ class _OrgDisbursementsTabState extends ConsumerState<OrgDisbursementsTab> {
                 ? OrgMetricCount(motionId: 'disbursements.$title',
                     targetValue: numericValue,
                     prefix: prefix ?? '',
-                    style: orgTabularFigures(inter(
-                      fontSize: 22,
-                      fontWeight: FontWeight.w700,
-                      color: valueColor ?? kOrgTextPrimary,
-                      letterSpacing: -0.5,
-                    )),
+                    style: orgTabularFigures(AppTypography.style(AppTextRole.metric, fontSize: 22, color: valueColor ?? kOrgTextPrimary, letterSpacing: -0.5, height: opticalLeading(22, isBody: (22) <= 16))),
                   )
                 : Text(
                     value,
-                    style: orgTabularFigures(inter(
-                      fontSize: 22,
-                      fontWeight: FontWeight.w700,
-                      color: valueColor ?? kOrgTextPrimary,
-                      letterSpacing: -0.5,
-                    )),
+                    style: orgTabularFigures(AppTypography.style(AppTextRole.metric, fontSize: 22, color: valueColor ?? kOrgTextPrimary, letterSpacing: -0.5, height: opticalLeading(22, isBody: (22) <= 16))),
                   ),
           ),
           const SizedBox(height: 12),
@@ -1406,7 +1315,7 @@ class _OrgDisbursementsTabState extends ConsumerState<OrgDisbursementsTab> {
             const SizedBox(width: 6),
             Text(
               'Tranche 1 • Completed',
-              style: inter(fontSize: 10.5, fontWeight: FontWeight.w700, color: const Color(0xFF00351C)),
+              style: AppTypography.style(AppTextRole.badge, fontSize: 10.5, color: const Color(0xFF00351C), letterSpacing: opticalTracking(10.5), height: opticalLeading(10.5, isBody: (10.5) <= 16)),
             ),
           ],
         ),
@@ -1428,14 +1337,14 @@ class _OrgDisbursementsTabState extends ConsumerState<OrgDisbursementsTab> {
               'Disbursed & Liquidated',
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
-              style: inter(fontSize: 11, fontWeight: FontWeight.w600, color: kOrgPrimary),
+              style: AppTypography.style(AppTextRole.badge, fontSize: 11, color: kOrgPrimary, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: (11) <= 16)),
             ),
           ),
         ],
       ),
       footerRight: Text(
         'Audit Ref #TR1-${DateTime.now().year}',
-        style: inter(fontSize: 10.5, color: kOrgTextMuted),
+        style: AppTypography.style(AppTextRole.caption, fontSize: 10.5, color: kOrgTextMuted, letterSpacing: opticalTracking(10.5), height: opticalLeading(10.5, isBody: (10.5) <= 16)),
       ),
     );
 
@@ -1455,7 +1364,7 @@ class _OrgDisbursementsTabState extends ConsumerState<OrgDisbursementsTab> {
             const SizedBox(width: 6),
             Text(
               'Tranche 2 • Scheduled',
-              style: inter(fontSize: 10.5, fontWeight: FontWeight.w700, color: const Color(0xFF004493)),
+              style: AppTypography.style(AppTextRole.badge, fontSize: 10.5, color: const Color(0xFF004493), letterSpacing: opticalTracking(10.5), height: opticalLeading(10.5, isBody: (10.5) <= 16)),
             ),
           ],
         ),
@@ -1477,7 +1386,7 @@ class _OrgDisbursementsTabState extends ConsumerState<OrgDisbursementsTab> {
               'Ready for Release (3 days)',
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
-              style: inter(fontSize: 11, fontWeight: FontWeight.w600, color: const Color(0xFF0058BC)),
+              style: AppTypography.style(AppTextRole.badge, fontSize: 11, color: const Color(0xFF0058BC), letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: (11) <= 16)),
             ),
           ),
         ],
@@ -1486,7 +1395,7 @@ class _OrgDisbursementsTabState extends ConsumerState<OrgDisbursementsTab> {
         onTap: () => _showPrepareTrancheToast(context, upcomingMidterm, totalScholars),
         child: Text(
           'Review Queue →',
-          style: inter(fontSize: 11, fontWeight: FontWeight.w600, color: kOrgPrimary),
+          style: AppTypography.style(AppTextRole.button, fontSize: 11, color: kOrgPrimary, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: (11) <= 16)),
         ),
       ),
     );
@@ -1506,7 +1415,7 @@ class _OrgDisbursementsTabState extends ConsumerState<OrgDisbursementsTab> {
             const SizedBox(width: 6),
             Text(
               'Tranche 3 • Upcoming',
-              style: inter(fontSize: 10.5, fontWeight: FontWeight.w600, color: kOrgTextSecondary),
+              style: AppTypography.style(AppTextRole.badge, fontSize: 10.5, color: kOrgTextSecondary, letterSpacing: opticalTracking(10.5), height: opticalLeading(10.5, isBody: (10.5) <= 16)),
             ),
           ],
         ),
@@ -1528,14 +1437,14 @@ class _OrgDisbursementsTabState extends ConsumerState<OrgDisbursementsTab> {
               'Pending Midterm Grades',
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
-              style: inter(fontSize: 11, color: kOrgTextSecondary),
+              style: AppTypography.style(AppTextRole.badge, fontSize: 11, color: kOrgTextSecondary, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: (11) <= 16)),
             ),
           ),
         ],
       ),
       footerRight: Text(
         'Q1 2025 Cycle',
-        style: inter(fontSize: 10.5, color: kOrgTextMuted),
+        style: AppTypography.style(AppTextRole.caption, fontSize: 10.5, color: kOrgTextMuted, letterSpacing: opticalTracking(10.5), height: opticalLeading(10.5, isBody: (10.5) <= 16)),
       ),
     );
 
@@ -1555,11 +1464,7 @@ class _OrgDisbursementsTabState extends ConsumerState<OrgDisbursementsTab> {
                 const SizedBox(width: 8),
                 Text(
                   'Semester Tranche Release Timeline',
-                  style: inter(
-                    fontSize: 17,
-                    fontWeight: FontWeight.w700,
-                    color: kOrgTextPrimary,
-                  ),
+                  style: AppTypography.style(AppTextRole.sectionTitle, fontSize: 17, color: kOrgTextPrimary, letterSpacing: opticalTracking(17), height: opticalLeading(17, isBody: (17) <= 16)),
                 ),
               ],
             ),
@@ -1574,7 +1479,7 @@ class _OrgDisbursementsTabState extends ConsumerState<OrgDisbursementsTab> {
                 const SizedBox(width: 6),
                 Text(
                   'Bank Transfer Direct to University & Scholar Institutional Accounts',
-                  style: inter(fontSize: 11, color: kOrgTextSecondary),
+                  style: AppTypography.style(AppTextRole.subtitle, fontSize: 11, color: kOrgTextSecondary, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: (11) <= 16)),
                 ),
               ],
             ),
@@ -1666,18 +1571,18 @@ class _OrgDisbursementsTabState extends ConsumerState<OrgDisbursementsTab> {
                   crossAxisAlignment: WrapCrossAlignment.center,
                   children: [
                     statusBadge,
-                    Text(dateText, style: inter(fontSize: 11, color: kOrgTextSecondary)),
+                    Text(dateText, style: AppTypography.style(AppTextRole.caption, fontSize: 11, color: kOrgTextSecondary, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: (11) <= 16))),
                   ],
                 ),
                 const SizedBox(height: 14),
                 Text(
                   title,
-                  style: inter(fontSize: 15, fontWeight: FontWeight.w700, color: kOrgTextPrimary),
+                  style: AppTypography.style(AppTextRole.cardTitle, fontSize: 15, color: kOrgTextPrimary, letterSpacing: opticalTracking(15), height: opticalLeading(15, isBody: (15) <= 16)),
                 ),
                 const SizedBox(height: 4),
                 Text(
                   subtext,
-                  style: inter(fontSize: 11.5, color: kOrgTextSecondary, height: 1.3),
+                  style: AppTypography.style(AppTextRole.caption, fontSize: 11.5, color: kOrgTextSecondary, height: 1.3, letterSpacing: opticalTracking(11.5)),
                 ),
                 const SizedBox(height: 14),
                 Container(
@@ -1694,22 +1599,22 @@ class _OrgDisbursementsTabState extends ConsumerState<OrgDisbursementsTab> {
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(volumeLabel, style: inter(fontSize: 10.5, color: kOrgTextMuted)),
+                          Text(volumeLabel, style: AppTypography.style(AppTextRole.label, fontSize: 10.5, color: kOrgTextMuted, letterSpacing: opticalTracking(10.5), height: opticalLeading(10.5, isBody: (10.5) <= 16))),
                           const SizedBox(height: 2),
                           Text(
                             volumeValue,
-                            style: orgTabularFigures(inter(fontSize: 15, fontWeight: FontWeight.w700, color: kOrgTextPrimary)),
+                            style: orgTabularFigures(AppTypography.style(AppTextRole.metric, fontSize: 15, color: kOrgTextPrimary, letterSpacing: opticalTracking(15), height: opticalLeading(15, isBody: (15) <= 16))),
                           ),
                         ],
                       ),
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
-                          Text(seatsLabel, style: inter(fontSize: 10.5, color: kOrgTextMuted)),
+                          Text(seatsLabel, style: AppTypography.style(AppTextRole.label, fontSize: 10.5, color: kOrgTextMuted, letterSpacing: opticalTracking(10.5), height: opticalLeading(10.5, isBody: (10.5) <= 16))),
                           const SizedBox(height: 2),
                           Text(
                             seatsValue,
-                            style: orgTabularFigures(inter(fontSize: 13, fontWeight: FontWeight.w600, color: kOrgTextPrimary)),
+                            style: orgTabularFigures(AppTypography.style(AppTextRole.metric, fontSize: 13, color: kOrgTextPrimary, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: (13) <= 16))),
                           ),
                         ],
                       ),
@@ -1780,11 +1685,7 @@ class _OrgDisbursementsTabState extends ConsumerState<OrgDisbursementsTab> {
                       children: [
                         Text(
                           'Scholar Payout Roster',
-                          style: inter(
-                            fontSize: 17,
-                            fontWeight: FontWeight.w700,
-                            color: kOrgTextPrimary,
-                          ),
+                          style: AppTypography.style(AppTextRole.sectionTitle, fontSize: 17, color: kOrgTextPrimary, letterSpacing: opticalTracking(17), height: opticalLeading(17, isBody: (17) <= 16)),
                         ),
                         const SizedBox(width: 10),
                         Container(
@@ -1795,11 +1696,7 @@ class _OrgDisbursementsTabState extends ConsumerState<OrgDisbursementsTab> {
                           ),
                           child: Text(
                             '$totalScholars ${totalScholars == 1 ? 'Grant Active' : 'Grants Active'}',
-                            style: inter(
-                              fontSize: 10.5,
-                              fontWeight: FontWeight.w600,
-                              color: kOrgTextSecondary,
-                            ),
+                            style: AppTypography.style(AppTextRole.badge, fontSize: 10.5, color: kOrgTextSecondary, letterSpacing: opticalTracking(10.5), height: opticalLeading(10.5, isBody: (10.5) <= 16)),
                           ),
                         ),
                       ],
@@ -1807,7 +1704,7 @@ class _OrgDisbursementsTabState extends ConsumerState<OrgDisbursementsTab> {
                     const SizedBox(height: 2),
                     Text(
                       'Individual stipend vouchers, remitted receipts, and tranche settlement records.',
-                      style: inter(fontSize: 11.5, color: kOrgTextSecondary),
+                      style: AppTypography.style(AppTextRole.subtitle, fontSize: 11.5, color: kOrgTextSecondary, letterSpacing: opticalTracking(11.5), height: opticalLeading(11.5, isBody: (11.5) <= 16)),
                     ),
                   ],
                 ),
@@ -1828,10 +1725,10 @@ class _OrgDisbursementsTabState extends ConsumerState<OrgDisbursementsTab> {
                       child: TextField(
                         controller: _searchController,
                         onChanged: (val) => setState(() => _searchQuery = val),
-                        style: inter(fontSize: 11.5, color: kOrgTextPrimary),
+                        style: AppTypography.style(AppTextRole.input, fontSize: 11.5, color: kOrgTextPrimary, letterSpacing: opticalTracking(11.5), height: opticalLeading(11.5, isBody: (11.5) <= 16)),
                         decoration: InputDecoration(
                           hintText: 'Filter by scholar or LRN...',
-                          hintStyle: inter(fontSize: 11, color: kOrgTextMuted),
+                          hintStyle: AppTypography.style(AppTextRole.placeholder, fontSize: 11, color: kOrgTextMuted, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: (11) <= 16)),
                           prefixIcon: const Icon(Icons.search_rounded, size: 16, color: kOrgTextSecondary),
                           border: InputBorder.none,
                           contentPadding: const EdgeInsets.symmetric(vertical: 9),
@@ -1851,7 +1748,7 @@ class _OrgDisbursementsTabState extends ConsumerState<OrgDisbursementsTab> {
                         child: DropdownButton<String>(
                           value: _selectedGrantTrack,
                           icon: const Icon(Icons.expand_more_rounded, size: 16, color: kOrgTextSecondary),
-                          style: inter(fontSize: 11, fontWeight: FontWeight.w500, color: kOrgTextPrimary),
+                          style: AppTypography.style(AppTextRole.label, fontSize: 11, color: kOrgTextPrimary, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: (11) <= 16)),
                           onChanged: (val) {
                             if (val != null) setState(() => _selectedGrantTrack = val);
                           },
@@ -1881,12 +1778,7 @@ class _OrgDisbursementsTabState extends ConsumerState<OrgDisbursementsTab> {
                 dataRowMaxHeight: 64,
                 horizontalMargin: 16,
                 columnSpacing: 16,
-                headingTextStyle: inter(
-                  fontSize: 10.5,
-                  fontWeight: FontWeight.w700,
-                  color: kOrgTextMuted,
-                  letterSpacing: 0.1,
-                ),
+                headingTextStyle: AppTypography.style(AppTextRole.label, fontSize: 10.5, color: kOrgTextMuted, letterSpacing: 0.1, height: opticalLeading(10.5, isBody: (10.5) <= 16)),
                 columns: const [
                   DataColumn(label: Text('SCHOLAR & ACADEMIC ID')),
                   DataColumn(label: Text('GRANT TRACK')),
@@ -1902,7 +1794,7 @@ class _OrgDisbursementsTabState extends ConsumerState<OrgDisbursementsTab> {
                             DataCell(
                               Text(
                                 'No awarded scholars with active allocations found.',
-                                style: inter(fontSize: 12, color: kOrgTextMuted),
+                                style: AppTypography.style(AppTextRole.body, fontSize: 12, color: kOrgTextMuted, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: (12) <= 16)),
                               ),
                             ),
                             const DataCell(SizedBox()),
@@ -1946,11 +1838,7 @@ class _OrgDisbursementsTabState extends ConsumerState<OrgDisbursementsTab> {
                                     child: Center(
                                       child: Text(
                                         initials,
-                                        style: inter(
-                                          fontSize: 12,
-                                          fontWeight: FontWeight.w700,
-                                          color: kOrgPrimary,
-                                        ),
+                                        style: AppTypography.style(AppTextRole.label, fontSize: 12, color: kOrgPrimary, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: (12) <= 16)),
                                       ),
                                     ),
                                   ),
@@ -1961,18 +1849,11 @@ class _OrgDisbursementsTabState extends ConsumerState<OrgDisbursementsTab> {
                                     children: [
                                       Text(
                                         fullName,
-                                        style: inter(
-                                          fontSize: 12.5,
-                                          fontWeight: FontWeight.w600,
-                                          color: kOrgTextPrimary,
-                                        ),
+                                        style: AppTypography.style(AppTextRole.bodyEmphasis, fontSize: 12.5, color: kOrgTextPrimary, letterSpacing: opticalTracking(12.5), height: opticalLeading(12.5, isBody: (12.5) <= 16)),
                                       ),
                                       Text(
                                         '$lrn • $school ($course)',
-                                        style: inter(
-                                          fontSize: 11,
-                                          color: kOrgTextSecondary,
-                                        ),
+                                        style: AppTypography.style(AppTextRole.caption, fontSize: 11, color: kOrgTextSecondary, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: (11) <= 16)),
                                       ),
                                     ],
                                   ),
@@ -1989,11 +1870,7 @@ class _OrgDisbursementsTabState extends ConsumerState<OrgDisbursementsTab> {
                                 ),
                                 child: Text(
                                   grantTitle,
-                                  style: inter(
-                                    fontSize: 11,
-                                    fontWeight: FontWeight.w500,
-                                    color: kOrgTextPrimary,
-                                  ),
+                                  style: AppTypography.style(AppTextRole.badge, fontSize: 11, color: kOrgTextPrimary, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: (11) <= 16)),
                                 ),
                               ),
                             ),
@@ -2005,11 +1882,7 @@ class _OrgDisbursementsTabState extends ConsumerState<OrgDisbursementsTab> {
                                 children: [
                                   Text(
                                     '${_formatCurrency(perScholarTranche)}.00',
-                                    style: inter(
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.w600,
-                                      color: kOrgTextPrimary,
-                                    ),
+                                    style: AppTypography.style(AppTextRole.metric, fontSize: 12, color: kOrgTextPrimary, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: (12) <= 16)),
                                   ),
                                   Row(
                                     mainAxisSize: MainAxisSize.min,
@@ -2018,11 +1891,7 @@ class _OrgDisbursementsTabState extends ConsumerState<OrgDisbursementsTab> {
                                       const SizedBox(width: 3),
                                       Text(
                                         'Released Aug 28',
-                                        style: inter(
-                                          fontSize: 10,
-                                          color: kOrgPrimary,
-                                          fontWeight: FontWeight.w500,
-                                        ),
+                                        style: AppTypography.style(AppTextRole.caption, fontSize: 10, color: kOrgPrimary, letterSpacing: opticalTracking(10), height: opticalLeading(10, isBody: (10) <= 16)),
                                       ),
                                     ],
                                   ),
@@ -2037,11 +1906,7 @@ class _OrgDisbursementsTabState extends ConsumerState<OrgDisbursementsTab> {
                                 children: [
                                   Text(
                                     '${_formatCurrency(perScholarTranche)}.00',
-                                    style: inter(
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.w600,
-                                      color: kOrgTextPrimary,
-                                    ),
+                                    style: AppTypography.style(AppTextRole.metric, fontSize: 12, color: kOrgTextPrimary, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: (12) <= 16)),
                                   ),
                                   Row(
                                     mainAxisSize: MainAxisSize.min,
@@ -2050,11 +1915,7 @@ class _OrgDisbursementsTabState extends ConsumerState<OrgDisbursementsTab> {
                                       const SizedBox(width: 3),
                                       Text(
                                         'Releasing Nov 15',
-                                        style: inter(
-                                          fontSize: 10,
-                                          color: const Color(0xFF0058BC),
-                                          fontWeight: FontWeight.w500,
-                                        ),
+                                        style: AppTypography.style(AppTextRole.caption, fontSize: 10, color: const Color(0xFF0058BC), letterSpacing: opticalTracking(10), height: opticalLeading(10, isBody: (10) <= 16)),
                                       ),
                                     ],
                                   ),
@@ -2091,13 +1952,7 @@ class _OrgDisbursementsTabState extends ConsumerState<OrgDisbursementsTab> {
                                       app.status == ApplicationStatus.approved
                                           ? 'Awaiting Tranche Release'
                                           : 'Verified & Awarded (Ref #${app.id.length >= 6 ? app.id.substring(0, 6) : app.id})',
-                                      style: inter(
-                                        fontSize: 10.5,
-                                        fontWeight: FontWeight.w600,
-                                        color: app.status == ApplicationStatus.approved
-                                            ? const Color(0xFF8C5D00)
-                                            : const Color(0xFF00351C),
-                                      ),
+                                      style: AppTypography.style(AppTextRole.badge, fontSize: 10.5, color: app.status == ApplicationStatus.approved ? const Color(0xFF8C5D00) : const Color(0xFF00351C), letterSpacing: opticalTracking(10.5), height: opticalLeading(10.5, isBody: (10.5) <= 16)),
                                     ),
                                   ],
                                 ),
@@ -2122,7 +1977,7 @@ class _OrgDisbursementsTabState extends ConsumerState<OrgDisbursementsTab> {
                                         icon: const Icon(Icons.payments_rounded, size: 14, color: Colors.white),
                                         label: Text(
                                           'Authorize Award & Release Tranche',
-                                          style: inter(fontSize: 11, fontWeight: FontWeight.w700, color: Colors.white),
+                                          style: AppTypography.style(AppTextRole.button, fontSize: 11, color: Colors.white, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: (11) <= 16)),
                                         ),
                                         style: ElevatedButton.styleFrom(
                                           backgroundColor: const Color(0xFF0F4D2E),
@@ -2144,7 +1999,7 @@ class _OrgDisbursementsTabState extends ConsumerState<OrgDisbursementsTab> {
                                         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                                       ),
-                                      child: Text('View Ledger →', style: inter(fontSize: 11, fontWeight: FontWeight.w500)),
+                                      child: Text('View Ledger →', style: AppTypography.style(AppTextRole.button, fontSize: 11, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: (11) <= 16))),
                                     ),
                                   ],
                                 ),
@@ -2174,16 +2029,16 @@ class _OrgDisbursementsTabState extends ConsumerState<OrgDisbursementsTab> {
                 RichText(
                   text: TextSpan(
                     text: 'Showing ',
-                    style: inter(fontSize: 11.5, color: kOrgTextSecondary),
+                    style: AppTypography.style(AppTextRole.caption, fontSize: 11.5, color: kOrgTextSecondary, letterSpacing: opticalTracking(11.5), height: opticalLeading(11.5, isBody: (11.5) <= 16)),
                     children: [
                       TextSpan(
                         text: '1–${filteredApps.length}',
-                        style: inter(fontWeight: FontWeight.w700, color: kOrgTextPrimary),
+                        style: AppTypography.style(AppTextRole.bodyEmphasis, color: kOrgTextPrimary),
                       ),
                       const TextSpan(text: ' of '),
                       TextSpan(
                         text: '$totalScholars',
-                        style: inter(fontWeight: FontWeight.w700, color: kOrgTextPrimary),
+                        style: AppTypography.style(AppTextRole.bodyEmphasis, color: kOrgTextPrimary),
                       ),
                       const TextSpan(text: ' scholars with active allocations'),
                     ],
@@ -2195,7 +2050,7 @@ class _OrgDisbursementsTabState extends ConsumerState<OrgDisbursementsTab> {
                     OutlinedButton.icon(
                       onPressed: _currentPage > 1 ? () => setState(() => _currentPage--) : null,
                       icon: const Icon(Icons.chevron_left_rounded, size: 14),
-                      label: Text('Previous', style: inter(fontSize: 11)),
+                      label: Text('Previous', style: AppTypography.style(AppTextRole.button, fontSize: 11, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: (11) <= 16))),
                       style: OutlinedButton.styleFrom(
                         foregroundColor: kOrgTextPrimary,
                         side: const BorderSide(color: kOrgBorder),
@@ -2212,7 +2067,7 @@ class _OrgDisbursementsTabState extends ConsumerState<OrgDisbursementsTab> {
                       ),
                       child: Text(
                         '1',
-                        style: inter(fontSize: 11, fontWeight: FontWeight.w700, color: kOrgTextPrimary),
+                        style: AppTypography.style(AppTextRole.navigation, fontSize: 11, color: kOrgTextPrimary, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: (11) <= 16)),
                       ),
                     ),
                     const SizedBox(width: 8),
@@ -2226,7 +2081,7 @@ class _OrgDisbursementsTabState extends ConsumerState<OrgDisbursementsTab> {
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          Text('Next', style: inter(fontSize: 11)),
+                          Text('Next', style: AppTypography.style(AppTextRole.button, fontSize: 11, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: (11) <= 16))),
                           const SizedBox(width: 4),
                           const Icon(Icons.chevron_right_rounded, size: 14),
                         ],
@@ -2266,16 +2121,12 @@ class _OrgDisbursementsTabState extends ConsumerState<OrgDisbursementsTab> {
             children: [
               Text(
                 'Commission on Higher Education (CHED) & BIR Liquidation Protocol',
-                style: inter(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w700,
-                  color: kOrgTextPrimary,
-                ),
+                style: AppTypography.style(AppTextRole.cardTitle, fontSize: 14, color: kOrgTextPrimary, letterSpacing: opticalTracking(14), height: opticalLeading(14, isBody: (14) <= 16)),
               ),
               const SizedBox(height: 4),
               Text(
                 'Scholar disbursement batches are strictly audited against verified university registrars\' official receipts (OR) and certified enrollment rosters before subsequent tranches can be authorized by the Foundation Treasurer.',
-                style: inter(fontSize: 12, color: kOrgTextSecondary, height: 1.35),
+                style: AppTypography.style(AppTextRole.body, fontSize: 12, color: kOrgTextSecondary, height: 1.35, letterSpacing: opticalTracking(12)),
               ),
             ],
           ),
@@ -2296,11 +2147,7 @@ class _OrgDisbursementsTabState extends ConsumerState<OrgDisbursementsTab> {
               padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8.5),
               child: Text(
                 'View Compliance Policy',
-                style: inter(
-                  fontSize: 11.5,
-                  fontWeight: FontWeight.w600,
-                  color: kOrgTextPrimary,
-                ),
+                style: AppTypography.style(AppTextRole.button, fontSize: 11.5, color: kOrgTextPrimary, letterSpacing: opticalTracking(11.5), height: opticalLeading(11.5, isBody: (11.5) <= 16)),
               ),
             ),
           ),
@@ -2316,11 +2163,7 @@ class _OrgDisbursementsTabState extends ConsumerState<OrgDisbursementsTab> {
               padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8.5),
               child: Text(
                 'Generate Audit Binder',
-                style: inter(
-                  fontSize: 11.5,
-                  fontWeight: FontWeight.w600,
-                  color: Colors.white,
-                ),
+                style: AppTypography.style(AppTextRole.button, fontSize: 11.5, color: Colors.white, letterSpacing: opticalTracking(11.5), height: opticalLeading(11.5, isBody: (11.5) <= 16)),
               ),
             ),
           ),

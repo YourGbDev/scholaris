@@ -83,7 +83,7 @@ void main() {
       }
       final label = tester.widget<Text>(find.text('Home'));
       expect(label.style!.fontSize, 10.5);
-      expect(label.style!.fontWeight, FontWeight.w600);
+      expect(label.style!.fontWeight, FontWeight.w500);
       expect(label.style!.letterSpacing, -.1);
       final plus = tester.widget<Icon>(find.byIcon(Icons.add_rounded));
       expect(plus.size, 21);

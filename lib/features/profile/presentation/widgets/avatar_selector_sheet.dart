@@ -3,6 +3,7 @@
 // Modal sheet allowing the student to choose among the 6 doodle avatars or
 // upload a verified real photo from camera or gallery.
 
+import 'package:scholaris/shared/theme/app_typography.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -64,18 +65,11 @@ class AvatarSelectorSheet extends ConsumerWidget {
                     children: [
                       Text(
                         'Profile Avatar',
-                        style: poppins(
-                          fontSize: 18,
-                          fontWeight: FontWeight.w700,
-                          color: kNavyTrust,
-                        ),
+                        style: AppTypography.style(AppTextRole.sectionTitle, fontSize: 18, color: kNavyTrust, letterSpacing: opticalTracking(18), height: opticalLeading(18, isBody: false)),
                       ),
                       Text(
                         'Choose a cartoon doodle or upload a real photo.',
-                        style: openSans(
-                          fontSize: 12,
-                          color: const Color(0xFF707971),
-                        ),
+                        style: AppTypography.style(AppTextRole.subtitle, fontSize: 12, color: const Color(0xFF707971), letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: true)),
                       ),
                     ],
                   ),
@@ -104,7 +98,7 @@ class AvatarSelectorSheet extends ConsumerWidget {
                   Expanded(
                     child: Text(
                       'Note: Doodle avatars are great for browsing, but submitting applications requires a verified face photo for scholarship committee deliberation.',
-                      style: openSans(fontSize: 11, color: const Color(0xFF5D4037)),
+                      style: AppTypography.style(AppTextRole.caption, fontSize: 11, color: const Color(0xFF5D4037), letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: true)),
                     ),
                   ),
                 ],
@@ -127,22 +121,13 @@ class AvatarSelectorSheet extends ConsumerWidget {
                     avatarState.isRealPhoto
                         ? 'Verified Real Photo'
                         : AvatarItem.findById(avatarState.avatarId).name,
-                    style: poppins(
-                      fontSize: 13,
-                      fontWeight: FontWeight.w600,
-                      color: kNavyTrust,
-                    ),
+                    style: AppTypography.style(AppTextRole.label, fontSize: 13, color: kNavyTrust, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: false)),
                   ),
                   Text(
                     avatarState.isRealPhoto
                         ? 'Eligible for scholarship deliberation'
                         : 'Placeholder Avatar',
-                    style: openSans(
-                      fontSize: 11,
-                      color: avatarState.isRealPhoto
-                          ? kPrimary
-                          : const Color(0xFFBA1A1A),
-                    ),
+                    style: AppTypography.style(AppTextRole.subtitle, fontSize: 11, color: avatarState.isRealPhoto ? kPrimary : const Color(0xFFBA1A1A), letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: true)),
                   ),
                 ],
               ),
@@ -151,11 +136,7 @@ class AvatarSelectorSheet extends ConsumerWidget {
 
             Text(
               'Cartoon Doodle Avatars',
-              style: poppins(
-                fontSize: 13,
-                fontWeight: FontWeight.w600,
-                color: kNavyTrust,
-              ),
+              style: AppTypography.style(AppTextRole.sectionTitle, fontSize: 13, color: kNavyTrust, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: false)),
             ),
             const SizedBox(height: 8),
 
@@ -209,13 +190,7 @@ class AvatarSelectorSheet extends ConsumerWidget {
                               preset.name.split(' ').first,
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
-                              style: openSans(
-                                fontSize: 10,
-                                fontWeight: isSelected
-                                    ? FontWeight.w700
-                                    : FontWeight.w500,
-                                color: isSelected ? kPrimary : const Color(0xFF404942),
-                              ),
+                              style: AppTypography.style(AppTextRole.label, fontSize: 10, color: isSelected ? kPrimary : const Color(0xFF404942), letterSpacing: opticalTracking(10), height: opticalLeading(10, isBody: true)),
                             ),
                           ],
                         ),
@@ -230,19 +205,12 @@ class AvatarSelectorSheet extends ConsumerWidget {
 
             Text(
               'Identity Verification Photo',
-              style: poppins(
-                fontSize: 13,
-                fontWeight: FontWeight.w600,
-                color: kNavyTrust,
-              ),
+              style: AppTypography.style(AppTextRole.sectionTitle, fontSize: 13, color: kNavyTrust, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: false)),
             ),
             const SizedBox(height: 4),
             Text(
               'Scholarship providers require a real photograph for official verification.',
-              style: openSans(
-                fontSize: 11,
-                color: const Color(0xFF707971),
-              ),
+              style: AppTypography.style(AppTextRole.subtitle, fontSize: 11, color: const Color(0xFF707971), letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: true)),
             ),
             const SizedBox(height: 10),
 
@@ -262,11 +230,7 @@ class AvatarSelectorSheet extends ConsumerWidget {
                       icon: const Icon(Icons.camera_alt_rounded, size: 18, color: kPrimary),
                       label: Text(
                         'Take Photo',
-                        style: poppins(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w600,
-                          color: kPrimary,
-                        ),
+                        style: AppTypography.style(AppTextRole.button, fontSize: 12, color: kPrimary, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: false)),
                       ),
                       onPressed: () async {
                         HapticFeedback.lightImpact();
@@ -300,10 +264,7 @@ class AvatarSelectorSheet extends ConsumerWidget {
                       icon: const Icon(Icons.photo_library_rounded, size: 18),
                       label: Text(
                         'From Gallery',
-                        style: poppins(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w600,
-                        ),
+                        style: AppTypography.style(AppTextRole.button, fontSize: 12, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: false)),
                       ),
                       onPressed: () async {
                         HapticFeedback.lightImpact();

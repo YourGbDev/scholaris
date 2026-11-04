@@ -5,6 +5,7 @@
 // Displays candidate intake dossiers, 4-KPI performance metrics, multi-parameter filtering,
 // dossier squircle cards, and regulatory compliance footer.
 
+import 'package:scholaris/shared/theme/app_typography.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -125,21 +126,21 @@ class _OrgIncomingApplicationsTabState
                 const SizedBox(height: 12),
                 Text(
                   'Error loading incoming applications',
-                  style: orgHeadline(fontSize: 16),
+                  style: AppTypography.style(AppTextRole.cardTitle, fontSize: 16, color: kOrgTextPrimary, letterSpacing: opticalTracking(16), height: opticalLeading(16, isBody: false)),
                 ),
                 const SizedBox(height: 6),
                 Text(
                   '${incomingAppsAsync.error}',
-                  style: orgBody(fontSize: 12, color: kOrgTextSecondary),
+                  style: AppTypography.style(AppTextRole.body, fontSize: 12, color: kOrgTextSecondary, letterSpacing: opticalTracking(12), height: ((12) <= 16 ? 1.45 : opticalLeading(12, isBody: true))),
                 ),
                 const SizedBox(height: 16),
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(backgroundColor: kOrgPrimary),
                   onPressed: () =>
                       ref.refresh(incomingApplicationsProvider.future),
-                  child: const Text(
+                  child:  Text(
                     'Retry',
-                    style: TextStyle(color: Colors.white),
+                    style: AppTypography.style(AppTextRole.button, color: Colors.white),
                   ),
                 ),
               ],
@@ -400,18 +401,13 @@ class _OrgIncomingApplicationsTabState
             widget.isDecisioningMode
                 ? 'Application decisions'.toUpperCase()
                 : orgName.toUpperCase(),
-            style: orgLabel(
-              fontSize: 11,
-              fontWeight: FontWeight.w600,
-              color: kOrgPrimary,
-              letterSpacing: 0.6,
-            ),
+            style: AppTypography.style(AppTextRole.label, fontSize: 11, color: kOrgPrimary, letterSpacing: 0.6, height: opticalLeading(11, isBody: false)),
           ),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 6),
             child: Text(
               '•',
-              style: orgLabel(fontSize: 11, color: const Color(0xFFC0C9C0)),
+              style: AppTypography.style(AppTextRole.caption, fontSize: 11, color: const Color(0xFFC0C9C0), letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: false)),
             ),
           ),
           Row(
@@ -430,11 +426,7 @@ class _OrgIncomingApplicationsTabState
                 widget.isDecisioningMode
                     ? 'Under review'
                     : 'Application intake',
-                style: orgLabel(
-                  fontSize: 11,
-                  fontWeight: FontWeight.w500,
-                  color: kOrgTextSecondary,
-                ),
+                style: AppTypography.style(AppTextRole.badge, fontSize: 11, color: kOrgTextSecondary, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: false)),
               ),
             ],
           ),
@@ -451,11 +443,7 @@ class _OrgIncomingApplicationsTabState
           widget.isDecisioningMode
               ? 'Grant Intake & Decisioning'
               : 'Incoming Applications',
-          style: orgHeadline(
-            fontSize: isDesktop ? 32 : 26,
-            fontWeight: FontWeight.w700,
-            color: kOrgTextPrimary,
-          ),
+          style: AppTypography.style(AppTextRole.screenTitle, fontSize: isDesktop ? 32 : 26, color: kOrgTextPrimary, letterSpacing: opticalTracking(isDesktop ? 32 : 26), height: opticalLeading(isDesktop ? 32 : 26, isBody: false)),
         ),
         const SizedBox(height: 4),
         ConstrainedBox(
@@ -464,7 +452,7 @@ class _OrgIncomingApplicationsTabState
             widget.isDecisioningMode
                 ? 'Review applications and record selection decisions.'
                 : 'Find applicants, review requirements, and manage application status.',
-            style: orgBody(fontSize: 13.5, color: kOrgTextSecondary),
+            style: AppTypography.style(AppTextRole.subtitle, fontSize: 13.5, color: kOrgTextSecondary, letterSpacing: opticalTracking(13.5), height: ((13.5) <= 16 ? 1.45 : opticalLeading(13.5, isBody: true))),
           ),
         ),
       ],
@@ -559,7 +547,7 @@ class _OrgIncomingApplicationsTabState
         numericValue: underReviewCount,
         badgeWidget: Text(
           '${underReviewPercent.toStringAsFixed(1)}% of pool',
-          style: orgLabel(fontSize: 11, color: kOrgPrimary),
+          style: AppTypography.style(AppTextRole.badge, fontSize: 11, color: kOrgPrimary, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: false)),
         ),
         subtitle: '$underReviewCount awaiting evaluator consensus',
         progressValue: underReviewRatio,
@@ -585,7 +573,7 @@ class _OrgIncomingApplicationsTabState
           ),
           child: Text(
             'Intake Queue',
-            style: orgLabel(fontSize: 10.5, color: kOrgTextPrimary),
+            style: AppTypography.style(AppTextRole.badge, fontSize: 10.5, color: kOrgTextPrimary, letterSpacing: opticalTracking(10.5), height: opticalLeading(10.5, isBody: false)),
           ),
         ),
         subtitle: 'Applications awaiting stage assignment',
@@ -607,7 +595,7 @@ class _OrgIncomingApplicationsTabState
         numericValue: confirmedCount,
         badgeWidget: Text(
           'Listing estimate only',
-          style: orgLabel(fontSize: 11, color: kOrgPrimary),
+          style: AppTypography.style(AppTextRole.caption, fontSize: 11, color: kOrgPrimary, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: false)),
         ),
         subtitle:
             '${_formatCurrency(allocatedCapital)} known award estimate · ${missingAwardValues > 0 ? '$missingAwardValues award value unavailable' : 'Not a payment total'}',
@@ -709,11 +697,7 @@ class _OrgIncomingApplicationsTabState
               Expanded(
                 child: Text(
                   title,
-                  style: orgLabel(
-                    fontSize: 11.5,
-                    fontWeight: FontWeight.w600,
-                    color: isSelected ? kOrgPrimary : kOrgTextSecondary,
-                  ),
+                  style: AppTypography.style(AppTextRole.cardTitle, fontSize: 11.5, color: isSelected ? kOrgPrimary : kOrgTextSecondary, letterSpacing: opticalTracking(11.5), height: opticalLeading(11.5, isBody: false)),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -749,21 +733,13 @@ class _OrgIncomingApplicationsTabState
                       motionId: 'applications.$title',
                       targetValue: numericValue,
                       style: orgTabularFigures(
-                        orgHeadline(
-                          fontSize: 24,
-                          fontWeight: FontWeight.w700,
-                          color: kOrgTextPrimary,
-                        ),
+                        AppTypography.style(AppTextRole.metric, fontSize: 24, color: kOrgTextPrimary, letterSpacing: opticalTracking(24), height: opticalLeading(24, isBody: false)),
                       ),
                     )
                   : Text(
                       value,
                       style: orgTabularFigures(
-                        orgHeadline(
-                          fontSize: 24,
-                          fontWeight: FontWeight.w700,
-                          color: kOrgTextPrimary,
-                        ),
+                        AppTypography.style(AppTextRole.metric, fontSize: 24, color: kOrgTextPrimary, letterSpacing: opticalTracking(24), height: opticalLeading(24, isBody: false)),
                       ),
                     ),
               if (badgeWidget != null) ...[
@@ -774,7 +750,7 @@ class _OrgIncomingApplicationsTabState
           const SizedBox(height: 4),
           Text(
             subtitle,
-            style: orgBody(fontSize: 11.5, color: kOrgTextSecondary),
+            style: AppTypography.style(AppTextRole.caption, fontSize: 11.5, color: kOrgTextSecondary, letterSpacing: opticalTracking(11.5), height: ((11.5) <= 16 ? 1.45 : opticalLeading(11.5, isBody: true))),
           ),
           const SizedBox(height: 12),
           ClipRRect(
@@ -886,15 +862,7 @@ class _OrgIncomingApplicationsTabState
                       children: [
                         Text(
                           item['label'] as String,
-                          style: orgLabel(
-                            fontSize: 12,
-                            fontWeight: isSelected
-                                ? FontWeight.w600
-                                : FontWeight.w500,
-                            color: isSelected
-                                ? kOrgTextPrimary
-                                : kOrgTextSecondary,
-                          ),
+                          style: AppTypography.style(AppTextRole.navigation, fontSize: 12, color: isSelected ? kOrgTextPrimary : kOrgTextSecondary, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: false)),
                         ),
                         const SizedBox(width: 6),
                         Container(
@@ -911,11 +879,7 @@ class _OrgIncomingApplicationsTabState
                           ),
                           child: Text(
                             '${item['count']}',
-                            style: orgLabel(
-                              fontSize: 10.5,
-                              fontWeight: FontWeight.w600,
-                              color: kOrgTextSecondary,
-                            ),
+                            style: AppTypography.style(AppTextRole.badge, fontSize: 10.5, color: kOrgTextSecondary, letterSpacing: opticalTracking(10.5), height: opticalLeading(10.5, isBody: false)),
                           ),
                         ),
                       ],
@@ -971,14 +935,11 @@ class _OrgIncomingApplicationsTabState
                         child: TextField(
                           onChanged: (val) =>
                               setState(() => _searchQuery = val.trim()),
-                          style: orgBody(fontSize: 12.5),
+                          style: AppTypography.style(AppTextRole.input, fontSize: 12.5, color: kOrgTextPrimary, letterSpacing: opticalTracking(12.5), height: ((12.5) <= 16 ? 1.45 : opticalLeading(12.5, isBody: true))),
                           decoration: InputDecoration(
                             isDense: true,
                             hintText: 'Filter by student name, LRN, university, or program...',
-                            hintStyle: orgBody(
-                              fontSize: 12,
-                              color: kOrgTextMuted,
-                            ),
+                            hintStyle: AppTypography.style(AppTextRole.placeholder, fontSize: 12, color: kOrgTextMuted, letterSpacing: opticalTracking(12), height: ((12) <= 16 ? 1.45 : opticalLeading(12, isBody: true))),
                             prefixIcon: const Icon(
                               Icons.search_rounded,
                               size: 18,
@@ -1070,13 +1031,7 @@ class _OrgIncomingApplicationsTabState
                       ),
                       label: Text(
                         'Assigned to Me',
-                        style: orgLabel(
-                          fontSize: 11.5,
-                          fontWeight: _assignedToMe
-                              ? FontWeight.w600
-                              : FontWeight.w500,
-                          color: _assignedToMe ? Colors.white : kOrgTextPrimary,
-                        ),
+                        style: AppTypography.style(AppTextRole.button, fontSize: 11.5, color: _assignedToMe ? Colors.white : kOrgTextPrimary, letterSpacing: opticalTracking(11.5), height: opticalLeading(11.5, isBody: false)),
                       ),
                       selected: _assignedToMe,
                       selectedColor: kOrgPrimary,
@@ -1124,14 +1079,11 @@ class _OrgIncomingApplicationsTabState
                       child: TextField(
                         onChanged: (val) =>
                             setState(() => _searchQuery = val.trim()),
-                        style: orgBody(fontSize: 12.5),
+                        style: AppTypography.style(AppTextRole.input, fontSize: 12.5, color: kOrgTextPrimary, letterSpacing: opticalTracking(12.5), height: ((12.5) <= 16 ? 1.45 : opticalLeading(12.5, isBody: true))),
                         decoration: InputDecoration(
                           isDense: true,
                           hintText: 'Filter applicants...',
-                          hintStyle: orgBody(
-                            fontSize: 12,
-                            color: kOrgTextMuted,
-                          ),
+                          hintStyle: AppTypography.style(AppTextRole.placeholder, fontSize: 12, color: kOrgTextMuted, letterSpacing: opticalTracking(12), height: ((12) <= 16 ? 1.45 : opticalLeading(12, isBody: true))),
                           prefixIcon: const Icon(
                             Icons.search_rounded,
                             size: 18,
@@ -1224,15 +1176,7 @@ class _OrgIncomingApplicationsTabState
                             ),
                             label: Text(
                               'Assigned to Me',
-                              style: orgLabel(
-                                fontSize: 11.5,
-                                fontWeight: _assignedToMe
-                                    ? FontWeight.w600
-                                    : FontWeight.w500,
-                                color: _assignedToMe
-                                    ? Colors.white
-                                    : kOrgTextPrimary,
-                              ),
+                              style: AppTypography.style(AppTextRole.button, fontSize: 11.5, color: _assignedToMe ? Colors.white : kOrgTextPrimary, letterSpacing: opticalTracking(11.5), height: opticalLeading(11.5, isBody: false)),
                             ),
                             selected: _assignedToMe,
                             selectedColor: kOrgPrimary,
@@ -1303,17 +1247,13 @@ class _OrgIncomingApplicationsTabState
           children: [
             Text(
               '$label: ',
-              style: orgLabel(fontSize: 11.5, color: kOrgTextSecondary),
+              style: AppTypography.style(AppTextRole.label, fontSize: 11.5, color: kOrgTextSecondary, letterSpacing: opticalTracking(11.5), height: opticalLeading(11.5, isBody: false)),
             ),
             ConstrainedBox(
               constraints: const BoxConstraints(maxWidth: 140),
               child: Text(
                 valueText,
-                style: orgHeadline(
-                  fontSize: 11.5,
-                  fontWeight: FontWeight.w600,
-                  color: kOrgTextPrimary,
-                ),
+                style: AppTypography.style(AppTextRole.label, fontSize: 11.5, color: kOrgTextPrimary, letterSpacing: opticalTracking(11.5), height: opticalLeading(11.5, isBody: false)),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
               ),
@@ -1463,11 +1403,7 @@ class _OrgIncomingApplicationsTabState
           child: Center(
             child: Text(
               initials,
-              style: orgHeadline(
-                fontSize: 16,
-                fontWeight: FontWeight.w700,
-                color: Colors.white,
-              ),
+              style: AppTypography.style(AppTextRole.label, fontSize: 16, color: Colors.white, letterSpacing: opticalTracking(16), height: opticalLeading(16, isBody: false)),
             ),
           ),
         ),
@@ -1502,11 +1438,7 @@ class _OrgIncomingApplicationsTabState
           children: [
             Text(
               fullName,
-              style: orgHeadline(
-                fontSize: 16.5,
-                fontWeight: FontWeight.w700,
-                color: kOrgTextPrimary,
-              ),
+              style: AppTypography.style(AppTextRole.cardTitle, fontSize: 16.5, color: kOrgTextPrimary, letterSpacing: opticalTracking(16.5), height: opticalLeading(16.5, isBody: false)),
             ),
             orgIdPill(
               app.id.length >= 8
@@ -1534,11 +1466,7 @@ class _OrgIncomingApplicationsTabState
                     const SizedBox(width: 4),
                     Text(
                       honorStanding,
-                      style: orgLabel(
-                        fontSize: 10.5,
-                        fontWeight: FontWeight.w600,
-                        color: kOrgPrimary,
-                      ),
+                      style: AppTypography.style(AppTextRole.badge, fontSize: 10.5, color: kOrgPrimary, letterSpacing: opticalTracking(10.5), height: opticalLeading(10.5, isBody: false)),
                     ),
                   ],
                 ),
@@ -1553,19 +1481,19 @@ class _OrgIncomingApplicationsTabState
           children: [
             Text(
               course,
-              style: orgHeadline(fontSize: 12.5, fontWeight: FontWeight.w600),
+              style: AppTypography.style(AppTextRole.caption, fontSize: 12.5, color: kOrgTextPrimary, letterSpacing: opticalTracking(12.5), height: opticalLeading(12.5, isBody: false)),
             ),
             Text(
               '•',
-              style: orgLabel(fontSize: 11, color: const Color(0xFFC0C9C0)),
+              style: AppTypography.style(AppTextRole.caption, fontSize: 11, color: const Color(0xFFC0C9C0), letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: false)),
             ),
             Text(
               school,
-              style: orgBody(fontSize: 12.5, color: kOrgTextSecondary),
+              style: AppTypography.style(AppTextRole.caption, fontSize: 12.5, color: kOrgTextSecondary, letterSpacing: opticalTracking(12.5), height: ((12.5) <= 16 ? 1.45 : opticalLeading(12.5, isBody: true))),
             ),
             Text(
               '•',
-              style: orgLabel(fontSize: 11, color: const Color(0xFFC0C9C0)),
+              style: AppTypography.style(AppTextRole.caption, fontSize: 11, color: const Color(0xFFC0C9C0), letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: false)),
             ),
             Row(
               mainAxisSize: MainAxisSize.min,
@@ -1578,7 +1506,7 @@ class _OrgIncomingApplicationsTabState
                 const SizedBox(width: 2),
                 Text(
                   location,
-                  style: orgBody(fontSize: 12, color: kOrgTextSecondary),
+                  style: AppTypography.style(AppTextRole.caption, fontSize: 12, color: kOrgTextSecondary, letterSpacing: opticalTracking(12), height: ((12) <= 16 ? 1.45 : opticalLeading(12, isBody: true))),
                 ),
               ],
             ),
@@ -1619,11 +1547,7 @@ class _OrgIncomingApplicationsTabState
                   children: [
                     Text(
                       'Review Dossier',
-                      style: orgLabel(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.white,
-                      ),
+                      style: AppTypography.style(AppTextRole.button, fontSize: 12, color: Colors.white, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: false)),
                     ),
                     const SizedBox(width: 6),
                     const Icon(
@@ -1680,21 +1604,12 @@ class _OrgIncomingApplicationsTabState
       children: [
         Text(
           'GRANT TRACK',
-          style: orgLabel(
-            fontSize: 10,
-            fontWeight: FontWeight.w600,
-            color: kOrgTextSecondary,
-            letterSpacing: 0.5,
-          ),
+          style: AppTypography.style(AppTextRole.label, fontSize: 10, color: kOrgTextSecondary, letterSpacing: 0.5, height: opticalLeading(10, isBody: false)),
         ),
         const SizedBox(height: 3),
         Text(
           scholarship?.title ?? 'Grant Intake Track',
-          style: orgHeadline(
-            fontSize: 13,
-            fontWeight: FontWeight.w600,
-            color: kOrgTextPrimary,
-          ),
+          style: AppTypography.style(AppTextRole.cardTitle, fontSize: 13, color: kOrgTextPrimary, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: false)),
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
         ),
@@ -1702,7 +1617,7 @@ class _OrgIncomingApplicationsTabState
           scholarship?.awardAmount != null
               ? '${_formatCurrency(scholarship!.awardAmount)} / yr Grant'
               : 'Grant Value Declared',
-          style: orgTabularFigures(orgBody(fontSize: 11, color: kOrgPrimary)),
+          style: orgTabularFigures(AppTypography.style(AppTextRole.caption, fontSize: 11, color: kOrgPrimary, letterSpacing: opticalTracking(11), height: ((11) <= 16 ? 1.45 : opticalLeading(11, isBody: true)))),
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
         ),
@@ -1714,12 +1629,7 @@ class _OrgIncomingApplicationsTabState
       children: [
         Text(
           'CUMULATIVE GWA',
-          style: orgLabel(
-            fontSize: 10,
-            fontWeight: FontWeight.w600,
-            color: kOrgTextSecondary,
-            letterSpacing: 0.5,
-          ),
+          style: AppTypography.style(AppTextRole.label, fontSize: 10, color: kOrgTextSecondary, letterSpacing: 0.5, height: opticalLeading(10, isBody: false)),
         ),
         const SizedBox(height: 3),
         Row(
@@ -1729,13 +1639,13 @@ class _OrgIncomingApplicationsTabState
           children: [
             Text(
               gwa != null ? gwa.toStringAsFixed(2) : '—',
-              style: orgTabularFigures(orgHeadline(fontSize: 16, fontWeight: FontWeight.w700)),
+              style: orgTabularFigures(AppTypography.style(AppTextRole.metric, fontSize: 16, color: kOrgTextPrimary, letterSpacing: opticalTracking(16), height: opticalLeading(16, isBody: false))),
             ),
             if (gwa != null)
               Flexible(
                 child: Text(
                   ' / 1.00 Max',
-                  style: orgBody(fontSize: 11, color: kOrgTextSecondary),
+                  style: AppTypography.style(AppTextRole.caption, fontSize: 11, color: kOrgTextSecondary, letterSpacing: opticalTracking(11), height: ((11) <= 16 ? 1.45 : opticalLeading(11, isBody: true))),
                   overflow: TextOverflow.ellipsis,
                 ),
               ),
@@ -1743,7 +1653,7 @@ class _OrgIncomingApplicationsTabState
         ),
         Text(
           gwa != null ? honorStanding : 'Pending Verification',
-          style: orgLabel(fontSize: 11, color: gwa != null ? kOrgPrimary : kOrgTextSecondary),
+          style: AppTypography.style(AppTextRole.badge, fontSize: 11, color: gwa != null ? kOrgPrimary : kOrgTextSecondary, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: false)),
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
         ),
@@ -1755,21 +1665,12 @@ class _OrgIncomingApplicationsTabState
       children: [
         Text(
           'SOCIOECONOMIC NEED',
-          style: orgLabel(
-            fontSize: 10,
-            fontWeight: FontWeight.w600,
-            color: kOrgTextSecondary,
-            letterSpacing: 0.5,
-          ),
+          style: AppTypography.style(AppTextRole.label, fontSize: 10, color: kOrgTextSecondary, letterSpacing: 0.5, height: opticalLeading(10, isBody: false)),
         ),
         const SizedBox(height: 3),
         Text(
           annualIncome != null ? '${_formatCurrency(annualIncome)} / yr' : '—',
-          style: orgTabularFigures(orgHeadline(
-            fontSize: 13,
-            fontWeight: FontWeight.w600,
-            color: kOrgTextPrimary,
-          )),
+          style: orgTabularFigures(AppTypography.style(AppTextRole.metric, fontSize: 13, color: kOrgTextPrimary, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: false))),
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
         ),
@@ -1781,7 +1682,7 @@ class _OrgIncomingApplicationsTabState
           ),
           child: Text(
             annualIncome != null ? 'Self-Declared Income' : 'Income Not Declared',
-            style: orgLabel(fontSize: 10, color: kOrgTextSecondary),
+            style: AppTypography.style(AppTextRole.caption, fontSize: 10, color: kOrgTextSecondary, letterSpacing: opticalTracking(10), height: opticalLeading(10, isBody: false)),
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
           ),
@@ -1794,12 +1695,7 @@ class _OrgIncomingApplicationsTabState
       children: [
         Text(
           'APPLICATION STATUS',
-          style: orgLabel(
-            fontSize: 10,
-            fontWeight: FontWeight.w600,
-            color: kOrgTextSecondary,
-            letterSpacing: 0.5,
-          ),
+          style: AppTypography.style(AppTextRole.label, fontSize: 10, color: kOrgTextSecondary, letterSpacing: 0.5, height: opticalLeading(10, isBody: false)),
         ),
         const SizedBox(height: 3),
         Container(
@@ -1830,11 +1726,7 @@ class _OrgIncomingApplicationsTabState
                 ],
                 Text(
                   statusTitle,
-                  style: orgLabel(
-                    fontSize: 11,
-                    fontWeight: FontWeight.w600,
-                    color: statusTextColor,
-                  ),
+                  style: AppTypography.style(AppTextRole.badge, fontSize: 11, color: statusTextColor, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: false)),
                 ),
               ],
             ),
@@ -1843,7 +1735,7 @@ class _OrgIncomingApplicationsTabState
         const SizedBox(height: 2),
         Text(
           'Updated recently',
-          style: orgBody(fontSize: 10.5, color: kOrgTextSecondary),
+          style: AppTypography.style(AppTextRole.caption, fontSize: 10.5, color: kOrgTextSecondary, letterSpacing: opticalTracking(10.5), height: ((10.5) <= 16 ? 1.45 : opticalLeading(10.5, isBody: true))),
         ),
       ],
     );
@@ -1960,11 +1852,7 @@ class _OrgIncomingApplicationsTabState
                     _expandedAppIds.contains(app.id)
                         ? 'Hide candidate details'
                         : 'Quick intake summary & verification',
-                    style: orgLabel(
-                      fontSize: 11.5,
-                      fontWeight: FontWeight.w600,
-                      color: kOrgPrimary,
-                    ),
+                    style: AppTypography.style(AppTextRole.button, fontSize: 11.5, color: kOrgPrimary, letterSpacing: opticalTracking(11.5), height: opticalLeading(11.5, isBody: false)),
                   ),
                 ],
               ),
@@ -1989,15 +1877,12 @@ class _OrgIncomingApplicationsTabState
                         children: [
                           Text(
                             'SUBMISSION TIMELINE',
-                            style: orgLabel(
-                              fontSize: 9.5,
-                              color: kOrgTextSecondary,
-                            ),
+                            style: AppTypography.style(AppTextRole.label, fontSize: 9.5, color: kOrgTextSecondary, letterSpacing: opticalTracking(9.5), height: opticalLeading(9.5, isBody: false)),
                           ),
                           const SizedBox(height: 2),
                           Text(
                             'Verified Intake Dossier • LRN: Not on file',
-                            style: orgBody(fontSize: 11.5),
+                            style: AppTypography.style(AppTextRole.caption, fontSize: 11.5, color: kOrgTextPrimary, letterSpacing: opticalTracking(11.5), height: ((11.5) <= 16 ? 1.45 : opticalLeading(11.5, isBody: true))),
                           ),
                         ],
                       ),
@@ -2009,10 +1894,7 @@ class _OrgIncomingApplicationsTabState
                         children: [
                           Text(
                             'FAMILY CONTEXT',
-                            style: orgLabel(
-                              fontSize: 9.5,
-                              color: kOrgTextSecondary,
-                            ),
+                            style: AppTypography.style(AppTextRole.label, fontSize: 9.5, color: kOrgTextSecondary, letterSpacing: opticalTracking(9.5), height: opticalLeading(9.5, isBody: false)),
                           ),
                           const SizedBox(height: 2),
                           Text(
@@ -2021,7 +1903,7 @@ class _OrgIncomingApplicationsTabState
                                 : (monthlyIncome != null
                                       ? 'Declared ₱$monthlyIncome/mo'
                                       : 'Family income not declared'),
-                            style: orgBody(fontSize: 11.5),
+                            style: AppTypography.style(AppTextRole.bodyEmphasis, fontSize: 11.5, color: kOrgTextPrimary, letterSpacing: opticalTracking(11.5), height: ((11.5) <= 16 ? 1.45 : opticalLeading(11.5, isBody: true))),
                           ),
                         ],
                       ),
@@ -2062,7 +1944,7 @@ class _OrgIncomingApplicationsTabState
           Flexible(
             child: Text(
               'Review submitted information against your recorded program criteria.',
-              style: orgBody(fontSize: 12, color: kOrgTextSecondary),
+              style: AppTypography.style(AppTextRole.caption, fontSize: 12, color: kOrgTextSecondary, letterSpacing: opticalTracking(12), height: ((12) <= 16 ? 1.45 : opticalLeading(12, isBody: true))),
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
             ),
@@ -2076,7 +1958,7 @@ class _OrgIncomingApplicationsTabState
       children: [
         Text(
           'Showing 1–$displayCount of $totalCount candidates',
-          style: orgBody(fontSize: 12.5, color: kOrgTextSecondary),
+          style: AppTypography.style(AppTextRole.caption, fontSize: 12.5, color: kOrgTextSecondary, letterSpacing: opticalTracking(12.5), height: ((12.5) <= 16 ? 1.45 : opticalLeading(12.5, isBody: true))),
         ),
         const SizedBox(width: 12),
         Container(
@@ -2102,14 +1984,10 @@ class _OrgIncomingApplicationsTabState
             color: kOrgPrimary,
             borderRadius: BorderRadius.circular(8),
           ),
-          child: const Center(
+          child:  Center(
             child: Text(
               '1',
-              style: TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.w700,
-                fontSize: 12.5,
-              ),
+              style: AppTypography.style(AppTextRole.navigation, color: Colors.white, fontSize: 12.5),
             ),
           ),
         ),
@@ -2182,14 +2060,14 @@ class _OrgIncomingApplicationsTabState
           const SizedBox(height: 14),
           Text(
             'No Applications in this View',
-            style: orgHeadline(fontSize: 16, fontWeight: FontWeight.w700),
+            style: AppTypography.style(AppTextRole.cardTitle, fontSize: 16, color: kOrgTextPrimary, letterSpacing: opticalTracking(16), height: opticalLeading(16, isBody: false)),
           ),
           const SizedBox(height: 6),
           ConstrainedBox(
             constraints: const BoxConstraints(maxWidth: 420),
             child: Text(
               'No candidate applications match the selected filter criteria. Try adjusting or resetting the filters.',
-              style: orgBody(fontSize: 13, color: kOrgTextSecondary),
+              style: AppTypography.style(AppTextRole.body, fontSize: 13, color: kOrgTextSecondary, letterSpacing: opticalTracking(13), height: ((13) <= 16 ? 1.45 : opticalLeading(13, isBody: true))),
               textAlign: TextAlign.center,
             ),
           ),

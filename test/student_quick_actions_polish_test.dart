@@ -8,9 +8,9 @@ void main() {
   testWidgets(
     'three-action menu stays narrow and concise at normal phone text size',
     (tester) async {
-      await (FontLoader('Geist')
-            ..addFont(rootBundle.load('assets/fonts/geist/Geist-Regular.ttf'))
-            ..addFont(rootBundle.load('assets/fonts/geist/Geist-SemiBold.ttf')))
+      await (FontLoader('Inter')
+            ..addFont(rootBundle.load('assets/fonts/inter/Inter-Regular.ttf'))
+            ..addFont(rootBundle.load('assets/fonts/inter/Inter-SemiBold.ttf')))
           .load();
       tester.view.physicalSize = const Size(390, 844);
       tester.view.devicePixelRatio = 1;

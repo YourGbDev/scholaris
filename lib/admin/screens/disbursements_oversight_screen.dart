@@ -5,6 +5,7 @@
 // Strictly real data: 100% wired to public.disbursements, public.profiles, and public.scholarships.
 // Zero fabricated metrics, zero fake compliance stamps, honest empty states.
 
+import 'package:scholaris/shared/theme/app_typography.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:scholaris/features/admin/presentation/admin_theme.dart';
@@ -320,10 +321,7 @@ class _DisbursementsOversightScreenState
               const SizedBox(width: 5),
               Text(
                 'Live data',
-                style: seqLabelSm(
-                  color: kSeqOnPrimaryFixedVariant,
-                  fontWeight: FontWeight.w600,
-                ),
+                style: AppTypography.style(AppTextRole.badge, color: kSeqOnPrimaryFixedVariant, fontSize: 10, height: 12 / 10, letterSpacing: 0.03 * 10),
               ),
             ],
           ),
@@ -331,15 +329,12 @@ class _DisbursementsOversightScreenState
         const SizedBox(height: 8),
         Text(
           'Disbursements Oversight',
-          style: seqHeadlineLg(
-            fontWeight: FontWeight.w700,
-            color: kSeqOnSurface,
-          ),
+          style: AppTypography.style(AppTextRole.screenTitle, color: kSeqOnSurface, fontSize: 32, height: 38 / 32, letterSpacing: -0.021 * 32),
         ),
         const SizedBox(height: 4),
         Text(
           '$totalCount disbursements on platform',
-          style: seqBodyMd(color: kSeqOnSurfaceVariant),
+          style: AppTypography.style(AppTextRole.subtitle, color: kSeqOnSurfaceVariant, fontSize: 14, height: 20 / 14, letterSpacing: -0.006 * 14),
         ),
       ],
     );
@@ -385,10 +380,7 @@ class _DisbursementsOversightScreenState
                 },
                 backgroundColor: kSeqSurfaceContainerLow,
                 selectedColor: kSeqPrimaryContainer,
-                labelStyle: seqLabelSm(
-                  color: isSelected ? kSeqOnPrimary : kSeqOnSurfaceVariant,
-                  fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
-                ),
+                labelStyle: AppTypography.style(AppTextRole.navigation, color: isSelected ? kSeqOnPrimary : kSeqOnSurfaceVariant, fontSize: 10, height: 12 / 10, letterSpacing: 0.03 * 10),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10),
                   side: BorderSide(
@@ -434,17 +426,14 @@ class _DisbursementsOversightScreenState
           const SizedBox(height: 18),
           Text(
             'No disbursements yet',
-            style: seqHeadlineSm(
-              fontWeight: FontWeight.w700,
-              color: kSeqOnSurface,
-            ),
+            style: AppTypography.style(AppTextRole.sectionTitle, color: kSeqOnSurface, fontSize: 19, height: 24 / 19, letterSpacing: -0.015 * 19),
           ),
           const SizedBox(height: 8),
           ConstrainedBox(
             constraints: const BoxConstraints(maxWidth: 420),
             child: Text(
               'Disbursements appear here once authorized and created from an approved scholarship application.',
-              style: seqBodyMd(color: kSeqOnSurfaceVariant),
+              style: AppTypography.style(AppTextRole.body, color: kSeqOnSurfaceVariant, fontSize: 14, height: 20 / 14, letterSpacing: -0.006 * 14),
               textAlign: TextAlign.center,
             ),
           ),
@@ -488,14 +477,14 @@ class _DisbursementsOversightScreenState
                       children: [
                         Text(
                           recipient,
-                          style: seqHeadlineSm(fontWeight: FontWeight.w700),
+                          style: AppTypography.style(AppTextRole.cardTitle, fontSize: 19, height: 24 / 19, letterSpacing: -0.015 * 19, color: kSeqOnSurface),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                         ),
                         const SizedBox(height: 2),
                         Text(
                           scholarship,
-                          style: seqBodySm(color: kSeqOnSurfaceVariant),
+                          style: AppTypography.style(AppTextRole.subtitle, color: kSeqOnSurfaceVariant, fontSize: 12, height: 16 / 12, letterSpacing: 0),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                         ),
@@ -517,17 +506,11 @@ class _DisbursementsOversightScreenState
                       children: [
                         Text(
                           'AMOUNT',
-                          style: seqLabelSm(
-                            color: kSeqOutline,
-                            fontWeight: FontWeight.w600,
-                          ),
+                          style: AppTypography.style(AppTextRole.label, color: kSeqOutline, fontSize: 10, height: 12 / 10, letterSpacing: 0.03 * 10),
                         ),
                         Text(
                           amountStr,
-                          style: seqTabularFigures(seqHeadlineSm(
-                            fontWeight: FontWeight.w700,
-                            color: kSeqPrimary,
-                          )),
+                          style: seqTabularFigures(AppTypography.style(AppTextRole.metric, color: kSeqPrimary, fontSize: 19, height: 24 / 19, letterSpacing: -0.015 * 19)),
                         ),
                       ],
                     ),
@@ -538,14 +521,11 @@ class _DisbursementsOversightScreenState
                       children: [
                         Text(
                           'METHOD',
-                          style: seqLabelSm(
-                            color: kSeqOutline,
-                            fontWeight: FontWeight.w600,
-                          ),
+                          style: AppTypography.style(AppTextRole.label, color: kSeqOutline, fontSize: 10, height: 12 / 10, letterSpacing: 0.03 * 10),
                         ),
                         Text(
                           paymentMethodStr,
-                          style: seqBodySm(fontWeight: FontWeight.w600),
+                          style: AppTypography.style(AppTextRole.bodyEmphasis, fontSize: 12, height: 16 / 12, letterSpacing: 0, color: kSeqOnSurface),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                         ),
@@ -558,16 +538,13 @@ class _DisbursementsOversightScreenState
                       children: [
                         Text(
                           'REF NO.',
-                          style: seqLabelSm(
-                            color: kSeqOutline,
-                            fontWeight: FontWeight.w600,
-                          ),
+                          style: AppTypography.style(AppTextRole.label, color: kSeqOutline, fontSize: 10, height: 12 / 10, letterSpacing: 0.03 * 10),
                         ),
                         refStr != '—'
                             ? adminIdPill(refStr)
                             : Text(
                                 refStr,
-                                style: seqBodySm(fontWeight: FontWeight.w600),
+                                style: AppTypography.style(AppTextRole.caption, fontSize: 12, height: 16 / 12, letterSpacing: 0, color: kSeqOnSurface),
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
                               ),
@@ -576,7 +553,7 @@ class _DisbursementsOversightScreenState
                   ),
                   Text(
                     dateStr,
-                    style: seqTabularFigures(seqLabelSm(color: kSeqOutline)),
+                    style: seqTabularFigures(AppTypography.style(AppTextRole.caption, color: kSeqOutline, fontSize: 10, height: 12 / 10, letterSpacing: 0.03 * 10)),
                   ),
                 ],
               ),
@@ -645,7 +622,7 @@ class _DisbursementsOversightScreenState
           const SizedBox(width: 5),
           Text(
             label,
-            style: seqLabelSm(color: fg, fontWeight: FontWeight.w600),
+            style: AppTypography.style(AppTextRole.badge, color: fg, fontSize: 10, height: 12 / 10, letterSpacing: 0.03 * 10),
           ),
         ],
       ),
@@ -681,7 +658,7 @@ class _DisbursementsOversightScreenState
             Expanded(
               child: Text(
                 'Disbursement Details',
-                style: seqHeadlineSm(fontWeight: FontWeight.w700),
+                style: AppTypography.style(AppTextRole.sectionTitle, fontSize: 19, height: 24 / 19, letterSpacing: -0.015 * 19, color: kSeqOnSurface),
               ),
             ),
             _buildStatusChip(record.status),
@@ -719,10 +696,7 @@ class _DisbursementsOversightScreenState
                 const SizedBox(height: 8),
                 Text(
                   'INTERNAL NOTES',
-                  style: seqLabelSm(
-                    color: kSeqOutline,
-                    fontWeight: FontWeight.w700,
-                  ),
+                  style: AppTypography.style(AppTextRole.sectionTitle, color: kSeqOutline, fontSize: 10, height: 12 / 10, letterSpacing: 0.03 * 10),
                 ),
                 const SizedBox(height: 6),
                 Container(
@@ -739,8 +713,8 @@ class _DisbursementsOversightScreenState
                     notesStr,
                     style: record.notes != null &&
                             record.notes!.trim().isNotEmpty
-                        ? seqBodySm(color: kSeqOnSurface)
-                        : seqBodySm(color: kSeqOutline),
+                        ? AppTypography.style(AppTextRole.body, color: kSeqOnSurface, fontSize: 12, height: 16 / 12, letterSpacing: 0)
+                        : AppTypography.style(AppTextRole.body, color: kSeqOutline, fontSize: 12, height: 16 / 12, letterSpacing: 0),
                   ),
                 ),
               ],
@@ -752,10 +726,7 @@ class _DisbursementsOversightScreenState
             onPressed: () => Navigator.of(dContext).pop(),
             child: Text(
               'Close',
-              style: seqLabelMd(
-                color: kSeqOnSurfaceVariant,
-                fontWeight: FontWeight.w600,
-              ),
+              style: AppTypography.style(AppTextRole.button, color: kSeqOnSurfaceVariant, fontSize: 12, height: 16 / 12, letterSpacing: -0.002 * 12),
             ),
           ),
         ],
@@ -776,22 +747,15 @@ class _DisbursementsOversightScreenState
             child: Text(
               label,
               style:
-                  seqLabelSm(color: kSeqOutline, fontWeight: FontWeight.w500),
+                  AppTypography.style(AppTextRole.label, color: kSeqOutline, fontSize: 10, height: 12 / 10, letterSpacing: 0.03 * 10),
             ),
           ),
           Expanded(
             child: Text(
               value,
               style: isMono
-                  ? adminDataMono(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w500,
-                      color: kSeqOnSurface,
-                    )
-                  : seqBodySm(
-                      color: kSeqOnSurface,
-                      fontWeight: FontWeight.w600,
-                    ),
+                  ? AppTypography.style(AppTextRole.caption, fontSize: 12, color: kSeqOnSurface)
+                  : AppTypography.style(AppTextRole.bodyEmphasis, color: kSeqOnSurface, fontSize: 12, height: 16 / 12, letterSpacing: 0),
             ),
           ),
         ],

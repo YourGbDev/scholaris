@@ -1,3 +1,4 @@
+import 'package:scholaris/shared/theme/app_typography.dart';
 import 'dart:math' as math;
 
 import 'package:flutter/gestures.dart';
@@ -700,28 +701,20 @@ class _StudentApplicationGuideState extends State<StudentApplicationGuide>
                           liveRegion: true,
                           child: Text(
                             _stop.title,
-                            style: geist(
-                              fontSize: 20,
-                              height: 1.2,
-                              fontWeight: FontWeight.w700,
-                            ),
+                            style: AppTypography.style(AppTextRole.sectionTitle, fontSize: 20, height: 1.2),
                           ),
                         ),
                         const SizedBox(height: 10),
                         Text(
                           _stop.tip,
-                          style: geist(
-                            fontSize: 15,
-                            height: 1.45,
-                            color: kTextSecondary,
-                          ),
+                          style: AppTypography.style(AppTextRole.body, fontSize: 15, height: 1.45, color: kTextSecondary),
                         ),
                         if (_step == 7 &&
                             widget.exampleScholarship == null) ...[
                           const SizedBox(height: 10),
                           Text(
                             'No scholarship is available right now. Skip the guide and try again when listings load.',
-                            style: geist(fontSize: 14),
+                            style: AppTypography.style(AppTextRole.caption, fontSize: 14),
                           ),
                         ] else if (_stop.action != null && target == null) ...[
                           const SizedBox(height: 12),
@@ -732,7 +725,7 @@ class _StudentApplicationGuideState extends State<StudentApplicationGuide>
                               onPressed: _action,
                               child: Text(
                                 _stop.action!,
-                                style: geist(fontWeight: FontWeight.w600),
+                                style: AppTypography.style(AppTextRole.button),
                               ),
                             ),
                           ),
@@ -764,12 +757,7 @@ class _StudentApplicationGuideState extends State<StudentApplicationGuide>
                           ? 'Tap anywhere to finish'
                           : 'Tap anywhere to continue',
                       textAlign: TextAlign.center,
-                      style: geist(
-                        fontSize: 15,
-                        height: 1.3,
-                        fontWeight: FontWeight.w700,
-                        color: Colors.white,
-                      ),
+                      style: AppTypography.style(AppTextRole.caption, fontSize: 15, height: 1.3, color: Colors.white),
                     ),
                   ),
                 ),

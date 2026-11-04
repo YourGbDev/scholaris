@@ -3,6 +3,7 @@
 // Centralized Scholaris Motion System Tokens & Components
 // Derived directly from scholaris-design-system.md Section 5 (Motion).
 
+import 'package:scholaris/shared/theme/app_typography.dart';
 import 'dart:async';
 import 'dart:math' as math;
 import 'dart:ui' as ui;
@@ -882,12 +883,7 @@ void showScholarisToast(
               Flexible(
                 child: Text(
                   message,
-                  style: const TextStyle(
-                    fontFamily: 'Geist',
-                    fontSize: 13.5,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.white,
-                  ),
+                  style: AppTypography.style(AppTextRole.body, fontSize: 13.5, color: Colors.white),
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                 ),

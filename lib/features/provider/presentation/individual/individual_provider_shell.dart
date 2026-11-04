@@ -1,3 +1,4 @@
+import 'package:scholaris/shared/theme/app_typography.dart';
 import 'individual_support_tab.dart';
 // lib/features/provider/presentation/individual/individual_provider_shell.dart
 //
@@ -98,10 +99,7 @@ class _IndividualProviderShellState
                             const SizedBox(height: 12),
                             Text(
                               'Individual provider',
-                              style: orgBody(
-                                fontSize: 12,
-                                color: kOrgTextSecondary,
-                              ),
+                              style: AppTypography.style(AppTextRole.subtitle, fontSize: 12, color: kOrgTextSecondary, letterSpacing: opticalTracking(12), height: ((12) <= 16 ? 1.45 : opticalLeading(12, isBody: true))),
                             ),
                             const SizedBox(height: 28),
                             for (final item in [
@@ -162,15 +160,7 @@ class _IndividualProviderShellState
                                       item.$2,
                                       maxLines: 1,
                                       overflow: TextOverflow.ellipsis,
-                                      style: orgBody(
-                                        fontSize: 13,
-                                        color: _currentIndex == item.$1
-                                            ? Colors.white
-                                            : kOrgTextPrimary,
-                                        fontWeight: _currentIndex == item.$1
-                                            ? FontWeight.w600
-                                            : FontWeight.w400,
-                                      ),
+                                      style: AppTypography.style(AppTextRole.navigation, fontSize: 13, color: _currentIndex == item.$1 ? Colors.white : kOrgTextPrimary, letterSpacing: opticalTracking(13), height: ((13) <= 16 ? 1.45 : opticalLeading(13, isBody: true))),
                                     ),
                                     onTap: () =>
                                         setState(() { _showAwaitingReview = false; _currentIndex = item.$1; }),
@@ -190,10 +180,7 @@ class _IndividualProviderShellState
                                   backgroundColor: kOrgPrimary,
                                   child: Text(
                                     identity.initials,
-                                    style: orgLabel(
-                                      fontSize: 12,
-                                      color: Colors.white,
-                                    ),
+                                    style: AppTypography.style(AppTextRole.label, fontSize: 12, color: Colors.white, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: false)),
                                   ),
                                 ),
                                 const SizedBox(width: 10),
@@ -206,15 +193,12 @@ class _IndividualProviderShellState
                                         identity.name,
                                         maxLines: 2,
                                         overflow: TextOverflow.ellipsis,
-                                        style: orgLabel(fontSize: 12),
+                                        style: AppTypography.style(AppTextRole.label, fontSize: 12, color: kOrgTextSecondary, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: false)),
                                       ),
                                       const SizedBox(height: 3),
                                       Text(
                                         'Individual provider',
-                                        style: orgBody(
-                                          fontSize: 11,
-                                          color: kOrgTextSecondary,
-                                        ),
+                                        style: AppTypography.style(AppTextRole.subtitle, fontSize: 11, color: kOrgTextSecondary, letterSpacing: opticalTracking(11), height: ((11) <= 16 ? 1.45 : opticalLeading(11, isBody: true))),
                                       ),
                                     ],
                                   ),
@@ -229,7 +213,7 @@ class _IndividualProviderShellState
                               style: TextButton.styleFrom(
                                 foregroundColor: kOrgTextSecondary,
                                 padding: EdgeInsets.zero,
-                                textStyle: orgLabel(fontSize: 11),
+                                textStyle: AppTypography.style(AppTextRole.button, fontSize: 11, color: kOrgTextSecondary, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: false)),
                               ),
                               icon: const Icon(
                                 Icons.settings_outlined,
@@ -241,7 +225,7 @@ class _IndividualProviderShellState
                               style: TextButton.styleFrom(
                                 foregroundColor: kOrgError,
                                 padding: EdgeInsets.zero,
-                                textStyle: orgLabel(fontSize: 11),
+                                textStyle: AppTypography.style(AppTextRole.button, fontSize: 11, color: kOrgTextSecondary, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: false)),
                               ),
                               onPressed: () async {
                                 if (await showLogoutConfirmationDialog(
@@ -308,11 +292,7 @@ class _IndividualProviderShellState
                 ),
                 child: Text(
                   'BENEFACTOR',
-                  style: orgLabel(
-                    color: const Color(0xFF404942),
-                    fontSize: 9,
-                    letterSpacing: 0.8,
-                  ),
+                  style: AppTypography.style(AppTextRole.badge, color: const Color(0xFF404942), fontSize: 9, letterSpacing: 0.8, height: opticalLeading(9, isBody: false)),
                 ),
               ),
           ],

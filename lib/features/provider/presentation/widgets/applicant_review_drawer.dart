@@ -1,3 +1,4 @@
+import 'package:scholaris/shared/theme/app_typography.dart';
 import '../../repositories/support_repository.dart';
 import '../../models/support_ledger.dart';
 // lib/features/provider/presentation/widgets/applicant_review_drawer.dart
@@ -325,7 +326,7 @@ class _ApplicantReviewDrawerState extends ConsumerState<ApplicantReviewDrawer> {
             Expanded(
               child: Text(
                 'Confirm Decision',
-                style: orgHeadline(fontSize: 17, fontWeight: FontWeight.bold),
+                style: AppTypography.style(AppTextRole.cardTitle, fontSize: 17, color: kOrgTextPrimary, letterSpacing: opticalTracking(17), height: opticalLeading(17, isBody: false)),
               ),
             ),
           ],
@@ -336,14 +337,14 @@ class _ApplicantReviewDrawerState extends ConsumerState<ApplicantReviewDrawer> {
           children: [
             Text(
               'Are you sure you want to $actionLabel for $candidateName?',
-              style: orgBody(fontSize: 13, color: const Color(0xFF161C27)),
+              style: AppTypography.style(AppTextRole.body, fontSize: 13, color: const Color(0xFF161C27), letterSpacing: opticalTracking(13), height: ((13) <= 16 ? 1.45 : opticalLeading(13, isBody: true))),
             ),
             if (budgetImpact != null)
               Padding(
                 padding: const EdgeInsets.only(top: 12),
                 child: Text(
                   budgetImpact,
-                  style: orgBody(fontSize: 13, color: kOrgPrimary),
+                  style: AppTypography.style(AppTextRole.bodyEmphasis, fontSize: 13, color: kOrgPrimary, letterSpacing: opticalTracking(13), height: ((13) <= 16 ? 1.45 : opticalLeading(13, isBody: true))),
                 ),
               ),
             const SizedBox(height: 8),
@@ -355,7 +356,7 @@ class _ApplicantReviewDrawerState extends ConsumerState<ApplicantReviewDrawer> {
                         ? 'The student will receive your decision. This does not judge their eligibility for other scholarships.'
                         : 'The application will be marked as ineligible in the institutional roster.')
                   : 'The rubric evaluation will be saved and sent to the organization admin for a final decision.',
-              style: orgBody(fontSize: 12, color: const Color(0xFF707971)),
+              style: AppTypography.style(AppTextRole.body, fontSize: 12, color: const Color(0xFF707971), letterSpacing: opticalTracking(12), height: ((12) <= 16 ? 1.45 : opticalLeading(12, isBody: true))),
             ),
           ],
         ),
@@ -372,11 +373,7 @@ class _ApplicantReviewDrawerState extends ConsumerState<ApplicantReviewDrawer> {
               ),
               child: Text(
                 'Cancel',
-                style: orgLabel(
-                  color: kOrgTextMuted,
-                  fontSize: 13,
-                  fontWeight: FontWeight.w600,
-                ),
+                style: AppTypography.style(AppTextRole.button, color: kOrgTextMuted, fontSize: 13, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: false)),
               ),
             ),
           ),
@@ -396,11 +393,7 @@ class _ApplicantReviewDrawerState extends ConsumerState<ApplicantReviewDrawer> {
               onPressed: () => Navigator.of(dialogCtx).pop(true),
               child: Text(
                 actionLabel,
-                style: orgLabel(
-                  color: Colors.white,
-                  fontSize: 13,
-                  fontWeight: FontWeight.bold,
-                ),
+                style: AppTypography.style(AppTextRole.button, color: Colors.white, fontSize: 13, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: false)),
               ),
             ),
           ),
@@ -471,11 +464,7 @@ class _ApplicantReviewDrawerState extends ConsumerState<ApplicantReviewDrawer> {
                       : targetStatus == ApplicationStatus.rejected
                       ? 'Application marked as ineligible.'
                       : 'Evaluation saved and endorsed to the organization admin.',
-                  style: orgBody(
-                    color: Colors.white,
-                    fontSize: 13,
-                    fontWeight: FontWeight.w600,
-                  ),
+                  style: AppTypography.style(AppTextRole.body, color: Colors.white, fontSize: 13, letterSpacing: opticalTracking(13), height: ((13) <= 16 ? 1.45 : opticalLeading(13, isBody: true))),
                 ),
               ),
             ],
@@ -503,11 +492,7 @@ class _ApplicantReviewDrawerState extends ConsumerState<ApplicantReviewDrawer> {
               Expanded(
                 child: Text(
                   'Could not save the decision. Check your connection, refresh the application, and try again.',
-                  style: orgBody(
-                    color: Colors.white,
-                    fontSize: 13,
-                    fontWeight: FontWeight.w500,
-                  ),
+                  style: AppTypography.style(AppTextRole.body, color: Colors.white, fontSize: 13, letterSpacing: opticalTracking(13), height: ((13) <= 16 ? 1.45 : opticalLeading(13, isBody: true))),
                 ),
               ),
             ],
@@ -826,11 +811,7 @@ class _ApplicantReviewDrawerState extends ConsumerState<ApplicantReviewDrawer> {
             alignment: Alignment.center,
             child: Text(
               initials,
-              style: orgHeadline(
-                fontSize: 18,
-                fontWeight: FontWeight.w700,
-                color: Colors.white,
-              ),
+              style: AppTypography.style(AppTextRole.label, fontSize: 18, color: Colors.white, letterSpacing: opticalTracking(18), height: opticalLeading(18, isBody: false)),
             ),
           ),
           const SizedBox(width: 14),
@@ -848,10 +829,7 @@ class _ApplicantReviewDrawerState extends ConsumerState<ApplicantReviewDrawer> {
                         studentName,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: orgHeadline(
-                          fontSize: isNarrow ? 16 : 19,
-                          fontWeight: FontWeight.w700,
-                        ),
+                        style: AppTypography.style(AppTextRole.screenTitle, fontSize: isNarrow ? 16 : 19, color: kOrgTextPrimary, letterSpacing: opticalTracking(isNarrow ? 16 : 19), height: opticalLeading(isNarrow ? 16 : 19, isBody: false)),
                       ),
                     ),
                     if (!isNarrow &&
@@ -880,13 +858,7 @@ class _ApplicantReviewDrawerState extends ConsumerState<ApplicantReviewDrawer> {
                               : (setupComplete
                                     ? 'Profile Complete'
                                     : 'Profile Incomplete'),
-                          style: orgLabel(
-                            fontSize: 11,
-                            fontWeight: FontWeight.w600,
-                            color: setupComplete
-                                ? const Color(0xFF002110)
-                                : const Color(0xFF623A00),
-                          ),
+                          style: AppTypography.style(AppTextRole.badge, fontSize: 11, color: setupComplete ? const Color(0xFF002110) : const Color(0xFF623A00), letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: false)),
                         ),
                       ),
                     ],
@@ -901,19 +873,12 @@ class _ApplicantReviewDrawerState extends ConsumerState<ApplicantReviewDrawer> {
                             .isIndividualBenefactor) ...[
                       Text(
                         'LRN: Not on file',
-                        style: orgBody(
-                          fontSize: 12,
-                          color: const Color(0xFF707971),
-                        ),
+                        style: AppTypography.style(AppTextRole.caption, fontSize: 12, color: const Color(0xFF707971), letterSpacing: opticalTracking(12), height: ((12) <= 16 ? 1.45 : opticalLeading(12, isBody: true))),
                       ),
                       const SizedBox(width: 6),
-                      const Text(
+                       Text(
                         '•',
-                        style: TextStyle(
-                          color: Color(0xFF707971),
-                          fontSize: 12,
-                          letterSpacing: 0.15,
-                        ),
+                        style: AppTypography.style(AppTextRole.caption, color: Color(0xFF707971), fontSize: 12, letterSpacing: 0.15),
                       ),
                       const SizedBox(width: 6),
                     ],
@@ -922,11 +887,7 @@ class _ApplicantReviewDrawerState extends ConsumerState<ApplicantReviewDrawer> {
                         scholarshipTitle,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: orgBody(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w500,
-                          color: kOrgPrimary,
-                        ),
+                        style: AppTypography.style(AppTextRole.subtitle, fontSize: 12, color: kOrgPrimary, letterSpacing: opticalTracking(12), height: ((12) <= 16 ? 1.45 : opticalLeading(12, isBody: true))),
                       ),
                     ),
                   ],
@@ -1029,7 +990,7 @@ class _ApplicantReviewDrawerState extends ConsumerState<ApplicantReviewDrawer> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('Student details', style: orgHeadline(fontSize: 20)),
+          Text('Student details', style: AppTypography.style(AppTextRole.sectionTitle, fontSize: 20, color: kOrgTextPrimary, letterSpacing: opticalTracking(20), height: opticalLeading(20, isBody: false))),
           const SizedBox(height: 8),
           const Text(
             'Submitted profile information. Review the supporting documents before making a decision.',
@@ -1050,13 +1011,10 @@ class _ApplicantReviewDrawerState extends ConsumerState<ApplicantReviewDrawer> {
                       children: [
                         Text(
                           fact.$1,
-                          style: orgBody(
-                            fontSize: 12,
-                            color: kOrgTextSecondary,
-                          ),
+                          style: AppTypography.style(AppTextRole.label, fontSize: 12, color: kOrgTextSecondary, letterSpacing: opticalTracking(12), height: ((12) <= 16 ? 1.45 : opticalLeading(12, isBody: true))),
                         ),
                         const SizedBox(height: 5),
-                        Text(fact.$2, style: orgLabel(fontSize: 15)),
+                        Text(fact.$2, style: AppTypography.style(AppTextRole.bodyEmphasis, fontSize: 15, color: kOrgTextSecondary, letterSpacing: opticalTracking(15), height: opticalLeading(15, isBody: false))),
                       ],
                     ),
                   ),
@@ -1066,7 +1024,7 @@ class _ApplicantReviewDrawerState extends ConsumerState<ApplicantReviewDrawer> {
           const SizedBox(height: 16),
           Text(
             'The grading scale is not included in this review record. A grade alone does not verify honors or eligibility.',
-            style: orgBody(fontSize: 12, color: kOrgTextSecondary),
+            style: AppTypography.style(AppTextRole.body, fontSize: 12, color: kOrgTextSecondary, letterSpacing: opticalTracking(12), height: ((12) <= 16 ? 1.45 : opticalLeading(12, isBody: true))),
           ),
         ],
       ),
@@ -1080,13 +1038,13 @@ class _ApplicantReviewDrawerState extends ConsumerState<ApplicantReviewDrawer> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('Provider notes', style: orgHeadline(fontSize: 20)),
+        Text('Provider notes', style: AppTypography.style(AppTextRole.sectionTitle, fontSize: 20, color: kOrgTextPrimary, letterSpacing: opticalTracking(20), height: opticalLeading(20, isBody: false))),
         const SizedBox(height: 8),
         Text(
           canDecide
               ? 'Optional context for your decision. Notes are saved with the decision record and may be visible to the student.'
               : 'This application already has a recorded decision.',
-          style: orgBody(fontSize: 13, color: kOrgTextSecondary),
+          style: AppTypography.style(AppTextRole.body, fontSize: 13, color: kOrgTextSecondary, letterSpacing: opticalTracking(13), height: ((13) <= 16 ? 1.45 : opticalLeading(13, isBody: true))),
         ),
         if (canDecide) ...[
           const SizedBox(height: 14),
@@ -1144,21 +1102,13 @@ class _ApplicantReviewDrawerState extends ConsumerState<ApplicantReviewDrawer> {
           const SizedBox(height: 10),
           Text(
             'Applicant profile unavailable',
-            style: orgHeadline(
-              fontSize: 14,
-              fontWeight: FontWeight.w600,
-              color: const Color(0xFF1A1B1F),
-            ),
+            style: AppTypography.style(AppTextRole.cardTitle, fontSize: 14, color: const Color(0xFF1A1B1F), letterSpacing: opticalTracking(14), height: opticalLeading(14, isBody: false)),
           ),
           const SizedBox(height: 4),
           Text(
             'The candidate profile record could not be loaded or is not associated with this application submission.',
             textAlign: TextAlign.center,
-            style: orgBody(
-              fontSize: 12,
-              color: const Color(0xFF707971),
-              height: 1.4,
-            ),
+            style: AppTypography.style(AppTextRole.body, fontSize: 12, color: const Color(0xFF707971), height: 1.4, letterSpacing: opticalTracking(12)),
           ),
         ],
       ),
@@ -1208,29 +1158,17 @@ class _ApplicantReviewDrawerState extends ConsumerState<ApplicantReviewDrawer> {
                   children: [
                     Text(
                       'UNDERGRADUATE PROFILE',
-                      style: orgLabel(
-                        fontSize: 10,
-                        fontWeight: FontWeight.w600,
-                        color: const Color(0xFF404942),
-                        letterSpacing: 0.2,
-                      ),
+                      style: AppTypography.style(AppTextRole.label, fontSize: 10, color: const Color(0xFF404942), letterSpacing: 0.2, height: opticalLeading(10, isBody: false)),
                     ),
                     const SizedBox(height: 2),
                     Text(
                       '$studentCourse • Year ${profile.yearLevel} (${_yearLevelLabel(profile.yearLevel)})',
-                      style: orgHeadline(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w700,
-                        color: const Color(0xFF1A1B1F),
-                      ),
+                      style: AppTypography.style(AppTextRole.cardTitle, fontSize: 14, color: const Color(0xFF1A1B1F), letterSpacing: opticalTracking(14), height: opticalLeading(14, isBody: false)),
                     ),
                     const SizedBox(height: 2),
                     Text(
                       studentSchool,
-                      style: orgBody(
-                        fontSize: 12,
-                        color: const Color(0xFF404942),
-                      ),
+                      style: AppTypography.style(AppTextRole.caption, fontSize: 12, color: const Color(0xFF404942), letterSpacing: opticalTracking(12), height: ((12) <= 16 ? 1.45 : opticalLeading(12, isBody: true))),
                     ),
                   ],
                 ),
@@ -1240,21 +1178,12 @@ class _ApplicantReviewDrawerState extends ConsumerState<ApplicantReviewDrawer> {
                 children: [
                   Text(
                     'COHORT STANDING',
-                    style: orgLabel(
-                      fontSize: 10,
-                      fontWeight: FontWeight.w600,
-                      color: const Color(0xFF404942),
-                      letterSpacing: 0.2,
-                    ),
+                    style: AppTypography.style(AppTextRole.label, fontSize: 10, color: const Color(0xFF404942), letterSpacing: 0.2, height: opticalLeading(10, isBody: false)),
                   ),
                   const SizedBox(height: 2),
                   Text(
                     'Rank 1 of $totalCohortCount',
-                    style: orgHeadline(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w700,
-                      color: kOrgPrimary,
-                    ),
+                    style: AppTypography.style(AppTextRole.metric, fontSize: 18, color: kOrgPrimary, letterSpacing: opticalTracking(18), height: opticalLeading(18, isBody: false)),
                   ),
                 ],
               ),
@@ -1283,19 +1212,12 @@ class _ApplicantReviewDrawerState extends ConsumerState<ApplicantReviewDrawer> {
                           children: [
                             Text(
                               'Cumulative GWA',
-                              style: orgBody(
-                                fontSize: 11,
-                                color: const Color(0xFF404942),
-                              ),
+                              style: AppTypography.style(AppTextRole.label, fontSize: 11, color: const Color(0xFF404942), letterSpacing: opticalTracking(11), height: ((11) <= 16 ? 1.45 : opticalLeading(11, isBody: true))),
                             ),
                             const SizedBox(height: 2),
                             Text(
                               gwaString,
-                              style: orgHeadline(
-                                fontSize: 22,
-                                fontWeight: FontWeight.w700,
-                                color: const Color(0xFF1A1B1F),
-                              ),
+                              style: AppTypography.style(AppTextRole.metric, fontSize: 22, color: const Color(0xFF1A1B1F), letterSpacing: opticalTracking(22), height: opticalLeading(22, isBody: false)),
                             ),
                             const SizedBox(height: 2),
                             Text(
@@ -1306,11 +1228,7 @@ class _ApplicantReviewDrawerState extends ConsumerState<ApplicantReviewDrawer> {
                                   : "GWA Not Recorded",
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
-                              style: orgLabel(
-                                fontSize: 10,
-                                fontWeight: FontWeight.w500,
-                                color: kOrgPrimary,
-                              ),
+                              style: AppTypography.style(AppTextRole.badge, fontSize: 10, color: kOrgPrimary, letterSpacing: opticalTracking(10), height: opticalLeading(10, isBody: false)),
                             ),
                           ],
                         ),
@@ -1352,30 +1270,19 @@ class _ApplicantReviewDrawerState extends ConsumerState<ApplicantReviewDrawer> {
                           children: [
                             Text(
                               'Annual Household Income',
-                              style: orgBody(
-                                fontSize: 11,
-                                color: const Color(0xFF404942),
-                              ),
+                              style: AppTypography.style(AppTextRole.label, fontSize: 11, color: const Color(0xFF404942), letterSpacing: opticalTracking(11), height: ((11) <= 16 ? 1.45 : opticalLeading(11, isBody: true))),
                             ),
                             const SizedBox(height: 2),
                             Text(
                               annualIncome,
-                              style: orgHeadline(
-                                fontSize: 22,
-                                fontWeight: FontWeight.w700,
-                                color: const Color(0xFF1A1B1F),
-                              ),
+                              style: AppTypography.style(AppTextRole.metric, fontSize: 22, color: const Color(0xFF1A1B1F), letterSpacing: opticalTracking(22), height: opticalLeading(22, isBody: false)),
                             ),
                             const SizedBox(height: 2),
                             Text(
                               incomeTierText,
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
-                              style: orgLabel(
-                                fontSize: 10,
-                                fontWeight: FontWeight.w600,
-                                color: const Color(0xFF623A00),
-                              ),
+                              style: AppTypography.style(AppTextRole.badge, fontSize: 10, color: const Color(0xFF623A00), letterSpacing: opticalTracking(10), height: opticalLeading(10, isBody: false)),
                             ),
                           ],
                         ),
@@ -1461,11 +1368,7 @@ class _ApplicantReviewDrawerState extends ConsumerState<ApplicantReviewDrawer> {
           Flexible(
             child: Text(
               text,
-              style: orgLabel(
-                fontSize: 11,
-                fontWeight: FontWeight.w500,
-                color: const Color(0xFF1A1B1F),
-              ),
+              style: AppTypography.style(AppTextRole.badge, fontSize: 11, color: const Color(0xFF1A1B1F), letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: false)),
               overflow: TextOverflow.ellipsis,
               maxLines: 1,
             ),
@@ -1489,7 +1392,7 @@ class _ApplicantReviewDrawerState extends ConsumerState<ApplicantReviewDrawer> {
           ref.watch(providerSubRoleProvider).isIndividualBenefactor
               ? 'Requirements & documents'
               : 'SUBMITTED EVIDENCE',
-          style: orgLabel(fontSize: 11, fontWeight: FontWeight.w600),
+          style: AppTypography.style(AppTextRole.sectionTitle, fontSize: 11, color: kOrgTextSecondary, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: false)),
         ),
         const SizedBox(height: 8),
         documents.when(
@@ -1574,20 +1477,12 @@ class _ApplicantReviewDrawerState extends ConsumerState<ApplicantReviewDrawer> {
                   children: [
                     Text(
                       'PROVIDER SCORING RUBRIC',
-                      style: orgLabel(
-                        fontSize: 10,
-                        fontWeight: FontWeight.w600,
-                        color: const Color(0xFF404942),
-                        letterSpacing: 0.2,
-                      ),
+                      style: AppTypography.style(AppTextRole.label, fontSize: 10, color: const Color(0xFF404942), letterSpacing: 0.2, height: opticalLeading(10, isBody: false)),
                     ),
                     const SizedBox(height: 2),
                     Text(
                       'Candidate Evaluation',
-                      style: orgHeadline(
-                        fontSize: 18,
-                        fontWeight: FontWeight.w700,
-                      ),
+                      style: AppTypography.style(AppTextRole.cardTitle, fontSize: 18, color: kOrgTextPrimary, letterSpacing: opticalTracking(18), height: opticalLeading(18, isBody: false)),
                     ),
                   ],
                 ),
@@ -1618,20 +1513,11 @@ class _ApplicantReviewDrawerState extends ConsumerState<ApplicantReviewDrawer> {
                       children: [
                         Text(
                           'COMPOSITE',
-                          style: orgLabel(
-                            fontSize: 9,
-                            fontWeight: FontWeight.w600,
-                            color: const Color(0xFF82BD95),
-                            letterSpacing: 0.2,
-                          ),
+                          style: AppTypography.style(AppTextRole.label, fontSize: 9, color: const Color(0xFF82BD95), letterSpacing: 0.2, height: opticalLeading(9, isBody: false)),
                         ),
                         Text(
                           _compositeScore.toStringAsFixed(2),
-                          style: orgHeadline(
-                            fontSize: 22,
-                            fontWeight: FontWeight.w700,
-                            color: Colors.white,
-                          ),
+                          style: AppTypography.style(AppTextRole.metric, fontSize: 22, color: Colors.white, letterSpacing: opticalTracking(22), height: opticalLeading(22, isBody: false)),
                         ),
                       ],
                     ),
@@ -1641,19 +1527,11 @@ class _ApplicantReviewDrawerState extends ConsumerState<ApplicantReviewDrawer> {
                       children: [
                         Text(
                           '/ 10.0',
-                          style: orgLabel(
-                            fontSize: 11,
-                            fontWeight: FontWeight.w500,
-                            color: const Color(0xFF82BD95),
-                          ),
+                          style: AppTypography.style(AppTextRole.caption, fontSize: 11, color: const Color(0xFF82BD95), letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: false)),
                         ),
                         Text(
                           'Live Score',
-                          style: orgLabel(
-                            fontSize: 11,
-                            fontWeight: FontWeight.w700,
-                            color: const Color(0xFFB3F1C6),
-                          ),
+                          style: AppTypography.style(AppTextRole.badge, fontSize: 11, color: const Color(0xFFB3F1C6), letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: false)),
                         ),
                       ],
                     ),
@@ -1685,11 +1563,7 @@ class _ApplicantReviewDrawerState extends ConsumerState<ApplicantReviewDrawer> {
                       _isRubricExpanded
                           ? 'Hide detailed rubric criteria'
                           : 'Show 4 evaluation criteria sliders',
-                      style: orgLabel(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w600,
-                        color: kOrgPrimary,
-                      ),
+                      style: AppTypography.style(AppTextRole.button, fontSize: 12, color: kOrgPrimary, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: false)),
                       overflow: TextOverflow.ellipsis,
                     ),
                   ),
@@ -1773,19 +1647,13 @@ class _ApplicantReviewDrawerState extends ConsumerState<ApplicantReviewDrawer> {
                       title,
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
-                      style: orgHeadline(
-                        fontSize: 13,
-                        fontWeight: FontWeight.w600,
-                      ),
+                      style: AppTypography.style(AppTextRole.label, fontSize: 13, color: kOrgTextPrimary, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: false)),
                     ),
                   ),
                   const SizedBox(width: 6),
                   Text(
                     weightText,
-                    style: orgBody(
-                      fontSize: 11,
-                      color: const Color(0xFF404942),
-                    ),
+                    style: AppTypography.style(AppTextRole.caption, fontSize: 11, color: const Color(0xFF404942), letterSpacing: opticalTracking(11), height: ((11) <= 16 ? 1.45 : opticalLeading(11, isBody: true))),
                   ),
                 ],
               ),
@@ -1793,11 +1661,7 @@ class _ApplicantReviewDrawerState extends ConsumerState<ApplicantReviewDrawer> {
             const SizedBox(width: 8),
             Text(
               value.toStringAsFixed(1),
-              style: orgHeadline(
-                fontSize: 14,
-                fontWeight: FontWeight.w700,
-                color: kOrgPrimary,
-              ),
+              style: AppTypography.style(AppTextRole.metric, fontSize: 14, color: kOrgPrimary, letterSpacing: opticalTracking(14), height: opticalLeading(14, isBody: false)),
             ),
           ],
         ),
@@ -1824,7 +1688,7 @@ class _ApplicantReviewDrawerState extends ConsumerState<ApplicantReviewDrawer> {
         ),
         Text(
           note,
-          style: orgBody(fontSize: 11, color: const Color(0xFF404942)),
+          style: AppTypography.style(AppTextRole.body, fontSize: 11, color: const Color(0xFF404942), letterSpacing: opticalTracking(11), height: ((11) <= 16 ? 1.45 : opticalLeading(11, isBody: true))),
         ),
       ],
     );
@@ -1851,23 +1715,14 @@ class _ApplicantReviewDrawerState extends ConsumerState<ApplicantReviewDrawer> {
             Flexible(
               child: Text(
                 'EVALUATION COMMENTARY',
-                style: orgLabel(
-                  fontSize: 11,
-                  fontWeight: FontWeight.w600,
-                  color: const Color(0xFF404942),
-                  letterSpacing: 0.2,
-                ),
+                style: AppTypography.style(AppTextRole.sectionTitle, fontSize: 11, color: const Color(0xFF404942), letterSpacing: 0.2, height: opticalLeading(11, isBody: false)),
                 overflow: TextOverflow.ellipsis,
               ),
             ),
             const SizedBox(width: 8),
             Text(
               'REF: #$refCode',
-              style: orgLabel(
-                fontSize: 11,
-                fontWeight: FontWeight.w500,
-                color: const Color(0xFF404942),
-              ),
+              style: AppTypography.style(AppTextRole.caption, fontSize: 11, color: const Color(0xFF404942), letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: false)),
             ),
           ],
         ),
@@ -1894,7 +1749,7 @@ class _ApplicantReviewDrawerState extends ConsumerState<ApplicantReviewDrawer> {
               if (hasRealNotes) ...[
                 Text(
                   'Deliberation Record',
-                  style: orgHeadline(fontSize: 13, fontWeight: FontWeight.w600),
+                  style: AppTypography.style(AppTextRole.cardTitle, fontSize: 13, color: kOrgTextPrimary, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: false)),
                 ),
                 const SizedBox(height: 6),
                 Container(
@@ -1909,11 +1764,7 @@ class _ApplicantReviewDrawerState extends ConsumerState<ApplicantReviewDrawer> {
                   ),
                   child: Text(
                     realNotesText,
-                    style: orgBody(
-                      fontSize: 12,
-                      color: const Color(0xFF1A1B1F),
-                      height: 1.5,
-                    ),
+                    style: AppTypography.style(AppTextRole.body, fontSize: 12, color: const Color(0xFF1A1B1F), height: 1.5, letterSpacing: opticalTracking(12)),
                   ),
                 ),
                 const SizedBox(height: 12),
@@ -1941,19 +1792,12 @@ class _ApplicantReviewDrawerState extends ConsumerState<ApplicantReviewDrawer> {
                           children: [
                             Text(
                               'No committee remarks recorded yet',
-                              style: orgHeadline(
-                                fontSize: 12,
-                                fontWeight: FontWeight.w600,
-                                color: const Color(0xFF1A1B1F),
-                              ),
+                              style: AppTypography.style(AppTextRole.cardTitle, fontSize: 12, color: const Color(0xFF1A1B1F), letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: false)),
                             ),
                             const SizedBox(height: 2),
                             Text(
                               'Remarks entered below will be persisted directly to Supabase with your status decision.',
-                              style: orgBody(
-                                fontSize: 11,
-                                color: const Color(0xFF707971),
-                              ),
+                              style: AppTypography.style(AppTextRole.body, fontSize: 11, color: const Color(0xFF707971), letterSpacing: opticalTracking(11), height: ((11) <= 16 ? 1.45 : opticalLeading(11, isBody: true))),
                             ),
                           ],
                         ),
@@ -1967,23 +1811,16 @@ class _ApplicantReviewDrawerState extends ConsumerState<ApplicantReviewDrawer> {
               // Active Evaluator Notes Input
               Text(
                 'Committee Remarks / Award Stipulations',
-                style: orgLabel(
-                  fontSize: 11,
-                  fontWeight: FontWeight.w600,
-                  color: const Color(0xFF404942),
-                ),
+                style: AppTypography.style(AppTextRole.label, fontSize: 11, color: const Color(0xFF404942), letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: false)),
               ),
               const SizedBox(height: 6),
               TextFormField(
                 controller: _notesController,
                 maxLines: 2,
-                style: orgBody(fontSize: 12),
+                style: AppTypography.style(AppTextRole.input, fontSize: 12, color: kOrgTextPrimary, letterSpacing: opticalTracking(12), height: ((12) <= 16 ? 1.45 : opticalLeading(12, isBody: true))),
                 decoration: InputDecoration(
                   hintText: 'Record committee deliberation notes or grant conditions before approving...',
-                  hintStyle: orgBody(
-                    fontSize: 12,
-                    color: const Color(0xFF707971),
-                  ),
+                  hintStyle: AppTypography.style(AppTextRole.placeholder, fontSize: 12, color: const Color(0xFF707971), letterSpacing: opticalTracking(12), height: ((12) <= 16 ? 1.45 : opticalLeading(12, isBody: true))),
                   filled: true,
                   fillColor: const Color(0xFFFAF9FE),
                   contentPadding: const EdgeInsets.all(10),
@@ -2031,7 +1868,7 @@ class _ApplicantReviewDrawerState extends ConsumerState<ApplicantReviewDrawer> {
               Flexible(
                 child: Text(
                   'Cohort Percentile Distribution',
-                  style: orgHeadline(fontSize: 13, fontWeight: FontWeight.w600),
+                  style: AppTypography.style(AppTextRole.cardTitle, fontSize: 13, color: kOrgTextPrimary, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: false)),
                   overflow: TextOverflow.ellipsis,
                 ),
               ),
@@ -2044,11 +1881,7 @@ class _ApplicantReviewDrawerState extends ConsumerState<ApplicantReviewDrawer> {
                 ),
                 child: Text(
                   'Insufficient Pool Data',
-                  style: orgLabel(
-                    fontSize: 11,
-                    fontWeight: FontWeight.w600,
-                    color: const Color(0xFF707971),
-                  ),
+                  style: AppTypography.style(AppTextRole.badge, fontSize: 11, color: const Color(0xFF707971), letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: false)),
                 ),
               ),
             ],
@@ -2077,19 +1910,12 @@ class _ApplicantReviewDrawerState extends ConsumerState<ApplicantReviewDrawer> {
                     children: [
                       Text(
                         'Distribution curve requires at least 5 candidates',
-                        style: orgHeadline(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w600,
-                          color: const Color(0xFF1A1B1F),
-                        ),
+                        style: AppTypography.style(AppTextRole.cardTitle, fontSize: 12, color: const Color(0xFF1A1B1F), letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: false)),
                       ),
                       const SizedBox(height: 2),
                       Text(
                         'Comparative percentile metrics and median cutoffs become active once additional candidates submit applications.',
-                        style: orgBody(
-                          fontSize: 11,
-                          color: const Color(0xFF707971),
-                        ),
+                        style: AppTypography.style(AppTextRole.body, fontSize: 11, color: const Color(0xFF707971), letterSpacing: opticalTracking(11), height: ((11) <= 16 ? 1.45 : opticalLeading(11, isBody: true))),
                       ),
                     ],
                   ),
@@ -2105,7 +1931,7 @@ class _ApplicantReviewDrawerState extends ConsumerState<ApplicantReviewDrawer> {
               Flexible(
                 child: Text(
                   'Registered Pool: $totalCohortCount candidate',
-                  style: orgBody(fontSize: 11, color: const Color(0xFF404942)),
+                  style: AppTypography.style(AppTextRole.caption, fontSize: 11, color: const Color(0xFF404942), letterSpacing: opticalTracking(11), height: ((11) <= 16 ? 1.45 : opticalLeading(11, isBody: true))),
                   overflow: TextOverflow.ellipsis,
                 ),
               ),
@@ -2113,11 +1939,7 @@ class _ApplicantReviewDrawerState extends ConsumerState<ApplicantReviewDrawer> {
               Flexible(
                 child: Text(
                   'Candidate Score: ${_compositeScore.toStringAsFixed(2)}',
-                  style: orgLabel(
-                    fontSize: 11,
-                    fontWeight: FontWeight.w700,
-                    color: kOrgPrimary,
-                  ),
+                  style: AppTypography.style(AppTextRole.bodyEmphasis, fontSize: 11, color: kOrgPrimary, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: false)),
                   overflow: TextOverflow.ellipsis,
                   textAlign: TextAlign.end,
                 ),
@@ -2158,7 +1980,7 @@ class _ApplicantReviewDrawerState extends ConsumerState<ApplicantReviewDrawer> {
           if (widget.application.endorsedBy != null) ...[
             Text(
               'Endorsed by reviewer ${widget.application.endorsedBy} on ${widget.application.endorsedAt?.toLocal()}.',
-              style: orgBody(fontSize: 12, color: kOrgPrimary),
+              style: AppTypography.style(AppTextRole.caption, fontSize: 12, color: kOrgPrimary, letterSpacing: opticalTracking(12), height: ((12) <= 16 ? 1.45 : opticalLeading(12, isBody: true))),
             ),
             const SizedBox(height: 8),
           ],
@@ -2171,10 +1993,7 @@ class _ApplicantReviewDrawerState extends ConsumerState<ApplicantReviewDrawer> {
                     children: [
                       Text(
                         'Proposed Grant Allocation',
-                        style: orgBody(
-                          fontSize: 11,
-                          color: const Color(0xFF404942),
-                        ),
+                        style: AppTypography.style(AppTextRole.label, fontSize: 11, color: const Color(0xFF404942), letterSpacing: opticalTracking(11), height: ((11) <= 16 ? 1.45 : opticalLeading(11, isBody: true))),
                       ),
                       const SizedBox(height: 2),
                       Text(
@@ -2183,11 +2002,7 @@ class _ApplicantReviewDrawerState extends ConsumerState<ApplicantReviewDrawer> {
                                 .isIndividualBenefactor
                             ? '$allocationAmount ${widget.scholarship?.formattedFrequency ?? ''} · ${widget.scholarship?.coverage ?? 'Coverage not provided'}'
                             : '$allocationAmount / Academic Year (Direct + Allowance)',
-                        style: orgLabel(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w600,
-                          color: kOrgPrimary,
-                        ),
+                        style: AppTypography.style(AppTextRole.metric, fontSize: 12, color: kOrgPrimary, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: false)),
                       ),
                     ],
                   )
@@ -2197,10 +2012,7 @@ class _ApplicantReviewDrawerState extends ConsumerState<ApplicantReviewDrawer> {
                       Flexible(
                         child: Text(
                           'Proposed Grant Allocation',
-                          style: orgBody(
-                            fontSize: 11,
-                            color: const Color(0xFF404942),
-                          ),
+                          style: AppTypography.style(AppTextRole.label, fontSize: 11, color: const Color(0xFF404942), letterSpacing: opticalTracking(11), height: ((11) <= 16 ? 1.45 : opticalLeading(11, isBody: true))),
                           overflow: TextOverflow.ellipsis,
                         ),
                       ),
@@ -2212,11 +2024,7 @@ class _ApplicantReviewDrawerState extends ConsumerState<ApplicantReviewDrawer> {
                                   .isIndividualBenefactor
                               ? '$allocationAmount ${widget.scholarship?.formattedFrequency ?? ''} · ${widget.scholarship?.coverage ?? 'Coverage not provided'}'
                               : '$allocationAmount / Academic Year (Direct + Allowance)',
-                          style: orgLabel(
-                            fontSize: 12,
-                            fontWeight: FontWeight.w600,
-                            color: kOrgPrimary,
-                          ),
+                          style: AppTypography.style(AppTextRole.metric, fontSize: 12, color: kOrgPrimary, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: false)),
                           overflow: TextOverflow.ellipsis,
                           textAlign: TextAlign.end,
                         ),
@@ -2280,15 +2088,11 @@ class _ApplicantReviewDrawerState extends ConsumerState<ApplicantReviewDrawer> {
                                     ApplicationStatus.underReview,
                                   ),
                             icon: const Icon(Icons.verified_rounded, size: 18),
-                            label: const FittedBox(
+                            label:  FittedBox(
                               fit: BoxFit.scaleDown,
                               child: Text(
                                 'Endorse to Org Admin for Decision',
-                                style: TextStyle(
-                                  fontWeight: FontWeight.w700,
-                                  fontSize: 14,
-                                  letterSpacing: 0.1,
-                                ),
+                                style: AppTypography.style(AppTextRole.button, fontSize: 14, letterSpacing: 0.1),
                               ),
                             ),
                           ),
@@ -2329,11 +2133,7 @@ class _ApplicantReviewDrawerState extends ConsumerState<ApplicantReviewDrawer> {
                               identity.isIndividualBenefactor
                                   ? 'Decline application'
                                   : 'Ineligible',
-                              style: TextStyle(
-                                fontWeight: FontWeight.w600,
-                                fontSize: 13,
-                                letterSpacing: 0.1,
-                              ),
+                              style: AppTypography.style(AppTextRole.button, fontSize: 13, letterSpacing: 0.1),
                             ),
                           ),
                         ),
@@ -2363,15 +2163,11 @@ class _ApplicantReviewDrawerState extends ConsumerState<ApplicantReviewDrawer> {
                               : () =>
                                     _handleDecision(ApplicationStatus.approved),
                           icon: const Icon(Icons.check_rounded, size: 18),
-                          label: const FittedBox(
+                          label:  FittedBox(
                             fit: BoxFit.scaleDown,
                             child: Text(
                               'Approve Application',
-                              style: TextStyle(
-                                fontWeight: FontWeight.w600,
-                                fontSize: 13,
-                                letterSpacing: 0.1,
-                              ),
+                              style: AppTypography.style(AppTextRole.button, fontSize: 13, letterSpacing: 0.1),
                             ),
                           ),
                         ),

@@ -1,3 +1,4 @@
+import 'package:scholaris/shared/theme/app_typography.dart';
 import 'package:scholaris/shared/theme/app_theme.dart';
 import 'package:scholaris/admin/screens/reports_safety_screen.dart';
 import 'package:scholaris/shared/theme/app_motion.dart';
@@ -174,11 +175,7 @@ class _AdminHomeScreenState extends ConsumerState<AdminHomeScreen> {
             Flexible(
               child: Text(
                 'Scholaris Admin',
-                style: adminHeaderStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w700,
-                  color: kAdminNavyTrust,
-                ),
+                style: AppTypography.style(AppTextRole.bodyEmphasis, fontSize: 16, color: kAdminNavyTrust),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
               ),
@@ -240,15 +237,12 @@ class _AdminHomeScreenState extends ConsumerState<AdminHomeScreen> {
           Expanded(
             child: Text(
               'Platform administration',
-              style: geist(
-                fontSize: 13,
-                color: kAdminTextSecondary,
-              ),
+              style: AppTypography.style(AppTextRole.subtitle, fontSize: 13, color: kAdminTextSecondary),
             ),
           ),
           TextButton.icon(
             icon: const Icon(Icons.shield_outlined, size: 16, color: Color(0xFF93000A)),
-            label: const Text('Live safety report dialog', style: TextStyle(fontSize: 12, color: Color(0xFF93000A))),
+            label:  Text('Live safety report dialog', style: AppTypography.style(AppTextRole.button, fontSize: 12, color: Color(0xFF93000A))),
             onPressed: () {
               showDialog<bool>(
                 animationStyle:
@@ -325,10 +319,7 @@ class _AdminHomeScreenState extends ConsumerState<AdminHomeScreen> {
                   Expanded(
                     child: Text(
                       'Scholaris Admin',
-                      style: adminHeaderStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w700,
-                      ),
+                      style: AppTypography.style(AppTextRole.bodyEmphasis, fontSize: 16, color: kAdminNavyTrust),
                     ),
                   ),
                   if (isDrawer)
@@ -340,15 +331,11 @@ class _AdminHomeScreenState extends ConsumerState<AdminHomeScreen> {
                 ],
               ),
             ),
-            const Padding(
+             Padding(
               padding: EdgeInsets.symmetric(horizontal: 16),
               child: Text(
                 'SUPER ADMIN',
-                style: TextStyle(
-                  fontSize: 11,
-                  fontWeight: FontWeight.w700,
-                  color: kAdminBridgeGreen,
-                ),
+                style: AppTypography.style(AppTextRole.badge, fontSize: 11, color: kAdminBridgeGreen),
               ),
             ),
             const SizedBox(height: 12),
@@ -366,11 +353,11 @@ class _AdminHomeScreenState extends ConsumerState<AdminHomeScreen> {
             link('Audit Logs', Icons.fact_check_outlined, 7),
             link('Settings', Icons.settings_outlined, 8),
             const Divider(height: 32),
-            const Padding(
+             Padding(
               padding: EdgeInsets.symmetric(horizontal: 16),
               child: Text(
                 'Platform administration',
-                style: TextStyle(fontSize: 12, color: kAdminTextSecondary),
+                style: AppTypography.style(AppTextRole.caption, fontSize: 12, color: kAdminTextSecondary),
               ),
             ),
             Padding(
@@ -392,12 +379,7 @@ class _AdminHomeScreenState extends ConsumerState<AdminHomeScreen> {
       padding: const EdgeInsets.fromLTRB(16, 10, 16, 4),
       child: Text(
         title,
-        style: geist(
-          fontSize: 11.5,
-          fontWeight: FontWeight.w600,
-          letterSpacing: 0.5,
-          color: kSeqOutline,
-        ),
+        style: AppTypography.style(AppTextRole.sectionTitle, fontSize: 11.5, letterSpacing: 0.5, color: kSeqOutline),
       ),
     );
   }
@@ -444,10 +426,7 @@ class _SidebarNavItem extends StatelessWidget {
               Expanded(
                 child: Text(
                   label,
-                  style: geist(
-                    fontSize: 13.5,
-                    fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
-                  ),
+                  style: AppTypography.style(AppTextRole.navigation, fontSize: 13.5),
                 ),
               ),
             ],

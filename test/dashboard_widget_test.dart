@@ -344,17 +344,17 @@ void main() {
 
       // Stat tiles expose their counts via stable keys; the number itself is
       // the tile's primary text.
-      int countOf(String statKey) => int.parse(
-            tester
-                .widget<Text>(
-                  find.byKey(ValueKey('stat-count-$statKey')),
-                )
-                .data!.split(' ').first,
-          );
+      String summaryText(String statKey) {
+        final text = tester.widget<Text>(
+          find.byKey(ValueKey('stat-count-$statKey')),
+        );
+        return text.data ?? text.textSpan!.toPlainText();
+      }
+      int countOf(String statKey) => int.parse(summaryText(statKey).split(' ').first);
 
       expect(countOf('matches'), 2);
       expect(find.text('Find your next opportunity.'), findsOneWidget);
-      expect(tester.widget<Text>(find.byKey(const ValueKey('stat-count-matches'))).data,
+      expect(summaryText('matches'),
           '2 scholarships match your profile.');
       expect(countOf('closing-soon'), 2);
       expect(countOf('saved'), 1);

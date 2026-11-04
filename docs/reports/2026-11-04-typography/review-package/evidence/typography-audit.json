@@ -1,0 +1,67 @@
+{
+  "roles": {
+    "display": 700,
+    "screenTitle": 700,
+    "metric": 700,
+    "sectionTitle": 600,
+    "cardTitle": 600,
+    "button": 600,
+    "bodyEmphasis": 500,
+    "label": 500,
+    "navigation": 500,
+    "badge": 500,
+    "subtitle": 400,
+    "body": 400,
+    "caption": 400,
+    "input": 400,
+    "placeholder": 400
+  },
+  "exactApprovedMapping": true,
+  "appDartFilesScanned": 229,
+  "geistAppSourceHits": [],
+  "geistPubspecReference": false,
+  "productionFontManifest": [
+    {
+      "family": "MaterialIcons",
+      "fonts": [
+        {
+          "asset": "fonts/MaterialIcons-Regular.otf"
+        }
+      ]
+    },
+    {
+      "family": "Inter",
+      "fonts": [
+        {
+          "weight": 400,
+          "asset": "assets/fonts/inter/Inter-Regular.ttf"
+        },
+        {
+          "weight": 500,
+          "asset": "assets/fonts/inter/Inter-Medium.ttf"
+        },
+        {
+          "weight": 600,
+          "asset": "assets/fonts/inter/Inter-SemiBold.ttf"
+        },
+        {
+          "weight": 700,
+          "asset": "assets/fonts/inter/Inter-Bold.ttf"
+        }
+      ]
+    },
+    {
+      "family": "packages/cupertino_icons/CupertinoIcons",
+      "fonts": [
+        {
+          "asset": "packages/cupertino_icons/assets/CupertinoIcons.ttf"
+        }
+      ]
+    }
+  ],
+  "notes": [
+    "Old assets/fonts/geist files deliberately retained but not registered or referenced by app source.",
+    "Separate landing website intentionally retains its original Geist typography.",
+    "Guard negative-test string and historical before screenshots/documentation may mention Geist."
+  ]
+}

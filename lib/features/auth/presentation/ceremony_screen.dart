@@ -9,6 +9,8 @@
 //   Default:     /ceremony -> GraduationCeremony plays -> onCompleted -> /login
 //   Celebration: CeremonyScreen(title, subtitle, onCompleted) -> plays -> onCompleted()
 
+import 'package:scholaris/shared/theme/app_motion.dart' show opticalTracking, opticalLeading;
+import 'package:scholaris/shared/theme/app_typography.dart';
 import 'dart:async';
 
 import 'package:flutter/material.dart';
@@ -128,11 +130,7 @@ class _CeremonyScreenState extends State<CeremonyScreen> {
                         if (widget.title != null)
                           Text(
                             widget.title!,
-                            style: outfit(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w700,
-                              color: const Color(0xFF0F4D2E),
-                            ),
+                            style: AppTypography.style(AppTextRole.screenTitle, fontSize: 16, color: const Color(0xFF0F4D2E), letterSpacing: opticalTracking(16), height: opticalLeading(16, isBody: false)),
                             maxLines: 2,
                             overflow: TextOverflow.ellipsis,
                           ),
@@ -140,11 +138,7 @@ class _CeremonyScreenState extends State<CeremonyScreen> {
                           const SizedBox(height: 4),
                           Text(
                             widget.subtitle!,
-                            style: outfit(
-                              fontSize: 12,
-                              fontWeight: FontWeight.w500,
-                              color: const Color(0xFF404942),
-                            ),
+                            style: AppTypography.style(AppTextRole.subtitle, fontSize: 12, color: const Color(0xFF404942), letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: false)),
                             maxLines: 3,
                             overflow: TextOverflow.ellipsis,
                           ),

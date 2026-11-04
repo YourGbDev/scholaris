@@ -7,6 +7,7 @@
 //
 // Preserves local validation, Supabase resend, and test suite contracts.
 
+import 'package:scholaris/shared/theme/app_typography.dart';
 import 'dart:async';
 
 import 'package:flutter/material.dart';
@@ -175,7 +176,7 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
   }
 
   SnackBar _snackBar(String message) => SnackBar(
-    content: Text(message, style: openSans(color: Colors.white, fontSize: 13)),
+    content: Text(message, style: AppTypography.style(AppTextRole.body, color: Colors.white, fontSize: 13, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: true))),
     backgroundColor: const Color(0xFF161C27),
     behavior: SnackBarBehavior.floating,
     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -213,12 +214,7 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
                   const Spacer(),
                   Text(
                     'Scholaris',
-                    style: poppins(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w700,
-                      color: kPrimary,
-                      letterSpacing: -0.5,
-                    ),
+                    style: AppTypography.style(AppTextRole.label, fontSize: 18, color: kPrimary, letterSpacing: -0.5, height: opticalLeading(18, isBody: false)),
                   ),
                   const Spacer(),
                   IconButton(
@@ -295,12 +291,7 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
                                 const SizedBox(width: 6),
                                 Text(
                                   'EMAIL VERIFICATION',
-                                  style: poppins(
-                                    fontSize: 11,
-                                    fontWeight: FontWeight.w700,
-                                    color: kPrimary,
-                                    letterSpacing: 0.8,
-                                  ),
+                                  style: AppTypography.style(AppTextRole.label, fontSize: 11, color: kPrimary, letterSpacing: 0.8, height: opticalLeading(11, isBody: false)),
                                 ),
                               ],
                             ),
@@ -314,12 +305,7 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
                               ? 'Verify your recovery code'
                               : 'Verify your email',
                           textAlign: TextAlign.center,
-                          style: poppins(
-                            fontSize: 26,
-                            fontWeight: FontWeight.w700,
-                            color: kPrimary,
-                            height: 1.2,
-                          ),
+                          style: AppTypography.style(AppTextRole.screenTitle, fontSize: 26, color: kPrimary, height: 1.2, letterSpacing: opticalTracking(26)),
                         ),
                         const SizedBox(height: 6),
                         Text(
@@ -327,11 +313,7 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
                               ? 'If an account exists, a recovery code is on its way to:'
                               : 'Enter the verification code sent to:',
                           textAlign: TextAlign.center,
-                          style: openSans(
-                            fontSize: 13,
-                            color: kTextSecondary,
-                            height: 1.4,
-                          ),
+                          style: AppTypography.style(AppTextRole.subtitle, fontSize: 13, color: kTextSecondary, height: 1.4, letterSpacing: opticalTracking(13)),
                         ),
                         const SizedBox(height: 16),
 
@@ -372,21 +354,14 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
                                   children: [
                                     Text(
                                       'Recipient Target',
-                                      style: openSans(
-                                        fontSize: 11,
-                                        color: kTextSecondary,
-                                      ),
+                                      style: AppTypography.style(AppTextRole.label, fontSize: 11, color: kTextSecondary, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: true)),
                                     ),
                                     Text(
                                       hasEmail
                                           ? email
                                           : 'No email address specified',
                                       overflow: TextOverflow.ellipsis,
-                                      style: poppins(
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.w600,
-                                        color: kTextPrimary,
-                                      ),
+                                      style: AppTypography.style(AppTextRole.bodyEmphasis, fontSize: 14, color: kTextPrimary, letterSpacing: opticalTracking(14), height: opticalLeading(14, isBody: false)),
                                     ),
                                   ],
                                 ),
@@ -421,11 +396,7 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
                                         const SizedBox(width: 4),
                                         Text(
                                           'Edit',
-                                          style: openSans(
-                                            fontSize: 12,
-                                            fontWeight: FontWeight.w600,
-                                            color: kPrimary,
-                                          ),
+                                          style: AppTypography.style(AppTextRole.button, fontSize: 12, color: kPrimary, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: true)),
                                         ),
                                       ],
                                     ),
@@ -440,11 +411,7 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
                         Text(
                           'Use the latest code in your inbox. Check your spam folder if it has not arrived.',
                           textAlign: TextAlign.center,
-                          style: openSans(
-                            fontSize: 12,
-                            color: kTextSecondary,
-                            height: 1.45,
-                          ),
+                          style: AppTypography.style(AppTextRole.caption, fontSize: 12, color: kTextSecondary, height: 1.45, letterSpacing: opticalTracking(12)),
                         ),
                         const SizedBox(height: 20),
 
@@ -513,11 +480,7 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
                                       _secondsLeft > 0
                                           ? 'Resend in ${_secondsLeft}s'
                                           : 'Resend email',
-                                      style: poppins(
-                                        fontSize: 15,
-                                        fontWeight: FontWeight.w600,
-                                        color: Colors.white,
-                                      ),
+                                      style: AppTypography.style(AppTextRole.button, fontSize: 15, color: Colors.white, letterSpacing: opticalTracking(15), height: opticalLeading(15, isBody: false)),
                                     ),
                                   ],
                                 ),
@@ -542,11 +505,7 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
                                 Expanded(
                                   child: Text(
                                     'If eligible, a fresh code is on its way. Check your inbox.',
-                                    style: openSans(
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.w600,
-                                      color: kPrimary,
-                                    ),
+                                    style: AppTypography.style(AppTextRole.caption, fontSize: 12, color: kPrimary, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: true)),
                                   ),
                                 ),
                               ],
@@ -587,20 +546,12 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
                                   children: [
                                     Text(
                                       'Campus Firewall Advisory (UP, PUP, UST, DLSU)',
-                                      style: poppins(
-                                        fontSize: 12,
-                                        fontWeight: FontWeight.w600,
-                                        color: kTextPrimary,
-                                      ),
+                                      style: AppTypography.style(AppTextRole.cardTitle, fontSize: 12, color: kTextPrimary, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: false)),
                                     ),
                                     const SizedBox(height: 2),
                                     Text(
                                       'State universities and institutional mail servers frequently filter security links into Spam or quarantine folders. Please allow 1–2 minutes before requesting a resend.',
-                                      style: openSans(
-                                        fontSize: 11,
-                                        color: kTextSecondary,
-                                        height: 1.35,
-                                      ),
+                                      style: AppTypography.style(AppTextRole.body, fontSize: 11, color: kTextSecondary, height: 1.35, letterSpacing: opticalTracking(11)),
                                     ),
                                   ],
                                 ),
@@ -625,11 +576,7 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
                                 const SizedBox(width: 6),
                                 Text(
                                   'Back to login',
-                                  style: poppins(
-                                    fontSize: 13,
-                                    fontWeight: FontWeight.w600,
-                                    color: kPrimary,
-                                  ),
+                                  style: AppTypography.style(AppTextRole.button, fontSize: 13, color: kPrimary, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: false)),
                                 ),
                               ],
                             ),
@@ -674,16 +621,12 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
               const SizedBox(height: 16),
               Text(
                 'Verification Help & Support',
-                style: poppins(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w700,
-                  color: kTextPrimary,
-                ),
+                style: AppTypography.style(AppTextRole.sectionTitle, fontSize: 18, color: kTextPrimary, letterSpacing: opticalTracking(18), height: opticalLeading(18, isBody: false)),
               ),
               const SizedBox(height: 6),
               Text(
                 'Having trouble receiving your 8-digit confirmation code?',
-                style: openSans(fontSize: 13, color: kTextSecondary),
+                style: AppTypography.style(AppTextRole.subtitle, fontSize: 13, color: kTextSecondary, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: true)),
               ),
               const SizedBox(height: 16),
               _buildSupportOption(
@@ -759,16 +702,12 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
                 children: [
                   Text(
                     title,
-                    style: poppins(
-                      fontSize: 13,
-                      fontWeight: FontWeight.w600,
-                      color: kTextPrimary,
-                    ),
+                    style: AppTypography.style(AppTextRole.cardTitle, fontSize: 13, color: kTextPrimary, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: false)),
                   ),
                   const SizedBox(height: 2),
                   Text(
                     description,
-                    style: openSans(fontSize: 11, color: kTextSecondary),
+                    style: AppTypography.style(AppTextRole.body, fontSize: 11, color: kTextSecondary, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: true)),
                   ),
                 ],
               ),

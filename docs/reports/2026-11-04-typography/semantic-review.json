@@ -1,0 +1,416 @@
+{
+ "originalStyleCalls": 2068,
+ "roles": {
+  "screenTitle": 59,
+  "subtitle": 127,
+  "button": 230,
+  "label": 328,
+  "sectionTitle": 146,
+  "badge": 207,
+  "cardTitle": 166,
+  "metric": 91,
+  "bodyEmphasis": 65,
+  "caption": 280,
+  "input": 78,
+  "body": 194,
+  "navigation": 41,
+  "placeholder": 49,
+  "display": 7
+ },
+ "additionalReviewedStyles": [
+  {
+   "file": "lib/admin/screens/reports_safety_screen.dart",
+   "line": 102,
+   "label": "Text: error!",
+   "role": "caption"
+  },
+  {
+   "file": "lib/admin/screens/reports_safety_screen.dart",
+   "line": 507,
+   "label": "Text: 'Try clearing your search query or selecting a different review status.'",
+   "role": "body"
+  },
+  {
+   "file": "lib/dev/student_navbar_preview/main.dart",
+   "line": 268,
+   "label": "Text: 'High Contrast: '",
+   "role": "label"
+  },
+  {
+   "file": "lib/dev/student_navbar_preview/main.dart",
+   "line": 282,
+   "label": "Text: 'Reduced Motion: '",
+   "role": "label"
+  },
+  {
+   "file": "lib/dev/student_navbar_preview/main.dart",
+   "line": 296,
+   "label": "Text: 'Pale BG: '",
+   "role": "label"
+  },
+  {
+   "file": "lib/dev/student_navbar_preview/main.dart",
+   "line": 310,
+   "label": "Text: 'Vibrant Bands: '",
+   "role": "label"
+  },
+  {
+   "file": "lib/dev/student_navbar_preview/main.dart",
+   "line": 325,
+   "label": "Text: 'Collapsed: '",
+   "role": "label"
+  },
+  {
+   "file": "lib/dev/student_navbar_preview/main.dart",
+   "line": 628,
+   "label": "Text: 'Curated for undergraduate STEM & academic scholars in Metro Manila.'",
+   "role": "subtitle"
+  },
+  {
+   "file": "lib/dev/student_navbar_preview/main.dart",
+   "line": 731,
+   "label": "Text: provider",
+   "role": "subtitle"
+  },
+  {
+   "file": "lib/dev/student_navbar_preview/main.dart",
+   "line": 767,
+   "label": "Text: 'Due $deadline'",
+   "role": "caption"
+  },
+  {
+   "file": "lib/dev/student_navbar_preview/main.dart",
+   "line": 804,
+   "label": "Text: 'Pale background test surface: verify translucent dock color transmission, fine illuminated edge, and high-contrast text legibility.'",
+   "role": "body"
+  },
+  {
+   "file": "lib/dev/student_navbar_preview/main.dart",
+   "line": 849,
+   "label": "Text: 'Submitted on Oct 26, 2026 • Verified'",
+   "role": "caption"
+  },
+  {
+   "file": "lib/dev/student_navbar_preview/main.dart",
+   "line": 889,
+   "label": "Text: 'Compare the floating navigation over bright and dark colors. Inspect background transmission, the fine rim, selection clarity, and labels while scrolling.'",
+   "role": "body"
+  },
+  {
+   "file": "lib/dev/student_navbar_preview/main.dart",
+   "line": 986,
+   "label": "Text: subtitle",
+   "role": "subtitle"
+  },
+  {
+   "file": "lib/features/account/presentation/change_email_dialog.dart",
+   "line": 130,
+   "label": "Text: _error!",
+   "role": "caption"
+  },
+  {
+   "file": "lib/features/admin/presentation/admin_home_screen.dart",
+   "line": 245,
+   "label": "Text: 'Live safety report dialog'",
+   "role": "button"
+  },
+  {
+   "file": "lib/features/admin/presentation/admin_home_screen.dart",
+   "line": 360,
+   "label": "Text: 'Platform administration'",
+   "role": "caption"
+  },
+  {
+   "file": "lib/features/admin/presentation/admin_providers_tab.dart",
+   "line": 502,
+   "label": "Text: _error!",
+   "role": "caption"
+  },
+  {
+   "file": "lib/features/admin/presentation/admin_providers_tab.dart",
+   "line": 564,
+   "label": "Text: label",
+   "role": "label"
+  },
+  {
+   "file": "lib/features/applications/presentation/student_support_concerns.dart",
+   "line": 174,
+   "label": "Text: _error!",
+   "role": "caption"
+  },
+  {
+   "file": "lib/features/applications/presentation/submit_application_review_dialog.dart",
+   "line": 656,
+   "label": "Text: _packetError!",
+   "role": "caption"
+  },
+  {
+   "file": "lib/features/applications/presentation/widgets/document_upload_sheet.dart",
+   "line": 247,
+   "label": "Text: 'Could not load applications: $e'",
+   "role": "caption"
+  },
+  {
+   "file": "lib/features/auth/presentation/login_screen.dart",
+   "line": 548,
+   "label": "Text: 'Your future starts somewhere.'",
+   "role": "inherits semantic parent / existing nonvisual compatibility marker"
+  },
+  {
+   "file": "lib/features/auth/presentation/signup_screen.dart",
+   "line": 478,
+   "label": "Text: '🇵🇭'",
+   "role": "inherits semantic parent / existing nonvisual compatibility marker"
+  },
+  {
+   "file": "lib/features/dashboard/presentation/student_dashboard_screen.dart",
+   "line": 932,
+   "label": "Text: '$numericValue'",
+   "role": "inherits semantic parent / existing nonvisual compatibility marker"
+  },
+  {
+   "file": "lib/features/onboarding/presentation/onboarding_screen.dart",
+   "line": 466,
+   "label": "TextSpan: ",
+   "role": "inherits semantic parent / existing nonvisual compatibility marker"
+  },
+  {
+   "file": "lib/features/onboarding/presentation/onboarding_screen.dart",
+   "line": 629,
+   "label": "Text: '🚀'",
+   "role": "inherits semantic parent / existing nonvisual compatibility marker"
+  },
+  {
+   "file": "lib/features/profile/presentation/profile_setup_screen.dart",
+   "line": 905,
+   "label": "Text: '👨'",
+   "role": "inherits semantic parent / existing nonvisual compatibility marker"
+  },
+  {
+   "file": "lib/features/profile/presentation/profile_setup_screen.dart",
+   "line": 936,
+   "label": "Text: '👩'",
+   "role": "inherits semantic parent / existing nonvisual compatibility marker"
+  },
+  {
+   "file": "lib/features/provider/presentation/individual/individual_applications_tab.dart",
+   "line": 100,
+   "label": "Text: 'Retry'",
+   "role": "button"
+  },
+  {
+   "file": "lib/features/provider/presentation/individual/individual_applications_tab.dart",
+   "line": 246,
+   "label": "Text: 'Checking support totals…'",
+   "role": "caption"
+  },
+  {
+   "file": "lib/features/provider/presentation/individual/individual_applications_tab.dart",
+   "line": 250,
+   "label": "Text: 'Support totals unavailable'",
+   "role": "caption"
+  },
+  {
+   "file": "lib/features/provider/presentation/individual/individual_support_tab.dart",
+   "line": 603,
+   "label": "Text: _error!",
+   "role": "caption"
+  },
+  {
+   "file": "lib/features/provider/presentation/org/org_incoming_applications_tab.dart",
+   "line": 143,
+   "label": "Text: 'Retry'",
+   "role": "button"
+  },
+  {
+   "file": "lib/features/provider/presentation/org/org_scholarships_tab.dart",
+   "line": 128,
+   "label": "Text: 'Retry'",
+   "role": "button"
+  },
+  {
+   "file": "lib/features/provider/presentation/provider_incoming_applications.dart",
+   "line": 385,
+   "label": "Text: ' • Priority STEM Candidate'",
+   "role": "caption"
+  },
+  {
+   "file": "lib/features/provider/presentation/provider_login_screen.dart",
+   "line": 1181,
+   "label": "Text: '•'",
+   "role": "caption"
+  },
+  {
+   "file": "lib/features/provider/presentation/provider_login_screen.dart",
+   "line": 1187,
+   "label": "Text: '•'",
+   "role": "caption"
+  },
+  {
+   "file": "lib/features/provider/presentation/provider_login_screen.dart",
+   "line": 1193,
+   "label": "Text: '•'",
+   "role": "caption"
+  },
+  {
+   "file": "lib/features/provider/presentation/widgets/applicant_review_drawer.dart",
+   "line": 881,
+   "label": "Text: '•'",
+   "role": "caption"
+  },
+  {
+   "file": "lib/features/provider/presentation/widgets/provider_verification_banner.dart",
+   "line": 460,
+   "label": "Text: selectedName",
+   "role": "caption"
+  },
+  {
+   "file": "lib/features/provider/presentation/widgets/provider_verification_banner.dart",
+   "line": 480,
+   "label": "Text: 'Upload new'",
+   "role": "button"
+  },
+  {
+   "file": "lib/features/provider/presentation/widgets/provider_verification_banner.dart",
+   "line": 521,
+   "label": "Text: note",
+   "role": "caption"
+  },
+  {
+   "file": "lib/features/provider/presentation/widgets/provider_verification_banner.dart",
+   "line": 533,
+   "label": "Text: 'Please correct your information below. Once submitted, your accreditation application will return to pending review.'",
+   "role": "body"
+  },
+  {
+   "file": "lib/features/provider/presentation/widgets/provider_verification_banner.dart",
+   "line": 578,
+   "label": "Text: 'Select replacement files to update your accreditation dossier. Existing files will be preserved if not replaced.'",
+   "role": "caption"
+  },
+  {
+   "file": "lib/features/provider/presentation/widgets/provider_verification_banner.dart",
+   "line": 648,
+   "label": "Text: _error!",
+   "role": "caption"
+  },
+  {
+   "file": "lib/features/safety/presentation/student_safety_report.dart",
+   "line": 285,
+   "label": "Text: 'Your report is kept strictly confidential. Platform administrators will review your concern. Scholarship providers never receive your identity, report text, or notes.'",
+   "role": "body"
+  },
+  {
+   "file": "lib/features/safety/presentation/student_safety_report.dart",
+   "line": 313,
+   "label": "Text: 'Report safety or integrity concern'",
+   "role": "sectionTitle"
+  },
+  {
+   "file": "lib/features/safety/presentation/student_safety_report.dart",
+   "line": 350,
+   "label": "Text: 'Strictly confidential. Reviewed by platform safety administrators only. Providers cannot view reports.'",
+   "role": "caption"
+  },
+  {
+   "file": "lib/features/safety/presentation/student_safety_report.dart",
+   "line": 380,
+   "label": "Text: c.value",
+   "role": "input"
+  },
+  {
+   "file": "lib/features/safety/presentation/student_safety_report.dart",
+   "line": 410,
+   "label": "Text: r.value",
+   "role": "input"
+  },
+  {
+   "file": "lib/features/safety/presentation/student_safety_report.dart",
+   "line": 436,
+   "label": "Text: _incidentDate != null ? _incidentDate!.toIso8601String().substring(0, 10) : 'Select date'",
+   "role": "input"
+  },
+  {
+   "file": "lib/features/safety/presentation/student_safety_report.dart",
+   "line": 485,
+   "label": "Text: 'Add file'",
+   "role": "button"
+  },
+  {
+   "file": "lib/features/safety/presentation/student_safety_report.dart",
+   "line": 503,
+   "label": "Text: _attachedFiles[i].name",
+   "role": "caption"
+  },
+  {
+   "file": "lib/features/safety/presentation/student_safety_report.dart",
+   "line": 543,
+   "label": "Text: _errorMessage!",
+   "role": "caption"
+  },
+  {
+   "file": "lib/features/safety/presentation/student_safety_report.dart",
+   "line": 633,
+   "label": "Text: 'You have not submitted any safety reports.'",
+   "role": "body"
+  },
+  {
+   "file": "lib/features/safety/presentation/student_safety_report.dart",
+   "line": 679,
+   "label": "Text: 'Category: ${r.categoryLabel} · ${r.relationshipLabel}'",
+   "role": "caption"
+  },
+  {
+   "file": "lib/features/safety/presentation/student_safety_report.dart",
+   "line": 689,
+   "label": "Text: r.description",
+   "role": "body"
+  },
+  {
+   "file": "lib/features/safety/presentation/student_safety_report.dart",
+   "line": 703,
+   "label": "Text: 'Update from safety team: ${r.resolutionNote}'",
+   "role": "caption"
+  },
+  {
+   "file": "lib/features/scholarships/presentation/scholarship_detail_screen.dart",
+   "line": 1977,
+   "label": "Text: 'Add'",
+   "role": "button"
+  }
+ ],
+ "matchedCaptures": [
+  "admin-320.png",
+  "admin-390.png",
+  "authentication-320.png",
+  "authentication-390.png",
+  "authentication-errors-320.png",
+  "authentication-errors-390.png",
+  "logout-dialog-320.png",
+  "logout-dialog-390.png",
+  "onboarding-320.png",
+  "onboarding-390.png",
+  "provider-individual-320.png",
+  "provider-individual-390.png",
+  "provider-organization-320.png",
+  "provider-organization-390.png",
+  "scholarship-card-320.png",
+  "scholarship-card-390.png",
+  "web-detail-390.png",
+  "web-discover-390.png",
+  "web-home-390.png",
+  "web-home-large-text-320.png",
+  "web-home-narrow-320.png",
+  "web-profile-390.png",
+  "web-tracker-390.png"
+ ],
+ "finalRoleCorrections": [
+  "Dashboard personalized greeting: display700",
+  "Dashboard opportunity hero: display700",
+  "Chat personalized greeting: display700"
+ ],
+ "platformNativeRendering": {
+  "iOS": "pending — no native host/device",
+  "Android": "pending — Gradle loopback connection failure before compilation"
+ }
+}

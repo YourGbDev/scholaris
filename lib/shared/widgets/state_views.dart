@@ -3,6 +3,8 @@
 // Reusable loading / empty / error views so every discovery surface presents
 // a consistent, polished state instead of a raw spinner or exception.
 
+import 'package:scholaris/shared/theme/app_motion.dart' show opticalTracking, opticalLeading;
+import 'package:scholaris/shared/theme/app_typography.dart';
 import 'package:flutter/material.dart';
 import '../theme/app_theme.dart';
 import 'mascot_pose_view.dart';
@@ -224,21 +226,13 @@ class EmptyView extends StatelessWidget {
             Text(
               title,
               textAlign: TextAlign.center,
-              style: outfit(
-                fontSize: 17,
-                fontWeight: FontWeight.w700,
-                color: kTextPrimary,
-              ),
+              style: AppTypography.style(AppTextRole.sectionTitle, fontSize: 17, color: kTextPrimary, letterSpacing: opticalTracking(17), height: opticalLeading(17, isBody: false)),
             ),
             const SizedBox(height: 8),
             Text(
               message,
               textAlign: TextAlign.center,
-              style: openSans(
-                fontSize: 13.5,
-                color: kTextSecondary,
-                height: 1.45,
-              ),
+              style: AppTypography.style(AppTextRole.body, fontSize: 13.5, color: kTextSecondary, height: 1.45, letterSpacing: opticalTracking(13.5)),
             ),
             if (actionLabel != null && onAction != null) ...[
               const SizedBox(height: 20),
@@ -258,11 +252,7 @@ class EmptyView extends StatelessWidget {
                 ),
                 child: Text(
                   actionLabel!,
-                  style: outfit(
-                    fontSize: 13.5,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.white,
-                  ),
+                  style: AppTypography.style(AppTextRole.button, fontSize: 13.5, color: Colors.white, letterSpacing: opticalTracking(13.5), height: opticalLeading(13.5, isBody: false)),
                 ),
               ),
             ],
@@ -356,7 +346,7 @@ class ErrorView extends StatelessWidget {
             Text(
               isOffline ? 'No internet connection' : title,
               textAlign: TextAlign.center,
-              style: outfit(fontSize: 18, fontWeight: FontWeight.w700, color: kTextPrimary),
+              style: AppTypography.style(AppTextRole.sectionTitle, fontSize: 18, color: kTextPrimary, letterSpacing: opticalTracking(18), height: opticalLeading(18, isBody: false)),
             ),
             const SizedBox(height: 8),
             Text(
@@ -364,7 +354,7 @@ class ErrorView extends StatelessWidget {
                   ? 'Please check your Wi-Fi or cellular network settings and try again.'
                   : message,
               textAlign: TextAlign.center,
-              style: openSans(fontSize: 13.5, color: kTextSecondary, height: 1.4),
+              style: AppTypography.style(AppTextRole.body, fontSize: 13.5, color: kTextSecondary, height: 1.4, letterSpacing: opticalTracking(13.5)),
             ),
             if (onRetry != null) ...[
               const SizedBox(height: 20),
@@ -380,7 +370,7 @@ class ErrorView extends StatelessWidget {
                 icon: const Icon(Icons.refresh_rounded, size: 18),
                 label: Text(
                   'Try again',
-                  style: outfit(fontSize: 13.5, fontWeight: FontWeight.w600),
+                  style: AppTypography.style(AppTextRole.button, fontSize: 13.5, letterSpacing: opticalTracking(13.5), height: opticalLeading(13.5, isBody: false)),
                 ),
               ),
             ],
@@ -430,21 +420,13 @@ class InlineFormErrorBanner extends StatelessWidget {
                 if (title != null) ...[
                   Text(
                     title!,
-                    style: outfit(
-                      fontSize: 13.5,
-                      fontWeight: FontWeight.w700,
-                      color: kError,
-                    ),
+                    style: AppTypography.style(AppTextRole.sectionTitle, fontSize: 13.5, color: kError, letterSpacing: opticalTracking(13.5), height: opticalLeading(13.5, isBody: false)),
                   ),
                   const SizedBox(height: 2),
                 ],
                 Text(
                   message,
-                  style: openSans(
-                    fontSize: 12.5,
-                    color: kError,
-                    height: 1.35,
-                  ),
+                  style: AppTypography.style(AppTextRole.body, fontSize: 12.5, color: kError, height: 1.35, letterSpacing: opticalTracking(12.5)),
                 ),
               ],
             ),

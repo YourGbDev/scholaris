@@ -11,6 +11,7 @@
 // 5. Digital Signature with dynamic applicant name & SHA-256 ledger notice
 // 6. Pinned final submit action (with loading state) & exit-intent draft protection
 
+import 'package:scholaris/shared/theme/app_typography.dart';
 import 'package:flutter/material.dart';
 
 import '../providers/applications_provider.dart';
@@ -266,12 +267,7 @@ class _SubmitApplicationReviewDialogState
                               'Final Step • Review',
 
                               overflow: TextOverflow.ellipsis,
-                              style: geist(
-                                fontSize: 11,
-                                fontWeight: FontWeight.w700,
-                                color: kSecondary,
-                                letterSpacing: 0.5,
-                              ),
+                              style: AppTypography.style(AppTextRole.label, fontSize: 11, color: kSecondary, letterSpacing: 0.5),
                             ),
                           ),
                         ],
@@ -280,32 +276,20 @@ class _SubmitApplicationReviewDialogState
                     const SizedBox(height: 6),
                     Text(
                       'Submit Application',
-                      style: geist(
-                        fontSize: 22,
-                        fontWeight: FontWeight.bold,
-                        color: kOnSurface,
-                        letterSpacing: -0.2,
-                      ),
+                      style: AppTypography.style(AppTextRole.sectionTitle, fontSize: 22, color: kOnSurface, letterSpacing: -0.2),
                     ),
                     const SizedBox(height: 2),
                     // Prompt label preserved for accessibility and test suites
                     Text(
                       'Apply to this scholarship?',
-                      style: geist(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w600,
-                        color: kSecondary,
-                      ),
+                      style: AppTypography.style(AppTextRole.cardTitle, fontSize: 12, color: kSecondary),
                     ),
                     const SizedBox(height: 2),
                     Text(
                       '${widget.scholarship.title} • ${widget.scholarship.provider ?? "National Science Endowment"}',
 
                       overflow: TextOverflow.ellipsis,
-                      style: geist(
-                        fontSize: 12,
-                        color: kOnSurfaceVariant,
-                      ),
+                      style: AppTypography.style(AppTextRole.subtitle, fontSize: 12, color: kOnSurfaceVariant),
                     ),
                   ],
                 ),
@@ -342,11 +326,7 @@ class _SubmitApplicationReviewDialogState
                   'Review & Submit',
 
                   overflow: TextOverflow.ellipsis,
-                  style: geist(
-                    fontSize: 12,
-                    fontWeight: FontWeight.bold,
-                    color: kPrimaryDark,
-                  ),
+                  style: AppTypography.style(AppTextRole.badge, fontSize: 12, color: kPrimaryDark),
                 ),
               ),
               const SizedBox(width: 8),
@@ -355,11 +335,7 @@ class _SubmitApplicationReviewDialogState
                   'Review Required',
 
                   overflow: TextOverflow.ellipsis,
-                  style: geist(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w600,
-                    color: kOnSurfaceVariant,
-                  ),
+                  style: AppTypography.style(AppTextRole.badge, fontSize: 12, color: kOnSurfaceVariant),
                 ),
               ),
             ],
@@ -441,11 +417,7 @@ class _SubmitApplicationReviewDialogState
         const SizedBox(width: 4),
         Text(
           label,
-          style: geist(
-            fontSize: 11,
-            fontWeight: bold ? FontWeight.bold : FontWeight.w600,
-            color: kPrimaryDark,
-          ),
+          style: AppTypography.style(AppTextRole.label, fontSize: 11, color: kPrimaryDark),
         ),
       ],
     );
@@ -477,12 +449,7 @@ class _SubmitApplicationReviewDialogState
                     children: [
                       Text(
                         'AWARD VALUE',
-                        style: geist(
-                          fontSize: 10,
-                          fontWeight: FontWeight.w700,
-                          color: kOnSurfaceVariant,
-                          letterSpacing: 0.5,
-                        ),
+                        style: AppTypography.style(AppTextRole.label, fontSize: 10, color: kOnSurfaceVariant, letterSpacing: 0.5),
                       ),
                       const SizedBox(height: 2),
                       FittedBox(
@@ -491,19 +458,11 @@ class _SubmitApplicationReviewDialogState
                         child: RichText(
                           text: TextSpan(
                             text: _grantValue(widget.scholarship),
-                            style: geist(
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                              color: kPrimaryDark,
-                            ),
+                            style: AppTypography.style(AppTextRole.metric, fontSize: 20, color: kPrimaryDark),
                             children: [
                               TextSpan(
                                 text: ' / semester',
-                                style: geist(
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.normal,
-                                  color: kOnSurfaceVariant,
-                                ),
+                                style: AppTypography.style(AppTextRole.caption, fontSize: 12, color: kOnSurfaceVariant),
                               ),
                             ],
                           ),
@@ -543,11 +502,7 @@ class _SubmitApplicationReviewDialogState
                           const SizedBox(width: 4),
                           Text(
                             '98% Fit',
-                            style: geist(
-                              fontSize: 11,
-                              fontWeight: FontWeight.bold,
-                              color: kOnPrimaryFixedVariant,
-                            ),
+                            style: AppTypography.style(AppTextRole.badge, fontSize: 11, color: kOnPrimaryFixedVariant),
                           ),
                         ],
                       ),
@@ -555,10 +510,7 @@ class _SubmitApplicationReviewDialogState
                     const SizedBox(height: 3),
                     Text(
                       '4-Year Renewable',
-                      style: geist(
-                        fontSize: 10,
-                        color: kOnSurfaceVariant,
-                      ),
+                      style: AppTypography.style(AppTextRole.badge, fontSize: 10, color: kOnSurfaceVariant),
                     ),
                   ],
                 ),
@@ -601,11 +553,7 @@ class _SubmitApplicationReviewDialogState
                           children: [
                             Text(
                               'Deadline',
-                              style: geist(
-                                fontSize: 10,
-                                fontWeight: FontWeight.w600,
-                                color: kOnSurfaceVariant,
-                              ),
+                              style: AppTypography.style(AppTextRole.label, fontSize: 10, color: kOnSurfaceVariant),
                             ),
                             Text(
                               daysLeft > 0
@@ -613,11 +561,7 @@ class _SubmitApplicationReviewDialogState
                                   : deadlineLabel(widget.scholarship.deadline),
 
                               overflow: TextOverflow.ellipsis,
-                              style: geist(
-                                fontSize: 12,
-                                fontWeight: FontWeight.w600,
-                                color: kError,
-                              ),
+                              style: AppTypography.style(AppTextRole.caption, fontSize: 12, color: kError),
                             ),
                           ],
                         ),
@@ -659,21 +603,13 @@ class _SubmitApplicationReviewDialogState
                           children: [
                             Text(
                               'Recipient',
-                              style: geist(
-                                fontSize: 10,
-                                fontWeight: FontWeight.w600,
-                                color: kOnSurfaceVariant,
-                              ),
+                              style: AppTypography.style(AppTextRole.label, fontSize: 10, color: kOnSurfaceVariant),
                             ),
                             Text(
                               'UP Diliman',
 
                               overflow: TextOverflow.ellipsis,
-                              style: geist(
-                                fontSize: 12,
-                                fontWeight: FontWeight.w600,
-                                color: kOnSurface,
-                              ),
+                              style: AppTypography.style(AppTextRole.bodyEmphasis, fontSize: 12, color: kOnSurface),
                             ),
                           ],
                         ),
@@ -707,10 +643,7 @@ class _SubmitApplicationReviewDialogState
         children: [
           Text(
             'Application Packet',
-            style: geist(
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-            ),
+            style: AppTypography.style(AppTextRole.sectionTitle, fontSize: 16),
           ),
           const SizedBox(height: 8),
           Text(
@@ -720,7 +653,7 @@ class _SubmitApplicationReviewDialogState
           if (documents == null)
             const Text('No supporting documents attached yet.'),
           if (_packetError != null)
-            Text(_packetError!, style: const TextStyle(color: Colors.red)),
+            Text(_packetError!, style: AppTypography.style(AppTextRole.caption, color: Colors.red)),
           if (documents != null)
             documents.when(
               loading: () => const CircularProgressIndicator(),
@@ -800,11 +733,7 @@ class _SubmitApplicationReviewDialogState
                   'Affirmations & Honor Code',
 
                   overflow: TextOverflow.ellipsis,
-                  style: geist(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: kOnSurface,
-                  ),
+                  style: AppTypography.style(AppTextRole.sectionTitle, fontSize: 16, color: kOnSurface),
                 ),
               ),
             ],
@@ -871,11 +800,7 @@ class _SubmitApplicationReviewDialogState
             Expanded(
               child: Text(
                 text,
-                style: geist(
-                  fontSize: 12,
-                  color: kOnSurface,
-                  height: 1.4,
-                ),
+                style: AppTypography.style(AppTextRole.body, fontSize: 12, color: kOnSurface, height: 1.4),
               ),
             ),
           ],
@@ -900,12 +825,7 @@ class _SubmitApplicationReviewDialogState
             children: [
               Text(
                 'APPLICANT',
-                style: geist(
-                  fontSize: 10,
-                  fontWeight: FontWeight.w700,
-                  color: kOnSurfaceVariant,
-                  letterSpacing: 0.5,
-                ),
+                style: AppTypography.style(AppTextRole.label, fontSize: 10, color: kOnSurfaceVariant, letterSpacing: 0.5),
               ),
               Row(
                 mainAxisSize: MainAxisSize.min,
@@ -918,11 +838,7 @@ class _SubmitApplicationReviewDialogState
                   const SizedBox(width: 4),
                   Text(
                     'Review Pending',
-                    style: geist(
-                      fontSize: 11,
-                      fontWeight: FontWeight.bold,
-                      color: kPrimaryContainer,
-                    ),
+                    style: AppTypography.style(AppTextRole.badge, fontSize: 11, color: kPrimaryContainer),
                   ),
                 ],
               ),
@@ -948,23 +864,14 @@ class _SubmitApplicationReviewDialogState
                         children: [
                           Text(
                             'Applicant Name',
-                            style: geist(
-                              fontSize: 10,
-                              color: kOnSurfaceVariant,
-                            ),
+                            style: AppTypography.style(AppTextRole.label, fontSize: 10, color: kOnSurfaceVariant),
                           ),
                           const SizedBox(height: 2),
                           Text(
                             studentName,
 
                             overflow: TextOverflow.ellipsis,
-                            style: geist(
-                              fontSize: 22,
-                              fontWeight: FontWeight.bold,
-                              fontStyle: FontStyle.italic,
-                              color: kPrimaryDark,
-                              letterSpacing: 0.5,
-                            ),
+                            style: AppTypography.style(AppTextRole.bodyEmphasis, fontSize: 22, fontStyle: FontStyle.italic, color: kPrimaryDark, letterSpacing: 0.5),
                           ),
                         ],
                       ),
@@ -985,20 +892,13 @@ class _SubmitApplicationReviewDialogState
                         'Submission time is saved after successful submission.',
 
                         overflow: TextOverflow.ellipsis,
-                        style: geist(
-                          fontSize: 10,
-                          color: kOnSurfaceVariant,
-                        ),
+                        style: AppTypography.style(AppTextRole.caption, fontSize: 10, color: kOnSurfaceVariant),
                       ),
                     ),
                     const SizedBox(width: 8),
                     Text(
                       '',
-                      style: geist(
-                        fontSize: 11,
-                        fontWeight: FontWeight.bold,
-                        color: kPrimaryContainer,
-                      ),
+                      style: AppTypography.style(AppTextRole.caption, fontSize: 11, color: kPrimaryContainer),
                     ),
                   ],
                 ),
@@ -1020,10 +920,7 @@ class _SubmitApplicationReviewDialogState
                 Expanded(
                   child: Text(
                     'A submission is complete only after it is saved successfully.',
-                    style: geist(
-                      fontSize: 11,
-                      color: kOnSurfaceVariant,
-                    ),
+                    style: AppTypography.style(AppTextRole.caption, fontSize: 11, color: kOnSurfaceVariant),
                   ),
                 ),
               ],
@@ -1092,10 +989,7 @@ class _SubmitApplicationReviewDialogState
                     child: Text(
                       'Submit Application (Final)',
                       textAlign: TextAlign.center,
-                      style: geist(
-                        fontSize: 14,
-                        fontWeight: FontWeight.bold,
-                      ),
+                      style: AppTypography.style(AppTextRole.button, fontSize: 14),
                     ),
                   ),
                 ],
@@ -1119,11 +1013,7 @@ class _SubmitApplicationReviewDialogState
                     : () => Navigator.of(context).pop(false),
                 child: Text(
                   'Cancel',
-                  style: geist(
-                    fontSize: 13,
-                    fontWeight: FontWeight.w600,
-                    color: const Color(0xFF707971),
-                  ),
+                  style: AppTypography.style(AppTextRole.button, fontSize: 13, color: const Color(0xFF707971)),
                 ),
               ),
               // Save Progress Button
@@ -1138,11 +1028,7 @@ class _SubmitApplicationReviewDialogState
                       )
                     : Text(
                         'Save Progress & Return to Grant Detail',
-                        style: geist(
-                          fontSize: 13,
-                          fontWeight: FontWeight.bold,
-                          color: kPrimaryContainer,
-                        ),
+                        style: AppTypography.style(AppTextRole.button, fontSize: 13, color: kPrimaryContainer),
                       ),
               ),
             ],
@@ -1153,11 +1039,7 @@ class _SubmitApplicationReviewDialogState
             textAlign: TextAlign.center,
 
             overflow: TextOverflow.ellipsis,
-            style: geist(
-              fontSize: 10,
-              color: kOnSurfaceVariant,
-              height: 1.3,
-            ),
+            style: AppTypography.style(AppTextRole.caption, fontSize: 10, color: kOnSurfaceVariant, height: 1.3),
           ),
         ],
       ),

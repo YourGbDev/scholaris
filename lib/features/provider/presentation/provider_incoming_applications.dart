@@ -3,6 +3,8 @@
 // Incoming Applications Console for /provider-home.
 // Built to match Stitch design reference: scholaris_incoming_applications_console.
 
+import 'package:scholaris/shared/theme/app_motion.dart' show opticalTracking, opticalLeading;
+import 'package:scholaris/shared/theme/app_typography.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -44,16 +46,12 @@ class ProviderIncomingApplications extends ConsumerWidget {
               children: [
                 Text(
                   'Incoming Applications',
-                  style: poppins(
-                    fontSize: 22,
-                    fontWeight: FontWeight.w700,
-                    color: kPrimary,
-                  ),
+                  style: AppTypography.style(AppTextRole.screenTitle, fontSize: 22, color: kPrimary, letterSpacing: opticalTracking(22), height: opticalLeading(22, isBody: false)),
                 ),
                 const SizedBox(height: 2),
                 Text(
                   'Review and evaluate student applications.',
-                  style: openSans(fontSize: 12, color: Colors.black54),
+                  style: AppTypography.style(AppTextRole.subtitle, fontSize: 12, color: Colors.black54, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: true)),
                 ),
               ],
             ),
@@ -285,11 +283,7 @@ class _IncomingApplicationRow extends ConsumerWidget {
                     ),
                     child: Text(
                       refCode,
-                      style: openSans(
-                        fontSize: 10,
-                        fontWeight: FontWeight.w600,
-                        color: kNavyTrust,
-                      ),
+                      style: AppTypography.style(AppTextRole.caption, fontSize: 10, color: kNavyTrust, letterSpacing: opticalTracking(10), height: opticalLeading(10, isBody: true)),
                     ),
                   ),
                   const SizedBox(width: 6),
@@ -314,11 +308,7 @@ class _IncomingApplicationRow extends ConsumerWidget {
                         const SizedBox(width: 4),
                         Text(
                           '98% Match',
-                          style: poppins(
-                            fontSize: 10,
-                            fontWeight: FontWeight.w700,
-                            color: kPrimary,
-                          ),
+                          style: AppTypography.style(AppTextRole.badge, fontSize: 10, color: kPrimary, letterSpacing: opticalTracking(10), height: opticalLeading(10, isBody: false)),
                         ),
                       ],
                     ),
@@ -345,11 +335,7 @@ class _IncomingApplicationRow extends ConsumerWidget {
                       applicantName.isNotEmpty
                           ? applicantName.substring(0, 1).toUpperCase()
                           : 'A',
-                      style: poppins(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w700,
-                        color: kNavyTrust,
-                      ),
+                      style: AppTypography.style(AppTextRole.label, fontSize: 16, color: kNavyTrust, letterSpacing: opticalTracking(16), height: opticalLeading(16, isBody: false)),
                     ),
                   ),
                   const SizedBox(width: 10),
@@ -361,22 +347,14 @@ class _IncomingApplicationRow extends ConsumerWidget {
                           title,
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
-                          style: poppins(
-                            fontSize: 15,
-                            fontWeight: FontWeight.w600,
-                            color: Colors.black87,
-                          ),
+                          style: AppTypography.style(AppTextRole.cardTitle, fontSize: 15, color: Colors.black87, letterSpacing: opticalTracking(15), height: opticalLeading(15, isBody: false)),
                         ),
                         const SizedBox(height: 2),
                         Text(
                           applicantName,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
-                          style: openSans(
-                            fontSize: 13,
-                            color: Colors.black87,
-                            fontWeight: FontWeight.w600,
-                          ),
+                          style: AppTypography.style(AppTextRole.bodyEmphasis, fontSize: 13, color: Colors.black87, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: true)),
                         ),
                       ],
                     ),
@@ -401,14 +379,10 @@ class _IncomingApplicationRow extends ConsumerWidget {
                       const SizedBox(width: 5),
                       Text(
                         'Applicant GWA: ${applicantProfile!.gpa.toStringAsFixed(2)}',
-                        style: poppins(
-                          fontSize: 11,
-                          fontWeight: FontWeight.w700,
-                          color: kPrimary,
-                        ),
+                        style: AppTypography.style(AppTextRole.caption, fontSize: 11, color: kPrimary, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: false)),
                       ),
-                      const Text(' • Priority STEM Candidate',
-                          style: TextStyle(fontSize: 11, color: Colors.black54)),
+                       Text(' • Priority STEM Candidate',
+                          style: AppTypography.style(AppTextRole.caption, fontSize: 11, color: Colors.black54)),
                     ],
                   ),
                 ),
@@ -429,11 +403,7 @@ class _IncomingApplicationRow extends ConsumerWidget {
                       children: [
                         Text(
                           'Review',
-                          style: poppins(
-                            fontSize: 12,
-                            fontWeight: FontWeight.w600,
-                            color: kPrimary,
-                          ),
+                          style: AppTypography.style(AppTextRole.button, fontSize: 12, color: kPrimary, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: false)),
                         ),
                         const SizedBox(width: 2),
                         const Icon(
@@ -478,7 +448,7 @@ class _IncomingApplicationRow extends ConsumerWidget {
                       const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
                   child: Text(
                     'Update Application Status',
-                    style: poppins(fontSize: 18, fontWeight: FontWeight.w600),
+                    style: AppTypography.style(AppTextRole.cardTitle, fontSize: 18, letterSpacing: opticalTracking(18), height: opticalLeading(18, isBody: false)),
                   ),
                 ),
                 if (applicantProfile != null)
@@ -567,11 +537,11 @@ class _IncomingApplicationRow extends ConsumerWidget {
       builder: (dialogContext) => AlertDialog(
         title: Text(
           '$actionLabel Application',
-          style: poppins(fontWeight: FontWeight.w600, fontSize: 18),
+          style: AppTypography.style(AppTextRole.cardTitle, fontSize: 18, letterSpacing: opticalTracking(18), height: opticalLeading(18, isBody: false)),
         ),
         content: Text(
           'Are you sure you want to ${actionLabel.toLowerCase()} the application for $applicantName? This decision is final.',
-          style: openSans(fontSize: 14),
+          style: AppTypography.style(AppTextRole.body, fontSize: 14, letterSpacing: opticalTracking(14), height: opticalLeading(14, isBody: true)),
         ),
         actions: [
           TextButton(
@@ -624,7 +594,7 @@ class _ApplicantCredentialsCard extends StatelessWidget {
         children: [
           Text(
             profile.fullName,
-            style: poppins(fontSize: 15, fontWeight: FontWeight.w600),
+            style: AppTypography.style(AppTextRole.cardTitle, fontSize: 15, letterSpacing: opticalTracking(15), height: opticalLeading(15, isBody: false)),
           ),
           const SizedBox(height: 8),
           _credentialRow(Icons.school_outlined, profile.course),
@@ -649,19 +619,12 @@ class _ApplicantCredentialsCard extends StatelessWidget {
                 children: [
                   Text(
                     'Applicant Note',
-                    style: poppins(
-                      fontSize: 11,
-                      fontWeight: FontWeight.w600,
-                      color: kPrimary,
-                    ),
+                    style: AppTypography.style(AppTextRole.sectionTitle, fontSize: 11, color: kPrimary, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: false)),
                   ),
                   const SizedBox(height: 3),
                   Text(
                     notes!,
-                    style: openSans(
-                      fontSize: 13,
-                      color: Colors.black87,
-                    ),
+                    style: AppTypography.style(AppTextRole.body, fontSize: 13, color: Colors.black87, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: true)),
                   ),
                 ],
               ),
@@ -682,7 +645,7 @@ class _ApplicantCredentialsCard extends StatelessWidget {
           Expanded(
             child: Text(
               text,
-              style: openSans(fontSize: 13, color: Colors.black87),
+              style: AppTypography.style(AppTextRole.body, fontSize: 13, color: Colors.black87, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: true)),
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
             ),
@@ -773,11 +736,7 @@ class _ProviderStatusFilterChip extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
             child: Text(
               '$label ($count)',
-              style: poppins(
-                fontSize: 12,
-                fontWeight: FontWeight.w600,
-                color: foreground,
-              ),
+              style: AppTypography.style(AppTextRole.badge, fontSize: 12, color: foreground, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: false)),
             ),
           ),
         ),
@@ -807,11 +766,7 @@ class _MetaChip extends StatelessWidget {
           const SizedBox(width: 5),
           Text(
             label,
-            style: openSans(
-              fontSize: 12,
-              fontWeight: FontWeight.w600,
-              color: kPrimary,
-            ),
+            style: AppTypography.style(AppTextRole.badge, fontSize: 12, color: kPrimary, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: true)),
           ),
         ],
       ),
@@ -881,11 +836,7 @@ class _ProviderSummaryPill extends StatelessWidget {
           const SizedBox(width: 5),
           Text(
             label,
-            style: poppins(
-              fontSize: 12,
-              fontWeight: FontWeight.w600,
-              color: kPrimary,
-            ),
+            style: AppTypography.style(AppTextRole.badge, fontSize: 12, color: kPrimary, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: false)),
           ),
         ],
       ),

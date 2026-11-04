@@ -5,7 +5,7 @@
 // - scholaris_institutional_provider_portal_apple_design
 // - scholaris_individual_provider_portal_apple_design
 
-import 'package:scholaris/shared/theme/app_theme.dart';
+import 'package:scholaris/shared/theme/app_typography.dart';
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -213,17 +213,13 @@ class _ProviderLoginScreenState extends ConsumerState<ProviderLoginScreen> {
             const SizedBox(width: 8),
             Text(
               'Provider Portal',
-              style: geist(fontWeight: FontWeight.w700, fontSize: 18),
+              style: AppTypography.style(AppTextRole.cardTitle, fontSize: 18),
             ),
           ],
         ),
         content: Text(
           'This portal is for providers. Use the Scholaris app.',
-          style: geist(
-            fontSize: 14,
-            color: const Color(0xFF1A1B1F),
-            height: 1.4,
-          ),
+          style: AppTypography.style(AppTextRole.body, fontSize: 14, color: const Color(0xFF1A1B1F), height: 1.4),
         ),
         actions: [
           TextButton(
@@ -232,10 +228,7 @@ class _ProviderLoginScreenState extends ConsumerState<ProviderLoginScreen> {
             },
             child: Text(
               'Dismiss',
-              style: geist(
-                color: const Color(0xFF707971),
-                fontWeight: FontWeight.w600,
-              ),
+              style: AppTypography.style(AppTextRole.button, color: const Color(0xFF707971)),
             ),
           ),
           ElevatedButton(
@@ -252,7 +245,7 @@ class _ProviderLoginScreenState extends ConsumerState<ProviderLoginScreen> {
             ),
             child: Text(
               'Go to Student Login',
-              style: geist(fontWeight: FontWeight.w600),
+              style: AppTypography.style(AppTextRole.button),
             ),
           ),
         ],
@@ -276,7 +269,7 @@ class _ProviderLoginScreenState extends ConsumerState<ProviderLoginScreen> {
       SnackBar(
         content: Text(
           message,
-          style: geist(color: Colors.white, fontSize: 13.5),
+          style: AppTypography.style(AppTextRole.body, color: Colors.white, fontSize: 13.5),
         ),
         backgroundColor:
             isError ? const Color(0xFFBA1A1A) : const Color(0xFF1A1B1F),
@@ -442,12 +435,7 @@ class _ProviderLoginScreenState extends ConsumerState<ProviderLoginScreen> {
                 ),
                 child: Text(
                   isOrg ? 'ORGANIZATION PORTAL' : 'INDIVIDUAL PROVIDER PORTAL',
-                  style: geist(
-                    fontSize: 9.5,
-                    fontWeight: FontWeight.w700,
-                    color: const Color(0xFF00351C),
-                    letterSpacing: 0.5,
-                  ),
+                  style: AppTypography.style(AppTextRole.label, fontSize: 9.5, color: const Color(0xFF00351C), letterSpacing: 0.5),
                 ),
               ),
             ],
@@ -471,11 +459,7 @@ class _ProviderLoginScreenState extends ConsumerState<ProviderLoginScreen> {
                         ? 'AY 2026–2027 • Clearance Engine'
                         : 'Direct Disbursement Rail',
                     overflow: TextOverflow.ellipsis,
-                    style: geist(
-                      fontSize: 11,
-                      fontWeight: FontWeight.w500,
-                      color: const Color(0xFF404942),
-                    ),
+                    style: AppTypography.style(AppTextRole.caption, fontSize: 11, color: const Color(0xFF404942)),
                   ),
                 ),
               ],
@@ -534,12 +518,7 @@ class _ProviderLoginScreenState extends ConsumerState<ProviderLoginScreen> {
                         const SizedBox(width: 6),
                         Text(
                           'Organization',
-                          style: geist(
-                            fontSize: 12.5,
-                            fontWeight:
-                                isOrg ? FontWeight.w600 : FontWeight.w500,
-                            color: isOrg ? Colors.white : const Color(0xFF404942),
-                          ),
+                          style: AppTypography.style(AppTextRole.navigation, fontSize: 12.5, color: isOrg ? Colors.white : const Color(0xFF404942)),
                         ),
                       ],
                     ),
@@ -584,12 +563,7 @@ class _ProviderLoginScreenState extends ConsumerState<ProviderLoginScreen> {
                         const SizedBox(width: 6),
                         Text(
                           'Individual',
-                          style: geist(
-                            fontSize: 12.5,
-                            fontWeight:
-                                !isOrg ? FontWeight.w600 : FontWeight.w500,
-                            color: !isOrg ? Colors.white : const Color(0xFF404942),
-                          ),
+                          style: AppTypography.style(AppTextRole.navigation, fontSize: 12.5, color: !isOrg ? Colors.white : const Color(0xFF404942)),
                         ),
                       ],
                     ),
@@ -605,10 +579,7 @@ class _ProviderLoginScreenState extends ConsumerState<ProviderLoginScreen> {
               ? 'For foundations, corporate endowments, SUCs & LGUs'
               : 'For private philanthropists, alumni sponsors & independent grant providers',
           textAlign: TextAlign.center,
-          style: geist(
-            fontSize: 11,
-            color: const Color(0xFF404942),
-          ),
+          style: AppTypography.style(AppTextRole.subtitle, fontSize: 11, color: const Color(0xFF404942)),
         ),
       ],
     );
@@ -637,12 +608,7 @@ class _ProviderLoginScreenState extends ConsumerState<ProviderLoginScreen> {
                   isOrg
                       ? 'AUTHORIZED PHILANTHROPIC & CORPORATE PARTNERS ONLY'
                       : 'DIRECT SCHOLAR GRANT FUNDING · FULL 100% TRANCHE TRANSPARENCY',
-                  style: geist(
-                    fontSize: 9.5,
-                    fontWeight: FontWeight.w700,
-                    color: const Color(0xFF00351C),
-                    letterSpacing: 0.4,
-                  ),
+                  style: AppTypography.style(AppTextRole.label, fontSize: 9.5, color: const Color(0xFF00351C), letterSpacing: 0.4),
                 ),
               ),
             ],
@@ -652,12 +618,7 @@ class _ProviderLoginScreenState extends ConsumerState<ProviderLoginScreen> {
         Text(
           isOrg ? 'Organization Provider Portal' : 'Individual Provider Portal',
           textAlign: TextAlign.center,
-          style: geist(
-            fontSize: 24,
-            fontWeight: FontWeight.w700,
-            color: const Color(0xFF1A1B1F),
-            letterSpacing: -0.5,
-          ),
+          style: AppTypography.style(AppTextRole.screenTitle, fontSize: 24, color: const Color(0xFF1A1B1F), letterSpacing: -0.5),
         ),
         const SizedBox(height: 6),
         Text(
@@ -665,11 +626,7 @@ class _ProviderLoginScreenState extends ConsumerState<ProviderLoginScreen> {
               ? 'Sign in to manage institutional endowments, verify applicant LRNs, and disburse education grants via automated clearing rails.'
               : 'Fund a student directly. As an individual provider, you choose who you support and see every single peso reach their tuition and living allowance.',
           textAlign: TextAlign.center,
-          style: geist(
-            fontSize: 13,
-            color: const Color(0xFF404942),
-            height: 1.45,
-          ),
+          style: AppTypography.style(AppTextRole.subtitle, fontSize: 13, color: const Color(0xFF404942), height: 1.45),
         ),
       ],
     );
@@ -691,11 +648,7 @@ class _ProviderLoginScreenState extends ConsumerState<ProviderLoginScreen> {
           Expanded(
             child: Text(
               _lockoutStatus!.lockoutMessage,
-              style: geist(
-                fontSize: 12,
-                fontWeight: FontWeight.w600,
-                color: const Color(0xFF93000A),
-              ),
+              style: AppTypography.style(AppTextRole.body, fontSize: 12, color: const Color(0xFF93000A)),
             ),
           ),
         ],
@@ -712,20 +665,12 @@ class _ProviderLoginScreenState extends ConsumerState<ProviderLoginScreen> {
           children: [
             Text(
               isOrg ? 'ORGANIZATION EMAIL' : 'PROVIDER EMAIL',
-              style: geist(
-                fontSize: 10.5,
-                fontWeight: FontWeight.w700,
-                color: const Color(0xFF404942),
-                letterSpacing: 0.8,
-              ),
+              style: AppTypography.style(AppTextRole.label, fontSize: 10.5, color: const Color(0xFF404942), letterSpacing: 0.8),
             ),
             if (isOrg)
               Text(
                 'Gov / Org domain',
-                style: geist(
-                  fontSize: 10.5,
-                  color: const Color(0xFF707971),
-                ),
+                style: AppTypography.style(AppTextRole.badge, fontSize: 10.5, color: const Color(0xFF707971)),
               ),
           ],
         ),
@@ -735,10 +680,7 @@ class _ProviderLoginScreenState extends ConsumerState<ProviderLoginScreen> {
           controller: _emailController,
           keyboardType: TextInputType.emailAddress,
           autocorrect: false,
-          style: geist(
-            fontSize: 14,
-            color: const Color(0xFF1A1B1F),
-          ),
+          style: AppTypography.style(AppTextRole.input, fontSize: 14, color: const Color(0xFF1A1B1F)),
           validator: (val) {
             final email = val?.trim() ?? '';
             if (email.isEmpty) return 'Enter your provider email.';
@@ -751,10 +693,7 @@ class _ProviderLoginScreenState extends ConsumerState<ProviderLoginScreen> {
             hintText: isOrg
                 ? 'endowments@partnerfoundation.org.ph'
                 : 'provider@example.com or sponsor@gmail.com',
-            hintStyle: geist(
-              fontSize: 13,
-              color: const Color(0xFF707971).withValues(alpha: 0.6),
-            ),
+            hintStyle: AppTypography.style(AppTextRole.placeholder, fontSize: 13, color: const Color(0xFF707971).withValues(alpha: 0.6)),
             prefixIcon: const Icon(
               Icons.mail_outline_rounded,
               size: 18,
@@ -787,22 +726,13 @@ class _ProviderLoginScreenState extends ConsumerState<ProviderLoginScreen> {
           children: [
             Text(
               'PASSWORD',
-              style: geist(
-                fontSize: 10.5,
-                fontWeight: FontWeight.w700,
-                color: const Color(0xFF404942),
-                letterSpacing: 0.8,
-              ),
+              style: AppTypography.style(AppTextRole.label, fontSize: 10.5, color: const Color(0xFF404942), letterSpacing: 0.8),
             ),
             GestureDetector(
               onTap: () => context.go('/forgot-password'),
               child: Text(
                 'Forgot password?',
-                style: geist(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w600,
-                  color: const Color(0xFF0F4D2E),
-                ),
+                style: AppTypography.style(AppTextRole.button, fontSize: 12, color: const Color(0xFF0F4D2E)),
               ),
             ),
           ],
@@ -812,20 +742,14 @@ class _ProviderLoginScreenState extends ConsumerState<ProviderLoginScreen> {
           key: const ValueKey('provider-login-password-field'),
           controller: _passwordController,
           obscureText: _obscurePassword,
-          style: geist(
-            fontSize: 14,
-            color: const Color(0xFF1A1B1F),
-          ),
+          style: AppTypography.style(AppTextRole.input, fontSize: 14, color: const Color(0xFF1A1B1F)),
           validator: (val) {
             if (val == null || val.isEmpty) return 'Enter your password.';
             return null;
           },
           decoration: InputDecoration(
             hintText: '••••••••••••',
-            hintStyle: geist(
-              fontSize: 13,
-              color: const Color(0xFF707971).withValues(alpha: 0.6),
-            ),
+            hintStyle: AppTypography.style(AppTextRole.placeholder, fontSize: 13, color: const Color(0xFF707971).withValues(alpha: 0.6)),
             prefixIcon: const Icon(
               Icons.lock_outline_rounded,
               size: 18,
@@ -882,10 +806,7 @@ class _ProviderLoginScreenState extends ConsumerState<ProviderLoginScreen> {
             const SizedBox(width: 8),
             Text(
               isOrg ? 'Remember this workstation' : 'Keep me signed in',
-              style: geist(
-                fontSize: 12,
-                color: const Color(0xFF404942),
-              ),
+              style: AppTypography.style(AppTextRole.label, fontSize: 12, color: const Color(0xFF404942)),
             ),
           ],
         ),
@@ -903,10 +824,7 @@ class _ProviderLoginScreenState extends ConsumerState<ProviderLoginScreen> {
                 child: Text(
                   'Encrypted Session',
                   overflow: TextOverflow.ellipsis,
-                  style: geist(
-                    fontSize: 10.5,
-                    color: const Color(0xFF707971),
-                  ),
+                  style: AppTypography.style(AppTextRole.badge, fontSize: 10.5, color: const Color(0xFF707971)),
                 ),
               ),
             ],
@@ -947,10 +865,7 @@ class _ProviderLoginScreenState extends ConsumerState<ProviderLoginScreen> {
                     isOrg
                         ? 'Access Provider Console'
                         : 'Access Individual Provider Console',
-                    style: geist(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w600,
-                    ),
+                    style: AppTypography.style(AppTextRole.button, fontSize: 14),
                   ),
                   const SizedBox(width: 8),
                   const Icon(Icons.arrow_forward_rounded, size: 16),
@@ -976,19 +891,12 @@ class _ProviderLoginScreenState extends ConsumerState<ProviderLoginScreen> {
               children: [
                 Text(
                   'New endowment partner or educational foundation?',
-                  style: geist(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w600,
-                    color: const Color(0xFF1A1B1F),
-                  ),
+                  style: AppTypography.style(AppTextRole.body, fontSize: 12, color: const Color(0xFF1A1B1F)),
                 ),
                 const SizedBox(height: 2),
                 Text(
                   'SEC & BIR-verified institutional clearing status.',
-                  style: geist(
-                    fontSize: 11,
-                    color: const Color(0xFF404942),
-                  ),
+                  style: AppTypography.style(AppTextRole.caption, fontSize: 11, color: const Color(0xFF404942)),
                 ),
               ],
             ),
@@ -1006,10 +914,7 @@ class _ProviderLoginScreenState extends ConsumerState<ProviderLoginScreen> {
             ),
             child: Text(
               'Accreditation Fast Track →',
-              style: geist(
-                fontSize: 11.5,
-                fontWeight: FontWeight.w600,
-              ),
+              style: AppTypography.style(AppTextRole.button, fontSize: 11.5),
             ),
           ),
         ],
@@ -1040,10 +945,7 @@ class _ProviderLoginScreenState extends ConsumerState<ProviderLoginScreen> {
                     children: [
                       Text(
                         'Want to sponsor a scholar independently?',
-                        style: geist(
-                          fontSize: 12,
-                          color: const Color(0xFF404942),
-                        ),
+                        style: AppTypography.style(AppTextRole.body, fontSize: 12, color: const Color(0xFF404942)),
                       ),
                       const SizedBox(height: 2),
                       Row(
@@ -1051,11 +953,7 @@ class _ProviderLoginScreenState extends ConsumerState<ProviderLoginScreen> {
                           Flexible(
                             child: Text(
                               'Register as an Individual Provider (2-Step Quick Setup)',
-                              style: geist(
-                                fontSize: 12.5,
-                                fontWeight: FontWeight.w600,
-                                color: const Color(0xFF0F4D2E),
-                              ),
+                              style: AppTypography.style(AppTextRole.cardTitle, fontSize: 12.5, color: const Color(0xFF0F4D2E)),
                             ),
                           ),
                           Icon(
@@ -1107,11 +1005,7 @@ class _ProviderLoginScreenState extends ConsumerState<ProviderLoginScreen> {
                     alignment: Alignment.center,
                     child: Text(
                       '1',
-                      style: geist(
-                        fontSize: 10.5,
-                        fontWeight: FontWeight.w700,
-                        color: Colors.white,
-                      ),
+                      style: AppTypography.style(AppTextRole.label, fontSize: 10.5, color: Colors.white),
                     ),
                   ),
                   const SizedBox(width: 10),
@@ -1121,18 +1015,11 @@ class _ProviderLoginScreenState extends ConsumerState<ProviderLoginScreen> {
                       children: [
                         Text(
                           'Personal Profile & Verification',
-                          style: geist(
-                            fontSize: 12,
-                            fontWeight: FontWeight.w600,
-                            color: const Color(0xFF1A1B1F),
-                          ),
+                          style: AppTypography.style(AppTextRole.sectionTitle, fontSize: 12, color: const Color(0xFF1A1B1F)),
                         ),
                         Text(
                           'Instant PhilSys National ID, passport, or alumni credential check with e-KYC instant validation.',
-                          style: geist(
-                            fontSize: 11,
-                            color: const Color(0xFF404942),
-                          ),
+                          style: AppTypography.style(AppTextRole.caption, fontSize: 11, color: const Color(0xFF404942)),
                         ),
                       ],
                     ),
@@ -1160,11 +1047,7 @@ class _ProviderLoginScreenState extends ConsumerState<ProviderLoginScreen> {
                     alignment: Alignment.center,
                     child: Text(
                       '2',
-                      style: geist(
-                        fontSize: 10.5,
-                        fontWeight: FontWeight.w700,
-                        color: Colors.white,
-                      ),
+                      style: AppTypography.style(AppTextRole.label, fontSize: 10.5, color: Colors.white),
                     ),
                   ),
                   const SizedBox(width: 10),
@@ -1174,18 +1057,11 @@ class _ProviderLoginScreenState extends ConsumerState<ProviderLoginScreen> {
                       children: [
                         Text(
                           'Giving Preferences & Scholar Match',
-                          style: geist(
-                            fontSize: 12,
-                            fontWeight: FontWeight.w600,
-                            color: const Color(0xFF1A1B1F),
-                          ),
+                          style: AppTypography.style(AppTextRole.sectionTitle, fontSize: 12, color: const Color(0xFF1A1B1F)),
                         ),
                         Text(
                           'Select STEM, Agriculture, or State University criteria, set recurring tranche amounts, and link instant wallets.',
-                          style: geist(
-                            fontSize: 11,
-                            color: const Color(0xFF404942),
-                          ),
+                          style: AppTypography.style(AppTextRole.caption, fontSize: 11, color: const Color(0xFF404942)),
                         ),
                       ],
                     ),
@@ -1209,10 +1085,7 @@ class _ProviderLoginScreenState extends ConsumerState<ProviderLoginScreen> {
                 ),
                 child: Text(
                   'Begin 2-Minute Onboarding Now →',
-                  style: geist(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w600,
-                  ),
+                  style: AppTypography.style(AppTextRole.button, fontSize: 12),
                 ),
               ),
             ),
@@ -1227,12 +1100,7 @@ class _ProviderLoginScreenState extends ConsumerState<ProviderLoginScreen> {
       children: [
         Text(
           'SUPPORTED INSTANT REMITTANCE RAILS',
-          style: geist(
-            fontSize: 9.5,
-            fontWeight: FontWeight.w700,
-            color: const Color(0xFF707971),
-            letterSpacing: 0.8,
-          ),
+          style: AppTypography.style(AppTextRole.label, fontSize: 9.5, color: const Color(0xFF707971), letterSpacing: 0.8),
         ),
         const SizedBox(height: 8),
         Wrap(
@@ -1274,11 +1142,7 @@ class _ProviderLoginScreenState extends ConsumerState<ProviderLoginScreen> {
           const SizedBox(width: 6),
           Text(
             label,
-            style: geist(
-              fontSize: 11,
-              fontWeight: FontWeight.w500,
-              color: const Color(0xFF1A1B1F),
-            ),
+            style: AppTypography.style(AppTextRole.badge, fontSize: 11, color: const Color(0xFF1A1B1F)),
           ),
         ],
       ),
@@ -1298,10 +1162,7 @@ class _ProviderLoginScreenState extends ConsumerState<ProviderLoginScreen> {
               child: Text(
                 'RA 10173 Philippine Data Privacy Act Compliant · Encrypted Identity Verification',
                 textAlign: TextAlign.center,
-                style: geist(
-                  fontSize: 10,
-                  color: const Color(0xFF707971),
-                ),
+                style: AppTypography.style(AppTextRole.caption, fontSize: 10, color: const Color(0xFF707971)),
               ),
             ),
           ],
@@ -1314,37 +1175,25 @@ class _ProviderLoginScreenState extends ConsumerState<ProviderLoginScreen> {
           children: [
             Text(
               '© 2026 Scholaris Philippines',
-              style: geist(
-                fontSize: 10.5,
-                color: const Color(0xFF707971),
-              ),
+              style: AppTypography.style(AppTextRole.caption, fontSize: 10.5, color: const Color(0xFF707971)),
             ),
-            const Text('•',
-                style: TextStyle(fontSize: 10, color: Color(0xFF707971))),
+             Text('•',
+                style: AppTypography.style(AppTextRole.caption, fontSize: 10, color: Color(0xFF707971))),
             Text(
               'Privacy Charter',
-              style: geist(
-                fontSize: 10.5,
-                color: const Color(0xFF707971),
-              ),
+              style: AppTypography.style(AppTextRole.navigation, fontSize: 10.5, color: const Color(0xFF707971)),
             ),
-            const Text('•',
-                style: TextStyle(fontSize: 10, color: Color(0xFF707971))),
+             Text('•',
+                style: AppTypography.style(AppTextRole.caption, fontSize: 10, color: Color(0xFF707971))),
             Text(
               'Legal Terms',
-              style: geist(
-                fontSize: 10.5,
-                color: const Color(0xFF707971),
-              ),
+              style: AppTypography.style(AppTextRole.navigation, fontSize: 10.5, color: const Color(0xFF707971)),
             ),
-            const Text('•',
-                style: TextStyle(fontSize: 10, color: Color(0xFF707971))),
+             Text('•',
+                style: AppTypography.style(AppTextRole.caption, fontSize: 10, color: Color(0xFF707971))),
             Text(
               isOrg ? 'Security Disclosure' : 'Program Terms',
-              style: geist(
-                fontSize: 10.5,
-                color: const Color(0xFF707971),
-              ),
+              style: AppTypography.style(AppTextRole.navigation, fontSize: 10.5, color: const Color(0xFF707971)),
             ),
           ],
         ),
@@ -1354,19 +1203,13 @@ class _ProviderLoginScreenState extends ConsumerState<ProviderLoginScreen> {
           children: [
             Text(
               'Compliance Rails: RA 10173 Philippine Data Privacy Act',
-              style: geist(
-                fontSize: 9.5,
-                color: const Color(0xFF707971),
-              ),
+              style: AppTypography.style(AppTextRole.caption, fontSize: 9.5, color: const Color(0xFF707971)),
             ),
             Text(
               isOrg
                   ? 'Scholaris Institutional Security Architecture'
                   : 'Scholaris Individual Provider Portal',
-              style: geist(
-                fontSize: 9.5,
-                color: const Color(0xFF707971),
-              ),
+              style: AppTypography.style(AppTextRole.caption, fontSize: 9.5, color: const Color(0xFF707971)),
             ),
           ],
         ),

@@ -88,11 +88,20 @@ void main() {
   });
 
   group('Student Dashboard Hero Section', () {
+    testWidgets('personal greeting and opportunity hero use display emphasis', (tester) async {
+      await tester.pumpWidget(_buildTestApp());
+      await tester.pumpAndSettle();
+      final greeting = tester.widget<Text>(find.byWidgetPredicate((widget) =>
+        widget is Text && (widget.data?.contains('Gilbert!') ?? false)));
+      expect(greeting.style!.fontWeight, FontWeight.w700);
+      expect(tester.widget<Text>(find.text('Find your next opportunity.')).style!.fontWeight, FontWeight.w700);
+    });
     testWidgets('hero shows loading until matches arrive', (tester) async {
       final pending = Completer<List<Scholarship>>();
       await tester.pumpWidget(_buildTestApp(pendingMatches: pending.future));
       await tester.pump();
       expect(find.text('Finding matches…'), findsOneWidget);
+      expect(tester.widget<Text>(find.text('Finding matches…')).style!.fontWeight, FontWeight.w400);
       pending.complete(const []);
       await tester.pumpAndSettle();
       expect(find.text('0 scholarships match your profile.'), findsOneWidget);
@@ -101,6 +110,7 @@ void main() {
       await tester.pumpWidget(_buildTestApp(matchesError: true));
       await tester.pumpAndSettle();
       expect(find.text('Matches unavailable'), findsOneWidget);
+      expect(tester.widget<Text>(find.text('Matches unavailable')).style!.fontWeight, FontWeight.w400);
       expect(find.text('0 scholarships match your profile.'), findsNothing);
     });
     for (final size in [const Size(360, 800), const Size(440, 956)]) {
@@ -121,6 +131,14 @@ void main() {
       await tester.pumpWidget(_buildTestApp(matches: const []));
       await tester.pumpAndSettle();
       expect(find.text('0 scholarships match your profile.'), findsOneWidget);
+      final summary = tester.widget<Text>(find.text('0 scholarships match your profile.'));
+      expect(summary.style!.fontWeight, FontWeight.w400);
+      expect(summary.style!.fontSize, 13);
+      expect(summary.style!.height, 1.4);
+      final spans = (summary.textSpan! as TextSpan).children!.cast<TextSpan>();
+      expect(spans.first.text, '0');
+      expect(spans.first.style!.fontWeight, FontWeight.w700);
+      expect(spans.skip(1).map((span) => span.toPlainText()).join(), ' scholarships match your profile.');
       final oneMatch = Scholarship(id: 'live-match', title: 'Sample', minGpa: 2, deadline: DateTime(2099));
       await tester.pumpWidget(const SizedBox.shrink());
       await tester.pumpWidget(_buildTestApp(matches: [oneMatch]));

@@ -1,0 +1,9 @@
+01:19 +752 ~4 -6: C:/scholaris/test/matches_provider_test.dart: matchesProvider returns ranked eligible scholarships for the student [E]
+  Expected: ['sch-dost', 'sch-ched']
+    Actual: MappedListIterable<Scholarship, String>:['sch-ched', 'sch-dost']
+     Which: at location [0] is 'sch-ched' instead of 'sch-dost'
+  
+  package:matcher                                     expect
+  package:flutter_test/src/widget_tester.dart 473:18  expect
+  test\matches_provider_test.dart 63:5                main.<fn>
+  

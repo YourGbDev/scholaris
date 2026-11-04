@@ -1,0 +1,4534 @@
+{
+  "note": "Current changes classified against the task file inventory and the pre-migration status recorded in the chat. This is not a pristine working tree.",
+  "unexpectedTrackedChanges": [],
+  "files": [
+    {
+      "status": " M",
+      "file": "AGENTS.md",
+      "size": 5649,
+      "mtimeMs": 1793745135965.3174,
+      "category": "typography task"
+    },
+    {
+      "status": " M",
+      "file": "docs/reviews/2026-10-28-final-checking-readiness.md",
+      "size": 23774,
+      "mtimeMs": 1793350897501.993,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": " M",
+      "file": "landing/index.html",
+      "size": 45136,
+      "mtimeMs": 1793303820824.8396,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": " M",
+      "file": "lib/admin/screens/admin_settings_screen.dart",
+      "size": 11595,
+      "mtimeMs": 1793745135967.3127,
+      "category": "typography task"
+    },
+    {
+      "status": " M",
+      "file": "lib/admin/screens/applications_oversight_screen.dart",
+      "size": 71788,
+      "mtimeMs": 1793745135968.5518,
+      "category": "typography task"
+    },
+    {
+      "status": " M",
+      "file": "lib/admin/screens/audit_trail_screen.dart",
+      "size": 44353,
+      "mtimeMs": 1793745135969.58,
+      "category": "typography task"
+    },
+    {
+      "status": " M",
+      "file": "lib/admin/screens/disbursements_oversight_screen.dart",
+      "size": 28961,
+      "mtimeMs": 1793745135969.58,
+      "category": "typography task"
+    },
+    {
+      "status": " M",
+      "file": "lib/admin/screens/platform_overview_screen.dart",
+      "size": 23346,
+      "mtimeMs": 1793745135970.5886,
+      "category": "typography task"
+    },
+    {
+      "status": " M",
+      "file": "lib/admin/screens/reports_analytics_screen.dart",
+      "size": 27353,
+      "mtimeMs": 1793745135971.5928,
+      "category": "typography task"
+    },
+    {
+      "status": " M",
+      "file": "lib/admin/screens/reports_safety_screen.dart",
+      "size": 23774,
+      "mtimeMs": 1793745383450.8794,
+      "category": "typography task"
+    },
+    {
+      "status": " M",
+      "file": "lib/admin/screens/support_concerns_screen.dart",
+      "size": 9924,
+      "mtimeMs": 1793745383449.873,
+      "category": "typography task"
+    },
+    {
+      "status": " M",
+      "file": "lib/admin/widgets/admin_review_priorities.dart",
+      "size": 12061,
+      "mtimeMs": 1793745135973.1045,
+      "category": "typography task"
+    },
+    {
+      "status": " M",
+      "file": "lib/app/router.dart",
+      "size": 36949,
+      "mtimeMs": 1793745135973.7441,
+      "category": "typography task"
+    },
+    {
+      "status": " M",
+      "file": "lib/dev/provider_preview/main.dart",
+      "size": 7885,
+      "mtimeMs": 1793745135973.7441,
+      "category": "typography task"
+    },
+    {
+      "status": " M",
+      "file": "lib/dev/student_navbar_preview/main.dart",
+      "size": 39146,
+      "mtimeMs": 1793745383437.7466,
+      "category": "typography task"
+    },
+    {
+      "status": " M",
+      "file": "lib/features/account/presentation/account_settings_screen.dart",
+      "size": 48934,
+      "mtimeMs": 1793745135975.7522,
+      "category": "typography task"
+    },
+    {
+      "status": " M",
+      "file": "lib/features/account/presentation/change_email_dialog.dart",
+      "size": 5925,
+      "mtimeMs": 1793745383438.856,
+      "category": "typography task"
+    },
+    {
+      "status": " M",
+      "file": "lib/features/admin/presentation/admin_home_screen.dart",
+      "size": 14608,
+      "mtimeMs": 1793745383439.361,
+      "category": "typography task"
+    },
+    {
+      "status": " M",
+      "file": "lib/features/admin/presentation/admin_login_screen.dart",
+      "size": 24745,
+      "mtimeMs": 1793745135976.7568,
+      "category": "typography task"
+    },
+    {
+      "status": " M",
+      "file": "lib/features/admin/presentation/admin_providers_tab.dart",
+      "size": 22683,
+      "mtimeMs": 1793745383451.9172,
+      "category": "typography task"
+    },
+    {
+      "status": " M",
+      "file": "lib/features/admin/presentation/admin_scholarships_tab.dart",
+      "size": 74841,
+      "mtimeMs": 1793745135978.7534,
+      "category": "typography task"
+    },
+    {
+      "status": " M",
+      "file": "lib/features/admin/presentation/admin_theme.dart",
+      "size": 6185,
+      "mtimeMs": 1793745135978.7534,
+      "category": "typography task"
+    },
+    {
+      "status": " M",
+      "file": "lib/features/admin/presentation/admin_users_tab.dart",
+      "size": 93221,
+      "mtimeMs": 1793745135979.9016,
+      "category": "typography task"
+    },
+    {
+      "status": " M",
+      "file": "lib/features/applications/presentation/application_decision_letter.dart",
+      "size": 7935,
+      "mtimeMs": 1793745135980.9114,
+      "category": "typography task"
+    },
+    {
+      "status": " M",
+      "file": "lib/features/applications/presentation/application_detail_screen.dart",
+      "size": 41019,
+      "mtimeMs": 1793745135981.9077,
+      "category": "typography task"
+    },
+    {
+      "status": " M",
+      "file": "lib/features/applications/presentation/application_status_chip.dart",
+      "size": 4079,
+      "mtimeMs": 1793745135981.9077,
+      "category": "typography task"
+    },
+    {
+      "status": " M",
+      "file": "lib/features/applications/presentation/applications_screen.dart",
+      "size": 74846,
+      "mtimeMs": 1793745135981.9077,
+      "category": "typography task"
+    },
+    {
+      "status": " M",
+      "file": "lib/features/applications/presentation/student_support_concerns.dart",
+      "size": 6807,
+      "mtimeMs": 1793745383452.881,
+      "category": "typography task"
+    },
+    {
+      "status": " M",
+      "file": "lib/features/applications/presentation/student_support_receipts.dart",
+      "size": 4642,
+      "mtimeMs": 1793746174416.0188,
+      "category": "typography task"
+    },
+    {
+      "status": " M",
+      "file": "lib/features/applications/presentation/submission_confirmation_receipt_screen.dart",
+      "size": 35234,
+      "mtimeMs": 1793745135983.5107,
+      "category": "typography task"
+    },
+    {
+      "status": " M",
+      "file": "lib/features/applications/presentation/submit_application_review_dialog.dart",
+      "size": 38310,
+      "mtimeMs": 1793745383440.371,
+      "category": "typography task"
+    },
+    {
+      "status": " M",
+      "file": "lib/features/applications/presentation/widgets/document_upload_sheet.dart",
+      "size": 18790,
+      "mtimeMs": 1793745383441.367,
+      "category": "typography task"
+    },
+    {
+      "status": " M",
+      "file": "lib/features/auth/presentation/ceremony_screen.dart",
+      "size": 6740,
+      "mtimeMs": 1793745135985.1028,
+      "category": "typography task"
+    },
+    {
+      "status": " M",
+      "file": "lib/features/auth/presentation/forgot_password_screen.dart",
+      "size": 24880,
+      "mtimeMs": 1793745135986.1023,
+      "category": "typography task"
+    },
+    {
+      "status": " M",
+      "file": "lib/features/auth/presentation/graduation_ceremony.dart",
+      "size": 6517,
+      "mtimeMs": 1793745135986.1023,
+      "category": "typography task"
+    },
+    {
+      "status": " M",
+      "file": "lib/features/auth/presentation/login_screen.dart",
+      "size": 49823,
+      "mtimeMs": 1793745135987.118,
+      "category": "typography task"
+    },
+    {
+      "status": " M",
+      "file": "lib/features/auth/presentation/reset_password_screen.dart",
+      "size": 30169,
+      "mtimeMs": 1793745135987.118,
+      "category": "typography task"
+    },
+    {
+      "status": " M",
+      "file": "lib/features/auth/presentation/signup_screen.dart",
+      "size": 42178,
+      "mtimeMs": 1793745135988.1035,
+      "category": "typography task"
+    },
+    {
+      "status": " M",
+      "file": "lib/features/auth/presentation/verify_email_screen.dart",
+      "size": 31368,
+      "mtimeMs": 1793745135989.1028,
+      "category": "typography task"
+    },
+    {
+      "status": " M",
+      "file": "lib/features/dashboard/presentation/student_dashboard_screen.dart",
+      "size": 35312,
+      "mtimeMs": 1793745971436.1584,
+      "category": "typography task"
+    },
+    {
+      "status": " M",
+      "file": "lib/features/dashboard/presentation/widgets/student_notifications_sheet.dart",
+      "size": 20669,
+      "mtimeMs": 1793745135990.1472,
+      "category": "typography task"
+    },
+    {
+      "status": " M",
+      "file": "lib/features/home/presentation/home_screen.dart",
+      "size": 53333,
+      "mtimeMs": 1793745135991.1047,
+      "category": "typography task"
+    },
+    {
+      "status": " M",
+      "file": "lib/features/home/presentation/student_chat_screen.dart",
+      "size": 8444,
+      "mtimeMs": 1793745971437.1833,
+      "category": "typography task"
+    },
+    {
+      "status": " M",
+      "file": "lib/features/home/presentation/widgets/student_action_sheet.dart",
+      "size": 5886,
+      "mtimeMs": 1793745135991.1047,
+      "category": "typography task"
+    },
+    {
+      "status": " M",
+      "file": "lib/features/home/presentation/widgets/student_application_guide.dart",
+      "size": 28630,
+      "mtimeMs": 1793745135992.104,
+      "category": "typography task"
+    },
+    {
+      "status": " M",
+      "file": "lib/features/home/presentation/widgets/student_guide_greeting.dart",
+      "size": 8481,
+      "mtimeMs": 1793745135992.104,
+      "category": "typography task"
+    },
+    {
+      "status": " M",
+      "file": "lib/features/intro/presentation/intro_screen.dart",
+      "size": 10047,
+      "mtimeMs": 1793745135993.1035,
+      "category": "typography task"
+    },
+    {
+      "status": " M",
+      "file": "lib/features/onboarding/presentation/onboarding_screen.dart",
+      "size": 71348,
+      "mtimeMs": 1793745135994.6096,
+      "category": "typography task"
+    },
+    {
+      "status": " M",
+      "file": "lib/features/profile/presentation/matching_power_sheet.dart",
+      "size": 13725,
+      "mtimeMs": 1793745135994.6096,
+      "category": "typography task"
+    },
+    {
+      "status": " M",
+      "file": "lib/features/profile/presentation/profile_setup_screen.dart",
+      "size": 95682,
+      "mtimeMs": 1793745135995.6172,
+      "category": "typography task"
+    },
+    {
+      "status": " M",
+      "file": "lib/features/profile/presentation/profile_tab_screen.dart",
+      "size": 63602,
+      "mtimeMs": 1793745135996.6155,
+      "category": "typography task"
+    },
+    {
+      "status": " M",
+      "file": "lib/features/profile/presentation/widgets/avatar_selector_sheet.dart",
+      "size": 12922,
+      "mtimeMs": 1793745135996.6155,
+      "category": "typography task"
+    },
+    {
+      "status": " M",
+      "file": "lib/features/provider/presentation/individual/individual_applications_tab.dart",
+      "size": 34901,
+      "mtimeMs": 1793745383441.367,
+      "category": "typography task"
+    },
+    {
+      "status": " M",
+      "file": "lib/features/provider/presentation/individual/individual_grant_tab.dart",
+      "size": 22035,
+      "mtimeMs": 1793745135998.6162,
+      "category": "typography task"
+    },
+    {
+      "status": " M",
+      "file": "lib/features/provider/presentation/individual/individual_provider_shell.dart",
+      "size": 16706,
+      "mtimeMs": 1793745135998.6162,
+      "category": "typography task"
+    },
+    {
+      "status": " M",
+      "file": "lib/features/provider/presentation/individual/individual_settings_tab.dart",
+      "size": 17627,
+      "mtimeMs": 1793745135998.6162,
+      "category": "typography task"
+    },
+    {
+      "status": " M",
+      "file": "lib/features/provider/presentation/individual/individual_support_tab.dart",
+      "size": 25871,
+      "mtimeMs": 1793745383442.3713,
+      "category": "typography task"
+    },
+    {
+      "status": " M",
+      "file": "lib/features/provider/presentation/org/org_activity_log_view.dart",
+      "size": 20007,
+      "mtimeMs": 1793745135999.619,
+      "category": "typography task"
+    },
+    {
+      "status": " M",
+      "file": "lib/features/provider/presentation/org/org_analytics_tab.dart",
+      "size": 101592,
+      "mtimeMs": 1793745136000.6167,
+      "category": "typography task"
+    },
+    {
+      "status": " M",
+      "file": "lib/features/provider/presentation/org/org_disbursements_tab.dart",
+      "size": 114043,
+      "mtimeMs": 1793745136002.6716,
+      "category": "typography task"
+    },
+    {
+      "status": " M",
+      "file": "lib/features/provider/presentation/org/org_incoming_applications_tab.dart",
+      "size": 90108,
+      "mtimeMs": 1793745383443.3684,
+      "category": "typography task"
+    },
+    {
+      "status": " M",
+      "file": "lib/features/provider/presentation/org/org_provider_shell.dart",
+      "size": 60325,
+      "mtimeMs": 1793745136004.6145,
+      "category": "typography task"
+    },
+    {
+      "status": " M",
+      "file": "lib/features/provider/presentation/org/org_provider_theme.dart",
+      "size": 3415,
+      "mtimeMs": 1793745136005.1182,
+      "category": "typography task"
+    },
+    {
+      "status": " M",
+      "file": "lib/features/provider/presentation/org/org_review_analytics_tab.dart",
+      "size": 18332,
+      "mtimeMs": 1793745136005.1182,
+      "category": "typography task"
+    },
+    {
+      "status": " M",
+      "file": "lib/features/provider/presentation/org/org_scholarships_tab.dart",
+      "size": 62358,
+      "mtimeMs": 1793745383443.3684,
+      "category": "typography task"
+    },
+    {
+      "status": " M",
+      "file": "lib/features/provider/presentation/org/org_settings_tab.dart",
+      "size": 84744,
+      "mtimeMs": 1793745136008.1248,
+      "category": "typography task"
+    },
+    {
+      "status": " M",
+      "file": "lib/features/provider/presentation/org/org_team_view.dart",
+      "size": 26524,
+      "mtimeMs": 1793745136009.1245,
+      "category": "typography task"
+    },
+    {
+      "status": " M",
+      "file": "lib/features/provider/presentation/org/widgets/assign_reviewer_dialog.dart",
+      "size": 15072,
+      "mtimeMs": 1793745136009.1245,
+      "category": "typography task"
+    },
+    {
+      "status": " M",
+      "file": "lib/features/provider/presentation/provider_application_detail_screen.dart",
+      "size": 41498,
+      "mtimeMs": 1793745136010.1245,
+      "category": "typography task"
+    },
+    {
+      "status": " M",
+      "file": "lib/features/provider/presentation/provider_incoming_applications.dart",
+      "size": 31999,
+      "mtimeMs": 1793745383444.37,
+      "category": "typography task"
+    },
+    {
+      "status": " M",
+      "file": "lib/features/provider/presentation/provider_login_screen.dart",
+      "size": 44420,
+      "mtimeMs": 1793745383445.3682,
+      "category": "typography task"
+    },
+    {
+      "status": " M",
+      "file": "lib/features/provider/presentation/provider_review_screen.dart",
+      "size": 3183,
+      "mtimeMs": 1793745136012.1245,
+      "category": "typography task"
+    },
+    {
+      "status": " M",
+      "file": "lib/features/provider/presentation/provider_scholarships_tab.dart",
+      "size": 30954,
+      "mtimeMs": 1793745136012.1245,
+      "category": "typography task"
+    },
+    {
+      "status": " M",
+      "file": "lib/features/provider/presentation/provider_signup_screen.dart",
+      "size": 83673,
+      "mtimeMs": 1793745136013.1228,
+      "category": "typography task"
+    },
+    {
+      "status": " M",
+      "file": "lib/features/provider/presentation/scholarship_form_screen.dart",
+      "size": 43576,
+      "mtimeMs": 1793745136014.1243,
+      "category": "typography task"
+    },
+    {
+      "status": " M",
+      "file": "lib/features/provider/presentation/widgets/applicant_review_drawer.dart",
+      "size": 90379,
+      "mtimeMs": 1793745383446.3691,
+      "category": "typography task"
+    },
+    {
+      "status": " M",
+      "file": "lib/features/provider/presentation/widgets/individual_support_summary.dart",
+      "size": 2134,
+      "mtimeMs": 1793745136015.124,
+      "category": "typography task"
+    },
+    {
+      "status": " M",
+      "file": "lib/features/provider/presentation/widgets/org_overview_workspace.dart",
+      "size": 16692,
+      "mtimeMs": 1793745136015.6287,
+      "category": "typography task"
+    },
+    {
+      "status": " M",
+      "file": "lib/features/provider/presentation/widgets/org_review_snapshot.dart",
+      "size": 5659,
+      "mtimeMs": 1793745136015.6287,
+      "category": "typography task"
+    },
+    {
+      "status": " M",
+      "file": "lib/features/provider/presentation/widgets/org_summary_disclosure.dart",
+      "size": 1599,
+      "mtimeMs": 1793745136015.6287,
+      "category": "typography task"
+    },
+    {
+      "status": " M",
+      "file": "lib/features/provider/presentation/widgets/provider_overview_panel.dart",
+      "size": 21301,
+      "mtimeMs": 1793745136016.634,
+      "category": "typography task"
+    },
+    {
+      "status": " M",
+      "file": "lib/features/provider/presentation/widgets/provider_verification_banner.dart",
+      "size": 23785,
+      "mtimeMs": 1793745383446.3691,
+      "category": "typography task"
+    },
+    {
+      "status": " M",
+      "file": "lib/features/provider/presentation/widgets/scholarship_qr_dialog.dart",
+      "size": 7844,
+      "mtimeMs": 1793745136017.634,
+      "category": "typography task"
+    },
+    {
+      "status": " M",
+      "file": "lib/features/safety/presentation/student_safety_report.dart",
+      "size": 26416,
+      "mtimeMs": 1793745383447.3674,
+      "category": "typography task"
+    },
+    {
+      "status": " M",
+      "file": "lib/features/scholarships/presentation/discovery_filter_sheet.dart",
+      "size": 12172,
+      "mtimeMs": 1793745136018.6355,
+      "category": "typography task"
+    },
+    {
+      "status": " M",
+      "file": "lib/features/scholarships/presentation/scholarship_detail_screen.dart",
+      "size": 126464,
+      "mtimeMs": 1793745383449.3674,
+      "category": "typography task"
+    },
+    {
+      "status": " M",
+      "file": "lib/features/scholarships/presentation/scholarship_qr_scanner_screen.dart",
+      "size": 19476,
+      "mtimeMs": 1793745136019.638,
+      "category": "typography task"
+    },
+    {
+      "status": " M",
+      "file": "lib/features/scholarships/presentation/widgets/identity_photo_dialog.dart",
+      "size": 7540,
+      "mtimeMs": 1793745136020.6338,
+      "category": "typography task"
+    },
+    {
+      "status": " M",
+      "file": "lib/features/scholarships/screens/discover_screen.dart",
+      "size": 38346,
+      "mtimeMs": 1793745136020.6338,
+      "category": "typography task"
+    },
+    {
+      "status": " M",
+      "file": "lib/features/scholarships/screens/saved_screen.dart",
+      "size": 30326,
+      "mtimeMs": 1793745136021.636,
+      "category": "typography task"
+    },
+    {
+      "status": " M",
+      "file": "lib/features/splash/presentation/splash_screen.dart",
+      "size": 10630,
+      "mtimeMs": 1793745136022.635,
+      "category": "typography task"
+    },
+    {
+      "status": " M",
+      "file": "lib/shared/theme/app_motion.dart",
+      "size": 49345,
+      "mtimeMs": 1793745136023.6343,
+      "category": "typography task"
+    },
+    {
+      "status": " M",
+      "file": "lib/shared/theme/app_theme.dart",
+      "size": 15821,
+      "mtimeMs": 1793745137164.2585,
+      "category": "typography task"
+    },
+    {
+      "status": " M",
+      "file": "lib/shared/widgets/logout_confirmation_dialog.dart",
+      "size": 2242,
+      "mtimeMs": 1793745136023.6343,
+      "category": "typography task"
+    },
+    {
+      "status": " M",
+      "file": "lib/shared/widgets/primary_button.dart",
+      "size": 1283,
+      "mtimeMs": 1793745136024.634,
+      "category": "typography task"
+    },
+    {
+      "status": " M",
+      "file": "lib/shared/widgets/radial_matching_gauge.dart",
+      "size": 4524,
+      "mtimeMs": 1793745136024.634,
+      "category": "typography task"
+    },
+    {
+      "status": " M",
+      "file": "lib/shared/widgets/save_draft_dialog.dart",
+      "size": 2781,
+      "mtimeMs": 1793745136025.637,
+      "category": "typography task"
+    },
+    {
+      "status": " M",
+      "file": "lib/shared/widgets/scholaris_logo.dart",
+      "size": 2783,
+      "mtimeMs": 1793745136026.2043,
+      "category": "typography task"
+    },
+    {
+      "status": " M",
+      "file": "lib/shared/widgets/scholarship_card.dart",
+      "size": 25359,
+      "mtimeMs": 1793745136026.2043,
+      "category": "typography task"
+    },
+    {
+      "status": " M",
+      "file": "lib/shared/widgets/section_header.dart",
+      "size": 2084,
+      "mtimeMs": 1793745136027.2102,
+      "category": "typography task"
+    },
+    {
+      "status": " M",
+      "file": "lib/shared/widgets/state_views.dart",
+      "size": 13409,
+      "mtimeMs": 1793745136027.2102,
+      "category": "typography task"
+    },
+    {
+      "status": " M",
+      "file": "lib/shared/widgets/success_overlay.dart",
+      "size": 5131,
+      "mtimeMs": 1793745136028.211,
+      "category": "typography task"
+    },
+    {
+      "status": " M",
+      "file": "pubspec.yaml",
+      "size": 2508,
+      "mtimeMs": 1793745136028.211,
+      "category": "typography task"
+    },
+    {
+      "status": " M",
+      "file": "test/hero_section_test.dart",
+      "size": 8017,
+      "mtimeMs": 1793745947750.3154,
+      "category": "typography task"
+    },
+    {
+      "status": " M",
+      "file": "test/scholarship_card_test.dart",
+      "size": 16762,
+      "mtimeMs": 1793745136029.211,
+      "category": "typography task"
+    },
+    {
+      "status": " M",
+      "file": "test/screenshots/generate_stitch_screenshots_test.dart",
+      "size": 11250,
+      "mtimeMs": 1793746082538.0876,
+      "category": "typography task"
+    },
+    {
+      "status": " D",
+      "file": "test/shared/theme/geist_typography_test.dart",
+      "missing": true,
+      "category": "typography task"
+    },
+    {
+      "status": " M",
+      "file": "test/student_application_guide_test.dart",
+      "size": 7234,
+      "mtimeMs": 1793745136029.211,
+      "category": "typography task"
+    },
+    {
+      "status": " M",
+      "file": "test/student_chat_screen_test.dart",
+      "size": 4155,
+      "mtimeMs": 1793745947751.3147,
+      "category": "typography task"
+    },
+    {
+      "status": " M",
+      "file": "test/student_detail_tour_test.dart",
+      "size": 6448,
+      "mtimeMs": 1793745136029.211,
+      "category": "typography task"
+    },
+    {
+      "status": " M",
+      "file": "test/student_frosted_nav_test.dart",
+      "size": 7469,
+      "mtimeMs": 1793745136030.2104,
+      "category": "typography task"
+    },
+    {
+      "status": " M",
+      "file": "test/student_quick_actions_polish_test.dart",
+      "size": 4198,
+      "mtimeMs": 1793745136030.2104,
+      "category": "typography task"
+    },
+    {
+      "status": "??",
+      "file": "Scholaris.ipa",
+      "size": 34400339,
+      "mtimeMs": 1793438132781.609,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "Scholaris_build.zip",
+      "size": 25648665,
+      "mtimeMs": 1792346548207.4053,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "Scholaris_latest.zip",
+      "size": 22910928,
+      "mtimeMs": 1792346173387.6555,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "assets/fonts/inter/Inter-Bold.ttf",
+      "size": 420428,
+      "mtimeMs": 1731658560000,
+      "category": "typography task"
+    },
+    {
+      "status": "??",
+      "file": "assets/fonts/inter/Inter-Medium.ttf",
+      "size": 417300,
+      "mtimeMs": 1731658560000,
+      "category": "typography task"
+    },
+    {
+      "status": "??",
+      "file": "assets/fonts/inter/Inter-Regular.ttf",
+      "size": 411640,
+      "mtimeMs": 1731658560000,
+      "category": "typography task"
+    },
+    {
+      "status": "??",
+      "file": "assets/fonts/inter/Inter-SemiBold.ttf",
+      "size": 419744,
+      "mtimeMs": 1731658560000,
+      "category": "typography task"
+    },
+    {
+      "status": "??",
+      "file": "assets/fonts/inter/OFL.txt",
+      "size": 4380,
+      "mtimeMs": 1731658560000,
+      "category": "typography task"
+    },
+    {
+      "status": "??",
+      "file": "assets/images/hero_chapter_backdrop.png",
+      "size": 1407289,
+      "mtimeMs": 1792346946715.5342,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "build_ios_build10_oct27/Scholaris.ipa",
+      "size": 28085788,
+      "mtimeMs": 1793119765238.9233,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "build_ios_build3_oct27/Scholaris_build3.zip",
+      "size": 27996705,
+      "mtimeMs": 1793058532618.7295,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "build_ios_build3_oct27/extracted/Scholaris.ipa",
+      "size": 28071523,
+      "mtimeMs": 1793029104000,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "build_ios_build3_oct27/ipa_extracted/Payload/Runner.app/Info.plist",
+      "size": 1881,
+      "mtimeMs": 1793057901000,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "build_ios_build4_oct27/Scholaris_build4.zip",
+      "size": 27996408,
+      "mtimeMs": 1793062599835.6296,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "build_ios_build4_oct27/extracted/Scholaris.ipa",
+      "size": 28072315,
+      "mtimeMs": 1793033312000,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "build_ios_build4_oct27/ipa_extracted/Payload/Runner.app/Info.plist",
+      "size": 1881,
+      "mtimeMs": 1793062110000,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "build_ios_build5_oct27/Scholaris_build5.zip",
+      "size": 28005756,
+      "mtimeMs": 1793069341878.2058,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "build_ios_build5_oct27/extracted/Scholaris.ipa",
+      "size": 28080450,
+      "mtimeMs": 1793040456000,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "build_ios_build5_oct27/ipa_extracted/Payload/Runner.app/Info.plist",
+      "size": 1881,
+      "mtimeMs": 1793069255000,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "build_ios_build6_oct27/Scholaris_build6.zip",
+      "size": 28008060,
+      "mtimeMs": 1793071277227.2566,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "build_ios_build6_oct27/extracted/Scholaris.ipa",
+      "size": 28082180,
+      "mtimeMs": 1793042386000,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "build_ios_build6_oct27/ipa_extracted/Payload/Runner.app/Info.plist",
+      "size": 1881,
+      "mtimeMs": 1793071184000,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "build_ios_build7_oct27/Scholaris-iOS-App/Scholaris.ipa",
+      "size": 28079983,
+      "mtimeMs": 1793080122338.8313,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "build_ios_build8_oct27/Scholaris.ipa",
+      "size": 28081685,
+      "mtimeMs": 1793082738464.4805,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "build_ios_build9_oct27/Scholaris.ipa",
+      "size": 28085561,
+      "mtimeMs": 1793115557692.8496,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "build_ios_decision_letter_oct19/Scholaris.ipa",
+      "size": 26953860,
+      "mtimeMs": 1792335404000,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "build_ios_decision_letter_oct19/Scholaris_artifact.zip",
+      "size": 26879006,
+      "mtimeMs": 1792364623846.572,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "build_ios_decision_letter_oct19/extracted/Scholaris.ipa",
+      "size": 26953860,
+      "mtimeMs": 1792335404000,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "build_ios_output_oct19/Scholaris.ipa",
+      "size": 26949725,
+      "mtimeMs": 1792330608000,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "build_ios_output_oct19/Scholaris_artifact.zip",
+      "size": 26875421,
+      "mtimeMs": 1792360487133.9805,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "build_ios_output_oct19/Scholaris_artifact_latest.zip",
+      "size": 29160636,
+      "mtimeMs": 1792359768570.6172,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "build_ios_output_oct19/extracted/Scholaris.ipa",
+      "size": 26949725,
+      "mtimeMs": 1792330608000,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "chrome_provider_decisioning.png",
+      "size": 113686,
+      "mtimeMs": 1792354168593.3127,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "chrome_provider_login.png",
+      "size": 96234,
+      "mtimeMs": 1792353988583.005,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "chrome_test.png",
+      "size": 2740,
+      "mtimeMs": 1792353903497.1006,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "chrome_test2.png",
+      "size": 3850,
+      "mtimeMs": 1792353938290.6978,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "chrome_test3.png",
+      "size": 104197,
+      "mtimeMs": 1792353965165.3074,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "design-plans/2026-10-31-tour-re-audit/audit.md",
+      "size": 6525,
+      "mtimeMs": 1793393476891.5718,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "design-plans/2026-10-31-tour-re-audit/interaction_probe_test.dart",
+      "size": 3392,
+      "mtimeMs": 1793394343570.6726,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "design-plans/2026-11-02-scholaris-own-identity.md",
+      "size": 11755,
+      "mtimeMs": 1793600322587.0684,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "docs/coordination/SESSION_LOG.md",
+      "size": 156583,
+      "mtimeMs": 1793164205584.841,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "docs/coordination/SESSION_STATE.md",
+      "size": 71481,
+      "mtimeMs": 1793164204259.8018,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "docs/coordination/SPECIALIST_CONTRACT.md",
+      "size": 10602,
+      "mtimeMs": 1792949432577.7793,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "docs/coordination/STATUS_BOARD.md",
+      "size": 13549,
+      "mtimeMs": 1792950299883.1528,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "docs/plans/2026-10-21-scholaris-product-roadmap.md",
+      "size": 43852,
+      "mtimeMs": 1793046571158.782,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "docs/plans/2026-10-21-student-onboarding-recovery.md",
+      "size": 2470,
+      "mtimeMs": 1792572352468.7266,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "docs/plans/2026-10-21_individual_provider_lifecycle_plan.md",
+      "size": 9911,
+      "mtimeMs": 1792515049001.7485,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "docs/plans/2026-10-22-organization-workspace-concept.md",
+      "size": 2418,
+      "mtimeMs": 1792659154607.7688,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "docs/plans/2026-10-23-provider-ui-polish.md",
+      "size": 7799,
+      "mtimeMs": 1792746906382.1484,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/2026-10-21-female-dashboard-hero.md",
+      "size": 2521,
+      "mtimeMs": 1792573739669.0547,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/2026-10-21-student-onboarding-recovery.md",
+      "size": 3764,
+      "mtimeMs": 1792572330873.1772,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/2026-10-21_individual_provider_lifecycle_report.md",
+      "size": 27323,
+      "mtimeMs": 1792521533694.509,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/2026-10-27-student-650ms-choreography.md",
+      "size": 3374,
+      "mtimeMs": 1793068654584.613,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/2026-10-27-student-clear-rim-refinement.md",
+      "size": 4287,
+      "mtimeMs": 1793067951188.0527,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/2026-10-27-student-clearer-glass-ipa-handoff.md",
+      "size": 4197,
+      "mtimeMs": 1793053116596.6616,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/2026-10-27-student-dock-boundary-tab-sequence-build4-report.md",
+      "size": 3980,
+      "mtimeMs": 1793062198396.268,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/2026-10-27-student-dock-boundary-tab-sequence.md",
+      "size": 3692,
+      "mtimeMs": 1793061408573.9404,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/2026-10-27-student-frosted-lens-refinement.md",
+      "size": 5988,
+      "mtimeMs": 1793066866075.8235,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/2026-10-27-student-navbar-animation-ipa-handoff.md",
+      "size": 5564,
+      "mtimeMs": 1793049637449.8938,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/2026-10-27-student-saved-spacing-cards-build3-handoff.md",
+      "size": 8620,
+      "mtimeMs": 1793056881111.6475,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/2026-10-27-student-saved-spacing-cards-build3-report.md",
+      "size": 4041,
+      "mtimeMs": 1793058335777.2397,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/2026-10-27-student-soft-nav-fluid-entrance.md",
+      "size": 3574,
+      "mtimeMs": 1793070476502.4048,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/2026-10-30-geist-crisp-pass/discover-typography-only-440.jpg",
+      "size": 49659,
+      "mtimeMs": 1793303289114.052,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/2026-10-30-geist-crisp-pass/landing-geist-desktop.jpg",
+      "size": 88919,
+      "mtimeMs": 1793303679414.796,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/2026-10-30-geist-crisp-pass/typography-only-440.jpg",
+      "size": 55193,
+      "mtimeMs": 1793303343790.6963,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/2026-10-30-geist-crisp-pass/typography-only.md",
+      "size": 1312,
+      "mtimeMs": 1793303315764.9146,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/2026-10-31-ari-tour-scroll-cutout-desync-report.md",
+      "size": 7926,
+      "mtimeMs": 1793456394386.0398,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/2026-10-31-auth-tour-pre-defense-audit.md",
+      "size": 10722,
+      "mtimeMs": 1793432138668.5654,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/2026-11-04-typography/after/admin-320.png",
+      "size": 53158,
+      "mtimeMs": 1793746137365.675,
+      "category": "typography task"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/2026-11-04-typography/after/admin-390.png",
+      "size": 56037,
+      "mtimeMs": 1793746137491.991,
+      "category": "typography task"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/2026-11-04-typography/after/authentication-320.png",
+      "size": 50455,
+      "mtimeMs": 1793746134386.5222,
+      "category": "typography task"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/2026-11-04-typography/after/authentication-390.png",
+      "size": 110468,
+      "mtimeMs": 1793746134636.6086,
+      "category": "typography task"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/2026-11-04-typography/after/authentication-errors-320.png",
+      "size": 94465,
+      "mtimeMs": 1793746135032.9165,
+      "category": "typography task"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/2026-11-04-typography/after/authentication-errors-390.png",
+      "size": 113017,
+      "mtimeMs": 1793746135248.5334,
+      "category": "typography task"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/2026-11-04-typography/after/logout-dialog-320.png",
+      "size": 9486,
+      "mtimeMs": 1793746137726.1506,
+      "category": "typography task"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/2026-11-04-typography/after/logout-dialog-390.png",
+      "size": 9336,
+      "mtimeMs": 1793746137812.6338,
+      "category": "typography task"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/2026-11-04-typography/after/onboarding-320.png",
+      "size": 57302,
+      "mtimeMs": 1793746133588.791,
+      "category": "typography task"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/2026-11-04-typography/after/onboarding-390.png",
+      "size": 120977,
+      "mtimeMs": 1793746133848.099,
+      "category": "typography task"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/2026-11-04-typography/after/provider-individual-320.png",
+      "size": 43182,
+      "mtimeMs": 1793746136707.6487,
+      "category": "typography task"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/2026-11-04-typography/after/provider-individual-390.png",
+      "size": 112047,
+      "mtimeMs": 1793746137104.2612,
+      "category": "typography task"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/2026-11-04-typography/after/provider-organization-320.png",
+      "size": 37163,
+      "mtimeMs": 1793746135770.8826,
+      "category": "typography task"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/2026-11-04-typography/after/provider-organization-390.png",
+      "size": 38307,
+      "mtimeMs": 1793746136090.7278,
+      "category": "typography task"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/2026-11-04-typography/after/scholarship-card-320.png",
+      "size": 29200,
+      "mtimeMs": 1793746137562.925,
+      "category": "typography task"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/2026-11-04-typography/after/scholarship-card-390.png",
+      "size": 30188,
+      "mtimeMs": 1793746137627.2476,
+      "category": "typography task"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/2026-11-04-typography/after/web-capture.json",
+      "size": 1926,
+      "mtimeMs": 1793746250110.3115,
+      "category": "typography task"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/2026-11-04-typography/after/web-detail-390.png",
+      "size": 91078,
+      "mtimeMs": 1793746238926.809,
+      "category": "typography task"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/2026-11-04-typography/after/web-discover-390.png",
+      "size": 91528,
+      "mtimeMs": 1793746222183.141,
+      "category": "typography task"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/2026-11-04-typography/after/web-home-390.png",
+      "size": 131278,
+      "mtimeMs": 1793746216603.7249,
+      "category": "typography task"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/2026-11-04-typography/after/web-home-large-text-320.png",
+      "size": 87653,
+      "mtimeMs": 1793746250108.3887,
+      "category": "typography task"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/2026-11-04-typography/after/web-home-narrow-320.png",
+      "size": 100982,
+      "mtimeMs": 1793746244516.1719,
+      "category": "typography task"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/2026-11-04-typography/after/web-profile-390.png",
+      "size": 85943,
+      "mtimeMs": 1793746233337.306,
+      "category": "typography task"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/2026-11-04-typography/after/web-tracker-390.png",
+      "size": 96053,
+      "mtimeMs": 1793746227757.6885,
+      "category": "typography task"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/2026-11-04-typography/before/admin-320.png",
+      "size": 50373,
+      "mtimeMs": 1793745251464.8916,
+      "category": "typography task"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/2026-11-04-typography/before/admin-390.png",
+      "size": 55304,
+      "mtimeMs": 1793745251553.2776,
+      "category": "typography task"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/2026-11-04-typography/before/authentication-320.png",
+      "size": 49987,
+      "mtimeMs": 1793745249829.6235,
+      "category": "typography task"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/2026-11-04-typography/before/authentication-390.png",
+      "size": 109917,
+      "mtimeMs": 1793745249993.9824,
+      "category": "typography task"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/2026-11-04-typography/before/authentication-errors-320.png",
+      "size": 94160,
+      "mtimeMs": 1793745250199.6084,
+      "category": "typography task"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/2026-11-04-typography/before/authentication-errors-390.png",
+      "size": 112531,
+      "mtimeMs": 1793745250325.6196,
+      "category": "typography task"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/2026-11-04-typography/before/logout-dialog-320.png",
+      "size": 9834,
+      "mtimeMs": 1793745251770.719,
+      "category": "typography task"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/2026-11-04-typography/before/logout-dialog-390.png",
+      "size": 9687,
+      "mtimeMs": 1793745251844.4314,
+      "category": "typography task"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/2026-11-04-typography/before/onboarding-320.png",
+      "size": 58502,
+      "mtimeMs": 1793745249386.042,
+      "category": "typography task"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/2026-11-04-typography/before/onboarding-390.png",
+      "size": 122385,
+      "mtimeMs": 1793745249519.9775,
+      "category": "typography task"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/2026-11-04-typography/before/provider-individual-320.png",
+      "size": 42021,
+      "mtimeMs": 1793745251055.7136,
+      "category": "typography task"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/2026-11-04-typography/before/provider-individual-390.png",
+      "size": 111376,
+      "mtimeMs": 1793745251283.545,
+      "category": "typography task"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/2026-11-04-typography/before/provider-organization-320.png",
+      "size": 36236,
+      "mtimeMs": 1793745250619.8672,
+      "category": "typography task"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/2026-11-04-typography/before/provider-organization-390.png",
+      "size": 37602,
+      "mtimeMs": 1793745250767.9143,
+      "category": "typography task"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/2026-11-04-typography/before/scholarship-card-320.png",
+      "size": 29512,
+      "mtimeMs": 1793745251619.093,
+      "category": "typography task"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/2026-11-04-typography/before/scholarship-card-390.png",
+      "size": 30709,
+      "mtimeMs": 1793745251693.2717,
+      "category": "typography task"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/2026-11-04-typography/before/web-capture.json",
+      "size": 1445,
+      "mtimeMs": 1793744054620.1238,
+      "category": "typography task"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/2026-11-04-typography/before/web-detail-390.png",
+      "size": 92468,
+      "mtimeMs": 1793744043458.4478,
+      "category": "typography task"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/2026-11-04-typography/before/web-discover-390.png",
+      "size": 94270,
+      "mtimeMs": 1793744026709.744,
+      "category": "typography task"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/2026-11-04-typography/before/web-home-390.png",
+      "size": 134184,
+      "mtimeMs": 1793744021146.6892,
+      "category": "typography task"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/2026-11-04-typography/before/web-home-large-text-320.png",
+      "size": 92190,
+      "mtimeMs": 1793744054620.1238,
+      "category": "typography task"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/2026-11-04-typography/before/web-home-narrow-320.png",
+      "size": 102168,
+      "mtimeMs": 1793744049037.9194,
+      "category": "typography task"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/2026-11-04-typography/before/web-profile-390.png",
+      "size": 88649,
+      "mtimeMs": 1793744037878.0781,
+      "category": "typography task"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/2026-11-04-typography/before/web-tracker-390.png",
+      "size": 98208,
+      "mtimeMs": 1793744032301.2888,
+      "category": "typography task"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/2026-11-04-typography/changed-files.md",
+      "size": 15339,
+      "mtimeMs": 1793746174420.0156,
+      "category": "typography task"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/2026-11-04-typography/comparison.html",
+      "size": 3660,
+      "mtimeMs": 1793745468836.0237,
+      "category": "typography task"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/2026-11-04-typography/font-provenance.json",
+      "size": 832,
+      "mtimeMs": 1793745469072.8513,
+      "category": "typography task"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/2026-11-04-typography/handoff.md",
+      "size": 9609,
+      "mtimeMs": 1793746358020.236,
+      "category": "typography task"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/2026-11-04-typography/progress.md",
+      "size": 3707,
+      "mtimeMs": 1793746259229.4182,
+      "category": "typography task"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/2026-11-04-typography/semantic-review.json",
+      "size": 12041,
+      "mtimeMs": 1793746280607.3262,
+      "category": "typography task"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/codex-local-pass/READY.json",
+      "size": 898,
+      "mtimeMs": 1793008522809.7622,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/codex-local-pass/architect.md",
+      "size": 15935,
+      "mtimeMs": 1793008502358.0312,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/codex-local-pass/builder.md",
+      "size": 20589,
+      "mtimeMs": 1793007501918.4,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/codex-local-pass/independent-acceptance.md",
+      "size": 1969,
+      "mtimeMs": 1793008908789.297,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/codex-local-pass/qa.md",
+      "size": 18834,
+      "mtimeMs": 1793007136972.903,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/codex-local-pass/security.md",
+      "size": 24793,
+      "mtimeMs": 1793006603280.833,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/codex-local-pass/ui.md",
+      "size": 25558,
+      "mtimeMs": 1793006230322.936,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-device-feedback-2026-10-31/ari-design-detect.json",
+      "size": 3,
+      "mtimeMs": 1793392097566.4917,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-device-feedback-2026-10-31/ari-journey/male-welcome.jpg",
+      "size": 38103,
+      "mtimeMs": 1793391405102.4377,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-device-feedback-2026-10-31/ari-journey/saved-tap-anywhere.jpg",
+      "size": 29727,
+      "mtimeMs": 1793391549145.9768,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-device-feedback-2026-10-31/collapsed-nav-green.jpg",
+      "size": 1340,
+      "mtimeMs": 1793386268982.3313,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-device-feedback-2026-10-31/contextual-guide/discover-compact.jpg",
+      "size": 41363,
+      "mtimeMs": 1793389127206.304,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-device-feedback-2026-10-31/contextual-guide/female-home.jpg",
+      "size": 45566,
+      "mtimeMs": 1793388924700.3472,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-device-feedback-2026-10-31/contextual-guide/guide-01-saved.jpg",
+      "size": 32356,
+      "mtimeMs": 1793388660171.8904,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-device-feedback-2026-10-31/contextual-guide/guide-02-progress.jpg",
+      "size": 32444,
+      "mtimeMs": 1793388667045.6167,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-device-feedback-2026-10-31/contextual-guide/guide-03-discover.jpg",
+      "size": 30586,
+      "mtimeMs": 1793389009318.1025,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-device-feedback-2026-10-31/contextual-guide/guide-04-details.jpg",
+      "size": 23098,
+      "mtimeMs": 1793389084038.2996,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-device-feedback-2026-10-31/contextual-guide/guide-05-eligibility.jpg",
+      "size": 31027,
+      "mtimeMs": 1793388719188.98,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-device-feedback-2026-10-31/contextual-guide/guide-06-start.jpg",
+      "size": 25807,
+      "mtimeMs": 1793388770637.1829,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-device-feedback-2026-10-31/contextual-guide/guide-07-review.jpg",
+      "size": 36513,
+      "mtimeMs": 1793388795646.0056,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-device-feedback-2026-10-31/contextual-guide/guide-08-submit.jpg",
+      "size": 30653,
+      "mtimeMs": 1793388821838.0776,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-device-feedback-2026-10-31/contextual-guide/guide-09-receipt.jpg",
+      "size": 24380,
+      "mtimeMs": 1793388828517.3638,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-device-feedback-2026-10-31/contextual-guide/guide-10-tracker.jpg",
+      "size": 27478,
+      "mtimeMs": 1793388834504.2366,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-device-feedback-2026-10-31/contextual-guide/male-guide-saved.jpg",
+      "size": 32738,
+      "mtimeMs": 1793389004031.0083,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-device-feedback-2026-10-31/contextual-guide/male-home.jpg",
+      "size": 47319,
+      "mtimeMs": 1793388969566.7112,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-device-feedback-2026-10-31/fresh-browser-2026-10-31/female-hero-header.jpg",
+      "size": 24461,
+      "mtimeMs": 1793387427534.3628,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-device-feedback-2026-10-31/fresh-browser-2026-10-31/female-home.jpg",
+      "size": 45575,
+      "mtimeMs": 1793387426560.6057,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-device-feedback-2026-10-31/fresh-browser-2026-10-31/female-plus-menu.jpg",
+      "size": 8336,
+      "mtimeMs": 1793387433540.6394,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-device-feedback-2026-10-31/fresh-browser-2026-10-31/guide-finished-home.jpg",
+      "size": 45575,
+      "mtimeMs": 1793387483871.1453,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-device-feedback-2026-10-31/fresh-browser-2026-10-31/guide-step-1.jpg",
+      "size": 23947,
+      "mtimeMs": 1793387456171.652,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-device-feedback-2026-10-31/fresh-browser-2026-10-31/guide-step-2.jpg",
+      "size": 26903,
+      "mtimeMs": 1793387460038.8904,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-device-feedback-2026-10-31/fresh-browser-2026-10-31/guide-step-3.jpg",
+      "size": 28595,
+      "mtimeMs": 1793387463660.5132,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-device-feedback-2026-10-31/fresh-browser-2026-10-31/guide-step-4.jpg",
+      "size": 31911,
+      "mtimeMs": 1793387467594.0098,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-device-feedback-2026-10-31/fresh-browser-2026-10-31/guide-step-5.jpg",
+      "size": 31053,
+      "mtimeMs": 1793387471158.484,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-device-feedback-2026-10-31/fresh-browser-2026-10-31/guide-step-6.jpg",
+      "size": 29255,
+      "mtimeMs": 1793387476839.7378,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-device-feedback-2026-10-31/fresh-browser-2026-10-31/header-actions.jpg",
+      "size": 1117,
+      "mtimeMs": 1793387408661.4917,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-device-feedback-2026-10-31/fresh-browser-2026-10-31/male-hero-header.jpg",
+      "size": 25188,
+      "mtimeMs": 1793387400374.3713,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-device-feedback-2026-10-31/fresh-browser-2026-10-31/male-home.jpg",
+      "size": 46200,
+      "mtimeMs": 1793387399637.569,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-device-feedback-2026-10-31/fresh-browser-2026-10-31/male-plus-menu.jpg",
+      "size": 8336,
+      "mtimeMs": 1793387408512.7778,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-device-feedback-2026-10-31/home-390x844.jpg",
+      "size": 46117,
+      "mtimeMs": 1793386244910.938,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-device-feedback-2026-10-31/impeccable-detect.json",
+      "size": 3,
+      "mtimeMs": 1793388637568.831,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-glass-material-2026-10-27/READY.json",
+      "size": 1815,
+      "mtimeMs": 1793035252479.1206,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-glass-material-2026-10-27/architect.md",
+      "size": 13257,
+      "mtimeMs": 1793035293403.5173,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-glass-material-2026-10-27/builder.md",
+      "size": 7796,
+      "mtimeMs": 1793034228816.086,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-glass-material-2026-10-27/qa.md",
+      "size": 7513,
+      "mtimeMs": 1793034783038.1133,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-glass-material-2026-10-27/security.md",
+      "size": 9125,
+      "mtimeMs": 1793034268860.5342,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-glass-material-2026-10-27/ui.md",
+      "size": 17576,
+      "mtimeMs": 1793034662112.6948,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-navbar-2026-10-26/READY.json",
+      "size": 1716,
+      "mtimeMs": 1793023851594.5576,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-navbar-2026-10-26/architect.md",
+      "size": 9850,
+      "mtimeMs": 1793023746321.7693,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-navbar-2026-10-26/builder.md",
+      "size": 2962,
+      "mtimeMs": 1793023793926.5227,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-navbar-2026-10-26/qa.md",
+      "size": 4356,
+      "mtimeMs": 1793023780727.5847,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-navbar-2026-10-26/security.md",
+      "size": 2856,
+      "mtimeMs": 1793023820755.045,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-navbar-2026-10-26/ui.md",
+      "size": 4810,
+      "mtimeMs": 1793023764069.2715,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-navbar-proportions-2026-10-27/READY.json",
+      "size": 1008,
+      "mtimeMs": 1793037844092.2424,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-navbar-proportions-2026-10-27/architect.md",
+      "size": 8774,
+      "mtimeMs": 1793037827183.6199,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-navbar-proportions-2026-10-27/builder.md",
+      "size": 9516,
+      "mtimeMs": 1793037213438.7239,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-navbar-proportions-2026-10-27/qa.md",
+      "size": 8458,
+      "mtimeMs": 1793037740486.168,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-navbar-proportions-2026-10-27/security.md",
+      "size": 9431,
+      "mtimeMs": 1793036997450.0889,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-navbar-proportions-2026-10-27/ui.md",
+      "size": 17578,
+      "mtimeMs": 1793037405080.9663,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-scroll-dock-2026-10-26/READY.json",
+      "size": 646,
+      "mtimeMs": 1793033112396.6477,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-scroll-dock-2026-10-26/architect.md",
+      "size": 18243,
+      "mtimeMs": 1793033096638.5027,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-scroll-dock-2026-10-26/builder.md",
+      "size": 17502,
+      "mtimeMs": 1793031788691.551,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-scroll-dock-2026-10-26/qa.md",
+      "size": 14887,
+      "mtimeMs": 1793032750078.0242,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-scroll-dock-2026-10-26/security.md",
+      "size": 15059,
+      "mtimeMs": 1793027863726.7405,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-scroll-dock-2026-10-26/ui.md",
+      "size": 25806,
+      "mtimeMs": 1793028603181.395,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-tour-polish-2026-10-30/all-gray-capsules.md",
+      "size": 420,
+      "mtimeMs": 1793367346283.8813,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-tour-polish-2026-10-30/calm-experiment.md",
+      "size": 1628,
+      "mtimeMs": 1793359201676.6475,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-tour-polish-2026-10-30/calm-tests.txt",
+      "size": 13709,
+      "mtimeMs": 1793359175351.7903,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-tour-polish-2026-10-30/capsules-all-gray.jpg",
+      "size": 39759,
+      "mtimeMs": 1793367355739.947,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-tour-polish-2026-10-30/capsules-gray.jpg",
+      "size": 39786,
+      "mtimeMs": 1793367304524.037,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-tour-polish-2026-10-30/capsules.jpg",
+      "size": 39765,
+      "mtimeMs": 1793367078561.7507,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-tour-polish-2026-10-30/capsules.md",
+      "size": 747,
+      "mtimeMs": 1793367068390.2673,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-tour-polish-2026-10-30/card-emphasis-tests.txt",
+      "size": 5408,
+      "mtimeMs": 1793366280940.61,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-tour-polish-2026-10-30/card-emphasis.md",
+      "size": 1097,
+      "mtimeMs": 1793366303047.3003,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-tour-polish-2026-10-30/cards-emphasis.jpg",
+      "size": 39361,
+      "mtimeMs": 1793366292120.3018,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-tour-polish-2026-10-30/detail-tags-gray.jpg",
+      "size": 41460,
+      "mtimeMs": 1793367586852.4648,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-tour-polish-2026-10-30/discover-calm.jpg",
+      "size": 37362,
+      "mtimeMs": 1793359136778.7815,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-tour-polish-2026-10-30/female-dashboard-parity/discover-390x844.jpg",
+      "size": 40037,
+      "mtimeMs": 1793371966318.7393,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-tour-polish-2026-10-30/female-dashboard-parity/hero-shorter.jpg",
+      "size": 20241,
+      "mtimeMs": 1793372133371.0706,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-tour-polish-2026-10-30/female-dashboard-parity/home-390x844.jpg",
+      "size": 46765,
+      "mtimeMs": 1793371888938.7405,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-tour-polish-2026-10-30/female-dashboard-parity/home-navbar.jpg",
+      "size": 7610,
+      "mtimeMs": 1793371889706.9053,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-tour-polish-2026-10-30/female-dashboard-parity/home-shorter-390x844.jpg",
+      "size": 45940,
+      "mtimeMs": 1793372132715.565,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-tour-polish-2026-10-30/female-dashboard-parity/illustration-source.txt",
+      "size": 1207,
+      "mtimeMs": 1793372006180.3423,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-tour-polish-2026-10-30/female-dashboard-parity/tracker-390x844.jpg",
+      "size": 42847,
+      "mtimeMs": 1793372006179.3242,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-tour-polish-2026-10-30/fresh-browser-capture-2026-10-30/discover-390x844.jpg",
+      "size": 37000,
+      "mtimeMs": 1793370980055.3665,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-tour-polish-2026-10-30/fresh-browser-capture-2026-10-30/discover-navbar.jpg",
+      "size": 5042,
+      "mtimeMs": 1793370980383.9893,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-tour-polish-2026-10-30/fresh-browser-capture-2026-10-30/home-390x844.jpg",
+      "size": 43432,
+      "mtimeMs": 1793370883260.8657,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-tour-polish-2026-10-30/fresh-browser-capture-2026-10-30/home-navbar.jpg",
+      "size": 6270,
+      "mtimeMs": 1793370883366.5,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-tour-polish-2026-10-30/glass-restoration-tests.txt",
+      "size": 5006,
+      "mtimeMs": 1793370330447.1714,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-tour-polish-2026-10-30/hero-and-tracker-2026-10-30/discover-390x844.jpg",
+      "size": 40037,
+      "mtimeMs": 1793371345948.48,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-tour-polish-2026-10-30/hero-and-tracker-2026-10-30/discover-navbar.jpg",
+      "size": 5950,
+      "mtimeMs": 1793371348041.5032,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-tour-polish-2026-10-30/hero-and-tracker-2026-10-30/hero-button-clearance.jpg",
+      "size": 21423,
+      "mtimeMs": 1793372285300.8496,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-tour-polish-2026-10-30/hero-and-tracker-2026-10-30/home-390x844.jpg",
+      "size": 45593,
+      "mtimeMs": 1793371320935.1582,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-tour-polish-2026-10-30/hero-and-tracker-2026-10-30/home-navbar.jpg",
+      "size": 6677,
+      "mtimeMs": 1793371322138.787,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-tour-polish-2026-10-30/hero-and-tracker-2026-10-30/illustration-source.txt",
+      "size": 1104,
+      "mtimeMs": 1793371446707.0261,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-tour-polish-2026-10-30/hero-and-tracker-2026-10-30/tracker-390x844.jpg",
+      "size": 42847,
+      "mtimeMs": 1793371446078.5686,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-tour-polish-2026-10-30/hero-and-tracker-2026-10-30/tracker-capsules.jpg",
+      "size": 31934,
+      "mtimeMs": 1793371446702.3857,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-tour-polish-2026-10-30/hero-character.md",
+      "size": 808,
+      "mtimeMs": 1793365410675.7183,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-tour-polish-2026-10-30/hero-emphasis.md",
+      "size": 992,
+      "mtimeMs": 1793365900590.5857,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-tour-polish-2026-10-30/home-calm.jpg",
+      "size": 43216,
+      "mtimeMs": 1793359210396.3184,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-tour-polish-2026-10-30/home-character.jpg",
+      "size": 41025,
+      "mtimeMs": 1793365400839.1409,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-tour-polish-2026-10-30/home-emphasis.jpg",
+      "size": 42571,
+      "mtimeMs": 1793365910500.4485,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-tour-polish-2026-10-30/home-simple.jpg",
+      "size": 41002,
+      "mtimeMs": 1793359657977.9695,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-tour-polish-2026-10-30/home.jpg",
+      "size": 45509,
+      "mtimeMs": 1793357476536.7312,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-tour-polish-2026-10-30/implementation.md",
+      "size": 2196,
+      "mtimeMs": 1793357810260.4111,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-tour-polish-2026-10-30/indicator-colors-tests.txt",
+      "size": 8680,
+      "mtimeMs": 1793370060673.392,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-tour-polish-2026-10-30/nav-weight-tests.txt",
+      "size": 4218,
+      "mtimeMs": 1793370591101.9514,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-tour-polish-2026-10-30/quick-actions.jpg",
+      "size": 43590,
+      "mtimeMs": 1793357482836.3171,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-tour-polish-2026-10-30/simple-hero.md",
+      "size": 1307,
+      "mtimeMs": 1793359667716.036,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-tour-polish-2026-10-30/subtitles.jpg",
+      "size": 39378,
+      "mtimeMs": 1793366919155.912,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-tour-polish-2026-10-30/subtitles.md",
+      "size": 873,
+      "mtimeMs": 1793366926866.7146,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-tour-polish-2026-10-30/tag-consistency-tests.txt",
+      "size": 7720,
+      "mtimeMs": 1793367515786.2253,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-tour-polish-2026-10-30/tag-consistency.md",
+      "size": 1267,
+      "mtimeMs": 1793367595240.055,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-tour-polish-2026-10-30/tests.txt",
+      "size": 12096,
+      "mtimeMs": 1793357373921.3489,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-tour-polish-2026-10-30/tour-plus.jpg",
+      "size": 36389,
+      "mtimeMs": 1793357779331.8281,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "docs/reports/student-tour-polish-2026-10-30/tour.jpg",
+      "size": 36197,
+      "mtimeMs": 1793357769156.2732,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "docs/reviews/2026-10-30-ias-audit-followup.md",
+      "size": 4065,
+      "mtimeMs": 1793295615854.8645,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "docs/reviews/2026-11-01-independent-readiness-audit.md",
+      "size": 9605,
+      "mtimeMs": 1793510702638.9912,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "docs/superpowers/plans/2026-10-23-individual-budget-support.md",
+      "size": 2382,
+      "mtimeMs": 1792764681915.5056,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "docs/superpowers/plans/2026-10-23-individual-review-recovery.md",
+      "size": 1658,
+      "mtimeMs": 1792766080800.012,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "docs/superpowers/plans/2026-10-23-provider-audit-fixes.md",
+      "size": 3166,
+      "mtimeMs": 1792785353244.0698,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "docs/superpowers/plans/2026-10-24-super-admin-and-provider-ui-polish.md",
+      "size": 7169,
+      "mtimeMs": 1792789821196.8567,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "docs/superpowers/plans/2026-10-24-super-admin-backend-wiring.md",
+      "size": 11793,
+      "mtimeMs": 1792792275929.276,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "docs/superpowers/plans/2026-10-24-super-admin-ui.md",
+      "size": 7021,
+      "mtimeMs": 1792787626391.1619,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "docs/superpowers/plans/2026-10-26-student-navbar-refinements.md",
+      "size": 10778,
+      "mtimeMs": 1793017383741.8547,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "docs/superpowers/plans/2026-10-26-student-scroll-dock.md",
+      "size": 7006,
+      "mtimeMs": 1793024374274.977,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "docs/superpowers/plans/2026-10-27-direct-student-motion.md",
+      "size": 14452,
+      "mtimeMs": 1793046571156.6555,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "docs/superpowers/plans/2026-10-27-student-section-entrance.md",
+      "size": 4700,
+      "mtimeMs": 1793048050643.8162,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "docs/superpowers/plans/2026-10-29-trusted-audit-completion.md",
+      "size": 3003,
+      "mtimeMs": 1793286861588.828,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "docs/superpowers/plans/2026-10-30-student-tour-and-polish.md",
+      "size": 2198,
+      "mtimeMs": 1793356767026.9126,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "docs/superpowers/plans/2026-10-31-ari-scroll-cutout-polish.md",
+      "size": 8232,
+      "mtimeMs": 1793432138669.5642,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "docs/superpowers/plans/2026-10-31-auth-lifecycle-polish.md",
+      "size": 10190,
+      "mtimeMs": 1793432138668.5654,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "docs/superpowers/specs/2026-10-24-super-admin-workspace-design.md",
+      "size": 13036,
+      "mtimeMs": 1792786138951.4966,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "docs/superpowers/specs/2026-10-31-student-contextual-guide-design.md",
+      "size": 9283,
+      "mtimeMs": 1793388986531.302,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "landing/assets/images/app-application.jpg",
+      "size": 128480,
+      "mtimeMs": 1792486342279.4114,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "landing/assets/images/app-dashboard.jpg",
+      "size": 61009,
+      "mtimeMs": 1792421257314.483,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "landing/assets/images/app-detail.jpg",
+      "size": 56134,
+      "mtimeMs": 1792421355923.5374,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "landing/assets/images/app-discover.jpg",
+      "size": 51613,
+      "mtimeMs": 1792421327427.4631,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "landing/assets/images/app-profile.jpg",
+      "size": 47816,
+      "mtimeMs": 1792423079294.9465,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "landing/assets/images/app-receipt.jpg",
+      "size": 102788,
+      "mtimeMs": 1792486344528.6038,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "landing/assets/images/app-tracker-submitted.jpg",
+      "size": 104611,
+      "mtimeMs": 1792655989646.4692,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "landing/assets/images/app-tracker.jpg",
+      "size": 60474,
+      "mtimeMs": 1792420972680.9253,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "landing/assets/org-provider-concept.mp4",
+      "size": 4151109,
+      "mtimeMs": 1792659193459.171,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "landing/assets/org-provider-concept.vtt",
+      "size": 338,
+      "mtimeMs": 1792659154606.7632,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "landing/assets/org-provider-poster.png",
+      "size": 71312,
+      "mtimeMs": 1792659055930.7195,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "landing/assets/provider-concept-v2.mp4",
+      "size": 5037307,
+      "mtimeMs": 1792657169727.4407,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "landing/assets/provider-concept-v2.vtt",
+      "size": 373,
+      "mtimeMs": 1792656915319.1565,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "landing/assets/provider-concept.mp4",
+      "size": 1025537,
+      "mtimeMs": 1792655268487.076,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "landing/assets/provider-concept.vtt",
+      "size": 314,
+      "mtimeMs": 1792655454611.6516,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "landing/assets/provider-poster.png",
+      "size": 74067,
+      "mtimeMs": 1792656919975.8967,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "landing/landing.css",
+      "size": 39423,
+      "mtimeMs": 1793303820823.8914,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "landing/landing.js",
+      "size": 14561,
+      "mtimeMs": 1793306556666.5183,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "landing/vendor/LENIS-LICENSE.txt",
+      "size": 1088,
+      "mtimeMs": 1792763051331.7283,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "landing/vendor/lenis-1.3.27.css",
+      "size": 513,
+      "mtimeMs": 1792763051045.7563,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "landing/vendor/lenis-1.3.27.min.js",
+      "size": 18815,
+      "mtimeMs": 1792763050934.6057,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "latest_ipa/Scholaris.ipa",
+      "size": 25724307,
+      "mtimeMs": 1792316960000,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "latest_ipa_email_code_oct22/Scholaris.ipa",
+      "size": 28040732,
+      "mtimeMs": 1792647470000,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "latest_ipa_oct20/Scholaris-iOS-App/Scholaris.ipa",
+      "size": 26954363,
+      "mtimeMs": 1792430122401.2659,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "latest_ipa_student_build11_oct29/Scholaris-iOS-App/Scholaris.ipa",
+      "size": 28253214,
+      "mtimeMs": 1793213261481.8784,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "latest_ipa_student_build11_oct29/Scholaris.ipa",
+      "size": 28253214,
+      "mtimeMs": 1793213261481.8784,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "latest_ipa_student_build12_oct30/Scholaris-iOS-App/Scholaris.ipa",
+      "size": 30066772,
+      "mtimeMs": 1793292903384.9473,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "latest_ipa_student_build12_oct30/Scholaris.ipa",
+      "size": 30066772,
+      "mtimeMs": 1793292903384.9473,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "latest_ipa_student_build13_oct30/Scholaris-iOS-App/Scholaris.ipa",
+      "size": 30312131,
+      "mtimeMs": 1793308560344.9888,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "latest_ipa_student_build13_oct30/Scholaris.ipa",
+      "size": 30312131,
+      "mtimeMs": 1793308560344.9888,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "latest_ipa_student_build14_oct30/Scholaris.ipa",
+      "size": 30302982,
+      "mtimeMs": 1793348328359.5415,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "latest_ipa_student_build15_oct30/Scholaris.ipa",
+      "size": 33255787,
+      "mtimeMs": 1793373983307.8398,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "latest_ipa_student_build16_oct31/Scholaris.ipa",
+      "size": 34388687,
+      "mtimeMs": 1793397270852.49,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "latest_ipa_student_build17_oct31/Scholaris.ipa",
+      "size": 34384772,
+      "mtimeMs": 1793398633205.5757,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "latest_ipa_student_build18_oct31/Scholaris.ipa",
+      "size": 34400339,
+      "mtimeMs": 1793438132781.609,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "latest_ipa_student_build20_nov02/Scholaris.ipa",
+      "size": 34476662,
+      "mtimeMs": 1793523386000,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "latest_ipa_student_build21_nov02/Scholaris.ipa",
+      "size": 34476789,
+      "mtimeMs": 1793527908000,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "latest_ipa_student_build22_nov02/Scholaris.ipa",
+      "size": 34473738,
+      "mtimeMs": 1793531946000,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "latest_ipa_student_build23_nov02/Scholaris.ipa",
+      "size": 34473709,
+      "mtimeMs": 1793533832000,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "latest_ipa_student_build24_nov02/Scholaris.ipa",
+      "size": 34475564,
+      "mtimeMs": 1793537010000,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "latest_ipa_student_build24_nov02/artifact.zip",
+      "size": 34395938,
+      "mtimeMs": 1793566451061.3027,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "latest_ipa_student_build25_nov02/Scholaris.ipa",
+      "size": 34475501,
+      "mtimeMs": 1793541982000,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "latest_ipa_student_build25_nov02/artifact.zip",
+      "size": 34395651,
+      "mtimeMs": 1793571336069.386,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "latest_ipa_student_build26_nov02/Scholaris-iOS-App/Scholaris.ipa",
+      "size": 41111269,
+      "mtimeMs": 1793636720215.164,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "latest_ipa_student_build26_nov02/Scholaris.ipa",
+      "size": 41111269,
+      "mtimeMs": 1793636720215.164,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "latest_ipa_student_build27_nov03/Scholaris.ipa",
+      "size": 46649899,
+      "mtimeMs": 1793618766000,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "latest_ipa_student_build27_nov03/artifact.zip",
+      "size": 46572061,
+      "mtimeMs": 1793648537065.4563,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "latest_ipa_student_build27_nov03/extracted/Scholaris.ipa",
+      "size": 46649899,
+      "mtimeMs": 1793618766000,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "latest_ipa_student_build27_nov03_run41524236026/Scholaris.ipa",
+      "size": 46649489,
+      "mtimeMs": 1793625054000,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "latest_ipa_student_build27_nov03_run41524236026/artifact.zip",
+      "size": 46571785,
+      "mtimeMs": 1793654648615.0276,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "latest_ipa_student_build28_nov03/Scholaris.ipa",
+      "size": 46649543,
+      "mtimeMs": 1793626786000,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "latest_ipa_student_build28_nov03/artifact.zip",
+      "size": 46571729,
+      "mtimeMs": 1793656355578.9602,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "latest_ipa_student_build29_nov03/Scholaris.ipa",
+      "size": 50276420,
+      "mtimeMs": 1793670898000,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "latest_ipa_student_build29_nov03/artifact.zip",
+      "size": 50198394,
+      "mtimeMs": 1793701385506.7046,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "latest_ipa_student_choreography_build5_oct27/Scholaris.ipa",
+      "size": 28080450,
+      "mtimeMs": 1793040456000,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "latest_ipa_student_crisp_polish_build10_oct27/Scholaris.ipa",
+      "size": 28085788,
+      "mtimeMs": 1793119765238.9233,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "latest_ipa_student_crisp_polish_build9_oct27/Scholaris.ipa",
+      "size": 28085561,
+      "mtimeMs": 1793115557692.8496,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "latest_ipa_student_dock_reveal_build4_oct27/Scholaris.ipa",
+      "size": 28072315,
+      "mtimeMs": 1793033312000,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "latest_ipa_student_geist_captcha_oct30/Scholaris-iOS-App/Scholaris.ipa",
+      "size": 30303249,
+      "mtimeMs": 1793306383468.6367,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "latest_ipa_student_geist_captcha_oct30/Scholaris.ipa",
+      "size": 30303249,
+      "mtimeMs": 1793306383468.6367,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "latest_ipa_student_geist_oct30/Scholaris-iOS-App/Scholaris.ipa",
+      "size": 30234998,
+      "mtimeMs": 1793304674405.159,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "latest_ipa_student_geist_oct30/Scholaris.ipa",
+      "size": 30234998,
+      "mtimeMs": 1793304674405.159,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "latest_ipa_student_motion_oct27/Scholaris.ipa",
+      "size": 28070030,
+      "mtimeMs": 1793021884000,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "latest_ipa_student_pure_white_build7_oct27/Scholaris.ipa",
+      "size": 28079983,
+      "mtimeMs": 1793080122338.8313,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "latest_ipa_student_saved_cards_build3_oct27/Scholaris.ipa",
+      "size": 28071523,
+      "mtimeMs": 1793029104000,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "latest_ipa_student_signup_flash_fix_oct22/Scholaris-iOS-App/Scholaris.ipa",
+      "size": 28049419,
+      "mtimeMs": 1792684138464.5676,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "latest_ipa_student_signup_flash_fix_oct22/Scholaris.ipa",
+      "size": 28049419,
+      "mtimeMs": 1792684138464.5676,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "latest_ipa_student_signup_oct22/Scholaris.ipa",
+      "size": 28041867,
+      "mtimeMs": 1792680611362.4185,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "latest_ipa_student_soft_nav_build6_oct27/Scholaris.ipa",
+      "size": 28082180,
+      "mtimeMs": 1793042386000,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "latest_ipa_student_stat_capsules_build8_oct27/Scholaris.ipa",
+      "size": 28081685,
+      "mtimeMs": 1793082738464.4805,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "latest_ipa_student_ui_oct20/Scholaris.ipa",
+      "size": 27022727,
+      "mtimeMs": 1792459528000,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "latest_ipa_student_ui_oct22/Scholaris-iOS-App/Scholaris.ipa",
+      "size": 28039087,
+      "mtimeMs": 1792602192473.1484,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "latest_ipa_student_ui_oct22/Scholaris.ipa",
+      "size": 28039087,
+      "mtimeMs": 1792602192473.1484,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "latest_ipa_student_ui_oct22_nav_fix/Scholaris-iOS-App/Scholaris.ipa",
+      "size": 28038935,
+      "mtimeMs": 1792605112344.1404,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "latest_ipa_student_ui_oct22_nav_fix/Scholaris.ipa",
+      "size": 28038935,
+      "mtimeMs": 1792605112344.1404,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "latest_ipa_tour_sync_build19/Scholaris.ipa",
+      "size": 34401152,
+      "mtimeMs": 1793426570000,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "lib/shared/theme/app_typography.dart",
+      "size": 4458,
+      "mtimeMs": 1793745137138.1794,
+      "category": "typography task"
+    },
+    {
+      "status": "??",
+      "file": "supabase/cleanup_demo_transaction_records.sql",
+      "size": 3045,
+      "mtimeMs": 1792362816439.8628,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/AppFrameworkInfo.plist",
+      "size": 347,
+      "mtimeMs": 1793523384000,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/AppIcon60x60@2x.png",
+      "size": 4274,
+      "mtimeMs": 1793523384000,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/AppIcon76x76@2x~ipad.png",
+      "size": 5444,
+      "mtimeMs": 1793523384000,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/Assets.car",
+      "size": 164648,
+      "mtimeMs": 1793523384000,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/Base.lproj/LaunchScreen.storyboardc/01J-lp-oVM-view-Ze5-6b-2t3.nib",
+      "size": 2281,
+      "mtimeMs": 1793523384000,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/Base.lproj/LaunchScreen.storyboardc/Info.plist",
+      "size": 258,
+      "mtimeMs": 1793523384000,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/Base.lproj/LaunchScreen.storyboardc/UIViewController-01J-lp-oVM.nib",
+      "size": 924,
+      "mtimeMs": 1793523384000,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/Base.lproj/Main.storyboardc/BYZ-38-t0r-view-8bC-Xf-vdC.nib",
+      "size": 1835,
+      "mtimeMs": 1793523384000,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/Base.lproj/Main.storyboardc/Info.plist",
+      "size": 258,
+      "mtimeMs": 1793523384000,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/Base.lproj/Main.storyboardc/UIViewController-BYZ-38-t0r.nib",
+      "size": 951,
+      "mtimeMs": 1793523384000,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/DKImagePickerController_DKImagePickerController.bundle/Assets.car",
+      "size": 89736,
+      "mtimeMs": 1793523384000,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/DKImagePickerController_DKImagePickerController.bundle/Base.lproj/DKImagePickerController.strings",
+      "size": 837,
+      "mtimeMs": 1793523384000,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/DKImagePickerController_DKImagePickerController.bundle/Info.plist",
+      "size": 739,
+      "mtimeMs": 1793523384000,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/DKImagePickerController_DKImagePickerController.bundle/ar.lproj/DKImagePickerController.strings",
+      "size": 1018,
+      "mtimeMs": 1793523384000,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/DKImagePickerController_DKImagePickerController.bundle/da.lproj/DKImagePickerController.strings",
+      "size": 883,
+      "mtimeMs": 1793523384000,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/DKImagePickerController_DKImagePickerController.bundle/de.lproj/DKImagePickerController.strings",
+      "size": 920,
+      "mtimeMs": 1793523384000,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/DKImagePickerController_DKImagePickerController.bundle/en.lproj/DKImagePickerController.strings",
+      "size": 865,
+      "mtimeMs": 1793523384000,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/DKImagePickerController_DKImagePickerController.bundle/es.lproj/DKImagePickerController.strings",
+      "size": 886,
+      "mtimeMs": 1793523384000,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/DKImagePickerController_DKImagePickerController.bundle/fr.lproj/DKImagePickerController.strings",
+      "size": 942,
+      "mtimeMs": 1793523384000,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/DKImagePickerController_DKImagePickerController.bundle/hu.lproj/DKImagePickerController.strings",
+      "size": 886,
+      "mtimeMs": 1793523384000,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/DKImagePickerController_DKImagePickerController.bundle/it.lproj/DKImagePickerController.strings",
+      "size": 891,
+      "mtimeMs": 1793523384000,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/DKImagePickerController_DKImagePickerController.bundle/ja.lproj/DKImagePickerController.strings",
+      "size": 967,
+      "mtimeMs": 1793523384000,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/DKImagePickerController_DKImagePickerController.bundle/ko.lproj/DKImagePickerController.strings",
+      "size": 931,
+      "mtimeMs": 1793523384000,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/DKImagePickerController_DKImagePickerController.bundle/nb-NO.lproj/DKImagePickerController.strings",
+      "size": 844,
+      "mtimeMs": 1793523384000,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/DKImagePickerController_DKImagePickerController.bundle/nl.lproj/DKImagePickerController.strings",
+      "size": 893,
+      "mtimeMs": 1793523384000,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/DKImagePickerController_DKImagePickerController.bundle/pt_BR.lproj/DKImagePickerController.strings",
+      "size": 865,
+      "mtimeMs": 1793523384000,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/DKImagePickerController_DKImagePickerController.bundle/ru.lproj/DKImagePickerController.strings",
+      "size": 1037,
+      "mtimeMs": 1793523384000,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/DKImagePickerController_DKImagePickerController.bundle/tr.lproj/DKImagePickerController.strings",
+      "size": 885,
+      "mtimeMs": 1793523384000,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/DKImagePickerController_DKImagePickerController.bundle/ur.lproj/DKImagePickerController.strings",
+      "size": 1114,
+      "mtimeMs": 1793523384000,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/DKImagePickerController_DKImagePickerController.bundle/vi.lproj/DKImagePickerController.strings",
+      "size": 909,
+      "mtimeMs": 1793523384000,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/DKImagePickerController_DKImagePickerController.bundle/zh-Hans.lproj/DKImagePickerController.strings",
+      "size": 782,
+      "mtimeMs": 1793523384000,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/DKImagePickerController_DKImagePickerController.bundle/zh-Hant.lproj/DKImagePickerController.strings",
+      "size": 778,
+      "mtimeMs": 1793523384000,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/DKPhotoGallery_DKPhotoGallery.bundle/Assets.car",
+      "size": 93624,
+      "mtimeMs": 1793523384000,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/DKPhotoGallery_DKPhotoGallery.bundle/Base.lproj/DKPhotoGallery.strings",
+      "size": 824,
+      "mtimeMs": 1793523384000,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/DKPhotoGallery_DKPhotoGallery.bundle/Info.plist",
+      "size": 703,
+      "mtimeMs": 1793523384000,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/DKPhotoGallery_DKPhotoGallery.bundle/en.lproj/DKPhotoGallery.strings",
+      "size": 825,
+      "mtimeMs": 1793523384000,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/DKPhotoGallery_DKPhotoGallery.bundle/zh-Hans.lproj/DKPhotoGallery.strings",
+      "size": 839,
+      "mtimeMs": 1793523384000,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/Frameworks/App.framework/App",
+      "size": 12138064,
+      "mtimeMs": 1793523384000,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/Frameworks/App.framework/Info.plist",
+      "size": 754,
+      "mtimeMs": 1793523384000,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/Frameworks/App.framework/_CodeSignature/CodeResources",
+      "size": 16802,
+      "mtimeMs": 1793523384000,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/Frameworks/App.framework/flutter_assets/AssetManifest.bin",
+      "size": 4137,
+      "mtimeMs": 1793523384000,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/Frameworks/App.framework/flutter_assets/FontManifest.json",
+      "size": 546,
+      "mtimeMs": 1793523384000,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/Frameworks/App.framework/flutter_assets/NOTICES.Z",
+      "size": 109582,
+      "mtimeMs": 1793523384000,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/Frameworks/App.framework/flutter_assets/NativeAssetsManifest.json",
+      "size": 147,
+      "mtimeMs": 1793523384000,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/Frameworks/App.framework/flutter_assets/assets/animations/Successfully%20Done.json",
+      "size": 26447,
+      "mtimeMs": 1793523384000,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/Frameworks/App.framework/flutter_assets/assets/animations/forgot_password_hero.json",
+      "size": 56813,
+      "mtimeMs": 1793523384000,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/Frameworks/App.framework/flutter_assets/assets/animations/login_hero.json",
+      "size": 329145,
+      "mtimeMs": 1793523384000,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/Frameworks/App.framework/flutter_assets/assets/animations/onboarding_slide1.json",
+      "size": 181157,
+      "mtimeMs": 1793523384000,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/Frameworks/App.framework/flutter_assets/assets/animations/onboarding_slide2_hero.json",
+      "size": 192159,
+      "mtimeMs": 1793523384000,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/Frameworks/App.framework/flutter_assets/assets/animations/onboarding_slide3.json",
+      "size": 60674,
+      "mtimeMs": 1793523384000,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/Frameworks/App.framework/flutter_assets/assets/animations/provider_signup_hero.json",
+      "size": 162464,
+      "mtimeMs": 1793523384000,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/Frameworks/App.framework/flutter_assets/assets/animations/reset_password_hero.json",
+      "size": 192159,
+      "mtimeMs": 1793523384000,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/Frameworks/App.framework/flutter_assets/assets/animations/scholaris_ceremony.json",
+      "size": 39625,
+      "mtimeMs": 1793523384000,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/Frameworks/App.framework/flutter_assets/assets/animations/signup_hero.json",
+      "size": 250297,
+      "mtimeMs": 1793523384000,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/Frameworks/App.framework/flutter_assets/assets/animations/verify_email_hero.json",
+      "size": 56813,
+      "mtimeMs": 1793523384000,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/Frameworks/App.framework/flutter_assets/assets/fonts/geist/Geist-Bold.ttf",
+      "size": 128824,
+      "mtimeMs": 1793523384000,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/Frameworks/App.framework/flutter_assets/assets/fonts/geist/Geist-ExtraBold.ttf",
+      "size": 129664,
+      "mtimeMs": 1793523384000,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/Frameworks/App.framework/flutter_assets/assets/fonts/geist/Geist-Medium.ttf",
+      "size": 127660,
+      "mtimeMs": 1793523384000,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/Frameworks/App.framework/flutter_assets/assets/fonts/geist/Geist-Regular.ttf",
+      "size": 126048,
+      "mtimeMs": 1793523384000,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/Frameworks/App.framework/flutter_assets/assets/fonts/geist/Geist-SemiBold.ttf",
+      "size": 127872,
+      "mtimeMs": 1793523384000,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/Frameworks/App.framework/flutter_assets/assets/fonts/geist/OFL.txt",
+      "size": 4382,
+      "mtimeMs": 1793523384000,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/Frameworks/App.framework/flutter_assets/assets/images/hero_banner_exact.png",
+      "size": 673139,
+      "mtimeMs": 1793523384000,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/Frameworks/App.framework/flutter_assets/assets/images/hero_banner_female.png",
+      "size": 1725587,
+      "mtimeMs": 1793523384000,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/Frameworks/App.framework/flutter_assets/assets/images/intro_scene.png",
+      "size": 509782,
+      "mtimeMs": 1793523384000,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/Frameworks/App.framework/flutter_assets/assets/images/login_hero.svg",
+      "size": 69121,
+      "mtimeMs": 1793523384000,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/Frameworks/App.framework/flutter_assets/assets/images/mascot_couple_magnifier.png",
+      "size": 1068068,
+      "mtimeMs": 1793523384000,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/Frameworks/App.framework/flutter_assets/assets/images/mascot_couple_wave.png",
+      "size": 151117,
+      "mtimeMs": 1793523384000,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/Frameworks/App.framework/flutter_assets/assets/images/mascot_female.png",
+      "size": 365306,
+      "mtimeMs": 1793523384000,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/Frameworks/App.framework/flutter_assets/assets/images/mascot_female_pointing.png",
+      "size": 863521,
+      "mtimeMs": 1793523384000,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/Frameworks/App.framework/flutter_assets/assets/images/mascot_male.png",
+      "size": 446003,
+      "mtimeMs": 1793523384000,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/Frameworks/App.framework/flutter_assets/assets/images/mascot_male_thinking.png",
+      "size": 729853,
+      "mtimeMs": 1793523384000,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/Frameworks/App.framework/flutter_assets/assets/images/mascot_male_welcome_wave.png",
+      "size": 1281900,
+      "mtimeMs": 1793523384000,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/Frameworks/App.framework/flutter_assets/assets/images/onboarding_slide1.svg",
+      "size": 13189,
+      "mtimeMs": 1793523384000,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/Frameworks/App.framework/flutter_assets/assets/images/onboarding_slide2.svg",
+      "size": 7849,
+      "mtimeMs": 1793523384000,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/Frameworks/App.framework/flutter_assets/assets/images/onboarding_slide3.svg",
+      "size": 14022,
+      "mtimeMs": 1793523384000,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/Frameworks/App.framework/flutter_assets/assets/images/provider_hero_illustration.png",
+      "size": 1762606,
+      "mtimeMs": 1793523384000,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/Frameworks/App.framework/flutter_assets/assets/images/scholaris_hero_student.png",
+      "size": 87210,
+      "mtimeMs": 1793523384000,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/Frameworks/App.framework/flutter_assets/assets/images/student_hero_graduate_campus.png",
+      "size": 1581098,
+      "mtimeMs": 1793523384000,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/Frameworks/App.framework/flutter_assets/assets/images/student_hero_graduate_campus_female.png",
+      "size": 1604624,
+      "mtimeMs": 1793523384000,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/Frameworks/App.framework/flutter_assets/assets/mascots/mascot_female_celebrating.png",
+      "size": 1493691,
+      "mtimeMs": 1793523384000,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/Frameworks/App.framework/flutter_assets/assets/mascots/mascot_female_confused.png",
+      "size": 1211607,
+      "mtimeMs": 1793523384000,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/Frameworks/App.framework/flutter_assets/assets/mascots/mascot_female_consoling.png",
+      "size": 1199719,
+      "mtimeMs": 1793523384000,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/Frameworks/App.framework/flutter_assets/assets/mascots/mascot_female_searching.png",
+      "size": 1349485,
+      "mtimeMs": 1793523384000,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/Frameworks/App.framework/flutter_assets/assets/mascots/mascot_male_celebrating.png",
+      "size": 1567802,
+      "mtimeMs": 1793523384000,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/Frameworks/App.framework/flutter_assets/assets/mascots/mascot_male_confused.png",
+      "size": 1281376,
+      "mtimeMs": 1793523384000,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/Frameworks/App.framework/flutter_assets/assets/mascots/mascot_male_consoling.png",
+      "size": 1276842,
+      "mtimeMs": 1793523384000,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/Frameworks/App.framework/flutter_assets/assets/mascots/mascot_male_searching.png",
+      "size": 1359176,
+      "mtimeMs": 1793523384000,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/Frameworks/App.framework/flutter_assets/fonts/MaterialIcons-Regular.otf",
+      "size": 46424,
+      "mtimeMs": 1793523384000,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/Frameworks/App.framework/flutter_assets/packages/cupertino_icons/assets/CupertinoIcons.ttf",
+      "size": 1400,
+      "mtimeMs": 1793523384000,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/Frameworks/App.framework/flutter_assets/shaders/ink_sparkle.frag",
+      "size": 4960,
+      "mtimeMs": 1793523384000,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/Frameworks/App.framework/flutter_assets/shaders/stretch_effect.frag",
+      "size": 4408,
+      "mtimeMs": 1793523384000,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/Frameworks/App.framework/flutter_assets/shaders/student_glass_lens.frag",
+      "size": 1776,
+      "mtimeMs": 1793523384000,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/Frameworks/Flutter.framework/Flutter",
+      "size": 9432656,
+      "mtimeMs": 1793523384000,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/Frameworks/Flutter.framework/Headers/Flutter.h",
+      "size": 921,
+      "mtimeMs": 1793523384000,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/Frameworks/Flutter.framework/Headers/FlutterAppDelegate.h",
+      "size": 2283,
+      "mtimeMs": 1793523384000,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/Frameworks/Flutter.framework/Headers/FlutterBinaryMessenger.h",
+      "size": 3761,
+      "mtimeMs": 1793523384000,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/Frameworks/Flutter.framework/Headers/FlutterCallbackCache.h",
+      "size": 1724,
+      "mtimeMs": 1793523384000,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/Frameworks/Flutter.framework/Headers/FlutterChannels.h",
+      "size": 18414,
+      "mtimeMs": 1793523384000,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/Frameworks/Flutter.framework/Headers/FlutterCodecs.h",
+      "size": 15290,
+      "mtimeMs": 1793523384000,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/Frameworks/Flutter.framework/Headers/FlutterDartProject.h",
+      "size": 3914,
+      "mtimeMs": 1793523384000,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/Frameworks/Flutter.framework/Headers/FlutterEngine.h",
+      "size": 21724,
+      "mtimeMs": 1793523384000,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/Frameworks/Flutter.framework/Headers/FlutterEngineGroup.h",
+      "size": 4755,
+      "mtimeMs": 1793523384000,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/Frameworks/Flutter.framework/Headers/FlutterHeadlessDartRunner.h",
+      "size": 3927,
+      "mtimeMs": 1793523384000,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/Frameworks/Flutter.framework/Headers/FlutterHourFormat.h",
+      "size": 536,
+      "mtimeMs": 1793523384000,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/Frameworks/Flutter.framework/Headers/FlutterMacros.h",
+      "size": 1823,
+      "mtimeMs": 1793523384000,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/Frameworks/Flutter.framework/Headers/FlutterPlatformViews.h",
+      "size": 1966,
+      "mtimeMs": 1793523384000,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/Frameworks/Flutter.framework/Headers/FlutterPlugin.h",
+      "size": 19326,
+      "mtimeMs": 1793523384000,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/Frameworks/Flutter.framework/Headers/FlutterPluginAppLifeCycleDelegate.h",
+      "size": 5318,
+      "mtimeMs": 1793523384000,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/Frameworks/Flutter.framework/Headers/FlutterSceneDelegate.h",
+      "size": 893,
+      "mtimeMs": 1793523384000,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/Frameworks/Flutter.framework/Headers/FlutterSceneLifeCycle.h",
+      "size": 8387,
+      "mtimeMs": 1793523384000,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/Frameworks/Flutter.framework/Headers/FlutterTexture.h",
+      "size": 2263,
+      "mtimeMs": 1793523384000,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/Frameworks/Flutter.framework/Headers/FlutterViewController.h",
+      "size": 10734,
+      "mtimeMs": 1793523384000,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/Frameworks/Flutter.framework/Info.plist",
+      "size": 1078,
+      "mtimeMs": 1793523384000,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/Frameworks/Flutter.framework/Modules/module.modulemap",
+      "size": 95,
+      "mtimeMs": 1793523384000,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/Frameworks/Flutter.framework/PrivacyInfo.xcprivacy",
+      "size": 845,
+      "mtimeMs": 1793523384000,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/Frameworks/Flutter.framework/_CodeSignature/CodeResources",
+      "size": 7070,
+      "mtimeMs": 1793523384000,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/Frameworks/Flutter.framework/icudtl.dat",
+      "size": 864880,
+      "mtimeMs": 1793523384000,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/Frameworks/objective_c.framework/Info.plist",
+      "size": 791,
+      "mtimeMs": 1793523384000,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/Frameworks/objective_c.framework/_CodeSignature/CodeResources",
+      "size": 1798,
+      "mtimeMs": 1793523384000,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/Frameworks/objective_c.framework/objective_c",
+      "size": 203216,
+      "mtimeMs": 1793523384000,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/Info.plist",
+      "size": 1882,
+      "mtimeMs": 1793523384000,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/PkgInfo",
+      "size": 8,
+      "mtimeMs": 1793523384000,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/Runner",
+      "size": 4694816,
+      "mtimeMs": 1793523384000,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/SDWebImage_SDWebImage.bundle/Info.plist",
+      "size": 687,
+      "mtimeMs": 1793523384000,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/SDWebImage_SDWebImage.bundle/PrivacyInfo.xcprivacy",
+      "size": 599,
+      "mtimeMs": 1793523384000,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/SwiftyGif_SwiftyGif.bundle/Info.plist",
+      "size": 683,
+      "mtimeMs": 1793523384000,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/SwiftyGif_SwiftyGif.bundle/PrivacyInfo.xcprivacy",
+      "size": 373,
+      "mtimeMs": 1793523384000,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/TOCropViewController_TOCropViewController.bundle/Base.lproj/TOCropViewControllerLocalizable.strings",
+      "size": 168,
+      "mtimeMs": 1793523384000,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/TOCropViewController_TOCropViewController.bundle/Info.plist",
+      "size": 727,
+      "mtimeMs": 1793523384000,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/TOCropViewController_TOCropViewController.bundle/PrivacyInfo.xcprivacy",
+      "size": 373,
+      "mtimeMs": 1793523384000,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/TOCropViewController_TOCropViewController.bundle/ar.lproj/TOCropViewControllerLocalizable.strings",
+      "size": 207,
+      "mtimeMs": 1793523384000,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/TOCropViewController_TOCropViewController.bundle/ca.lproj/TOCropViewControllerLocalizable.strings",
+      "size": 177,
+      "mtimeMs": 1793523384000,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/TOCropViewController_TOCropViewController.bundle/cs.lproj/TOCropViewControllerLocalizable.strings",
+      "size": 173,
+      "mtimeMs": 1793523384000,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/TOCropViewController_TOCropViewController.bundle/da-DK.lproj/TOCropViewControllerLocalizable.strings",
+      "size": 174,
+      "mtimeMs": 1793523384000,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/TOCropViewController_TOCropViewController.bundle/de.lproj/TOCropViewControllerLocalizable.strings",
+      "size": 189,
+      "mtimeMs": 1793523384000,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/TOCropViewController_TOCropViewController.bundle/en.lproj/TOCropViewControllerLocalizable.strings",
+      "size": 168,
+      "mtimeMs": 1793523384000,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/TOCropViewController_TOCropViewController.bundle/es.lproj/TOCropViewControllerLocalizable.strings",
+      "size": 179,
+      "mtimeMs": 1793523384000,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/TOCropViewController_TOCropViewController.bundle/fa-IR.lproj/TOCropViewControllerLocalizable.strings",
+      "size": 210,
+      "mtimeMs": 1793523384000,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/TOCropViewController_TOCropViewController.bundle/fa.lproj/TOCropViewControllerLocalizable.strings",
+      "size": 210,
+      "mtimeMs": 1793523384000,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/TOCropViewController_TOCropViewController.bundle/fi.lproj/TOCropViewControllerLocalizable.strings",
+      "size": 179,
+      "mtimeMs": 1793523384000,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/TOCropViewController_TOCropViewController.bundle/fr.lproj/TOCropViewControllerLocalizable.strings",
+      "size": 193,
+      "mtimeMs": 1793523384000,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/TOCropViewController_TOCropViewController.bundle/hu.lproj/TOCropViewControllerLocalizable.strings",
+      "size": 194,
+      "mtimeMs": 1793523384000,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/TOCropViewController_TOCropViewController.bundle/id.lproj/TOCropViewControllerLocalizable.strings",
+      "size": 178,
+      "mtimeMs": 1793523384000,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/TOCropViewController_TOCropViewController.bundle/it.lproj/TOCropViewControllerLocalizable.strings",
+      "size": 181,
+      "mtimeMs": 1793523384000,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/TOCropViewController_TOCropViewController.bundle/ja.lproj/TOCropViewControllerLocalizable.strings",
+      "size": 210,
+      "mtimeMs": 1793523384000,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/TOCropViewController_TOCropViewController.bundle/ko.lproj/TOCropViewControllerLocalizable.strings",
+      "size": 187,
+      "mtimeMs": 1793523384000,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/TOCropViewController_TOCropViewController.bundle/ms.lproj/TOCropViewControllerLocalizable.strings",
+      "size": 173,
+      "mtimeMs": 1793523384000,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/TOCropViewController_TOCropViewController.bundle/nl.lproj/TOCropViewControllerLocalizable.strings",
+      "size": 178,
+      "mtimeMs": 1793523384000,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/TOCropViewController_TOCropViewController.bundle/pl.lproj/TOCropViewControllerLocalizable.strings",
+      "size": 171,
+      "mtimeMs": 1793523384000,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/TOCropViewController_TOCropViewController.bundle/pt-BR.lproj/TOCropViewControllerLocalizable.strings",
+      "size": 181,
+      "mtimeMs": 1793523384000,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/TOCropViewController_TOCropViewController.bundle/pt.lproj/TOCropViewControllerLocalizable.strings",
+      "size": 181,
+      "mtimeMs": 1793523384000,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/TOCropViewController_TOCropViewController.bundle/ro.lproj/TOCropViewControllerLocalizable.strings",
+      "size": 181,
+      "mtimeMs": 1793523384000,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/TOCropViewController_TOCropViewController.bundle/ru.lproj/TOCropViewControllerLocalizable.strings",
+      "size": 237,
+      "mtimeMs": 1793523384000,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/TOCropViewController_TOCropViewController.bundle/sk.lproj/TOCropViewControllerLocalizable.strings",
+      "size": 176,
+      "mtimeMs": 1793523384000,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/TOCropViewController_TOCropViewController.bundle/tr.lproj/TOCropViewControllerLocalizable.strings",
+      "size": 183,
+      "mtimeMs": 1793523384000,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/TOCropViewController_TOCropViewController.bundle/uk.lproj/TOCropViewControllerLocalizable.strings",
+      "size": 231,
+      "mtimeMs": 1793523384000,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/TOCropViewController_TOCropViewController.bundle/vi.lproj/TOCropViewControllerLocalizable.strings",
+      "size": 178,
+      "mtimeMs": 1793523384000,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/TOCropViewController_TOCropViewController.bundle/zh-Hans.lproj/TOCropViewControllerLocalizable.strings",
+      "size": 172,
+      "mtimeMs": 1793523384000,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/TOCropViewController_TOCropViewController.bundle/zh-Hant.lproj/TOCropViewControllerLocalizable.strings",
+      "size": 175,
+      "mtimeMs": 1793523384000,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/app_links_app_links.bundle/Info.plist",
+      "size": 689,
+      "mtimeMs": 1793523384000,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/app_links_app_links.bundle/PrivacyInfo.xcprivacy",
+      "size": 415,
+      "mtimeMs": 1793523384000,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/file_picker_file_picker.bundle/Info.plist",
+      "size": 697,
+      "mtimeMs": 1793523384000,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/file_picker_file_picker.bundle/PrivacyInfo.xcprivacy",
+      "size": 372,
+      "mtimeMs": 1793523384000,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/mobile_scanner_mobile_scanner.bundle/Info.plist",
+      "size": 709,
+      "mtimeMs": 1793523384000,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/mobile_scanner_mobile_scanner.bundle/PrivacyInfo.xcprivacy",
+      "size": 373,
+      "mtimeMs": 1793523384000,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/shared_preferences_foundation_shared_preferences_foundation.bundle/Info.plist",
+      "size": 769,
+      "mtimeMs": 1793523384000,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/shared_preferences_foundation_shared_preferences_foundation.bundle/PrivacyInfo.xcprivacy",
+      "size": 598,
+      "mtimeMs": 1793523384000,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/url_launcher_ios_url_launcher_ios.bundle/Info.plist",
+      "size": 717,
+      "mtimeMs": 1793523384000,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/url_launcher_ios_url_launcher_ios.bundle/PrivacyInfo.xcprivacy",
+      "size": 373,
+      "mtimeMs": 1793523384000,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/webview_flutter_wkwebview_webview_flutter_wkwebview.bundle/Info.plist",
+      "size": 754,
+      "mtimeMs": 1793523384000,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/Payload/Runner.app/webview_flutter_wkwebview_webview_flutter_wkwebview.bundle/PrivacyInfo.xcprivacy",
+      "size": 373,
+      "mtimeMs": 1793523384000,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "temp_ipa_inspect/app.zip",
+      "size": 34476662,
+      "mtimeMs": 1793523386000,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "test/shared/theme/app_typography_test.dart",
+      "size": 3880,
+      "mtimeMs": 1793745736776.2788,
+      "category": "typography task"
+    },
+    {
+      "status": "??",
+      "file": "test/shared/theme/reference_typography_test.dart",
+      "size": 1027,
+      "mtimeMs": 1793744400535.9546,
+      "category": "typography task"
+    },
+    {
+      "status": "??",
+      "file": "test/shared/theme/semantic_theme_test.dart",
+      "size": 3357,
+      "mtimeMs": 1793745137174.7754,
+      "category": "typography task"
+    },
+    {
+      "status": "??",
+      "file": "test/shared/theme/semantic_widgets_test.dart",
+      "size": 3093,
+      "mtimeMs": 1793745137181.5144,
+      "category": "typography task"
+    },
+    {
+      "status": "??",
+      "file": "test/typography_visual_capture_test.dart",
+      "size": 5488,
+      "mtimeMs": 1793745261031.921,
+      "category": "typography task"
+    },
+    {
+      "status": "??",
+      "file": "tools/capture_preview_screenshot.mjs",
+      "size": 2283,
+      "mtimeMs": 1793033841378.4934,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "tools/capture_typography_web.mjs",
+      "size": 4663,
+      "mtimeMs": 1793746209519.3147,
+      "category": "typography task"
+    },
+    {
+      "status": "??",
+      "file": "tools/check_typography.mjs",
+      "size": 1978,
+      "mtimeMs": 1793744347986.1194,
+      "category": "typography task"
+    },
+    {
+      "status": "??",
+      "file": "tools/check_typography.test.mjs",
+      "size": 2325,
+      "mtimeMs": 1793744688278.6963,
+      "category": "typography task"
+    },
+    {
+      "status": "??",
+      "file": "tools/deploy_orchestrator.mjs",
+      "size": 36973,
+      "mtimeMs": 1792944153563.8188,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "tools/test_confirmed_email_sync.mjs",
+      "size": 1320,
+      "mtimeMs": 1793164590434.5818,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "tools/test_genuine_storage_api_plan.mjs",
+      "size": 23799,
+      "mtimeMs": 1792937242081.8066,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "tools/test_individual_provider_security.mjs",
+      "size": 30439,
+      "mtimeMs": 1792519042268.681,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "tools/test_individual_provider_two_connection_concurrency.mjs",
+      "size": 12895,
+      "mtimeMs": 1792520609845.9673,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "tools/test_individual_support_recovery.mjs",
+      "size": 19166,
+      "mtimeMs": 1792765222727.5808,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "tools/test_individual_support_security.mjs",
+      "size": 15899,
+      "mtimeMs": 1792764660840.6692,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "tools/test_live_acceptance_api.mjs",
+      "size": 27429,
+      "mtimeMs": 1792479556440.5515,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "tools/test_postchecks_validation.mjs",
+      "size": 11712,
+      "mtimeMs": 1792937177547.393,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "tools/test_profile_status_guard.mjs",
+      "size": 4339,
+      "mtimeMs": 1793164469927.8901,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "tools/test_provider_audit_security.mjs",
+      "size": 22282,
+      "mtimeMs": 1792768361556.9453,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "tools/test_provider_review_concurrency.mjs",
+      "size": 9816,
+      "mtimeMs": 1792792865549.3977,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "tools/test_provider_review_security.mjs",
+      "size": 13596,
+      "mtimeMs": 1792796553555.1042,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "tools/test_remote_security_remaining.mjs",
+      "size": 7432,
+      "mtimeMs": 1792480311068.3528,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "tools/test_safety_concurrency.mjs",
+      "size": 12257,
+      "mtimeMs": 1792851370633.718,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "tools/test_safety_storage_concurrency.mjs",
+      "size": 13090,
+      "mtimeMs": 1792852754305.6992,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "tools/test_signup_role_security.mjs",
+      "size": 2848,
+      "mtimeMs": 1793163526233.916,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "tools/test_storage_api_binary_integrity.mjs",
+      "size": 15954,
+      "mtimeMs": 1792854028105.4812,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "tools/test_student_safety_security.mjs",
+      "size": 22318,
+      "mtimeMs": 1792850503950.377,
+      "category": "pre-existing unrelated work"
+    },
+    {
+      "status": "??",
+      "file": "tools/verify_student_navbar_browser.mjs",
+      "size": 5134,
+      "mtimeMs": 1793023512960.438,
+      "category": "pre-existing unrelated work"
+    }
+  ]
+}

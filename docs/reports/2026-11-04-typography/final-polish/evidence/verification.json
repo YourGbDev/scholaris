@@ -1,0 +1,62 @@
+{
+  "passed": 1254,
+  "skipped": 9,
+  "failed": 7,
+  "failures": [
+    {
+      "file": "admin_users_tab_test.dart",
+      "name": "AdminUsersTab creates a new user account with audit event logging"
+    },
+    {
+      "file": "admin_users_tab_test.dart",
+      "name": "AdminUsersTab edits role and status with audit event logging"
+    },
+    {
+      "file": "admin_users_tab_test.dart",
+      "name": "AdminUsersTab deactivates user with audit event logging"
+    },
+    {
+      "file": "admin_users_tab_test.dart",
+      "name": "AdminUsersTab deletes user with audit event logging"
+    },
+    {
+      "file": "auth_boundary_test.dart",
+      "name": "auth boundary — matches isolation matches recompute for the new user and never reuse prior results"
+    },
+    {
+      "file": "matches_provider_test.dart",
+      "name": "matchesProvider returns ranked eligible scholarships for the student"
+    },
+    {
+      "file": "scholarship_repository_test.dart",
+      "name": "ScholarshipRepository fetchActive returns scholarships from snake_case rows"
+    }
+  ],
+  "onlyKnownOriginalFailures": true,
+  "matchedCaptures": 18,
+  "unchangedScenes": 14,
+  "changedScenes": [
+    "home-390-1.0.png",
+    "home-390-2.0.png",
+    "scholarship-card-320.png",
+    "scholarship-card-390.png"
+  ],
+  "independentReview": "No actionable P1/P2 findings; reviewer independently ran 17 passing focused tests.",
+  "platforms": {
+    "web": "Production build passed. Bundled Inter 400/500/600/700 verified in production font manifest.",
+    "iOS": "Supported native SF Pro proxies verified in installed SDK source. Genuine iOS capture pending.",
+    "Android": "Inter resolver/assets verified. Native capture pending; prior Gradle loopback failure remains outside this typography pass."
+  },
+  "tracking": "No tracking changes: existing size-specific values retained.",
+  "scope": [
+    "lib/features/applications/presentation/applications_screen.dart",
+    "lib/features/dashboard/presentation/student_dashboard_screen.dart",
+    "lib/features/scholarships/screens/discover_screen.dart",
+    "lib/shared/widgets/scholarship_card.dart",
+    "test/hero_section_test.dart",
+    "test/shared/theme/app_typography_test.dart",
+    "test/shared/theme/semantic_widgets_test.dart",
+    "test/typography_visual_capture_test.dart",
+    "test/dashboard_widget_test.dart"
+  ]
+}

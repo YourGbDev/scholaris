@@ -18,6 +18,7 @@
 //   - Pull-to-refresh
 //   - Empty search results state with quick clear action
 
+import 'package:scholaris/shared/theme/app_typography.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:scholaris/features/profile/providers/profile_setup_provider.dart';
@@ -113,22 +114,13 @@ class _SavedScreenState extends ConsumerState<SavedScreen> {
                       children: [
                         Text(
                           'Saved Scholarships',
-                          style: geist(
-                            fontSize: 22,
-                            fontWeight: FontWeight.bold,
-                            color: const Color(0xFF161C27),
-                            letterSpacing: -0.3,
-                          ),
+                          style: AppTypography.style(AppTextRole.screenTitle, fontSize: 22, color: const Color(0xFF161C27), letterSpacing: -0.3),
                         ),
                         CountUpAnimation(
                           targetValue: savedCount,
                           prefix: '(',
                           suffix: ' saved)',
-                          style: geist(
-                            fontSize: 13,
-                            fontWeight: FontWeight.w600,
-                            color: const Color(0xFF404942),
-                          ),
+                          style: AppTypography.style(AppTextRole.badge, fontSize: 13, color: const Color(0xFF404942)),
                         ),
                       ],
                     ),
@@ -170,10 +162,7 @@ class _SavedScreenState extends ConsumerState<SavedScreen> {
                   autofocus: true,
                   decoration: InputDecoration(
                     hintText: 'Search saved scholarships...',
-                    hintStyle: geist(
-                      fontSize: 13.5,
-                      color: const Color(0xFF707971),
-                    ),
+                    hintStyle: AppTypography.style(AppTextRole.placeholder, fontSize: 13.5, color: const Color(0xFF707971)),
                     prefixIcon: const Icon(
                       Icons.search_rounded,
                       size: 20,
@@ -204,7 +193,7 @@ class _SavedScreenState extends ConsumerState<SavedScreen> {
                       borderSide: const BorderSide(color: kPrimary, width: 1.5),
                     ),
                   ),
-                  style: geist(fontSize: 14),
+                  style: AppTypography.style(AppTextRole.input, fontSize: 14),
                 ),
               ),
 
@@ -303,19 +292,12 @@ class _SavedScreenState extends ConsumerState<SavedScreen> {
                   const SizedBox(height: 12),
                   Text(
                     'No matching saved scholarships',
-                    style: geist(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: const Color(0xFF161C27),
-                    ),
+                    style: AppTypography.style(AppTextRole.sectionTitle, fontSize: 16, color: const Color(0xFF161C27)),
                   ),
                   const SizedBox(height: 4),
                   Text(
                     'Try searching with a different keyword.',
-                    style: geist(
-                      fontSize: 13,
-                      color: const Color(0xFF404942),
-                    ),
+                    style: AppTypography.style(AppTextRole.body, fontSize: 13, color: const Color(0xFF404942)),
                   ),
                   const SizedBox(height: 16),
                   PressableScale(
@@ -323,11 +305,7 @@ class _SavedScreenState extends ConsumerState<SavedScreen> {
                       onPressed: () => _searchController.clear(),
                       child: Text(
                         'Clear search',
-                        style: geist(
-                          fontSize: 13,
-                          fontWeight: FontWeight.bold,
-                          color: kPrimary,
-                        ),
+                        style: AppTypography.style(AppTextRole.button, fontSize: 13, color: kPrimary),
                       ),
                     ),
                   ),
@@ -391,11 +369,7 @@ class _SavedScreenState extends ConsumerState<SavedScreen> {
                     added
                         ? 'Scholarship saved to your list!'
                         : 'Scholarship removed from bookmarks',
-                    style: geist(
-                      fontSize: 13,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.white,
-                    ),
+                    style: AppTypography.style(AppTextRole.body, fontSize: 13, color: Colors.white),
                   ),
                 ],
               ),
@@ -448,22 +422,13 @@ class _SavedEmptyState extends ConsumerWidget {
                 Text(
                   "Save scholarships you're interested in",
                   textAlign: TextAlign.center,
-                  style: geist(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: const Color(0xFF161C27),
-                    letterSpacing: -0.2,
-                  ),
+                  style: AppTypography.style(AppTextRole.sectionTitle, fontSize: 18, color: const Color(0xFF161C27), letterSpacing: -0.2),
                 ),
                 const SizedBox(height: 4),
                 Text(
                   "Save scholarships you're interested in so you don't lose them.",
                   textAlign: TextAlign.center,
-                  style: geist(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w600,
-                    color: const Color(0xFF0F4D2E),
-                  ),
+                  style: AppTypography.style(AppTextRole.subtitle, fontSize: 12, color: const Color(0xFF0F4D2E)),
                 ),
                 const SizedBox(height: 6),
                 Text(
@@ -471,11 +436,7 @@ class _SavedEmptyState extends ConsumerWidget {
                   'application requirements without losing your spot. Tap the bookmark '
                   'icon on any scholarship card to save it here.',
                   textAlign: TextAlign.center,
-                  style: geist(
-                    fontSize: 12,
-                    color: const Color(0xFF404942),
-                    height: 1.4,
-                  ),
+                  style: AppTypography.style(AppTextRole.caption, fontSize: 12, color: const Color(0xFF404942), height: 1.4),
                 ),
                 const SizedBox(height: 16),
                 SizedBox(
@@ -495,10 +456,7 @@ class _SavedEmptyState extends ConsumerWidget {
                       icon: const Icon(Icons.arrow_forward_rounded, size: 16),
                       label: Text(
                         'Discover Scholarships',
-                        style: geist(
-                          fontSize: 14,
-                          fontWeight: FontWeight.bold,
-                        ),
+                        style: AppTypography.style(AppTextRole.button, fontSize: 14),
                       ),
                     ),
                   ),
@@ -526,11 +484,7 @@ class _SavedEmptyState extends ConsumerWidget {
                       child: Text(
                         'Trending Grants Near You',
                         overflow: TextOverflow.ellipsis,
-                        style: geist(
-                          fontSize: 14.5,
-                          fontWeight: FontWeight.bold,
-                          color: const Color(0xFF161C27),
-                        ),
+                        style: AppTypography.style(AppTextRole.sectionTitle, fontSize: 14.5, color: const Color(0xFF161C27)),
                       ),
                     ),
                   ],
@@ -545,12 +499,7 @@ class _SavedEmptyState extends ConsumerWidget {
                 ),
                 child: Text(
                   'SUGGESTED',
-                  style: geist(
-                    fontSize: 10,
-                    fontWeight: FontWeight.w700,
-                    color: const Color(0xFF001C38),
-                    letterSpacing: 0.5,
-                  ),
+                  style: AppTypography.style(AppTextRole.badge, fontSize: 10, color: const Color(0xFF001C38), letterSpacing: 0.5),
                 ),
               ),
             ],
@@ -684,11 +633,7 @@ class _SuggestedGrantCard extends ConsumerWidget {
                           ),
                           child: Text(
                             category,
-                            style: geist(
-                              fontSize: 10.5,
-                              fontWeight: FontWeight.w600,
-                              color: const Color(0xFF404942),
-                            ),
+                            style: AppTypography.style(AppTextRole.label, fontSize: 10.5, color: const Color(0xFF404942)),
                           ),
                         ),
                         const SizedBox(height: 6),
@@ -696,21 +641,14 @@ class _SuggestedGrantCard extends ConsumerWidget {
                           title,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
-                          style: geist(
-                            fontSize: 14.5,
-                            fontWeight: FontWeight.bold,
-                            color: const Color(0xFF161C27),
-                          ),
+                          style: AppTypography.style(AppTextRole.cardTitle, fontSize: 14.5, color: const Color(0xFF161C27)),
                         ),
                         const SizedBox(height: 2),
                         Text(
                           provider,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
-                          style: geist(
-                            fontSize: 12,
-                            color: const Color(0xFF404942),
-                          ),
+                          style: AppTypography.style(AppTextRole.subtitle, fontSize: 12, color: const Color(0xFF404942)),
                         ),
                       ],
                     ),
@@ -748,11 +686,7 @@ class _SuggestedGrantCard extends ConsumerWidget {
                                         added
                                             ? 'Scholarship saved to your list!'
                                             : 'Scholarship removed from bookmarks',
-                                        style: geist(
-                                          fontSize: 13,
-                                          fontWeight: FontWeight.w600,
-                                          color: Colors.white,
-                                        ),
+                                        style: AppTypography.style(AppTextRole.body, fontSize: 13, color: Colors.white),
                                       ),
                                     ],
                                   ),
@@ -794,18 +728,11 @@ class _SuggestedGrantCard extends ConsumerWidget {
                       children: [
                         Text(
                           amount,
-                          style: geist(
-                            fontSize: 15,
-                            fontWeight: FontWeight.w700,
-                            color: const Color(0xFF0F4D2E),
-                          ),
+                          style: AppTypography.style(AppTextRole.metric, fontSize: 15, color: const Color(0xFF0F4D2E)),
                         ),
                         Text(
                           frequency,
-                          style: geist(
-                            fontSize: 11,
-                            color: const Color(0xFF404942),
-                          ),
+                          style: AppTypography.style(AppTextRole.caption, fontSize: 11, color: const Color(0xFF404942)),
                         ),
                       ],
                     ),
@@ -822,11 +749,7 @@ class _SuggestedGrantCard extends ConsumerWidget {
                           const SizedBox(width: 3),
                           Text(
                             badgeText,
-                            style: geist(
-                              fontSize: 10.5,
-                              fontWeight: FontWeight.w600,
-                              color: badgeTextColor,
-                            ),
+                            style: AppTypography.style(AppTextRole.badge, fontSize: 10.5, color: badgeTextColor),
                           ),
                         ],
                       ),

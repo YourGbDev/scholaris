@@ -4,10 +4,10 @@
 // White workspace and sidebar, #0F4D2E active fill,
 // pure white active typography, subtle hairline borders, and responsive elevation.
 
+import 'package:scholaris/shared/theme/app_typography.dart';
 import 'package:scholaris/shared/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 
-import '../../../../shared/theme/app_motion.dart';
 
 // Brand & Institutional Colors
 const kOrgPrimary = Color(0xFF0F4D2E); // Bridge Green
@@ -58,62 +58,6 @@ const BorderRadius kOrgPillRadius = BorderRadius.all(Radius.circular(20));
 const List<BoxShadow> kOrgCardShadow = kCardElevationCrisp;
 
 // Typography Helpers adhering to Apple HIG Optical Typography (Section 15)
-TextStyle orgHeadline({
-  double fontSize = 18,
-  FontWeight fontWeight = FontWeight.w700,
-  Color color = kOrgTextPrimary,
-  double? letterSpacing,
-  double? height,
-}) =>
-    geist(
-      fontSize: fontSize,
-      fontWeight: fontWeight,
-      color: color,
-      letterSpacing: letterSpacing ?? opticalTracking(fontSize),
-      height: height ?? opticalLeading(fontSize, isBody: false),
-    );
-
-TextStyle orgBody({
-  double fontSize = 13.5,
-  FontWeight fontWeight = FontWeight.w400,
-  Color color = kOrgTextPrimary,
-  double? letterSpacing,
-  double? height,
-}) =>
-    geist(
-      fontSize: fontSize,
-      fontWeight: fontWeight,
-      color: color,
-      letterSpacing: letterSpacing ?? opticalTracking(fontSize),
-      height: height ?? (fontSize <= 16 ? 1.45 : opticalLeading(fontSize, isBody: true)),
-    );
-
-TextStyle orgLabel({
-  double fontSize = 11.5,
-  FontWeight fontWeight = FontWeight.w600,
-  Color color = kOrgTextSecondary,
-  double? letterSpacing,
-  double? height,
-}) =>
-    geist(
-      fontSize: fontSize,
-      fontWeight: fontWeight,
-      color: color,
-      letterSpacing: letterSpacing ?? opticalTracking(fontSize),
-      height: height ?? opticalLeading(fontSize, isBody: false),
-    );
-
-/// Compatibility helper; counts, metrics, timestamps, and IDs use Geist Sans.
-TextStyle orgDataMono({
-  double fontSize = 12.5,
-  FontWeight fontWeight = FontWeight.w500,
-  Color color = kOrgTextPrimary,
-}) =>
-    geist(
-      fontSize: fontSize,
-      fontWeight: fontWeight,
-      color: color,
-    );
 
 /// Tabular figures helper for numeric typography (prevents digit horizontal jittering).
 TextStyle orgTabularFigures(TextStyle base) => base.copyWith(
@@ -123,7 +67,7 @@ TextStyle orgTabularFigures(TextStyle base) => base.copyWith(
       ],
     );
 
-/// Geist Sans pill container helper for IDs, hashes, and reference codes.
+/// Reference-code pill container helper for IDs, hashes, and reference codes.
 Widget orgIdPill(String idText) => Container(
       padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
       decoration: BoxDecoration(
@@ -133,6 +77,6 @@ Widget orgIdPill(String idText) => Container(
       ),
       child: Text(
         idText,
-        style: orgDataMono(fontSize: 11, color: kOrgTextSecondary),
+        style: AppTypography.style(AppTextRole.caption, fontSize: 11, color: kOrgTextSecondary),
       ),
     );

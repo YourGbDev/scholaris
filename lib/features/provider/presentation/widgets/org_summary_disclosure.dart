@@ -1,3 +1,4 @@
+import 'package:scholaris/shared/theme/app_typography.dart';
 import 'package:flutter/material.dart';
 
 import '../../../../shared/theme/app_motion.dart';
@@ -27,10 +28,10 @@ class OrgSummaryDisclosure extends StatelessWidget {
           ? Duration.zero
           : const Duration(milliseconds: 200),
     ),
-    title: Text(title, style: orgLabel(fontSize: 13, color: kOrgPrimary)),
+    title: Text(title, style: AppTypography.style(AppTextRole.cardTitle, fontSize: 13, color: kOrgPrimary, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: false))),
     subtitle: Text(
       summary,
-      style: orgBody(fontSize: 13, color: kOrgTextSecondary),
+      style: AppTypography.style(AppTextRole.body, fontSize: 13, color: kOrgTextSecondary, letterSpacing: opticalTracking(13), height: ((13) <= 16 ? 1.45 : opticalLeading(13, isBody: true))),
     ),
     children: [child],
   );

@@ -3,7 +3,7 @@
 // Provider modal dialog generating and displaying a shareable QR code for a published
 // scholarship using the canonical `scholaris://scholarships/{id}` URI scheme.
 
-import 'package:scholaris/shared/theme/app_theme.dart';
+import 'package:scholaris/shared/theme/app_typography.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:qr_flutter/qr_flutter.dart';
@@ -69,21 +69,14 @@ class _ScholarshipQrDialogState extends State<_ScholarshipQrDialog> {
                       children: [
                         Text(
                           'Scholarship QR Code',
-                          style: geist(
-                            fontSize: 18,
-                            fontWeight: FontWeight.w700,
-                            color: const Color(0xFF161C27),
-                          ),
+                          style: AppTypography.style(AppTextRole.cardTitle, fontSize: 18, color: const Color(0xFF161C27)),
                         ),
                         const SizedBox(height: 2),
                         Text(
                           s.title,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
-                          style: geist(
-                            fontSize: 12.5,
-                            color: const Color(0xFF707971),
-                          ),
+                          style: AppTypography.style(AppTextRole.subtitle, fontSize: 12.5, color: const Color(0xFF707971)),
                         ),
                       ],
                     ),
@@ -134,10 +127,7 @@ class _ScholarshipQrDialogState extends State<_ScholarshipQrDialog> {
                         _qrPayload,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: geist(
-                          fontSize: 11,
-                          color: const Color(0xFF404942),
-                        ),
+                        style: AppTypography.style(AppTextRole.caption, fontSize: 11, color: const Color(0xFF404942)),
                       ),
                     ),
                     const SizedBox(width: 6),
@@ -165,13 +155,7 @@ class _ScholarshipQrDialogState extends State<_ScholarshipQrDialog> {
                               const SizedBox(width: 4),
                               Text(
                                 _copied ? 'Copied' : 'Copy',
-                                style: geist(
-                                  fontSize: 11.5,
-                                  fontWeight: FontWeight.w600,
-                                  color: _copied
-                                      ? const Color(0xFF0F4D2E)
-                                      : const Color(0xFF0058BC),
-                                ),
+                                style: AppTypography.style(AppTextRole.button, fontSize: 11.5, color: _copied ? const Color(0xFF0F4D2E) : const Color(0xFF0058BC)),
                               ),
                             ],
                           ),
@@ -186,10 +170,7 @@ class _ScholarshipQrDialogState extends State<_ScholarshipQrDialog> {
               Text(
                 'Students can scan this code with the Scholaris student app to open criteria and apply directly.',
                 textAlign: TextAlign.center,
-                style: geist(
-                  fontSize: 12,
-                  color: const Color(0xFF707971),
-                ),
+                style: AppTypography.style(AppTextRole.caption, fontSize: 12, color: const Color(0xFF707971)),
               ),
               const SizedBox(height: 16),
 
@@ -209,10 +190,7 @@ class _ScholarshipQrDialogState extends State<_ScholarshipQrDialog> {
                     onPressed: () => Navigator.of(context).pop(),
                     child: Text(
                       'Done',
-                      style: geist(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600,
-                      ),
+                      style: AppTypography.style(AppTextRole.button, fontSize: 14),
                     ),
                   ),
                 ),

@@ -1,3 +1,5 @@
+import 'package:scholaris/shared/theme/app_motion.dart' show opticalTracking, opticalLeading;
+import 'package:scholaris/shared/theme/app_typography.dart';
 import 'individual_support_summary.dart';
 
 import 'package:flutter/material.dart';
@@ -52,7 +54,7 @@ class ProviderOverview extends ConsumerWidget {
             children: [
               Text(
                 'Your workspace could not load.',
-                style: orgHeadline(fontSize: 20),
+                style: AppTypography.style(AppTextRole.cardTitle, fontSize: 20, color: kOrgTextPrimary, letterSpacing: opticalTracking(20), height: opticalLeading(20, isBody: false)),
               ),
               const SizedBox(height: 12),
               const Text('Check your connection and try again.'),
@@ -196,11 +198,7 @@ class ProviderOverviewPanel extends StatelessWidget {
                           : hasActiveScholarship
                           ? 'YOUR IMPACT'
                           : 'GET STARTED',
-                      style: orgLabel(
-                        fontSize: 11,
-                        color: kOrgPrimary,
-                        letterSpacing: 1,
-                      ),
+                      style: AppTypography.style(AppTextRole.badge, fontSize: 11, color: kOrgPrimary, letterSpacing: 1, height: opticalLeading(11, isBody: false)),
                     ),
                   ),
                 ],
@@ -212,10 +210,7 @@ class ProviderOverviewPanel extends StatelessWidget {
                     : hasActiveScholarship
                     ? 'You’re all caught up'
                     : 'Start your first scholarship',
-                style: orgHeadline(
-                  fontSize: compact ? 20 : 23,
-                  color: kOrgPrimary,
-                ),
+                style: AppTypography.style(AppTextRole.cardTitle, fontSize: compact ? 20 : 23, color: kOrgPrimary, letterSpacing: opticalTracking(compact ? 20 : 23), height: opticalLeading(compact ? 20 : 23, isBody: false)),
               ),
               const SizedBox(height: 6),
               Text(
@@ -224,7 +219,7 @@ class ProviderOverviewPanel extends StatelessWidget {
                           ? 'There are no applications awaiting review.'
                           : 'Visit your scholarships to create an opportunity for students.'
                     : '$pendingCount ${pendingCount == 1 ? 'application needs' : 'applications need'} a closer look. Take them one at a time.',
-                style: orgBody(fontSize: 14, color: kOrgTextSecondary),
+                style: AppTypography.style(AppTextRole.body, fontSize: 14, color: kOrgTextSecondary, letterSpacing: opticalTracking(14), height: ((14) <= 16 ? 1.45 : opticalLeading(14, isBody: true))),
               ),
               const SizedBox(height: 8),
               FilledButton.icon(
@@ -258,21 +253,14 @@ class ProviderOverviewPanel extends StatelessWidget {
                     individual
                         ? 'YOUR INDIVIDUAL PROVIDER WORKSPACE'
                         : 'YOUR ORGANIZATION WORKSPACE',
-                    style: orgLabel(
-                      fontSize: 10,
-                      color: kOrgTextSecondary,
-                      letterSpacing: 1.6,
-                    ),
+                    style: AppTypography.style(AppTextRole.label, fontSize: 10, color: kOrgTextSecondary, letterSpacing: 1.6, height: opticalLeading(10, isBody: false)),
                   ),
                   const SizedBox(height: 8),
                   Text(
                     individual
                         ? 'Hi, $firstName — a little support. A new beginning.'
                         : 'Organization overview',
-                    style: orgHeadline(
-                      fontSize: compact ? 24 : 28,
-                      color: kOrgPrimary,
-                    ),
+                    style: AppTypography.style(AppTextRole.screenTitle, fontSize: compact ? 24 : 28, color: kOrgPrimary, letterSpacing: opticalTracking(compact ? 24 : 28), height: opticalLeading(compact ? 24 : 28, isBody: false)),
                   ),
                   const SizedBox(height: 20),
                   Container(
@@ -387,7 +375,7 @@ class ProviderOverviewPanel extends StatelessWidget {
                     children: [
                       Text(
                         'Your scholarship programs',
-                        style: orgHeadline(fontSize: 21),
+                        style: AppTypography.style(AppTextRole.sectionTitle, fontSize: 21, color: kOrgTextPrimary, letterSpacing: opticalTracking(21), height: opticalLeading(21, isBody: false)),
                       ),
                       OutlinedButton.icon(
                         style: OutlinedButton.styleFrom(
@@ -408,12 +396,12 @@ class ProviderOverviewPanel extends StatelessWidget {
                         children: [
                           Text(
                             'Your first opportunity starts here.',
-                            style: orgHeadline(fontSize: 18),
+                            style: AppTypography.style(AppTextRole.cardTitle, fontSize: 18, color: kOrgTextPrimary, letterSpacing: opticalTracking(18), height: opticalLeading(18, isBody: false)),
                           ),
                           const SizedBox(height: 8),
                           Text(
                             'Set your support, requirements, and application deadline in your scholarship workspace.',
-                            style: orgBody(color: kOrgTextSecondary),
+                            style: AppTypography.style(AppTextRole.caption, color: kOrgTextSecondary, fontSize: 13.5, letterSpacing: opticalTracking(13.5), height: ((13.5) <= 16 ? 1.45 : opticalLeading(13.5, isBody: true))),
                           ),
                         ],
                       ),
@@ -432,12 +420,12 @@ class ProviderOverviewPanel extends StatelessWidget {
                                   children: [
                                     Text(
                                       scholarship.title,
-                                      style: orgHeadline(fontSize: 16),
+                                      style: AppTypography.style(AppTextRole.cardTitle, fontSize: 16, color: kOrgTextPrimary, letterSpacing: opticalTracking(16), height: opticalLeading(16, isBody: false)),
                                     ),
                                     const SizedBox(height: 8),
                                     Text(
                                       '${scholarship.formattedAmount} ${scholarship.formattedFrequency}',
-                                      style: orgBody(color: kOrgTextSecondary),
+                                      style: AppTypography.style(AppTextRole.metric, color: kOrgTextSecondary, fontSize: 13.5, letterSpacing: opticalTracking(13.5), height: ((13.5) <= 16 ? 1.45 : opticalLeading(13.5, isBody: true))),
                                     ),
                                   ],
                                 ),
@@ -456,11 +444,7 @@ class ProviderOverviewPanel extends StatelessWidget {
                                 ),
                                 child: Text(
                                   scholarship.isActive ? 'Active' : 'Closed',
-                                  style: orgLabel(
-                                    color: scholarship.isActive
-                                        ? kOrgPrimary
-                                        : kOrgTextSecondary,
-                                  ),
+                                  style: AppTypography.style(AppTextRole.badge, color: scholarship.isActive ? kOrgPrimary : kOrgTextSecondary, fontSize: 11.5, letterSpacing: opticalTracking(11.5), height: opticalLeading(11.5, isBody: false)),
                                 ),
                               ),
                             ],
@@ -473,7 +457,7 @@ class ProviderOverviewPanel extends StatelessWidget {
                     individual
                         ? 'Clear criteria. Thoughtful reviews. Decisions made by people.'
                         : 'Application and program information reflects recorded activity.',
-                    style: orgBody(fontSize: 12, color: kOrgTextSecondary),
+                    style: AppTypography.style(AppTextRole.body, fontSize: 12, color: kOrgTextSecondary, letterSpacing: opticalTracking(12), height: ((12) <= 16 ? 1.45 : opticalLeading(12, isBody: true))),
                   ),
                 ],
               ),
@@ -500,12 +484,12 @@ class ProviderOverviewPanel extends StatelessWidget {
         child: ProviderOverviewCard(
           heading: Text(
             label,
-            style: orgBody(fontSize: 12, color: kOrgTextSecondary),
+            style: AppTypography.style(AppTextRole.label, fontSize: 12, color: kOrgTextSecondary, letterSpacing: opticalTracking(12), height: ((12) <= 16 ? 1.45 : opticalLeading(12, isBody: true))),
           ),
           child: OrgMetricCount(
             motionId: 'individual-overview.$label',
             targetValue: value,
-            style: orgHeadline(fontSize: 30),
+            style: AppTypography.style(AppTextRole.metric, fontSize: 30, color: kOrgTextPrimary, letterSpacing: opticalTracking(30), height: opticalLeading(30, isBody: false)),
           ),
         ),
       ),

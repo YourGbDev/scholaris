@@ -1,0 +1,182 @@
+[
+  {
+    "comparison": "01-admin-320-comparison.png",
+    "source": "admin-320.png",
+    "width": 320,
+    "height": 844,
+    "beforePixelSha256": "308aabdcd16a2bffdce1104f74ad72591474597739bafaff911d53cbcdda0abe",
+    "afterPixelSha256": "308aabdcd16a2bffdce1104f74ad72591474597739bafaff911d53cbcdda0abe",
+    "exportedPanelsPixelIdentical": true,
+    "sha256": "3631fe109ee6d61e557f738f11200e64b5ea785b65c70b7a8cb5175c11b0c5d0"
+  },
+  {
+    "comparison": "02-admin-390-comparison.png",
+    "source": "admin-390.png",
+    "width": 390,
+    "height": 844,
+    "beforePixelSha256": "bcbf8dd940657f1ce51f2b885dc528d23553bb49bad5c0ab9f73c22f8c284173",
+    "afterPixelSha256": "bcbf8dd940657f1ce51f2b885dc528d23553bb49bad5c0ab9f73c22f8c284173",
+    "exportedPanelsPixelIdentical": true,
+    "sha256": "0eef3d1fbc6119a13d8bfa4ef668b0d83b67809355eede22bd4cf33df92f9307"
+  },
+  {
+    "comparison": "03-authentication-320-comparison.png",
+    "source": "authentication-320.png",
+    "width": 320,
+    "height": 844,
+    "beforePixelSha256": "519048491b47a111960f8de2146eac6ae3b401a172dacfc0e7bac5c4310a7da5",
+    "afterPixelSha256": "519048491b47a111960f8de2146eac6ae3b401a172dacfc0e7bac5c4310a7da5",
+    "exportedPanelsPixelIdentical": true,
+    "sha256": "c053ec44cd608c962f8f2e491644ac4e6a8950f722aebeffc77f9ea4c3b1b0c3"
+  },
+  {
+    "comparison": "04-authentication-390-comparison.png",
+    "source": "authentication-390.png",
+    "width": 390,
+    "height": 844,
+    "beforePixelSha256": "94b87dab3c52e98c88c3fa0eaa199d009a5f062c3c83047ef0afc76b6e510962",
+    "afterPixelSha256": "94b87dab3c52e98c88c3fa0eaa199d009a5f062c3c83047ef0afc76b6e510962",
+    "exportedPanelsPixelIdentical": true,
+    "sha256": "90dbd1682517c716f38fa8271ec078c0a2db9862e609f0520e01dc823bbbfb4a"
+  },
+  {
+    "comparison": "05-authentication-errors-320-comparison.png",
+    "source": "authentication-errors-320.png",
+    "width": 320,
+    "height": 844,
+    "beforePixelSha256": "9a2bf7605b177d8bd705020c7b7102dbd139855e237b83dcf3c2c057ed7fe224",
+    "afterPixelSha256": "9a2bf7605b177d8bd705020c7b7102dbd139855e237b83dcf3c2c057ed7fe224",
+    "exportedPanelsPixelIdentical": true,
+    "sha256": "16fc769d6829f12e0f608d03981694de2d888943e32acd77d8a38eb5053d6772"
+  },
+  {
+    "comparison": "06-authentication-errors-390-comparison.png",
+    "source": "authentication-errors-390.png",
+    "width": 390,
+    "height": 844,
+    "beforePixelSha256": "82b7bb4e274ccf272e8065502b904ddbd46cfab1fe4d65430888b528d3dfb5f4",
+    "afterPixelSha256": "82b7bb4e274ccf272e8065502b904ddbd46cfab1fe4d65430888b528d3dfb5f4",
+    "exportedPanelsPixelIdentical": true,
+    "sha256": "28e9d9c7542ccffec6093bd4a72248ccdecc607bfc80a98bdcbf78467e246c88"
+  },
+  {
+    "comparison": "07-home-390-1.0-comparison.png",
+    "source": "home-390-1.0.png",
+    "width": 390,
+    "height": 1100,
+    "beforePixelSha256": "34c8403d34fa577c699eb7e70f2e6ff40f3918ac007a9c1da4375ec9544a972a",
+    "afterPixelSha256": "4a50fb1b45f1f931eaa4d2d6f82b225a124bf12e9554e8eca0fc44f77d8a98b3",
+    "exportedPanelsPixelIdentical": true,
+    "sha256": "8d0128e2838df751830e61836f86bac3e6bc4968dff4145d7785173cd5f25711"
+  },
+  {
+    "comparison": "08-home-390-2.0-comparison.png",
+    "source": "home-390-2.0.png",
+    "width": 390,
+    "height": 1100,
+    "beforePixelSha256": "de4afe824c399195b37c6bd4d8f40750e78493810549ac397ccb46a845f3e655",
+    "afterPixelSha256": "63b3a7bd05f56a344d8fc83bc753a901be204912dc28ceaefdf780fdf04babf4",
+    "exportedPanelsPixelIdentical": true,
+    "sha256": "cccd246d561ce60124c0f0f13752ae2e9c6baeafd1f73aaca234cbd16e8de95b"
+  },
+  {
+    "comparison": "09-logout-dialog-320-comparison.png",
+    "source": "logout-dialog-320.png",
+    "width": 320,
+    "height": 844,
+    "beforePixelSha256": "2c45144f9ff10af79dfedcf235f321aa9baf684ccbd1939459e6ea70eb6ecc1f",
+    "afterPixelSha256": "2c45144f9ff10af79dfedcf235f321aa9baf684ccbd1939459e6ea70eb6ecc1f",
+    "exportedPanelsPixelIdentical": true,
+    "sha256": "d5eab6d7fcb1b28f4dde29be6f76a2676255f84b59fe1cb5222a88b68d5ec1df"
+  },
+  {
+    "comparison": "10-logout-dialog-390-comparison.png",
+    "source": "logout-dialog-390.png",
+    "width": 390,
+    "height": 844,
+    "beforePixelSha256": "ce7f3d4be8838c0a148b9c757e465783d07eb42bee9f92c7b1dfa9acbff556c5",
+    "afterPixelSha256": "ce7f3d4be8838c0a148b9c757e465783d07eb42bee9f92c7b1dfa9acbff556c5",
+    "exportedPanelsPixelIdentical": true,
+    "sha256": "ede42d09ccac24f8fafda3d4f23bf813897922fb0bdf1cda8ae3a9b16daba232"
+  },
+  {
+    "comparison": "11-onboarding-320-comparison.png",
+    "source": "onboarding-320.png",
+    "width": 320,
+    "height": 844,
+    "beforePixelSha256": "a7b5545a186d5546a13953f73d9fdadbe1da92ec88a4ae81998a2f400f4d14e6",
+    "afterPixelSha256": "a7b5545a186d5546a13953f73d9fdadbe1da92ec88a4ae81998a2f400f4d14e6",
+    "exportedPanelsPixelIdentical": true,
+    "sha256": "6915bdf3f825b5d1c483e588dd8aceecc3af83dbf3ad23fe2dbed7604198f901"
+  },
+  {
+    "comparison": "12-onboarding-390-comparison.png",
+    "source": "onboarding-390.png",
+    "width": 390,
+    "height": 844,
+    "beforePixelSha256": "a50593c2e1da297764887aae0c0be0c07a997d043bd497d87319277a6a539cf9",
+    "afterPixelSha256": "a50593c2e1da297764887aae0c0be0c07a997d043bd497d87319277a6a539cf9",
+    "exportedPanelsPixelIdentical": true,
+    "sha256": "34d0f27790a7dfffde402d6040650360bf10e606073f4c4596800f2496221de3"
+  },
+  {
+    "comparison": "13-provider-individual-320-comparison.png",
+    "source": "provider-individual-320.png",
+    "width": 320,
+    "height": 844,
+    "beforePixelSha256": "011a639c72d7bff305b81fd431a9e8795d0e2811bd0d7a6ff188ae05fdf88c7f",
+    "afterPixelSha256": "011a639c72d7bff305b81fd431a9e8795d0e2811bd0d7a6ff188ae05fdf88c7f",
+    "exportedPanelsPixelIdentical": true,
+    "sha256": "2c0b514f51678b99bd3284078067384264d028e78aeee35977f0f8bdf1f7eb97"
+  },
+  {
+    "comparison": "14-provider-individual-390-comparison.png",
+    "source": "provider-individual-390.png",
+    "width": 390,
+    "height": 844,
+    "beforePixelSha256": "b7fa89692947a0fb2a4144b781b15fb2a965b915e573e3e8b594925ebb5d1260",
+    "afterPixelSha256": "b7fa89692947a0fb2a4144b781b15fb2a965b915e573e3e8b594925ebb5d1260",
+    "exportedPanelsPixelIdentical": true,
+    "sha256": "2b6fba4fca307c09b1673f249c5752e8b503319ce7bbc31601d1a033cbfd2a32"
+  },
+  {
+    "comparison": "15-provider-organization-320-comparison.png",
+    "source": "provider-organization-320.png",
+    "width": 320,
+    "height": 844,
+    "beforePixelSha256": "4301c0b7066dc27305f4d7fedd5e66f80df4bbd2d8daa688e3b35c42d6753fed",
+    "afterPixelSha256": "4301c0b7066dc27305f4d7fedd5e66f80df4bbd2d8daa688e3b35c42d6753fed",
+    "exportedPanelsPixelIdentical": true,
+    "sha256": "1dff6bc79853aeb2b90505f1f7404c1751cb49cfd2cd16a15899f8cbfc1cb4c5"
+  },
+  {
+    "comparison": "16-provider-organization-390-comparison.png",
+    "source": "provider-organization-390.png",
+    "width": 390,
+    "height": 844,
+    "beforePixelSha256": "c55abc8e279122bafcf90eb5f0e9acf128085ad0bebd1761e26140d6cce3b4af",
+    "afterPixelSha256": "c55abc8e279122bafcf90eb5f0e9acf128085ad0bebd1761e26140d6cce3b4af",
+    "exportedPanelsPixelIdentical": true,
+    "sha256": "3e8544607e17d2db6c7377963f4c09027108127b8eb658b42d5393d7a3e8f99d"
+  },
+  {
+    "comparison": "17-scholarship-card-320-comparison.png",
+    "source": "scholarship-card-320.png",
+    "width": 320,
+    "height": 844,
+    "beforePixelSha256": "69455cf552be7b1fab2e9fa78ece0e788ee19a936a6d88df01914d1156101fc3",
+    "afterPixelSha256": "d2ecb1f3afebdf8b136c1eba3357fa33b24da87b7828ac58e0a7c0f56fb53a69",
+    "exportedPanelsPixelIdentical": true,
+    "sha256": "3d0ee8dd7881caff042a0d433cd654a702dfc083dedadc3584ec00a8390010df"
+  },
+  {
+    "comparison": "18-scholarship-card-390-comparison.png",
+    "source": "scholarship-card-390.png",
+    "width": 390,
+    "height": 844,
+    "beforePixelSha256": "7add611dbf8674066ba9ef1742dd52aca47d9a9804316be3a0ceeb73d267b276",
+    "afterPixelSha256": "398c97ac6f16dd5cfebeaeef7d1461b47de2e37a715da27b2f7f6d2cfbdde58f",
+    "exportedPanelsPixelIdentical": true,
+    "sha256": "07f5c54a71647eb8923fe2cb92d266ca2d65761c5912e470188bdfd5df16a31e"
+  }
+]

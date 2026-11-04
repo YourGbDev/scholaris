@@ -4,6 +4,7 @@
 // Philippine trust network, institutional SSO, provider portal).
 // Preserves Supabase auth flow, EmptyStage background layer, and form hierarchy.
 
+import 'package:scholaris/shared/theme/app_typography.dart';
 import 'dart:async';
 
 import 'package:flutter/foundation.dart' show kIsWeb;
@@ -239,7 +240,7 @@ class _LoginScreenState extends State<LoginScreen>
   SnackBar _snackBar(String message) => SnackBar(
         content: Text(
           message,
-          style: openSans(color: Colors.white, fontSize: 13),
+          style: AppTypography.style(AppTextRole.body, color: Colors.white, fontSize: 13, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: true)),
         ),
         backgroundColor: const Color(0xFF161C27),
         behavior: SnackBarBehavior.floating,
@@ -293,11 +294,7 @@ class _LoginScreenState extends State<LoginScreen>
                       Expanded(
                         child: Text(
                           'Account Temporarily Locked',
-                          style: poppins(
-                            fontSize: 13,
-                            fontWeight: FontWeight.bold,
-                            color: const Color(0xFFBA1A1A),
-                          ),
+                          style: AppTypography.style(AppTextRole.cardTitle, fontSize: 13, color: const Color(0xFFBA1A1A), letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: false)),
                         ),
                       ),
                       Container(
@@ -309,11 +306,7 @@ class _LoginScreenState extends State<LoginScreen>
                         ),
                         child: Text(
                           timeStr,
-                          style: poppins(
-                            fontSize: 11,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
-                          ),
+                          style: AppTypography.style(AppTextRole.metric, fontSize: 11, color: Colors.white, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: false)),
                         ),
                       ),
                     ],
@@ -321,11 +314,7 @@ class _LoginScreenState extends State<LoginScreen>
                   const SizedBox(height: 4),
                   Text(
                     'Due to ${status.failedAttempts} consecutive failed attempts, sign-in is disabled. Please wait for the timer to expire or reset your password.',
-                    style: openSans(
-                      fontSize: 11,
-                      color: const Color(0xFF410002),
-                      height: 1.35,
-                    ),
+                    style: AppTypography.style(AppTextRole.body, fontSize: 11, color: const Color(0xFF410002), height: 1.35, letterSpacing: opticalTracking(11)),
                   ),
                 ],
               ),
@@ -367,12 +356,7 @@ class _LoginScreenState extends State<LoginScreen>
           Expanded(
             child: Text(
               warningText,
-              style: openSans(
-                fontSize: 11,
-                fontWeight: FontWeight.w600,
-                color: const Color(0xFF5D4037),
-                height: 1.35,
-              ),
+              style: AppTypography.style(AppTextRole.caption, fontSize: 11, color: const Color(0xFF5D4037), height: 1.35, letterSpacing: opticalTracking(11)),
             ),
           ),
         ],
@@ -468,11 +452,7 @@ class _LoginScreenState extends State<LoginScreen>
                                       const SizedBox(width: 4),
                                       Text(
                                         'Help',
-                                        style: openSans(
-                                          fontSize: 12,
-                                          fontWeight: FontWeight.w600,
-                                          color: const Color(0xFF161C27),
-                                        ),
+                                        style: AppTypography.style(AppTextRole.button, fontSize: 12, color: const Color(0xFF161C27), letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: true)),
                                       ),
                                     ],
                                   ),
@@ -543,12 +523,7 @@ class _LoginScreenState extends State<LoginScreen>
                                       const SizedBox(width: 4),
                                       Text(
                                         'PADAYON, ISKOLAR',
-                                        style: poppins(
-                                          fontSize: 9.5,
-                                          fontWeight: FontWeight.w700,
-                                          color: const Color(0xFFFFDEA3),
-                                          letterSpacing: 0.5,
-                                        ),
+                                        style: AppTypography.style(AppTextRole.badge, fontSize: 9.5, color: const Color(0xFFFFDEA3), letterSpacing: 0.5, height: opticalLeading(9.5, isBody: false)),
                                       ),
                                     ],
                                   ),
@@ -558,12 +533,7 @@ class _LoginScreenState extends State<LoginScreen>
                                 // Welcome Back heading
                                 Text(
                                   'Welcome Back',
-                                  style: poppins(
-                                    fontSize: 22,
-                                    fontWeight: FontWeight.w800,
-                                    color: const Color(0xFF0F4D2E),
-                                    letterSpacing: -0.5,
-                                  ),
+                                  style: AppTypography.style(AppTextRole.display, fontSize: 22, color: const Color(0xFF0F4D2E), letterSpacing: -0.5, height: opticalLeading(22, isBody: false)),
                                 ),
 
                                 // Retained headline string for test contract compatibility
@@ -587,11 +557,7 @@ class _LoginScreenState extends State<LoginScreen>
                                 // Subtext
                                 Text(
                                   'Sign in to track ongoing applications and unlock newly matched Philippine academic grants.',
-                                  style: openSans(
-                                    fontSize: 11.5,
-                                    color: const Color(0xFF404942),
-                                    height: 1.3,
-                                  ),
+                                  style: AppTypography.style(AppTextRole.subtitle, fontSize: 11.5, color: const Color(0xFF404942), height: 1.3, letterSpacing: opticalTracking(11.5)),
                                 ),
                                 const SizedBox(height: 6),
 
@@ -603,11 +569,7 @@ class _LoginScreenState extends State<LoginScreen>
                                 // Email Field
                                 Text(
                                   'Email',
-                                  style: poppins(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w600,
-                                    color: const Color(0xFF161C27),
-                                  ),
+                                  style: AppTypography.style(AppTextRole.label, fontSize: 14, color: const Color(0xFF161C27), letterSpacing: opticalTracking(14), height: opticalLeading(14, isBody: false)),
                                 ),
                                 const SizedBox(height: 6),
                                 TextFormField(
@@ -616,11 +578,11 @@ class _LoginScreenState extends State<LoginScreen>
                                   textInputAction: TextInputAction.next,
                                   autofillHints: const [AutofillHints.username, AutofillHints.email],
                                   validator: _validateEmail,
-                                  style: openSans(fontSize: 14),
+                                  style: AppTypography.style(AppTextRole.input, fontSize: 14, letterSpacing: opticalTracking(14), height: opticalLeading(14, isBody: true)),
                                   decoration: InputDecoration(
                                     prefixIcon: const Icon(Icons.alternate_email, size: 20, color: Color(0xFF707971)),
                                     hintText: 'e.g. maya.santos@up.edu.ph',
-                                    hintStyle: openSans(fontSize: 14, color: const Color(0xFF707971)),
+                                    hintStyle: AppTypography.style(AppTextRole.placeholder, fontSize: 14, color: const Color(0xFF707971), letterSpacing: opticalTracking(14), height: opticalLeading(14, isBody: true)),
                                     filled: true,
                                     fillColor: Colors.white,
                                     contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
@@ -648,11 +610,7 @@ class _LoginScreenState extends State<LoginScreen>
                                   children: [
                                     Text(
                                       'Password',
-                                      style: poppins(
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.w600,
-                                        color: const Color(0xFF161C27),
-                                      ),
+                                      style: AppTypography.style(AppTextRole.label, fontSize: 14, color: const Color(0xFF161C27), letterSpacing: opticalTracking(14), height: opticalLeading(14, isBody: false)),
                                     ),
                                     Flexible(
                                       child: TextButton(
@@ -666,11 +624,7 @@ class _LoginScreenState extends State<LoginScreen>
                                         child: Text(
                                           'Forgot password?',
                                           overflow: TextOverflow.ellipsis,
-                                          style: poppins(
-                                            fontSize: 13,
-                                            fontWeight: FontWeight.w600,
-                                            color: kNavyTrust,
-                                          ),
+                                          style: AppTypography.style(AppTextRole.button, fontSize: 13, color: kNavyTrust, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: false)),
                                         ),
                                       ),
                                     ),
@@ -686,7 +640,7 @@ class _LoginScreenState extends State<LoginScreen>
                                           ? null
                                           : _onLogin(),
                                   validator: (v) => (v == null || v.isEmpty) ? 'Enter your password.' : null,
-                                  style: openSans(fontSize: 14),
+                                  style: AppTypography.style(AppTextRole.input, fontSize: 14, letterSpacing: opticalTracking(14), height: opticalLeading(14, isBody: true)),
                                   decoration: InputDecoration(
                                     prefixIcon: const Icon(Icons.lock_outline, size: 20, color: Color(0xFF707971)),
                                     suffixIcon: IconButton(
@@ -698,7 +652,7 @@ class _LoginScreenState extends State<LoginScreen>
                                       onPressed: () => setState(() => _obscurePassword = !_obscurePassword),
                                     ),
                                     hintText: 'Enter your password',
-                                    hintStyle: openSans(fontSize: 14, color: const Color(0xFF707971)),
+                                    hintStyle: AppTypography.style(AppTextRole.placeholder, fontSize: 14, color: const Color(0xFF707971), letterSpacing: opticalTracking(14), height: opticalLeading(14, isBody: true)),
                                     filled: true,
                                     fillColor: Colors.white,
                                     contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
@@ -751,10 +705,7 @@ class _LoginScreenState extends State<LoginScreen>
                                         child: Text(
                                           'Remember me for 30 days',
                                           overflow: TextOverflow.ellipsis,
-                                           style: openSans(
-                                             fontSize: 13,
-                                             color: const Color(0xFF404944),
-                                           ),
+                                           style: AppTypography.style(AppTextRole.label, fontSize: 13, color: const Color(0xFF404944), letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: true)),
                                          ),
                                        ),
                                      ),
@@ -802,7 +753,7 @@ class _LoginScreenState extends State<LoginScreen>
                                                 (_lockoutStatus?.isLocked ?? false)
                                                     ? 'Account Locked'
                                                     : 'Log in',
-                                                style: poppins(fontSize: 16, fontWeight: FontWeight.bold),
+                                                style: AppTypography.style(AppTextRole.button, fontSize: 16, letterSpacing: opticalTracking(16), height: opticalLeading(16, isBody: false)),
                                               ),
                                               const SizedBox(width: 8),
                                               Icon(
@@ -827,7 +778,7 @@ class _LoginScreenState extends State<LoginScreen>
                                     children: [
                                       Text(
                                         "Don't have an account?",
-                                        style: openSans(fontSize: 14, color: const Color(0xFF404942)),
+                                        style: AppTypography.style(AppTextRole.body, fontSize: 14, color: const Color(0xFF404942), letterSpacing: opticalTracking(14), height: opticalLeading(14, isBody: true)),
                                       ),
                                       const SizedBox(width: 4),
                                       TextButton(
@@ -840,12 +791,7 @@ class _LoginScreenState extends State<LoginScreen>
                                         ),
                                         child: Text(
                                           'Sign up',
-                                          style: poppins(
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.bold,
-                                            color: kPrimary,
-                                            decoration: TextDecoration.underline,
-                                          ),
+                                          style: AppTypography.style(AppTextRole.button, fontSize: 14, color: kPrimary, decoration: TextDecoration.underline, letterSpacing: opticalTracking(14), height: opticalLeading(14, isBody: false)),
                                         ),
                                       ),
                                     ],
@@ -871,11 +817,7 @@ class _LoginScreenState extends State<LoginScreen>
                                           Text(
                                             'Want to help students reach their dreams?',
                                             textAlign: TextAlign.center,
-                                            style: poppins(
-                                              fontSize: 12,
-                                              fontWeight: FontWeight.bold,
-                                              color: kNavyTrust,
-                                            ),
+                                            style: AppTypography.style(AppTextRole.cardTitle, fontSize: 12, color: kNavyTrust, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: false)),
                                           ),
                                           const SizedBox(height: 4),
                                           FittedBox(
@@ -886,12 +828,7 @@ class _LoginScreenState extends State<LoginScreen>
                                               children: [
                                                 Text(
                                                   'Become a scholarship provider',
-                                                  style: poppins(
-                                                    fontSize: 12,
-                                                    fontWeight: FontWeight.bold,
-                                                    color: kPrimary,
-                                                    decoration: TextDecoration.underline,
-                                                  ),
+                                                  style: AppTypography.style(AppTextRole.button, fontSize: 12, color: kPrimary, decoration: TextDecoration.underline, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: false)),
                                                 ),
                                                 const SizedBox(width: 4),
                                                 const Icon(Icons.arrow_forward_rounded, size: 14, color: kPrimary),
@@ -913,12 +850,7 @@ class _LoginScreenState extends State<LoginScreen>
                                       padding: const EdgeInsets.symmetric(horizontal: 10),
                                       child: Text(
                                         'OR AUTHENTICATE WITH',
-                                        style: poppins(
-                                          fontSize: 10,
-                                          fontWeight: FontWeight.w700,
-                                          color: const Color(0xFF707971),
-                                          letterSpacing: 0.5,
-                                        ),
+                                        style: AppTypography.style(AppTextRole.label, fontSize: 10, color: const Color(0xFF707971), letterSpacing: 0.5, height: opticalLeading(10, isBody: false)),
                                       ),
                                     ),
                                     const Expanded(child: Divider(color: Color(0xFFDDE2F3))),
@@ -953,11 +885,11 @@ class _LoginScreenState extends State<LoginScreen>
                                           children: [
                                             Text(
                                               'Institutional Student SSO • Coming soon',
-                                              style: poppins(fontSize: 12, fontWeight: FontWeight.bold),
+                                              style: AppTypography.style(AppTextRole.button, fontSize: 12, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: false)),
                                             ),
                                             Text(
                                               'Institutional sign-in is not available yet',
-                                              style: openSans(fontSize: 10, color: const Color(0xFF404942)),
+                                              style: AppTypography.style(AppTextRole.subtitle, fontSize: 10, color: const Color(0xFF404942), letterSpacing: opticalTracking(10), height: opticalLeading(10, isBody: true)),
                                               maxLines: 1,
                                               overflow: TextOverflow.ellipsis,
                                             ),
@@ -990,7 +922,7 @@ class _LoginScreenState extends State<LoginScreen>
                                         Flexible(
                                           child: Text(
                                             'Google sign-in • Coming soon',
-                                            style: poppins(fontSize: 11, fontWeight: FontWeight.w600),
+                                            style: AppTypography.style(AppTextRole.button, fontSize: 11, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: false)),
                                             overflow: TextOverflow.ellipsis,
                                           ),
                                         ),
@@ -1013,11 +945,7 @@ class _LoginScreenState extends State<LoginScreen>
                                             const SizedBox(width: 4),
                                             Text(
                                               'Scholaris student access',
-                                              style: poppins(
-                                                fontSize: 11,
-                                                fontWeight: FontWeight.w700,
-                                                color: kNavyTrust,
-                                              ),
+                                              style: AppTypography.style(AppTextRole.cardTitle, fontSize: 11, color: kNavyTrust, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: false)),
                                             ),
                                           ],
                                         ),
@@ -1026,7 +954,7 @@ class _LoginScreenState extends State<LoginScreen>
                                       Text(
                                         'Sign in with your Scholaris account to continue.',
                                         textAlign: TextAlign.center,
-                                        style: openSans(fontSize: 10, color: const Color(0xFF707971)),
+                                        style: AppTypography.style(AppTextRole.subtitle, fontSize: 10, color: const Color(0xFF707971), letterSpacing: opticalTracking(10), height: opticalLeading(10, isBody: true)),
                                       ),
                                     ],
                                   ),

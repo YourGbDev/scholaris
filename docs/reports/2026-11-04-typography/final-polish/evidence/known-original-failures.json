@@ -1,0 +1,131 @@
+{
+  "originalCommit": "1804904c45594803989e5d7ec83e5b3ec09d25dd",
+  "failures": [
+    {
+      "file": "admin_users_tab_test.dart",
+      "name": "AdminUsersTab creates a new user account with audit event logging",
+      "currentLog": "scratch/typography/full-suite-final.log",
+      "currentLines": [
+        142,
+        167
+      ],
+      "originalLog": "docs/reports/2026-11-04-typography/review-package/evidence/original-source-rerun.log",
+      "originalLines": [
+        52,
+        76
+      ],
+      "sameExactAssertion": true,
+      "assertion": "Expected: true\n  Actual: <false>"
+    },
+    {
+      "file": "admin_users_tab_test.dart",
+      "name": "AdminUsersTab edits role and status with audit event logging",
+      "currentLog": "scratch/typography/full-suite-final.log",
+      "currentLines": [
+        173,
+        198
+      ],
+      "originalLog": "docs/reports/2026-11-04-typography/review-package/evidence/original-source-rerun.log",
+      "originalLines": [
+        78,
+        102
+      ],
+      "sameExactAssertion": true,
+      "assertion": "Expected: true\n  Actual: <false>"
+    },
+    {
+      "file": "admin_users_tab_test.dart",
+      "name": "AdminUsersTab deactivates user with audit event logging",
+      "currentLog": "scratch/typography/full-suite-final.log",
+      "currentLines": [
+        202,
+        227
+      ],
+      "originalLog": "docs/reports/2026-11-04-typography/review-package/evidence/original-source-rerun.log",
+      "originalLines": [
+        103,
+        127
+      ],
+      "sameExactAssertion": true,
+      "assertion": "Expected: true\n  Actual: <false>"
+    },
+    {
+      "file": "admin_users_tab_test.dart",
+      "name": "AdminUsersTab deletes user with audit event logging",
+      "currentLog": "scratch/typography/full-suite-final.log",
+      "currentLines": [
+        244,
+        269
+      ],
+      "originalLog": "docs/reports/2026-11-04-typography/review-package/evidence/original-source-rerun.log",
+      "originalLines": [
+        128,
+        152
+      ],
+      "sameExactAssertion": true,
+      "assertion": "Expected: true\n  Actual: <false>"
+    },
+    {
+      "file": "auth_boundary_test.dart",
+      "name": "auth boundary — matches isolation matches recompute for the new user and never reuse prior results",
+      "currentLog": "scratch/typography/full-suite-final.log",
+      "currentLines": [
+        432,
+        440
+      ],
+      "originalLog": "docs/reports/2026-11-04-typography/review-package/evidence/original-source-rerun.log",
+      "originalLines": [
+        9,
+        17
+      ],
+      "sameExactAssertion": true,
+      "assertion": "Expected: ['sch-dost', 'sch-ched']\n    Actual: MappedListIterable<Scholarship, String>:['sch-ched', 'sch-dost']\n     Which: at location [0] is 'sch-ched' instead of 'sch-dost'\n  \n  package:matcher                                     expect\n  package:flutter_test/src/widget_tester.dart 473:18  expect\n  test\\auth_boundary_test.dart 292:7                  main.<fn>.<fn>"
+    },
+    {
+      "file": "matches_provider_test.dart",
+      "name": "matchesProvider returns ranked eligible scholarships for the student",
+      "currentLog": "scratch/typography/full-suite-final.log",
+      "currentLines": [
+        3456,
+        3464
+      ],
+      "originalLog": "docs/reports/2026-11-04-typography/review-package/evidence/original-source-rerun.log",
+      "originalLines": [
+        24,
+        32
+      ],
+      "sameExactAssertion": true,
+      "assertion": "Expected: ['sch-dost', 'sch-ched']\n    Actual: MappedListIterable<Scholarship, String>:['sch-ched', 'sch-dost']\n     Which: at location [0] is 'sch-ched' instead of 'sch-dost'\n  \n  package:matcher                                     expect\n  package:flutter_test/src/widget_tester.dart 473:18  expect\n  test\\matches_provider_test.dart 63:5                main.<fn>"
+    },
+    {
+      "file": "scholarship_repository_test.dart",
+      "name": "ScholarshipRepository fetchActive returns scholarships from snake_case rows",
+      "currentLog": "scratch/typography/full-suite-final.log",
+      "currentLines": [
+        3897,
+        3909
+      ],
+      "originalLog": "docs/reports/2026-11-04-typography/review-package/evidence/original-source-rerun.log",
+      "originalLines": [
+        35,
+        47
+      ],
+      "sameExactAssertion": true,
+      "assertion": "Expected: 'sch-dost'\n    Actual: 'sch-ched'\n     Which: is different.\n            Expected: sch-dost\n              Actual: sch-ched\n                          ^\n             Differ at offset 4\n  \n  package:matcher                                     expect\n  package:flutter_test/src/widget_tester.dart 473:18  expect\n  test\\scholarship_repository_test.dart 16:7          main.<fn>.<fn>"
+    }
+  ],
+  "logHashes": [
+    {
+      "file": "scratch/typography/full-suite-final.log",
+      "sha256": "117c1c1ad06607bbe4f92c9b77291bec2f09cf1e250a783d64e16132fd9709b2"
+    },
+    {
+      "file": "docs/reports/2026-11-04-typography/review-package/evidence/original-source-rerun.log",
+      "sha256": "70842d42e8241e32ef8d0f04d35746d67835f2cfc8326edb68bcf2630a611c61"
+    },
+    {
+      "file": "docs/reports/2026-11-04-typography/review-package/evidence/original-source-rerun.log",
+      "sha256": "70842d42e8241e32ef8d0f04d35746d67835f2cfc8326edb68bcf2630a611c61"
+    }
+  ]
+}

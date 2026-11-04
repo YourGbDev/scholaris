@@ -1,3 +1,4 @@
+import 'package:scholaris/shared/theme/app_typography.dart';
 import 'package:scholaris/features/home/presentation/widgets/student_tab_entrance.dart';
 // lib/features/applications/presentation/applications_screen.dart
 //
@@ -71,30 +72,17 @@ class ApplicationsScreen extends ConsumerWidget {
                         children: [
                           Text(
                             'My Applications',
-                            style: outfit(
-                              fontSize: 11,
-                              fontWeight: FontWeight.w700,
-                              color: kSecondary,
-                              letterSpacing: 0.8,
-                            ),
+                            style: AppTypography.style(AppTextRole.label, fontSize: 11, color: kSecondary, letterSpacing: 0.8, height: opticalLeading(11, isBody: false)),
                           ),
                           const SizedBox(height: 2),
                           Text(
                             'Application Tracker',
-                            style: outfit(
-                              fontSize: 24,
-                              fontWeight: FontWeight.bold,
-                              color: kOnSurface,
-                              letterSpacing: -0.3,
-                            ),
+                            style: AppTypography.style(AppTextRole.screenTitle, fontSize: 24, color: kOnSurface, letterSpacing: -0.3, height: opticalLeading(24, isBody: false)),
                           ),
                           const SizedBox(height: 2),
                           Text(
                             'Track deadlines, submission proofs, and award decisions.',
-                            style: openSans(
-                              fontSize: 12.5,
-                              color: kOnSurfaceVariant,
-                            ),
+                            style: AppTypography.style(AppTextRole.subtitle, fontSize: 12.5, color: kOnSurfaceVariant, letterSpacing: opticalTracking(12.5), height: opticalLeading(12.5, isBody: true)),
                           ),
                         ],
                       ),
@@ -132,20 +120,11 @@ class ApplicationsScreen extends ConsumerWidget {
           children: [
             Text(
               'My Applications',
-              style: outfit(
-                fontSize: 11,
-                fontWeight: FontWeight.w700,
-                color: kSecondary,
-                letterSpacing: 0.8,
-              ),
+              style: AppTypography.style(AppTextRole.label, fontSize: 11, color: kSecondary, letterSpacing: 0.8, height: opticalLeading(11, isBody: false)),
             ),
             Text(
               'Application Tracker',
-              style: outfit(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                color: kOnSurface,
-              ),
+              style: AppTypography.style(AppTextRole.screenTitle, fontSize: 18, color: kOnSurface, letterSpacing: opticalTracking(18), height: opticalLeading(18, isBody: false)),
             ),
           ],
         ),
@@ -522,12 +501,7 @@ class _PotentialAwardCard extends StatelessWidget {
                         children: [
                           Text(
                             'TOTAL POTENTIAL AWARDS',
-                            style: outfit(
-                              fontSize: 10.5,
-                              fontWeight: FontWeight.w700,
-                              letterSpacing: 0.8,
-                              color: const Color(0xFFB3F1C6),
-                            ),
+                            style: AppTypography.style(AppTextRole.label, fontSize: 10.5, letterSpacing: 0.8, color: const Color(0xFFB3F1C6), height: opticalLeading(10.5, isBody: false)),
                           ),
                           const SizedBox(height: 4),
                           Wrap(
@@ -537,20 +511,11 @@ class _PotentialAwardCard extends StatelessWidget {
                               CountUpAnimation(
                                   targetValue: totalPotential.toInt(),
                                   prefix: '₱',
-                                  style: outfit(
-                                    fontSize: 21,
-                                    fontWeight: FontWeight.w800,
-                                    color: Colors.white,
-                                    letterSpacing: -0.5,
-                                  ),
+                                  style: AppTypography.style(AppTextRole.metric, fontSize: 21, color: Colors.white, letterSpacing: -0.5, height: opticalLeading(21, isBody: false)),
                               ),
                               Text(
                                 'applied value',
-                                style: openSans(
-                                  fontSize: 11,
-                                  fontWeight: FontWeight.w600,
-                                  color: const Color(0xFF98D4AB),
-                                ),
+                                style: AppTypography.style(AppTextRole.caption, fontSize: 11, color: const Color(0xFF98D4AB), letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: true)),
                               ),
                             ],
                           ),
@@ -578,11 +543,7 @@ class _PotentialAwardCard extends StatelessWidget {
                         const SizedBox(width: 5),
                         Text(
                           '$activeCount Active',
-                          style: outfit(
-                            fontSize: 11.5,
-                            fontWeight: FontWeight.w700,
-                            color: Colors.white,
-                          ),
+                          style: AppTypography.style(AppTextRole.metric, fontSize: 11.5, color: Colors.white, letterSpacing: opticalTracking(11.5), height: opticalLeading(11.5, isBody: false)),
                         ),
                       ],
                     ),
@@ -592,11 +553,7 @@ class _PotentialAwardCard extends StatelessWidget {
               const SizedBox(height: 6),
               Text(
                 '$approvedCount Approved • $underReviewCount Under Review',
-                style: openSans(
-                  fontSize: 10.5,
-                  fontWeight: FontWeight.w600,
-                  color: const Color(0xFFB3F1C6),
-                ),
+                style: AppTypography.style(AppTextRole.caption, fontSize: 10.5, color: const Color(0xFFB3F1C6), letterSpacing: opticalTracking(10.5), height: opticalLeading(10.5, isBody: true)),
               ),
             ],
           ),
@@ -664,11 +621,7 @@ class _SummaryPill extends StatelessWidget {
             const SizedBox(width: 5),
             Text(
               label,
-              style: outfit(
-                fontSize: 11,
-                fontWeight: FontWeight.w600,
-                color: kScholarshipTagForeground,
-              ),
+              style: AppTypography.style(AppTextRole.badge, fontSize: 11, color: kScholarshipTagForeground, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: false)),
             ),
           ],
         ),
@@ -785,11 +738,7 @@ class _StatusFilterChip extends StatelessWidget {
                   ],
                   Text(
                     '$label ($count)',
-                    style: outfit(
-                      fontSize: 11.5,
-                      fontWeight: selected ? FontWeight.w700 : FontWeight.w600,
-                      color: foreground,
-                    ),
+                    style: AppTypography.style(AppTextRole.badge, fontSize: 11.5, color: foreground, letterSpacing: opticalTracking(11.5), height: opticalLeading(11.5, isBody: false)),
                   ),
                 ],
               ),
@@ -856,34 +805,20 @@ class _UrgentDeadlineBanner extends StatelessWidget {
                           timeLabel.toUpperCase(),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
-                          style: outfit(
-                            fontSize: 10.5,
-                            fontWeight: FontWeight.w800,
-                            color: const Color(0xFFBA1A1A),
-                            letterSpacing: 0.6,
-                          ),
+                          style: AppTypography.style(AppTextRole.label, fontSize: 10.5, color: const Color(0xFFBA1A1A), letterSpacing: 0.6, height: opticalLeading(10.5, isBody: false)),
                         ),
                       ),
                       const SizedBox(width: 8),
                       Text(
                         '1 Action Needed',
-                        style: openSans(
-                          fontSize: 11,
-                          fontWeight: FontWeight.w600,
-                          color: const Color(0xFF93000A),
-                        ),
+                        style: AppTypography.style(AppTextRole.cardTitle, fontSize: 11, color: const Color(0xFF93000A), letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: true)),
                       ),
                     ],
                   ),
                   const SizedBox(height: 3),
                   Text(
                     '${scholarship.title} requires completing your application before the deadline.',
-                    style: openSans(
-                      fontSize: 12.5,
-                      fontWeight: FontWeight.w500,
-                      color: const Color(0xFF93000A),
-                      height: 1.35,
-                    ),
+                    style: AppTypography.style(AppTextRole.caption, fontSize: 12.5, color: const Color(0xFF93000A), height: 1.35, letterSpacing: opticalTracking(12.5)),
                   ),
                   const SizedBox(height: 8),
                   InkWell(
@@ -904,11 +839,7 @@ class _UrgentDeadlineBanner extends StatelessWidget {
                           application.status == ApplicationStatus.draft
                               ? 'Resume Draft'
                               : 'View Submission',
-                          style: outfit(
-                            fontSize: 12.5,
-                            fontWeight: FontWeight.bold,
-                            color: const Color(0xFFBA1A1A),
-                          ),
+                          style: AppTypography.style(AppTextRole.button, fontSize: 12.5, color: const Color(0xFFBA1A1A), letterSpacing: opticalTracking(12.5), height: opticalLeading(12.5, isBody: false)),
                         ),
                         const SizedBox(width: 4),
                         const Icon(Icons.arrow_forward_rounded,
@@ -982,10 +913,7 @@ class _ApplicationCard extends StatelessWidget {
                           if (application.appliedAt != null)
                             Text(
                               _formatDate(application.appliedAt!),
-                              style: openSans(
-                                fontSize: 11.5,
-                                color: const Color(0xFF404942),
-                              ),
+                              style: AppTypography.style(AppTextRole.caption, fontSize: 11.5, color: const Color(0xFF404942), letterSpacing: opticalTracking(11.5), height: opticalLeading(11.5, isBody: true)),
                             ),
                         ],
                       ),
@@ -996,20 +924,11 @@ class _ApplicationCard extends StatelessWidget {
                       children: [
                         Text(
                           formattedAmount,
-                          style: outfit(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            color: isApproved ? const Color(0xFF00351C) : kOnSurface,
-                          ),
+                          style: AppTypography.style(AppTextRole.metric, fontSize: 16, color: isApproved ? const Color(0xFF00351C) : kOnSurface, letterSpacing: opticalTracking(16), height: opticalLeading(16, isBody: false)),
                         ),
                         Text(
                           'Per Annum',
-                          style: outfit(
-                            fontSize: 9.5,
-                            fontWeight: FontWeight.w600,
-                            color: kOnSurfaceVariant,
-                            letterSpacing: 0.3,
-                          ),
+                          style: AppTypography.style(AppTextRole.caption, fontSize: 9.5, color: kOnSurfaceVariant, letterSpacing: 0.3, height: opticalLeading(9.5, isBody: false)),
                         ),
                       ],
                     ),
@@ -1022,12 +941,7 @@ class _ApplicationCard extends StatelessWidget {
                   scholarship?.title ?? 'Scholarship unavailable',
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
-                  style: outfit(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: const Color(0xFF161C27),
-                    letterSpacing: -0.2,
-                  ),
+                  style: AppTypography.style(AppTextRole.cardTitle, fontSize: 16, color: const Color(0xFF161C27), letterSpacing: -0.2, height: opticalLeading(16, isBody: false)),
                 ),
                 const SizedBox(height: 2),
 
@@ -1035,19 +949,12 @@ class _ApplicationCard extends StatelessWidget {
                 Text.rich(
                   TextSpan(
                     text: '${scholarship?.provider ?? "National Scholarship Council"} ',
-                    style: openSans(
-                      fontSize: 12,
-                      color: const Color(0xFF404942),
-                    ),
+                    style: AppTypography.style(AppTextRole.caption, fontSize: 12, color: const Color(0xFF404942), letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: true)),
                     children: [
                       const TextSpan(text: '• Proof: '),
                       TextSpan(
                         text: '#REC-${application.id.substring(0, application.id.length.clamp(0, 6)).toUpperCase()}',
-                        style: outfit(
-                          fontSize: 11.5,
-                          fontWeight: FontWeight.w600,
-                          color: kSecondary,
-                        ),
+                        style: AppTypography.style(AppTextRole.caption, fontSize: 11.5, color: kSecondary, letterSpacing: opticalTracking(11.5), height: opticalLeading(11.5, isBody: false)),
                       ),
                     ],
                   ),
@@ -1107,10 +1014,7 @@ class _ApplicationCard extends StatelessWidget {
                           'View Submission PDF',
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
-                          style: outfit(
-                            fontSize: 11,
-                            fontWeight: FontWeight.w600,
-                          ),
+                          style: AppTypography.style(AppTextRole.button, fontSize: 11, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: false)),
                         ),
                       ),
                     ],
@@ -1142,10 +1046,7 @@ class _ApplicationCard extends StatelessWidget {
                     const SizedBox(width: 4),
                     Text(
                       'Liaison',
-                      style: outfit(
-                        fontSize: 11,
-                        fontWeight: FontWeight.w600,
-                      ),
+                      style: AppTypography.style(AppTextRole.button, fontSize: 11, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: false)),
                     ),
                   ],
                 ),
@@ -1179,20 +1080,11 @@ class _ApplicationCard extends StatelessWidget {
                   children: [
                     Text(
                       'NEXT STEP MANDATORY',
-                      style: outfit(
-                        fontSize: 9.5,
-                        fontWeight: FontWeight.w700,
-                        color: const Color(0xFF583F00),
-                        letterSpacing: 0.5,
-                      ),
+                      style: AppTypography.style(AppTextRole.badge, fontSize: 9.5, color: const Color(0xFF583F00), letterSpacing: 0.5, height: opticalLeading(9.5, isBody: false)),
                     ),
                     Text(
                       'Accept award package before Nov 15, 2026',
-                      style: openSans(
-                        fontSize: 11.5,
-                        fontWeight: FontWeight.w600,
-                        color: const Color(0xFF161C27),
-                      ),
+                      style: AppTypography.style(AppTextRole.caption, fontSize: 11.5, color: const Color(0xFF161C27), letterSpacing: opticalTracking(11.5), height: opticalLeading(11.5, isBody: true)),
                     ),
                   ],
                 ),
@@ -1219,10 +1111,7 @@ class _ApplicationCard extends StatelessWidget {
               fit: BoxFit.scaleDown,
               child: Text(
                 'Accept & Sign Award Package',
-                style: outfit(
-                  fontSize: 13,
-                  fontWeight: FontWeight.bold,
-                ),
+                style: AppTypography.style(AppTextRole.button, fontSize: 13, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: false)),
               ),
             ),
           ),
@@ -1245,7 +1134,7 @@ class _ApplicationCard extends StatelessWidget {
           ),
           child: Text(
             'Review your draft and attached documents.',
-            style: openSans(fontSize: 11.5, color: const Color(0xFF161C27)),
+            style: AppTypography.style(AppTextRole.body, fontSize: 11.5, color: const Color(0xFF161C27), letterSpacing: opticalTracking(11.5), height: opticalLeading(11.5, isBody: true)),
           ),
         ),
         const SizedBox(height: 10),
@@ -1265,11 +1154,7 @@ class _ApplicationCard extends StatelessWidget {
                           : 'Deadline unavailable',
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: outfit(
-                        fontSize: 11.5,
-                        fontWeight: FontWeight.w600,
-                        color: const Color(0xFFBA1A1A),
-                      ),
+                      style: AppTypography.style(AppTextRole.caption, fontSize: 11.5, color: const Color(0xFFBA1A1A), letterSpacing: opticalTracking(11.5), height: opticalLeading(11.5, isBody: false)),
                     ),
                   ),
                 ],
@@ -1289,10 +1174,7 @@ class _ApplicationCard extends StatelessWidget {
               icon: const Icon(Icons.arrow_forward_rounded, size: 15),
               label: Text(
                 'Continue',
-                style: outfit(
-                  fontSize: 12,
-                  fontWeight: FontWeight.bold,
-                ),
+                style: AppTypography.style(AppTextRole.button, fontSize: 12, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: false)),
               ),
             ),
           ],
@@ -1331,10 +1213,7 @@ class _ApplicationCard extends StatelessWidget {
                 'Review rounds commence in 8 days',
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
-                style: openSans(
-                  fontSize: 11.5,
-                  color: kOnSurfaceVariant,
-                ),
+                style: AppTypography.style(AppTextRole.caption, fontSize: 11.5, color: kOnSurfaceVariant, letterSpacing: opticalTracking(11.5), height: opticalLeading(11.5, isBody: true)),
               ),
             ),
             const SizedBox(width: 8),
@@ -1345,11 +1224,7 @@ class _ApplicationCard extends StatelessWidget {
                 children: [
                   Text(
                     'View Packet',
-                    style: outfit(
-                      fontSize: 12,
-                      fontWeight: FontWeight.bold,
-                      color: kSecondary,
-                    ),
+                    style: AppTypography.style(AppTextRole.button, fontSize: 12, color: kSecondary, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: false)),
                   ),
                   const SizedBox(width: 4),
                   const Icon(Icons.open_in_new_rounded, size: 14, color: kSecondary),
@@ -1476,11 +1351,7 @@ class _ApplicationTimelineStepper extends StatelessWidget {
                   _microStatusText(),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: openSans(
-                    fontSize: 11,
-                    color: const Color(0xFF404942),
-                    fontWeight: FontWeight.w500,
-                  ),
+                  style: AppTypography.style(AppTextRole.caption, fontSize: 11, color: const Color(0xFF404942), letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: true)),
                 ),
               ),
               ]),
@@ -1488,11 +1359,7 @@ class _ApplicationTimelineStepper extends StatelessWidget {
                 status == ApplicationStatus.underReview
                     ? 'Est. Decision: Oct 20'
                     : 'Step ${currentIndex + 1} of 4',
-                style: outfit(
-                  fontSize: 11,
-                  fontWeight: FontWeight.w600,
-                  color: const Color(0xFF161C27),
-                ),
+                style: AppTypography.style(AppTextRole.caption, fontSize: 11, color: const Color(0xFF161C27), letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: false)),
               ),
             ],
           ),
@@ -1573,13 +1440,7 @@ class _StepNode extends StatelessWidget {
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
             textAlign: TextAlign.center,
-            style: outfit(
-              fontSize: 10.5,
-              fontWeight: isActive ? FontWeight.w700 : FontWeight.w500,
-              color: isActive
-                  ? const Color(0xFF161C27)
-                  : const Color(0xFF707971),
-            ),
+            style: AppTypography.style(AppTextRole.label, fontSize: 10.5, color: isActive ? const Color(0xFF161C27) : const Color(0xFF707971), letterSpacing: opticalTracking(10.5), height: opticalLeading(10.5, isBody: false)),
           ),
         ],
       ),
@@ -1609,11 +1470,7 @@ class _MetaChip extends StatelessWidget {
           Flexible(
             child: Text(
               label,
-              style: openSans(
-                fontSize: 11,
-                fontWeight: FontWeight.w600,
-                color: kScholarshipTagForeground,
-              ),
+              style: AppTypography.style(AppTextRole.badge, fontSize: 11, color: kScholarshipTagForeground, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: true)),
             ),
           ),
         ],
@@ -1654,31 +1511,19 @@ class _EmptyApplicationsState extends ConsumerWidget {
                 Text(
                   'No applications yet',
                   textAlign: TextAlign.center,
-                  style: outfit(
-                    fontSize: 20,
-                    fontWeight: FontWeight.w700,
-                    color: const Color(0xFF161C27),
-                  ),
+                  style: AppTypography.style(AppTextRole.sectionTitle, fontSize: 20, color: const Color(0xFF161C27), letterSpacing: opticalTracking(20), height: opticalLeading(20, isBody: false)),
                 ),
                 const SizedBox(height: 4),
                 Text(
                   "You haven't applied to anything yet",
                   textAlign: TextAlign.center,
-                  style: outfit(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                    color: const Color(0xFF0F4D2E),
-                  ),
+                  style: AppTypography.style(AppTextRole.sectionTitle, fontSize: 14, color: const Color(0xFF0F4D2E), letterSpacing: opticalTracking(14), height: opticalLeading(14, isBody: false)),
                 ),
                 const SizedBox(height: 8),
                 Text(
                   'Your scholarship journey starts with your first application! Students who submit to at least 4 to 6 matched programs have an 83% higher chance of securing college funding.',
                   textAlign: TextAlign.center,
-                  style: openSans(
-                    fontSize: 13,
-                    color: const Color(0xFF404942),
-                    height: 1.45,
-                  ),
+                  style: AppTypography.style(AppTextRole.body, fontSize: 13, color: const Color(0xFF404942), height: 1.45, letterSpacing: opticalTracking(13)),
                 ),
                 const SizedBox(height: 18),
                 SizedBox(
@@ -1703,10 +1548,7 @@ class _EmptyApplicationsState extends ConsumerWidget {
                         children: [
                           Text(
                             'Start applying',
-                            style: outfit(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w700,
-                            ),
+                            style: AppTypography.style(AppTextRole.button, fontSize: 14, letterSpacing: opticalTracking(14), height: opticalLeading(14, isBody: false)),
                           ),
                           const SizedBox(width: 6),
                           const Icon(Icons.arrow_forward_rounded, size: 16),
@@ -1724,11 +1566,7 @@ class _EmptyApplicationsState extends ConsumerWidget {
                     const SizedBox(width: 6),
                     Text(
                       '$count Grants eligible for your profile',
-                      style: outfit(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w600,
-                        color: kSecondary,
-                      ),
+                      style: AppTypography.style(AppTextRole.badge, fontSize: 12, color: kSecondary, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: false)),
                     ),
                   ],
                 ),
@@ -1744,11 +1582,7 @@ class _EmptyApplicationsState extends ConsumerWidget {
               Expanded(
                 child: Text(
                   'What happens when you apply',
-                  style: outfit(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w700,
-                    color: const Color(0xFF161C27),
-                  ),
+                  style: AppTypography.style(AppTextRole.sectionTitle, fontSize: 16, color: const Color(0xFF161C27), letterSpacing: opticalTracking(16), height: opticalLeading(16, isBody: false)),
                 ),
               ),
             ],
@@ -1827,30 +1661,17 @@ class _EmptyApplicationsState extends ConsumerWidget {
                     children: [
                       Text(
                         'DOCUMENT PREPARATION',
-                        style: outfit(
-                          fontSize: 10.5,
-                          fontWeight: FontWeight.w700,
-                          color: const Color(0xFF436084),
-                          letterSpacing: 0.6,
-                        ),
+                        style: AppTypography.style(AppTextRole.label, fontSize: 10.5, color: const Color(0xFF436084), letterSpacing: 0.6, height: opticalLeading(10.5, isBody: false)),
                       ),
                       const SizedBox(height: 2),
                       Text(
                         'Preparing grades & certs?',
-                        style: outfit(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w600,
-                          color: const Color(0xFF161C27),
-                        ),
+                        style: AppTypography.style(AppTextRole.cardTitle, fontSize: 14, color: const Color(0xFF161C27), letterSpacing: opticalTracking(14), height: opticalLeading(14, isBody: false)),
                       ),
                       const SizedBox(height: 3),
                       Text(
                         'Need tips on requesting your True Copy of Grades (TCG) or PSA birth certificate? Check requirements before deadlines arrive.',
-                        style: openSans(
-                          fontSize: 12,
-                          color: const Color(0xFF404942),
-                          height: 1.4,
-                        ),
+                        style: AppTypography.style(AppTextRole.caption, fontSize: 12, color: const Color(0xFF404942), height: 1.4, letterSpacing: opticalTracking(12)),
                       ),
                     ],
                   ),
@@ -1867,11 +1688,7 @@ class _EmptyApplicationsState extends ConsumerWidget {
             children: [
               Text(
                 'Suggested For You',
-                style: outfit(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  color: const Color(0xFF161C27),
-                ),
+                style: AppTypography.style(AppTextRole.sectionTitle, fontSize: 16, color: const Color(0xFF161C27), letterSpacing: opticalTracking(16), height: opticalLeading(16, isBody: false)),
               ),
               GestureDetector(
                 onTap: () {
@@ -1879,11 +1696,7 @@ class _EmptyApplicationsState extends ConsumerWidget {
                 },
                 child: Text(
                   'View all ($count)',
-                  style: outfit(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w600,
-                    color: kPrimary,
-                  ),
+                  style: AppTypography.style(AppTextRole.button, fontSize: 12, color: kPrimary, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: false)),
                 ),
               ),
             ],
@@ -1904,19 +1717,11 @@ class _EmptyApplicationsState extends ConsumerWidget {
                     Text.rich(
                       TextSpan(
                         text: '₱40,000',
-                        style: outfit(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          color: const Color(0xFF0F4D2E),
-                        ),
+                        style: AppTypography.style(AppTextRole.metric, fontSize: 18, color: const Color(0xFF0F4D2E), letterSpacing: opticalTracking(18), height: opticalLeading(18, isBody: false)),
                         children: [
                           TextSpan(
                             text: ' / sem',
-                            style: openSans(
-                              fontSize: 12,
-                              fontWeight: FontWeight.normal,
-                              color: kOnSurfaceVariant,
-                            ),
+                            style: AppTypography.style(AppTextRole.caption, fontSize: 12, color: kOnSurfaceVariant, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: true)),
                           ),
                         ],
                       ),
@@ -1940,11 +1745,7 @@ class _EmptyApplicationsState extends ConsumerWidget {
                           const SizedBox(width: 5),
                           Text(
                             '98% Fit',
-                            style: outfit(
-                              fontSize: 11,
-                              fontWeight: FontWeight.bold,
-                              color: const Color(0xFF0F4D2E),
-                            ),
+                            style: AppTypography.style(AppTextRole.badge, fontSize: 11, color: const Color(0xFF0F4D2E), letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: false)),
                           ),
                         ],
                       ),
@@ -1954,19 +1755,12 @@ class _EmptyApplicationsState extends ConsumerWidget {
                 const SizedBox(height: 6),
                 Text(
                   'DOST-SEI Merit Scholarship 2025',
-                  style: outfit(
-                    fontSize: 15,
-                    fontWeight: FontWeight.bold,
-                    color: const Color(0xFF161C27),
-                  ),
+                  style: AppTypography.style(AppTextRole.cardTitle, fontSize: 15, color: const Color(0xFF161C27), letterSpacing: opticalTracking(15), height: opticalLeading(15, isBody: false)),
                 ),
                 const SizedBox(height: 2),
                 Text(
                   'Department of Science and Technology',
-                  style: openSans(
-                    fontSize: 12,
-                    color: const Color(0xFF404942),
-                  ),
+                  style: AppTypography.style(AppTextRole.caption, fontSize: 12, color: const Color(0xFF404942), letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: true)),
                 ),
                 const SizedBox(height: 12),
                 Wrap(
@@ -1983,11 +1777,7 @@ class _EmptyApplicationsState extends ConsumerWidget {
                         Flexible(
                           child: Text(
                             'Closes in 6 days',
-                            style: outfit(
-                              fontSize: 11.5,
-                              fontWeight: FontWeight.w600,
-                              color: const Color(0xFFBA1A1A),
-                            ),
+                            style: AppTypography.style(AppTextRole.badge, fontSize: 11.5, color: const Color(0xFFBA1A1A), letterSpacing: opticalTracking(11.5), height: opticalLeading(11.5, isBody: false)),
                           ),
                         ),
                       ],
@@ -2006,10 +1796,7 @@ class _EmptyApplicationsState extends ConsumerWidget {
                       },
                       child: Text(
                         'Draft Application',
-                        style: outfit(
-                          fontSize: 12,
-                          fontWeight: FontWeight.bold,
-                        ),
+                        style: AppTypography.style(AppTextRole.button, fontSize: 12, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: false)),
                       ),
                     ),
                   ],
@@ -2051,11 +1838,7 @@ class _RoadmapStep extends StatelessWidget {
           alignment: Alignment.center,
           child: Text(
             number,
-            style: outfit(
-              fontSize: 13,
-              fontWeight: FontWeight.w700,
-              color: Colors.white,
-            ),
+            style: AppTypography.style(AppTextRole.label, fontSize: 13, color: Colors.white, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: false)),
           ),
         ),
         const SizedBox(width: 12),
@@ -2065,20 +1848,12 @@ class _RoadmapStep extends StatelessWidget {
             children: [
               Text(
                 title,
-                style: outfit(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w600,
-                  color: const Color(0xFF161C27),
-                ),
+                style: AppTypography.style(AppTextRole.cardTitle, fontSize: 14, color: const Color(0xFF161C27), letterSpacing: opticalTracking(14), height: opticalLeading(14, isBody: false)),
               ),
               const SizedBox(height: 2),
               Text(
                 description,
-                style: openSans(
-                  fontSize: 12,
-                  color: const Color(0xFF404942),
-                  height: 1.4,
-                ),
+                style: AppTypography.style(AppTextRole.body, fontSize: 12, color: const Color(0xFF404942), height: 1.4, letterSpacing: opticalTracking(12)),
               ),
             ],
           ),

@@ -5,6 +5,7 @@
 // Honest placeholder: non-interactive controls clearly marked "Coming in v2".
 // Zero fake values, zero hardcoded active toggles, zero fabricated compliance stamps.
 
+import 'package:scholaris/shared/theme/app_typography.dart';
 import 'package:flutter/material.dart';
 import 'package:scholaris/features/admin/presentation/admin_theme.dart';
 import 'package:scholaris/shared/theme/app_motion.dart';
@@ -25,15 +26,12 @@ class AdminSettingsScreen extends StatelessWidget {
             // --- Header (No Live data tag per instructions) ---
             Text(
               'Admin Settings',
-              style: seqHeadlineLg(
-                fontWeight: FontWeight.w700,
-                color: kSeqOnSurface,
-              ),
+              style: AppTypography.style(AppTextRole.screenTitle, color: kSeqOnSurface, fontSize: 32, height: 38 / 32, letterSpacing: -0.021 * 32),
             ),
             const SizedBox(height: 4),
             Text(
               'Platform configuration',
-              style: seqBodyMd(color: kSeqOnSurfaceVariant),
+              style: AppTypography.style(AppTextRole.subtitle, color: kSeqOnSurfaceVariant, fontSize: 14, height: 20 / 14, letterSpacing: -0.006 * 14),
             ),
             const SizedBox(height: 24),
 
@@ -161,7 +159,7 @@ class AdminSettingsScreen extends StatelessWidget {
                   Flexible(
                     child: Text(
                       'Settings configuration will be available once the platform_settings table is provisioned. These controls are planned for v2.',
-                      style: seqBodySm(color: kSeqOutline),
+                      style: AppTypography.style(AppTextRole.caption, color: kSeqOutline, fontSize: 12, height: 16 / 12, letterSpacing: 0),
                       textAlign: TextAlign.center,
                     ),
                   ),
@@ -194,10 +192,7 @@ class AdminSettingsScreen extends StatelessWidget {
                 const SizedBox(width: 8),
                 Text(
                   title.toUpperCase(),
-                  style: seqLabelSm(
-                    color: kSeqOutline,
-                    fontWeight: FontWeight.w700,
-                  ).copyWith(letterSpacing: 0.8),
+                  style: AppTypography.style(AppTextRole.sectionTitle, color: kSeqOutline, fontSize: 10, height: 12 / 10, letterSpacing: 0.03 * 10).copyWith(letterSpacing: 0.8),
                 ),
               ],
             ),
@@ -230,10 +225,7 @@ class AdminSettingsScreen extends StatelessWidget {
                 children: [
                   Text(
                     title,
-                    style: seqBodyMd(
-                      fontWeight: FontWeight.w600,
-                      color: kSeqOnSurface,
-                    ),
+                    style: AppTypography.style(AppTextRole.label, color: kSeqOnSurface, fontSize: 14, height: 20 / 14, letterSpacing: -0.006 * 14),
                   ),
                   const SizedBox(height: 2),
                   Container(
@@ -244,7 +236,7 @@ class AdminSettingsScreen extends StatelessWidget {
                     ),
                     child: Text(
                       subtitle,
-                      style: seqLabelSm(color: kSeqOutline, fontWeight: FontWeight.w500),
+                      style: AppTypography.style(AppTextRole.subtitle, color: kSeqOutline, fontSize: 10, height: 12 / 10, letterSpacing: 0.03 * 10),
                     ),
                   ),
                 ],
@@ -287,10 +279,7 @@ class AdminSettingsScreen extends StatelessWidget {
                 children: [
                   Text(
                     title,
-                    style: seqBodyMd(
-                      fontWeight: FontWeight.w600,
-                      color: kSeqOnSurface,
-                    ),
+                    style: AppTypography.style(AppTextRole.label, color: kSeqOnSurface, fontSize: 14, height: 20 / 14, letterSpacing: -0.006 * 14),
                   ),
                   const SizedBox(height: 2),
                   Container(
@@ -301,7 +290,7 @@ class AdminSettingsScreen extends StatelessWidget {
                     ),
                     child: Text(
                       subtitle,
-                      style: seqLabelSm(color: kSeqOutline, fontWeight: FontWeight.w500),
+                      style: AppTypography.style(AppTextRole.subtitle, color: kSeqOutline, fontSize: 10, height: 12 / 10, letterSpacing: 0.03 * 10),
                     ),
                   ),
                 ],
@@ -320,10 +309,7 @@ class AdminSettingsScreen extends StatelessWidget {
               ),
               child: Text(
                 controlText,
-                style: seqLabelSm(
-                  color: kSeqOutline,
-                  fontWeight: FontWeight.w600,
-                ),
+                style: AppTypography.style(AppTextRole.label, color: kSeqOutline, fontSize: 10, height: 12 / 10, letterSpacing: 0.03 * 10),
               ),
             ),
           ],

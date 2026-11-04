@@ -299,6 +299,8 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
                         const Center(
                           child: MascotPoseView(
                             pose: MascotPose.celebrating,
+                            // No student profile exists before confirmation.
+                            gender: '',
                             height: 165,
                           ),
                         ),

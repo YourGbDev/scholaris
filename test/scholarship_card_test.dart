@@ -729,5 +729,44 @@ void main() {
         expect(find.textContaining('STEM Exam Qualifier'), findsOneWidget);
       },
     );
+
+    testWidgets(
+      'bookmark button retains optimistic saved state without flickering when toggle completes',
+      (tester) async {
+        final pending = Completer<void>();
+        await tester.pumpWidget(
+          _wrap(
+            card: ScholarshipCard(
+              scholarship: _scholarship(),
+              isBookmarked: false,
+              onToggleBookmark: () => pending.future,
+            ),
+          ),
+        );
+
+        // Initially unsaved
+        expect(find.byTooltip('Save this scholarship'), findsOneWidget);
+        expect(find.byIcon(Icons.bookmark_border_rounded), findsOneWidget);
+
+        // Tap to save
+        await tester.tap(find.byTooltip('Save this scholarship'));
+        await tester.pump();
+
+        // Immediately shows saved state optimistically with gold bookmark
+        expect(find.byTooltip('Remove from saved'), findsOneWidget);
+        expect(find.byIcon(Icons.bookmark_rounded), findsOneWidget);
+
+        // Network finishes
+        pending.complete();
+        await tester.pump();
+
+        // Must NOT flicker back to unsaved even if parent hasn't pushed isBookmarked: true yet
+        expect(find.byTooltip('Remove from saved'), findsOneWidget);
+        expect(find.byIcon(Icons.bookmark_rounded), findsOneWidget);
+        expect(find.byIcon(Icons.bookmark_border_rounded), findsNothing);
+
+        await tester.pumpAndSettle();
+      },
+    );
   });
 }

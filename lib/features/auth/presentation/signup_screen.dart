@@ -112,7 +112,12 @@ class _SignupScreenState extends State<SignupScreen> {
 
       if (!mounted) return;
 
-      await SuccessOverlay.show(context);
+      await SuccessOverlay.show(
+        context,
+        title: 'Continue to email verification',
+        subtitle: 'Use the code from your email to finish signing up.',
+        pose: MascotPose.celebrating,
+      );
       if (!mounted) return;
 
       if (response.session == null) {
@@ -709,8 +714,10 @@ class _SignupScreenState extends State<SignupScreen> {
                             ],
                           ),
                           const SizedBox(height: 6),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          Wrap(
+                            alignment: WrapAlignment.spaceBetween,
+                            spacing: 8,
+                            runSpacing: 4,
                             children: [
                               Text(
                                 'Password Complexity',
@@ -789,8 +796,10 @@ class _SignupScreenState extends State<SignupScreen> {
                           const SizedBox(height: 12),
 
                           // 6. Confirm Password (TextFormField index 3)
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          Wrap(
+                            alignment: WrapAlignment.spaceBetween,
+                            spacing: 8,
+                            runSpacing: 4,
                             children: [
                               Text(
                                 'Confirm Password',
@@ -804,6 +813,7 @@ class _SignupScreenState extends State<SignupScreen> {
                               ),
                               if (passwordsMatch)
                                 Row(
+                                  mainAxisSize: MainAxisSize.min,
                                   children: [
                                     const Icon(
                                       Icons.check_circle_rounded,

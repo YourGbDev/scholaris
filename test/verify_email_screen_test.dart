@@ -23,6 +23,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'package:scholaris/features/auth/presentation/login_screen.dart';
 import 'package:scholaris/features/auth/presentation/verify_email_screen.dart';
+import 'package:scholaris/shared/widgets/mascot_pose_view.dart';
 
 void main() {
   setUpAll(() {
@@ -75,6 +76,15 @@ void main() {
     expect(find.textContaining('a@b.com'), findsOneWidget);
     expect(find.text('Resend email'), findsOneWidget);
     expect(find.text('Back to login'), findsOneWidget);
+    final mascot = find.descendant(
+      of: find.byType(MascotPoseView),
+      matching: find.byType(Image),
+    );
+    expect(mascot, findsOneWidget);
+    expect(
+      (tester.widget<Image>(mascot).image as AssetImage).assetName,
+      getMascotAssetPath(MascotPose.celebrating),
+    );
   });
 
   testWidgets('resend email is disabled when email is null', (tester) async {

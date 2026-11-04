@@ -616,26 +616,35 @@ class _BookmarkButtonState extends State<_BookmarkButton>
   bool? _pendingBookmark;
   late final AnimationController _burstController;
   late final Animation<double> _burstScale;
-  late final Animation<Color?> _burstColor;
 
   @override
   void initState() {
     super.initState();
     _burstController = AnimationController(
-      duration: const Duration(milliseconds: 420),
+      duration: const Duration(milliseconds: 320),
       vsync: this,
     );
-    _burstScale =
-        TweenSequence<double>([
-          TweenSequenceItem(tween: Tween(begin: 1.0, end: 1.4), weight: 1),
-          TweenSequenceItem(tween: Tween(begin: 1.4, end: 1.0), weight: 1),
-        ]).animate(
-          CurvedAnimation(parent: _burstController, curve: Curves.elasticOut),
-        );
-    _burstColor = ColorTween(
-      begin: kPrimary,
-      end: kAccent,
-    ).animate(_burstController);
+    _burstScale = TweenSequence<double>([
+      TweenSequenceItem(
+        tween: Tween(begin: 1.0, end: 1.35)
+            .chain(CurveTween(curve: Curves.easeOutCubic)),
+        weight: 40,
+      ),
+      TweenSequenceItem(
+        tween: Tween(begin: 1.35, end: 1.0)
+            .chain(CurveTween(curve: Curves.easeInCubic)),
+        weight: 60,
+      ),
+    ]).animate(_burstController);
+  }
+
+  @override
+  void didUpdateWidget(covariant _BookmarkButton oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    // Clear pending state once the parent confirms the new bookmark status.
+    if (_pendingBookmark != null && widget.isBookmarked == _pendingBookmark) {
+      setState(() => _pendingBookmark = null);
+    }
   }
 
   @override
@@ -657,9 +666,14 @@ class _BookmarkButtonState extends State<_BookmarkButton>
 
     try {
       await widget.onToggleBookmark();
+      // If widget already reflects the new status, clear pending immediately.
+      if (mounted && widget.isBookmarked == willBookmark) {
+        setState(() => _pendingBookmark = null);
+      }
     } on Exception {
       if (mounted) {
         _burstController.reset();
+        setState(() => _pendingBookmark = null);
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text(
@@ -668,8 +682,6 @@ class _BookmarkButtonState extends State<_BookmarkButton>
           ),
         );
       }
-    } finally {
-      if (mounted) setState(() => _pendingBookmark = null);
     }
   }
 
@@ -682,15 +694,10 @@ class _BookmarkButtonState extends State<_BookmarkButton>
     if (showBurst) {
       icon = ScaleTransition(
         scale: _burstScale,
-        child: AnimatedBuilder(
-          animation: _burstColor,
-          builder: (context, child) {
-            return Icon(
-              Icons.bookmark_rounded,
-              size: 20,
-              color: _burstColor.value ?? kAccent,
-            );
-          },
+        child: const Icon(
+          Icons.bookmark_rounded,
+          size: 20,
+          color: kAccent,
         ),
       );
     } else {

@@ -172,42 +172,44 @@ html,body,.landing-main,.depth-hero,.student-story,.landing-gallery,.provider-st
 @media(max-width:760px){.provider-split{padding-top:60px;padding-bottom:35px}.provider-copy .provider-heading h2{font-size:34px!important}.provider-split-layout{gap:24px}}
 .story-mobile-device{display:none;position:relative;width:210px;margin:35px auto 0;padding:32px 5px 7px;border:2px solid #858784;border-radius:32px;background:#fafaf8;box-shadow:inset 0 0 0 3px #161817,0 20px 28px -22px #223c2990}.mobile-device-screen{aspect-ratio:440/956;overflow:hidden;position:relative;border-radius:6px 6px 24px 24px}.mobile-device-screen img{position:absolute;left:0;top:0;width:100%;height:100%;object-fit:contain;object-position:top}.story-mobile-device::before{content:'';position:absolute;z-index:2;top:11px;left:36%;width:28%;height:15px;border-radius:15px;background:#101211}.story-mobile-device .phone-status-bar{top:12px;left:15px;right:15px;font-size:8px}.story-mobile-device .phone-status-icons{gap:3px}.story-mobile-device .phone-status-icons svg{width:9px}.story-mobile-device .phone-battery{width:17px;height:9px;font-size:6px}
 @media(max-width:760px),(prefers-reduced-motion:reduce){.story-mobile-device{display:block}}
-/* A quiet close to the student story before the provider introduction. */
-/* A confident closing statement, with supporting copy kept quiet. */
+/* The student story closes as one compact celebration. */
 .student-breathing-room {
-  width: 100%; max-width: 1248px; margin: 0 auto; padding: 96px 48px;
-  display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(0, .8fr);
-  align-items: center; gap: 64px; color: #193e2b;
+  width: calc(100% - 96px); max-width: 1152px; margin: 48px auto; padding: 56px 56px 0;
+  display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, .8fr);
+  align-items: center; gap: 24px; color: #fafaf8;
+  background: var(--landing-green) !important; border-radius: 26px; overflow: hidden;
 }
-.chapter-close-copy { max-width: 650px; }
+.chapter-close-copy { max-width: 650px; padding-bottom: 56px; }
 .student-breathing-room #nextChapterTitle {
-  font: 700 clamp(36px, 3.8vw, 52px)/1.12 'Geist', sans-serif !important;
+  font: 700 clamp(36px, 3.5vw, 48px)/1.12 'Geist', sans-serif !important;
   letter-spacing: -.02em !important; margin: 0 0 24px; overflow-wrap: normal;
 }
 .chapter-close-description {
-  font: 400 18px/1.65 'Geist', sans-serif; color: #526454;
+  font: 400 18px/1.65 'Geist', sans-serif; color: #e0e8df;
   max-width: 43ch; margin: 0; text-wrap: pretty;
 }
 .chapter-close-note {
-  font: 400 14px/1.6 'Geist', sans-serif; color: #7b703f;
+  font: 400 14px/1.6 'Geist', sans-serif; color: #f2d278;
   margin: 24px 0 0; max-width: 43ch; text-wrap: pretty;
 }
-.chapter-close-art { margin: 0; display: flex; align-items: center; justify-content: center; }
-.chapter-close-art img { display: block; width: 100%; max-width: 340px; height: auto; object-fit: contain; }
+.chapter-close-art { margin: 0; align-self: end; height: 440px; overflow: hidden; }
+.chapter-close-art img { display: block; width: 100%; height: auto; }
 .student-breathing-room .scroll-rise { transition-duration: 650ms; filter: none; }
 .student-breathing-room .scroll-rise:not(.is-revealed) { transform: translateY(16px); }
 @media (max-width: 1000px) {
-  .student-breathing-room { padding: 80px 40px; gap: 32px; }
+  .student-breathing-room { width: calc(100% - 64px); padding: 40px 32px 0; gap: 20px; scroll-margin-top: 56px; }
+  .chapter-close-copy { padding-bottom: 40px; }
   .student-breathing-room #nextChapterTitle { font-size: 36px !important; }
-  .chapter-close-art img { max-width: 280px; }
+  .chapter-close-art { height: 360px; }
 }
 @media (max-width: 760px) {
-  .student-breathing-room { grid-template-columns: 1fr; text-align: center; padding: 64px 24px; gap: 32px; }
-  .chapter-close-copy { max-width: 440px; margin: auto; }
-  .student-breathing-room #nextChapterTitle { font-size: 32px !important; max-width: 19ch; margin: 0 auto 20px; }
+  .student-breathing-room { width: calc(100% - 32px); grid-template-columns: 1fr; text-align: center; padding: 36px 24px 0; margin-block: 32px; gap: 24px; scroll-margin-top: 0; }
+  .chapter-close-copy { max-width: 440px; margin: auto; padding-bottom: 0; }
+  .student-breathing-room #nextChapterTitle { font-size: clamp(28px, 8.2vw, 32px) !important; max-width: 19ch; margin: 0 auto 20px; text-wrap: balance; }
   .chapter-close-description { font-size: 16px; max-width: 34ch; margin: auto; }
   .chapter-close-note { margin: 20px auto 0; max-width: 34ch; }
-  .chapter-close-art img { max-width: 205px; }
+  .chapter-close-art { width: 100%; max-width: 290px; height: 300px; margin-inline: auto; }
+  .chapter-close-break { display: none; }
 }
 
 /* Readable word-by-word scroll emphasis; the hero builds once on entry. */

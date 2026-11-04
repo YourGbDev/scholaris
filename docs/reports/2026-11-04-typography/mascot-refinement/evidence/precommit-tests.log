@@ -1,0 +1,61 @@
+00:00 +0: loading C:/scholaris/test/shared/theme/apple_motion_test.dart
+00:00 +0: C:/scholaris/test/shared/theme/app_typography_test.dart: all platforms and web universally resolve to bundled Geist
+00:00 +1: C:/scholaris/test/shared/theme/app_typography_test.dart: all platforms and web universally resolve to bundled Geist
+00:00 +2: C:/scholaris/test/shared/theme/apple_motion_test.dart: Apple WWDC Spring Physics Specification Apple Shipped Presets adhere to WWDC parameters
+00:00 +3: C:/scholaris/test/shared/theme/app_typography_test.dart: all fifteen roles use exactly the approved semantic weights
+00:00 +4: C:/scholaris/test/shared/theme/app_typography_test.dart: all fifteen roles use exactly the approved semantic weights
+00:00 +5: C:/scholaris/test/shared/theme/app_typography_test.dart: all fifteen roles use exactly the approved semantic weights
+00:00 +6: C:/scholaris/test/shared/theme/app_typography_test.dart: all fifteen roles use exactly the approved semantic weights
+00:00 +7: C:/scholaris/test/shared/theme/apple_motion_test.dart: PressableScale Spring & Interruptibility Interruptible mid-flight: releases cleanly without snapping or jumping
+00:00 +8: C:/scholaris/test/shared/theme/apple_motion_test.dart: PressableScale Spring & Interruptibility Interruptible mid-flight: releases cleanly without snapping or jumping
+00:00 +9: C:/scholaris/test/shared/theme/apple_motion_test.dart: PressableScale Spring & Interruptibility Interruptible mid-flight: releases cleanly without snapping or jumping
+00:00 +10: C:/scholaris/test/shared/theme/apple_motion_test.dart: PressableScale Spring & Interruptibility Interruptible mid-flight: releases cleanly without snapping or jumping
+00:00 +11: C:/scholaris/test/shared/theme/apple_motion_test.dart: Apple Liquid Glass Material Renders BackdropFilter with blur, light-edge border, and tint
+00:00 +12: C:/scholaris/test/shared/theme/apple_motion_test.dart: Apple HIG Optical Typography System Calculates optical tracking and leading correctly across scales
+00:00 +13: C:/scholaris/test/shared/theme/apple_motion_test.dart: Apple HIG Optical Typography System ThemeData gives Geist the approved compact tracking and leading
+00:02 +14: C:/scholaris/test/shared/theme/reference_typography_test.dart: (setUpAll)
+00:02 +14: C:/scholaris/test/shared/theme/semantic_theme_test.dart: typography keeps navigation state colors and dialog content colors
+00:02 +15: C:/scholaris/test/shared/theme/reference_typography_test.dart: admin and provider reference pills use bundled Geist offline
+00:02 +16: C:/scholaris/test/shared/theme/reference_typography_test.dart: admin and provider reference pills use bundled Geist offline
+00:02 +17: C:/scholaris/test/shared/theme/reference_typography_test.dart: admin and provider reference pills use bundled Geist offline
+00:02 +18: C:/scholaris/test/shared/theme/reference_typography_test.dart: admin and provider reference pills use bundled Geist offline
+00:02 +19: C:/scholaris/test/shared/theme/reference_typography_test.dart: (tearDownAll)
+00:03 +19: C:/scholaris/test/shared/theme/semantic_widgets_test.dart: (setUpAll)
+00:03 +19: C:/scholaris/test/shared/theme/semantic_widgets_test.dart: scholarship card spends emphasis on title and amount, not metadata
+00:03 +20: C:/scholaris/test/shared/theme/semantic_widgets_test.dart: large text and system Bold Text remain effective with semantic styles
+00:03 +21: C:/scholaris/test/shared/theme/semantic_widgets_test.dart: (tearDownAll)
+00:07 +21: C:/scholaris/test/mascot_identity_test.dart: mascot names follow the same gender rule as assets
+00:07 +22: C:/scholaris/test/greeting_mascot_test.dart: welcome pair scales as one composition on a narrow screen
+00:08 +23: C:/scholaris/test/mascot_profile_loading_test.dart: profile-driven mascot stays neutral until female profile resolves
+00:08 +24: C:/scholaris/test/mascot_profile_loading_test.dart: profile-driven mascot stays neutral until female profile resolves
+00:08 +25: C:/scholaris/test/mascot_profile_loading_test.dart: profile-driven mascot stays neutral until female profile resolves
+00:08 +26: C:/scholaris/test/mascot_profile_loading_test.dart: profile-driven mascot stays neutral until female profile resolves
+00:08 +27: C:/scholaris/test/mascot_profile_loading_test.dart: profile-driven mascot stays neutral until female profile resolves
+00:08 +28: C:/scholaris/test/mascot_profile_loading_test.dart: profile-driven mascot stays neutral until female profile resolves
+00:08 +29: C:/scholaris/test/onboarding_screen_test.dart: welcome introduces Scholaris without promotional badges
+00:08 +30: C:/scholaris/test/onboarding_screen_test.dart: welcome introduces Scholaris without promotional badges
+00:08 +31: C:/scholaris/test/onboarding_screen_test.dart: four features follow welcome with a distinct mascot and consistent controls
+00:09 +32: C:/scholaris/test/onboarding_screen_test.dart: skip and returning-user login persist completion before entering login
+00:09 +33: C:/scholaris/test/onboarding_screen_test.dart: reduced-motion controls and swipes preserve progress without completing
+00:09 +34: C:/scholaris/test/onboarding_screen_test.dart: all pages reflow at Size(320.0, 568.0) and text 1.0
+00:09 +35: C:/scholaris/test/onboarding_screen_test.dart: all pages reflow at Size(320.0, 568.0) and text 2.0
+00:09 +36: C:/scholaris/test/onboarding_screen_test.dart: all pages reflow at Size(1024.0, 768.0) and text 1.0
+00:16 +37: C:/scholaris/test/student_chat_screen_test.dart: chat intro returns on every opening even after saved completion
+00:16 +38: C:/scholaris/test/student_chat_screen_test.dart: chat intro returns on every opening even after saved completion
+00:16 +39: C:/scholaris/test/student_chat_screen_test.dart: chat intro returns on every opening even after saved completion
+00:16 +40: C:/scholaris/test/student_chat_screen_test.dart: chat intro returns on every opening even after saved completion
+00:16 +41: C:/scholaris/test/student_chat_screen_test.dart: chat intro returns on every opening even after saved completion
+00:16 +42: C:/scholaris/test/student_chat_screen_test.dart: chat intro returns on every opening even after saved completion
+00:16 +43: C:/scholaris/test/student_chat_screen_test.dart: chat intro returns on every opening even after saved completion
+00:16 +44: C:/scholaris/test/student_chat_screen_test.dart: chat intro returns on every opening even after saved completion
+00:16 +45: C:/scholaris/test/student_chat_screen_test.dart: chat intro returns on every opening even after saved completion
+00:17 +46: C:/scholaris/test/student_chat_screen_test.dart: chat uses profile name and Male mascot with a working back button
+00:17 +47: C:/scholaris/test/student_chat_screen_test.dart: chat uses profile name and Female mascot with a working back button
+00:17 +48: C:/scholaris/test/student_chat_screen_test.dart: chat explains availability and keeps a typed draft unsent
+00:18 +49: C:/scholaris/test/student_chat_screen_test.dart: chat composer remains usable with keyboard and enlarged phone text
+00:18 +50: C:/scholaris/test/student_chat_screen_test.dart: each visit can finish on skip or final start and replay
+00:18 +51: C:/scholaris/test/student_chat_screen_test.dart: skipping does not persist a completion flag
+00:18 +52: C:/scholaris/test/student_chat_screen_test.dart: each visible tool explains its real flow before opening
+00:19 +53: C:/scholaris/test/student_chat_screen_test.dart: Find scholarships opens Home with Discover selected
+00:19 +54: C:/scholaris/test/student_chat_screen_test.dart: guide fits narrow enlarged text and leaving does not complete it
+00:19 +55: All tests passed!

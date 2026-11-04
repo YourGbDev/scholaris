@@ -1,0 +1,4 @@
+00:00 +0: loading C:/scholaris/scratch/mascot-refinement/verify_assets_test.dart
+00:00 +0: mascot dimensions, transparency and direct-edit alpha stay intact
+Verified 22 mascot PNGs; all direct edits preserve every alpha pixel.
+00:01 +1: All tests passed!

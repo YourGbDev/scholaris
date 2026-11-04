@@ -1,0 +1,222 @@
+[
+  {
+    "path": "assets/mascots/chat/ariel_explain.png",
+    "width": 1145,
+    "height": 1374,
+    "transparentPixels": 747507,
+    "solidPixelsAlpha240Plus": 805415,
+    "originalAlphaPreserved": false,
+    "method": "generated",
+    "sha256": "b6024c109e92eb19512a7b496f470f859aeff31686ec85ac417a832ff7d38a77"
+  },
+  {
+    "path": "assets/mascots/chat/ariel_tools.png",
+    "width": 1312,
+    "height": 1199,
+    "transparentPixels": 914437,
+    "solidPixelsAlpha240Plus": 640617,
+    "originalAlphaPreserved": true,
+    "method": "direct",
+    "sha256": "c40f5c75ad1fcbfea363e786bde42396448f341c89a42d057d0876c32223298e"
+  },
+  {
+    "path": "assets/mascots/chat/ariel_welcome.png",
+    "width": 1312,
+    "height": 1199,
+    "transparentPixels": 833565,
+    "solidPixelsAlpha240Plus": 717816,
+    "originalAlphaPreserved": false,
+    "method": "generated",
+    "sha256": "b395840ff59841b8a7605fe6d7165528ad2efcdb5ed292249e2a90ab2d63b1ed"
+  },
+  {
+    "path": "assets/mascots/chat/ari_explain.png",
+    "width": 1317,
+    "height": 1194,
+    "transparentPixels": 904152,
+    "solidPixelsAlpha240Plus": 648245,
+    "originalAlphaPreserved": true,
+    "method": "direct",
+    "sha256": "a81f062cd285056b86e29d89a4fe9fd0cfbddde71847dae85453910b4053147b"
+  },
+  {
+    "path": "assets/mascots/chat/ari_tools.png",
+    "width": 1145,
+    "height": 1374,
+    "transparentPixels": 865749,
+    "solidPixelsAlpha240Plus": 684220,
+    "originalAlphaPreserved": true,
+    "method": "direct",
+    "sha256": "d51ac6dc2ca7fc8be350a4e1212ba0b286bc35d9db3f8bd74e5eb8153bdd60ce"
+  },
+  {
+    "path": "assets/mascots/chat/ari_welcome.png",
+    "width": 1312,
+    "height": 1199,
+    "transparentPixels": 867132,
+    "solidPixelsAlpha240Plus": 683436,
+    "originalAlphaPreserved": false,
+    "method": "generated",
+    "sha256": "4eeea5f976e2c4d450e2f809c66210b39f62a242ff36355d501be1c18ae9d09a"
+  },
+  {
+    "path": "assets/mascots/greetings/ari.png",
+    "width": 1312,
+    "height": 1199,
+    "transparentPixels": 867132,
+    "solidPixelsAlpha240Plus": 683436,
+    "originalAlphaPreserved": false,
+    "method": "generated",
+    "sha256": "4eeea5f976e2c4d450e2f809c66210b39f62a242ff36355d501be1c18ae9d09a"
+  },
+  {
+    "path": "assets/mascots/greetings/ariel.png",
+    "width": 1299,
+    "height": 1211,
+    "transparentPixels": 884599,
+    "solidPixelsAlpha240Plus": 669128,
+    "originalAlphaPreserved": false,
+    "method": "generated",
+    "sha256": "683555518ac38272428ffc701f57bcb5dca5410848cc94db3258aa7148aaf89a"
+  },
+  {
+    "path": "assets/mascots/greetings/welcome_pair.png",
+    "width": 1448,
+    "height": 1086,
+    "transparentPixels": 586293,
+    "solidPixelsAlpha240Plus": 951098,
+    "originalAlphaPreserved": false,
+    "method": "generated",
+    "sha256": "2c6cf1ac2627cfd0e0f61cf3ed3edf557aaacae5bde9f0705ccd96fa0e1fa187"
+  },
+  {
+    "path": "assets/mascots/mascot_female_celebrating.png",
+    "width": 1024,
+    "height": 1536,
+    "transparentPixels": 1004613,
+    "solidPixelsAlpha240Plus": 537779,
+    "originalAlphaPreserved": true,
+    "method": "direct",
+    "sha256": "d02aa3b65f4d818ce4be910c3f20ddf87247f552ebea0d74a2225f5bb613a77a"
+  },
+  {
+    "path": "assets/mascots/mascot_female_confused.png",
+    "width": 1024,
+    "height": 1536,
+    "transparentPixels": 1117102,
+    "solidPixelsAlpha240Plus": 435460,
+    "originalAlphaPreserved": true,
+    "method": "direct",
+    "sha256": "0ebbb225dab554d132960709fa17aee7f87e6c19a2cc207b28122699ac6df6a2"
+  },
+  {
+    "path": "assets/mascots/mascot_female_consoling.png",
+    "width": 1024,
+    "height": 1536,
+    "transparentPixels": 1088491,
+    "solidPixelsAlpha240Plus": 464607,
+    "originalAlphaPreserved": true,
+    "method": "direct",
+    "sha256": "9f5f65331c942defee3a2a6e4f998abdb0823b0bd2645a723e2fc27f5257b020"
+  },
+  {
+    "path": "assets/mascots/mascot_female_searching.png",
+    "width": 1024,
+    "height": 1536,
+    "transparentPixels": 1014155,
+    "solidPixelsAlpha240Plus": 535602,
+    "originalAlphaPreserved": true,
+    "method": "direct",
+    "sha256": "4f0ecd7700e40505662113cf6ac6b9bf2da2339372c1ce2fe0940af4c30e97d3"
+  },
+  {
+    "path": "assets/mascots/mascot_male_celebrating.png",
+    "width": 1024,
+    "height": 1536,
+    "transparentPixels": 888765,
+    "solidPixelsAlpha240Plus": 634284,
+    "originalAlphaPreserved": true,
+    "method": "direct",
+    "sha256": "725bb7505a49df0fe9501e6ab86f4f0a5a2434ad8130a72d30100c93c73950ef"
+  },
+  {
+    "path": "assets/mascots/mascot_male_confused.png",
+    "width": 1024,
+    "height": 1536,
+    "transparentPixels": 1000682,
+    "solidPixelsAlpha240Plus": 545168,
+    "originalAlphaPreserved": true,
+    "method": "direct",
+    "sha256": "cbcd487639d55402dc3ebeba8888b862d8548137c4b9f5bcb4f7f33c9c6de033"
+  },
+  {
+    "path": "assets/mascots/mascot_male_consoling.png",
+    "width": 1024,
+    "height": 1536,
+    "transparentPixels": 1056275,
+    "solidPixelsAlpha240Plus": 498141,
+    "originalAlphaPreserved": true,
+    "method": "direct",
+    "sha256": "b736bb119ebd15e58813d5aeaac0f96a546e337d6d9084939dd5f53f567fdb37"
+  },
+  {
+    "path": "assets/mascots/mascot_male_searching.png",
+    "width": 1024,
+    "height": 1536,
+    "transparentPixels": 963353,
+    "solidPixelsAlpha240Plus": 586829,
+    "originalAlphaPreserved": true,
+    "method": "direct",
+    "sha256": "e6913c5dfd9cf143aa5f5140b1b2ded094ddb8248d9dad2c6cbcae4b14854fcb"
+  },
+  {
+    "path": "assets/mascots/onboarding/companion.png",
+    "width": 1102,
+    "height": 1427,
+    "transparentPixels": 533107,
+    "solidPixelsAlpha240Plus": 1018226,
+    "originalAlphaPreserved": false,
+    "method": "generated",
+    "sha256": "583d88e722f22bfadd6e0646f648eccac9421aabab6c78d03b79216119ba4675"
+  },
+  {
+    "path": "assets/mascots/onboarding/discover.png",
+    "width": 1102,
+    "height": 1427,
+    "transparentPixels": 537976,
+    "solidPixelsAlpha240Plus": 1016556,
+    "originalAlphaPreserved": false,
+    "method": "generated",
+    "sha256": "6575c9de96fe8a650439b0ace9826d24ac8a5a0b0d1f5f6cf9231bf4d36e5f4c"
+  },
+  {
+    "path": "assets/mascots/onboarding/match.png",
+    "width": 1102,
+    "height": 1428,
+    "transparentPixels": 564130,
+    "solidPixelsAlpha240Plus": 984716,
+    "originalAlphaPreserved": true,
+    "method": "direct",
+    "sha256": "c66d33904ff470547810d7f28f1f31845d355db54cc5808238c22caa26623297"
+  },
+  {
+    "path": "assets/mascots/onboarding/track.png",
+    "width": 1102,
+    "height": 1428,
+    "transparentPixels": 567463,
+    "solidPixelsAlpha240Plus": 986445,
+    "originalAlphaPreserved": true,
+    "method": "direct",
+    "sha256": "543decf76e57c7e70886e350601b69bb02db948fd1e2ea1926e24b4d98e69a05"
+  },
+  {
+    "path": "assets/mascots/onboarding/welcome.png",
+    "width": 1462,
+    "height": 1076,
+    "transparentPixels": 564143,
+    "solidPixelsAlpha240Plus": 986603,
+    "originalAlphaPreserved": true,
+    "method": "direct",
+    "sha256": "05c3ca902537f942f3a8051c868d3231cf84ef99b8f67dcec66186f544c8e33d"
+  }
+]

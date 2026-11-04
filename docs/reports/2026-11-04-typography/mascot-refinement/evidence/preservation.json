@@ -1,0 +1,23 @@
+{
+  "baselineCommit": "b45f1a3a43ff0b91d3a93856d9cb3d94b4f3990a",
+  "checks": [
+    {
+      "path": "landing/index.html",
+      "unchanged": true
+    },
+    {
+      "path": "docs/reviews/2026-10-28-final-checking-readiness.md",
+      "unchanged": true
+    },
+    {
+      "path": "lib/shared/theme/app_typography.dart",
+      "unchanged": true
+    },
+    {
+      "path": "pubspec.yaml",
+      "unchanged": true
+    }
+  ],
+  "runtimeSourceChanged": false,
+  "ipaBuilt": false
+}

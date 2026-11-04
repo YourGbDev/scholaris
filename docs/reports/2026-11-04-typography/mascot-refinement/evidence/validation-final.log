@@ -1,0 +1,92 @@
+00:00 +0: loading C:/scholaris/scratch/mascot-refinement/verify_assets_test.dart
+00:00 +0: C:/scholaris/scratch/mascot-refinement/verify_assets_test.dart: mascot dimensions, transparency and direct-edit alpha stay intact
+00:00 +1: C:/scholaris/scratch/mascot-refinement/verify_assets_test.dart: mascot dimensions, transparency and direct-edit alpha stay intact
+00:01 +2: C:/scholaris/scratch/mascot-refinement/verify_assets_test.dart: mascot dimensions, transparency and direct-edit alpha stay intact
+00:01 +3: C:/scholaris/scratch/mascot-refinement/verify_assets_test.dart: mascot dimensions, transparency and direct-edit alpha stay intact
+00:01 +4: C:/scholaris/scratch/mascot-refinement/verify_assets_test.dart: mascot dimensions, transparency and direct-edit alpha stay intact
+00:01 +5: C:/scholaris/scratch/mascot-refinement/verify_assets_test.dart: mascot dimensions, transparency and direct-edit alpha stay intact
+00:01 +6: C:/scholaris/scratch/mascot-refinement/verify_assets_test.dart: mascot dimensions, transparency and direct-edit alpha stay intact
+Verified 22 mascot PNGs; all direct edits preserve every alpha pixel.
+00:01 +7: C:/scholaris/test/greeting_mascot_test.dart: welcome pair scales as one composition on a narrow screen
+00:01 +8: C:/scholaris/test/greeting_mascot_test.dart: welcome pair scales as one composition on a narrow screen
+00:01 +9: C:/scholaris/test/current_ui_visual_capture_test.dart: current Home at 320.0 text 2.0
+00:01 +10: C:/scholaris/test/current_ui_visual_capture_test.dart: current Home at 320.0 text 2.0
+00:01 +11: C:/scholaris/test/current_ui_visual_capture_test.dart: current Home at 320.0 text 2.0
+00:01 +12: C:/scholaris/test/typography_visual_capture_test.dart: onboarding-feature-2 at 390.0 matched capture
+00:01 +13: C:/scholaris/test/typography_visual_capture_test.dart: onboarding-feature-2 at 390.0 matched capture
+00:01 +14: C:/scholaris/test/current_ui_visual_capture_test.dart: current Home at 390.0 text 1.0
+00:01 +15: C:/scholaris/test/current_ui_visual_capture_test.dart: current Home at 390.0 text 1.0
+00:01 +16: C:/scholaris/test/current_ui_visual_capture_test.dart: current Home at 390.0 text 1.0
+00:01 +17: C:/scholaris/test/current_ui_visual_capture_test.dart: current Home at 390.0 text 1.0
+00:01 +18: C:/scholaris/test/current_ui_visual_capture_test.dart: current Home at 390.0 text 1.0
+00:01 +19: C:/scholaris/test/typography_visual_capture_test.dart: onboarding-feature-3 at 390.0 matched capture
+00:02 +20: C:/scholaris/test/current_ui_visual_capture_test.dart: current Home at 390.0 text 2.0
+00:02 +21: C:/scholaris/test/typography_visual_capture_test.dart: onboarding-feature-4 at 320.0 matched capture
+00:02 +22: C:/scholaris/test/typography_visual_capture_test.dart: onboarding-feature-4 at 390.0 matched capture
+00:02 +23: C:/scholaris/test/typography_visual_capture_test.dart: authentication at 320.0 matched capture
+00:02 +24: C:/scholaris/test/mascot_profile_loading_test.dart: profile-driven mascot stays neutral until female profile resolves
+00:02 +25: C:/scholaris/test/mascot_profile_loading_test.dart: profile-driven mascot stays neutral until female profile resolves
+00:02 +26: C:/scholaris/test/mascot_profile_loading_test.dart: profile-driven mascot stays neutral until female profile resolves
+00:02 +27: C:/scholaris/test/onboarding_screen_test.dart: welcome introduces Scholaris without promotional badges
+00:03 +28: C:/scholaris/test/onboarding_screen_test.dart: welcome introduces Scholaris without promotional badges
+00:03 +29: C:/scholaris/test/onboarding_screen_test.dart: welcome introduces Scholaris without promotional badges
+00:03 +30: C:/scholaris/test/student_chat_screen_test.dart: chat intro returns on every opening even after saved completion
+00:03 +31: C:/scholaris/test/student_chat_screen_test.dart: chat intro returns on every opening even after saved completion
+00:03 +32: C:/scholaris/test/student_chat_screen_test.dart: chat intro returns on every opening even after saved completion
+00:04 +33: C:/scholaris/test/student_chat_screen_test.dart: chat intro returns on every opening even after saved completion
+00:04 +34: C:/scholaris/test/hero_section_test.dart: Student Dashboard next action failed profile does not leave a perpetual overview loading message
+00:04 +35: C:/scholaris/test/hero_section_test.dart: Student Dashboard next action failed profile does not leave a perpetual overview loading message
+00:04 +36: C:/scholaris/test/hero_section_test.dart: Student Dashboard next action failed profile does not leave a perpetual overview loading message
+00:04 +37: C:/scholaris/test/hero_section_test.dart: Student Dashboard next action failed profile does not leave a perpetual overview loading message
+00:04 +38: C:/scholaris/test/hero_section_test.dart: Student Dashboard next action failed profile does not leave a perpetual overview loading message
+00:04 +39: C:/scholaris/test/hero_section_test.dart: Student Dashboard next action failed profile does not leave a perpetual overview loading message
+00:04 +40: C:/scholaris/test/hero_section_test.dart: Student Dashboard next action failed profile does not leave a perpetual overview loading message
+00:04 +41: C:/scholaris/test/hero_section_test.dart: Student Dashboard next action failed profile does not leave a perpetual overview loading message
+00:04 +42: C:/scholaris/test/hero_section_test.dart: Student Dashboard next action failed profile does not leave a perpetual overview loading message
+00:04 +43: C:/scholaris/test/hero_section_test.dart: Student Dashboard next action failed profile does not leave a perpetual overview loading message
+00:04 +44: C:/scholaris/test/hero_section_test.dart: Student Dashboard next action failed profile does not leave a perpetual overview loading message
+00:04 +45: C:/scholaris/test/hero_section_test.dart: Student Dashboard next action failed profile does not leave a perpetual overview loading message
+00:04 +46: C:/scholaris/test/hero_section_test.dart: Student Dashboard next action failed profile does not leave a perpetual overview loading message
+00:04 +47: C:/scholaris/test/student_chat_screen_test.dart: chat explains availability and keeps a typed draft unsent
+00:04 +48: C:/scholaris/test/student_chat_screen_test.dart: chat explains availability and keeps a typed draft unsent
+00:05 +49: C:/scholaris/test/onboarding_screen_test.dart: all pages reflow at Size(1024.0, 768.0) and text 1.0
+00:05 +50: C:/scholaris/test/hero_section_test.dart: Student Dashboard next action returning student keeps progress below the compact friendly welcome card
+00:05 +51: C:/scholaris/test/student_chat_screen_test.dart: chat composer remains usable with keyboard and enlarged phone text
+00:05 +52: C:/scholaris/test/hero_section_test.dart: Student Dashboard next action hero shows loading until matches arrive
+00:05 +53: C:/scholaris/test/student_chat_screen_test.dart: each visit can finish on skip or final start and replay
+00:05 +54: C:/scholaris/test/student_chat_screen_test.dart: each visit can finish on skip or final start and replay
+00:05 +55: C:/scholaris/test/hero_section_test.dart: Student Dashboard next action live hero remains readable with large text at Size(360.0, 800.0)
+00:05 +56: C:/scholaris/test/student_chat_screen_test.dart: skipping does not persist a completion flag
+00:05 +57: C:/scholaris/test/student_chat_screen_test.dart: skipping does not persist a completion flag
+00:05 +58: C:/scholaris/test/student_chat_screen_test.dart: skipping does not persist a completion flag
+00:05 +59: C:/scholaris/test/student_chat_screen_test.dart: skipping does not persist a completion flag
+00:05 +60: C:/scholaris/test/student_chat_screen_test.dart: skipping does not persist a completion flag
+00:05 +61: C:/scholaris/test/student_chat_screen_test.dart: skipping does not persist a completion flag
+00:05 +62: C:/scholaris/test/hero_section_test.dart: Student Dashboard next action live hero remains readable with large text at Size(440.0, 956.0)
+00:05 +63: C:/scholaris/test/hero_section_test.dart: Student Dashboard next action live hero remains readable with large text at Size(440.0, 956.0)
+00:05 +64: C:/scholaris/test/hero_section_test.dart: Student Dashboard next action live hero remains readable with large text at Size(440.0, 956.0)
+00:05 +65: C:/scholaris/test/hero_section_test.dart: Student Dashboard next action live hero remains readable with large text at Size(440.0, 956.0)
+00:05 +66: C:/scholaris/test/hero_section_test.dart: Student Dashboard next action live hero remains readable with large text at Size(440.0, 956.0)
+00:05 +67: C:/scholaris/test/hero_section_test.dart: Student Dashboard next action live hero remains readable with large text at Size(440.0, 956.0)
+00:05 +68: C:/scholaris/test/shared/theme/apple_motion_test.dart: PressableScale Spring & Interruptibility Interruptible mid-flight: releases cleanly without snapping or jumping
+00:06 +69: C:/scholaris/test/shared/theme/apple_motion_test.dart: PressableScale Spring & Interruptibility Interruptible mid-flight: releases cleanly without snapping or jumping
+00:06 +70: C:/scholaris/test/shared/theme/apple_motion_test.dart: PressableScale Spring & Interruptibility Interruptible mid-flight: releases cleanly without snapping or jumping
+00:06 +71: C:/scholaris/test/shared/theme/apple_motion_test.dart: PressableScale Spring & Interruptibility Interruptible mid-flight: releases cleanly without snapping or jumping
+00:06 +72: C:/scholaris/test/student_chat_screen_test.dart: Find scholarships opens Home with Discover selected
+00:06 +73: C:/scholaris/test/student_chat_screen_test.dart: Find scholarships opens Home with Discover selected
+00:06 +74: C:/scholaris/test/student_chat_screen_test.dart: Find scholarships opens Home with Discover selected
+00:06 +75: C:/scholaris/test/student_chat_screen_test.dart: Find scholarships opens Home with Discover selected
+00:06 +76: C:/scholaris/test/student_chat_screen_test.dart: Find scholarships opens Home with Discover selected
+00:06 +77: C:/scholaris/test/hero_section_test.dart: Student Dashboard next action renders floating pill nav bar on HomeScreen
+00:07 +78: C:/scholaris/test/hero_section_test.dart: Student Dashboard next action renders floating pill nav bar on HomeScreen
+00:07 +79: C:/scholaris/test/shared/theme/reference_typography_test.dart: admin and provider reference pills use bundled Geist offline
+00:07 +80: C:/scholaris/test/shared/theme/reference_typography_test.dart: admin and provider reference pills use bundled Geist offline
+00:07 +81: C:/scholaris/test/shared/theme/reference_typography_test.dart: admin and provider reference pills use bundled Geist offline
+00:07 +82: C:/scholaris/test/shared/theme/semantic_theme_test.dart: all Material text slots have the approved semantic hierarchy
+00:07 +83: C:/scholaris/test/shared/theme/reference_typography_test.dart: (tearDownAll)
+00:07 +83: C:/scholaris/test/shared/theme/semantic_theme_test.dart: preview themes keep custom button dimensions and all actions semibold
+00:07 +84: C:/scholaris/test/shared/theme/semantic_widgets_test.dart: (setUpAll)
+00:07 +84: C:/scholaris/test/shared/theme/semantic_widgets_test.dart: scholarship card spends emphasis on title and amount, not metadata
+00:08 +85: C:/scholaris/test/shared/theme/semantic_widgets_test.dart: large text and system Bold Text remain effective with semantic styles
+00:08 +86: C:/scholaris/test/shared/theme/semantic_widgets_test.dart: (tearDownAll)
+00:08 +86: All tests passed!

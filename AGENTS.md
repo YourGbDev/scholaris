@@ -2,16 +2,16 @@
 
 These rules apply to every contributor and agent, including Codex and Archi. Read them before changing UI or producing an IPA.
 
-## Typography: platform-adaptive semantic roles
+## Typography: universal Geist Sans with semantic roles
 
 - `lib/shared/theme/app_typography.dart` is the single authority for font families and role weights. Use `AppTypography.style(AppTextRole.<role>, ...)`; do not define font families or weights independently in components or restore legacy font helpers.
-- Check `kIsWeb` first. Every web browser/OS uses locally bundled **Inter**, including Safari on iOS. Android and other native platforms also use bundled Inter. Native iOS uses **SF Pro** through Flutter's supported `CupertinoSystemText`/`CupertinoSystemDisplay` system-font proxies, not downloaded or bundled copies of SF Pro.
+- User-approved November 4, 2026: every app-owned text surface uses locally bundled **Geist Sans** (`Geist`) on iOS, Android, web (including iOS Safari), and other platforms. `AppTypography` selects the same family everywhere. Do not restore the superseded SF Pro/Inter platform switch or runtime font downloads.
 - Exact default weights: **700** `display`, `screenTitle`, `metric`; **600** `sectionTitle`, `cardTitle`, `button`; **500** `bodyEmphasis`, `label`, `navigation`, `badge`; **400** `subtitle`, `body`, `caption`, `input`, `placeholder`. Primary/secondary actions share `button`; chips share `badge`. No default 800/900 weights.
 - Apply these roles to every student, provider and admin surface, onboarding/tours, chat, dialogs, sheets, forms, validation messages, navigation, receipts, and previews. Use `applyScholarisTypography` when a standalone preview needs its own base theme.
 - Choose roles by actual purpose, not by old weights, text size, or whether a string happens to contain digits. Shared helpers with mixed purposes accept an explicit semantic role. Supporting text stays quieter than headings; important amounts and metrics use `metric`.
 - Preserve existing font sizes, heights, tracking, colors, spacing, component dimensions and geometry. Correct only verified rendering issues, documenting the problem and correction. Do not shrink text, replace text with images, clamp system text scaling, or redesign screens to conceal overflow.
 - Preserve Flutter text scaling and system Bold Text. System-requested bolding and essential missing-glyph/emoji fallback are accessibility exceptions; other semantic exceptions require documented justification. Platform-owned keyboards/system UI are outside the app-owned typography requirement.
-- Bundle genuine Inter 400/500/600/700 assets with their license; do not download fonts at runtime. Keep the font source and hashes documented.
+- Bundle the genuine Geist font assets with their license; do not download fonts at runtime. Preserve the existing 400/500/600/700/800 face registration. The available 800 face does not change the approved semantic role weights, whose default maximum remains 700. Keep the font source and hashes documented.
 - Before handoff, run `node tools/check_typography.mjs`, `node --test tools/check_typography.test.mjs`, the semantic typography tests, and relevant UI tests. Compare matched before/after captures, including narrow layouts and enlarged text. Native iOS and Android rendering need genuine platform captures; a simulated target-platform override or video alone does not prove the actual font family. Label unavailable platform checks pending.
 
 ## Consistent content-card surfaces
@@ -29,7 +29,7 @@ These rules apply to every contributor and agent, including Codex and Archi. Rea
 
 ## Neutral operational workspaces
 
-- User-approved November 3: individual provider, organization and admin workspaces use white canvases, neutral supporting surfaces, and charcoal-selected filters through the shared workspace theme. Keep the platform-adaptive semantic typography and visible crisp card/control edges. Do not restore seeded Material pastel chips, decorative green/blue/cream panels, or category-colored metric tiles.
+- User-approved November 3: individual provider, organization and admin workspaces use white canvases, neutral supporting surfaces, and charcoal-selected filters through the shared workspace theme. Keep the universal Geist semantic typography and visible crisp card/control edges. Do not restore seeded Material pastel chips, decorative green/blue/cream panels, or category-colored metric tiles.
 - Preserve green primary actions/navigation and meaningful success, warning, error, decision, safety and chart-series indicators. Informational guidance and ordinary metadata stay neutral; color does not substitute for a status label.
 
 ## Every IPA must enable CAPTCHA
@@ -53,6 +53,8 @@ These rules apply to every contributor and agent, including Codex and Archi. Rea
 - Build from the intended committed source using the production entry point, not a regression-preview entry point. Assign the next unused build number when a new IPA is authorized; keep old archives in place.
 
 ## Mascot identity
+
+- User-approved November 4: mascot artwork uses deeper emerald gowns/caps, subtly warmer brown skin, vivid gold collar/cuff/tassel and continuous gold front bands. Use `assets/mascots/greetings/welcome_pair.png` as the palette/uniform reference and preserve pose framing and PNG transparency. See `assets/mascots/ARTWORK.md`.
 
 - Ariel is the male mascot; Ari is the female mascot. Resolve both name and artwork from the student's stored gender using the shared mascot helpers. Tour/Home keep this matching identity. User-approved November 3 exception: Chat introduces the OTHER companion (male/unset student → Ari, female student → Ariel), with the matching new chest-up chat artwork. Chat must not change the Home/tour identity.
 
